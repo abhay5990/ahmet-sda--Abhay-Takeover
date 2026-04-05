@@ -186,4 +186,4 @@ python manage.py seed_games --file /path/to/mapping.json
 
 | Arguman | Tip | Varsayilan | Aciklama |
 |---|---|---|---|
-| `--file` | str | `data/game_platform_mapping.json` | Mapping JSON dosyasi |
+| `--file` | str | `data/game_mapp.json` | Mapping JSON dosyasi |

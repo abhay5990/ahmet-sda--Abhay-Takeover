@@ -32,12 +32,21 @@ backfill workflows.
 - Git
 - Docker and Docker Compose if you want local MySQL
 
+If you plan to use MySQL (not SQLite), install the required system libraries first:
+
+```bash
+sudo apt install pkg-config libmysqlclient-dev -y
+```
+
 ### 2. Install
 
 ```bash
 python -m venv venv
 source venv/bin/activate
+pip install -r requirements/base.txt
 pip install -r requirements/dev.txt
+pip install -r requirements/mysql.txt
+pip install -r requirements/prod.txt
 pip install -e ./libs/apis_sdk
 ```
 
@@ -90,6 +99,7 @@ Production sunucusunda sadece scheduler çalıştırmak için:
 ```bash
 git clone https://github.com/Ahmetcetin3448/e-commerce-management-system.git
 cd e-commerce-management-system
+sudo apt install pkg-config libmysqlclient-dev -y
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements/prod.txt

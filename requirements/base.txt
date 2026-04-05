@@ -18,6 +18,9 @@ django-apscheduler==0.7.0
 ijson==3.5.0
 pydantic==2.12.5
 
+# Image processing
+Pillow==10.4.0
+
 # Utilities
 python-dateutil==2.9.0
 pytz==2024.1

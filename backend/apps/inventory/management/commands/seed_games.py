@@ -14,7 +14,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             '--file',
-            default=str(Path(settings.BASE_DIR) / 'data' / 'game_platform_mapping.json'),
+            default=str(Path(settings.BASE_DIR) / 'data' / 'game_mapp.json'),
             help='Path to the game mapping JSON file',
         )
 

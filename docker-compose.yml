@@ -29,7 +29,7 @@ services:
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-devpassword}
     ports:
-      - "8080:80"
+      - "8082:80"
     depends_on:
       - db
 
