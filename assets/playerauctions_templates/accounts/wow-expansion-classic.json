@@ -1,0 +1,601 @@
+{
+  "game_id": 12856,
+  "game": "wow-expansion-classic",
+  "game_name": "World of Warcraft: Mists of Pandaria Classic",
+  "seo_name": "WoW-Expansion-Classic",
+  "servers": [
+    {
+      "id": 13073,
+      "name": "US",
+      "subCategories": [
+        {
+          "id": 13185,
+          "name": "Angerforge - Alliance"
+        },
+        {
+          "id": 13186,
+          "name": "Angerforge - Horde"
+        },
+        {
+          "id": 13076,
+          "name": "Ashkandi - Alliance"
+        },
+        {
+          "id": 13077,
+          "name": "Ashkandi - Horde"
+        },
+        {
+          "id": 13078,
+          "name": "Atiesh - Alliance"
+        },
+        {
+          "id": 13079,
+          "name": "Atiesh - Horde"
+        },
+        {
+          "id": 13080,
+          "name": "Azuresong - Alliance"
+        },
+        {
+          "id": 13081,
+          "name": "Azuresong - Horde"
+        },
+        {
+          "id": 13082,
+          "name": "Benediction - Alliance"
+        },
+        {
+          "id": 13083,
+          "name": "Benediction - Horde"
+        },
+        {
+          "id": 13084,
+          "name": "Bloodsail Buccaneers - Alliance"
+        },
+        {
+          "id": 13085,
+          "name": "Bloodsail Buccaneers - Horde"
+        },
+        {
+          "id": 13086,
+          "name": "Earthfury - Alliance"
+        },
+        {
+          "id": 13087,
+          "name": "Earthfury - Horde"
+        },
+        {
+          "id": 13194,
+          "name": "Eranikus - Horde"
+        },
+        {
+          "id": 13193,
+          "name": "Eranikus- Alliance"
+        },
+        {
+          "id": 13088,
+          "name": "Faerlina - Alliance"
+        },
+        {
+          "id": 13089,
+          "name": "Faerlina - Horde"
+        },
+        {
+          "id": 14615,
+          "name": "Galakras - Alliance"
+        },
+        {
+          "id": 14616,
+          "name": "Galakras - Horde"
+        },
+        {
+          "id": 13091,
+          "name": "Grobbulus - Alliance"
+        },
+        {
+          "id": 13092,
+          "name": "Grobbulus - Horde"
+        },
+        {
+          "id": 14617,
+          "name": "Immerseus - Alliance"
+        },
+        {
+          "id": 14618,
+          "name": "Immerseus - Horde"
+        },
+        {
+          "id": 14619,
+          "name": "Lei Shen - Alliance"
+        },
+        {
+          "id": 14620,
+          "name": "Lei Shen - Horde"
+        },
+        {
+          "id": 13093,
+          "name": "Maladath - Horde"
+        },
+        {
+          "id": 13094,
+          "name": "Maladath- Alliance"
+        },
+        {
+          "id": 13095,
+          "name": "Mankrik - Alliance"
+        },
+        {
+          "id": 13096,
+          "name": "Mankrik - Horde"
+        },
+        {
+          "id": 13097,
+          "name": "Myzrael - Alliance"
+        },
+        {
+          "id": 13098,
+          "name": "Myzrael - Horde"
+        },
+        {
+          "id": 14621,
+          "name": "Nazgrim - Alliance"
+        },
+        {
+          "id": 14622,
+          "name": "Nazgrim - Horde"
+        },
+        {
+          "id": 13099,
+          "name": "Old Blanchy - Alliance"
+        },
+        {
+          "id": 13100,
+          "name": "Old Blanchy - Horde"
+        },
+        {
+          "id": 13101,
+          "name": "Pagle - Alliance"
+        },
+        {
+          "id": 13102,
+          "name": "Pagle - Horde"
+        },
+        {
+          "id": 14623,
+          "name": "Ra-den - Alliance"
+        },
+        {
+          "id": 14624,
+          "name": "Ra-den - Horde"
+        },
+        {
+          "id": 13103,
+          "name": "Remulos - Alliance"
+        },
+        {
+          "id": 13104,
+          "name": "Remulos - Horde"
+        },
+        {
+          "id": 13105,
+          "name": "Skyfury - Alliance"
+        },
+        {
+          "id": 13106,
+          "name": "Skyfury - Horde"
+        },
+        {
+          "id": 13107,
+          "name": "Sulfuras - Alliance"
+        },
+        {
+          "id": 13108,
+          "name": "Sulfuras - Horde"
+        },
+        {
+          "id": 13109,
+          "name": "Westfall - Alliance"
+        },
+        {
+          "id": 13110,
+          "name": "Westfall - Horde"
+        },
+        {
+          "id": 13111,
+          "name": "Whitemane - Alliance"
+        },
+        {
+          "id": 13112,
+          "name": "Whitemane - Horde"
+        },
+        {
+          "id": 13113,
+          "name": "Windseeker - Alliance"
+        },
+        {
+          "id": 13114,
+          "name": "Windseeker - Horde"
+        },
+        {
+          "id": 13115,
+          "name": "Yojamba - Alliance"
+        },
+        {
+          "id": 13116,
+          "name": "Yojamba - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13117,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 13118,
+          "name": "Amnennar - Alliance"
+        },
+        {
+          "id": 13119,
+          "name": "Amnennar - Horde"
+        },
+        {
+          "id": 13120,
+          "name": "Ashbringer - Alliance"
+        },
+        {
+          "id": 13121,
+          "name": "Ashbringer - Horde"
+        },
+        {
+          "id": 13122,
+          "name": "Auberdine - Alliance"
+        },
+        {
+          "id": 13123,
+          "name": "Auberdine - Horde"
+        },
+        {
+          "id": 13124,
+          "name": "Earthshaker - Alliance"
+        },
+        {
+          "id": 13125,
+          "name": "Earthshaker - Horde"
+        },
+        {
+          "id": 13126,
+          "name": "Everlook - Alliance"
+        },
+        {
+          "id": 13127,
+          "name": "Everlook - Horde"
+        },
+        {
+          "id": 13128,
+          "name": "Firemaw - Alliance"
+        },
+        {
+          "id": 13129,
+          "name": "Firemaw - Horde"
+        },
+        {
+          "id": 14625,
+          "name": "Garalon - Alliance"
+        },
+        {
+          "id": 14626,
+          "name": "Garalon - Horde"
+        },
+        {
+          "id": 13130,
+          "name": "Gehennas - Alliance"
+        },
+        {
+          "id": 13131,
+          "name": "Gehennas - Horde"
+        },
+        {
+          "id": 13169,
+          "name": "Giantstalker - Alliance"
+        },
+        {
+          "id": 13170,
+          "name": "Giantstalker - Horde"
+        },
+        {
+          "id": 13132,
+          "name": "Golemagg - Alliance"
+        },
+        {
+          "id": 13133,
+          "name": "Golemagg - Horde"
+        },
+        {
+          "id": 14627,
+          "name": "Hoptallus - Alliance"
+        },
+        {
+          "id": 14628,
+          "name": "Hoptallus - Horde"
+        },
+        {
+          "id": 13134,
+          "name": "Hydraxian Waterlords - Alliance"
+        },
+        {
+          "id": 13135,
+          "name": "Hydraxian Waterlords - Horde"
+        },
+        {
+          "id": 13204,
+          "name": "Jindo - Alliance"
+        },
+        {
+          "id": 13203,
+          "name": "Jindo - Horde"
+        },
+        {
+          "id": 13136,
+          "name": "Lakeshire - Alliance"
+        },
+        {
+          "id": 13137,
+          "name": "Lakeshire - Horde"
+        },
+        {
+          "id": 13138,
+          "name": "Mandokir - Alliance"
+        },
+        {
+          "id": 13139,
+          "name": "Mandokir - Horde"
+        },
+        {
+          "id": 13140,
+          "name": "Mirage Raceway - Alliance"
+        },
+        {
+          "id": 13141,
+          "name": "Mirage Raceway - Horde"
+        },
+        {
+          "id": 13142,
+          "name": "Mograine - Alliance"
+        },
+        {
+          "id": 13143,
+          "name": "Mograine - Horde"
+        },
+        {
+          "id": 13144,
+          "name": "Nethergarde Keep - Alliance"
+        },
+        {
+          "id": 13145,
+          "name": "Nethergarde Keep - Horde"
+        },
+        {
+          "id": 14629,
+          "name": "Norushen - Alliance"
+        },
+        {
+          "id": 14630,
+          "name": "Norushen - Horde"
+        },
+        {
+          "id": 14631,
+          "name": "Ook Ook - Alliance"
+        },
+        {
+          "id": 14632,
+          "name": "Ook Ook - Horde"
+        },
+        {
+          "id": 13146,
+          "name": "Patchwerk - Alliance"
+        },
+        {
+          "id": 13147,
+          "name": "Patchwerk - Horde"
+        },
+        {
+          "id": 13148,
+          "name": "Pyrewood Village - Alliance"
+        },
+        {
+          "id": 13149,
+          "name": "Pyrewood Village - Horde"
+        },
+        {
+          "id": 13150,
+          "name": "Razorfen - Alliance"
+        },
+        {
+          "id": 13151,
+          "name": "Razorfen - Horde"
+        },
+        {
+          "id": 14633,
+          "name": "Shek'zeer - Alliance"
+        },
+        {
+          "id": 14634,
+          "name": "Shek'zeer - Horde"
+        },
+        {
+          "id": 13152,
+          "name": "Sulfuron - Alliance"
+        },
+        {
+          "id": 13153,
+          "name": "Sulfuron - Horde"
+        },
+        {
+          "id": 13167,
+          "name": "Thekal - Alliance"
+        },
+        {
+          "id": 13168,
+          "name": "Thekal - Horde"
+        },
+        {
+          "id": 13154,
+          "name": "Transcendence - Alliance"
+        },
+        {
+          "id": 13155,
+          "name": "Transcendence - Horde"
+        },
+        {
+          "id": 13156,
+          "name": "Venoxis - Alliance"
+        },
+        {
+          "id": 13157,
+          "name": "Venoxis - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13158,
+      "name": "Oceania",
+      "subCategories": [
+        {
+          "id": 13159,
+          "name": "Arugal - Alliance"
+        },
+        {
+          "id": 13160,
+          "name": "Arugal - Horde"
+        },
+        {
+          "id": 13163,
+          "name": "Remulos - Alliance"
+        },
+        {
+          "id": 13164,
+          "name": "Remulos - Horde"
+        },
+        {
+          "id": 13165,
+          "name": "Yojamba - Alliance"
+        },
+        {
+          "id": 13166,
+          "name": "Yojamba - Horde"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

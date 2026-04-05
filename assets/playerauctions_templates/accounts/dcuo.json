@@ -1,0 +1,175 @@
+{
+  "game_id": 3712,
+  "game": "dcuo",
+  "game_name": "DC Universe Online",
+  "seo_name": "DCUO",
+  "servers": [
+    {
+      "id": 4518,
+      "name": "US PC",
+      "subCategories": [
+        {
+          "id": 4519,
+          "name": "Heroes"
+        },
+        {
+          "id": 4520,
+          "name": "Villains"
+        }
+      ]
+    },
+    {
+      "id": 4524,
+      "name": "EU PC",
+      "subCategories": [
+        {
+          "id": 4525,
+          "name": "Heroes"
+        },
+        {
+          "id": 4526,
+          "name": "Villains"
+        }
+      ]
+    },
+    {
+      "id": 6585,
+      "name": "EU PS4",
+      "subCategories": [
+        {
+          "id": 6589,
+          "name": "Heroes"
+        },
+        {
+          "id": 6590,
+          "name": "Villains"
+        }
+      ]
+    },
+    {
+      "id": 6587,
+      "name": "US PS4",
+      "subCategories": [
+        {
+          "id": 6593,
+          "name": "Heroes"
+        },
+        {
+          "id": 6594,
+          "name": "Villains"
+        }
+      ]
+    },
+    {
+      "id": 6588,
+      "name": "US Xbox",
+      "subCategories": [
+        {
+          "id": 6596,
+          "name": "Heroes"
+        },
+        {
+          "id": 6595,
+          "name": "Villains"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

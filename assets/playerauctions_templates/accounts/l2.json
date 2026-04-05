@@ -1,0 +1,173 @@
+{
+  "game_id": 3,
+  "game": "l2",
+  "game_name": "Lineage 2",
+  "seo_name": "L2",
+  "servers": [
+    {
+      "id": 69,
+      "name": "Chronos"
+    },
+    {
+      "id": 8439,
+      "name": "Classic EU - Skelth"
+    },
+    {
+      "id": 8440,
+      "name": "Classic US - Aden"
+    },
+    {
+      "id": 8441,
+      "name": "Classic US - Giran"
+    },
+    {
+      "id": 8460,
+      "name": "Classic US - Gludio"
+    },
+    {
+      "id": 8442,
+      "name": "Classic US - Talking Island"
+    },
+    {
+      "id": 9032,
+      "name": "Essence EU Blue"
+    },
+    {
+      "id": 9031,
+      "name": "Essence EU Red"
+    },
+    {
+      "id": 9022,
+      "name": "EU - Essence"
+    },
+    {
+      "id": 5955,
+      "name": "EU-Core"
+    },
+    {
+      "id": 7819,
+      "name": "EU-Ramona"
+    },
+    {
+      "id": 7649,
+      "name": "Freya"
+    },
+    {
+      "id": 70,
+      "name": "Naia"
+    },
+    {
+      "id": 5956,
+      "name": "PL-Lilith"
+    },
+    {
+      "id": 4868,
+      "name": "Shillen"
+    },
+    {
+      "id": 7159,
+      "name": "Skelth"
+    },
+    {
+      "id": 7160,
+      "name": "Zaken"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

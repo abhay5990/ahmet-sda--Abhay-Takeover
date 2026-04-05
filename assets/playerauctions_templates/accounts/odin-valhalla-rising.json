@@ -1,0 +1,229 @@
+{
+  "game_id": 9419,
+  "game": "odin-valhalla-rising",
+  "game_name": "ODIN: Valhalla Rising",
+  "seo_name": "ODIN-Valhalla-Rising",
+  "servers": [
+    {
+      "id": 14315,
+      "name": "Global",
+      "subCategories": [
+        {
+          "id": 14316,
+          "name": "Asgard 01"
+        },
+        {
+          "id": 14317,
+          "name": "Asgard 02"
+        },
+        {
+          "id": 14318,
+          "name": "Asgard 03"
+        },
+        {
+          "id": 14319,
+          "name": "Asgard 04"
+        },
+        {
+          "id": 14320,
+          "name": "Asgard 05"
+        },
+        {
+          "id": 14321,
+          "name": "Asgard 06"
+        },
+        {
+          "id": 14322,
+          "name": "Asgard 07"
+        },
+        {
+          "id": 14323,
+          "name": "Asgard 08"
+        },
+        {
+          "id": 14324,
+          "name": "Asgard 09"
+        }
+      ]
+    },
+    {
+      "id": 14296,
+      "name": "Asia",
+      "subCategories": [
+        {
+          "id": 14306,
+          "name": "Alfheim 01"
+        },
+        {
+          "id": 14307,
+          "name": "Alfheim 02"
+        },
+        {
+          "id": 14308,
+          "name": "Alfheim 03"
+        },
+        {
+          "id": 14309,
+          "name": "Alfheim 04"
+        },
+        {
+          "id": 14310,
+          "name": "Alfheim 05"
+        },
+        {
+          "id": 14311,
+          "name": "Alfheim 06"
+        },
+        {
+          "id": 14312,
+          "name": "Alfheim 07"
+        },
+        {
+          "id": 14313,
+          "name": "Alfheim 08"
+        },
+        {
+          "id": 14314,
+          "name": "Alfheim 09"
+        },
+        {
+          "id": 14297,
+          "name": "Vanaheim 01"
+        },
+        {
+          "id": 14298,
+          "name": "Vanaheim 02"
+        },
+        {
+          "id": 14299,
+          "name": "Vanaheim 03"
+        },
+        {
+          "id": 14300,
+          "name": "Vanaheim 04"
+        },
+        {
+          "id": 14301,
+          "name": "Vanaheim 05"
+        },
+        {
+          "id": 14302,
+          "name": "Vanaheim 06"
+        },
+        {
+          "id": 14303,
+          "name": "Vanaheim 07"
+        },
+        {
+          "id": 14304,
+          "name": "Vanaheim 08"
+        },
+        {
+          "id": 14305,
+          "name": "Vanaheim 09"
+        }
+      ]
+    },
+    {
+      "id": 9420,
+      "name": "Global - Old"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

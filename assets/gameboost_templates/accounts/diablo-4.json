@@ -1,0 +1,158 @@
+{
+  "game": "diablo-4",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "platform": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "PC",
+        "PlayStation",
+        "Xbox"
+      ]
+    },
+    "main_character": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Barbarian",
+        "Sorcerer",
+        "Druid",
+        "Rogue",
+        "Necromancer"
+      ]
+    },
+    "edition": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Standard",
+        "Deluxe",
+        "Ultimate"
+      ]
+    },
+    "character_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "realm": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Seasonal Realm Softcore",
+        "Seasonal Realm Hardcore",
+        "Eternal Softcore",
+        "Eternal Hardcore"
+      ]
+    },
+    "season_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "cleared_pit_tier_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "paragon_points_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "gold_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "uber_lilith_killed": {
+      "type": "boolean",
+      "required": false
+    },
+    "premium_battle_pass": {
+      "type": "boolean",
+      "required": false
+    },
+    "max_renown": {
+      "type": "boolean",
+      "required": false
+    },
+    "uber_uniques": {
+      "type": "boolean",
+      "required": false
+    }
+  }
+}

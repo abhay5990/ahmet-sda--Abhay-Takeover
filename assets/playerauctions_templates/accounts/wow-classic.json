@@ -1,0 +1,1125 @@
+{
+  "game_id": 8581,
+  "game": "wow-classic",
+  "game_name": "World of Warcraft Classic Era / TBC Anniversary / SoD / Hardcore",
+  "seo_name": "WoW-Classic",
+  "servers": [
+    {
+      "id": 14149,
+      "name": "US 20th Anniversary Edition",
+      "subCategories": [
+        {
+          "id": 14154,
+          "name": "Doomhowl - Alliance"
+        },
+        {
+          "id": 14155,
+          "name": "Doomhowl - Horde"
+        },
+        {
+          "id": 14150,
+          "name": "Dreamscythe - Alliance"
+        },
+        {
+          "id": 14151,
+          "name": "Dreamscythe - Horde"
+        },
+        {
+          "id": 14152,
+          "name": "Nightslayer - Alliance"
+        },
+        {
+          "id": 14153,
+          "name": "Nightslayer - Horde"
+        }
+      ]
+    },
+    {
+      "id": 14156,
+      "name": "EU 20th Anniversary Edition",
+      "subCategories": [
+        {
+          "id": 14161,
+          "name": "Soulseeker - Alliance"
+        },
+        {
+          "id": 14162,
+          "name": "Soulseeker - Horde"
+        },
+        {
+          "id": 14159,
+          "name": "Spineshatter - Alliance"
+        },
+        {
+          "id": 14160,
+          "name": "Spineshatter - Horde"
+        },
+        {
+          "id": 14157,
+          "name": "Thunderstrike - Alliance"
+        },
+        {
+          "id": 14158,
+          "name": "Thunderstrike - Horde"
+        }
+      ]
+    },
+    {
+      "id": 14163,
+      "name": "AU 20th Anniversary Edition",
+      "subCategories": [
+        {
+          "id": 14164,
+          "name": "Maladath - Alliance"
+        },
+        {
+          "id": 14165,
+          "name": "Maladath - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13551,
+      "name": "US Season of Discovery",
+      "subCategories": [
+        {
+          "id": 13595,
+          "name": "Chaos Bolt - Alliance"
+        },
+        {
+          "id": 13596,
+          "name": "Chaos Bolt - Horde"
+        },
+        {
+          "id": 13563,
+          "name": "Crusader Strike - Alliance"
+        },
+        {
+          "id": 13574,
+          "name": "Crusader Strike - Horde"
+        },
+        {
+          "id": 13562,
+          "name": "Lava Lash - Alliance"
+        },
+        {
+          "id": 13575,
+          "name": "Lava Lash - Horde"
+        },
+        {
+          "id": 13559,
+          "name": "Living Flame - Alliance"
+        },
+        {
+          "id": 13576,
+          "name": "Living Flame - Horde"
+        },
+        {
+          "id": 13561,
+          "name": "Lone Wolf - Alliance"
+        },
+        {
+          "id": 13577,
+          "name": "Lone Wolf - Horde"
+        },
+        {
+          "id": 13558,
+          "name": "Penance - AU - Alliance"
+        },
+        {
+          "id": 13578,
+          "name": "Penance - AU - Horde"
+        },
+        {
+          "id": 13560,
+          "name": "Shadow Strike - AU - Alliance"
+        },
+        {
+          "id": 13579,
+          "name": "Shadowstrike - AU - Horde"
+        },
+        {
+          "id": 13557,
+          "name": "Wild Growth - Alliance"
+        },
+        {
+          "id": 13580,
+          "name": "Wild Growth - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13553,
+      "name": "EU Season Of Discovery",
+      "subCategories": [
+        {
+          "id": 13597,
+          "name": "Chaos Bolt - Alliance"
+        },
+        {
+          "id": 13598,
+          "name": "Chaos Bolt - Horde"
+        },
+        {
+          "id": 13569,
+          "name": "Crusader Strike - Alliance"
+        },
+        {
+          "id": 13568,
+          "name": "Crusader Strike - Horde"
+        },
+        {
+          "id": 13570,
+          "name": "Lava Lash - Alliance"
+        },
+        {
+          "id": 13567,
+          "name": "Lava Lash - Horde"
+        },
+        {
+          "id": 13571,
+          "name": "Living Flame - Alliance"
+        },
+        {
+          "id": 13565,
+          "name": "Living Flame - Horde"
+        },
+        {
+          "id": 13572,
+          "name": "Lone Wolf - Alliance"
+        },
+        {
+          "id": 13566,
+          "name": "Lone Wolf - Horde"
+        },
+        {
+          "id": 13573,
+          "name": "Wild Growth - Alliance"
+        },
+        {
+          "id": 13564,
+          "name": "Wild Growth - Horde"
+        }
+      ]
+    },
+    {
+      "id": 8582,
+      "name": "US Classic Era",
+      "subCategories": [
+        {
+          "id": 8920,
+          "name": "Anathema - Alliance"
+        },
+        {
+          "id": 8921,
+          "name": "Anathema - Horde"
+        },
+        {
+          "id": 8935,
+          "name": "Arcanite Reaper - Alliance"
+        },
+        {
+          "id": 8936,
+          "name": "Arcanite Reaper- Horde"
+        },
+        {
+          "id": 8763,
+          "name": "Arugal - Alliance"
+        },
+        {
+          "id": 8764,
+          "name": "Arugal - Horde"
+        },
+        {
+          "id": 8859,
+          "name": "Ashkandi - Alliance"
+        },
+        {
+          "id": 8860,
+          "name": "Ashkandi - Horde"
+        },
+        {
+          "id": 8741,
+          "name": "Atiesh - Alliance"
+        },
+        {
+          "id": 8742,
+          "name": "Atiesh - Horde"
+        },
+        {
+          "id": 8882,
+          "name": "Azuresong - Alliance"
+        },
+        {
+          "id": 8883,
+          "name": "Azuresong - Horde"
+        },
+        {
+          "id": 8884,
+          "name": "Benediction - Alliance"
+        },
+        {
+          "id": 8885,
+          "name": "Benediction - Horde"
+        },
+        {
+          "id": 8825,
+          "name": "Bigglesworth - Alliance"
+        },
+        {
+          "id": 8826,
+          "name": "Bigglesworth - Horde"
+        },
+        {
+          "id": 8827,
+          "name": "Blaumeux - Alliance"
+        },
+        {
+          "id": 8828,
+          "name": "Blaumeux - Horde"
+        },
+        {
+          "id": 8759,
+          "name": "Bloodsail Buccaneers - Alliance"
+        },
+        {
+          "id": 8760,
+          "name": "Bloodsail Buccaneers - Horde"
+        },
+        {
+          "id": 8861,
+          "name": "Deviate Delight - Alliance"
+        },
+        {
+          "id": 8862,
+          "name": "Deviate Delight - Horde"
+        },
+        {
+          "id": 8939,
+          "name": "Earthfury - Alliance"
+        },
+        {
+          "id": 8940,
+          "name": "Earthfury - Horde"
+        },
+        {
+          "id": 8749,
+          "name": "Faerlina - Alliance"
+        },
+        {
+          "id": 8750,
+          "name": "Faerlina - Horde"
+        },
+        {
+          "id": 8751,
+          "name": "Fairbanks - Alliance"
+        },
+        {
+          "id": 8752,
+          "name": "Fairbanks - Horde"
+        },
+        {
+          "id": 8863,
+          "name": "Felstriker - Alliance"
+        },
+        {
+          "id": 8864,
+          "name": "Felstriker - Horde"
+        },
+        {
+          "id": 8761,
+          "name": "Grobbulus - Alliance"
+        },
+        {
+          "id": 8762,
+          "name": "Grobbulus - Horde"
+        },
+        {
+          "id": 8937,
+          "name": "Heartseeker - Alliance"
+        },
+        {
+          "id": 8938,
+          "name": "Heartseeker - Horde"
+        },
+        {
+          "id": 8753,
+          "name": "Herod - Alliance"
+        },
+        {
+          "id": 8754,
+          "name": "Herod - Horde"
+        },
+        {
+          "id": 8829,
+          "name": "Incendius - Alliance"
+        },
+        {
+          "id": 8830,
+          "name": "Incendius - Horde"
+        },
+        {
+          "id": 8886,
+          "name": "Kirtonos - Alliance"
+        },
+        {
+          "id": 8887,
+          "name": "Kirtonos - Horde"
+        },
+        {
+          "id": 8865,
+          "name": "Kromcrush - Alliance"
+        },
+        {
+          "id": 8866,
+          "name": "Kromcrush - Horde"
+        },
+        {
+          "id": 8867,
+          "name": "Kurinnaxx - Alliance"
+        },
+        {
+          "id": 8868,
+          "name": "Kurinnaxx - Horde"
+        },
+        {
+          "id": 9014,
+          "name": "Loatheb - Alliance"
+        },
+        {
+          "id": 9057,
+          "name": "Loatheb - Horde"
+        },
+        {
+          "id": 8743,
+          "name": "Mankrik - Alliance"
+        },
+        {
+          "id": 8744,
+          "name": "Mankrik - Horde"
+        },
+        {
+          "id": 8745,
+          "name": "Myzrael - Alliance"
+        },
+        {
+          "id": 8746,
+          "name": "Myzrael - Horde"
+        },
+        {
+          "id": 8922,
+          "name": "Netherwind - Alliance"
+        },
+        {
+          "id": 8927,
+          "name": "Netherwind - Horde"
+        },
+        {
+          "id": 8831,
+          "name": "Old Blanchy - Alliance"
+        },
+        {
+          "id": 8832,
+          "name": "Old Blanchy - Horde"
+        },
+        {
+          "id": 8747,
+          "name": "Pagle - Alliance"
+        },
+        {
+          "id": 8748,
+          "name": "Pagle - Horde"
+        },
+        {
+          "id": 8869,
+          "name": "Rattlegore - Alliance"
+        },
+        {
+          "id": 8870,
+          "name": "Rattlegore - Horde"
+        },
+        {
+          "id": 8765,
+          "name": "Remulos - Alliance"
+        },
+        {
+          "id": 8766,
+          "name": "Remulos - Horde"
+        },
+        {
+          "id": 8833,
+          "name": "Skeram - Alliance"
+        },
+        {
+          "id": 8834,
+          "name": "Skeram - Horde"
+        },
+        {
+          "id": 8871,
+          "name": "Smolderweb - Alliance"
+        },
+        {
+          "id": 8872,
+          "name": "Smolderweb - Horde"
+        },
+        {
+          "id": 8835,
+          "name": "Stalagg - Alliance"
+        },
+        {
+          "id": 8836,
+          "name": "Stalagg - Horde"
+        },
+        {
+          "id": 9051,
+          "name": "Sul'thraze - Alliance"
+        },
+        {
+          "id": 9052,
+          "name": "Sul'thraze - Horde"
+        },
+        {
+          "id": 8873,
+          "name": "Sulfuras - Alliance"
+        },
+        {
+          "id": 8874,
+          "name": "Sulfuras - Horde"
+        },
+        {
+          "id": 8755,
+          "name": "Thalnos - Alliance"
+        },
+        {
+          "id": 8756,
+          "name": "Thalnos - Horde"
+        },
+        {
+          "id": 8888,
+          "name": "Thunderfury - Alliance"
+        },
+        {
+          "id": 8889,
+          "name": "Thunderfury - Horde"
+        },
+        {
+          "id": 8837,
+          "name": "Westfall - Alliance"
+        },
+        {
+          "id": 8838,
+          "name": "Westfall - Horde"
+        },
+        {
+          "id": 8757,
+          "name": "Whitemane - Alliance"
+        },
+        {
+          "id": 8758,
+          "name": "Whitemane - Horde"
+        },
+        {
+          "id": 8890,
+          "name": "Windseeker - Alliance"
+        },
+        {
+          "id": 8891,
+          "name": "Windseeker - Horde"
+        },
+        {
+          "id": 8875,
+          "name": "Yojamba - Alliance"
+        },
+        {
+          "id": 8876,
+          "name": "Yojamba - Horde"
+        }
+      ]
+    },
+    {
+      "id": 8583,
+      "name": "EU Classic Era",
+      "subCategories": [
+        {
+          "id": 8894,
+          "name": "Amnennar - Alliance"
+        },
+        {
+          "id": 8895,
+          "name": "Amnennar - Horde"
+        },
+        {
+          "id": 8892,
+          "name": "Ashbringer - Alliance"
+        },
+        {
+          "id": 8893,
+          "name": "Ashbringer - Horde"
+        },
+        {
+          "id": 8807,
+          "name": "Auberdine - Alliance"
+        },
+        {
+          "id": 8808,
+          "name": "Auberdine - Horde"
+        },
+        {
+          "id": 8896,
+          "name": "Bloodfang - Alliance"
+        },
+        {
+          "id": 8897,
+          "name": "Bloodfang - Horde"
+        },
+        {
+          "id": 9059,
+          "name": "Celebras – Alliance"
+        },
+        {
+          "id": 9060,
+          "name": "Celebras – Horde"
+        },
+        {
+          "id": 8815,
+          "name": "Chromie - Alliance"
+        },
+        {
+          "id": 8816,
+          "name": "Chromie - Horde"
+        },
+        {
+          "id": 8898,
+          "name": "Dragon's Call - Alliance"
+        },
+        {
+          "id": 8899,
+          "name": "Dragon's Call - Horde"
+        },
+        {
+          "id": 9003,
+          "name": "Dragonfang - Alliance"
+        },
+        {
+          "id": 9002,
+          "name": "Dragonfang - Horde"
+        },
+        {
+          "id": 8900,
+          "name": "Dreadmist - Alliance"
+        },
+        {
+          "id": 8901,
+          "name": "Dreadmist - Horde"
+        },
+        {
+          "id": 9005,
+          "name": "Earthshaker - Alliance"
+        },
+        {
+          "id": 9004,
+          "name": "Earthshaker - Horde"
+        },
+        {
+          "id": 8811,
+          "name": "Everlook - Alliance"
+        },
+        {
+          "id": 8812,
+          "name": "Everlook - Horde"
+        },
+        {
+          "id": 8902,
+          "name": "Finkle - Alliance"
+        },
+        {
+          "id": 8903,
+          "name": "Finkle - Horde"
+        },
+        {
+          "id": 8839,
+          "name": "Firemaw - Alliance"
+        },
+        {
+          "id": 8840,
+          "name": "Firemaw - Horde"
+        },
+        {
+          "id": 8817,
+          "name": "Flamegor - Alliance"
+        },
+        {
+          "id": 8818,
+          "name": "Flamegor - Horde"
+        },
+        {
+          "id": 8841,
+          "name": "Flamelash - Alliance"
+        },
+        {
+          "id": 8842,
+          "name": "Flamelash - Horde"
+        },
+        {
+          "id": 8843,
+          "name": "Gandling - Alliance"
+        },
+        {
+          "id": 8844,
+          "name": "Gandling - Horde"
+        },
+        {
+          "id": 8793,
+          "name": "Gehennas - Alliance"
+        },
+        {
+          "id": 8794,
+          "name": "Gehennas - Horde"
+        },
+        {
+          "id": 8795,
+          "name": "Golemagg - Alliance"
+        },
+        {
+          "id": 8796,
+          "name": "Golemagg - Horde"
+        },
+        {
+          "id": 9007,
+          "name": "Harbringer of Doom - Alliance"
+        },
+        {
+          "id": 9006,
+          "name": "Harbringer of Doom - Horde"
+        },
+        {
+          "id": 9009,
+          "name": "Heartstriker - Alliance"
+        },
+        {
+          "id": 9008,
+          "name": "Heartstriker - Horde"
+        },
+        {
+          "id": 8797,
+          "name": "Hydraxian Waterlords - Alliance"
+        },
+        {
+          "id": 8798,
+          "name": "Hydraxian Waterlords - Horde"
+        },
+        {
+          "id": 8904,
+          "name": "Judgement - Alliance"
+        },
+        {
+          "id": 8905,
+          "name": "Judgement - Horde"
+        },
+        {
+          "id": 8906,
+          "name": "Lakeshire - Alliance"
+        },
+        {
+          "id": 8907,
+          "name": "Lakeshire - Horde"
+        },
+        {
+          "id": 8813,
+          "name": "Lucifron - Alliance"
+        },
+        {
+          "id": 8814,
+          "name": "Lucifron - Horde"
+        },
+        {
+          "id": 9011,
+          "name": "Mandokir - Alliance"
+        },
+        {
+          "id": 9010,
+          "name": "Mandokir - Horde"
+        },
+        {
+          "id": 8799,
+          "name": "Mirage Raceway - Alliance"
+        },
+        {
+          "id": 8800,
+          "name": "Mirage Raceway - Horde"
+        },
+        {
+          "id": 8847,
+          "name": "Mograine - Alliance"
+        },
+        {
+          "id": 8848,
+          "name": "Mograine - Horde"
+        },
+        {
+          "id": 8849,
+          "name": "Nethergarde Keep - Alliance"
+        },
+        {
+          "id": 8850,
+          "name": "Nethergarde Keep - Horde"
+        },
+        {
+          "id": 8908,
+          "name": "Noggenfogger - Alliance"
+        },
+        {
+          "id": 8909,
+          "name": "Noggenfogger - Horde"
+        },
+        {
+          "id": 8910,
+          "name": "Patchwerk - Alliance"
+        },
+        {
+          "id": 8911,
+          "name": "Patchwerk - Horde"
+        },
+        {
+          "id": 8801,
+          "name": "Pyrewood Village - Alliance"
+        },
+        {
+          "id": 8802,
+          "name": "Pyrewood Village - Horde"
+        },
+        {
+          "id": 8851,
+          "name": "Razorfen - Alliance"
+        },
+        {
+          "id": 8852,
+          "name": "Razorfen - Horde"
+        },
+        {
+          "id": 8853,
+          "name": "Razorgore - Alliance"
+        },
+        {
+          "id": 8854,
+          "name": "Razorgore - Horde"
+        },
+        {
+          "id": 8925,
+          "name": "Rhok'delar - Alliance"
+        },
+        {
+          "id": 8926,
+          "name": "Rhok'delar - Horde"
+        },
+        {
+          "id": 8803,
+          "name": "Shazzrah - Alliance"
+        },
+        {
+          "id": 8804,
+          "name": "Shazzrah - Horde"
+        },
+        {
+          "id": 8912,
+          "name": "Skullflame - Alliance"
+        },
+        {
+          "id": 8913,
+          "name": "Skullflame - Horde"
+        },
+        {
+          "id": 8857,
+          "name": "Stonespine - Alliance"
+        },
+        {
+          "id": 8858,
+          "name": "Stonespine - Horde"
+        },
+        {
+          "id": 8809,
+          "name": "Sulfuron - Alliance"
+        },
+        {
+          "id": 8810,
+          "name": "Sulfuron - Horde"
+        },
+        {
+          "id": 8914,
+          "name": "Ten Storms - Alliance"
+        },
+        {
+          "id": 8915,
+          "name": "Ten Storms - Horde"
+        },
+        {
+          "id": 8916,
+          "name": "Transcendence - Alliance"
+        },
+        {
+          "id": 8917,
+          "name": "Transcendence - Horde"
+        },
+        {
+          "id": 8855,
+          "name": "Venoxis - Alliance"
+        },
+        {
+          "id": 8856,
+          "name": "Venoxis - Horde"
+        },
+        {
+          "id": 8923,
+          "name": "Wyrmthalak - Alliance"
+        },
+        {
+          "id": 8924,
+          "name": "Wyrmthalak - Horde"
+        },
+        {
+          "id": 8805,
+          "name": "Zandalar Tribe - Alliance"
+        },
+        {
+          "id": 8806,
+          "name": "Zandalar Tribe - Horde"
+        }
+      ]
+    },
+    {
+      "id": 8993,
+      "name": "OC Classic Era",
+      "subCategories": [
+        {
+          "id": 8995,
+          "name": "Arugal - Alliance"
+        },
+        {
+          "id": 8994,
+          "name": "Arugal - Horde"
+        },
+        {
+          "id": 8997,
+          "name": "Felstriker - Alliance"
+        },
+        {
+          "id": 8996,
+          "name": "Felstriker - Horde"
+        },
+        {
+          "id": 9001,
+          "name": "Remulos - Alliance"
+        },
+        {
+          "id": 9000,
+          "name": "Remulos - Horde"
+        },
+        {
+          "id": 8999,
+          "name": "Yojamba - Alliance"
+        },
+        {
+          "id": 8998,
+          "name": "Yojamba - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13457,
+      "name": "US Hardcore",
+      "subCategories": [
+        {
+          "id": 13458,
+          "name": "Defias Pillager - Alliance"
+        },
+        {
+          "id": 13459,
+          "name": "Defias Pillager - Horde"
+        },
+        {
+          "id": 13460,
+          "name": "Skull Rock - Alliance"
+        },
+        {
+          "id": 13461,
+          "name": "Skull Rock - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13462,
+      "name": "EU Hardcore",
+      "subCategories": [
+        {
+          "id": 13463,
+          "name": "NekRosh - Alliance"
+        },
+        {
+          "id": 13464,
+          "name": "NekRosh - Horde"
+        },
+        {
+          "id": 13465,
+          "name": "Stitches - Alliance"
+        },
+        {
+          "id": 13466,
+          "name": "Stitches - Horde"
+        }
+      ]
+    },
+    {
+      "id": 14986,
+      "name": "CN Titan Reforged",
+      "subCategories": [
+        {
+          "id": 14987,
+          "name": "Time I - Alliance"
+        },
+        {
+          "id": 14988,
+          "name": "Time I - Horde"
+        },
+        {
+          "id": 14989,
+          "name": "Time II - Alliance"
+        },
+        {
+          "id": 14990,
+          "name": "Time II - Horde"
+        },
+        {
+          "id": 14991,
+          "name": "Time III - Alliance"
+        },
+        {
+          "id": 14992,
+          "name": "Time III - Horde"
+        },
+        {
+          "id": 14993,
+          "name": "Time IV - Alliance"
+        },
+        {
+          "id": 14994,
+          "name": "Time IV - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13443,
+      "name": "OC Hardcore"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

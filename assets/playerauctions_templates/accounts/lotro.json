@@ -1,0 +1,181 @@
+{
+  "game_id": 27,
+  "game": "lotro",
+  "game_name": "Lord of The Rings Online",
+  "seo_name": "LOTRO",
+  "servers": [
+    {
+      "id": 9799,
+      "name": "EU-Belegaer"
+    },
+    {
+      "id": 9800,
+      "name": "EU-Bradywine"
+    },
+    {
+      "id": 9802,
+      "name": "EU-Evernight"
+    },
+    {
+      "id": 14333,
+      "name": "EU-Grond"
+    },
+    {
+      "id": 9804,
+      "name": "EU-Gwaihir"
+    },
+    {
+      "id": 9806,
+      "name": "EU-Laurelin"
+    },
+    {
+      "id": 14232,
+      "name": "EU-Meriadoc"
+    },
+    {
+      "id": 13933,
+      "name": "EU-Mordor"
+    },
+    {
+      "id": 14231,
+      "name": "EU-Orcrist"
+    },
+    {
+      "id": 9807,
+      "name": "EU-Sirannon"
+    },
+    {
+      "id": 13934,
+      "name": "NA-Angmar"
+    },
+    {
+      "id": 1749,
+      "name": "NA-Arkenstone"
+    },
+    {
+      "id": 1750,
+      "name": "NA-Brandywine"
+    },
+    {
+      "id": 3666,
+      "name": "NA-Crickhollow"
+    },
+    {
+      "id": 1753,
+      "name": "NA-Gladden"
+    },
+    {
+      "id": 14229,
+      "name": "NA-Glamdring"
+    },
+    {
+      "id": 1754,
+      "name": "NA-Landroval"
+    },
+    {
+      "id": 14230,
+      "name": "NA-Peregrin"
+    },
+    {
+      "id": 14334,
+      "name": "NA-Sting"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

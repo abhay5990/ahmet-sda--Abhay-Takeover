@@ -1,0 +1,102 @@
+{
+  "game": "pet-simulator-99",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "stock": {
+      "type": "integer",
+      "required": true
+    },
+    "min_quantity": {
+      "type": "integer",
+      "required": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "item_data": {
+    "item_type": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Eggs",
+        "Enchants",
+        "Pets",
+        "Potions",
+        "Other"
+      ]
+    },
+    "pet_power": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Evolved Huge",
+        "Golden Huge",
+        "Huge",
+        "Rainbow Huge",
+        "Shiny Huge",
+        "Other"
+      ]
+    },
+    "item_rarity": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Basic",
+        "Celestial",
+        "Divine",
+        "Epic",
+        "Exlusive",
+        "Exotic",
+        "Legendary",
+        "Mythical",
+        "Rare",
+        "Secret",
+        "Superior",
+        "Other"
+      ]
+    }
+  }
+}

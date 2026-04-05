@@ -1,0 +1,1 @@
+"""PlayerAuctions marketplace provider."""

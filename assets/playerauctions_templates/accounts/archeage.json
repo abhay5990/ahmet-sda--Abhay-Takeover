@@ -1,0 +1,209 @@
+{
+  "game_id": 6058,
+  "game": "archeage",
+  "game_name": "ArcheAge Online",
+  "seo_name": "ArcheAge",
+  "servers": [
+    {
+      "id": 10663,
+      "name": "NA-Ospheros",
+      "subCategories": [
+        {
+          "id": 10669,
+          "name": "Harania"
+        },
+        {
+          "id": 10670,
+          "name": "Nuia"
+        },
+        {
+          "id": 10671,
+          "name": "Pirate"
+        }
+      ]
+    },
+    {
+      "id": 13309,
+      "name": "NA-Gene",
+      "subCategories": [
+        {
+          "id": 13311,
+          "name": "Harania"
+        },
+        {
+          "id": 13312,
+          "name": "Nuia"
+        },
+        {
+          "id": 13313,
+          "name": "Pirate"
+        }
+      ]
+    },
+    {
+      "id": 10665,
+      "name": "EU-Leviathan",
+      "subCategories": [
+        {
+          "id": 10675,
+          "name": "Harania"
+        },
+        {
+          "id": 10676,
+          "name": "Nuia"
+        },
+        {
+          "id": 10677,
+          "name": "Pirate"
+        }
+      ]
+    },
+    {
+      "id": 13310,
+      "name": "EU-Melisara",
+      "subCategories": [
+        {
+          "id": 13314,
+          "name": "Harania"
+        },
+        {
+          "id": 13315,
+          "name": "Nuia"
+        },
+        {
+          "id": 13316,
+          "name": "Pirate"
+        }
+      ]
+    },
+    {
+      "id": 9241,
+      "name": "SEA",
+      "subCategories": [
+        {
+          "id": 9470,
+          "name": "Gene"
+        },
+        {
+          "id": 10043,
+          "name": "Morpheus"
+        },
+        {
+          "id": 9242,
+          "name": "Nui"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

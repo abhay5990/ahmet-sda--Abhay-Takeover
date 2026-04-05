@@ -1,0 +1,216 @@
+{
+  "game_id": "10",
+  "game": "osrs",
+  "game_name": "OSRS",
+  "category": "Account",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Main",
+      "group": "Account Build"
+    },
+    {
+      "id": "1",
+      "name": "Pure",
+      "group": "Account Build"
+    },
+    {
+      "id": "2",
+      "name": "Skiller",
+      "group": "Account Build"
+    },
+    {
+      "id": "3",
+      "name": "Zerker",
+      "group": "Account Build"
+    },
+    {
+      "id": "4",
+      "name": "Maxed",
+      "group": "Account Build"
+    },
+    {
+      "id": "5",
+      "name": "Tutorial Completed",
+      "group": "Account Build"
+    },
+    {
+      "id": "6",
+      "name": "Other",
+      "group": "Account Build"
+    }
+  ],
+  "attributes": {
+    "osrs-account-type": {
+      "name": "Type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "regular",
+          "name": "Regular"
+        },
+        {
+          "id": "ironman",
+          "name": "Ironman"
+        },
+        {
+          "id": "hcim",
+          "name": "HCIM"
+        },
+        {
+          "id": "uim",
+          "name": "UIM"
+        },
+        {
+          "id": "gim",
+          "name": "GIM"
+        },
+        {
+          "id": "hcgim",
+          "name": "HCGIM"
+        },
+        {
+          "id": "ugim",
+          "name": "UGIM"
+        }
+      ]
+    },
+    "osrs-login-method": {
+      "name": "Login Method",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "jagex-launcher",
+          "name": "Jagex Launcher"
+        },
+        {
+          "id": "legacy-email-login",
+          "name": "Legacy Email Login"
+        },
+        {
+          "id": "legacy-username-login",
+          "name": "Legacy Username Login"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "osrs-total-level": {
+      "name": "Total Level",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "32-499",
+          "name": "32-499"
+        },
+        {
+          "id": "500-999",
+          "name": "500-999"
+        },
+        {
+          "id": "1000-1499",
+          "name": "1000-1499"
+        },
+        {
+          "id": "1500-1999",
+          "name": "1500-1999"
+        },
+        {
+          "id": "2000",
+          "name": "2000"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "hasOriginalEmail": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  },
+  "accountSecretDetails": {
+    "type": "array",
+    "required": false,
+    "description": "Account credentials, each entry as \"login:password\" format. Not required for manual delivery offers.",
+    "items": {
+      "type": "string"
+    }
+  }
+}

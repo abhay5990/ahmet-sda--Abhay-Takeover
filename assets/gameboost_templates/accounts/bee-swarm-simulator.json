@@ -1,0 +1,98 @@
+{
+  "game": "bee-swarm-simulator",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "bee_amount": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "honey_amount": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "egg_amount": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "sticker_amount": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    }
+  }
+}

@@ -1,0 +1,3209 @@
+{
+  "version": "2.0.0",
+  "generated_at": "2025-01-31",
+  "description": "Unified game mapping with platform-specific identifiers",
+  "total_games": 136,
+  "games": [
+    {
+      "id": 1,
+      "name": "World of Warcraft",
+      "slug": "world-of-warcraft",
+      "acronym": "WoW",
+      "platforms": {
+        "eldorado": {
+          "gameId": "0",
+          "name": "World of Warcraft"
+        },
+        "gameboost": {
+          "id": 4,
+          "slug": "world-of-warcraft",
+          "name": "World of Warcraft"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 11,
+        "name": "Battle.net"
+      },
+      "aliases": []
+    },
+    {
+      "id": 2,
+      "name": "Rocket League",
+      "slug": "rocket-league",
+      "acronym": "RL",
+      "platforms": {
+        "eldorado": {
+          "gameId": "1",
+          "name": "Rocket League"
+        },
+        "gameboost": {
+          "id": 10,
+          "slug": "rocket-league",
+          "name": "Rocket League"
+        },
+        "playerauctions": {
+          "gameId": 7476,
+          "name": "Rocket League"
+        }
+      },
+      "lztCategory": {
+        "id": 12,
+        "name": "Epic Games"
+      },
+      "aliases": []
+    },
+    {
+      "id": 3,
+      "name": "Old School RuneScape",
+      "slug": "old-school-runescape",
+      "acronym": "OSRS",
+      "platforms": {
+        "eldorado": {
+          "gameId": "10",
+          "name": "Old School RuneScape"
+        },
+        "gameboost": {
+          "id": 18,
+          "slug": "old-school-runescape",
+          "name": "Old School RuneScape"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 4,
+      "name": "Xbox",
+      "slug": "xbox",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "103",
+          "name": "Xbox"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 4876,
+          "name": "Xbox"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 5,
+      "name": "PlayStation",
+      "slug": "playstation",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "104",
+          "name": "PlayStation"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 6,
+      "name": "Forza Horizon 5",
+      "slug": "forza-horizon-5",
+      "acronym": "FH5",
+      "platforms": {
+        "eldorado": {
+          "gameId": "106",
+          "name": "Forza Horizon 5"
+        },
+        "gameboost": {
+          "id": 40,
+          "slug": "forza-horizon-5",
+          "name": "Forza Horizon 5"
+        },
+        "playerauctions": {
+          "gameId": 10635,
+          "name": "Forza Horizon 5"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 7,
+      "name": "Epic Games",
+      "slug": "epic-games",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "108",
+          "name": "Epic Games"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 9310,
+          "name": "Epic Games"
+        }
+      },
+      "lztCategory": {
+        "id": 12,
+        "name": "Epic Games"
+      },
+      "aliases": []
+    },
+    {
+      "id": 8,
+      "name": "Warframe",
+      "slug": "warframe",
+      "acronym": "WF",
+      "platforms": {
+        "eldorado": {
+          "gameId": "11",
+          "name": "Warframe"
+        },
+        "gameboost": {
+          "id": 46,
+          "slug": "warframe",
+          "name": "Warframe"
+        },
+        "playerauctions": {
+          "gameId": 5655,
+          "name": "Warframe"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 9,
+      "name": "Elden Ring",
+      "slug": "elden-ring",
+      "acronym": "ER",
+      "platforms": {
+        "eldorado": {
+          "gameId": "111",
+          "name": "Elden Ring"
+        },
+        "gameboost": {
+          "id": 130,
+          "slug": "elden-ring",
+          "name": "Elden Ring"
+        },
+        "playerauctions": {
+          "gameId": 12410,
+          "name": "Elden Ring"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 10,
+      "name": "Diablo Immortal",
+      "slug": "diablo-immortal",
+      "acronym": "DIM",
+      "platforms": {
+        "eldorado": {
+          "gameId": "115",
+          "name": "Diablo Immortal"
+        },
+        "gameboost": {
+          "id": 78,
+          "slug": "diablo-immortal",
+          "name": "Diablo Immortal"
+        },
+        "playerauctions": {
+          "gameId": 9543,
+          "name": "Diablo Immortal"
+        }
+      },
+      "lztCategory": {
+        "id": 11,
+        "name": "Battle.net"
+      },
+      "aliases": []
+    },
+    {
+      "id": 11,
+      "name": "Tower of Fantasy",
+      "slug": "tower-of-fantasy",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "119",
+          "name": "Tower of Fantasy"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 12925,
+          "name": "Tower of Fantasy"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 12,
+      "name": "Battlenet",
+      "slug": "battlenet",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "124",
+          "name": "Battlenet"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 6445,
+          "name": "BattleNet"
+        }
+      },
+      "lztCategory": {
+        "id": 11,
+        "name": "Battle.net"
+      },
+      "aliases": []
+    },
+    {
+      "id": 13,
+      "name": "Dark and Darker",
+      "slug": "dark-and-darker",
+      "acronym": "DAD",
+      "platforms": {
+        "eldorado": {
+          "gameId": "128",
+          "name": "Dark and Darker"
+        },
+        "gameboost": {
+          "id": 86,
+          "slug": "dark-and-darker",
+          "name": "Dark and Darker"
+        },
+        "playerauctions": {
+          "gameId": 13319,
+          "name": "Dark and Darker"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 14,
+      "name": "Dragon Ball Legends",
+      "slug": "dragon-ball-legends",
+      "acronym": "DBL",
+      "platforms": {
+        "eldorado": {
+          "gameId": "130",
+          "name": "Dragon Ball Legends"
+        },
+        "gameboost": {
+          "id": 33,
+          "slug": "dragonball-legends",
+          "name": "Dragon Ball Legends"
+        },
+        "playerauctions": {
+          "gameId": 8324,
+          "name": "Dragon Ball Legends"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 15,
+      "name": "Diablo 4",
+      "slug": "diablo-4",
+      "acronym": "D4",
+      "platforms": {
+        "eldorado": {
+          "gameId": "132",
+          "name": "Diablo 4"
+        },
+        "gameboost": {
+          "id": 43,
+          "slug": "diablo-4",
+          "name": "Diablo 4"
+        },
+        "playerauctions": {
+          "gameId": 13341,
+          "name": "Diablo 4"
+        }
+      },
+      "lztCategory": {
+        "id": 11,
+        "name": "Battle.net"
+      },
+      "aliases": []
+    },
+    {
+      "id": 16,
+      "name": "Fate/Grand Order",
+      "slug": "fate/grand-order",
+      "acronym": "FGO",
+      "platforms": {
+        "eldorado": {
+          "gameId": "133",
+          "name": "Fate/Grand Order"
+        },
+        "gameboost": {
+          "id": 162,
+          "slug": "fate-grand-order",
+          "name": "Fate/Grand Order"
+        },
+        "playerauctions": {
+          "gameId": 7857,
+          "name": "Fate Grand Order"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 17,
+      "name": "Epic Seven",
+      "slug": "epic-seven",
+      "acronym": "ES",
+      "platforms": {
+        "eldorado": {
+          "gameId": "134",
+          "name": "Epic Seven"
+        },
+        "gameboost": {
+          "id": 143,
+          "slug": "epic-seven",
+          "name": "Epic Seven"
+        },
+        "playerauctions": {
+          "gameId": 8494,
+          "name": "Epic Seven"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 18,
+      "name": "One Piece Bounty Rush",
+      "slug": "one-piece-bounty-rush",
+      "acronym": "OPBR",
+      "platforms": {
+        "eldorado": {
+          "gameId": "135",
+          "name": "One Piece Bounty Rush"
+        },
+        "gameboost": {
+          "id": 39,
+          "slug": "one-piece-bounty-rush",
+          "name": "One Piece Bounty Rush"
+        },
+        "playerauctions": {
+          "gameId": 13501,
+          "name": "One Piece Bounty Rush"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 19,
+      "name": "Honkai: Star Rail",
+      "slug": "honkai:-star-rail",
+      "acronym": "HSR",
+      "platforms": {
+        "eldorado": {
+          "gameId": "137",
+          "name": "Honkai: Star Rail"
+        },
+        "gameboost": {
+          "id": 30,
+          "slug": "honkai-star-rail",
+          "name": "Honkai: Star Rail"
+        },
+        "playerauctions": {
+          "gameId": 10590,
+          "name": "Honkai: Star Rail"
+        }
+      },
+      "lztCategory": {
+        "id": 17,
+        "name": "miHoYo: Genshin Impact, Honkai Star Rail"
+      },
+      "aliases": []
+    },
+    {
+      "id": 20,
+      "name": "Bleach: Brave Souls",
+      "slug": "bleach:-brave-souls",
+      "acronym": "BBS",
+      "platforms": {
+        "eldorado": {
+          "gameId": "138",
+          "name": "Bleach: Brave Souls"
+        },
+        "gameboost": {
+          "id": 149,
+          "slug": "bleach-brave-souls",
+          "name": "Bleach: Brave Souls"
+        },
+        "playerauctions": {
+          "gameId": 7874,
+          "name": "Bleach: Brave Souls"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 21,
+      "name": "Hay Day",
+      "slug": "hay-day",
+      "acronym": "HD",
+      "platforms": {
+        "eldorado": {
+          "gameId": "139",
+          "name": "Hay Day"
+        },
+        "gameboost": {
+          "id": 47,
+          "slug": "hay-day",
+          "name": "Hay Day"
+        },
+        "playerauctions": {
+          "gameId": 7383,
+          "name": "Hay Day"
+        }
+      },
+      "lztCategory": {
+        "id": 15,
+        "name": "Supercell"
+      },
+      "aliases": []
+    },
+    {
+      "id": 22,
+      "name": "WoW Mists of Pandaria",
+      "slug": "wow-mists-of-pandaria",
+      "acronym": "WOWMOP",
+      "platforms": {
+        "eldorado": {
+          "gameId": "14",
+          "name": "WoW Mists of Pandaria"
+        },
+        "gameboost": {
+          "id": 93,
+          "slug": "wow-mists-of-pandaria",
+          "name": "WoW: Mists of Pandaria"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 11,
+        "name": "Battle.net"
+      },
+      "aliases": []
+    },
+    {
+      "id": 23,
+      "name": "EA Sports FC",
+      "slug": "ea-sports-fc",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "142",
+          "name": "EA Sports FC"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 3,
+        "name": "EA (Origin)"
+      },
+      "aliases": []
+    },
+    {
+      "id": 24,
+      "name": "Goddess of Victory: Nikke",
+      "slug": "goddess-of-victory:-nikke",
+      "acronym": "GOVN",
+      "platforms": {
+        "eldorado": {
+          "gameId": "143",
+          "name": "Goddess of Victory: Nikke"
+        },
+        "gameboost": {
+          "id": 142,
+          "slug": "goddess-of-victory-nikke",
+          "name": "Goddess of Victory: Nikke"
+        },
+        "playerauctions": {
+          "gameId": 13287,
+          "name": "GODDESS OF VICTORY: NIKKE"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 25,
+      "name": "Dragon Quest X",
+      "slug": "dragon-quest-x",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "148",
+          "name": "Dragon Quest X"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 4130,
+          "name": "Dragon Nest"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 26,
+      "name": "Monster Strike",
+      "slug": "monster-strike",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "149",
+          "name": "Monster Strike"
+        },
+        "gameboost": {
+          "id": null,
+          "slug": "monster-strike",
+          "name": "Monster Strike"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 27,
+      "name": "Animal Crossing: New Horizons",
+      "slug": "animal-crossing:-new-horizons",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "150",
+          "name": "Animal Crossing: New Horizons"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 9119,
+          "name": "Animal Crossing: New Horizons"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 28,
+      "name": "Uma Musume Pretty Derby",
+      "slug": "uma-musume-pretty-derby",
+      "acronym": "UMPD",
+      "platforms": {
+        "eldorado": {
+          "gameId": "151",
+          "name": "Uma Musume Pretty Derby"
+        },
+        "gameboost": {
+          "id": 129,
+          "slug": "uma-musume-pretty-derby",
+          "name": "Uma Musume Pretty Derby"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 29,
+      "name": "Shadowverse",
+      "slug": "shadowverse",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "153",
+          "name": "Shadowverse"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 30,
+      "name": "Honkai Impact 3rd",
+      "slug": "honkai-impact-3rd",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "154",
+          "name": "Honkai Impact 3rd"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 9366,
+          "name": "Honkai Impact 3rd"
+        }
+      },
+      "lztCategory": {
+        "id": 17,
+        "name": "miHoYo: Genshin Impact, Honkai Star Rail"
+      },
+      "aliases": []
+    },
+    {
+      "id": 31,
+      "name": "Princess Connect! Re:Dive",
+      "slug": "princess-connect!-re:dive",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "155",
+          "name": "Princess Connect! Re:Dive"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 32,
+      "name": "Dragon Ball Z Dokkan Battle",
+      "slug": "dragon-ball-z-dokkan-battle",
+      "acronym": "DBZDB",
+      "platforms": {
+        "eldorado": {
+          "gameId": "156",
+          "name": "Dragon Ball Z Dokkan Battle"
+        },
+        "gameboost": {
+          "id": 153,
+          "slug": "dragon-ball-z-dokkan-battle",
+          "name": "Dragon Ball Z Dokkan Battle"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 33,
+      "name": "Granblue Fantasy",
+      "slug": "granblue-fantasy",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "157",
+          "name": "Granblue Fantasy"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 8140,
+          "name": "Granblue Fantasy"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 34,
+      "name": "White Cat Project",
+      "slug": "white-cat-project",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "158",
+          "name": "White Cat Project"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 35,
+      "name": "Puzzle and Dragons",
+      "slug": "puzzle-and-dragons",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "159",
+          "name": "Puzzle and Dragons"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 5923,
+          "name": "Puzzle & Dragons"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 36,
+      "name": "Fortnite",
+      "slug": "fortnite",
+      "acronym": "FN",
+      "platforms": {
+        "eldorado": {
+          "gameId": "16",
+          "name": "Fortnite"
+        },
+        "gameboost": {
+          "id": 12,
+          "slug": "fortnite",
+          "name": "Fortnite"
+        },
+        "playerauctions": {
+          "gameId": 7876,
+          "name": "Fortnite"
+        }
+      },
+      "lztCategory": {
+        "id": 9,
+        "name": "Fortnite"
+      },
+      "aliases": []
+    },
+    {
+      "id": 37,
+      "name": "Professional Baseball Spirits A",
+      "slug": "professional-baseball-spirits-a",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "160",
+          "name": "Professional Baseball Spirits A"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 38,
+      "name": "Ayakashi Rumble!",
+      "slug": "ayakashi-rumble!",
+      "acronym": "AYR",
+      "platforms": {
+        "eldorado": {
+          "gameId": "161",
+          "name": "Ayakashi Rumble!"
+        },
+        "gameboost": {
+          "id": 161,
+          "slug": "ayakashi-rumble",
+          "name": "Ayakashi Rumble!"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 39,
+      "name": "Millennium War Aigis",
+      "slug": "millennium-war-aigis",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "162",
+          "name": "Millennium War Aigis"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 40,
+      "name": "Chocotto Land",
+      "slug": "chocotto-land",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "163",
+          "name": "Chocotto Land"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 41,
+      "name": "Houchi Shoujo",
+      "slug": "houchi-shoujo",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "164",
+          "name": "Houchi Shoujo"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 42,
+      "name": "Black Clover M",
+      "slug": "black-clover-m",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "165",
+          "name": "Black Clover M"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 13603,
+          "name": "Black Clover M"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 43,
+      "name": "Arknights",
+      "slug": "arknights",
+      "acronym": "AK",
+      "platforms": {
+        "eldorado": {
+          "gameId": "166",
+          "name": "Arknights"
+        },
+        "gameboost": {
+          "id": 109,
+          "slug": "arknights",
+          "name": "Arknights"
+        },
+        "playerauctions": {
+          "gameId": 9047,
+          "name": "Arknights"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 44,
+      "name": "The Finals",
+      "slug": "the-finals",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "168",
+          "name": "The Finals"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 13536,
+          "name": "The Finals"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 45,
+      "name": "League of Legends",
+      "slug": "league-of-legends",
+      "acronym": "LoL",
+      "platforms": {
+        "eldorado": {
+          "gameId": "17",
+          "name": "League of Legends"
+        },
+        "gameboost": {
+          "id": 1,
+          "slug": "league-of-legends",
+          "name": "League of Legends"
+        },
+        "playerauctions": {
+          "gameId": 3637,
+          "name": "League of Legends"
+        }
+      },
+      "lztCategory": {
+        "id": 13,
+        "name": "Valorant and League Of Legends"
+      },
+      "aliases": []
+    },
+    {
+      "id": 46,
+      "name": "Throne and Liberty",
+      "slug": "throne-and-liberty",
+      "acronym": "TL",
+      "platforms": {
+        "eldorado": {
+          "gameId": "171",
+          "name": "Throne and Liberty"
+        },
+        "gameboost": {
+          "id": 77,
+          "slug": "throne-and-liberty",
+          "name": "Throne and Liberty"
+        },
+        "playerauctions": {
+          "gameId": 13581,
+          "name": "Throne and Liberty"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 47,
+      "name": "Pokecolo",
+      "slug": "pokecolo",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "172",
+          "name": "Pokecolo"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 48,
+      "name": "Identity V",
+      "slug": "identity-v",
+      "acronym": "IDV",
+      "platforms": {
+        "eldorado": {
+          "gameId": "173",
+          "name": "Identity V"
+        },
+        "gameboost": {
+          "id": 144,
+          "slug": "identity-v",
+          "name": "Identity V"
+        },
+        "playerauctions": {
+          "gameId": 9342,
+          "name": "Identity V"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 49,
+      "name": "Knives Out",
+      "slug": "knives-out",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "174",
+          "name": "Knives Out"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 50,
+      "name": "Monster Hunter Now",
+      "slug": "monster-hunter-now",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "175",
+          "name": "Monster Hunter Now"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 13414,
+          "name": "Monster Hunter Now"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 51,
+      "name": "Pokecolo Twin",
+      "slug": "pokecolo-twin",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "176",
+          "name": "Pokecolo Twin"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 52,
+      "name": "Sky: Children of the Light",
+      "slug": "sky:-children-of-the-light",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "177",
+          "name": "Sky: Children of the Light"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 53,
+      "name": "Yo-kai Watch: Wibble Wobble",
+      "slug": "yo-kai-watch:-wibble-wobble",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "178",
+          "name": "Yo-kai Watch: Wibble Wobble"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 54,
+      "name": "Jujutsu Kaisen Phantom Parade",
+      "slug": "jujutsu-kaisen-phantom-parade",
+      "acronym": "JKPP",
+      "platforms": {
+        "eldorado": {
+          "gameId": "179",
+          "name": "Jujutsu Kaisen Phantom Parade"
+        },
+        "gameboost": {
+          "id": 151,
+          "slug": "jujutsu-kaisen-phantom-parade",
+          "name": "Jujutsu Kaisen Phantom Parade"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 55,
+      "name": "Clash of Clans",
+      "slug": "clash-of-clans",
+      "acronym": "CoC",
+      "platforms": {
+        "eldorado": {
+          "gameId": "18",
+          "name": "Clash of Clans"
+        },
+        "gameboost": {
+          "id": 16,
+          "slug": "clash-of-clans",
+          "name": "Clash of Clans"
+        },
+        "playerauctions": {
+          "gameId": 6156,
+          "name": "Clash of Clans"
+        }
+      },
+      "lztCategory": {
+        "id": 15,
+        "name": "Supercell"
+      },
+      "aliases": []
+    },
+    {
+      "id": 56,
+      "name": "Livly Island",
+      "slug": "livly-island",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "180",
+          "name": "Livly Island"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 57,
+      "name": "#Compass",
+      "slug": "#compass",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "181",
+          "name": "#Compass"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 58,
+      "name": "Golden HoYeah",
+      "slug": "golden-hoyeah",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "182",
+          "name": "Golden HoYeah"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 59,
+      "name": "eFootball",
+      "slug": "efootball",
+      "acronym": "EFB",
+      "platforms": {
+        "eldorado": {
+          "gameId": "183",
+          "name": "eFootball"
+        },
+        "gameboost": {
+          "id": 116,
+          "slug": "efootball",
+          "name": "eFootball"
+        },
+        "playerauctions": {
+          "gameId": 9510,
+          "name": "eFootball PES"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 60,
+      "name": "One Piece Treasure Cruise",
+      "slug": "one-piece-treasure-cruise",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "184",
+          "name": "One Piece Treasure Cruise"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 7485,
+          "name": "One Piece Treasure Cruise"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 61,
+      "name": "Project SEKAI",
+      "slug": "project-sekai",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "185",
+          "name": "Project SEKAI"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 62,
+      "name": "The Seven Deadly Sins",
+      "slug": "the-seven-deadly-sins",
+      "acronym": "TSDS",
+      "platforms": {
+        "eldorado": {
+          "gameId": "186",
+          "name": "The Seven Deadly Sins"
+        },
+        "gameboost": {
+          "id": 152,
+          "slug": "the-seven-deadly-sins",
+          "name": "The Seven Deadly Sins"
+        },
+        "playerauctions": {
+          "gameId": 9124,
+          "name": "The Seven Deadly Sins: Grand Cross"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 63,
+      "name": "EA Sports FC Mobile",
+      "slug": "ea-sports-fc-mobile",
+      "acronym": "EAFCM",
+      "platforms": {
+        "eldorado": {
+          "gameId": "188",
+          "name": "EA Sports FC Mobile"
+        },
+        "gameboost": {
+          "id": 156,
+          "slug": "ea-sports-fc-mobile",
+          "name": "EA Sports FC Mobile"
+        },
+        "playerauctions": {
+          "gameId": 8083,
+          "name": "EA FC Mobile"
+        }
+      },
+      "lztCategory": {
+        "id": 3,
+        "name": "EA (Origin)"
+      },
+      "aliases": []
+    },
+    {
+      "id": 64,
+      "name": "Escape from Tarkov",
+      "slug": "escape-from-tarkov",
+      "acronym": "EFT",
+      "platforms": {
+        "eldorado": {
+          "gameId": "19",
+          "name": "Escape from Tarkov"
+        },
+        "gameboost": {
+          "id": 36,
+          "slug": "escape-from-tarkov",
+          "name": "Escape From Tarkov"
+        },
+        "playerauctions": {
+          "gameId": 7510,
+          "name": "Escape From Tarkov"
+        }
+      },
+      "lztCategory": {
+        "id": 18,
+        "name": "Escape from Tarkov"
+      },
+      "aliases": []
+    },
+    {
+      "id": 65,
+      "name": "Wuthering Waves",
+      "slug": "wuthering-waves",
+      "acronym": "WUWA",
+      "platforms": {
+        "eldorado": {
+          "gameId": "190",
+          "name": "Wuthering Waves"
+        },
+        "gameboost": {
+          "id": 90,
+          "slug": "wuthering-waves",
+          "name": "Wuthering Waves"
+        },
+        "playerauctions": {
+          "gameId": 13370,
+          "name": "Wuthering Waves"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 66,
+      "name": "Zenless Zone Zero",
+      "slug": "zenless-zone-zero",
+      "acronym": "ZZZ",
+      "platforms": {
+        "eldorado": {
+          "gameId": "194",
+          "name": "Zenless Zone Zero"
+        },
+        "gameboost": {
+          "id": 65,
+          "slug": "zenless-zone-zero",
+          "name": "Zenless Zone Zero"
+        },
+        "playerauctions": {
+          "gameId": 13809,
+          "name": "Zenless Zone Zero"
+        }
+      },
+      "lztCategory": {
+        "id": 17,
+        "name": "miHoYo: Genshin Impact, Honkai Star Rail"
+      },
+      "aliases": []
+    },
+    {
+      "id": 67,
+      "name": "Path of Exile",
+      "slug": "path-of-exile",
+      "acronym": "PoE",
+      "platforms": {
+        "eldorado": {
+          "gameId": "2",
+          "name": "Path of Exile"
+        },
+        "gameboost": {
+          "id": 58,
+          "slug": "path-of-exile",
+          "name": "Path of Exile"
+        },
+        "playerauctions": {
+          "gameId": 5243,
+          "name": "Path of Exile"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 68,
+      "name": "Counter-Strike 2",
+      "slug": "counter-strike-2",
+      "acronym": "CS2",
+      "platforms": {
+        "eldorado": {
+          "gameId": "20",
+          "name": "Counter-Strike 2"
+        },
+        "gameboost": {
+          "id": 7,
+          "slug": "counter-strike-2",
+          "name": "Counter Strike 2"
+        },
+        "playerauctions": {
+          "gameId": 6903,
+          "name": "Counter-Strike 2"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 69,
+      "name": "Anime Defenders",
+      "slug": "anime-defenders",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "200",
+          "name": "Anime Defenders"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 13894,
+          "name": "Anime Defenders"
+        }
+      },
+      "lztCategory": {
+        "id": 31,
+        "name": "Roblox"
+      },
+      "aliases": []
+    },
+    {
+      "id": 70,
+      "name": "Adopt Me",
+      "slug": "adopt-me",
+      "acronym": "AM",
+      "platforms": {
+        "eldorado": {
+          "gameId": "201",
+          "name": "Adopt Me"
+        },
+        "gameboost": {
+          "id": 102,
+          "slug": "adopt-me",
+          "name": "Adopt Me"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 31,
+        "name": "Roblox"
+      },
+      "aliases": []
+    },
+    {
+      "id": 71,
+      "name": "Blox Fruits",
+      "slug": "blox-fruits",
+      "acronym": "BF",
+      "platforms": {
+        "eldorado": {
+          "gameId": "202",
+          "name": "Blox Fruits"
+        },
+        "gameboost": {
+          "id": 103,
+          "slug": "blox-fruits",
+          "name": "Blox Fruits"
+        },
+        "playerauctions": {
+          "gameId": 13891,
+          "name": "Blox Fruits"
+        }
+      },
+      "lztCategory": {
+        "id": 31,
+        "name": "Roblox"
+      },
+      "aliases": []
+    },
+    {
+      "id": 72,
+      "name": "PUBG Mobile",
+      "slug": "pubg-mobile",
+      "acronym": "PUBG-Mobile",
+      "platforms": {
+        "eldorado": {
+          "gameId": "21",
+          "name": "PUBG Mobile"
+        },
+        "gameboost": {
+          "id": 25,
+          "slug": "pubg-mobile",
+          "name": "PUBG Mobile"
+        },
+        "playerauctions": {
+          "gameId": 8174,
+          "name": "PUBG Mobile"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 73,
+      "name": "Anime Vanguards",
+      "slug": "anime-vanguards",
+      "acronym": "AV",
+      "platforms": {
+        "eldorado": {
+          "gameId": "212",
+          "name": "Anime Vanguards"
+        },
+        "gameboost": {
+          "id": 122,
+          "slug": "anime-vanguards",
+          "name": "Anime Vanguards"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 31,
+        "name": "Roblox"
+      },
+      "aliases": []
+    },
+    {
+      "id": 74,
+      "name": "Discord",
+      "slug": "discord",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "217",
+          "name": "Discord"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 22,
+        "name": "Discord"
+      },
+      "aliases": []
+    },
+    {
+      "id": 75,
+      "name": "Fisch",
+      "slug": "fisch",
+      "acronym": "FISCH",
+      "platforms": {
+        "eldorado": {
+          "gameId": "219",
+          "name": "Fisch"
+        },
+        "gameboost": {
+          "id": 108,
+          "slug": "fisch",
+          "name": "Fisch"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 31,
+        "name": "Roblox"
+      },
+      "aliases": []
+    },
+    {
+      "id": 76,
+      "name": "Fallout 76",
+      "slug": "fallout-76",
+      "acronym": "F76",
+      "platforms": {
+        "eldorado": {
+          "gameId": "22",
+          "name": "Fallout 76"
+        },
+        "gameboost": {
+          "id": 56,
+          "slug": "fallout-76",
+          "name": "Fallout 76"
+        },
+        "playerauctions": {
+          "gameId": 8443,
+          "name": "Fallout 76"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 77,
+      "name": "Path of Exile 2",
+      "slug": "path-of-exile-2",
+      "acronym": "PoE2",
+      "platforms": {
+        "eldorado": {
+          "gameId": "220",
+          "name": "Path of Exile 2"
+        },
+        "gameboost": {
+          "id": 83,
+          "slug": "path-of-exile-2",
+          "name": "Path of Exile 2"
+        },
+        "playerauctions": {
+          "gameId": 13867,
+          "name": "Path of Exile 2"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 78,
+      "name": "King Legacy",
+      "slug": "king-legacy",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "223",
+          "name": "King Legacy"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 13904,
+          "name": "King Legacy"
+        }
+      },
+      "lztCategory": {
+        "id": 31,
+        "name": "Roblox"
+      },
+      "aliases": []
+    },
+    {
+      "id": 79,
+      "name": "Pokemon TCG Pocket",
+      "slug": "pokemon-tcg-pocket",
+      "acronym": "PTCGP",
+      "platforms": {
+        "eldorado": {
+          "gameId": "226",
+          "name": "Pokemon TCG Pocket"
+        },
+        "gameboost": {
+          "id": 117,
+          "slug": "pokemon-tcg-pocket",
+          "name": "Pokemon TCG Pocket"
+        },
+        "playerauctions": {
+          "gameId": 14139,
+          "name": "Pokémon TCG Pocket"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 80,
+      "name": "Marvel Rivals",
+      "slug": "marvel-rivals",
+      "acronym": "MR",
+      "platforms": {
+        "eldorado": {
+          "gameId": "227",
+          "name": "Marvel Rivals"
+        },
+        "gameboost": {
+          "id": 84,
+          "slug": "marvel-rivals",
+          "name": "Marvel Rivals"
+        },
+        "playerauctions": {
+          "gameId": 14147,
+          "name": "Marvel Rivals"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 81,
+      "name": "Jujutsu Infinite",
+      "slug": "jujutsu-infinite",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "231",
+          "name": "Jujutsu Infinite"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 31,
+        "name": "Roblox"
+      },
+      "aliases": []
+    },
+    {
+      "id": 82,
+      "name": "Yu-Gi-Oh! Master Duel",
+      "slug": "yu-gi-oh!-master-duel",
+      "acronym": "YGOMD",
+      "platforms": {
+        "eldorado": {
+          "gameId": "232",
+          "name": "Yu-Gi-Oh! Master Duel"
+        },
+        "gameboost": {
+          "id": 155,
+          "slug": "yu-gi-oh-master-duel",
+          "name": "Yu-Gi-Oh! Master Duel"
+        },
+        "playerauctions": {
+          "gameId": 10747,
+          "name": "Yu-Gi-Oh Master Duel"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 83,
+      "name": "Black Desert Online",
+      "slug": "black-desert-online",
+      "acronym": "BD",
+      "platforms": {
+        "eldorado": {
+          "gameId": "24",
+          "name": "Black Desert Online"
+        },
+        "gameboost": {
+          "id": 44,
+          "slug": "black-desert",
+          "name": "Black Desert"
+        },
+        "playerauctions": {
+          "gameId": 9095,
+          "name": "Black Desert Mobile"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 84,
+      "name": "World of Tanks",
+      "slug": "world-of-tanks",
+      "acronym": "WoT",
+      "platforms": {
+        "eldorado": {
+          "gameId": "240",
+          "name": "World of Tanks"
+        },
+        "gameboost": {
+          "id": 38,
+          "slug": "world-of-tanks",
+          "name": "World of Tanks"
+        },
+        "playerauctions": {
+          "gameId": 4100,
+          "name": "World of Tanks"
+        }
+      },
+      "lztCategory": {
+        "id": 14,
+        "name": "World of Tanks"
+      },
+      "aliases": []
+    },
+    {
+      "id": 85,
+      "name": "mo.co",
+      "slug": "mo.co",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "241",
+          "name": "mo.co"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 14288,
+          "name": "Mo.co"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 86,
+      "name": "Grow a Garden",
+      "slug": "grow-a-garden",
+      "acronym": "GAG",
+      "platforms": {
+        "eldorado": {
+          "gameId": "243",
+          "name": "Grow a Garden"
+        },
+        "gameboost": {
+          "id": 92,
+          "slug": "grow-a-garden",
+          "name": "Grow a Garden"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 31,
+        "name": "Roblox"
+      },
+      "aliases": []
+    },
+    {
+      "id": 87,
+      "name": "SD Gundam G Generation ETERNAL",
+      "slug": "sd-gundam-g-generation-eternal",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "244",
+          "name": "SD Gundam G Generation ETERNAL"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 88,
+      "name": "Madoka Magica Magia Exedra",
+      "slug": "madoka-magica-magia-exedra",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "245",
+          "name": "Madoka Magica Magia Exedra"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 89,
+      "name": "Cookie Run: Kingdom",
+      "slug": "cookie-run:-kingdom",
+      "acronym": "CRK",
+      "platforms": {
+        "eldorado": {
+          "gameId": "247",
+          "name": "Cookie Run: Kingdom"
+        },
+        "gameboost": {
+          "id": 150,
+          "slug": "cookie-run-kingdom",
+          "name": "Cookie Run: Kingdom"
+        },
+        "playerauctions": {
+          "gameId": 9503,
+          "name": "Cookie Run: Kingdom"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 90,
+      "name": "Battlefield",
+      "slug": "battlefield",
+      "acronym": "BTF",
+      "platforms": {
+        "eldorado": {
+          "gameId": "248",
+          "name": "Battlefield"
+        },
+        "gameboost": {
+          "id": 115,
+          "slug": "battlefield",
+          "name": "Battlefield"
+        },
+        "playerauctions": {
+          "gameId": 7640,
+          "name": "Battlefield 1"
+        }
+      },
+      "lztCategory": {
+        "id": 3,
+        "name": "EA (Origin)"
+      },
+      "aliases": []
+    },
+    {
+      "id": 91,
+      "name": "Grand Theft Auto 5",
+      "slug": "grand-theft-auto-5",
+      "acronym": "GTAV",
+      "platforms": {
+        "eldorado": {
+          "gameId": "25",
+          "name": "Grand Theft Auto 5"
+        },
+        "gameboost": {
+          "id": 13,
+          "slug": "grand-theft-auto-v",
+          "name": "Grand Theft Auto V"
+        },
+        "playerauctions": {
+          "gameId": 5917,
+          "name": "GTA 5 Online"
+        }
+      },
+      "lztCategory": {
+        "id": 7,
+        "name": "Social Club"
+      },
+      "aliases": []
+    },
+    {
+      "id": 92,
+      "name": "Girls Frontline 2: Exilium",
+      "slug": "girls-frontline-2:-exilium",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "251",
+          "name": "Girls Frontline 2: Exilium"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 93,
+      "name": "Spotify",
+      "slug": "spotify",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "252",
+          "name": "Spotify"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 94,
+      "name": "Crunchyroll",
+      "slug": "crunchyroll",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "253",
+          "name": "Crunchyroll"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 95,
+      "name": "Netflix",
+      "slug": "netflix",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "255",
+          "name": "Netflix"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 96,
+      "name": "Dead Rails",
+      "slug": "dead-rails",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "258",
+          "name": "Dead Rails"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 97,
+      "name": "Overwatch 2",
+      "slug": "overwatch-2",
+      "acronym": "OW2",
+      "platforms": {
+        "eldorado": {
+          "gameId": "27",
+          "name": "Overwatch 2"
+        },
+        "gameboost": {
+          "id": 5,
+          "slug": "overwatch-2",
+          "name": "Overwatch 2"
+        },
+        "playerauctions": {
+          "gameId": 7097,
+          "name": "Overwatch 2"
+        }
+      },
+      "lztCategory": {
+        "id": 11,
+        "name": "Battle.net"
+      },
+      "aliases": []
+    },
+    {
+      "id": 98,
+      "name": "Summoners War",
+      "slug": "summoners-war",
+      "acronym": "SW",
+      "platforms": {
+        "eldorado": {
+          "gameId": "29",
+          "name": "Summoners War"
+        },
+        "gameboost": {
+          "id": 26,
+          "slug": "summoners-war",
+          "name": "Summoners War"
+        },
+        "playerauctions": {
+          "gameId": 6956,
+          "name": "Summoners War"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 99,
+      "name": "Elder Scrolls Online",
+      "slug": "elder-scrolls-online",
+      "acronym": "TES",
+      "platforms": {
+        "eldorado": {
+          "gameId": "3",
+          "name": "Elder Scrolls Online"
+        },
+        "gameboost": {
+          "id": 50,
+          "slug": "the-elder-scrolls",
+          "name": "Elder Scrolls Online"
+        },
+        "playerauctions": {
+          "gameId": 6091,
+          "name": "Elder Scrolls Online"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 100,
+      "name": "Valorant",
+      "slug": "valorant",
+      "acronym": "VAL",
+      "platforms": {
+        "eldorado": {
+          "gameId": "32",
+          "name": "Valorant"
+        },
+        "gameboost": {
+          "id": 2,
+          "slug": "valorant",
+          "name": "Valorant"
+        },
+        "playerauctions": {
+          "gameId": 9078,
+          "name": "Valorant"
+        }
+      },
+      "lztCategory": {
+        "id": 13,
+        "name": "Valorant and League Of Legends"
+      },
+      "aliases": []
+    },
+    {
+      "id": 101,
+      "name": "Apex Legends",
+      "slug": "apex-legends",
+      "acronym": "APEX",
+      "platforms": {
+        "eldorado": {
+          "gameId": "33",
+          "name": "Apex Legends"
+        },
+        "gameboost": {
+          "id": 9,
+          "slug": "apex-legends",
+          "name": "Apex Legends"
+        },
+        "playerauctions": {
+          "gameId": 8534,
+          "name": "Apex Legends"
+        }
+      },
+      "lztCategory": {
+        "id": 3,
+        "name": "EA (Origin)"
+      },
+      "aliases": []
+    },
+    {
+      "id": 102,
+      "name": "ARK: Survival Ascended",
+      "slug": "ark:-survival-ascended",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "34",
+          "name": "ARK: Survival Ascended"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 7702,
+          "name": "ARK: Survival Ascended"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 103,
+      "name": "Call of Duty",
+      "slug": "call-of-duty",
+      "acronym": "CoD",
+      "platforms": {
+        "eldorado": {
+          "gameId": "35",
+          "name": "Call of Duty"
+        },
+        "gameboost": {
+          "id": 23,
+          "slug": "call-of-duty",
+          "name": "Call of Duty"
+        },
+        "playerauctions": {
+          "gameId": 7313,
+          "name": "Call of Duty"
+        }
+      },
+      "lztCategory": {
+        "id": 11,
+        "name": "Battle.net"
+      },
+      "aliases": []
+    },
+    {
+      "id": 104,
+      "name": "New World",
+      "slug": "new-world",
+      "acronym": "NW",
+      "platforms": {
+        "eldorado": {
+          "gameId": "36",
+          "name": "New World"
+        },
+        "gameboost": {
+          "id": 63,
+          "slug": "new-world",
+          "name": "New World"
+        },
+        "playerauctions": {
+          "gameId": 9045,
+          "name": "New World"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 105,
+      "name": "Rust",
+      "slug": "rust",
+      "acronym": "RUST",
+      "platforms": {
+        "eldorado": {
+          "gameId": "37",
+          "name": "Rust"
+        },
+        "gameboost": {
+          "id": 27,
+          "slug": "rust",
+          "name": "Rust"
+        },
+        "playerauctions": {
+          "gameId": 6141,
+          "name": "RUST"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 106,
+      "name": "Genshin Impact",
+      "slug": "genshin-impact",
+      "acronym": "GI",
+      "platforms": {
+        "eldorado": {
+          "gameId": "39",
+          "name": "Genshin Impact"
+        },
+        "gameboost": {
+          "id": 14,
+          "slug": "genshin-impact",
+          "name": "Genshin Impact"
+        },
+        "playerauctions": {
+          "gameId": 9334,
+          "name": "Genshin Impact"
+        }
+      },
+      "lztCategory": {
+        "id": 17,
+        "name": "miHoYo: Genshin Impact, Honkai Star Rail"
+      },
+      "aliases": []
+    },
+    {
+      "id": 107,
+      "name": "Albion Online",
+      "slug": "albion-online",
+      "acronym": "AO",
+      "platforms": {
+        "eldorado": {
+          "gameId": "41",
+          "name": "Albion Online"
+        },
+        "gameboost": {
+          "id": 71,
+          "slug": "albion-online",
+          "name": "Albion Online"
+        },
+        "playerauctions": {
+          "gameId": 6664,
+          "name": "Albion Online"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 108,
+      "name": "Steam",
+      "slug": "steam",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "42",
+          "name": "Steam"
+        },
+        "gameboost": {
+          "id": null,
+          "slug": "steam",
+          "name": "Steam"
+        },
+        "playerauctions": {
+          "gameId": 4879,
+          "name": "Steam"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 109,
+      "name": "Dota 2",
+      "slug": "dota-2",
+      "acronym": "DOTA2",
+      "platforms": {
+        "eldorado": {
+          "gameId": "43",
+          "name": "Dota 2"
+        },
+        "gameboost": {
+          "id": 37,
+          "slug": "dota-2",
+          "name": "Dota 2"
+        },
+        "playerauctions": {
+          "gameId": 5707,
+          "name": "DOTA 2"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 110,
+      "name": "Destiny 2",
+      "slug": "destiny-2",
+      "acronym": "D2",
+      "platforms": {
+        "eldorado": {
+          "gameId": "44",
+          "name": "Destiny 2"
+        },
+        "gameboost": {
+          "id": 8,
+          "slug": "destiny-2",
+          "name": "Destiny 2"
+        },
+        "playerauctions": {
+          "gameId": 7942,
+          "name": "Destiny 2"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 111,
+      "name": "PUBG",
+      "slug": "pubg",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "45",
+          "name": "PUBG"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 112,
+      "name": "Garena Free Fire",
+      "slug": "garena-free-fire",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "46",
+          "name": "Garena Free Fire"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 113,
+      "name": "Dead By Daylight",
+      "slug": "dead-by-daylight",
+      "acronym": "DBD",
+      "platforms": {
+        "eldorado": {
+          "gameId": "47",
+          "name": "Dead By Daylight"
+        },
+        "gameboost": {
+          "id": 128,
+          "slug": "dead-by-daylight",
+          "name": "Dead By Daylight"
+        },
+        "playerauctions": {
+          "gameId": 8735,
+          "name": "Dead by Daylight"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 114,
+      "name": "Rainbow Six Siege",
+      "slug": "rainbow-six-siege",
+      "acronym": "R6",
+      "platforms": {
+        "eldorado": {
+          "gameId": "48",
+          "name": "Rainbow Six Siege"
+        },
+        "gameboost": {
+          "id": 17,
+          "slug": "rainbow-six-siege",
+          "name": "Rainbow Six Siege"
+        },
+        "playerauctions": {
+          "gameId": 7773,
+          "name": "Tom Clancys Rainbow Six Siege"
+        }
+      },
+      "lztCategory": {
+        "id": 5,
+        "name": "Uplay"
+      },
+      "aliases": []
+    },
+    {
+      "id": 115,
+      "name": "Lost Ark",
+      "slug": "lost-ark",
+      "acronym": "LA",
+      "platforms": {
+        "eldorado": {
+          "gameId": "50",
+          "name": "Lost Ark"
+        },
+        "gameboost": {
+          "id": 62,
+          "slug": "lost-ark",
+          "name": "Lost Ark"
+        },
+        "playerauctions": {
+          "gameId": 9027,
+          "name": "Lost Ark"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 116,
+      "name": "Clash Royale",
+      "slug": "clash-royale",
+      "acronym": "CR",
+      "platforms": {
+        "eldorado": {
+          "gameId": "52",
+          "name": "Clash Royale"
+        },
+        "gameboost": {
+          "id": 21,
+          "slug": "clash-royale",
+          "name": "Clash Royale"
+        },
+        "playerauctions": {
+          "gameId": 7293,
+          "name": "Clash Royale"
+        }
+      },
+      "lztCategory": {
+        "id": 15,
+        "name": "Supercell"
+      },
+      "aliases": []
+    },
+    {
+      "id": 117,
+      "name": "League of Legends: Wild Rift",
+      "slug": "league-of-legends:-wild-rift",
+      "acronym": "LoL",
+      "platforms": {
+        "eldorado": {
+          "gameId": "53",
+          "name": "League of Legends: Wild Rift"
+        },
+        "gameboost": {
+          "id": 1,
+          "slug": "league-of-legends",
+          "name": "League of Legends"
+        },
+        "playerauctions": {
+          "gameId": 9217,
+          "name": "League of Legends: Wild Rift"
+        }
+      },
+      "lztCategory": {
+        "id": 13,
+        "name": "Valorant and League Of Legends"
+      },
+      "aliases": []
+    },
+    {
+      "id": 118,
+      "name": "Mobile Legends",
+      "slug": "mobile-legends",
+      "acronym": "ML",
+      "platforms": {
+        "eldorado": {
+          "gameId": "55",
+          "name": "Mobile Legends"
+        },
+        "gameboost": {
+          "id": 35,
+          "slug": "mobile-legends",
+          "name": "Mobile Legends"
+        },
+        "playerauctions": {
+          "gameId": 7889,
+          "name": "Mobile Legends"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 119,
+      "name": "Brawl Stars",
+      "slug": "brawl-stars",
+      "acronym": "BS",
+      "platforms": {
+        "eldorado": {
+          "gameId": "56",
+          "name": "Brawl Stars"
+        },
+        "gameboost": {
+          "id": 20,
+          "slug": "brawl-stars",
+          "name": "Brawl Stars"
+        },
+        "playerauctions": {
+          "gameId": 8463,
+          "name": "Brawl Stars"
+        }
+      },
+      "lztCategory": {
+        "id": 15,
+        "name": "Supercell"
+      },
+      "aliases": []
+    },
+    {
+      "id": 120,
+      "name": "Pokemon Go",
+      "slug": "pokemon-go",
+      "acronym": "PoGo",
+      "platforms": {
+        "eldorado": {
+          "gameId": "57",
+          "name": "Pokemon Go"
+        },
+        "gameboost": {
+          "id": 22,
+          "slug": "pokemon-go",
+          "name": "Pokemon Go"
+        },
+        "playerauctions": {
+          "gameId": 7464,
+          "name": "Pokémon Go"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 121,
+      "name": "Call of Duty Mobile",
+      "slug": "call-of-duty-mobile",
+      "acronym": "CODM",
+      "platforms": {
+        "eldorado": {
+          "gameId": "59",
+          "name": "Call of Duty Mobile"
+        },
+        "gameboost": {
+          "id": 76,
+          "slug": "call-of-duty-mobile",
+          "name": "Call of Duty: Mobile"
+        },
+        "playerauctions": {
+          "gameId": 9033,
+          "name": "Call of Duty Mobile"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 122,
+      "name": "Minecraft",
+      "slug": "minecraft",
+      "acronym": "MC",
+      "platforms": {
+        "eldorado": {
+          "gameId": "61",
+          "name": "Minecraft"
+        },
+        "gameboost": {
+          "id": 28,
+          "slug": "minecraft",
+          "name": "Minecraft"
+        },
+        "playerauctions": {
+          "gameId": 4173,
+          "name": "Minecraft"
+        }
+      },
+      "lztCategory": {
+        "id": 28,
+        "name": "Minecraft"
+      },
+      "aliases": []
+    },
+    {
+      "id": 123,
+      "name": "Origin",
+      "slug": "origin",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "64",
+          "name": "Origin"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 6706,
+          "name": "Origin"
+        }
+      },
+      "lztCategory": {
+        "id": 3,
+        "name": "EA (Origin)"
+      },
+      "aliases": []
+    },
+    {
+      "id": 124,
+      "name": "Ubisoft Connect",
+      "slug": "ubisoft-connect",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "65",
+          "name": "Ubisoft Connect"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 5,
+        "name": "Uplay"
+      },
+      "aliases": []
+    },
+    {
+      "id": 125,
+      "name": "Final Fantasy XIV",
+      "slug": "final-fantasy-xiv",
+      "acronym": "FFXIV",
+      "platforms": {
+        "eldorado": {
+          "gameId": "7",
+          "name": "Final Fantasy XIV"
+        },
+        "gameboost": {
+          "id": 49,
+          "slug": "final-fantasy-xiv",
+          "name": "Final Fantasy XIV"
+        },
+        "playerauctions": {
+          "gameId": 3647,
+          "name": "Final Fantasy XIV"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 126,
+      "name": "Roblox",
+      "slug": "roblox",
+      "acronym": "RBLX",
+      "platforms": {
+        "eldorado": {
+          "gameId": "70",
+          "name": "Roblox"
+        },
+        "gameboost": {
+          "id": 15,
+          "slug": "roblox",
+          "name": "Roblox"
+        },
+        "playerauctions": {
+          "gameId": 5204,
+          "name": "ROBLOX"
+        }
+      },
+      "lztCategory": {
+        "id": 31,
+        "name": "Roblox"
+      },
+      "aliases": []
+    },
+    {
+      "id": 127,
+      "name": "Raid: Shadow Legends",
+      "slug": "raid:-shadow-legends",
+      "acronym": "RSL",
+      "platforms": {
+        "eldorado": {
+          "gameId": "73",
+          "name": "Raid: Shadow Legends"
+        },
+        "gameboost": {
+          "id": 32,
+          "slug": "raid-shadow-legends",
+          "name": "Raid: Shadow Legends"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 128,
+      "name": "Lords Mobile",
+      "slug": "lords-mobile",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "74",
+          "name": "Lords Mobile"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 7803,
+          "name": "Lords Mobile"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 129,
+      "name": "DayZ",
+      "slug": "dayz",
+      "acronym": "DZ",
+      "platforms": {
+        "eldorado": {
+          "gameId": "75",
+          "name": "DayZ"
+        },
+        "gameboost": {
+          "id": 48,
+          "slug": "dayz",
+          "name": "DayZ"
+        },
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 130,
+      "name": "8 Ball Pool",
+      "slug": "8-ball-pool",
+      "acronym": "8BP",
+      "platforms": {
+        "eldorado": {
+          "gameId": "77",
+          "name": "8 Ball Pool"
+        },
+        "gameboost": {
+          "id": 99,
+          "slug": "8-ball-pool",
+          "name": "8 Ball Pool"
+        },
+        "playerauctions": {
+          "gameId": 7388,
+          "name": "8 Ball Pool"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 131,
+      "name": "War Thunder",
+      "slug": "war-thunder",
+      "acronym": "WT",
+      "platforms": {
+        "eldorado": {
+          "gameId": "80",
+          "name": "War Thunder"
+        },
+        "gameboost": {
+          "id": 34,
+          "slug": "war-thunder",
+          "name": "War Thunder"
+        },
+        "playerauctions": {
+          "gameId": 6143,
+          "name": "War Thunder"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 132,
+      "name": "Sea of Thieves",
+      "slug": "sea-of-thieves",
+      "acronym": "SOT",
+      "platforms": {
+        "eldorado": {
+          "gameId": "82",
+          "name": "Sea of Thieves"
+        },
+        "gameboost": {
+          "id": 154,
+          "slug": "sea-of-thieves",
+          "name": "Sea of Thieves"
+        },
+        "playerauctions": {
+          "gameId": 8132,
+          "name": "Sea of Thieves"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 133,
+      "name": "RuneScape 3",
+      "slug": "runescape-3",
+      "acronym": "RS3",
+      "platforms": {
+        "eldorado": {
+          "gameId": "9",
+          "name": "RuneScape 3"
+        },
+        "gameboost": {
+          "id": 60,
+          "slug": "runescape-3",
+          "name": "RuneScape 3"
+        },
+        "playerauctions": {
+          "gameId": 33,
+          "name": "RuneScape"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 134,
+      "name": "WoW Classic",
+      "slug": "wow-classic",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "92",
+          "name": "WoW Classic"
+        },
+        "gameboost": null,
+        "playerauctions": {
+          "gameId": 9754,
+          "name": "Aion Classic"
+        }
+      },
+      "lztCategory": {
+        "id": 11,
+        "name": "Battle.net"
+      },
+      "aliases": []
+    },
+    {
+      "id": 135,
+      "name": "Rise of Kingdoms",
+      "slug": "rise-of-kingdoms",
+      "acronym": "ROK",
+      "platforms": {
+        "eldorado": {
+          "gameId": "94",
+          "name": "Rise of Kingdoms"
+        },
+        "gameboost": {
+          "id": 42,
+          "slug": "rise-of-kingdoms",
+          "name": "Rise of Kingdoms"
+        },
+        "playerauctions": {
+          "gameId": 8822,
+          "name": "Rise of Kingdoms"
+        }
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 136,
+      "name": "Red Dead Redemption 2",
+      "slug": "red-dead-redemption-2",
+      "acronym": "RDR2",
+      "platforms": {
+        "eldorado": null,
+        "gameboost": {
+          "id": 41,
+          "slug": "red-dead-redemption-2",
+          "name": "Red Dead Redemption 2"
+        },
+        "playerauctions": {
+          "gameId": 8527,
+          "name": "Red Dead Redemption 2"
+        }
+      },
+      "lztCategory": {
+        "id": 7,
+        "name": "Social Club"
+      },
+      "aliases": []
+    }
+  ]
+}

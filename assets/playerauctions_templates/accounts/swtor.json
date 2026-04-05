@@ -1,0 +1,185 @@
+{
+  "game_id": 4171,
+  "game": "swtor",
+  "game_name": "Star Wars: The Old Republic",
+  "seo_name": "SWTOR",
+  "servers": [
+    {
+      "id": 4197,
+      "name": "NA",
+      "subCategories": [
+        {
+          "id": 4305,
+          "name": "Satele Shan-Empire"
+        },
+        {
+          "id": 4413,
+          "name": "Satele Shan-Republic"
+        },
+        {
+          "id": 9868,
+          "name": "Star Forge-Empire"
+        },
+        {
+          "id": 9867,
+          "name": "Star Forge-Republic"
+        }
+      ]
+    },
+    {
+      "id": 4196,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 4304,
+          "name": "Darth Malgus-Empire"
+        },
+        {
+          "id": 4412,
+          "name": "Darth Malgus-Republic"
+        },
+        {
+          "id": 9866,
+          "name": "The Leviathan-Empire"
+        },
+        {
+          "id": 9863,
+          "name": "The Leviathan-Republic"
+        },
+        {
+          "id": 9865,
+          "name": "Tulak Hord-Empire"
+        },
+        {
+          "id": 9864,
+          "name": "Tulak Hord-Republic"
+        }
+      ]
+    },
+    {
+      "id": 13547,
+      "name": "Asia",
+      "subCategories": [
+        {
+          "id": 13548,
+          "name": "Shae Vizla-Empire"
+        },
+        {
+          "id": 13549,
+          "name": "Shae Vizla-Republic"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

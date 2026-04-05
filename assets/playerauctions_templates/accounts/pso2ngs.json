@@ -1,0 +1,129 @@
+{
+  "game_id": 9750,
+  "game": "pso2ngs",
+  "game_name": "Phantasy Star Online 2: New Genesis",
+  "seo_name": "PSO2NGS",
+  "servers": [
+    {
+      "id": 9751,
+      "name": "Ship01-Feoh"
+    },
+    {
+      "id": 9892,
+      "name": "Ship02-Ur"
+    },
+    {
+      "id": 9894,
+      "name": "Ship03-Thorn"
+    },
+    {
+      "id": 9895,
+      "name": "Ship04-Ansur"
+    },
+    {
+      "id": 9896,
+      "name": "Ship05-Laguz"
+    },
+    {
+      "id": 9897,
+      "name": "Ship06-Kenaz"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

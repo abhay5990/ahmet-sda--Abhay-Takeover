@@ -1,0 +1,165 @@
+{
+  "game_id": "201",
+  "game": "adopt-me",
+  "game_name": "Adopt Me",
+  "category": "Account",
+  "tradeEnvironments": [],
+  "attributes": {
+    "adopt-me-age-up-potions": {
+      "name": "Age-Up Potions",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "0-49-pots",
+          "name": "0 - 49 Pots"
+        },
+        {
+          "id": "50-99-pots",
+          "name": "50 - 99 Pots"
+        },
+        {
+          "id": "100-149-pots",
+          "name": "100 - 149 Pots"
+        },
+        {
+          "id": "150-199-pots",
+          "name": "150 - 199 Pots"
+        },
+        {
+          "id": "200-249-pots",
+          "name": "200 - 249 Pots"
+        },
+        {
+          "id": "250-plus-pots",
+          "name": "250+ Pots"
+        }
+      ]
+    },
+    "adopt-me-bucks": {
+      "name": "Bucks",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "0-999k-bucks",
+          "name": "0 - 9.99k Bucks"
+        },
+        {
+          "id": "10-49k-bucks",
+          "name": "10 - 49k Bucks"
+        },
+        {
+          "id": "50-99k-bucks",
+          "name": "50 - 99k Bucks"
+        },
+        {
+          "id": "100-199k-bucks",
+          "name": "100 - 199k Bucks"
+        },
+        {
+          "id": "200-299k-bucks",
+          "name": "200 - 299k Bucks"
+        },
+        {
+          "id": "300-399k-bucks",
+          "name": "300 - 399k Bucks"
+        },
+        {
+          "id": "400-499k-bucks",
+          "name": "400 - 499k Bucks"
+        },
+        {
+          "id": "500k-plus-bucks",
+          "name": "500k+ Bucks"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "hasOriginalEmail": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  },
+  "accountSecretDetails": {
+    "type": "array",
+    "required": false,
+    "description": "Account credentials, each entry as \"login:password\" format. Not required for manual delivery offers.",
+    "items": {
+      "type": "string"
+    }
+  }
+}

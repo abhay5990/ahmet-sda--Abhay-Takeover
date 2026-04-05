@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Inventory Manager{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-lg shadow p-6">
+        <p class="text-sm text-gray-500">Total Products</p>
+        <p class="text-3xl font-bold text-gray-900">{{ total_products }}</p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+        <p class="text-sm text-gray-500">Available</p>
+        <p class="text-3xl font-bold text-emerald-600">{{ available_products }}</p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+        <p class="text-sm text-gray-500">Active Listings</p>
+        <p class="text-3xl font-bold text-blue-600">{{ active_listings }}</p>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+        <p class="text-sm text-gray-500">Pending Orders</p>
+        <p class="text-3xl font-bold text-orange-600">{{ pending_orders }}</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Recent Products -->
+    <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Recent Products</h2>
+        </div>
+        <div class="p-6">
+            {% if recent_products %}
+            <div class="space-y-3">
+                {% for product in recent_products %}
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">{{ product.title|truncatechars:40 }}</p>
+                        <p class="text-xs text-gray-500">{{ product.game.name }} &middot; {{ product.get_status_display }}</p>
+                    </div>
+                    <span class="text-sm font-medium {% if product.status == 'available' %}text-emerald-600{% elif product.status == 'sold' %}text-red-600{% else %}text-gray-600{% endif %}">
+                        {{ product.get_status_display }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-sm">No products yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Recent Orders</h2>
+        </div>
+        <div class="p-6">
+            {% if recent_orders %}
+            <div class="space-y-3">
+                {% for order in recent_orders %}
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">#{{ order.external_order_id }}</p>
+                        <p class="text-xs text-gray-500">{{ order.marketplace.name }} &middot; {{ order.buyer_username }}</p>
+                    </div>
+                    <span class="text-sm font-medium text-emerald-600">${{ order.sale_price }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-sm">No orders yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,267 @@
+{
+  "game_id": 14852,
+  "game": "raven-2",
+  "game_name": "Raven 2",
+  "seo_name": "Raven-2",
+  "servers": [
+    {
+      "id": 14853,
+      "name": "NA",
+      "subCategories": [
+        {
+          "id": 14859,
+          "name": "Ignis - Dolor"
+        },
+        {
+          "id": 14854,
+          "name": "Ignis - Fides"
+        },
+        {
+          "id": 14857,
+          "name": "Ignis - Honor"
+        },
+        {
+          "id": 14858,
+          "name": "Ignis - Metus"
+        },
+        {
+          "id": 14855,
+          "name": "Ignis - Mors"
+        },
+        {
+          "id": 14856,
+          "name": "Ignis - Salus"
+        },
+        {
+          "id": 14865,
+          "name": "Lumen - Dolor"
+        },
+        {
+          "id": 14860,
+          "name": "Lumen - Fides"
+        },
+        {
+          "id": 14863,
+          "name": "Lumen - Honor"
+        },
+        {
+          "id": 14864,
+          "name": "Lumen - Metus"
+        },
+        {
+          "id": 14861,
+          "name": "Lumen - Mors"
+        },
+        {
+          "id": 14862,
+          "name": "Lumen - Salus"
+        }
+      ]
+    },
+    {
+      "id": 14866,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 14878,
+          "name": "Tempus - Dolor"
+        },
+        {
+          "id": 14873,
+          "name": "Tempus - Fides"
+        },
+        {
+          "id": 14876,
+          "name": "Tempus - Honor"
+        },
+        {
+          "id": 14877,
+          "name": "Tempus - Metus"
+        },
+        {
+          "id": 14874,
+          "name": "Tempus - Mors"
+        },
+        {
+          "id": 14875,
+          "name": "Tempus - Salus"
+        },
+        {
+          "id": 14872,
+          "name": "Umbra - Dolor"
+        },
+        {
+          "id": 14867,
+          "name": "Umbra - Fides"
+        },
+        {
+          "id": 14870,
+          "name": "Umbra - Honor"
+        },
+        {
+          "id": 14871,
+          "name": "Umbra - Metus"
+        },
+        {
+          "id": 14868,
+          "name": "Umbra - Mors"
+        },
+        {
+          "id": 14869,
+          "name": "Umbra - Salus"
+        }
+      ]
+    },
+    {
+      "id": 14879,
+      "name": "SEA and OCE",
+      "subCategories": [
+        {
+          "id": 14885,
+          "name": "Pluvia - Dolor"
+        },
+        {
+          "id": 14880,
+          "name": "Pluvia - Fides"
+        },
+        {
+          "id": 14883,
+          "name": "Pluvia - Honor"
+        },
+        {
+          "id": 14884,
+          "name": "Pluvia - Metus"
+        },
+        {
+          "id": 14881,
+          "name": "Pluvia - Mors"
+        },
+        {
+          "id": 14882,
+          "name": "Pluvia - Salus"
+        },
+        {
+          "id": 14891,
+          "name": "Silva - Dolor"
+        },
+        {
+          "id": 14886,
+          "name": "Silva - Fides"
+        },
+        {
+          "id": 14889,
+          "name": "Silva - Honor"
+        },
+        {
+          "id": 14890,
+          "name": "Silva - Metus"
+        },
+        {
+          "id": 14887,
+          "name": "Silva - Mors"
+        },
+        {
+          "id": 14888,
+          "name": "Silva - Salus"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

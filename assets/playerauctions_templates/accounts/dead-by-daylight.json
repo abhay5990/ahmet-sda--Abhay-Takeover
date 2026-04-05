@@ -1,0 +1,135 @@
+{
+  "game_id": 8735,
+  "game": "dead-by-daylight",
+  "game_name": "Dead by Daylight",
+  "seo_name": "Dead-by-Daylight",
+  "servers": [
+    {
+      "id": 8739,
+      "name": "Nintendo Switch"
+    },
+    {
+      "id": 8736,
+      "name": "PC"
+    },
+    {
+      "id": 8737,
+      "name": "PlayStation"
+    },
+    {
+      "id": 8738,
+      "name": "Xbox"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

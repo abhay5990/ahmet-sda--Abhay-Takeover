@@ -1,0 +1,335 @@
+{
+  "game_id": "32",
+  "game": "valorant",
+  "game_name": "Valorant",
+  "category": "Account",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "NA",
+      "group": "Region",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "PC"
+        },
+        {
+          "id": "0-1",
+          "name": "PlayStation"
+        },
+        {
+          "id": "0-2",
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "EU/TR/MENA/CIS",
+      "group": "Region",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "PC"
+        },
+        {
+          "id": "1-1",
+          "name": "PlayStation"
+        },
+        {
+          "id": "1-2",
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "LATAM",
+      "group": "Region",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "PC"
+        },
+        {
+          "id": "2-1",
+          "name": "PlayStation"
+        },
+        {
+          "id": "2-2",
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Brazil",
+      "group": "Region",
+      "children": [
+        {
+          "id": "3-0",
+          "name": "PC"
+        },
+        {
+          "id": "3-1",
+          "name": "PlayStation"
+        },
+        {
+          "id": "3-2",
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "AP",
+      "group": "Region",
+      "children": [
+        {
+          "id": "5-0",
+          "name": "PC"
+        },
+        {
+          "id": "5-1",
+          "name": "PlayStation"
+        },
+        {
+          "id": "5-2",
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "KR",
+      "group": "Region",
+      "children": [
+        {
+          "id": "6-0",
+          "name": "PC"
+        },
+        {
+          "id": "6-1",
+          "name": "PlayStation"
+        },
+        {
+          "id": "6-2",
+          "name": "Xbox"
+        }
+      ]
+    }
+  ],
+  "attributes": {
+    "valorant-agents": {
+      "name": "Agents",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "0-5-agents",
+          "name": "0-5 Agents"
+        },
+        {
+          "id": "6-10-agents",
+          "name": "6-10 Agents"
+        },
+        {
+          "id": "11-15-agents",
+          "name": "11-15 Agents"
+        },
+        {
+          "id": "16-20-agents",
+          "name": "16-20 Agents"
+        },
+        {
+          "id": "20-plus-agents",
+          "name": "20+ Agents"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "valorant-rank": {
+      "name": "Rank",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "ranked-ready",
+          "name": "Ranked Ready"
+        },
+        {
+          "id": "unranked",
+          "name": "Unranked"
+        },
+        {
+          "id": "radiant",
+          "name": "Radiant"
+        },
+        {
+          "id": "iron",
+          "name": "Iron"
+        },
+        {
+          "id": "bronze",
+          "name": "Bronze"
+        },
+        {
+          "id": "silver",
+          "name": "Silver"
+        },
+        {
+          "id": "gold",
+          "name": "Gold"
+        },
+        {
+          "id": "platinum",
+          "name": "Platinum"
+        },
+        {
+          "id": "diamond",
+          "name": "Diamond"
+        },
+        {
+          "id": "ascendant",
+          "name": "Ascendant"
+        },
+        {
+          "id": "immortal",
+          "name": "Immortal"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "valorant-weapon-skins": {
+      "name": "Weapon Skins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "0-skins",
+          "name": "0 Skins"
+        },
+        {
+          "id": "1-9-skins",
+          "name": "1-9 Skins"
+        },
+        {
+          "id": "10-19-skins",
+          "name": "10-19 Skins"
+        },
+        {
+          "id": "20-39-skins",
+          "name": "20-39 Skins"
+        },
+        {
+          "id": "40-69-skins",
+          "name": "40-69 Skins"
+        },
+        {
+          "id": "70-99-skins",
+          "name": "70-99 Skins"
+        },
+        {
+          "id": "100-plus-skins",
+          "name": "100+ Skins"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "hasOriginalEmail": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  },
+  "accountSecretDetails": {
+    "type": "array",
+    "required": false,
+    "description": "Account credentials, each entry as \"login:password\" format. Not required for manual delivery offers.",
+    "items": {
+      "type": "string"
+    }
+  }
+}

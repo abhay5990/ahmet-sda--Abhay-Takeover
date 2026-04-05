@@ -1,0 +1,519 @@
+{
+  "game_id": 3229,
+  "game": "conquer",
+  "game_name": "Conquer Online 2",
+  "seo_name": "Conquer",
+  "servers": [
+    {
+      "id": 8661,
+      "name": "Adventure",
+      "subCategories": [
+        {
+          "id": 8721,
+          "name": "Conquer13_EU/Backfire_EU/WaveOfBlood_EU/ShadowChas"
+        },
+        {
+          "id": 8719,
+          "name": "FlameLotus_EU/TempestWings_EU"
+        },
+        {
+          "id": 8720,
+          "name": "Sirius_EU"
+        }
+      ]
+    },
+    {
+      "id": 8660,
+      "name": "BattleArts",
+      "subCategories": [
+        {
+          "id": 8717,
+          "name": "FastBlade"
+        },
+        {
+          "id": 8718,
+          "name": "StarArrow/KingofKungFu/DragonRoar/DragonPunch/Brea"
+        }
+      ]
+    },
+    {
+      "id": 8657,
+      "name": "Celebrations",
+      "subCategories": [
+        {
+          "id": 8710,
+          "name": "Legends/Reminiscence/Hercules/KingdomWar/AuroraLot"
+        },
+        {
+          "id": 8709,
+          "name": "Lucky7/Evolution/GardenOfEden/TangDynasty/JollyRog"
+        }
+      ]
+    },
+    {
+      "id": 8659,
+      "name": "CelebrationsII",
+      "subCategories": [
+        {
+          "id": 8712,
+          "name": "Champions_EU/Reunion_EU/BladeTempest_EU"
+        },
+        {
+          "id": 8715,
+          "name": "DragonWar_EU/ShadowClone_EU"
+        },
+        {
+          "id": 8716,
+          "name": "Emperor_EU/EveOfWar_EU"
+        },
+        {
+          "id": 8714,
+          "name": "JiangHu_EU/FlyingDagger_EU"
+        },
+        {
+          "id": 8713,
+          "name": "SummerWind/Rebirth/KingOfKings/EpicWarrior"
+        }
+      ]
+    },
+    {
+      "id": 8651,
+      "name": "Celebrities",
+      "subCategories": [
+        {
+          "id": 8692,
+          "name": "BabyIcey/Mayfaire/Arbiter/Centaur/UglyDuckling/Ala"
+        },
+        {
+          "id": 8691,
+          "name": "Hebby/KingJus/Nanya"
+        }
+      ]
+    },
+    {
+      "id": 8656,
+      "name": "Classic",
+      "subCategories": [
+        {
+          "id": 8707,
+          "name": "Liberty_O/Prosperity"
+        },
+        {
+          "id": 8708,
+          "name": "Royalty_EU_O"
+        }
+      ]
+    },
+    {
+      "id": 8652,
+      "name": "Constellation",
+      "subCategories": [
+        {
+          "id": 8693,
+          "name": "Aquarius/Aries/Leo/Pisces"
+        },
+        {
+          "id": 8694,
+          "name": "Cancer/Sagittarius/Taurus"
+        },
+        {
+          "id": 8696,
+          "name": "Libra/Capricorn/Fury/Ryee"
+        },
+        {
+          "id": 8697,
+          "name": "Scorpio"
+        },
+        {
+          "id": 8695,
+          "name": "Virgo/Gemini"
+        }
+      ]
+    },
+    {
+      "id": 8647,
+      "name": "Dreams",
+      "subCategories": [
+        {
+          "id": 8677,
+          "name": "Eternity"
+        },
+        {
+          "id": 8676,
+          "name": "Faith"
+        },
+        {
+          "id": 8675,
+          "name": "Freedom"
+        },
+        {
+          "id": 8674,
+          "name": "Honor/Justice"
+        },
+        {
+          "id": 8673,
+          "name": "Triumph"
+        }
+      ]
+    },
+    {
+      "id": 8655,
+      "name": "Elements",
+      "subCategories": [
+        {
+          "id": 8703,
+          "name": "Dark"
+        },
+        {
+          "id": 8704,
+          "name": "Light"
+        },
+        {
+          "id": 8705,
+          "name": "LightFire/Water/Tortuga_EU"
+        },
+        {
+          "id": 8706,
+          "name": "Storm/Pishu_EU"
+        }
+      ]
+    },
+    {
+      "id": 8664,
+      "name": "Endeavor",
+      "subCategories": [
+        {
+          "id": 8734,
+          "name": "King"
+        }
+      ]
+    },
+    {
+      "id": 8653,
+      "name": "FairyTales",
+      "subCategories": [
+        {
+          "id": 8698,
+          "name": "SnowWhite/Cinderella"
+        },
+        {
+          "id": 8699,
+          "name": "WildSwan/FrogPrince/Bluebird/BeautyandBeast"
+        }
+      ]
+    },
+    {
+      "id": 8649,
+      "name": "Galaxy",
+      "subCategories": [
+        {
+          "id": 8685,
+          "name": "Mercury/Saturn"
+        },
+        {
+          "id": 8687,
+          "name": "Neptune/Pluto/Jupiter"
+        },
+        {
+          "id": 8686,
+          "name": "Uranus"
+        },
+        {
+          "id": 8684,
+          "name": "Venus/Mars/Perfection/ManiacDance/RageOfWar/SkyFla"
+        }
+      ]
+    },
+    {
+      "id": 8646,
+      "name": "Gem World",
+      "subCategories": [
+        {
+          "id": 8670,
+          "name": "Crystal/Dream"
+        },
+        {
+          "id": 8671,
+          "name": "Emerald/Sapphire/Ruby"
+        },
+        {
+          "id": 8672,
+          "name": "Turquoise/Diamond"
+        }
+      ]
+    },
+    {
+      "id": 9523,
+      "name": "Global - Glory_EU"
+    },
+    {
+      "id": 8654,
+      "name": "Myths",
+      "subCategories": [
+        {
+          "id": 8702,
+          "name": "Basilisk/Pegasus/Medusa"
+        },
+        {
+          "id": 8700,
+          "name": "Gryphon/Cerberus"
+        },
+        {
+          "id": 8701,
+          "name": "Titan/Unicorn"
+        }
+      ]
+    },
+    {
+      "id": 8648,
+      "name": "Nature",
+      "subCategories": [
+        {
+          "id": 8681,
+          "name": "Lightning"
+        },
+        {
+          "id": 8683,
+          "name": "Snowfall"
+        },
+        {
+          "id": 8682,
+          "name": "Sunshine/Blizzard/Tornado"
+        },
+        {
+          "id": 8680,
+          "name": "Thunder/Meteor"
+        },
+        {
+          "id": 8679,
+          "name": "Volcano/Glory/Pharos/TempleArtemis"
+        }
+      ]
+    },
+    {
+      "id": 8662,
+      "name": "New Era",
+      "subCategories": [
+        {
+          "id": 8722,
+          "name": "NewChallenge_EU/BloomOfDeath_EU"
+        }
+      ]
+    },
+    {
+      "id": 8658,
+      "name": "Region",
+      "subCategories": [
+        {
+          "id": 8711,
+          "name": "Columbus"
+        }
+      ]
+    },
+    {
+      "id": 8663,
+      "name": "Treasure Land",
+      "subCategories": [
+        {
+          "id": 8729,
+          "name": "Anima_EU"
+        },
+        {
+          "id": 8733,
+          "name": "Aurora_EU"
+        },
+        {
+          "id": 8726,
+          "name": "DominoTest1"
+        },
+        {
+          "id": 8732,
+          "name": "Dragonfang"
+        },
+        {
+          "id": 8730,
+          "name": "Inspiration"
+        },
+        {
+          "id": 8731,
+          "name": "JudgeSword_EU"
+        },
+        {
+          "id": 8725,
+          "name": "LasVegas"
+        },
+        {
+          "id": 8724,
+          "name": "MythicalRunes/LandOfWar"
+        },
+        {
+          "id": 8723,
+          "name": "NewWorld"
+        },
+        {
+          "id": 8728,
+          "name": "Nostalgia"
+        },
+        {
+          "id": 8727,
+          "name": "Tenshi_EU"
+        }
+      ]
+    },
+    {
+      "id": 8645,
+      "name": "Wild Kingdom",
+      "subCategories": [
+        {
+          "id": 8665,
+          "name": "Dragon"
+        },
+        {
+          "id": 8669,
+          "name": "Eagle"
+        },
+        {
+          "id": 8667,
+          "name": "Kylin/Tiger"
+        },
+        {
+          "id": 8668,
+          "name": "Lion"
+        },
+        {
+          "id": 8666,
+          "name": "Phoenix/StatueOfZeus"
+        }
+      ]
+    },
+    {
+      "id": 8650,
+      "name": "Wonders",
+      "subCategories": [
+        {
+          "id": 8688,
+          "name": "HangingGardens"
+        },
+        {
+          "id": 8689,
+          "name": "Mausoleum/GreatWall/ColossusRhodes"
+        },
+        {
+          "id": 8690,
+          "name": "Pyramid"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

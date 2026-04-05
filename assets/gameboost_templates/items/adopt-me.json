@@ -1,0 +1,87 @@
+{
+  "game": "adopt-me",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "stock": {
+      "type": "integer",
+      "required": true
+    },
+    "min_quantity": {
+      "type": "integer",
+      "required": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "item_data": {
+    "item_type": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Eggs",
+        "Food",
+        "Gifts",
+        "Pet Wear",
+        "Pets",
+        "Strollers",
+        "Toys",
+        "Transport",
+        "Other"
+      ]
+    },
+    "item_rarity": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Common",
+        "Uncommon",
+        "Rare",
+        "Ultra Rare",
+        "Legendary"
+      ]
+    }
+  }
+}

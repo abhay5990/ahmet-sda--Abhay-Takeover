@@ -1,0 +1,195 @@
+{
+  "game_id": 9531,
+  "game": "mlb-the-show",
+  "game_name": "MLB The Show",
+  "seo_name": "MLB-The-Show",
+  "servers": [
+    {
+      "id": 15063,
+      "name": "MLB The Show 26",
+      "subCategories": [
+        {
+          "id": 15064,
+          "name": "PlayStation"
+        },
+        {
+          "id": 15065,
+          "name": "Switch"
+        },
+        {
+          "id": 15066,
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": 14281,
+      "name": "MLB The Show 25",
+      "subCategories": [
+        {
+          "id": 14282,
+          "name": "PlayStation"
+        },
+        {
+          "id": 14283,
+          "name": "Switch"
+        },
+        {
+          "id": 14284,
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": 13673,
+      "name": "MLB The Show 24",
+      "subCategories": [
+        {
+          "id": 13674,
+          "name": "PlayStation"
+        },
+        {
+          "id": 13675,
+          "name": "Switch"
+        },
+        {
+          "id": 13676,
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": 12911,
+      "name": "MLB The Show 23",
+      "subCategories": [
+        {
+          "id": 12912,
+          "name": "PlayStation"
+        },
+        {
+          "id": 12913,
+          "name": "Switch"
+        },
+        {
+          "id": 12914,
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": 12507,
+      "name": "MLB The Show 22",
+      "subCategories": [
+        {
+          "id": 12512,
+          "name": "PlayStation"
+        },
+        {
+          "id": 12514,
+          "name": "Switch"
+        },
+        {
+          "id": 12513,
+          "name": "Xbox"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

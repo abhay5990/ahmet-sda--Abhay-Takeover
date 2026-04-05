@@ -1,0 +1,148 @@
+{
+  "game": "raid-shadow-legends",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "platform": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "PC",
+        "Android",
+        "iOS",
+        "All Platforms"
+      ]
+    },
+    "account_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "champion_power_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "energy_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "champions_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "epic_champion_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "legendary_champion_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "mythical_champion_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "shards_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "silver_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "gems_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "keys_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "books_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    }
+  }
+}

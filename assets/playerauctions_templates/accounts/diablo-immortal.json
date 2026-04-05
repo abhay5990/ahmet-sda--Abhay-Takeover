@@ -1,0 +1,957 @@
+{
+  "game_id": 9543,
+  "game": "diablo-immortal",
+  "game_name": "Diablo Immortal",
+  "seo_name": "Diablo-Immortal",
+  "servers": [
+    {
+      "id": 12563,
+      "name": "NA-West",
+      "subCategories": [
+        {
+          "id": 12580,
+          "name": "Amber Blades"
+        },
+        {
+          "id": 12577,
+          "name": "Black Abyss"
+        },
+        {
+          "id": 12589,
+          "name": "Breath of the Dying"
+        },
+        {
+          "id": 12591,
+          "name": "Burning Hells"
+        },
+        {
+          "id": 12564,
+          "name": "Caldesann"
+        },
+        {
+          "id": 12586,
+          "name": "Call to Arms"
+        },
+        {
+          "id": 12587,
+          "name": "Chains of Honor"
+        },
+        {
+          "id": 12585,
+          "name": "Crescent Moon"
+        },
+        {
+          "id": 12575,
+          "name": "Cult of Damnation"
+        },
+        {
+          "id": 12567,
+          "name": "Deckard Cain"
+        },
+        {
+          "id": 12579,
+          "name": "Dry Steppes"
+        },
+        {
+          "id": 12592,
+          "name": "End of Days"
+        },
+        {
+          "id": 12566,
+          "name": "Eternal Crown"
+        },
+        {
+          "id": 12581,
+          "name": "Halls of the Blind"
+        },
+        {
+          "id": 12588,
+          "name": "Hand of Justice"
+        },
+        {
+          "id": 12584,
+          "name": "Heart of the Oak"
+        },
+        {
+          "id": 12565,
+          "name": "Kanai"
+        },
+        {
+          "id": 12573,
+          "name": "Khalim's Will"
+        },
+        {
+          "id": 12899,
+          "name": "Not Listed - Message Seller"
+        },
+        {
+          "id": 12571,
+          "name": "Old Growth"
+        },
+        {
+          "id": 12590,
+          "name": "Pandemonium"
+        },
+        {
+          "id": 12576,
+          "name": "Purus the Decimator"
+        },
+        {
+          "id": 12569,
+          "name": "Sand Scorpions"
+        },
+        {
+          "id": 12582,
+          "name": "Star of Azkaranth"
+        },
+        {
+          "id": 12570,
+          "name": "Stormshield"
+        },
+        {
+          "id": 12574,
+          "name": "The Gidbinn"
+        },
+        {
+          "id": 12572,
+          "name": "The Soulstones"
+        },
+        {
+          "id": 12578,
+          "name": "The Triune"
+        },
+        {
+          "id": 12583,
+          "name": "Wailing Beast"
+        },
+        {
+          "id": 12568,
+          "name": "Zoltun Kulle"
+        }
+      ]
+    },
+    {
+      "id": 12593,
+      "name": "NA-East",
+      "subCategories": [
+        {
+          "id": 12614,
+          "name": "Albrecht"
+        },
+        {
+          "id": 12605,
+          "name": "Arcane Sanctuary"
+        },
+        {
+          "id": 12619,
+          "name": "Arkaine's Valor"
+        },
+        {
+          "id": 12609,
+          "name": "Darkening of Tristram"
+        },
+        {
+          "id": 12620,
+          "name": "Doombringer"
+        },
+        {
+          "id": 12622,
+          "name": "Eternal Conflict"
+        },
+        {
+          "id": 12610,
+          "name": "Greed"
+        },
+        {
+          "id": 12617,
+          "name": "Hadriel"
+        },
+        {
+          "id": 12602,
+          "name": "Helliquary"
+        },
+        {
+          "id": 12874,
+          "name": "High Heavens"
+        },
+        {
+          "id": 12600,
+          "name": "Iceburn Tear"
+        },
+        {
+          "id": 12615,
+          "name": "Lysander"
+        },
+        {
+          "id": 12618,
+          "name": "Mask of Jeram"
+        },
+        {
+          "id": 12612,
+          "name": "Meshif"
+        },
+        {
+          "id": 12891,
+          "name": "Not Listed - Message Seller"
+        },
+        {
+          "id": 12604,
+          "name": "Plains of Despair"
+        },
+        {
+          "id": 12595,
+          "name": "Prime Evils"
+        },
+        {
+          "id": 12875,
+          "name": "Rat King"
+        },
+        {
+          "id": 12608,
+          "name": "Risen Dead"
+        },
+        {
+          "id": 12598,
+          "name": "Sandro the Mouth"
+        },
+        {
+          "id": 12603,
+          "name": "Silver Spire"
+        },
+        {
+          "id": 12594,
+          "name": "Sin War"
+        },
+        {
+          "id": 12597,
+          "name": "Soul Siphon"
+        },
+        {
+          "id": 12606,
+          "name": "The Curator"
+        },
+        {
+          "id": 12607,
+          "name": "The Fallen"
+        },
+        {
+          "id": 12611,
+          "name": "The Last Vestige"
+        },
+        {
+          "id": 12599,
+          "name": "The Malus"
+        },
+        {
+          "id": 12601,
+          "name": "The Worldstone"
+        },
+        {
+          "id": 12621,
+          "name": "Town Portal"
+        },
+        {
+          "id": 12876,
+          "name": "Treasure Goblin"
+        },
+        {
+          "id": 12596,
+          "name": "Tree of Inifuss"
+        },
+        {
+          "id": 12613,
+          "name": "Ureh"
+        },
+        {
+          "id": 12616,
+          "name": "Wirt"
+        }
+      ]
+    },
+    {
+      "id": 12623,
+      "name": "Europe-English",
+      "subCategories": [
+        {
+          "id": 12636,
+          "name": "Archbishop Lazarus"
+        },
+        {
+          "id": 12625,
+          "name": "Arreat Summit"
+        },
+        {
+          "id": 12629,
+          "name": "Blood Rose"
+        },
+        {
+          "id": 15025,
+          "name": "Books of Kalan"
+        },
+        {
+          "id": 12635,
+          "name": "Cathedral of Light"
+        },
+        {
+          "id": 12646,
+          "name": "Crystal Arch"
+        },
+        {
+          "id": 12624,
+          "name": "Dark Exile"
+        },
+        {
+          "id": 12637,
+          "name": "Dark Wanderer"
+        },
+        {
+          "id": 12647,
+          "name": "Diamond Gates"
+        },
+        {
+          "id": 12878,
+          "name": "Frost Horrors"
+        },
+        {
+          "id": 12877,
+          "name": "Frozen Orb"
+        },
+        {
+          "id": 12642,
+          "name": "Gharbad the Weak"
+        },
+        {
+          "id": 12628,
+          "name": "Not Listed - Message Seller"
+        },
+        {
+          "id": 12650,
+          "name": "Oblivion Knight"
+        },
+        {
+          "id": 12645,
+          "name": "Sea of Light"
+        },
+        {
+          "id": 12626,
+          "name": "Sightless Eye"
+        },
+        {
+          "id": 12633,
+          "name": "Stone of Jordan"
+        },
+        {
+          "id": 12652,
+          "name": "Stygian Fury"
+        },
+        {
+          "id": 12631,
+          "name": "Talva Silvertongue"
+        },
+        {
+          "id": 12639,
+          "name": "The Ancients"
+        },
+        {
+          "id": 12643,
+          "name": "The Borderlands"
+        },
+        {
+          "id": 12632,
+          "name": "The Butcher"
+        },
+        {
+          "id": 12630,
+          "name": "The Countess"
+        },
+        {
+          "id": 12638,
+          "name": "The Hellforge"
+        },
+        {
+          "id": 12644,
+          "name": "The Martyr"
+        },
+        {
+          "id": 12627,
+          "name": "The Unspoken"
+        },
+        {
+          "id": 12634,
+          "name": "The Void"
+        },
+        {
+          "id": 12648,
+          "name": "Thorned Hulk"
+        },
+        {
+          "id": 12651,
+          "name": "Throne of Destruction"
+        },
+        {
+          "id": 12640,
+          "name": "Trade Consortium"
+        },
+        {
+          "id": 12649,
+          "name": "Wood Wraith"
+        },
+        {
+          "id": 12641,
+          "name": "Yshari Sanctum"
+        }
+      ]
+    },
+    {
+      "id": 12653,
+      "name": "East Asia-Korean",
+      "subCategories": [
+        {
+          "id": 12660,
+          "name": "Askari"
+        },
+        {
+          "id": 12669,
+          "name": "Cydaea"
+        },
+        {
+          "id": 12659,
+          "name": "Daedessa"
+        },
+        {
+          "id": 12665,
+          "name": "Ennead"
+        },
+        {
+          "id": 12667,
+          "name": "Griswold"
+        },
+        {
+          "id": 12668,
+          "name": "Harlequin Crest"
+        },
+        {
+          "id": 12661,
+          "name": "Kashya"
+        },
+        {
+          "id": 12655,
+          "name": "Lethes"
+        },
+        {
+          "id": 12664,
+          "name": "Namari"
+        },
+        {
+          "id": 12666,
+          "name": "Que-Hegan"
+        },
+        {
+          "id": 12654,
+          "name": "Rayek"
+        },
+        {
+          "id": 12663,
+          "name": "Sargoth"
+        },
+        {
+          "id": 12656,
+          "name": "Tal Rasha"
+        },
+        {
+          "id": 12657,
+          "name": "Tassi"
+        },
+        {
+          "id": 12658,
+          "name": "Vataos"
+        },
+        {
+          "id": 12662,
+          "name": "Zaka"
+        }
+      ]
+    },
+    {
+      "id": 12670,
+      "name": "East Asia-Japanese",
+      "subCategories": [
+        {
+          "id": 12888,
+          "name": "Escala"
+        },
+        {
+          "id": 12674,
+          "name": "Eskara"
+        },
+        {
+          "id": 12887,
+          "name": "Faheem"
+        },
+        {
+          "id": 12673,
+          "name": "Fahir"
+        },
+        {
+          "id": 12680,
+          "name": "Horadric Cube"
+        },
+        {
+          "id": 12672,
+          "name": "Inarius"
+        },
+        {
+          "id": 12677,
+          "name": "Lakrii"
+        },
+        {
+          "id": 12675,
+          "name": "Lilith"
+        },
+        {
+          "id": 12678,
+          "name": "Manoruk"
+        },
+        {
+          "id": 12681,
+          "name": "Not Listed - Message Seller"
+        },
+        {
+          "id": 12671,
+          "name": "Ongori"
+        },
+        {
+          "id": 12679,
+          "name": "Tyrael"
+        },
+        {
+          "id": 12682,
+          "name": "Zaim"
+        },
+        {
+          "id": 12676,
+          "name": "Zov"
+        }
+      ]
+    },
+    {
+      "id": 12683,
+      "name": "SA-Portuguese",
+      "subCategories": [
+        {
+          "id": 12685,
+          "name": "Akara"
+        },
+        {
+          "id": 12686,
+          "name": "Asylla"
+        },
+        {
+          "id": 12884,
+          "name": "Bailey"
+        },
+        {
+          "id": 12689,
+          "name": "Belial"
+        },
+        {
+          "id": 12882,
+          "name": "Blunderbore"
+        },
+        {
+          "id": 12693,
+          "name": "Elzix"
+        },
+        {
+          "id": 12684,
+          "name": "Flavie"
+        },
+        {
+          "id": 12692,
+          "name": "Gorgothra"
+        },
+        {
+          "id": 12690,
+          "name": "Izilech"
+        },
+        {
+          "id": 12691,
+          "name": "Jondo"
+        },
+        {
+          "id": 12883,
+          "name": "Morlu"
+        },
+        {
+          "id": 12892,
+          "name": "Not Listed - Message Seller"
+        },
+        {
+          "id": 12688,
+          "name": "Oza"
+        },
+        {
+          "id": 12886,
+          "name": "Torajan"
+        },
+        {
+          "id": 12885,
+          "name": "Vidian"
+        },
+        {
+          "id": 12687,
+          "name": "Xul"
+        }
+      ]
+    },
+    {
+      "id": 12694,
+      "name": "SA-Spanish",
+      "subCategories": [
+        {
+          "id": 12698,
+          "name": "Bul-Kathos"
+        },
+        {
+          "id": 12695,
+          "name": "Mephisto"
+        },
+        {
+          "id": 12697,
+          "name": "Navair"
+        },
+        {
+          "id": 12893,
+          "name": "Not Listed - Message Seller"
+        },
+        {
+          "id": 12696,
+          "name": "Rathma"
+        },
+        {
+          "id": 12699,
+          "name": "Viz-jaq'taar"
+        },
+        {
+          "id": 12700,
+          "name": "Viz-Jun"
+        }
+      ]
+    },
+    {
+      "id": 12701,
+      "name": "Europe-French",
+      "subCategories": [
+        {
+          "id": 12706,
+          "name": "Ammuit"
+        },
+        {
+          "id": 12860,
+          "name": "Beledwe"
+        },
+        {
+          "id": 12704,
+          "name": "Charsi"
+        },
+        {
+          "id": 12703,
+          "name": "Dravec"
+        },
+        {
+          "id": 12707,
+          "name": "Esu"
+        },
+        {
+          "id": 12861,
+          "name": "Kabraxis"
+        },
+        {
+          "id": 12705,
+          "name": "Leoric"
+        },
+        {
+          "id": 12894,
+          "name": "Not Listed - Message Seller"
+        },
+        {
+          "id": 12702,
+          "name": "Skarn"
+        }
+      ]
+    },
+    {
+      "id": 12708,
+      "name": "Europe-German",
+      "subCategories": [
+        {
+          "id": 12714,
+          "name": "Akeba"
+        },
+        {
+          "id": 12709,
+          "name": "El'Druin"
+        },
+        {
+          "id": 12864,
+          "name": "Harrogath"
+        },
+        {
+          "id": 12712,
+          "name": "Hemlir"
+        },
+        {
+          "id": 12865,
+          "name": "Hratli"
+        },
+        {
+          "id": 12854,
+          "name": "Larzuk"
+        },
+        {
+          "id": 12895,
+          "name": "Not Listed - Message Seller"
+        },
+        {
+          "id": 12862,
+          "name": "Qual-Kehk"
+        },
+        {
+          "id": 12713,
+          "name": "Segithis"
+        },
+        {
+          "id": 12710,
+          "name": "Tabri"
+        },
+        {
+          "id": 12711,
+          "name": "Vizjerei"
+        },
+        {
+          "id": 12863,
+          "name": "Zolthrax"
+        }
+      ]
+    },
+    {
+      "id": 12715,
+      "name": "Europe-Spanish",
+      "subCategories": [
+        {
+          "id": 12717,
+          "name": "Fara"
+        },
+        {
+          "id": 12879,
+          "name": "Farnham"
+        },
+        {
+          "id": 12880,
+          "name": "Greiz"
+        },
+        {
+          "id": 12896,
+          "name": "Not Listed - Message Seller"
+        },
+        {
+          "id": 12716,
+          "name": "Zatham"
+        }
+      ]
+    },
+    {
+      "id": 12718,
+      "name": "Europe-Italian",
+      "subCategories": [
+        {
+          "id": 12866,
+          "name": "Aranoch"
+        },
+        {
+          "id": 12867,
+          "name": "Horadric Malus"
+        },
+        {
+          "id": 12897,
+          "name": "Not Listed - Message Seller"
+        },
+        {
+          "id": 12720,
+          "name": "Sescheron"
+        },
+        {
+          "id": 12719,
+          "name": "Talus'ar"
+        }
+      ]
+    },
+    {
+      "id": 12721,
+      "name": "Europe-Polish",
+      "subCategories": [
+        {
+          "id": 12868,
+          "name": "Al''Maiesh"
+        },
+        {
+          "id": 12722,
+          "name": "Cathan"
+        },
+        {
+          "id": 12869,
+          "name": "Crodric"
+        },
+        {
+          "id": 12723,
+          "name": "Itherael"
+        },
+        {
+          "id": 12870,
+          "name": "Karshun"
+        },
+        {
+          "id": 12871,
+          "name": "Kion"
+        },
+        {
+          "id": 12898,
+          "name": "Not Listed - Message Seller"
+        },
+        {
+          "id": 12872,
+          "name": "Warden of Everfrost"
+        },
+        {
+          "id": 12873,
+          "name": "Wodem Castell"
+        }
+      ]
+    },
+    {
+      "id": 12724,
+      "name": "Oceania",
+      "subCategories": [
+        {
+          "id": 12881,
+          "name": "Azmodan"
+        },
+        {
+          "id": 12726,
+          "name": "Bloodsworn"
+        },
+        {
+          "id": 12725,
+          "name": "Not Listed - Message Seller"
+        }
+      ]
+    },
+    {
+      "id": 12889,
+      "name": "Not Listed",
+      "subCategories": [
+        {
+          "id": 12890,
+          "name": "Message Seller"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

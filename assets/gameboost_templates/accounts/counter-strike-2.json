@@ -1,0 +1,140 @@
+{
+  "game": "counter-strike-2",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "premier_rating_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "faceit_level": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ]
+    },
+    "esea": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "D-",
+        "D",
+        "D+",
+        "C-",
+        "C",
+        "C+",
+        "B-",
+        "B",
+        "B+",
+        "A-",
+        "A",
+        "A+",
+        "G",
+        "S"
+      ]
+    },
+    "veteran_coin": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "5 Year Veteran Coin",
+        "10 Year Veteran Coin"
+      ]
+    },
+    "hours_played_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "prime_enabled": {
+      "type": "boolean",
+      "required": false
+    },
+    "trade_banned": {
+      "type": "boolean",
+      "required": false
+    }
+  }
+}

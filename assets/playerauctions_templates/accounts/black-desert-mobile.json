@@ -1,0 +1,211 @@
+{
+  "game_id": 9095,
+  "game": "black-desert-mobile",
+  "game_name": "Black Desert Mobile",
+  "seo_name": "Black-Desert-Mobile",
+  "servers": [
+    {
+      "id": 9098,
+      "name": "Android",
+      "subCategories": [
+        {
+          "id": 9105,
+          "name": "Asia - Calpheon"
+        },
+        {
+          "id": 9106,
+          "name": "Asia - Dandelion"
+        },
+        {
+          "id": 9107,
+          "name": "Asia - Serendia"
+        },
+        {
+          "id": 9108,
+          "name": "Asia -Hexe"
+        },
+        {
+          "id": 9104,
+          "name": "EU - Balenos"
+        },
+        {
+          "id": 9103,
+          "name": "EU - Delphe"
+        },
+        {
+          "id": 9102,
+          "name": "EU - Velia"
+        },
+        {
+          "id": 9099,
+          "name": "NA - Heidel"
+        },
+        {
+          "id": 9101,
+          "name": "NA - Kaia"
+        },
+        {
+          "id": 9100,
+          "name": "NA - Mediah"
+        }
+      ]
+    },
+    {
+      "id": 9097,
+      "name": "iOS",
+      "subCategories": [
+        {
+          "id": 9115,
+          "name": "Asia - Calpheon"
+        },
+        {
+          "id": 9116,
+          "name": "Asia - Dandelion"
+        },
+        {
+          "id": 9117,
+          "name": "Asia - Serendia"
+        },
+        {
+          "id": 9118,
+          "name": "Asia -Hexe"
+        },
+        {
+          "id": 9114,
+          "name": "EU - Balenos"
+        },
+        {
+          "id": 9113,
+          "name": "EU - Delphe"
+        },
+        {
+          "id": 9112,
+          "name": "EU - Velia"
+        },
+        {
+          "id": 9109,
+          "name": "NA - Heidel"
+        },
+        {
+          "id": 9111,
+          "name": "NA - Kaia"
+        },
+        {
+          "id": 9110,
+          "name": "NA - Mediah"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

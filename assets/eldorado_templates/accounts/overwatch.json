@@ -1,0 +1,159 @@
+{
+  "game_id": "27",
+  "game": "overwatch",
+  "game_name": "Overwatch",
+  "category": "Account",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "PC"
+    },
+    {
+      "id": "1",
+      "name": "PlayStation"
+    },
+    {
+      "id": "2",
+      "name": "Xbox"
+    }
+  ],
+  "attributes": {
+    "overwatch-2-rank": {
+      "name": "Rank",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "ranked-ready",
+          "name": "Ranked Ready"
+        },
+        {
+          "id": "bronze",
+          "name": "Bronze"
+        },
+        {
+          "id": "silver",
+          "name": "Silver"
+        },
+        {
+          "id": "gold",
+          "name": "Gold"
+        },
+        {
+          "id": "platinum",
+          "name": "Platinum"
+        },
+        {
+          "id": "diamond",
+          "name": "Diamond"
+        },
+        {
+          "id": "master",
+          "name": "Master"
+        },
+        {
+          "id": "grandmaster",
+          "name": "Grandmaster"
+        },
+        {
+          "id": "champion",
+          "name": "Champion"
+        },
+        {
+          "id": "top-500",
+          "name": "Top 500"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "hasOriginalEmail": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  },
+  "accountSecretDetails": {
+    "type": "array",
+    "required": false,
+    "description": "Account credentials, each entry as \"login:password\" format. Not required for manual delivery offers.",
+    "items": {
+      "type": "string"
+    }
+  }
+}

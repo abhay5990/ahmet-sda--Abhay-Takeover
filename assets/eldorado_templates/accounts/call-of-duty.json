@@ -1,0 +1,263 @@
+{
+  "game_id": "35",
+  "game": "call-of-duty",
+  "game_name": "Call of Duty",
+  "category": "Account",
+  "tradeEnvironments": [
+    {
+      "id": "1",
+      "name": "PlayStation",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "Modern Warfare II"
+        },
+        {
+          "id": "1-1",
+          "name": "Warzone"
+        },
+        {
+          "id": "1-2",
+          "name": "Vanguard"
+        },
+        {
+          "id": "1-3",
+          "name": "Cold War"
+        },
+        {
+          "id": "1-4",
+          "name": "Modern Warfare I"
+        },
+        {
+          "id": "1-5",
+          "name": "Modern Warfare III"
+        },
+        {
+          "id": "1-6",
+          "name": "Black Ops 6"
+        },
+        {
+          "id": "1-7",
+          "name": "Other"
+        },
+        {
+          "id": "1-8",
+          "name": "Black Ops 7"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Xbox",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "Modern Warfare II"
+        },
+        {
+          "id": "2-1",
+          "name": "Warzone"
+        },
+        {
+          "id": "2-2",
+          "name": "Vanguard"
+        },
+        {
+          "id": "2-3",
+          "name": "Cold War"
+        },
+        {
+          "id": "2-4",
+          "name": "Modern Warfare I"
+        },
+        {
+          "id": "2-5",
+          "name": "Modern Warfare III"
+        },
+        {
+          "id": "2-6",
+          "name": "Black Ops 6"
+        },
+        {
+          "id": "2-7",
+          "name": "Other"
+        },
+        {
+          "id": "2-8",
+          "name": "Black Ops 7"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Steam",
+      "children": [
+        {
+          "id": "3-0",
+          "name": "Modern Warfare II"
+        },
+        {
+          "id": "3-1",
+          "name": "Warzone"
+        },
+        {
+          "id": "3-2",
+          "name": "Vanguard"
+        },
+        {
+          "id": "3-3",
+          "name": "Cold War"
+        },
+        {
+          "id": "3-4",
+          "name": "Modern Warfare I"
+        },
+        {
+          "id": "3-5",
+          "name": "Modern Warfare III"
+        },
+        {
+          "id": "3-6",
+          "name": "Black Ops 6"
+        },
+        {
+          "id": "3-7",
+          "name": "Other"
+        },
+        {
+          "id": "3-8",
+          "name": "Black Ops 7"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Battlenet",
+      "children": [
+        {
+          "id": "4-0",
+          "name": "Modern Warfare II"
+        },
+        {
+          "id": "4-1",
+          "name": "Warzone"
+        },
+        {
+          "id": "4-2",
+          "name": "Vanguard"
+        },
+        {
+          "id": "4-3",
+          "name": "Cold War"
+        },
+        {
+          "id": "4-4",
+          "name": "Modern Warfare I"
+        },
+        {
+          "id": "4-5",
+          "name": "Modern Warfare III"
+        },
+        {
+          "id": "4-6",
+          "name": "Black Ops 6"
+        },
+        {
+          "id": "4-7",
+          "name": "Other"
+        },
+        {
+          "id": "4-8",
+          "name": "Black Ops 7"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "hasOriginalEmail": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  },
+  "accountSecretDetails": {
+    "type": "array",
+    "required": false,
+    "description": "Account credentials, each entry as \"login:password\" format. Not required for manual delivery offers.",
+    "items": {
+      "type": "string"
+    }
+  }
+}

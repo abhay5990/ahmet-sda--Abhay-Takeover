@@ -1,0 +1,9 @@
+-r base.txt
+-r mysql.txt
+
+# Production server
+gunicorn==22.0.0
+whitenoise==6.6.0
+
+# Monitoring
+sentry-sdk==2.1.1

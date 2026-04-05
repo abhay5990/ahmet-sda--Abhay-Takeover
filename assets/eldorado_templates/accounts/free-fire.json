@@ -1,0 +1,160 @@
+{
+  "game_id": "46",
+  "game": "free-fire",
+  "game_name": "Garena Free Fire",
+  "category": "Account",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Indonesia",
+      "group": "Region"
+    },
+    {
+      "id": "1",
+      "name": "Thailand",
+      "group": "Region"
+    },
+    {
+      "id": "2",
+      "name": "Vietnam",
+      "group": "Region"
+    },
+    {
+      "id": "3",
+      "name": "Malaysia",
+      "group": "Region"
+    },
+    {
+      "id": "4",
+      "name": "Brazil",
+      "group": "Region"
+    },
+    {
+      "id": "5",
+      "name": "LATAM",
+      "group": "Region"
+    },
+    {
+      "id": "6",
+      "name": "MENA",
+      "group": "Region"
+    },
+    {
+      "id": "7",
+      "name": "India",
+      "group": "Region"
+    },
+    {
+      "id": "8",
+      "name": "Taiwan",
+      "group": "Region"
+    },
+    {
+      "id": "10",
+      "name": "Europe",
+      "group": "Region"
+    },
+    {
+      "id": "11",
+      "name": "Pakistan",
+      "group": "Region"
+    },
+    {
+      "id": "12",
+      "name": "Bangladesh",
+      "group": "Region"
+    },
+    {
+      "id": "13",
+      "name": "North America",
+      "group": "Region"
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "hasOriginalEmail": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  },
+  "accountSecretDetails": {
+    "type": "array",
+    "required": false,
+    "description": "Account credentials, each entry as \"login:password\" format. Not required for manual delivery offers.",
+    "items": {
+      "type": "string"
+    }
+  }
+}

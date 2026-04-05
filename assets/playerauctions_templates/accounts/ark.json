@@ -1,0 +1,205 @@
+{
+  "game_id": 7702,
+  "game": "ark",
+  "game_name": "ARK: Survival Ascended",
+  "seo_name": "ARK",
+  "servers": [
+    {
+      "id": 7963,
+      "name": "PC",
+      "subCategories": [
+        {
+          "id": 7966,
+          "name": "Official PvE"
+        },
+        {
+          "id": 8577,
+          "name": "PvP Classic"
+        },
+        {
+          "id": 7969,
+          "name": "PVP Legacy"
+        },
+        {
+          "id": 7968,
+          "name": "PVP New"
+        },
+        {
+          "id": 8431,
+          "name": "PVP Offline Raid Protection"
+        },
+        {
+          "id": 8332,
+          "name": "PVP Small Tribes"
+        }
+      ]
+    },
+    {
+      "id": 7964,
+      "name": "PS",
+      "subCategories": [
+        {
+          "id": 7973,
+          "name": "Official PvE"
+        },
+        {
+          "id": 9055,
+          "name": "PVE Primitive Plus"
+        },
+        {
+          "id": 7970,
+          "name": "PVP Legacy"
+        },
+        {
+          "id": 7971,
+          "name": "PVP New"
+        },
+        {
+          "id": 8432,
+          "name": "PVP Offline Raid Protection"
+        },
+        {
+          "id": 8333,
+          "name": "PVP Small Tribes"
+        }
+      ]
+    },
+    {
+      "id": 7965,
+      "name": "Xbox",
+      "subCategories": [
+        {
+          "id": 7974,
+          "name": "PVE"
+        },
+        {
+          "id": 7977,
+          "name": "PVP Legacy"
+        },
+        {
+          "id": 7976,
+          "name": "PVP New"
+        },
+        {
+          "id": 8433,
+          "name": "PVP Offline Raid Protection"
+        },
+        {
+          "id": 8334,
+          "name": "PVP Small Tribes"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

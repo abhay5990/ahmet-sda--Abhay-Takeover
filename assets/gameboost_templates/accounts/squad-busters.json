@@ -1,0 +1,137 @@
+{
+  "game": "squad-busters",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "platforms": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string",
+        "required": true,
+        "values": [
+          "iOS",
+          "Android"
+        ]
+      }
+    },
+    "exp_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "squad_journey_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "characters_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "characters_2_star_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "characters_3_star_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "coins_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "gems_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "max_walls": {
+      "type": "boolean",
+      "required": false
+    },
+    "max_buildings": {
+      "type": "boolean",
+      "required": false
+    },
+    "max_troops": {
+      "type": "boolean",
+      "required": false
+    }
+  }
+}

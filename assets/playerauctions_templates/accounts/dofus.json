@@ -1,0 +1,277 @@
+{
+  "game_id": 22,
+  "game": "dofus",
+  "game_name": "Dofus",
+  "seo_name": "Dofus",
+  "servers": [
+    {
+      "id": 14191,
+      "name": "Brial 1"
+    },
+    {
+      "id": 14192,
+      "name": "Brial 2"
+    },
+    {
+      "id": 14173,
+      "name": "Dakal 1"
+    },
+    {
+      "id": 14182,
+      "name": "Dakal 10"
+    },
+    {
+      "id": 14183,
+      "name": "Dakal 11"
+    },
+    {
+      "id": 14184,
+      "name": "Dakal 12"
+    },
+    {
+      "id": 14174,
+      "name": "Dakal 2"
+    },
+    {
+      "id": 14175,
+      "name": "Dakal 3"
+    },
+    {
+      "id": 14176,
+      "name": "Dakal 4"
+    },
+    {
+      "id": 14177,
+      "name": "Dakal 5"
+    },
+    {
+      "id": 14178,
+      "name": "Dakal 6"
+    },
+    {
+      "id": 14179,
+      "name": "Dakal 7"
+    },
+    {
+      "id": 14180,
+      "name": "Dakal 8"
+    },
+    {
+      "id": 14181,
+      "name": "Dakal 9"
+    },
+    {
+      "id": 14189,
+      "name": "Kourial 1"
+    },
+    {
+      "id": 14190,
+      "name": "Kourial 2"
+    },
+    {
+      "id": 14193,
+      "name": "Mikhal 1"
+    },
+    {
+      "id": 14194,
+      "name": "Mikhal 2"
+    },
+    {
+      "id": 14187,
+      "name": "Rafal 1"
+    },
+    {
+      "id": 14188,
+      "name": "Rafal 2"
+    },
+    {
+      "id": 14185,
+      "name": "Salar 1"
+    },
+    {
+      "id": 14186,
+      "name": "Salar 2"
+    },
+    {
+      "id": 13505,
+      "name": "Boune"
+    },
+    {
+      "id": 13507,
+      "name": "Crail"
+    },
+    {
+      "id": 13300,
+      "name": "Draconiros"
+    },
+    {
+      "id": 8046,
+      "name": "Dramak"
+    },
+    {
+      "id": 7177,
+      "name": "Eratz"
+    },
+    {
+      "id": 8047,
+      "name": "Fraktal "
+    },
+    {
+      "id": 13506,
+      "name": "Galgarion"
+    },
+    {
+      "id": 8049,
+      "name": "Ganymède"
+    },
+    {
+      "id": 13301,
+      "name": "Hellmina"
+    },
+    {
+      "id": 7406,
+      "name": "Henual"
+    },
+    {
+      "id": 13298,
+      "name": "Imagiro"
+    },
+    {
+      "id": 8052,
+      "name": "Lacrima"
+    },
+    {
+      "id": 8054,
+      "name": "Nevark"
+    },
+    {
+      "id": 8055,
+      "name": "Ombre"
+    },
+    {
+      "id": 13299,
+      "name": "Orukam"
+    },
+    {
+      "id": 3323,
+      "name": "Oto Mustam"
+    },
+    {
+      "id": 7894,
+      "name": "Pandore"
+    },
+    {
+      "id": 8056,
+      "name": "Razad"
+    },
+    {
+      "id": 7407,
+      "name": "Ruliet"
+    },
+    {
+      "id": 13297,
+      "name": "Talkasha"
+    },
+    {
+      "id": 13302,
+      "name": "Tylezia"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

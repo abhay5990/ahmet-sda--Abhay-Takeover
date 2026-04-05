@@ -1,0 +1,208 @@
+{
+  "game_id": 6364,
+  "game": "blade-soul",
+  "game_name": "Blade and Soul",
+  "seo_name": "Blade-Soul",
+  "servers": [
+    {
+      "id": 7144,
+      "name": "US",
+      "subCategories": [
+        {
+          "id": 7896,
+          "name": "Yura"
+        },
+        {
+          "id": 7897,
+          "name": "Zulia"
+        }
+      ]
+    },
+    {
+      "id": 7145,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 7898,
+          "name": "Eisenherz"
+        },
+        {
+          "id": 7899,
+          "name": "Jinsoyun"
+        },
+        {
+          "id": 7900,
+          "name": "Naksun"
+        }
+      ]
+    },
+    {
+      "id": 7397,
+      "name": "RU",
+      "subCategories": [
+        {
+          "id": 7398,
+          "name": "Агат"
+        },
+        {
+          "id": 7399,
+          "name": "Аметист"
+        },
+        {
+          "id": 7400,
+          "name": "Изумруд"
+        },
+        {
+          "id": 7401,
+          "name": "Рубин"
+        },
+        {
+          "id": 7402,
+          "name": "Сапфир"
+        },
+        {
+          "id": 7403,
+          "name": "Топаз"
+        }
+      ]
+    },
+    {
+      "id": 7152,
+      "name": "JP",
+      "subCategories": [
+        {
+          "id": 7154,
+          "name": "牡丹"
+        },
+        {
+          "id": 7153,
+          "name": "琥珀"
+        },
+        {
+          "id": 7156,
+          "name": "真红"
+        },
+        {
+          "id": 7155,
+          "name": "胡桃"
+        }
+      ]
+    },
+    {
+      "id": 7830,
+      "name": "TH",
+      "subCategories": [
+        {
+          "id": 7831,
+          "name": "Garena Thailand"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

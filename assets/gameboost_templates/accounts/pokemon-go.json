@@ -1,0 +1,156 @@
+{
+  "game": "pokemon-go",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "team": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Neutral",
+        "Mystic",
+        "Valor",
+        "Instinct"
+      ]
+    },
+    "level_up_method": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "by_hand",
+        "by_bot"
+      ]
+    },
+    "login_method": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "PTC",
+        "Gmail",
+        "Apple",
+        "Facebook"
+      ]
+    },
+    "account_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "pokemons_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "poke_coins_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "stardust_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "account_year": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "experience_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "shiny_pokemons_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "legendary_pokemons_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "mythical_pokemons_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "items_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    }
+  }
+}

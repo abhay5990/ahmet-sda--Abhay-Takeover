@@ -1,0 +1,169 @@
+{
+  "game_id": 10255,
+  "game": "diablo-2-resurrected",
+  "game_name": "Diablo 2 Resurrected",
+  "seo_name": "Diablo-2-Resurrected",
+  "servers": [
+    {
+      "id": 12493,
+      "name": "PC - Ladder- Softcore"
+    },
+    {
+      "id": 12494,
+      "name": "PC - Ladder- Hardcore"
+    },
+    {
+      "id": 10269,
+      "name": "PC - Softcore"
+    },
+    {
+      "id": 10268,
+      "name": "PC - Hardcore"
+    },
+    {
+      "id": 10265,
+      "name": "Nintendo Switch - Hardcore"
+    },
+    {
+      "id": 10257,
+      "name": "Nintendo Switch - Softcore"
+    },
+    {
+      "id": 10267,
+      "name": "PS4/PS5 - Hardcore"
+    },
+    {
+      "id": 10266,
+      "name": "PS4/PS5 - Softcore"
+    },
+    {
+      "id": 10256,
+      "name": "Xbox One/Series - Hardcore"
+    },
+    {
+      "id": 10258,
+      "name": "Xbox One/Series - Softcore"
+    },
+    {
+      "id": 12496,
+      "name": "Nintendo Switch- Ladder- Hardcore"
+    },
+    {
+      "id": 12495,
+      "name": "Nintendo Switch- Ladder- Softcore"
+    },
+    {
+      "id": 12497,
+      "name": "PS4/PS5 - Ladder - Hardcore"
+    },
+    {
+      "id": 12498,
+      "name": "PS4/PS5 - Ladder - Softcore"
+    },
+    {
+      "id": 12499,
+      "name": "Xbox One/Series - Ladder - Hardcore"
+    },
+    {
+      "id": 12500,
+      "name": "Xbox One/Series - Ladder - Softcore"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

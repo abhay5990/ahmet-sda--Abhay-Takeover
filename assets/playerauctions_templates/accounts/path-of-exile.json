@@ -1,0 +1,215 @@
+{
+  "game_id": 5243,
+  "game": "path-of-exile",
+  "game_name": "Path of Exile",
+  "seo_name": "Path-of-Exile",
+  "servers": [
+    {
+      "id": 15050,
+      "name": "PC - Mirage"
+    },
+    {
+      "id": 15051,
+      "name": "PC - Mirage HC"
+    },
+    {
+      "id": 15053,
+      "name": "PC - Mirage HC Ruthless"
+    },
+    {
+      "id": 15052,
+      "name": "PC - Mirage Ruthless"
+    },
+    {
+      "id": 15054,
+      "name": "PS - Mirage"
+    },
+    {
+      "id": 15055,
+      "name": "PS - Mirage HC"
+    },
+    {
+      "id": 15057,
+      "name": "PS - Mirage HC Ruthless"
+    },
+    {
+      "id": 15056,
+      "name": "PS - Mirage Ruthless"
+    },
+    {
+      "id": 15058,
+      "name": "Xbox - Mirage"
+    },
+    {
+      "id": 15059,
+      "name": "Xbox - Mirage HC"
+    },
+    {
+      "id": 15061,
+      "name": "Xbox - Mirage HC Ruthless"
+    },
+    {
+      "id": 15060,
+      "name": "Xbox - Mirage Ruthless"
+    },
+    {
+      "id": 5578,
+      "name": "PC - Standard"
+    },
+    {
+      "id": 5577,
+      "name": "PC - Hardcore"
+    },
+    {
+      "id": 13364,
+      "name": "PC - Ruthless"
+    },
+    {
+      "id": 13367,
+      "name": "PC - Hardcore Ruthless"
+    },
+    {
+      "id": 8559,
+      "name": "PS - Standard"
+    },
+    {
+      "id": 8560,
+      "name": "PS - Hardcore"
+    },
+    {
+      "id": 13365,
+      "name": "PS - Ruthless"
+    },
+    {
+      "id": 13368,
+      "name": "PS - Hardcore Ruthless"
+    },
+    {
+      "id": 7911,
+      "name": "Xbox - Standard"
+    },
+    {
+      "id": 7910,
+      "name": "Xbox - Hardcore"
+    },
+    {
+      "id": 13366,
+      "name": "Xbox - Ruthless"
+    },
+    {
+      "id": 13369,
+      "name": "Xbox - Hardcore Ruthless"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

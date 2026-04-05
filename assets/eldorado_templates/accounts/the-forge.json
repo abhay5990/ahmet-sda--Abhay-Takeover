@@ -1,0 +1,180 @@
+{
+  "game_id": "329",
+  "game": "the-forge",
+  "game_name": "The Forge",
+  "category": "Account",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Human",
+      "group": "Race"
+    },
+    {
+      "id": "1",
+      "name": "Elf",
+      "group": "Race"
+    },
+    {
+      "id": "2",
+      "name": "Zombie",
+      "group": "Race"
+    },
+    {
+      "id": "3",
+      "name": "Goblin",
+      "group": "Race"
+    },
+    {
+      "id": "4",
+      "name": "Undead",
+      "group": "Race"
+    },
+    {
+      "id": "5",
+      "name": "Orc",
+      "group": "Race"
+    },
+    {
+      "id": "6",
+      "name": "Dwarf",
+      "group": "Race"
+    },
+    {
+      "id": "7",
+      "name": "Shadow",
+      "group": "Race"
+    },
+    {
+      "id": "8",
+      "name": "Minotaur",
+      "group": "Race"
+    },
+    {
+      "id": "9",
+      "name": "Dragonborn",
+      "group": "Race"
+    },
+    {
+      "id": "10",
+      "name": "Golem",
+      "group": "Race"
+    },
+    {
+      "id": "11",
+      "name": "Angel",
+      "group": "Race"
+    },
+    {
+      "id": "12",
+      "name": "Demon",
+      "group": "Race"
+    },
+    {
+      "id": "13",
+      "name": "Other",
+      "group": "Race"
+    },
+    {
+      "id": "14",
+      "name": "Vampire",
+      "group": "Race"
+    },
+    {
+      "id": "15",
+      "name": "Felynx",
+      "group": "Race"
+    },
+    {
+      "id": "16",
+      "name": "Archangel",
+      "group": "Race"
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "hasOriginalEmail": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  },
+  "accountSecretDetails": {
+    "type": "array",
+    "required": false,
+    "description": "Account credentials, each entry as \"login:password\" format. Not required for manual delivery offers.",
+    "items": {
+      "type": "string"
+    }
+  }
+}

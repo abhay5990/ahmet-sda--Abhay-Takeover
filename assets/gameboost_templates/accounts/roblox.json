@@ -1,0 +1,178 @@
+{
+  "game": "roblox",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "main_experience": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Blox Fruits",
+        "TYPE://SOUL",
+        "Adopt Me",
+        "Steal A Brainrot",
+        "All Star Tower Defense",
+        "King Legacy",
+        "Anime Champions Simulator",
+        "Barry's Prison Run V2",
+        "Blade Ball",
+        "Cotton Obby",
+        "Easy Obby",
+        "Death Ball",
+        "DOORS",
+        "Dungeon Quest",
+        "Hide and Seek Extreme",
+        "Jailbreak",
+        "Murder Mystery 2",
+        "Natural Disaster Survival",
+        "Pet Simulator 99",
+        "Pet Simulator X",
+        "Piggy",
+        "Scuba Diving at Quill Lake",
+        "Speed Run 4",
+        "Super Bomb Survival!!",
+        "Theme Park Tycoon 2",
+        "The Strongest Battlegrounds",
+        "Work at a Pizza Place",
+        "Wuthering Waves",
+        "Anime Defenders",
+        "Grand Piece",
+        "Grow a Garden",
+        "Others"
+      ]
+    },
+    "other_experiences": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string",
+        "required": false,
+        "values": [
+          "Blox Fruits",
+          "TYPE://SOUL",
+          "Adopt Me",
+          "Steal A Brainrot",
+          "All Star Tower Defense",
+          "King Legacy",
+          "Anime Champions Simulator",
+          "Barry's Prison Run V2",
+          "Blade Ball",
+          "Cotton Obby",
+          "Easy Obby",
+          "Death Ball",
+          "DOORS",
+          "Dungeon Quest",
+          "Hide and Seek Extreme",
+          "Jailbreak",
+          "Murder Mystery 2",
+          "Natural Disaster Survival",
+          "Pet Simulator 99",
+          "Pet Simulator X",
+          "Piggy",
+          "Scuba Diving at Quill Lake",
+          "Speed Run 4",
+          "Super Bomb Survival!!",
+          "Theme Park Tycoon 2",
+          "The Strongest Battlegrounds",
+          "Work at a Pizza Place",
+          "Wuthering Waves",
+          "Anime Defenders",
+          "Grand Piece",
+          "Grow a Garden",
+          "Others"
+        ]
+      }
+    },
+    "account_tags": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string",
+        "required": false,
+        "values": [
+          "Old Account",
+          "Robux Account",
+          "4 Letter Username",
+          "3 Letter Username",
+          "Headless"
+        ]
+      }
+    },
+    "robux_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    }
+  }
+}

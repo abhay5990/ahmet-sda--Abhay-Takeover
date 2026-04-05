@@ -1,0 +1,267 @@
+{
+  "game_id": 14844,
+  "game": "aion-2",
+  "game_name": "Aion 2",
+  "seo_name": "Aion-2",
+  "servers": [
+    {
+      "id": 14933,
+      "name": "TW",
+      "subCategories": [
+        {
+          "id": 14952,
+          "name": "伊斯拉佩爾 - 魔族 Israphel - Asmodians"
+        },
+        {
+          "id": 14967,
+          "name": "克羅梅德 - 魔族 Kromede - Asmodians"
+        },
+        {
+          "id": 14937,
+          "name": "凱西內爾 - 天族 Kaisinel - Elyos"
+        },
+        {
+          "id": 14948,
+          "name": "卡薩卡 - 天族 Kasaka - Elyos"
+        },
+        {
+          "id": 14953,
+          "name": "吉凱爾 - 魔族 Zikel - Asmodians"
+        },
+        {
+          "id": 14961,
+          "name": "哈達爾 - 魔族 Hadala - Asmodians"
+        },
+        {
+          "id": 14944,
+          "name": "塔哈巴達 - 天族 Tahavatha - Elyos"
+        },
+        {
+          "id": 14950,
+          "name": "天加隆 - 天族 Tsenka - Elyos"
+        },
+        {
+          "id": 14960,
+          "name": "奈蒙 - 魔族 Nemon - Asmodians"
+        },
+        {
+          "id": 14935,
+          "name": "奈薩肯 - 天族 Nezekan - Elyos"
+        },
+        {
+          "id": 14968,
+          "name": "奎靈 - 魔族 Quai - Asmodians"
+        },
+        {
+          "id": 14965,
+          "name": "奧達爾 - 魔族 Odar - Asmodians"
+        },
+        {
+          "id": 14938,
+          "name": "尤斯迪埃 - 天族 Yustiel - Elyos"
+        },
+        {
+          "id": 14954,
+          "name": "崔妮爾 - 魔族 Triniel - Asmodians"
+        },
+        {
+          "id": 14949,
+          "name": "巴卡爾摩 - 天族 Bakarma - Elyos"
+        },
+        {
+          "id": 14969,
+          "name": "巴巴隆 - 魔族 Baba - Asmodians"
+        },
+        {
+          "id": 14959,
+          "name": "布里特拉 - 魔族 Beritra - Asmodians"
+        },
+        {
+          "id": 14934,
+          "name": "希埃爾 - 天族 Siel - Elyos"
+        },
+        {
+          "id": 14942,
+          "name": "希塔尼耶 - 天族 Hithanya - Elyos"
+        },
+        {
+          "id": 14940,
+          "name": "普雷奇翁 - 天族 Fregion - Elyos"
+        },
+        {
+          "id": 14941,
+          "name": "梅斯蘭泰達 - 天族 Meslamtaeda - Elyos"
+        },
+        {
+          "id": 14956,
+          "name": "瑪爾庫坦 - 魔族 Marchutan - Asmodians"
+        },
+        {
+          "id": 14936,
+          "name": "白傑爾 - 天族 Vaizel - Elyos"
+        },
+        {
+          "id": 14962,
+          "name": "盧德萊 - 魔族 Ludra - Asmodians"
+        },
+        {
+          "id": 14951,
+          "name": "科奇隆 - 天族 Kochi - Elyos"
+        },
+        {
+          "id": 14966,
+          "name": "简卡卡 - 魔族 Zemurru - Asmodians"
+        },
+        {
+          "id": 14943,
+          "name": "納尼亞 - 天族 Nania - Elyos"
+        },
+        {
+          "id": 14939,
+          "name": "艾瑞爾 - 天族 Ariel - Elyos"
+        },
+        {
+          "id": 14958,
+          "name": "艾萊修奇卡 - 魔族 Ereshkigal - Asmodians"
+        },
+        {
+          "id": 14946,
+          "name": "菲爾諾斯 - 天族 Phernos - Elyos"
+        },
+        {
+          "id": 14945,
+          "name": "路特斯 - 天族 Luteros - Elyos"
+        },
+        {
+          "id": 14947,
+          "name": "達彌努 - 天族 Daminu - Elyos"
+        },
+        {
+          "id": 14963,
+          "name": "鄔爾古倫 - 魔族 Ulgorn - Asmodians"
+        },
+        {
+          "id": 14957,
+          "name": "阿斯佩爾 - 魔族 Azphel - Asmodians"
+        },
+        {
+          "id": 14955,
+          "name": "露梅爾 - 魔族 Lumiel - Asmodians"
+        },
+        {
+          "id": 14964,
+          "name": "默尼 - 魔族 Munin - Asmodians"
+        }
+      ]
+    },
+    {
+      "id": 14846,
+      "name": "EU"
+    },
+    {
+      "id": 14847,
+      "name": "KR"
+    },
+    {
+      "id": 14845,
+      "name": "US"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

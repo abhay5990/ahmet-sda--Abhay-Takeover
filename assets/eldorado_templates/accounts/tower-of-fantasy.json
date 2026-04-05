@@ -1,0 +1,546 @@
+{
+  "game_id": "119",
+  "game": "tower-of-fantasy",
+  "game_name": "Tower of Fantasy",
+  "category": "Account",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Asia-Pacific",
+      "group": "Region",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "Gomap"
+        },
+        {
+          "id": "0-1",
+          "name": "Venus"
+        },
+        {
+          "id": "0-10",
+          "name": "Memory"
+        },
+        {
+          "id": "0-11",
+          "name": "Oxygen"
+        },
+        {
+          "id": "0-2",
+          "name": "Nova"
+        },
+        {
+          "id": "0-3",
+          "name": "Galaxy"
+        },
+        {
+          "id": "0-4",
+          "name": "Eden"
+        },
+        {
+          "id": "0-5",
+          "name": "Fate"
+        },
+        {
+          "id": "0-6",
+          "name": "Ruby"
+        },
+        {
+          "id": "0-7",
+          "name": "Babel"
+        },
+        {
+          "id": "0-8",
+          "name": "Pluto"
+        },
+        {
+          "id": "0-9",
+          "name": "Sushi"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "North America",
+      "group": "Region",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "New Era"
+        },
+        {
+          "id": "1-1",
+          "name": "Freedom-Oasis"
+        },
+        {
+          "id": "1-10",
+          "name": "Observer"
+        },
+        {
+          "id": "1-11",
+          "name": "Lunalite"
+        },
+        {
+          "id": "1-12",
+          "name": "Oumuamua"
+        },
+        {
+          "id": "1-13",
+          "name": "Silver Bridge"
+        },
+        {
+          "id": "1-14",
+          "name": "Eternium Phantasy"
+        },
+        {
+          "id": "1-15",
+          "name": "Sol-III"
+        },
+        {
+          "id": "1-16",
+          "name": "Myriad"
+        },
+        {
+          "id": "1-17",
+          "name": "Lighthouse"
+        },
+        {
+          "id": "1-18",
+          "name": "Azure Plane"
+        },
+        {
+          "id": "1-19",
+          "name": "Nirvana"
+        },
+        {
+          "id": "1-2",
+          "name": "The worlds between"
+        },
+        {
+          "id": "1-3",
+          "name": "Frontier"
+        },
+        {
+          "id": "1-4",
+          "name": "The Glades"
+        },
+        {
+          "id": "1-5",
+          "name": "Nightfall"
+        },
+        {
+          "id": "1-6",
+          "name": "Libera"
+        },
+        {
+          "id": "1-7",
+          "name": "Solaris"
+        },
+        {
+          "id": "1-8",
+          "name": "Radiant"
+        },
+        {
+          "id": "1-9",
+          "name": "Tempest"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "South America",
+      "group": "Region",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "Phoenix"
+        },
+        {
+          "id": "2-1",
+          "name": "Tiamat"
+        },
+        {
+          "id": "2-10",
+          "name": "Pegasus"
+        },
+        {
+          "id": "2-11",
+          "name": "Cepheu"
+        },
+        {
+          "id": "2-12",
+          "name": "Corvus"
+        },
+        {
+          "id": "2-13",
+          "name": "Cygnus"
+        },
+        {
+          "id": "2-14",
+          "name": "Grus"
+        },
+        {
+          "id": "2-15",
+          "name": "Ophiuchus"
+        },
+        {
+          "id": "2-16",
+          "name": "Hydra"
+        },
+        {
+          "id": "2-17",
+          "name": "Lyra"
+        },
+        {
+          "id": "2-2",
+          "name": "Centaurus"
+        },
+        {
+          "id": "2-3",
+          "name": "Columba"
+        },
+        {
+          "id": "2-4",
+          "name": "Orion"
+        },
+        {
+          "id": "2-5",
+          "name": "Luna Azul"
+        },
+        {
+          "id": "2-6",
+          "name": "Hope"
+        },
+        {
+          "id": "2-7",
+          "name": "Tanzanite"
+        },
+        {
+          "id": "2-8",
+          "name": "Calodesma Seven"
+        },
+        {
+          "id": "2-9",
+          "name": "Antila"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Europe",
+      "group": "Region",
+      "children": [
+        {
+          "id": "3-0",
+          "name": "Excalibur"
+        },
+        {
+          "id": "3-1",
+          "name": "Estrela"
+        },
+        {
+          "id": "3-10",
+          "name": "Blumous"
+        },
+        {
+          "id": "3-11",
+          "name": "Celestrialrise"
+        },
+        {
+          "id": "3-12",
+          "name": "Dyrnwyn"
+        },
+        {
+          "id": "3-13",
+          "name": "Elypium"
+        },
+        {
+          "id": "3-14",
+          "name": "Espoir IV"
+        },
+        {
+          "id": "3-15",
+          "name": "Futuria"
+        },
+        {
+          "id": "3-16",
+          "name": "Ex Nihilor"
+        },
+        {
+          "id": "3-17",
+          "name": "Hephaestus"
+        },
+        {
+          "id": "3-18",
+          "name": "Kuura"
+        },
+        {
+          "id": "3-19",
+          "name": "Midgard"
+        },
+        {
+          "id": "3-2",
+          "name": "Ether"
+        },
+        {
+          "id": "3-20",
+          "name": "Iter"
+        },
+        {
+          "id": "3-21",
+          "name": "Lycoris"
+        },
+        {
+          "id": "3-22",
+          "name": "Uranus"
+        },
+        {
+          "id": "3-23",
+          "name": "Utopia"
+        },
+        {
+          "id": "3-24",
+          "name": "Jupiter"
+        },
+        {
+          "id": "3-25",
+          "name": "Sweetie"
+        },
+        {
+          "id": "3-26",
+          "name": "Atlantis"
+        },
+        {
+          "id": "3-27",
+          "name": "Sakura"
+        },
+        {
+          "id": "3-28",
+          "name": "Seeker"
+        },
+        {
+          "id": "3-29",
+          "name": "Shinya"
+        },
+        {
+          "id": "3-3",
+          "name": "Cosmos"
+        },
+        {
+          "id": "3-30",
+          "name": "Stella"
+        },
+        {
+          "id": "3-31",
+          "name": "Takoyaki"
+        },
+        {
+          "id": "3-32",
+          "name": "Lyramiel"
+        },
+        {
+          "id": "3-33",
+          "name": "Silvercoast Lab"
+        },
+        {
+          "id": "3-4",
+          "name": "Aimanium"
+        },
+        {
+          "id": "3-5",
+          "name": "Alintheus"
+        },
+        {
+          "id": "3-6",
+          "name": "Andos"
+        },
+        {
+          "id": "3-7",
+          "name": "Anomora"
+        },
+        {
+          "id": "3-8",
+          "name": "Astora"
+        },
+        {
+          "id": "3-9",
+          "name": "Valstamm"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Southeast Asia",
+      "group": "Region",
+      "children": [
+        {
+          "id": "4-0",
+          "name": "Aestral-Noa"
+        },
+        {
+          "id": "4-1",
+          "name": "Fantasia"
+        },
+        {
+          "id": "4-10",
+          "name": "Saeri"
+        },
+        {
+          "id": "4-11",
+          "name": "Aeria"
+        },
+        {
+          "id": "4-12",
+          "name": "Scarlet"
+        },
+        {
+          "id": "4-13",
+          "name": "Oryza"
+        },
+        {
+          "id": "4-14",
+          "name": "Arcania"
+        },
+        {
+          "id": "4-15",
+          "name": "Animus"
+        },
+        {
+          "id": "4-16",
+          "name": "Mistilteinn"
+        },
+        {
+          "id": "4-17",
+          "name": "Illyrians"
+        },
+        {
+          "id": "4-18",
+          "name": "Florione"
+        },
+        {
+          "id": "4-19",
+          "name": "Vanilla"
+        },
+        {
+          "id": "4-2",
+          "name": "Gumi Gumi"
+        },
+        {
+          "id": "4-3",
+          "name": "Stardust"
+        },
+        {
+          "id": "4-4",
+          "name": "Phantasia"
+        },
+        {
+          "id": "4-5",
+          "name": "Mechafield"
+        },
+        {
+          "id": "4-6",
+          "name": "Ethereal Dream"
+        },
+        {
+          "id": "4-7",
+          "name": "Odyssey"
+        },
+        {
+          "id": "4-8",
+          "name": "Osillron"
+        },
+        {
+          "id": "4-9",
+          "name": "Chandra"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "hasOriginalEmail": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  },
+  "accountSecretDetails": {
+    "type": "array",
+    "required": false,
+    "description": "Account credentials, each entry as \"login:password\" format. Not required for manual delivery offers.",
+    "items": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "game": "final-fantasy-xiv",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "region": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Japan",
+        "North America",
+        "Europe",
+        "Oceania"
+      ]
+    },
+    "server": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Cerberus",
+        "Louisoix",
+        "Moogle",
+        "Omega",
+        "Ragnarok",
+        "Spriggan",
+        "Sagittarius",
+        "Phantom",
+        "Lich",
+        "Odin",
+        "Phoenix",
+        "Shiva",
+        "Twintania",
+        "Zodiark",
+        "Alpha",
+        "Raiden",
+        "Innocence",
+        "Pixie",
+        "Titania",
+        "Tycoon",
+        "Adamantoise",
+        "Cactuar",
+        "Faerie",
+        "Gilgamesh",
+        "Jenova",
+        "Midgardsormr",
+        "Sargatanas",
+        "Siren",
+        "Balmung",
+        "Brynhildr",
+        "Coeurl",
+        "Diabolos",
+        "Goblin",
+        "Malboro",
+        "Mateus",
+        "Zalera",
+        "Cuchulainn",
+        "Golem",
+        "Halicarnassus",
+        "Kraken",
+        "Maduin",
+        "Marilith",
+        "Rafflesia",
+        "Seraph",
+        "Behemoth",
+        "Excalibur",
+        "Exodus",
+        "Famfrit",
+        "Hyperion",
+        "Lamia",
+        "Leviathan",
+        "Ultros",
+        "Bismarck",
+        "Ravana",
+        "Sephirot",
+        "Sophia",
+        "Zurvan",
+        "Aegis",
+        "Atomos",
+        "Carbuncle",
+        "Garuda",
+        "Gungnir",
+        "Kujata",
+        "Tonberry",
+        "Typhon",
+        "Alexander",
+        "Bahamut",
+        "Durandal",
+        "Fenrir",
+        "Ifrit",
+        "Ridill",
+        "Tiamat",
+        "Ultima",
+        "Anima",
+        "Asura",
+        "Chocobo",
+        "Hades",
+        "Ixion",
+        "Masamune",
+        "Pandaemonium",
+        "Titan",
+        "Belias",
+        "Mandragora",
+        "Ramuh",
+        "Shinryu",
+        "Unicorn",
+        "Valefor",
+        "Yojimbo",
+        "Zeromus"
+      ]
+    }
+  }
+}

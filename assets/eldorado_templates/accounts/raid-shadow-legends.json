@@ -1,0 +1,153 @@
+{
+  "game_id": "73",
+  "game": "raid-shadow-legends",
+  "game_name": "Raid: Shadow Legends",
+  "category": "Account",
+  "tradeEnvironments": [],
+  "attributes": {
+    "raid-shadow-legends-energy": {
+      "name": "Energy",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "0-5000",
+          "name": "0-5000"
+        },
+        {
+          "id": "5000-10000",
+          "name": "5000-10000"
+        },
+        {
+          "id": "10001-20000",
+          "name": "10001-20000"
+        },
+        {
+          "id": "20001-50000",
+          "name": "20001-50000"
+        },
+        {
+          "id": "50001-plus",
+          "name": "50001+"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "raid-shadow-legends-power": {
+      "name": "Power",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "0-1m",
+          "name": "0-1m"
+        },
+        {
+          "id": "1m-5m",
+          "name": "1m-5m"
+        },
+        {
+          "id": "5m-20m",
+          "name": "5m-20m"
+        },
+        {
+          "id": "20m-plus",
+          "name": "20m+"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "hasOriginalEmail": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  },
+  "accountSecretDetails": {
+    "type": "array",
+    "required": false,
+    "description": "Account credentials, each entry as \"login:password\" format. Not required for manual delivery offers.",
+    "items": {
+      "type": "string"
+    }
+  }
+}

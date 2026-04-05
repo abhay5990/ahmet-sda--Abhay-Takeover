@@ -1,0 +1,232 @@
+{
+  "game": "old-school-runescape",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "account_type": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Jagex Launcher",
+        "Legacy"
+      ]
+    },
+    "account_build": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Main",
+        "Pure",
+        "Staker",
+        "Berserker",
+        "Starter"
+      ]
+    },
+    "total_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "combat_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "quest_points_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "bank_value_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "attack_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "strength_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "defence_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "ranger_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "prayer_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "magic_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "runecraft_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "hitpoints_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "crafting_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "mining_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "smithing_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "fishing_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "cooking_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "firemaking_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "woodcutting_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "agility_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "herblore_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "thieving_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "fletching_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "slayer_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "farmer_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "construction_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "hunter_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    }
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "game_id": 15076,
+  "game": "lineage-classic",
+  "game_name": "Lineage Classic",
+  "seo_name": "Lineage-Classic",
+  "servers": [
+    {
+      "id": 15077,
+      "name": "Taiwan",
+      "subCategories": [
+        {
+          "id": 15082,
+          "name": "冥王黑帝斯"
+        },
+        {
+          "id": 15083,
+          "name": "勝利女神雅典娜"
+        },
+        {
+          "id": 15078,
+          "name": "半人馬涅索斯"
+        },
+        {
+          "id": 15079,
+          "name": "天后海拉"
+        },
+        {
+          "id": 15080,
+          "name": "天神宙斯"
+        },
+        {
+          "id": 15081,
+          "name": "太陽神阿波羅"
+        },
+        {
+          "id": 15092,
+          "name": "愛神邱比特"
+        },
+        {
+          "id": 15089,
+          "name": "戰神馬爾斯"
+        },
+        {
+          "id": 15091,
+          "name": "收獲女神蒂蜜特"
+        },
+        {
+          "id": 15088,
+          "name": "月亮女神阿緹蜜斯"
+        },
+        {
+          "id": 15087,
+          "name": "水蛇許德拉"
+        },
+        {
+          "id": 15094,
+          "name": "泰坦女神瑞亞"
+        },
+        {
+          "id": 15090,
+          "name": "海神波塞頓"
+        },
+        {
+          "id": 15084,
+          "name": "火神赫發斯特斯"
+        },
+        {
+          "id": 15093,
+          "name": "牛人彌諾陶洛斯"
+        },
+        {
+          "id": 15085,
+          "name": "美神維納斯"
+        },
+        {
+          "id": 15086,
+          "name": "蛇髮女墨杜沙"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

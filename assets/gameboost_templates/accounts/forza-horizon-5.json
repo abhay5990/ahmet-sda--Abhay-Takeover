@@ -1,0 +1,144 @@
+{
+  "game": "forza-horizon-5",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "platforms": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string",
+        "required": true,
+        "values": [
+          "Steam",
+          "Xbox",
+          "Playstation",
+          "PC"
+        ]
+      }
+    },
+    "edition": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Standard",
+        "Deluxe",
+        "Premium"
+      ]
+    },
+    "cars_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "all_cars": {
+      "type": "boolean",
+      "required": false
+    },
+    "credits_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "ws_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "super_ws_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "progress_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "forzathon_points_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "skill_points_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "vip_membership": {
+      "type": "boolean",
+      "required": false
+    }
+  }
+}

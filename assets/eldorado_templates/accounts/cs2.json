@@ -1,0 +1,183 @@
+{
+  "game_id": "20",
+  "game": "cs2",
+  "game_name": "Counter-Strike 2",
+  "category": "Account",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Unrated",
+      "group": "Premier Rating"
+    },
+    {
+      "id": "1",
+      "name": "0-4,999",
+      "group": "Premier Rating"
+    },
+    {
+      "id": "2",
+      "name": "5,000-9,999",
+      "group": "Premier Rating"
+    },
+    {
+      "id": "3",
+      "name": "10,000-14,999",
+      "group": "Premier Rating"
+    },
+    {
+      "id": "4",
+      "name": "15,000-19,999",
+      "group": "Premier Rating"
+    },
+    {
+      "id": "5",
+      "name": "20,000-24,999",
+      "group": "Premier Rating"
+    },
+    {
+      "id": "6",
+      "name": "25,000-29,999",
+      "group": "Premier Rating"
+    },
+    {
+      "id": "7",
+      "name": "30,000-35,000",
+      "group": "Premier Rating"
+    },
+    {
+      "id": "8",
+      "name": "Other",
+      "group": "Premier Rating"
+    }
+  ],
+  "attributes": {
+    "counter-strike-2-medals": {
+      "name": "Medals",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "0-9-medals",
+          "name": "0-9 Medals"
+        },
+        {
+          "id": "10-19-medals",
+          "name": "10-19 Medals"
+        },
+        {
+          "id": "20-29-medals",
+          "name": "20-29 Medals"
+        },
+        {
+          "id": "30-39-medals",
+          "name": "30-39 Medals"
+        },
+        {
+          "id": "40-plus-medals",
+          "name": "40+ Medals"
+        }
+      ]
+    },
+    "counter-strike-2-prime-status": {
+      "name": "Prime Status",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "active-prime",
+          "name": "Active Prime"
+        },
+        {
+          "id": "non-prime",
+          "name": "Non Prime"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "hasOriginalEmail": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  },
+  "accountSecretDetails": {
+    "type": "array",
+    "required": false,
+    "description": "Account credentials, each entry as \"login:password\" format. Not required for manual delivery offers.",
+    "items": {
+      "type": "string"
+    }
+  }
+}

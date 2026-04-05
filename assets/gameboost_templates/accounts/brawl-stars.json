@@ -1,0 +1,150 @@
+{
+  "game": "brawl-stars",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "max_level_brawlers_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "total_prestige_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "trophies_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "hypercharge_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "experience_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "gems_count": {
+      "type": "integer",
+      "required": false
+    },
+    "brawlers_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "brawlers_rank_30_plus_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "skins_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "buffies_count": {
+      "type": "number",
+      "required": false,
+      "max": 48
+    },
+    "current_rank": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Diamond",
+        "Mythic",
+        "Legendary",
+        "Masters",
+        "Pro"
+      ]
+    },
+    "current_division": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "I",
+        "II",
+        "III"
+      ]
+    }
+  }
+}

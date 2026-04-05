@@ -1,0 +1,303 @@
+{
+  "game_id": 2890,
+  "game": "m2",
+  "game_name": "Metin 2",
+  "seo_name": "M2",
+  "servers": [
+    {
+      "id": 12782,
+      "name": "AE",
+      "subCategories": [
+        {
+          "id": 12822,
+          "name": "العالم_العربي"
+        }
+      ]
+    },
+    {
+      "id": 12783,
+      "name": "CZ",
+      "subCategories": [
+        {
+          "id": 12794,
+          "name": "Česko"
+        }
+      ]
+    },
+    {
+      "id": 12784,
+      "name": "DE",
+      "subCategories": [
+        {
+          "id": 12795,
+          "name": "Germania"
+        },
+        {
+          "id": 12796,
+          "name": "Teutonia"
+        }
+      ]
+    },
+    {
+      "id": 12785,
+      "name": "ES",
+      "subCategories": [
+        {
+          "id": 12797,
+          "name": "España"
+        }
+      ]
+    },
+    {
+      "id": 12823,
+      "name": "GR",
+      "subCategories": [
+        {
+          "id": 12824,
+          "name": "Ελλάδα"
+        }
+      ]
+    },
+    {
+      "id": 12786,
+      "name": "HU",
+      "subCategories": [
+        {
+          "id": 12798,
+          "name": "Magyarország"
+        }
+      ]
+    },
+    {
+      "id": 12787,
+      "name": "INT",
+      "subCategories": [
+        {
+          "id": 12799,
+          "name": "Azrael"
+        },
+        {
+          "id": 12800,
+          "name": "Carpathians"
+        },
+        {
+          "id": 12801,
+          "name": "Europe"
+        },
+        {
+          "id": 12802,
+          "name": "Felis"
+        },
+        {
+          "id": 12803,
+          "name": "Lynx"
+        },
+        {
+          "id": 12804,
+          "name": "Polyphemos"
+        },
+        {
+          "id": 12805,
+          "name": "Tigerghost"
+        }
+      ]
+    },
+    {
+      "id": 12788,
+      "name": "IT",
+      "subCategories": [
+        {
+          "id": 12806,
+          "name": "Italia"
+        }
+      ]
+    },
+    {
+      "id": 12789,
+      "name": "PL",
+      "subCategories": [
+        {
+          "id": 12807,
+          "name": "Polska"
+        }
+      ]
+    },
+    {
+      "id": 12790,
+      "name": "PT",
+      "subCategories": [
+        {
+          "id": 12808,
+          "name": "Portugal"
+        }
+      ]
+    },
+    {
+      "id": 12791,
+      "name": "RO",
+      "subCategories": [
+        {
+          "id": 12810,
+          "name": "România"
+        },
+        {
+          "id": 12809,
+          "name": "Țara Românească"
+        }
+      ]
+    },
+    {
+      "id": 12792,
+      "name": "RU",
+      "subCategories": [
+        {
+          "id": 12811,
+          "name": "Россия"
+        }
+      ]
+    },
+    {
+      "id": 12793,
+      "name": "TR",
+      "subCategories": [
+        {
+          "id": 12812,
+          "name": "Anadolu"
+        },
+        {
+          "id": 12813,
+          "name": "Arkadaşla"
+        },
+        {
+          "id": 12814,
+          "name": "Bagjanamu"
+        },
+        {
+          "id": 12815,
+          "name": "Barbaros"
+        },
+        {
+          "id": 12816,
+          "name": "Dandanakan"
+        },
+        {
+          "id": 12817,
+          "name": "Ege"
+        },
+        {
+          "id": 12818,
+          "name": "Ezel"
+        },
+        {
+          "id": 12819,
+          "name": "Marmara"
+        },
+        {
+          "id": 12820,
+          "name": "Türkiye"
+        },
+        {
+          "id": 12821,
+          "name": "Van"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

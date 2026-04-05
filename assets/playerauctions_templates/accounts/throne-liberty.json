@@ -1,0 +1,321 @@
+{
+  "game_id": 13581,
+  "game": "throne-liberty",
+  "game_name": "Throne and Liberty",
+  "seo_name": "Throne-Liberty",
+  "servers": [
+    {
+      "id": 13954,
+      "name": "Eastern Americas - Tax Not Covered",
+      "subCategories": [
+        {
+          "id": 14047,
+          "name": "Adrenaline"
+        },
+        {
+          "id": 13957,
+          "name": "Carnage"
+        },
+        {
+          "id": 14055,
+          "name": "Ivory"
+        },
+        {
+          "id": 14053,
+          "name": "Pippin - PS Only"
+        },
+        {
+          "id": 15042,
+          "name": "Roen"
+        },
+        {
+          "id": 13958,
+          "name": "Snowburn"
+        },
+        {
+          "id": 13965,
+          "name": "Stellarite"
+        },
+        {
+          "id": 15043,
+          "name": "Vulkan"
+        }
+      ]
+    },
+    {
+      "id": 13971,
+      "name": "Western Americas - Tax Not Covered",
+      "subCategories": [
+        {
+          "id": 14059,
+          "name": "Akidu - PS Only"
+        },
+        {
+          "id": 13983,
+          "name": "Invoker"
+        },
+        {
+          "id": 13972,
+          "name": "Moonstone"
+        },
+        {
+          "id": 13974,
+          "name": "Oblivion"
+        },
+        {
+          "id": 15044,
+          "name": "Zairos"
+        }
+      ]
+    },
+    {
+      "id": 13984,
+      "name": "South America - Tax Not Covered",
+      "subCategories": [
+        {
+          "id": 14060,
+          "name": "Chamir - PS Only"
+        },
+        {
+          "id": 15045,
+          "name": "Deluzhnoa"
+        },
+        {
+          "id": 14066,
+          "name": "Eldritch"
+        },
+        {
+          "id": 13992,
+          "name": "Resistance"
+        },
+        {
+          "id": 13987,
+          "name": "Starlight"
+        }
+      ]
+    },
+    {
+      "id": 13997,
+      "name": "Europe - Tax Not Covered",
+      "subCategories": [
+        {
+          "id": 14016,
+          "name": "Arcane"
+        },
+        {
+          "id": 15040,
+          "name": "Calanthia"
+        },
+        {
+          "id": 14003,
+          "name": "Cascade"
+        },
+        {
+          "id": 14005,
+          "name": "Conviction"
+        },
+        {
+          "id": 15041,
+          "name": "Cordy"
+        },
+        {
+          "id": 13998,
+          "name": "Destiny"
+        },
+        {
+          "id": 14072,
+          "name": "Emerald"
+        },
+        {
+          "id": 14018,
+          "name": "Fortune"
+        },
+        {
+          "id": 14085,
+          "name": "Judgment"
+        },
+        {
+          "id": 14013,
+          "name": "Obsidian"
+        },
+        {
+          "id": 14074,
+          "name": "Paola - PS Only"
+        },
+        {
+          "id": 14001,
+          "name": "Rebellion"
+        },
+        {
+          "id": 14071,
+          "name": "Talon"
+        },
+        {
+          "id": 14014,
+          "name": "Zephyr"
+        }
+      ]
+    },
+    {
+      "id": 14020,
+      "name": "Japan and Oceania - Tax Not Covered",
+      "subCategories": [
+        {
+          "id": 14028,
+          "name": "Amethyst"
+        },
+        {
+          "id": 15046,
+          "name": "Dragaryle"
+        },
+        {
+          "id": 14027,
+          "name": "Sunstorm"
+        },
+        {
+          "id": 14023,
+          "name": "Sylaveth"
+        },
+        {
+          "id": 14026,
+          "name": "Titanspine"
+        },
+        {
+          "id": 14093,
+          "name": "Valkarg - PS Only"
+        }
+      ]
+    },
+    {
+      "id": 13599,
+      "name": "KR - Tax Not Covered",
+      "subCategories": [
+        {
+          "id": 13600,
+          "name": "Aaron"
+        },
+        {
+          "id": 14032,
+          "name": "Asota"
+        },
+        {
+          "id": 14036,
+          "name": "Berkant"
+        },
+        {
+          "id": 14031,
+          "name": "Calis"
+        },
+        {
+          "id": 14035,
+          "name": "Crimson"
+        },
+        {
+          "id": 14033,
+          "name": "Einar"
+        },
+        {
+          "id": 14034,
+          "name": "Ponshine"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

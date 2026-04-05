@@ -1,0 +1,138 @@
+{
+  "game": "clash-royale",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "arena_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "king_tower_level": {
+      "type": "integer",
+      "required": false,
+      "min": 1
+    },
+    "gems_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "trophies_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "max_cards_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "emotes_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "gold_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "best_trophies_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "heroes_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "evolution_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "unlocked_cards_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "account_level": {
+      "type": "integer",
+      "required": false,
+      "min": 1
+    }
+  }
+}

@@ -1,0 +1,4235 @@
+{
+  "game_id": 10,
+  "game": "wow",
+  "game_name": "World of Warcraft: Midnight",
+  "seo_name": "WoW",
+  "servers": [
+    {
+      "id": 11353,
+      "name": "US",
+      "subCategories": [
+        {
+          "id": 11601,
+          "name": "Aegwynn - Alliance"
+        },
+        {
+          "id": 11355,
+          "name": "Aegwynn - Horde"
+        },
+        {
+          "id": 11602,
+          "name": "Aerie Peak - Alliance"
+        },
+        {
+          "id": 11356,
+          "name": "Aerie Peak - Horde"
+        },
+        {
+          "id": 11603,
+          "name": "Agamaggan - Alliance"
+        },
+        {
+          "id": 11357,
+          "name": "Agamaggan - Horde"
+        },
+        {
+          "id": 11604,
+          "name": "Aggramar - Alliance"
+        },
+        {
+          "id": 11358,
+          "name": "Aggramar - Horde"
+        },
+        {
+          "id": 11605,
+          "name": "Akama - Alliance"
+        },
+        {
+          "id": 11359,
+          "name": "Akama - Horde"
+        },
+        {
+          "id": 11606,
+          "name": "Alexstrasza - Alliance"
+        },
+        {
+          "id": 11360,
+          "name": "Alexstrasza - Horde"
+        },
+        {
+          "id": 11607,
+          "name": "Alleria - Alliance"
+        },
+        {
+          "id": 11361,
+          "name": "Alleria - Horde"
+        },
+        {
+          "id": 11608,
+          "name": "Altar of Storms - Alliance"
+        },
+        {
+          "id": 11362,
+          "name": "Altar of Storms - Horde"
+        },
+        {
+          "id": 11609,
+          "name": "Alterac Mountains - Alliance"
+        },
+        {
+          "id": 11363,
+          "name": "Alterac Mountains - Horde"
+        },
+        {
+          "id": 11610,
+          "name": "Aman'Thul - Alliance"
+        },
+        {
+          "id": 11364,
+          "name": "Aman'Thul - Horde"
+        },
+        {
+          "id": 11611,
+          "name": "Andorhal - Alliance"
+        },
+        {
+          "id": 11365,
+          "name": "Andorhal - Horde"
+        },
+        {
+          "id": 11612,
+          "name": "Anetheron - Alliance"
+        },
+        {
+          "id": 11366,
+          "name": "Anetheron - Horde"
+        },
+        {
+          "id": 11613,
+          "name": "Antonidas - Alliance"
+        },
+        {
+          "id": 11367,
+          "name": "Antonidas - Horde"
+        },
+        {
+          "id": 11614,
+          "name": "Anub'arak - Alliance"
+        },
+        {
+          "id": 11368,
+          "name": "Anub'arak - Horde"
+        },
+        {
+          "id": 11615,
+          "name": "Anvilmar - Alliance"
+        },
+        {
+          "id": 11369,
+          "name": "Anvilmar - Horde"
+        },
+        {
+          "id": 11616,
+          "name": "Arathor - Alliance"
+        },
+        {
+          "id": 11370,
+          "name": "Arathor - Horde"
+        },
+        {
+          "id": 11617,
+          "name": "Archimonde - Alliance"
+        },
+        {
+          "id": 11371,
+          "name": "Archimonde - Horde"
+        },
+        {
+          "id": 11618,
+          "name": "Area 52 - Alliance"
+        },
+        {
+          "id": 11372,
+          "name": "Area 52 - Horde"
+        },
+        {
+          "id": 11619,
+          "name": "Argent Dawn - Alliance"
+        },
+        {
+          "id": 11373,
+          "name": "Argent Dawn - Horde"
+        },
+        {
+          "id": 11620,
+          "name": "Arthas - Alliance"
+        },
+        {
+          "id": 11374,
+          "name": "Arthas - Horde"
+        },
+        {
+          "id": 11621,
+          "name": "Arygos - Alliance"
+        },
+        {
+          "id": 11375,
+          "name": "Arygos - Horde"
+        },
+        {
+          "id": 11622,
+          "name": "Auchindoun - Alliance"
+        },
+        {
+          "id": 11376,
+          "name": "Auchindoun - Horde"
+        },
+        {
+          "id": 11623,
+          "name": "Azgalor - Alliance"
+        },
+        {
+          "id": 11377,
+          "name": "Azgalor - Horde"
+        },
+        {
+          "id": 11624,
+          "name": "Azjol-Nerub - Alliance"
+        },
+        {
+          "id": 11378,
+          "name": "Azjol-Nerub - Horde"
+        },
+        {
+          "id": 11625,
+          "name": "Azralon - Alliance"
+        },
+        {
+          "id": 11379,
+          "name": "Azralon - Horde"
+        },
+        {
+          "id": 11626,
+          "name": "Azshara - Alliance"
+        },
+        {
+          "id": 11380,
+          "name": "Azshara - Horde"
+        },
+        {
+          "id": 11627,
+          "name": "Azuremyst - Alliance"
+        },
+        {
+          "id": 11381,
+          "name": "Azuremyst - Horde"
+        },
+        {
+          "id": 11628,
+          "name": "Baelgun - Alliance"
+        },
+        {
+          "id": 11382,
+          "name": "Baelgun - Horde"
+        },
+        {
+          "id": 11629,
+          "name": "Balnazzar - Alliance"
+        },
+        {
+          "id": 11383,
+          "name": "Balnazzar - Horde"
+        },
+        {
+          "id": 11630,
+          "name": "Barthilas - Alliance"
+        },
+        {
+          "id": 11384,
+          "name": "Barthilas - Horde"
+        },
+        {
+          "id": 11631,
+          "name": "Black Dragonflight - Alliance"
+        },
+        {
+          "id": 11385,
+          "name": "Black Dragonflight - Horde"
+        },
+        {
+          "id": 11632,
+          "name": "Blackhand - Alliance"
+        },
+        {
+          "id": 11386,
+          "name": "Blackhand - Horde"
+        },
+        {
+          "id": 11633,
+          "name": "Blackrock - Alliance"
+        },
+        {
+          "id": 11387,
+          "name": "Blackrock - Horde"
+        },
+        {
+          "id": 11634,
+          "name": "Blackwater Raiders - Alliance"
+        },
+        {
+          "id": 11388,
+          "name": "Blackwater Raiders - Horde"
+        },
+        {
+          "id": 11635,
+          "name": "Blackwing Lair - Alliance"
+        },
+        {
+          "id": 11389,
+          "name": "Blackwing Lair - Horde"
+        },
+        {
+          "id": 11636,
+          "name": "Blade's Edge - Alliance"
+        },
+        {
+          "id": 11390,
+          "name": "Blade's Edge - Horde"
+        },
+        {
+          "id": 11637,
+          "name": "Bladefist - Alliance"
+        },
+        {
+          "id": 11391,
+          "name": "Bladefist - Horde"
+        },
+        {
+          "id": 11638,
+          "name": "Bleeding Hollow - Alliance"
+        },
+        {
+          "id": 11392,
+          "name": "Bleeding Hollow - Horde"
+        },
+        {
+          "id": 11639,
+          "name": "Blood Furnace - Alliance"
+        },
+        {
+          "id": 11393,
+          "name": "Blood Furnace - Horde"
+        },
+        {
+          "id": 11640,
+          "name": "Bloodhoof - Alliance"
+        },
+        {
+          "id": 11394,
+          "name": "Bloodhoof - Horde"
+        },
+        {
+          "id": 11641,
+          "name": "Bloodscalp - Alliance"
+        },
+        {
+          "id": 11395,
+          "name": "Bloodscalp - Horde"
+        },
+        {
+          "id": 11642,
+          "name": "Bonechewer - Alliance"
+        },
+        {
+          "id": 11396,
+          "name": "Bonechewer - Horde"
+        },
+        {
+          "id": 11643,
+          "name": "Borean Tundra - Alliance"
+        },
+        {
+          "id": 11397,
+          "name": "Borean Tundra - Horde"
+        },
+        {
+          "id": 11644,
+          "name": "Boulderfist - Alliance"
+        },
+        {
+          "id": 11398,
+          "name": "Boulderfist - Horde"
+        },
+        {
+          "id": 11645,
+          "name": "Bronzebeard - Alliance"
+        },
+        {
+          "id": 11399,
+          "name": "Bronzebeard - Horde"
+        },
+        {
+          "id": 11646,
+          "name": "Burning Blade - Alliance"
+        },
+        {
+          "id": 11400,
+          "name": "Burning Blade - Horde"
+        },
+        {
+          "id": 11647,
+          "name": "Burning Legion - Alliance"
+        },
+        {
+          "id": 11401,
+          "name": "Burning Legion - Horde"
+        },
+        {
+          "id": 11648,
+          "name": "Caelestrasz - Alliance"
+        },
+        {
+          "id": 11402,
+          "name": "Caelestrasz - Horde"
+        },
+        {
+          "id": 11649,
+          "name": "Cairne - Alliance"
+        },
+        {
+          "id": 11403,
+          "name": "Cairne - Horde"
+        },
+        {
+          "id": 11650,
+          "name": "Cenarion Circle - Alliance"
+        },
+        {
+          "id": 11404,
+          "name": "Cenarion Circle - Horde"
+        },
+        {
+          "id": 11651,
+          "name": "Cenarius - Alliance"
+        },
+        {
+          "id": 11405,
+          "name": "Cenarius - Horde"
+        },
+        {
+          "id": 11652,
+          "name": "Cho'gall - Alliance"
+        },
+        {
+          "id": 11406,
+          "name": "Cho'gall - Horde"
+        },
+        {
+          "id": 11653,
+          "name": "Chromaggus - Alliance"
+        },
+        {
+          "id": 11407,
+          "name": "Chromaggus - Horde"
+        },
+        {
+          "id": 11654,
+          "name": "Coilfang - Alliance"
+        },
+        {
+          "id": 11408,
+          "name": "Coilfang - Horde"
+        },
+        {
+          "id": 11655,
+          "name": "Crushridge - Alliance"
+        },
+        {
+          "id": 11409,
+          "name": "Crushridge - Horde"
+        },
+        {
+          "id": 11656,
+          "name": "Daggerspine - Alliance"
+        },
+        {
+          "id": 11410,
+          "name": "Daggerspine - Horde"
+        },
+        {
+          "id": 11657,
+          "name": "Dalaran - Alliance"
+        },
+        {
+          "id": 11411,
+          "name": "Dalaran - Horde"
+        },
+        {
+          "id": 11658,
+          "name": "Dalvengyr - Alliance"
+        },
+        {
+          "id": 11412,
+          "name": "Dalvengyr - Horde"
+        },
+        {
+          "id": 11659,
+          "name": "Dark Iron - Alliance"
+        },
+        {
+          "id": 11413,
+          "name": "Dark Iron - Horde"
+        },
+        {
+          "id": 11660,
+          "name": "Darkspear - Alliance"
+        },
+        {
+          "id": 11414,
+          "name": "Darkspear - Horde"
+        },
+        {
+          "id": 11661,
+          "name": "Darrowmere - Alliance"
+        },
+        {
+          "id": 11415,
+          "name": "Darrowmere - Horde"
+        },
+        {
+          "id": 11662,
+          "name": "Dath'Remar - Alliance"
+        },
+        {
+          "id": 11416,
+          "name": "Dath'Remar - Horde"
+        },
+        {
+          "id": 11663,
+          "name": "Dawnbringer - Alliance"
+        },
+        {
+          "id": 11417,
+          "name": "Dawnbringer - Horde"
+        },
+        {
+          "id": 11664,
+          "name": "Deathwing - Alliance"
+        },
+        {
+          "id": 11418,
+          "name": "Deathwing - Horde"
+        },
+        {
+          "id": 11665,
+          "name": "Demon Soul - Alliance"
+        },
+        {
+          "id": 11419,
+          "name": "Demon Soul - Horde"
+        },
+        {
+          "id": 11666,
+          "name": "Dentarg - Alliance"
+        },
+        {
+          "id": 11420,
+          "name": "Dentarg - Horde"
+        },
+        {
+          "id": 11667,
+          "name": "Destromath - Alliance"
+        },
+        {
+          "id": 11421,
+          "name": "Destromath - Horde"
+        },
+        {
+          "id": 11668,
+          "name": "Dethecus - Alliance"
+        },
+        {
+          "id": 11422,
+          "name": "Dethecus - Horde"
+        },
+        {
+          "id": 11669,
+          "name": "Detheroc - Alliance"
+        },
+        {
+          "id": 11423,
+          "name": "Detheroc - Horde"
+        },
+        {
+          "id": 11670,
+          "name": "Doomhammer - Alliance"
+        },
+        {
+          "id": 11424,
+          "name": "Doomhammer - Horde"
+        },
+        {
+          "id": 11671,
+          "name": "Draenor - Alliance"
+        },
+        {
+          "id": 11425,
+          "name": "Draenor - Horde"
+        },
+        {
+          "id": 11672,
+          "name": "Dragonblight - Alliance"
+        },
+        {
+          "id": 11426,
+          "name": "Dragonblight - Horde"
+        },
+        {
+          "id": 11673,
+          "name": "Dragonmaw - Alliance"
+        },
+        {
+          "id": 11427,
+          "name": "Dragonmaw - Horde"
+        },
+        {
+          "id": 11674,
+          "name": "Drak'Tharon - Alliance"
+        },
+        {
+          "id": 11428,
+          "name": "Drak'Tharon - Horde"
+        },
+        {
+          "id": 11675,
+          "name": "Drak'thul - Alliance"
+        },
+        {
+          "id": 11429,
+          "name": "Drak'thul - Horde"
+        },
+        {
+          "id": 11676,
+          "name": "Draka - Alliance"
+        },
+        {
+          "id": 11430,
+          "name": "Draka - Horde"
+        },
+        {
+          "id": 11677,
+          "name": "Drakkari - Alliance"
+        },
+        {
+          "id": 11431,
+          "name": "Drakkari - Horde"
+        },
+        {
+          "id": 11678,
+          "name": "Dreadmaul - Alliance"
+        },
+        {
+          "id": 11432,
+          "name": "Dreadmaul - Horde"
+        },
+        {
+          "id": 11679,
+          "name": "Drenden - Alliance"
+        },
+        {
+          "id": 11433,
+          "name": "Drenden - Horde"
+        },
+        {
+          "id": 11680,
+          "name": "Dunemaul - Alliance"
+        },
+        {
+          "id": 11434,
+          "name": "Dunemaul - Horde"
+        },
+        {
+          "id": 11681,
+          "name": "Durotan - Alliance"
+        },
+        {
+          "id": 11435,
+          "name": "Durotan - Horde"
+        },
+        {
+          "id": 11682,
+          "name": "Duskwood - Alliance"
+        },
+        {
+          "id": 11436,
+          "name": "Duskwood - Horde"
+        },
+        {
+          "id": 11683,
+          "name": "Earthen Ring - Alliance"
+        },
+        {
+          "id": 11437,
+          "name": "Earthen Ring - Horde"
+        },
+        {
+          "id": 11684,
+          "name": "Echo Isles - Alliance"
+        },
+        {
+          "id": 11438,
+          "name": "Echo Isles - Horde"
+        },
+        {
+          "id": 11685,
+          "name": "Eitrigg - Alliance"
+        },
+        {
+          "id": 11439,
+          "name": "Eitrigg - Horde"
+        },
+        {
+          "id": 11686,
+          "name": "Eldre'Thalas - Alliance"
+        },
+        {
+          "id": 11440,
+          "name": "Eldre'Thalas - Horde"
+        },
+        {
+          "id": 11687,
+          "name": "Elune - Alliance"
+        },
+        {
+          "id": 11441,
+          "name": "Elune - Horde"
+        },
+        {
+          "id": 11688,
+          "name": "Emerald Dream - Alliance"
+        },
+        {
+          "id": 11442,
+          "name": "Emerald Dream - Horde"
+        },
+        {
+          "id": 11689,
+          "name": "Eonar - Alliance"
+        },
+        {
+          "id": 11443,
+          "name": "Eonar - Horde"
+        },
+        {
+          "id": 11690,
+          "name": "Eredar - Alliance"
+        },
+        {
+          "id": 11444,
+          "name": "Eredar - Horde"
+        },
+        {
+          "id": 11691,
+          "name": "Executus - Alliance"
+        },
+        {
+          "id": 11445,
+          "name": "Executus - Horde"
+        },
+        {
+          "id": 11692,
+          "name": "Exodar - Alliance"
+        },
+        {
+          "id": 11446,
+          "name": "Exodar - Horde"
+        },
+        {
+          "id": 11693,
+          "name": "Farstriders - Alliance"
+        },
+        {
+          "id": 11447,
+          "name": "Farstriders - Horde"
+        },
+        {
+          "id": 11694,
+          "name": "Feathermoon - Alliance"
+        },
+        {
+          "id": 11448,
+          "name": "Feathermoon - Horde"
+        },
+        {
+          "id": 11695,
+          "name": "Fenris - Alliance"
+        },
+        {
+          "id": 11449,
+          "name": "Fenris - Horde"
+        },
+        {
+          "id": 11696,
+          "name": "Firetree - Alliance"
+        },
+        {
+          "id": 11450,
+          "name": "Firetree - Horde"
+        },
+        {
+          "id": 11697,
+          "name": "Fizzcrank - Alliance"
+        },
+        {
+          "id": 11451,
+          "name": "Fizzcrank - Horde"
+        },
+        {
+          "id": 11698,
+          "name": "Frostmane - Alliance"
+        },
+        {
+          "id": 11452,
+          "name": "Frostmane - Horde"
+        },
+        {
+          "id": 11699,
+          "name": "Frostmourne - Alliance"
+        },
+        {
+          "id": 11453,
+          "name": "Frostmourne - Horde"
+        },
+        {
+          "id": 11700,
+          "name": "Frostwolf - Alliance"
+        },
+        {
+          "id": 11454,
+          "name": "Frostwolf - Horde"
+        },
+        {
+          "id": 11701,
+          "name": "Galakrond - Alliance"
+        },
+        {
+          "id": 11455,
+          "name": "Galakrond - Horde"
+        },
+        {
+          "id": 11702,
+          "name": "Gallywix - Alliance"
+        },
+        {
+          "id": 11456,
+          "name": "Gallywix - Horde"
+        },
+        {
+          "id": 11703,
+          "name": "Garithos - Alliance"
+        },
+        {
+          "id": 11457,
+          "name": "Garithos - Horde"
+        },
+        {
+          "id": 11704,
+          "name": "Garona - Alliance"
+        },
+        {
+          "id": 11458,
+          "name": "Garona - Horde"
+        },
+        {
+          "id": 11705,
+          "name": "Garrosh - Alliance"
+        },
+        {
+          "id": 11459,
+          "name": "Garrosh - Horde"
+        },
+        {
+          "id": 11706,
+          "name": "Ghostlands - Alliance"
+        },
+        {
+          "id": 11460,
+          "name": "Ghostlands - Horde"
+        },
+        {
+          "id": 11707,
+          "name": "Gilneas - Alliance"
+        },
+        {
+          "id": 11461,
+          "name": "Gilneas - Horde"
+        },
+        {
+          "id": 11708,
+          "name": "Gnomeregan - Alliance"
+        },
+        {
+          "id": 11462,
+          "name": "Gnomeregan - Horde"
+        },
+        {
+          "id": 11709,
+          "name": "Goldrinn - Alliance"
+        },
+        {
+          "id": 11463,
+          "name": "Goldrinn - Horde"
+        },
+        {
+          "id": 11710,
+          "name": "Gorefiend - Alliance"
+        },
+        {
+          "id": 11464,
+          "name": "Gorefiend - Horde"
+        },
+        {
+          "id": 11711,
+          "name": "Gorgonnash - Alliance"
+        },
+        {
+          "id": 11465,
+          "name": "Gorgonnash - Horde"
+        },
+        {
+          "id": 11712,
+          "name": "Greymane - Alliance"
+        },
+        {
+          "id": 11466,
+          "name": "Greymane - Horde"
+        },
+        {
+          "id": 11713,
+          "name": "Grizzly Hills - Alliance"
+        },
+        {
+          "id": 11467,
+          "name": "Grizzly Hills - Horde"
+        },
+        {
+          "id": 11714,
+          "name": "Gul'dan - Alliance"
+        },
+        {
+          "id": 11468,
+          "name": "Gul'dan - Horde"
+        },
+        {
+          "id": 11715,
+          "name": "Gundrak - Alliance"
+        },
+        {
+          "id": 11469,
+          "name": "Gundrak - Horde"
+        },
+        {
+          "id": 11716,
+          "name": "Gurubashi - Alliance"
+        },
+        {
+          "id": 11470,
+          "name": "Gurubashi - Horde"
+        },
+        {
+          "id": 11717,
+          "name": "Hakkar - Alliance"
+        },
+        {
+          "id": 11471,
+          "name": "Hakkar - Horde"
+        },
+        {
+          "id": 11718,
+          "name": "Haomarush - Alliance"
+        },
+        {
+          "id": 11472,
+          "name": "Haomarush - Horde"
+        },
+        {
+          "id": 11719,
+          "name": "Hellscream - Alliance"
+        },
+        {
+          "id": 11473,
+          "name": "Hellscream - Horde"
+        },
+        {
+          "id": 11720,
+          "name": "Hydraxis - Alliance"
+        },
+        {
+          "id": 11474,
+          "name": "Hydraxis - Horde"
+        },
+        {
+          "id": 11721,
+          "name": "Hyjal - Alliance"
+        },
+        {
+          "id": 11475,
+          "name": "Hyjal - Horde"
+        },
+        {
+          "id": 11722,
+          "name": "Icecrown - Alliance"
+        },
+        {
+          "id": 11476,
+          "name": "Icecrown - Horde"
+        },
+        {
+          "id": 11723,
+          "name": "Illidan - Alliance"
+        },
+        {
+          "id": 11477,
+          "name": "Illidan - Horde"
+        },
+        {
+          "id": 11724,
+          "name": "Jaedenar - Alliance"
+        },
+        {
+          "id": 11478,
+          "name": "Jaedenar - Horde"
+        },
+        {
+          "id": 11725,
+          "name": "Jubei'Thos - Alliance"
+        },
+        {
+          "id": 11479,
+          "name": "Jubei'Thos - Horde"
+        },
+        {
+          "id": 11726,
+          "name": "Kael'thas - Alliance"
+        },
+        {
+          "id": 11480,
+          "name": "Kael'thas - Horde"
+        },
+        {
+          "id": 11727,
+          "name": "Kalecgos - Alliance"
+        },
+        {
+          "id": 11481,
+          "name": "Kalecgos - Horde"
+        },
+        {
+          "id": 11728,
+          "name": "Kargath - Alliance"
+        },
+        {
+          "id": 11482,
+          "name": "Kargath - Horde"
+        },
+        {
+          "id": 11729,
+          "name": "Kel'Thuzad - Alliance"
+        },
+        {
+          "id": 11483,
+          "name": "Kel'Thuzad - Horde"
+        },
+        {
+          "id": 11730,
+          "name": "Khadgar - Alliance"
+        },
+        {
+          "id": 11484,
+          "name": "Khadgar - Horde"
+        },
+        {
+          "id": 11731,
+          "name": "Khaz Modan - Alliance"
+        },
+        {
+          "id": 11485,
+          "name": "Khaz Modan - Horde"
+        },
+        {
+          "id": 11732,
+          "name": "Khaz'goroth - Alliance"
+        },
+        {
+          "id": 11486,
+          "name": "Khaz'goroth - Horde"
+        },
+        {
+          "id": 11733,
+          "name": "Kil'jaeden - Alliance"
+        },
+        {
+          "id": 11487,
+          "name": "Kil'jaeden - Horde"
+        },
+        {
+          "id": 11734,
+          "name": "Kilrogg - Alliance"
+        },
+        {
+          "id": 11488,
+          "name": "Kilrogg - Horde"
+        },
+        {
+          "id": 11735,
+          "name": "Kirin Tor - Alliance"
+        },
+        {
+          "id": 11489,
+          "name": "Kirin Tor - Horde"
+        },
+        {
+          "id": 11736,
+          "name": "Korgath - Alliance"
+        },
+        {
+          "id": 11490,
+          "name": "Korgath - Horde"
+        },
+        {
+          "id": 11737,
+          "name": "Korialstrasz - Alliance"
+        },
+        {
+          "id": 11491,
+          "name": "Korialstrasz - Horde"
+        },
+        {
+          "id": 11738,
+          "name": "Kul Tiras - Alliance"
+        },
+        {
+          "id": 11492,
+          "name": "Kul Tiras - Horde"
+        },
+        {
+          "id": 11739,
+          "name": "Laughing Skull - Alliance"
+        },
+        {
+          "id": 11493,
+          "name": "Laughing Skull - Horde"
+        },
+        {
+          "id": 11740,
+          "name": "Lethon - Alliance"
+        },
+        {
+          "id": 11494,
+          "name": "Lethon - Horde"
+        },
+        {
+          "id": 11741,
+          "name": "Lightbringer - Alliance"
+        },
+        {
+          "id": 11495,
+          "name": "Lightbringer - Horde"
+        },
+        {
+          "id": 11742,
+          "name": "Lightning's Blade - Alliance"
+        },
+        {
+          "id": 11496,
+          "name": "Lightning's Blade - Horde"
+        },
+        {
+          "id": 11743,
+          "name": "Lightninghoof - Alliance"
+        },
+        {
+          "id": 11497,
+          "name": "Lightninghoof - Horde"
+        },
+        {
+          "id": 11744,
+          "name": "Llane - Alliance"
+        },
+        {
+          "id": 11498,
+          "name": "Llane - Horde"
+        },
+        {
+          "id": 11745,
+          "name": "Lothar - Alliance"
+        },
+        {
+          "id": 11499,
+          "name": "Lothar - Horde"
+        },
+        {
+          "id": 11746,
+          "name": "Madoran - Alliance"
+        },
+        {
+          "id": 11500,
+          "name": "Madoran - Horde"
+        },
+        {
+          "id": 11747,
+          "name": "Maelstrom - Alliance"
+        },
+        {
+          "id": 11501,
+          "name": "Maelstrom - Horde"
+        },
+        {
+          "id": 11748,
+          "name": "Magtheridon - Alliance"
+        },
+        {
+          "id": 11502,
+          "name": "Magtheridon - Horde"
+        },
+        {
+          "id": 11749,
+          "name": "Maiev - Alliance"
+        },
+        {
+          "id": 11503,
+          "name": "Maiev - Horde"
+        },
+        {
+          "id": 11750,
+          "name": "Mal'Ganis - Alliance"
+        },
+        {
+          "id": 11504,
+          "name": "Mal'Ganis - Horde"
+        },
+        {
+          "id": 11751,
+          "name": "Malfurion - Alliance"
+        },
+        {
+          "id": 11505,
+          "name": "Malfurion - Horde"
+        },
+        {
+          "id": 11752,
+          "name": "Malorne - Alliance"
+        },
+        {
+          "id": 11506,
+          "name": "Malorne - Horde"
+        },
+        {
+          "id": 11753,
+          "name": "Malygos - Alliance"
+        },
+        {
+          "id": 11507,
+          "name": "Malygos - Horde"
+        },
+        {
+          "id": 11754,
+          "name": "Mannoroth - Alliance"
+        },
+        {
+          "id": 11508,
+          "name": "Mannoroth - Horde"
+        },
+        {
+          "id": 11755,
+          "name": "Medivh - Alliance"
+        },
+        {
+          "id": 11509,
+          "name": "Medivh - Horde"
+        },
+        {
+          "id": 11756,
+          "name": "Misha - Alliance"
+        },
+        {
+          "id": 11510,
+          "name": "Misha - Horde"
+        },
+        {
+          "id": 11757,
+          "name": "Mok'Nathal - Alliance"
+        },
+        {
+          "id": 11511,
+          "name": "Mok'Nathal - Horde"
+        },
+        {
+          "id": 11758,
+          "name": "Moon Guard - Alliance"
+        },
+        {
+          "id": 11512,
+          "name": "Moon Guard - Horde"
+        },
+        {
+          "id": 11759,
+          "name": "Moonrunner - Alliance"
+        },
+        {
+          "id": 11513,
+          "name": "Moonrunner - Horde"
+        },
+        {
+          "id": 11760,
+          "name": "Mug'thol - Alliance"
+        },
+        {
+          "id": 11514,
+          "name": "Mug'thol - Horde"
+        },
+        {
+          "id": 11761,
+          "name": "Muradin - Alliance"
+        },
+        {
+          "id": 11515,
+          "name": "Muradin - Horde"
+        },
+        {
+          "id": 11762,
+          "name": "Nagrand - Alliance"
+        },
+        {
+          "id": 11516,
+          "name": "Nagrand - Horde"
+        },
+        {
+          "id": 11763,
+          "name": "Nathrezim - Alliance"
+        },
+        {
+          "id": 11517,
+          "name": "Nathrezim - Horde"
+        },
+        {
+          "id": 11764,
+          "name": "Nazgrel - Alliance"
+        },
+        {
+          "id": 11518,
+          "name": "Nazgrel - Horde"
+        },
+        {
+          "id": 11765,
+          "name": "Nazjatar - Alliance"
+        },
+        {
+          "id": 11519,
+          "name": "Nazjatar - Horde"
+        },
+        {
+          "id": 11766,
+          "name": "Nemesis - Alliance"
+        },
+        {
+          "id": 11520,
+          "name": "Nemesis - Horde"
+        },
+        {
+          "id": 11767,
+          "name": "Ner'zhul - Alliance"
+        },
+        {
+          "id": 11521,
+          "name": "Ner'zhul - Horde"
+        },
+        {
+          "id": 11768,
+          "name": "Nesingwary - Alliance"
+        },
+        {
+          "id": 11522,
+          "name": "Nesingwary - Horde"
+        },
+        {
+          "id": 11769,
+          "name": "Nordrassil - Alliance"
+        },
+        {
+          "id": 11523,
+          "name": "Nordrassil - Horde"
+        },
+        {
+          "id": 11770,
+          "name": "Norgannon - Alliance"
+        },
+        {
+          "id": 11524,
+          "name": "Norgannon - Horde"
+        },
+        {
+          "id": 11771,
+          "name": "Onyxia - Alliance"
+        },
+        {
+          "id": 11525,
+          "name": "Onyxia - Horde"
+        },
+        {
+          "id": 11772,
+          "name": "Perenolde - Alliance"
+        },
+        {
+          "id": 11526,
+          "name": "Perenolde - Horde"
+        },
+        {
+          "id": 11773,
+          "name": "Proudmoore - Alliance"
+        },
+        {
+          "id": 11527,
+          "name": "Proudmoore - Horde"
+        },
+        {
+          "id": 11775,
+          "name": "Quel'dorei - Alliance"
+        },
+        {
+          "id": 11529,
+          "name": "Quel'dorei - Horde"
+        },
+        {
+          "id": 11774,
+          "name": "Quel'Thalas - Alliance"
+        },
+        {
+          "id": 11528,
+          "name": "Quel'Thalas - Horde"
+        },
+        {
+          "id": 11776,
+          "name": "Ragnaros - Alliance"
+        },
+        {
+          "id": 11530,
+          "name": "Ragnaros - Horde"
+        },
+        {
+          "id": 11777,
+          "name": "Ravencrest - Alliance"
+        },
+        {
+          "id": 11531,
+          "name": "Ravencrest - Horde"
+        },
+        {
+          "id": 11778,
+          "name": "Ravenholdt - Alliance"
+        },
+        {
+          "id": 11532,
+          "name": "Ravenholdt - Horde"
+        },
+        {
+          "id": 11779,
+          "name": "Rexxar - Alliance"
+        },
+        {
+          "id": 11533,
+          "name": "Rexxar - Horde"
+        },
+        {
+          "id": 11780,
+          "name": "Rivendare - Alliance"
+        },
+        {
+          "id": 11534,
+          "name": "Rivendare - Horde"
+        },
+        {
+          "id": 11781,
+          "name": "Runetotem - Alliance"
+        },
+        {
+          "id": 11535,
+          "name": "Runetotem - Horde"
+        },
+        {
+          "id": 11782,
+          "name": "Sargeras - Alliance"
+        },
+        {
+          "id": 11536,
+          "name": "Sargeras - Horde"
+        },
+        {
+          "id": 11783,
+          "name": "Saurfang - Alliance"
+        },
+        {
+          "id": 11537,
+          "name": "Saurfang - Horde"
+        },
+        {
+          "id": 11784,
+          "name": "Scarlet Crusade - Alliance"
+        },
+        {
+          "id": 11538,
+          "name": "Scarlet Crusade - Horde"
+        },
+        {
+          "id": 11785,
+          "name": "Scilla - Alliance"
+        },
+        {
+          "id": 11539,
+          "name": "Scilla - Horde"
+        },
+        {
+          "id": 11786,
+          "name": "Sen'jin - Alliance"
+        },
+        {
+          "id": 11540,
+          "name": "Sen'jin - Horde"
+        },
+        {
+          "id": 11787,
+          "name": "Sentinels - Alliance"
+        },
+        {
+          "id": 11541,
+          "name": "Sentinels - Horde"
+        },
+        {
+          "id": 11788,
+          "name": "Shadow Council - Alliance"
+        },
+        {
+          "id": 11542,
+          "name": "Shadow Council - Horde"
+        },
+        {
+          "id": 11789,
+          "name": "Shadowmoon - Alliance"
+        },
+        {
+          "id": 11543,
+          "name": "Shadowmoon - Horde"
+        },
+        {
+          "id": 11790,
+          "name": "Shadowsong - Alliance"
+        },
+        {
+          "id": 11544,
+          "name": "Shadowsong - Horde"
+        },
+        {
+          "id": 11791,
+          "name": "Shandris - Alliance"
+        },
+        {
+          "id": 11545,
+          "name": "Shandris - Horde"
+        },
+        {
+          "id": 11792,
+          "name": "Shattered Halls - Alliance"
+        },
+        {
+          "id": 11546,
+          "name": "Shattered Halls - Horde"
+        },
+        {
+          "id": 11793,
+          "name": "Shattered Hand - Alliance"
+        },
+        {
+          "id": 11547,
+          "name": "Shattered Hand - Horde"
+        },
+        {
+          "id": 11794,
+          "name": "Shu'halo - Alliance"
+        },
+        {
+          "id": 11548,
+          "name": "Shu'halo - Horde"
+        },
+        {
+          "id": 11795,
+          "name": "Silver Hand - Alliance"
+        },
+        {
+          "id": 11549,
+          "name": "Silver Hand - Horde"
+        },
+        {
+          "id": 11796,
+          "name": "Silvermoon - Alliance"
+        },
+        {
+          "id": 11550,
+          "name": "Silvermoon - Horde"
+        },
+        {
+          "id": 11797,
+          "name": "Sisters of Elune - Alliance"
+        },
+        {
+          "id": 11551,
+          "name": "Sisters of Elune - Horde"
+        },
+        {
+          "id": 11798,
+          "name": "Skullcrusher - Alliance"
+        },
+        {
+          "id": 11552,
+          "name": "Skullcrusher - Horde"
+        },
+        {
+          "id": 11799,
+          "name": "Skywall - Alliance"
+        },
+        {
+          "id": 11553,
+          "name": "Skywall - Horde"
+        },
+        {
+          "id": 11800,
+          "name": "Smolderthorn - Alliance"
+        },
+        {
+          "id": 11554,
+          "name": "Smolderthorn - Horde"
+        },
+        {
+          "id": 11801,
+          "name": "Spinebreaker - Alliance"
+        },
+        {
+          "id": 11555,
+          "name": "Spinebreaker - Horde"
+        },
+        {
+          "id": 11802,
+          "name": "Spirestone - Alliance"
+        },
+        {
+          "id": 11556,
+          "name": "Spirestone - Horde"
+        },
+        {
+          "id": 11803,
+          "name": "Staghelm - Alliance"
+        },
+        {
+          "id": 11557,
+          "name": "Staghelm - Horde"
+        },
+        {
+          "id": 11804,
+          "name": "Steamwheedle Cartel - Alliance"
+        },
+        {
+          "id": 11558,
+          "name": "Steamwheedle Cartel - Horde"
+        },
+        {
+          "id": 11805,
+          "name": "Stonemaul - Alliance"
+        },
+        {
+          "id": 11559,
+          "name": "Stonemaul - Horde"
+        },
+        {
+          "id": 11806,
+          "name": "Stormrage - Alliance"
+        },
+        {
+          "id": 11560,
+          "name": "Stormrage - Horde"
+        },
+        {
+          "id": 11807,
+          "name": "Stormreaver - Alliance"
+        },
+        {
+          "id": 11561,
+          "name": "Stormreaver - Horde"
+        },
+        {
+          "id": 11808,
+          "name": "Stormscale - Alliance"
+        },
+        {
+          "id": 11562,
+          "name": "Stormscale - Horde"
+        },
+        {
+          "id": 11809,
+          "name": "Suramar - Alliance"
+        },
+        {
+          "id": 11563,
+          "name": "Suramar - Horde"
+        },
+        {
+          "id": 11810,
+          "name": "Tanaris - Alliance"
+        },
+        {
+          "id": 11564,
+          "name": "Tanaris - Horde"
+        },
+        {
+          "id": 11811,
+          "name": "Terenas - Alliance"
+        },
+        {
+          "id": 11565,
+          "name": "Terenas - Horde"
+        },
+        {
+          "id": 11812,
+          "name": "Terokkar - Alliance"
+        },
+        {
+          "id": 11566,
+          "name": "Terokkar - Horde"
+        },
+        {
+          "id": 11813,
+          "name": "Thaurissan - Alliance"
+        },
+        {
+          "id": 11567,
+          "name": "Thaurissan - Horde"
+        },
+        {
+          "id": 11814,
+          "name": "The Forgotten Coast - Alliance"
+        },
+        {
+          "id": 11568,
+          "name": "The Forgotten Coast - Horde"
+        },
+        {
+          "id": 11815,
+          "name": "The Scryers - Alliance"
+        },
+        {
+          "id": 11569,
+          "name": "The Scryers - Horde"
+        },
+        {
+          "id": 11816,
+          "name": "The Underbog - Alliance"
+        },
+        {
+          "id": 11570,
+          "name": "The Underbog - Horde"
+        },
+        {
+          "id": 11817,
+          "name": "The Venture Co - Alliance"
+        },
+        {
+          "id": 11571,
+          "name": "The Venture Co - Horde"
+        },
+        {
+          "id": 11818,
+          "name": "Thorium Brotherhood - Alliance"
+        },
+        {
+          "id": 11572,
+          "name": "Thorium Brotherhood - Horde"
+        },
+        {
+          "id": 11819,
+          "name": "Thrall - Alliance"
+        },
+        {
+          "id": 11573,
+          "name": "Thrall - Horde"
+        },
+        {
+          "id": 11820,
+          "name": "Thunderhorn - Alliance"
+        },
+        {
+          "id": 11574,
+          "name": "Thunderhorn - Horde"
+        },
+        {
+          "id": 11821,
+          "name": "Thunderlord - Alliance"
+        },
+        {
+          "id": 11575,
+          "name": "Thunderlord - Horde"
+        },
+        {
+          "id": 11822,
+          "name": "Tichondrius - Alliance"
+        },
+        {
+          "id": 11576,
+          "name": "Tichondrius - Horde"
+        },
+        {
+          "id": 11823,
+          "name": "Tol Barad - Alliance"
+        },
+        {
+          "id": 11577,
+          "name": "Tol Barad - Horde"
+        },
+        {
+          "id": 11824,
+          "name": "Tortheldrin - Alliance"
+        },
+        {
+          "id": 11578,
+          "name": "Tortheldrin - Horde"
+        },
+        {
+          "id": 11825,
+          "name": "Trollbane - Alliance"
+        },
+        {
+          "id": 11579,
+          "name": "Trollbane - Horde"
+        },
+        {
+          "id": 11826,
+          "name": "Turalyon - Alliance"
+        },
+        {
+          "id": 11580,
+          "name": "Turalyon - Horde"
+        },
+        {
+          "id": 11827,
+          "name": "Twisting Nether - Alliance"
+        },
+        {
+          "id": 11581,
+          "name": "Twisting Nether - Horde"
+        },
+        {
+          "id": 11828,
+          "name": "Uldaman - Alliance"
+        },
+        {
+          "id": 11582,
+          "name": "Uldaman - Horde"
+        },
+        {
+          "id": 11829,
+          "name": "Uldum - Alliance"
+        },
+        {
+          "id": 11583,
+          "name": "Uldum - Horde"
+        },
+        {
+          "id": 11830,
+          "name": "Undermine - Alliance"
+        },
+        {
+          "id": 11584,
+          "name": "Undermine - Horde"
+        },
+        {
+          "id": 11831,
+          "name": "Ursin - Alliance"
+        },
+        {
+          "id": 11585,
+          "name": "Ursin - Horde"
+        },
+        {
+          "id": 11832,
+          "name": "Uther - Alliance"
+        },
+        {
+          "id": 11586,
+          "name": "Uther - Horde"
+        },
+        {
+          "id": 11833,
+          "name": "Vashj - Alliance"
+        },
+        {
+          "id": 11587,
+          "name": "Vashj - Horde"
+        },
+        {
+          "id": 11834,
+          "name": "Vek'nilash - Alliance"
+        },
+        {
+          "id": 11588,
+          "name": "Vek'nilash - Horde"
+        },
+        {
+          "id": 11835,
+          "name": "Velen - Alliance"
+        },
+        {
+          "id": 11589,
+          "name": "Velen - Horde"
+        },
+        {
+          "id": 11836,
+          "name": "Warsong - Alliance"
+        },
+        {
+          "id": 11590,
+          "name": "Warsong - Horde"
+        },
+        {
+          "id": 11837,
+          "name": "Whisperwind - Alliance"
+        },
+        {
+          "id": 11591,
+          "name": "Whisperwind - Horde"
+        },
+        {
+          "id": 11838,
+          "name": "Wildhammer - Alliance"
+        },
+        {
+          "id": 11592,
+          "name": "Wildhammer - Horde"
+        },
+        {
+          "id": 11839,
+          "name": "Windrunner - Alliance"
+        },
+        {
+          "id": 11593,
+          "name": "Windrunner - Horde"
+        },
+        {
+          "id": 11840,
+          "name": "Winterhoof - Alliance"
+        },
+        {
+          "id": 11594,
+          "name": "Winterhoof - Horde"
+        },
+        {
+          "id": 11841,
+          "name": "Wyrmrest Accord - Alliance"
+        },
+        {
+          "id": 11595,
+          "name": "Wyrmrest Accord - Horde"
+        },
+        {
+          "id": 11842,
+          "name": "Ysera - Alliance"
+        },
+        {
+          "id": 11596,
+          "name": "Ysera - Horde"
+        },
+        {
+          "id": 11843,
+          "name": "Ysondre - Alliance"
+        },
+        {
+          "id": 11597,
+          "name": "Ysondre - Horde"
+        },
+        {
+          "id": 11844,
+          "name": "Zangarmarsh - Alliance"
+        },
+        {
+          "id": 11598,
+          "name": "Zangarmarsh - Horde"
+        },
+        {
+          "id": 11845,
+          "name": "Zul'jin - Alliance"
+        },
+        {
+          "id": 11599,
+          "name": "Zul'jin - Horde"
+        },
+        {
+          "id": 11846,
+          "name": "Zuluhed - Alliance"
+        },
+        {
+          "id": 11600,
+          "name": "Zuluhed - Horde"
+        }
+      ]
+    },
+    {
+      "id": 11354,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 11847,
+          "name": "Aegwynn - Alliance"
+        },
+        {
+          "id": 12114,
+          "name": "Aegwynn - Horde"
+        },
+        {
+          "id": 11848,
+          "name": "Aerie Peak - Alliance"
+        },
+        {
+          "id": 12115,
+          "name": "Aerie Peak - Horde"
+        },
+        {
+          "id": 11849,
+          "name": "Agamaggan - Alliance"
+        },
+        {
+          "id": 12116,
+          "name": "Agamaggan - Horde"
+        },
+        {
+          "id": 11850,
+          "name": "Aggra - Alliance"
+        },
+        {
+          "id": 12117,
+          "name": "Aggra - Horde"
+        },
+        {
+          "id": 11851,
+          "name": "Aggramar - Alliance"
+        },
+        {
+          "id": 12118,
+          "name": "Aggramar - Horde"
+        },
+        {
+          "id": 11852,
+          "name": "Ahn'Qiraj - Alliance"
+        },
+        {
+          "id": 12119,
+          "name": "Ahn'Qiraj - Horde"
+        },
+        {
+          "id": 11853,
+          "name": "Al'Akir - Alliance"
+        },
+        {
+          "id": 12120,
+          "name": "Al'Akir - Horde"
+        },
+        {
+          "id": 11854,
+          "name": "Alexstrasza - Alliance"
+        },
+        {
+          "id": 12121,
+          "name": "Alexstrasza - Horde"
+        },
+        {
+          "id": 11855,
+          "name": "Alleria - Alliance"
+        },
+        {
+          "id": 12122,
+          "name": "Alleria - Horde"
+        },
+        {
+          "id": 11856,
+          "name": "Alonsus - Alliance"
+        },
+        {
+          "id": 12123,
+          "name": "Alonsus - Horde"
+        },
+        {
+          "id": 11857,
+          "name": "Aman'Thul - Alliance"
+        },
+        {
+          "id": 12124,
+          "name": "Aman'Thul - Horde"
+        },
+        {
+          "id": 11858,
+          "name": "Ambossar - Alliance"
+        },
+        {
+          "id": 12125,
+          "name": "Ambossar - Horde"
+        },
+        {
+          "id": 11859,
+          "name": "Anachronos - Alliance"
+        },
+        {
+          "id": 12126,
+          "name": "Anachronos - Horde"
+        },
+        {
+          "id": 11860,
+          "name": "Anetheron - Alliance"
+        },
+        {
+          "id": 12127,
+          "name": "Anetheron - Horde"
+        },
+        {
+          "id": 11861,
+          "name": "Antonidas - Alliance"
+        },
+        {
+          "id": 12128,
+          "name": "Antonidas - Horde"
+        },
+        {
+          "id": 11862,
+          "name": "Anub'arak - Alliance"
+        },
+        {
+          "id": 12129,
+          "name": "Anub'arak - Horde"
+        },
+        {
+          "id": 11863,
+          "name": "Arak-arahm - Alliance"
+        },
+        {
+          "id": 12130,
+          "name": "Arak-arahm - Horde"
+        },
+        {
+          "id": 11864,
+          "name": "Arathi - Alliance"
+        },
+        {
+          "id": 12131,
+          "name": "Arathi - Horde"
+        },
+        {
+          "id": 11865,
+          "name": "Arathor - Alliance"
+        },
+        {
+          "id": 12132,
+          "name": "Arathor - Horde"
+        },
+        {
+          "id": 11866,
+          "name": "Archimonde - Alliance"
+        },
+        {
+          "id": 12133,
+          "name": "Archimonde - Horde"
+        },
+        {
+          "id": 11867,
+          "name": "Area 52 - Alliance"
+        },
+        {
+          "id": 12134,
+          "name": "Area 52 - Horde"
+        },
+        {
+          "id": 11868,
+          "name": "Argent Dawn - Alliance"
+        },
+        {
+          "id": 12135,
+          "name": "Argent Dawn - Horde"
+        },
+        {
+          "id": 11869,
+          "name": "Arthas - Alliance"
+        },
+        {
+          "id": 12136,
+          "name": "Arthas - Horde"
+        },
+        {
+          "id": 11870,
+          "name": "Arygos - Alliance"
+        },
+        {
+          "id": 12137,
+          "name": "Arygos - Horde"
+        },
+        {
+          "id": 11871,
+          "name": "Ashenvale - Alliance"
+        },
+        {
+          "id": 12138,
+          "name": "Ashenvale - Horde"
+        },
+        {
+          "id": 11872,
+          "name": "Aszune - Alliance"
+        },
+        {
+          "id": 12139,
+          "name": "Aszune - Horde"
+        },
+        {
+          "id": 11873,
+          "name": "Auchindoun - Alliance"
+        },
+        {
+          "id": 12140,
+          "name": "Auchindoun - Horde"
+        },
+        {
+          "id": 11874,
+          "name": "Azjol-Nerub - Alliance"
+        },
+        {
+          "id": 12141,
+          "name": "Azjol-Nerub - Horde"
+        },
+        {
+          "id": 11875,
+          "name": "Azshara - Alliance"
+        },
+        {
+          "id": 12142,
+          "name": "Azshara - Horde"
+        },
+        {
+          "id": 11876,
+          "name": "Azuregos - Alliance"
+        },
+        {
+          "id": 12143,
+          "name": "Azuregos - Horde"
+        },
+        {
+          "id": 11877,
+          "name": "Azuremyst - Alliance"
+        },
+        {
+          "id": 12144,
+          "name": "Azuremyst - Horde"
+        },
+        {
+          "id": 11878,
+          "name": "Baelgun - Alliance"
+        },
+        {
+          "id": 12145,
+          "name": "Baelgun - Horde"
+        },
+        {
+          "id": 11879,
+          "name": "Balnazzar - Alliance"
+        },
+        {
+          "id": 12146,
+          "name": "Balnazzar - Horde"
+        },
+        {
+          "id": 11880,
+          "name": "Blackhand - Alliance"
+        },
+        {
+          "id": 12147,
+          "name": "Blackhand - Horde"
+        },
+        {
+          "id": 11881,
+          "name": "Blackmoore - Alliance"
+        },
+        {
+          "id": 12148,
+          "name": "Blackmoore - Horde"
+        },
+        {
+          "id": 11882,
+          "name": "Blackrock - Alliance"
+        },
+        {
+          "id": 12149,
+          "name": "Blackrock - Horde"
+        },
+        {
+          "id": 11883,
+          "name": "Blackscar - Alliance"
+        },
+        {
+          "id": 12150,
+          "name": "Blackscar - Horde"
+        },
+        {
+          "id": 11884,
+          "name": "Blade's Edge - Alliance"
+        },
+        {
+          "id": 12151,
+          "name": "Blade's Edge - Horde"
+        },
+        {
+          "id": 11885,
+          "name": "Bladefist - Alliance"
+        },
+        {
+          "id": 12152,
+          "name": "Bladefist - Horde"
+        },
+        {
+          "id": 11886,
+          "name": "Bloodfeather - Alliance"
+        },
+        {
+          "id": 12153,
+          "name": "Bloodfeather - Horde"
+        },
+        {
+          "id": 11887,
+          "name": "Bloodhoof - Alliance"
+        },
+        {
+          "id": 12154,
+          "name": "Bloodhoof - Horde"
+        },
+        {
+          "id": 11888,
+          "name": "Bloodscalp - Alliance"
+        },
+        {
+          "id": 12155,
+          "name": "Bloodscalp - Horde"
+        },
+        {
+          "id": 11889,
+          "name": "Blutkessel - Alliance"
+        },
+        {
+          "id": 12156,
+          "name": "Blutkessel - Horde"
+        },
+        {
+          "id": 11890,
+          "name": "Booty Bay - Alliance"
+        },
+        {
+          "id": 12157,
+          "name": "Booty Bay - Horde"
+        },
+        {
+          "id": 11891,
+          "name": "Borean Tundra - Alliance"
+        },
+        {
+          "id": 12158,
+          "name": "Borean Tundra - Horde"
+        },
+        {
+          "id": 11892,
+          "name": "Boulderfist - Alliance"
+        },
+        {
+          "id": 12159,
+          "name": "Boulderfist - Horde"
+        },
+        {
+          "id": 11893,
+          "name": "Bronze Dragonflight - Alliance"
+        },
+        {
+          "id": 12160,
+          "name": "Bronze Dragonflight - Horde"
+        },
+        {
+          "id": 11894,
+          "name": "Bronzebeard - Alliance"
+        },
+        {
+          "id": 12161,
+          "name": "Bronzebeard - Horde"
+        },
+        {
+          "id": 11895,
+          "name": "Burning Blade - Alliance"
+        },
+        {
+          "id": 12162,
+          "name": "Burning Blade - Horde"
+        },
+        {
+          "id": 11896,
+          "name": "Burning Legion - Alliance"
+        },
+        {
+          "id": 12163,
+          "name": "Burning Legion - Horde"
+        },
+        {
+          "id": 11897,
+          "name": "Burning Steppes - Alliance"
+        },
+        {
+          "id": 12164,
+          "name": "Burning Steppes - Horde"
+        },
+        {
+          "id": 11898,
+          "name": "C'Thun - Alliance"
+        },
+        {
+          "id": 12165,
+          "name": "C'Thun - Horde"
+        },
+        {
+          "id": 11899,
+          "name": "Chamber of Aspects - Alliance"
+        },
+        {
+          "id": 12166,
+          "name": "Chamber of Aspects - Horde"
+        },
+        {
+          "id": 11900,
+          "name": "Chants éternels - Alliance"
+        },
+        {
+          "id": 12167,
+          "name": "Chants éternels - Horde"
+        },
+        {
+          "id": 11901,
+          "name": "Cho'gall - Alliance"
+        },
+        {
+          "id": 12168,
+          "name": "Cho'gall - Horde"
+        },
+        {
+          "id": 11902,
+          "name": "Chromaggus - Alliance"
+        },
+        {
+          "id": 12169,
+          "name": "Chromaggus - Horde"
+        },
+        {
+          "id": 11903,
+          "name": "Colinas Pardas - Alliance"
+        },
+        {
+          "id": 12170,
+          "name": "Colinas Pardas - Horde"
+        },
+        {
+          "id": 11904,
+          "name": "Confrérie du Thorium - Alliance"
+        },
+        {
+          "id": 12171,
+          "name": "Confrérie du Thorium - Horde"
+        },
+        {
+          "id": 11905,
+          "name": "Conseil des Ombres - Alliance"
+        },
+        {
+          "id": 12172,
+          "name": "Conseil des Ombres - Horde"
+        },
+        {
+          "id": 11906,
+          "name": "Crushridge - Alliance"
+        },
+        {
+          "id": 12173,
+          "name": "Crushridge - Horde"
+        },
+        {
+          "id": 11907,
+          "name": "Culte de la Rive noire - Alliance"
+        },
+        {
+          "id": 12174,
+          "name": "Culte de la Rive noire - Horde"
+        },
+        {
+          "id": 11908,
+          "name": "Daggerspine - Alliance"
+        },
+        {
+          "id": 12175,
+          "name": "Daggerspine - Horde"
+        },
+        {
+          "id": 11909,
+          "name": "Dalaran - Alliance"
+        },
+        {
+          "id": 12176,
+          "name": "Dalaran - Horde"
+        },
+        {
+          "id": 11910,
+          "name": "Dalvengyr - Alliance"
+        },
+        {
+          "id": 12177,
+          "name": "Dalvengyr - Horde"
+        },
+        {
+          "id": 11911,
+          "name": "Darkmoon Faire - Alliance"
+        },
+        {
+          "id": 12178,
+          "name": "Darkmoon Faire - Horde"
+        },
+        {
+          "id": 11912,
+          "name": "Darksorrow - Alliance"
+        },
+        {
+          "id": 12179,
+          "name": "Darksorrow - Horde"
+        },
+        {
+          "id": 11913,
+          "name": "Darkspear - Alliance"
+        },
+        {
+          "id": 12180,
+          "name": "Darkspear - Horde"
+        },
+        {
+          "id": 11914,
+          "name": "Das Konsortium - Alliance"
+        },
+        {
+          "id": 12181,
+          "name": "Das Konsortium - Horde"
+        },
+        {
+          "id": 11915,
+          "name": "Das Syndikat - Alliance"
+        },
+        {
+          "id": 12182,
+          "name": "Das Syndikat - Horde"
+        },
+        {
+          "id": 11916,
+          "name": "Deathguard - Alliance"
+        },
+        {
+          "id": 12183,
+          "name": "Deathguard - Horde"
+        },
+        {
+          "id": 11917,
+          "name": "Deathweaver - Alliance"
+        },
+        {
+          "id": 12184,
+          "name": "Deathweaver - Horde"
+        },
+        {
+          "id": 11918,
+          "name": "Deathwing - Alliance"
+        },
+        {
+          "id": 12185,
+          "name": "Deathwing - Horde"
+        },
+        {
+          "id": 11919,
+          "name": "Deepholm - Alliance"
+        },
+        {
+          "id": 12186,
+          "name": "Deepholm - Horde"
+        },
+        {
+          "id": 11920,
+          "name": "Defias Brotherhood - Alliance"
+        },
+        {
+          "id": 12187,
+          "name": "Defias Brotherhood - Horde"
+        },
+        {
+          "id": 11921,
+          "name": "Dentarg - Alliance"
+        },
+        {
+          "id": 12188,
+          "name": "Dentarg - Horde"
+        },
+        {
+          "id": 11924,
+          "name": "Der abyssische Rat - Alliance"
+        },
+        {
+          "id": 12191,
+          "name": "Der abyssische Rat - Horde"
+        },
+        {
+          "id": 11922,
+          "name": "Der Mithrilorden - Alliance"
+        },
+        {
+          "id": 12189,
+          "name": "Der Mithrilorden - Horde"
+        },
+        {
+          "id": 11923,
+          "name": "Der Rat von Dalaran - Alliance"
+        },
+        {
+          "id": 12190,
+          "name": "Der Rat von Dalaran - Horde"
+        },
+        {
+          "id": 11925,
+          "name": "Destromath - Alliance"
+        },
+        {
+          "id": 12192,
+          "name": "Destromath - Horde"
+        },
+        {
+          "id": 11926,
+          "name": "Dethecus - Alliance"
+        },
+        {
+          "id": 12193,
+          "name": "Dethecus - Horde"
+        },
+        {
+          "id": 11927,
+          "name": "Die Aldor - Alliance"
+        },
+        {
+          "id": 12194,
+          "name": "Die Aldor - Horde"
+        },
+        {
+          "id": 11928,
+          "name": "Die Arguswacht - Alliance"
+        },
+        {
+          "id": 12195,
+          "name": "Die Arguswacht - Horde"
+        },
+        {
+          "id": 11932,
+          "name": "Die ewige Wacht - Alliance"
+        },
+        {
+          "id": 12199,
+          "name": "Die ewige Wacht - Horde"
+        },
+        {
+          "id": 11929,
+          "name": "Die Nachtwache - Alliance"
+        },
+        {
+          "id": 12196,
+          "name": "Die Nachtwache - Horde"
+        },
+        {
+          "id": 11930,
+          "name": "Die Silberne Hand - Alliance"
+        },
+        {
+          "id": 12197,
+          "name": "Die Silberne Hand - Horde"
+        },
+        {
+          "id": 11931,
+          "name": "Die Todeskrallen - Alliance"
+        },
+        {
+          "id": 12198,
+          "name": "Die Todeskrallen - Horde"
+        },
+        {
+          "id": 11933,
+          "name": "Doomhammer - Alliance"
+        },
+        {
+          "id": 12200,
+          "name": "Doomhammer - Horde"
+        },
+        {
+          "id": 11934,
+          "name": "Draenor - Alliance"
+        },
+        {
+          "id": 12201,
+          "name": "Draenor - Horde"
+        },
+        {
+          "id": 11935,
+          "name": "Dragonblight - Alliance"
+        },
+        {
+          "id": 12202,
+          "name": "Dragonblight - Horde"
+        },
+        {
+          "id": 11936,
+          "name": "Dragonmaw - Alliance"
+        },
+        {
+          "id": 12203,
+          "name": "Dragonmaw - Horde"
+        },
+        {
+          "id": 11937,
+          "name": "Drak'thul - Alliance"
+        },
+        {
+          "id": 12204,
+          "name": "Drak'thul - Horde"
+        },
+        {
+          "id": 11938,
+          "name": "Drek'Thar - Alliance"
+        },
+        {
+          "id": 12205,
+          "name": "Drek'Thar - Horde"
+        },
+        {
+          "id": 11939,
+          "name": "Dun Modr - Alliance"
+        },
+        {
+          "id": 12206,
+          "name": "Dun Modr - Horde"
+        },
+        {
+          "id": 11940,
+          "name": "Dun Morogh - Alliance"
+        },
+        {
+          "id": 12207,
+          "name": "Dun Morogh - Horde"
+        },
+        {
+          "id": 11941,
+          "name": "Dunemaul - Alliance"
+        },
+        {
+          "id": 12208,
+          "name": "Dunemaul - Horde"
+        },
+        {
+          "id": 11942,
+          "name": "Durotan - Alliance"
+        },
+        {
+          "id": 12209,
+          "name": "Durotan - Horde"
+        },
+        {
+          "id": 11943,
+          "name": "Earthen Ring - Alliance"
+        },
+        {
+          "id": 12210,
+          "name": "Earthen Ring - Horde"
+        },
+        {
+          "id": 11944,
+          "name": "Echsenkessel - Alliance"
+        },
+        {
+          "id": 12211,
+          "name": "Echsenkessel - Horde"
+        },
+        {
+          "id": 11945,
+          "name": "Eitrigg - Alliance"
+        },
+        {
+          "id": 12212,
+          "name": "Eitrigg - Horde"
+        },
+        {
+          "id": 11946,
+          "name": "Eldre'Thalas - Alliance"
+        },
+        {
+          "id": 12213,
+          "name": "Eldre'Thalas - Horde"
+        },
+        {
+          "id": 11947,
+          "name": "Elune - Alliance"
+        },
+        {
+          "id": 12214,
+          "name": "Elune - Horde"
+        },
+        {
+          "id": 11948,
+          "name": "Emerald Dream - Alliance"
+        },
+        {
+          "id": 12215,
+          "name": "Emerald Dream - Horde"
+        },
+        {
+          "id": 11949,
+          "name": "Emeriss - Alliance"
+        },
+        {
+          "id": 12216,
+          "name": "Emeriss - Horde"
+        },
+        {
+          "id": 11950,
+          "name": "Eonar - Alliance"
+        },
+        {
+          "id": 12217,
+          "name": "Eonar - Horde"
+        },
+        {
+          "id": 11951,
+          "name": "Eredar - Alliance"
+        },
+        {
+          "id": 12218,
+          "name": "Eredar - Horde"
+        },
+        {
+          "id": 11952,
+          "name": "Eversong - Alliance"
+        },
+        {
+          "id": 12219,
+          "name": "Eversong - Horde"
+        },
+        {
+          "id": 11953,
+          "name": "Executus - Alliance"
+        },
+        {
+          "id": 12220,
+          "name": "Executus - Horde"
+        },
+        {
+          "id": 11954,
+          "name": "Exodar - Alliance"
+        },
+        {
+          "id": 12221,
+          "name": "Exodar - Horde"
+        },
+        {
+          "id": 11955,
+          "name": "Festung der Stürme - Alliance"
+        },
+        {
+          "id": 12222,
+          "name": "Festung der Stürme - Horde"
+        },
+        {
+          "id": 11956,
+          "name": "Fordragon - Alliance"
+        },
+        {
+          "id": 12223,
+          "name": "Fordragon - Horde"
+        },
+        {
+          "id": 11957,
+          "name": "Forscherliga - Alliance"
+        },
+        {
+          "id": 12224,
+          "name": "Forscherliga - Horde"
+        },
+        {
+          "id": 11958,
+          "name": "Frostmane - Alliance"
+        },
+        {
+          "id": 12225,
+          "name": "Frostmane - Horde"
+        },
+        {
+          "id": 11959,
+          "name": "Frostmourne - Alliance"
+        },
+        {
+          "id": 12226,
+          "name": "Frostmourne - Horde"
+        },
+        {
+          "id": 11960,
+          "name": "Frostwhisper - Alliance"
+        },
+        {
+          "id": 12227,
+          "name": "Frostwhisper - Horde"
+        },
+        {
+          "id": 11961,
+          "name": "Frostwolf - Alliance"
+        },
+        {
+          "id": 12228,
+          "name": "Frostwolf - Horde"
+        },
+        {
+          "id": 11962,
+          "name": "Galakrond - Alliance"
+        },
+        {
+          "id": 12229,
+          "name": "Galakrond - Horde"
+        },
+        {
+          "id": 11963,
+          "name": "Garona - Alliance"
+        },
+        {
+          "id": 12230,
+          "name": "Garona - Horde"
+        },
+        {
+          "id": 11964,
+          "name": "Garrosh - Alliance"
+        },
+        {
+          "id": 12231,
+          "name": "Garrosh - Horde"
+        },
+        {
+          "id": 11965,
+          "name": "Genjuros - Alliance"
+        },
+        {
+          "id": 12232,
+          "name": "Genjuros - Horde"
+        },
+        {
+          "id": 11966,
+          "name": "Ghostlands - Alliance"
+        },
+        {
+          "id": 12233,
+          "name": "Ghostlands - Horde"
+        },
+        {
+          "id": 11967,
+          "name": "Gilneas - Alliance"
+        },
+        {
+          "id": 12234,
+          "name": "Gilneas - Horde"
+        },
+        {
+          "id": 11968,
+          "name": "Goldrinn - Alliance"
+        },
+        {
+          "id": 12235,
+          "name": "Goldrinn - Horde"
+        },
+        {
+          "id": 11969,
+          "name": "Gordunni - Alliance"
+        },
+        {
+          "id": 12236,
+          "name": "Gordunni - Horde"
+        },
+        {
+          "id": 11970,
+          "name": "Gorgonnash - Alliance"
+        },
+        {
+          "id": 12237,
+          "name": "Gorgonnash - Horde"
+        },
+        {
+          "id": 11971,
+          "name": "Greymane - Alliance"
+        },
+        {
+          "id": 12238,
+          "name": "Greymane - Horde"
+        },
+        {
+          "id": 11972,
+          "name": "Grim Batol - Alliance"
+        },
+        {
+          "id": 12239,
+          "name": "Grim Batol - Horde"
+        },
+        {
+          "id": 11973,
+          "name": "Grom - Alliance"
+        },
+        {
+          "id": 12240,
+          "name": "Grom - Horde"
+        },
+        {
+          "id": 11974,
+          "name": "Gul'dan - Alliance"
+        },
+        {
+          "id": 12241,
+          "name": "Gul'dan - Horde"
+        },
+        {
+          "id": 11975,
+          "name": "Hakkar - Alliance"
+        },
+        {
+          "id": 12242,
+          "name": "Hakkar - Horde"
+        },
+        {
+          "id": 11976,
+          "name": "Haomarush - Alliance"
+        },
+        {
+          "id": 12243,
+          "name": "Haomarush - Horde"
+        },
+        {
+          "id": 11977,
+          "name": "Hellfire - Alliance"
+        },
+        {
+          "id": 12244,
+          "name": "Hellfire - Horde"
+        },
+        {
+          "id": 11978,
+          "name": "Hellscream - Alliance"
+        },
+        {
+          "id": 12245,
+          "name": "Hellscream - Horde"
+        },
+        {
+          "id": 11979,
+          "name": "Howling Fjord - Alliance"
+        },
+        {
+          "id": 12246,
+          "name": "Howling Fjord - Horde"
+        },
+        {
+          "id": 11980,
+          "name": "Hyjal - Alliance"
+        },
+        {
+          "id": 12247,
+          "name": "Hyjal - Horde"
+        },
+        {
+          "id": 11981,
+          "name": "Illidan - Alliance"
+        },
+        {
+          "id": 12248,
+          "name": "Illidan - Horde"
+        },
+        {
+          "id": 11982,
+          "name": "Jaedenar - Alliance"
+        },
+        {
+          "id": 12249,
+          "name": "Jaedenar - Horde"
+        },
+        {
+          "id": 11983,
+          "name": "Kael'thas - Alliance"
+        },
+        {
+          "id": 12250,
+          "name": "Kael'thas - Horde"
+        },
+        {
+          "id": 11984,
+          "name": "Karazhan - Alliance"
+        },
+        {
+          "id": 12251,
+          "name": "Karazhan - Horde"
+        },
+        {
+          "id": 11985,
+          "name": "Kargath - Alliance"
+        },
+        {
+          "id": 12252,
+          "name": "Kargath - Horde"
+        },
+        {
+          "id": 11986,
+          "name": "Kazzak - Alliance"
+        },
+        {
+          "id": 12253,
+          "name": "Kazzak - Horde"
+        },
+        {
+          "id": 11987,
+          "name": "Kel'Thuzad - Alliance"
+        },
+        {
+          "id": 12254,
+          "name": "Kel'Thuzad - Horde"
+        },
+        {
+          "id": 11988,
+          "name": "Khadgar - Alliance"
+        },
+        {
+          "id": 12255,
+          "name": "Khadgar - Horde"
+        },
+        {
+          "id": 11989,
+          "name": "Khaz Modan - Alliance"
+        },
+        {
+          "id": 12256,
+          "name": "Khaz Modan - Horde"
+        },
+        {
+          "id": 11990,
+          "name": "Khaz'goroth - Alliance"
+        },
+        {
+          "id": 12257,
+          "name": "Khaz'goroth - Horde"
+        },
+        {
+          "id": 11991,
+          "name": "Kil'jaeden - Alliance"
+        },
+        {
+          "id": 12258,
+          "name": "Kil'jaeden - Horde"
+        },
+        {
+          "id": 11992,
+          "name": "Kilrogg - Alliance"
+        },
+        {
+          "id": 12259,
+          "name": "Kilrogg - Horde"
+        },
+        {
+          "id": 11993,
+          "name": "Kirin Tor - Alliance"
+        },
+        {
+          "id": 12260,
+          "name": "Kirin Tor - Horde"
+        },
+        {
+          "id": 11994,
+          "name": "Kor'gall - Alliance"
+        },
+        {
+          "id": 12261,
+          "name": "Kor'gall - Horde"
+        },
+        {
+          "id": 11995,
+          "name": "Krag'jin - Alliance"
+        },
+        {
+          "id": 12262,
+          "name": "Krag'jin - Horde"
+        },
+        {
+          "id": 11996,
+          "name": "Krasus - Alliance"
+        },
+        {
+          "id": 12263,
+          "name": "Krasus - Horde"
+        },
+        {
+          "id": 11997,
+          "name": "Kul Tiras - Alliance"
+        },
+        {
+          "id": 12264,
+          "name": "Kul Tiras - Horde"
+        },
+        {
+          "id": 11998,
+          "name": "Kult der Verdammten - Alliance"
+        },
+        {
+          "id": 12265,
+          "name": "Kult der Verdammten - Horde"
+        },
+        {
+          "id": 11999,
+          "name": "La Croisade écarlate - Alliance"
+        },
+        {
+          "id": 12266,
+          "name": "La Croisade écarlate - Horde"
+        },
+        {
+          "id": 12000,
+          "name": "Laughing Skull - Alliance"
+        },
+        {
+          "id": 12267,
+          "name": "Laughing Skull - Horde"
+        },
+        {
+          "id": 12001,
+          "name": "Les Clairvoyants - Alliance"
+        },
+        {
+          "id": 12268,
+          "name": "Les Clairvoyants - Horde"
+        },
+        {
+          "id": 12002,
+          "name": "Les Sentinelles - Alliance"
+        },
+        {
+          "id": 12269,
+          "name": "Les Sentinelles - Horde"
+        },
+        {
+          "id": 12003,
+          "name": "Lich King - Alliance"
+        },
+        {
+          "id": 12270,
+          "name": "Lich King - Horde"
+        },
+        {
+          "id": 12004,
+          "name": "Lightbringer - Alliance"
+        },
+        {
+          "id": 12271,
+          "name": "Lightbringer - Horde"
+        },
+        {
+          "id": 12005,
+          "name": "Lightning's Blade - Alliance"
+        },
+        {
+          "id": 12272,
+          "name": "Lightning's Blade - Horde"
+        },
+        {
+          "id": 12006,
+          "name": "Lordaeron - Alliance"
+        },
+        {
+          "id": 12273,
+          "name": "Lordaeron - Horde"
+        },
+        {
+          "id": 12007,
+          "name": "Los Errantes - Alliance"
+        },
+        {
+          "id": 12274,
+          "name": "Los Errantes - Horde"
+        },
+        {
+          "id": 12008,
+          "name": "Lothar - Alliance"
+        },
+        {
+          "id": 12275,
+          "name": "Lothar - Horde"
+        },
+        {
+          "id": 12009,
+          "name": "Madmortem - Alliance"
+        },
+        {
+          "id": 12276,
+          "name": "Madmortem - Horde"
+        },
+        {
+          "id": 12010,
+          "name": "Magtheridon - Alliance"
+        },
+        {
+          "id": 12277,
+          "name": "Magtheridon - Horde"
+        },
+        {
+          "id": 12011,
+          "name": "Mal'Ganis - Alliance"
+        },
+        {
+          "id": 12278,
+          "name": "Mal'Ganis - Horde"
+        },
+        {
+          "id": 12012,
+          "name": "Malfurion - Alliance"
+        },
+        {
+          "id": 12279,
+          "name": "Malfurion - Horde"
+        },
+        {
+          "id": 12013,
+          "name": "Malorne - Alliance"
+        },
+        {
+          "id": 12280,
+          "name": "Malorne - Horde"
+        },
+        {
+          "id": 12014,
+          "name": "Malygos - Alliance"
+        },
+        {
+          "id": 12281,
+          "name": "Malygos - Horde"
+        },
+        {
+          "id": 12015,
+          "name": "Mannoroth - Alliance"
+        },
+        {
+          "id": 12282,
+          "name": "Mannoroth - Horde"
+        },
+        {
+          "id": 12016,
+          "name": "Marécage de Zangar - Alliance"
+        },
+        {
+          "id": 12283,
+          "name": "Marécage de Zangar - Horde"
+        },
+        {
+          "id": 12017,
+          "name": "Mazrigos - Alliance"
+        },
+        {
+          "id": 12284,
+          "name": "Mazrigos - Horde"
+        },
+        {
+          "id": 12018,
+          "name": "Medivh - Alliance"
+        },
+        {
+          "id": 12285,
+          "name": "Medivh - Horde"
+        },
+        {
+          "id": 12019,
+          "name": "Minahonda - Alliance"
+        },
+        {
+          "id": 12286,
+          "name": "Minahonda - Horde"
+        },
+        {
+          "id": 12020,
+          "name": "Moonglade - Alliance"
+        },
+        {
+          "id": 12287,
+          "name": "Moonglade - Horde"
+        },
+        {
+          "id": 12021,
+          "name": "Mug'thol - Alliance"
+        },
+        {
+          "id": 12288,
+          "name": "Mug'thol - Horde"
+        },
+        {
+          "id": 12022,
+          "name": "Nagrand - Alliance"
+        },
+        {
+          "id": 12289,
+          "name": "Nagrand - Horde"
+        },
+        {
+          "id": 12023,
+          "name": "Nathrezim - Alliance"
+        },
+        {
+          "id": 12290,
+          "name": "Nathrezim - Horde"
+        },
+        {
+          "id": 12024,
+          "name": "Naxxramas - Alliance"
+        },
+        {
+          "id": 12291,
+          "name": "Naxxramas - Horde"
+        },
+        {
+          "id": 12025,
+          "name": "Nazjatar - Alliance"
+        },
+        {
+          "id": 12292,
+          "name": "Nazjatar - Horde"
+        },
+        {
+          "id": 12026,
+          "name": "Nefarian - Alliance"
+        },
+        {
+          "id": 12293,
+          "name": "Nefarian - Horde"
+        },
+        {
+          "id": 12027,
+          "name": "Nemesis - Alliance"
+        },
+        {
+          "id": 12294,
+          "name": "Nemesis - Horde"
+        },
+        {
+          "id": 12028,
+          "name": "Neptulon - Alliance"
+        },
+        {
+          "id": 12295,
+          "name": "Neptulon - Horde"
+        },
+        {
+          "id": 12029,
+          "name": "Ner'zhul - Alliance"
+        },
+        {
+          "id": 12296,
+          "name": "Ner'zhul - Horde"
+        },
+        {
+          "id": 12030,
+          "name": "Nera'thor - Alliance"
+        },
+        {
+          "id": 12297,
+          "name": "Nera'thor - Horde"
+        },
+        {
+          "id": 12031,
+          "name": "Nethersturm - Alliance"
+        },
+        {
+          "id": 12298,
+          "name": "Nethersturm - Horde"
+        },
+        {
+          "id": 12032,
+          "name": "Nordrassil - Alliance"
+        },
+        {
+          "id": 12299,
+          "name": "Nordrassil - Horde"
+        },
+        {
+          "id": 12033,
+          "name": "Norgannon - Alliance"
+        },
+        {
+          "id": 12300,
+          "name": "Norgannon - Horde"
+        },
+        {
+          "id": 12034,
+          "name": "Nozdormu - Alliance"
+        },
+        {
+          "id": 12301,
+          "name": "Nozdormu - Horde"
+        },
+        {
+          "id": 12035,
+          "name": "Onyxia - Alliance"
+        },
+        {
+          "id": 12302,
+          "name": "Onyxia - Horde"
+        },
+        {
+          "id": 12036,
+          "name": "Outland - Alliance"
+        },
+        {
+          "id": 12303,
+          "name": "Outland - Horde"
+        },
+        {
+          "id": 12037,
+          "name": "Perenolde - Alliance"
+        },
+        {
+          "id": 12304,
+          "name": "Perenolde - Horde"
+        },
+        {
+          "id": 12038,
+          "name": "Pozzo dell'Eternità - Alliance"
+        },
+        {
+          "id": 12305,
+          "name": "Pozzo dell'Eternità - Horde"
+        },
+        {
+          "id": 12039,
+          "name": "Proudmoore - Alliance"
+        },
+        {
+          "id": 12306,
+          "name": "Proudmoore - Horde"
+        },
+        {
+          "id": 12040,
+          "name": "Quel'Thalas - Alliance"
+        },
+        {
+          "id": 12307,
+          "name": "Quel'Thalas - Horde"
+        },
+        {
+          "id": 12041,
+          "name": "Ragnaros - Alliance"
+        },
+        {
+          "id": 12308,
+          "name": "Ragnaros - Horde"
+        },
+        {
+          "id": 12042,
+          "name": "Rajaxx - Alliance"
+        },
+        {
+          "id": 12309,
+          "name": "Rajaxx - Horde"
+        },
+        {
+          "id": 12043,
+          "name": "Rashgarroth - Alliance"
+        },
+        {
+          "id": 12310,
+          "name": "Rashgarroth - Horde"
+        },
+        {
+          "id": 12044,
+          "name": "Ravencrest - Alliance"
+        },
+        {
+          "id": 12311,
+          "name": "Ravencrest - Horde"
+        },
+        {
+          "id": 12045,
+          "name": "Ravenholdt - Alliance"
+        },
+        {
+          "id": 12312,
+          "name": "Ravenholdt - Horde"
+        },
+        {
+          "id": 12046,
+          "name": "Razuvious - Alliance"
+        },
+        {
+          "id": 12313,
+          "name": "Razuvious - Horde"
+        },
+        {
+          "id": 12047,
+          "name": "Rexxar - Alliance"
+        },
+        {
+          "id": 12314,
+          "name": "Rexxar - Horde"
+        },
+        {
+          "id": 12048,
+          "name": "Runetotem - Alliance"
+        },
+        {
+          "id": 12315,
+          "name": "Runetotem - Horde"
+        },
+        {
+          "id": 12049,
+          "name": "Sanguino - Alliance"
+        },
+        {
+          "id": 12316,
+          "name": "Sanguino - Horde"
+        },
+        {
+          "id": 12050,
+          "name": "Sargeras - Alliance"
+        },
+        {
+          "id": 12317,
+          "name": "Sargeras - Horde"
+        },
+        {
+          "id": 12051,
+          "name": "Saurfang - Alliance"
+        },
+        {
+          "id": 12318,
+          "name": "Saurfang - Horde"
+        },
+        {
+          "id": 12052,
+          "name": "Scarshield Legion - Alliance"
+        },
+        {
+          "id": 12319,
+          "name": "Scarshield Legion - Horde"
+        },
+        {
+          "id": 12053,
+          "name": "Sen'jin - Alliance"
+        },
+        {
+          "id": 12320,
+          "name": "Sen'jin - Horde"
+        },
+        {
+          "id": 12054,
+          "name": "Shadowsong - Alliance"
+        },
+        {
+          "id": 12321,
+          "name": "Shadowsong - Horde"
+        },
+        {
+          "id": 12055,
+          "name": "Shattered Halls - Alliance"
+        },
+        {
+          "id": 12322,
+          "name": "Shattered Halls - Horde"
+        },
+        {
+          "id": 12056,
+          "name": "Shattered Hand - Alliance"
+        },
+        {
+          "id": 12323,
+          "name": "Shattered Hand - Horde"
+        },
+        {
+          "id": 12057,
+          "name": "Shattrath - Alliance"
+        },
+        {
+          "id": 12324,
+          "name": "Shattrath - Horde"
+        },
+        {
+          "id": 12058,
+          "name": "Shen'dralar - Alliance"
+        },
+        {
+          "id": 12325,
+          "name": "Shen'dralar - Horde"
+        },
+        {
+          "id": 12059,
+          "name": "Silvermoon - Alliance"
+        },
+        {
+          "id": 12326,
+          "name": "Silvermoon - Horde"
+        },
+        {
+          "id": 12060,
+          "name": "Sinstralis - Alliance"
+        },
+        {
+          "id": 12327,
+          "name": "Sinstralis - Horde"
+        },
+        {
+          "id": 12061,
+          "name": "Skullcrusher - Alliance"
+        },
+        {
+          "id": 12328,
+          "name": "Skullcrusher - Horde"
+        },
+        {
+          "id": 12062,
+          "name": "Soulflayer - Alliance"
+        },
+        {
+          "id": 12329,
+          "name": "Soulflayer - Horde"
+        },
+        {
+          "id": 12063,
+          "name": "Spinebreaker - Alliance"
+        },
+        {
+          "id": 12330,
+          "name": "Spinebreaker - Horde"
+        },
+        {
+          "id": 12064,
+          "name": "Sporeggar - Alliance"
+        },
+        {
+          "id": 12331,
+          "name": "Sporeggar - Horde"
+        },
+        {
+          "id": 12065,
+          "name": "Steamwheedle Cartel - Alliance"
+        },
+        {
+          "id": 12332,
+          "name": "Steamwheedle Cartel - Horde"
+        },
+        {
+          "id": 12066,
+          "name": "Stormrage - Alliance"
+        },
+        {
+          "id": 12333,
+          "name": "Stormrage - Horde"
+        },
+        {
+          "id": 12067,
+          "name": "Stormreaver - Alliance"
+        },
+        {
+          "id": 12334,
+          "name": "Stormreaver - Horde"
+        },
+        {
+          "id": 12068,
+          "name": "Stormscale - Alliance"
+        },
+        {
+          "id": 12335,
+          "name": "Stormscale - Horde"
+        },
+        {
+          "id": 12069,
+          "name": "Sunstrider - Alliance"
+        },
+        {
+          "id": 12336,
+          "name": "Sunstrider - Horde"
+        },
+        {
+          "id": 12070,
+          "name": "Suramar - Alliance"
+        },
+        {
+          "id": 12337,
+          "name": "Suramar - Horde"
+        },
+        {
+          "id": 12071,
+          "name": "Sylvanas - Alliance"
+        },
+        {
+          "id": 12338,
+          "name": "Sylvanas - Horde"
+        },
+        {
+          "id": 12072,
+          "name": "Taerar - Alliance"
+        },
+        {
+          "id": 12339,
+          "name": "Taerar - Horde"
+        },
+        {
+          "id": 12073,
+          "name": "Talnivarr - Alliance"
+        },
+        {
+          "id": 12340,
+          "name": "Talnivarr - Horde"
+        },
+        {
+          "id": 12074,
+          "name": "Tarren Mill - Alliance"
+        },
+        {
+          "id": 12341,
+          "name": "Tarren Mill - Horde"
+        },
+        {
+          "id": 12075,
+          "name": "Teldrassil - Alliance"
+        },
+        {
+          "id": 12342,
+          "name": "Teldrassil - Horde"
+        },
+        {
+          "id": 12076,
+          "name": "Temple noir - Alliance"
+        },
+        {
+          "id": 12343,
+          "name": "Temple noir - Horde"
+        },
+        {
+          "id": 12077,
+          "name": "Terenas - Alliance"
+        },
+        {
+          "id": 12344,
+          "name": "Terenas - Horde"
+        },
+        {
+          "id": 12078,
+          "name": "Terokkar - Alliance"
+        },
+        {
+          "id": 12345,
+          "name": "Terokkar - Horde"
+        },
+        {
+          "id": 12079,
+          "name": "Terrordar - Alliance"
+        },
+        {
+          "id": 12346,
+          "name": "Terrordar - Horde"
+        },
+        {
+          "id": 12080,
+          "name": "The Maelstrom - Alliance"
+        },
+        {
+          "id": 12347,
+          "name": "The Maelstrom - Horde"
+        },
+        {
+          "id": 12081,
+          "name": "The Sha'tar - Alliance"
+        },
+        {
+          "id": 12348,
+          "name": "The Sha'tar - Horde"
+        },
+        {
+          "id": 12082,
+          "name": "The Venture Co - Alliance"
+        },
+        {
+          "id": 12349,
+          "name": "The Venture Co - Horde"
+        },
+        {
+          "id": 12083,
+          "name": "Theradras - Alliance"
+        },
+        {
+          "id": 12350,
+          "name": "Theradras - Horde"
+        },
+        {
+          "id": 12084,
+          "name": "Thermaplugg - Alliance"
+        },
+        {
+          "id": 12351,
+          "name": "Thermaplugg - Horde"
+        },
+        {
+          "id": 12085,
+          "name": "Thrall - Alliance"
+        },
+        {
+          "id": 12352,
+          "name": "Thrall - Horde"
+        },
+        {
+          "id": 12086,
+          "name": "Throk'Feroth - Alliance"
+        },
+        {
+          "id": 12353,
+          "name": "Throk'Feroth - Horde"
+        },
+        {
+          "id": 12087,
+          "name": "Thunderhorn - Alliance"
+        },
+        {
+          "id": 12354,
+          "name": "Thunderhorn - Horde"
+        },
+        {
+          "id": 12088,
+          "name": "Tichondrius - Alliance"
+        },
+        {
+          "id": 12355,
+          "name": "Tichondrius - Horde"
+        },
+        {
+          "id": 12089,
+          "name": "Tirion - Alliance"
+        },
+        {
+          "id": 12356,
+          "name": "Tirion - Horde"
+        },
+        {
+          "id": 12090,
+          "name": "Todeswache - Alliance"
+        },
+        {
+          "id": 12357,
+          "name": "Todeswache - Horde"
+        },
+        {
+          "id": 12091,
+          "name": "Trollbane - Alliance"
+        },
+        {
+          "id": 12358,
+          "name": "Trollbane - Horde"
+        },
+        {
+          "id": 12092,
+          "name": "Turalyon - Alliance"
+        },
+        {
+          "id": 12359,
+          "name": "Turalyon - Horde"
+        },
+        {
+          "id": 12093,
+          "name": "Twilight's Hammer - Alliance"
+        },
+        {
+          "id": 12360,
+          "name": "Twilight's Hammer - Horde"
+        },
+        {
+          "id": 12094,
+          "name": "Twisting Nether - Alliance"
+        },
+        {
+          "id": 12361,
+          "name": "Twisting Nether - Horde"
+        },
+        {
+          "id": 12095,
+          "name": "Tyrande - Alliance"
+        },
+        {
+          "id": 12362,
+          "name": "Tyrande - Horde"
+        },
+        {
+          "id": 12096,
+          "name": "Uldaman - Alliance"
+        },
+        {
+          "id": 12363,
+          "name": "Uldaman - Horde"
+        },
+        {
+          "id": 12097,
+          "name": "Ulduar - Alliance"
+        },
+        {
+          "id": 12364,
+          "name": "Ulduar - Horde"
+        },
+        {
+          "id": 12098,
+          "name": "Uldum - Alliance"
+        },
+        {
+          "id": 12365,
+          "name": "Uldum - Horde"
+        },
+        {
+          "id": 12099,
+          "name": "Un'Goro - Alliance"
+        },
+        {
+          "id": 12366,
+          "name": "Un'Goro - Horde"
+        },
+        {
+          "id": 12100,
+          "name": "Varimathras - Alliance"
+        },
+        {
+          "id": 12367,
+          "name": "Varimathras - Horde"
+        },
+        {
+          "id": 12101,
+          "name": "Vashj - Alliance"
+        },
+        {
+          "id": 12368,
+          "name": "Vashj - Horde"
+        },
+        {
+          "id": 12102,
+          "name": "Vek'lor - Alliance"
+        },
+        {
+          "id": 12369,
+          "name": "Vek'lor - Horde"
+        },
+        {
+          "id": 12103,
+          "name": "Vek'nilash - Alliance"
+        },
+        {
+          "id": 12370,
+          "name": "Vek'nilash - Horde"
+        },
+        {
+          "id": 12104,
+          "name": "Vol'jin - Alliance"
+        },
+        {
+          "id": 12371,
+          "name": "Vol'jin - Horde"
+        },
+        {
+          "id": 12105,
+          "name": "Wildhammer - Alliance"
+        },
+        {
+          "id": 12372,
+          "name": "Wildhammer - Horde"
+        },
+        {
+          "id": 12106,
+          "name": "Wrathbringer - Alliance"
+        },
+        {
+          "id": 12373,
+          "name": "Wrathbringer - Horde"
+        },
+        {
+          "id": 12107,
+          "name": "Xavius - Alliance"
+        },
+        {
+          "id": 12374,
+          "name": "Xavius - Horde"
+        },
+        {
+          "id": 12108,
+          "name": "Ysera - Alliance"
+        },
+        {
+          "id": 12375,
+          "name": "Ysera - Horde"
+        },
+        {
+          "id": 12109,
+          "name": "Ysondre - Alliance"
+        },
+        {
+          "id": 12376,
+          "name": "Ysondre - Horde"
+        },
+        {
+          "id": 12110,
+          "name": "Zenedar - Alliance"
+        },
+        {
+          "id": 12377,
+          "name": "Zenedar - Horde"
+        },
+        {
+          "id": 12111,
+          "name": "Zirkel des Cenarius - Alliance"
+        },
+        {
+          "id": 12378,
+          "name": "Zirkel des Cenarius - Horde"
+        },
+        {
+          "id": 12112,
+          "name": "Zul'jin - Alliance"
+        },
+        {
+          "id": 12379,
+          "name": "Zul'jin - Horde"
+        },
+        {
+          "id": 12113,
+          "name": "Zuluhed - Alliance"
+        },
+        {
+          "id": 12380,
+          "name": "Zuluhed - Horde"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

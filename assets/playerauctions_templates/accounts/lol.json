@@ -1,0 +1,166 @@
+{
+  "game_id": 3637,
+  "game": "lol",
+  "game_name": "League of Legends",
+  "seo_name": "LOL",
+  "servers": [
+    {
+      "id": 6001,
+      "name": "Brazil"
+    },
+    {
+      "id": 4144,
+      "name": "EU Nordic and East"
+    },
+    {
+      "id": 4143,
+      "name": "EU West"
+    },
+    {
+      "id": 8928,
+      "name": "Japan"
+    },
+    {
+      "id": 5772,
+      "name": "Latin America North"
+    },
+    {
+      "id": 5773,
+      "name": "Latin America South"
+    },
+    {
+      "id": 13870,
+      "name": "Middle East"
+    },
+    {
+      "id": 3638,
+      "name": "North America"
+    },
+    {
+      "id": 5769,
+      "name": "Oceania"
+    },
+    {
+      "id": 8605,
+      "name": "PBE"
+    },
+    {
+      "id": 5771,
+      "name": "Russia"
+    },
+    {
+      "id": 9496,
+      "name": "Southeast Asia"
+    },
+    {
+      "id": 5770,
+      "name": "Turkey"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

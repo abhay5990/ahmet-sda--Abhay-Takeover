@@ -1,0 +1,151 @@
+{
+  "game": "pubg-mobile",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "account_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "evo_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "current_tier": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum",
+        "Diamond",
+        "Crown",
+        "Ace",
+        "Conqueror"
+      ]
+    },
+    "highest_tier_reached": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum",
+        "Diamond",
+        "Crown",
+        "Ace",
+        "Conqueror"
+      ]
+    },
+    "weapon_skins_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "suits_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "helmets_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "backpacks_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "vehicle_skins_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "room_cards_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "emotes_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    }
+  }
+}

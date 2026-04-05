@@ -1,0 +1,98 @@
+{
+  "game": "ark-survival-evolved",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "stock": {
+      "type": "integer",
+      "required": true
+    },
+    "min_quantity": {
+      "type": "integer",
+      "required": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "item_data": {
+    "server": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "PvE Legacy",
+        "PvP Legacy",
+        "PvE New",
+        "PvP New"
+      ]
+    },
+    "platform": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "PC",
+        "PlayStation",
+        "Xbox"
+      ]
+    },
+    "item_type": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Bases",
+        "Blueprints",
+        "Dinosaurs",
+        "Eggs",
+        "Food",
+        "Pets",
+        "Resources",
+        "Saddles",
+        "Skins",
+        "Tek",
+        "Weapons",
+        "Other"
+      ]
+    }
+  }
+}

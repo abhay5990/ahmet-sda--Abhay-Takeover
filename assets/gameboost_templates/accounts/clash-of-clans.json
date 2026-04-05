@@ -1,0 +1,152 @@
+{
+  "game": "clash-of-clans",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "clan_role": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Leader",
+        "Co-Leader",
+        "Elder",
+        "Member"
+      ]
+    },
+    "town_hall_level": {
+      "type": "integer",
+      "required": false,
+      "min": 1
+    },
+    "experience_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "gems_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "minion_prince_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "barbarian_king_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "archer_queen_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "grand_warden_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "royal_champion_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "trophy_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "builder_hall_level": {
+      "type": "integer",
+      "required": false,
+      "min": 1
+    },
+    "battle_machine_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "clan_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "max": {
+      "type": "boolean",
+      "required": false
+    }
+  }
+}

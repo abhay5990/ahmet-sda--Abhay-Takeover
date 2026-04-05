@@ -1,0 +1,207 @@
+{
+  "game_id": 7806,
+  "game": "dofus-touch",
+  "game_name": "Dofus Touch",
+  "seo_name": "Dofus-Touch",
+  "servers": [
+    {
+      "id": 7807,
+      "name": "Brutas"
+    },
+    {
+      "id": 7808,
+      "name": "Dodge"
+    },
+    {
+      "id": 13814,
+      "name": "Epsilon"
+    },
+    {
+      "id": 13815,
+      "name": "Epsilon-2"
+    },
+    {
+      "id": 13816,
+      "name": "Epsilon-3"
+    },
+    {
+      "id": 7809,
+      "name": "Grandapan"
+    },
+    {
+      "id": 7810,
+      "name": "Herdegrize"
+    },
+    {
+      "id": 7811,
+      "name": "Oshimo"
+    },
+    {
+      "id": 13817,
+      "name": "Talok"
+    },
+    {
+      "id": 13818,
+      "name": "Talok-2"
+    },
+    {
+      "id": 13819,
+      "name": "Talok-3"
+    },
+    {
+      "id": 13820,
+      "name": "Talok-4"
+    },
+    {
+      "id": 13821,
+      "name": "Talok-5"
+    },
+    {
+      "id": 13822,
+      "name": "Talok-6"
+    },
+    {
+      "id": 7812,
+      "name": "Terra Cogita"
+    },
+    {
+      "id": 13823,
+      "name": "Tiliwan"
+    },
+    {
+      "id": 13824,
+      "name": "Tiliwan-2"
+    },
+    {
+      "id": 13825,
+      "name": "Tiliwan-3"
+    },
+    {
+      "id": 13826,
+      "name": "Tiliwan-4"
+    },
+    {
+      "id": 13827,
+      "name": "Tiliwan-5"
+    },
+    {
+      "id": 13828,
+      "name": "Tiliwan-6"
+    },
+    {
+      "id": 13829,
+      "name": "Tiliwan-7"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

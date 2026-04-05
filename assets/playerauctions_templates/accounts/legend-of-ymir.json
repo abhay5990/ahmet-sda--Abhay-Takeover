@@ -1,0 +1,343 @@
+{
+  "game_id": 14772,
+  "game": "legend-of-ymir",
+  "game_name": "Legend of YMIR",
+  "seo_name": "Legend-of-YMIR",
+  "servers": [
+    {
+      "id": 14773,
+      "name": "ASIA",
+      "subCategories": [
+        {
+          "id": 14828,
+          "name": "Asia 055"
+        },
+        {
+          "id": 14787,
+          "name": "ASIA014"
+        },
+        {
+          "id": 14788,
+          "name": "ASIA015"
+        },
+        {
+          "id": 14789,
+          "name": "ASIA016"
+        },
+        {
+          "id": 14790,
+          "name": "ASIA017"
+        },
+        {
+          "id": 14791,
+          "name": "ASIA018"
+        },
+        {
+          "id": 14811,
+          "name": "ASIA019"
+        },
+        {
+          "id": 14812,
+          "name": "ASIA020"
+        },
+        {
+          "id": 14813,
+          "name": "ASIA021"
+        },
+        {
+          "id": 14814,
+          "name": "ASIA022"
+        },
+        {
+          "id": 14815,
+          "name": "ASIA023"
+        },
+        {
+          "id": 14816,
+          "name": "ASIA024"
+        },
+        {
+          "id": 14817,
+          "name": "ASIA025"
+        },
+        {
+          "id": 14818,
+          "name": "ASIA026"
+        },
+        {
+          "id": 14819,
+          "name": "ASIA027"
+        },
+        {
+          "id": 14820,
+          "name": "ASIA028"
+        },
+        {
+          "id": 14821,
+          "name": "ASIA029"
+        },
+        {
+          "id": 14822,
+          "name": "ASIA030"
+        },
+        {
+          "id": 14823,
+          "name": "ASIA031"
+        },
+        {
+          "id": 14824,
+          "name": "ASIA032"
+        },
+        {
+          "id": 14825,
+          "name": "ASIA033"
+        },
+        {
+          "id": 14826,
+          "name": "ASIA050"
+        },
+        {
+          "id": 14827,
+          "name": "ASIA051"
+        },
+        {
+          "id": 14836,
+          "name": "ASIA060"
+        },
+        {
+          "id": 14837,
+          "name": "ASIA061"
+        },
+        {
+          "id": 14838,
+          "name": "ASIA062"
+        },
+        {
+          "id": 14839,
+          "name": "ASIA063"
+        },
+        {
+          "id": 14786,
+          "name": "Bangkok"
+        },
+        {
+          "id": 14780,
+          "name": "Chess"
+        },
+        {
+          "id": 14778,
+          "name": "DaddyKim"
+        },
+        {
+          "id": 14779,
+          "name": "DaddyVerse"
+        },
+        {
+          "id": 14774,
+          "name": "HOF1"
+        },
+        {
+          "id": 14775,
+          "name": "HOF2"
+        },
+        {
+          "id": 14776,
+          "name": "ISEKAI"
+        },
+        {
+          "id": 14781,
+          "name": "Kings"
+        },
+        {
+          "id": 14777,
+          "name": "ManiTW"
+        },
+        {
+          "id": 14783,
+          "name": "PROSGARD"
+        },
+        {
+          "id": 14785,
+          "name": "Taipei"
+        },
+        {
+          "id": 14784,
+          "name": "Tokyo"
+        },
+        {
+          "id": 14782,
+          "name": "xaou"
+        }
+      ]
+    },
+    {
+      "id": 14792,
+      "name": "NAEU",
+      "subCategories": [
+        {
+          "id": 14794,
+          "name": "Moscow"
+        },
+        {
+          "id": 14795,
+          "name": "NAEU003"
+        },
+        {
+          "id": 14796,
+          "name": "NAEU004"
+        },
+        {
+          "id": 14797,
+          "name": "NAEU005"
+        },
+        {
+          "id": 14798,
+          "name": "NAEU006"
+        },
+        {
+          "id": 14829,
+          "name": "NAEU007"
+        },
+        {
+          "id": 14809,
+          "name": "NAEU009"
+        },
+        {
+          "id": 14793,
+          "name": "TheOrigin"
+        }
+      ]
+    },
+    {
+      "id": 14799,
+      "name": "SA",
+      "subCategories": [
+        {
+          "id": 14801,
+          "name": "Ragnarok"
+        },
+        {
+          "id": 14802,
+          "name": "S?o Paulo"
+        },
+        {
+          "id": 14803,
+          "name": "SA004"
+        },
+        {
+          "id": 14804,
+          "name": "SA005"
+        },
+        {
+          "id": 14805,
+          "name": "SA006"
+        },
+        {
+          "id": 14810,
+          "name": "SA008"
+        },
+        {
+          "id": 14800,
+          "name": "Valhalla"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

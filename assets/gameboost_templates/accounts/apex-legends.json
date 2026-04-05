@@ -1,0 +1,184 @@
+{
+  "game": "apex-legends",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "platform": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "PC",
+        "PSN",
+        "XBOX"
+      ]
+    },
+    "account_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "current_tier": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Unranked",
+        "Rookie",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum",
+        "Diamond",
+        "Master",
+        "Predator"
+      ]
+    },
+    "current_division": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "IV",
+        "III",
+        "II",
+        "I"
+      ]
+    },
+    "previous_tier": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Unranked",
+        "Rookie",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum",
+        "Diamond",
+        "Master",
+        "Predator"
+      ]
+    },
+    "previous_division": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "IV",
+        "III",
+        "II",
+        "I"
+      ]
+    },
+    "legend_skins_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "heirlooms_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "weapon_skins_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "legendary_items_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "crafting_metals_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "legend_tokens_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "apex_coins_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    }
+  },
+  "game_items": {
+    "legends": [
+      "Mirage",
+      "Revenant",
+      "Vantage"
+    ]
+  }
+}

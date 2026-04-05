@@ -1,0 +1,229 @@
+{
+  "game": "overwatch-2",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "platform": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "BattleNet",
+        "Steam",
+        "PlayStation",
+        "Xbox",
+        "Switch"
+      ]
+    },
+    "damage_tier": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Unranked",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum",
+        "Diamond",
+        "Master",
+        "Grandmaster",
+        "Champion",
+        "Top500"
+      ]
+    },
+    "damage_division": {
+      "type": "integer",
+      "required": false,
+      "values": [
+        5,
+        4,
+        3,
+        2,
+        1
+      ]
+    },
+    "support_tier": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Unranked",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum",
+        "Diamond",
+        "Master",
+        "Grandmaster",
+        "Champion",
+        "Top500"
+      ]
+    },
+    "support_division": {
+      "type": "integer",
+      "required": false,
+      "values": [
+        5,
+        4,
+        3,
+        2,
+        1
+      ]
+    },
+    "tank_tier": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Unranked",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum",
+        "Diamond",
+        "Master",
+        "Grandmaster",
+        "Champion",
+        "Top500"
+      ]
+    },
+    "tank_division": {
+      "type": "integer",
+      "required": false,
+      "values": [
+        5,
+        4,
+        3,
+        2,
+        1
+      ]
+    },
+    "progression_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "golden_weapons_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "legendary_skins_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "skins_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "prisms_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "ow_coins_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "legacy_coins_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "email_change": {
+      "type": "boolean",
+      "required": false
+    },
+    "name_change": {
+      "type": "boolean",
+      "required": false
+    },
+    "sms_verified": {
+      "type": "boolean",
+      "required": false
+    }
+  },
+  "game_items": {
+    "heroes": [
+      "Sojourn",
+      "Junker Queen",
+      "Cassidy"
+    ],
+    "roles": [
+      "Tank",
+      "Support",
+      "Damage"
+    ]
+  }
+}

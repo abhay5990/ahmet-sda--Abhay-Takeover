@@ -1,0 +1,128 @@
+{
+  "game": "nba-2k",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "game_series": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "NBA 2K24",
+        "NBA 2K23",
+        "NBA 2K22",
+        "NBA 2K21"
+      ]
+    },
+    "platform": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "PC",
+        "PlayStation 5",
+        "Xbox Series X/S",
+        "PlayStation 4",
+        "Xbox One",
+        "Switch"
+      ]
+    },
+    "account_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "special_edition": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "NBA 2K24 Kobe Bryant",
+        "NBA 2K24 Black Mamba",
+        "NBA 2K23 Michael Jordan"
+      ]
+    },
+    "vc_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "maxed_badges": {
+      "type": "boolean",
+      "required": false
+    },
+    "overall_rating_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    }
+  }
+}

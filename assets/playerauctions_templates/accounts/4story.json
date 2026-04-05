@@ -1,0 +1,553 @@
+{
+  "game_id": 4883,
+  "game": "4story",
+  "game_name": "4Story",
+  "seo_name": "4Story",
+  "servers": [
+    {
+      "id": 8198,
+      "name": "CZ Kalinor",
+      "subCategories": [
+        {
+          "id": 8199,
+          "name": "Derion"
+        },
+        {
+          "id": 8200,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 8195,
+      "name": "BR Kalinor",
+      "subCategories": [
+        {
+          "id": 8196,
+          "name": "Derion"
+        },
+        {
+          "id": 8197,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4888,
+      "name": "BR Lapiris",
+      "subCategories": [
+        {
+          "id": 4889,
+          "name": "Derion"
+        },
+        {
+          "id": 4890,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4891,
+      "name": "CZ Lapiris",
+      "subCategories": [
+        {
+          "id": 4892,
+          "name": "Derion"
+        },
+        {
+          "id": 4893,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4894,
+      "name": "CZ Xhadra",
+      "subCategories": [
+        {
+          "id": 4896,
+          "name": "Derion"
+        },
+        {
+          "id": 4895,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 8201,
+      "name": "DE Kalinor",
+      "subCategories": [
+        {
+          "id": 8203,
+          "name": "Derion"
+        },
+        {
+          "id": 8202,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4897,
+      "name": "DE Lapiris",
+      "subCategories": [
+        {
+          "id": 4898,
+          "name": "Derion"
+        },
+        {
+          "id": 4899,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4900,
+      "name": "DE Pendatron",
+      "subCategories": [
+        {
+          "id": 4902,
+          "name": "Derion"
+        },
+        {
+          "id": 4901,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4903,
+      "name": "DE Rumapark",
+      "subCategories": [
+        {
+          "id": 4921,
+          "name": "Derion"
+        },
+        {
+          "id": 4939,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4904,
+      "name": "DE Titurion",
+      "subCategories": [
+        {
+          "id": 4922,
+          "name": "Derion"
+        },
+        {
+          "id": 4940,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4905,
+      "name": "DE Xhadra",
+      "subCategories": [
+        {
+          "id": 4923,
+          "name": "Derion"
+        },
+        {
+          "id": 4941,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4906,
+      "name": "ENDENDROS",
+      "subCategories": [
+        {
+          "id": 4924,
+          "name": "Derion"
+        },
+        {
+          "id": 4942,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 8204,
+      "name": "ES Kalinor",
+      "subCategories": [
+        {
+          "id": 8205,
+          "name": "Derion"
+        },
+        {
+          "id": 8206,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4907,
+      "name": "ES Lapiris",
+      "subCategories": [
+        {
+          "id": 4925,
+          "name": "Derion"
+        },
+        {
+          "id": 4943,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4908,
+      "name": "ES Xhadra",
+      "subCategories": [
+        {
+          "id": 4926,
+          "name": "Derion"
+        },
+        {
+          "id": 4944,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 8207,
+      "name": "FR Kalinor",
+      "subCategories": [
+        {
+          "id": 8209,
+          "name": "Derion"
+        },
+        {
+          "id": 8208,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4909,
+      "name": "FR Lapiris",
+      "subCategories": [
+        {
+          "id": 4927,
+          "name": "Derion"
+        },
+        {
+          "id": 4945,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4910,
+      "name": "FR Xhadra",
+      "subCategories": [
+        {
+          "id": 4928,
+          "name": "Derion"
+        },
+        {
+          "id": 4946,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4911,
+      "name": "GR Server1",
+      "subCategories": [
+        {
+          "id": 4929,
+          "name": "Derion"
+        },
+        {
+          "id": 4947,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4912,
+      "name": "HU Server1",
+      "subCategories": [
+        {
+          "id": 4930,
+          "name": "Derion"
+        },
+        {
+          "id": 4948,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 8210,
+      "name": "IT Kalinor",
+      "subCategories": [
+        {
+          "id": 8211,
+          "name": "Derion"
+        },
+        {
+          "id": 8212,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4913,
+      "name": "IT Lapiris",
+      "subCategories": [
+        {
+          "id": 4931,
+          "name": "Derion"
+        },
+        {
+          "id": 4949,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4914,
+      "name": "IT Xhadra",
+      "subCategories": [
+        {
+          "id": 4932,
+          "name": "Derion"
+        },
+        {
+          "id": 4950,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4915,
+      "name": "PL Aderia",
+      "subCategories": [
+        {
+          "id": 4933,
+          "name": "Derion"
+        },
+        {
+          "id": 4951,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4916,
+      "name": "PL Mortal",
+      "subCategories": [
+        {
+          "id": 4934,
+          "name": "Derion"
+        },
+        {
+          "id": 4952,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4917,
+      "name": "PT Server1",
+      "subCategories": [
+        {
+          "id": 4935,
+          "name": "Derion"
+        },
+        {
+          "id": 4953,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4918,
+      "name": "RO Server1",
+      "subCategories": [
+        {
+          "id": 4936,
+          "name": "Derion"
+        },
+        {
+          "id": 4954,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4919,
+      "name": "TR Server1",
+      "subCategories": [
+        {
+          "id": 4937,
+          "name": "Derion"
+        },
+        {
+          "id": 4955,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 8213,
+      "name": "UK Kalinor",
+      "subCategories": [
+        {
+          "id": 8216,
+          "name": "Derion"
+        },
+        {
+          "id": 8215,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4920,
+      "name": "UK Server1",
+      "subCategories": [
+        {
+          "id": 4938,
+          "name": "Derion"
+        },
+        {
+          "id": 4956,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 8214,
+      "name": "US Kalinor",
+      "subCategories": [
+        {
+          "id": 8217,
+          "name": "Derion"
+        },
+        {
+          "id": 8218,
+          "name": "Valorian"
+        }
+      ]
+    },
+    {
+      "id": 4884,
+      "name": "US Lapiris",
+      "subCategories": [
+        {
+          "id": 4886,
+          "name": "Derion"
+        },
+        {
+          "id": 4887,
+          "name": "Valorian"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

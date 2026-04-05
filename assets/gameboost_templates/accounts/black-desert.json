@@ -1,0 +1,209 @@
+{
+  "game": "black-desert",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "server": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "North America",
+        "United States",
+        "Europe",
+        "Europe West",
+        "Europe Nordic & East",
+        "Brazil",
+        "Latin America North",
+        "Latin America South",
+        "Oceania",
+        "Middle East",
+        "Korea",
+        "Japan",
+        "China",
+        "Russia",
+        "Turkey",
+        "Vietnam",
+        "Philippines",
+        "Singapore",
+        "Thailand",
+        "Taiwan",
+        "America",
+        "Asia",
+        "Africa",
+        "TW/HK/MO",
+        "Asia Pacific",
+        "Public Beta Environment",
+        "Garena SEA",
+        "Global",
+        "Bangladesh",
+        "India",
+        "Indonesia",
+        "Malaysia",
+        "Mexico",
+        "Pakistan",
+        "Latin America",
+        "South America",
+        "South East Asia",
+        "Middle East & North Africa"
+      ]
+    },
+    "platform": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Steam",
+        "Pearl Abyss",
+        "PlayStation",
+        "Xbox"
+      ]
+    },
+    "main_character": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Warrior",
+        "Ranger",
+        "Sorceress",
+        "Berserker",
+        "Tamer",
+        "Musa",
+        "Maehwa",
+        "Valkyrie",
+        "Kunoichi",
+        "Ninja",
+        "Wizard",
+        "Witch",
+        "Dark Knight",
+        "Striker",
+        "Mystic",
+        "Lahn",
+        "Archer",
+        "Shai",
+        "Hashashin",
+        "Guardian",
+        "Nova",
+        "Sage",
+        "Corsair",
+        "Drakania",
+        "Woosa",
+        "Maegu",
+        "Scholar"
+      ]
+    },
+    "character_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "silver_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "pearls_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "loyalties_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "skill_points_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "mounts_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "pets_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "pearl_shop_items_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "completed_main_story": {
+      "type": "boolean",
+      "required": false
+    }
+  }
+}

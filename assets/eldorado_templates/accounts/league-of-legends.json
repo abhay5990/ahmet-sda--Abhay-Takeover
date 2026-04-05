@@ -1,0 +1,321 @@
+{
+  "game_id": "17",
+  "game": "league-of-legends",
+  "game_name": "League of Legends",
+  "category": "Account",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Brazil",
+      "group": "Server"
+    },
+    {
+      "id": "1",
+      "name": "Europe Nordic & East",
+      "group": "Server"
+    },
+    {
+      "id": "2",
+      "name": "Europe West",
+      "group": "Server"
+    },
+    {
+      "id": "3",
+      "name": "Latin America North",
+      "group": "Server"
+    },
+    {
+      "id": "4",
+      "name": "Latin America South",
+      "group": "Server"
+    },
+    {
+      "id": "5",
+      "name": "Oceania",
+      "group": "Server"
+    },
+    {
+      "id": "7",
+      "name": "Turkey",
+      "group": "Server"
+    },
+    {
+      "id": "8",
+      "name": "Japan",
+      "group": "Server"
+    },
+    {
+      "id": "9",
+      "name": "North America",
+      "group": "Server"
+    },
+    {
+      "id": "10",
+      "name": "PBE",
+      "group": "Server"
+    },
+    {
+      "id": "12",
+      "name": "Singapore",
+      "group": "Server"
+    },
+    {
+      "id": "13",
+      "name": "Philippines",
+      "group": "Server"
+    },
+    {
+      "id": "14",
+      "name": "Vietnam",
+      "group": "Server"
+    },
+    {
+      "id": "15",
+      "name": "Thailand",
+      "group": "Server"
+    },
+    {
+      "id": "16",
+      "name": "Taiwan",
+      "group": "Server"
+    },
+    {
+      "id": "17",
+      "name": "Middle East",
+      "group": "Server"
+    }
+  ],
+  "attributes": {
+    "lol-blue-essence": {
+      "name": "Blue Essence",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "0-19k-be",
+          "name": "0-19K BE"
+        },
+        {
+          "id": "20-40k-be",
+          "name": "20-40K BE"
+        },
+        {
+          "id": "41-60k-be",
+          "name": "41-60K BE"
+        },
+        {
+          "id": "61-80k-be",
+          "name": "61-80K BE"
+        },
+        {
+          "id": "81-100k-be",
+          "name": "81-100K BE"
+        },
+        {
+          "id": "100k-plus-be",
+          "name": "100K+ BE"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "lol-current-rank": {
+      "name": "Current Rank",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "unranked",
+          "name": "Unranked"
+        },
+        {
+          "id": "iron",
+          "name": "Iron"
+        },
+        {
+          "id": "bronze",
+          "name": "Bronze"
+        },
+        {
+          "id": "silver",
+          "name": "Silver"
+        },
+        {
+          "id": "gold",
+          "name": "Gold"
+        },
+        {
+          "id": "platinum",
+          "name": "Platinum"
+        },
+        {
+          "id": "diamond",
+          "name": "Diamond"
+        },
+        {
+          "id": "emerald",
+          "name": "Emerald"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "lol-skins": {
+      "name": "Skins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "0-skins",
+          "name": "0 Skins"
+        },
+        {
+          "id": "1-9-skins",
+          "name": "1-9 Skins"
+        },
+        {
+          "id": "300-399-skins",
+          "name": "300-399 Skins"
+        },
+        {
+          "id": "400-499-skins",
+          "name": "400-499 Skins"
+        },
+        {
+          "id": "500-699-skins",
+          "name": "500-699 Skins"
+        },
+        {
+          "id": "700-899-skins",
+          "name": "700-899 Skins"
+        },
+        {
+          "id": "900-1099-skins",
+          "name": "900-1099 Skins"
+        },
+        {
+          "id": "1100-1399-skins",
+          "name": "1100-1399 Skins"
+        },
+        {
+          "id": "1400-plus-skins",
+          "name": "1400+ Skins"
+        },
+        {
+          "id": "10-24-skins",
+          "name": "10-24 Skins"
+        },
+        {
+          "id": "25-49-skins",
+          "name": "25-49 Skins"
+        },
+        {
+          "id": "50-99-skins",
+          "name": "50-99 Skins"
+        },
+        {
+          "id": "100-199-skins",
+          "name": "100-199 Skins"
+        },
+        {
+          "id": "200-299-skins",
+          "name": "200-299 Skins"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "hasOriginalEmail": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  },
+  "accountSecretDetails": {
+    "type": "array",
+    "required": false,
+    "description": "Account credentials, each entry as \"login:password\" format. Not required for manual delivery offers.",
+    "items": {
+      "type": "string"
+    }
+  }
+}

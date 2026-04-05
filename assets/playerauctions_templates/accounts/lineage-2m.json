@@ -1,0 +1,327 @@
+{
+  "game_id": 10712,
+  "game": "lineage-2m",
+  "game_name": "Lineage 2M",
+  "seo_name": "Lineage-2M",
+  "servers": [
+    {
+      "id": 14635,
+      "name": "SEA",
+      "subCategories": [
+        {
+          "id": 14636,
+          "name": "Bartz 01"
+        },
+        {
+          "id": 14637,
+          "name": "Bartz 02"
+        },
+        {
+          "id": 14638,
+          "name": "Bartz 03"
+        },
+        {
+          "id": 14639,
+          "name": "Bartz 04"
+        },
+        {
+          "id": 14640,
+          "name": "Bartz 05"
+        },
+        {
+          "id": 14641,
+          "name": "Bartz 06"
+        },
+        {
+          "id": 14642,
+          "name": "Bartz 07"
+        },
+        {
+          "id": 14643,
+          "name": "Bartz 08"
+        },
+        {
+          "id": 14644,
+          "name": "Bartz 09"
+        },
+        {
+          "id": 14645,
+          "name": "Bartz 10"
+        },
+        {
+          "id": 14646,
+          "name": "Erica 01"
+        },
+        {
+          "id": 14647,
+          "name": "Erica 02"
+        },
+        {
+          "id": 14648,
+          "name": "Erica 03"
+        },
+        {
+          "id": 14649,
+          "name": "Erica 04"
+        },
+        {
+          "id": 14650,
+          "name": "Erica 05"
+        },
+        {
+          "id": 14651,
+          "name": "Erica 06"
+        },
+        {
+          "id": 14652,
+          "name": "Erica 07"
+        },
+        {
+          "id": 14653,
+          "name": "Erica 08"
+        },
+        {
+          "id": 14654,
+          "name": "Erica 09"
+        },
+        {
+          "id": 14655,
+          "name": "Erica 10"
+        },
+        {
+          "id": 14656,
+          "name": "Kain 01"
+        },
+        {
+          "id": 14657,
+          "name": "Kain 02"
+        },
+        {
+          "id": 14658,
+          "name": "Kain 03"
+        },
+        {
+          "id": 14659,
+          "name": "Kain 04"
+        },
+        {
+          "id": 14660,
+          "name": "Kain 05"
+        },
+        {
+          "id": 14661,
+          "name": "Kain 06"
+        },
+        {
+          "id": 14662,
+          "name": "Kain 07"
+        },
+        {
+          "id": 14663,
+          "name": "Kain 08"
+        },
+        {
+          "id": 14664,
+          "name": "Kain 09"
+        },
+        {
+          "id": 14665,
+          "name": "Kain 10"
+        },
+        {
+          "id": 14666,
+          "name": "Leona 01"
+        },
+        {
+          "id": 14667,
+          "name": "Leona 02"
+        },
+        {
+          "id": 14668,
+          "name": "Leona 03"
+        },
+        {
+          "id": 14669,
+          "name": "Leona 04"
+        },
+        {
+          "id": 14670,
+          "name": "Leona 05"
+        },
+        {
+          "id": 14671,
+          "name": "Leona 06"
+        },
+        {
+          "id": 14672,
+          "name": "Leona 07"
+        },
+        {
+          "id": 14673,
+          "name": "Leona 08"
+        },
+        {
+          "id": 14674,
+          "name": "Leona 09"
+        },
+        {
+          "id": 14675,
+          "name": "Leona 10"
+        },
+        {
+          "id": 14676,
+          "name": "Teon 01"
+        },
+        {
+          "id": 14677,
+          "name": "Teon 02"
+        },
+        {
+          "id": 14678,
+          "name": "Teon 03"
+        },
+        {
+          "id": 14679,
+          "name": "Teon 04"
+        },
+        {
+          "id": 14680,
+          "name": "Teon 05"
+        },
+        {
+          "id": 14681,
+          "name": "Teon 06"
+        },
+        {
+          "id": 14682,
+          "name": "Teon 07"
+        },
+        {
+          "id": 14683,
+          "name": "Teon 08"
+        },
+        {
+          "id": 14684,
+          "name": "Teon 09"
+        },
+        {
+          "id": 14685,
+          "name": "Teon 10"
+        }
+      ]
+    },
+    {
+      "id": 10854,
+      "name": " NA/EU West Bartz01"
+    },
+    {
+      "id": 10855,
+      "name": " NA/EU West Bartz02"
+    },
+    {
+      "id": 10856,
+      "name": " NA/EU West Bartz03"
+    },
+    {
+      "id": 10857,
+      "name": " NA/EU West Bartz04"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

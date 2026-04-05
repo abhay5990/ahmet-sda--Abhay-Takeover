@@ -1,0 +1,185 @@
+{
+  "game_id": 12754,
+  "game": "f1",
+  "game_name": "F1",
+  "seo_name": "F1",
+  "servers": [
+    {
+      "id": 14326,
+      "name": "F1 25",
+      "subCategories": [
+        {
+          "id": 14327,
+          "name": "PC"
+        },
+        {
+          "id": 14328,
+          "name": "PS"
+        },
+        {
+          "id": 14329,
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": 13805,
+      "name": "F1 24",
+      "subCategories": [
+        {
+          "id": 13806,
+          "name": "PC"
+        },
+        {
+          "id": 13807,
+          "name": "PS"
+        },
+        {
+          "id": 13808,
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": 13801,
+      "name": "F1 23",
+      "subCategories": [
+        {
+          "id": 13802,
+          "name": "PC"
+        },
+        {
+          "id": 13803,
+          "name": "PS"
+        },
+        {
+          "id": 13804,
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": 12776,
+      "name": "F1 22",
+      "subCategories": [
+        {
+          "id": 12777,
+          "name": "PC"
+        },
+        {
+          "id": 12778,
+          "name": "PS4"
+        },
+        {
+          "id": 12780,
+          "name": "PS5"
+        },
+        {
+          "id": 12781,
+          "name": "Xbox One"
+        },
+        {
+          "id": 12779,
+          "name": "Xbox Serier X/S"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

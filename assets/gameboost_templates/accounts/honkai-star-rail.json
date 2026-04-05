@@ -1,0 +1,146 @@
+{
+  "game": "honkai-star-rail",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "server": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "North America",
+        "United States",
+        "Europe",
+        "Europe West",
+        "Europe Nordic & East",
+        "Brazil",
+        "Latin America North",
+        "Latin America South",
+        "Oceania",
+        "Middle East",
+        "Korea",
+        "Japan",
+        "China",
+        "Russia",
+        "Turkey",
+        "Vietnam",
+        "Philippines",
+        "Singapore",
+        "Thailand",
+        "Taiwan",
+        "America",
+        "Asia",
+        "Africa",
+        "TW/HK/MO",
+        "Asia Pacific",
+        "Public Beta Environment",
+        "Garena SEA",
+        "Global",
+        "Bangladesh",
+        "India",
+        "Indonesia",
+        "Malaysia",
+        "Mexico",
+        "Pakistan",
+        "Latin America",
+        "South America",
+        "South East Asia",
+        "Middle East & North Africa"
+      ]
+    },
+    "main_character": {
+      "type": "string",
+      "required": false
+    },
+    "trailblaze_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "light_cones_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "stellar_jade_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "warps_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    }
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "game_id": 2392,
+  "game": "uo",
+  "game_name": "Ultima Online",
+  "seo_name": "UO",
+  "servers": [
+    {
+      "id": 2393,
+      "name": "Atlantic"
+    },
+    {
+      "id": 2394,
+      "name": "Baja"
+    },
+    {
+      "id": 2395,
+      "name": "Catskills"
+    },
+    {
+      "id": 2396,
+      "name": "Chesapeake"
+    },
+    {
+      "id": 2397,
+      "name": "Drachenfels"
+    },
+    {
+      "id": 2398,
+      "name": "Europa"
+    },
+    {
+      "id": 2399,
+      "name": "Great Lakes"
+    },
+    {
+      "id": 2400,
+      "name": "Lake Austin"
+    },
+    {
+      "id": 2401,
+      "name": "Lake Superior"
+    },
+    {
+      "id": 2402,
+      "name": "Legends"
+    },
+    {
+      "id": 2403,
+      "name": "Napa Valley"
+    },
+    {
+      "id": 2404,
+      "name": "Oceania"
+    },
+    {
+      "id": 2405,
+      "name": "Origin"
+    },
+    {
+      "id": 2406,
+      "name": "Pacific"
+    },
+    {
+      "id": 2407,
+      "name": "Siege Perilous"
+    },
+    {
+      "id": 2408,
+      "name": "Sonoma"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

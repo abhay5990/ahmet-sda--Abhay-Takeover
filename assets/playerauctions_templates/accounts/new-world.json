@@ -1,0 +1,207 @@
+{
+  "game_id": 9045,
+  "game": "new-world",
+  "game_name": "New World",
+  "seo_name": "New-World",
+  "servers": [
+    {
+      "id": 9920,
+      "name": "US East",
+      "subCategories": [
+        {
+          "id": 10318,
+          "name": "Empi"
+        },
+        {
+          "id": 14100,
+          "name": "Hudsonland"
+        },
+        {
+          "id": 14103,
+          "name": "Pangea"
+        },
+        {
+          "id": 10371,
+          "name": "Tumtum"
+        },
+        {
+          "id": 9939,
+          "name": "Valhalla"
+        }
+      ]
+    },
+    {
+      "id": 9916,
+      "name": "US West",
+      "subCategories": [
+        {
+          "id": 10029,
+          "name": "El Dorado"
+        }
+      ]
+    },
+    {
+      "id": 9917,
+      "name": "AP Southeast",
+      "subCategories": [
+        {
+          "id": 14206,
+          "name": "Cahokia"
+        },
+        {
+          "id": 14146,
+          "name": "Cerberus"
+        },
+        {
+          "id": 14112,
+          "name": "Crux"
+        },
+        {
+          "id": 10549,
+          "name": "Delos"
+        },
+        {
+          "id": 14111,
+          "name": "Taiyi"
+        }
+      ]
+    },
+    {
+      "id": 9919,
+      "name": "EU Central",
+      "subCategories": [
+        {
+          "id": 14115,
+          "name": "Aries"
+        },
+        {
+          "id": 9965,
+          "name": "Bifrost"
+        },
+        {
+          "id": 9969,
+          "name": "Fae"
+        },
+        {
+          "id": 9974,
+          "name": "Harmonia"
+        },
+        {
+          "id": 9987,
+          "name": "Nysa"
+        },
+        {
+          "id": 10190,
+          "name": "Saba"
+        }
+      ]
+    },
+    {
+      "id": 9918,
+      "name": "SA East",
+      "subCategories": [
+        {
+          "id": 10410,
+          "name": "Devaloka"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

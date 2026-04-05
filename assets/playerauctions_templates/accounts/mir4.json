@@ -1,0 +1,221 @@
+{
+  "game_id": 10105,
+  "game": "mir4",
+  "game_name": "MIR4",
+  "seo_name": "MIR4",
+  "servers": [
+    {
+      "id": 10119,
+      "name": "ASIA11"
+    },
+    {
+      "id": 10120,
+      "name": "ASIA12"
+    },
+    {
+      "id": 10121,
+      "name": "ASIA13"
+    },
+    {
+      "id": 10122,
+      "name": "ASIA14"
+    },
+    {
+      "id": 10123,
+      "name": "ASIA21"
+    },
+    {
+      "id": 10124,
+      "name": "ASIA22"
+    },
+    {
+      "id": 10125,
+      "name": "ASIA23"
+    },
+    {
+      "id": 10126,
+      "name": "ASIA24"
+    },
+    {
+      "id": 10127,
+      "name": "ASIA31"
+    },
+    {
+      "id": 10128,
+      "name": "ASIA32"
+    },
+    {
+      "id": 10129,
+      "name": "ASIA33"
+    },
+    {
+      "id": 10130,
+      "name": "ASIA34"
+    },
+    {
+      "id": 10131,
+      "name": "ASIA41"
+    },
+    {
+      "id": 10132,
+      "name": "ASIA42"
+    },
+    {
+      "id": 10133,
+      "name": "ASIA43"
+    },
+    {
+      "id": 10134,
+      "name": "ASIA44"
+    },
+    {
+      "id": 10116,
+      "name": "EU11"
+    },
+    {
+      "id": 10117,
+      "name": "EU12"
+    },
+    {
+      "id": 10118,
+      "name": "EU13"
+    },
+    {
+      "id": 10106,
+      "name": "NA11"
+    },
+    {
+      "id": 10107,
+      "name": "NA12"
+    },
+    {
+      "id": 10108,
+      "name": "NA13"
+    },
+    {
+      "id": 10109,
+      "name": "NA14"
+    },
+    {
+      "id": 10110,
+      "name": "NA21"
+    },
+    {
+      "id": 10111,
+      "name": "NA22"
+    },
+    {
+      "id": 10112,
+      "name": "NA23"
+    },
+    {
+      "id": 10113,
+      "name": "NA24"
+    },
+    {
+      "id": 10114,
+      "name": "NA31"
+    },
+    {
+      "id": 10115,
+      "name": "NA32"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

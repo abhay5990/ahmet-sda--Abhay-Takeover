@@ -1,0 +1,239 @@
+{
+  "game_id": 13683,
+  "game": "night-crows",
+  "game_name": "Night Crows",
+  "seo_name": "Night-Crows",
+  "servers": [
+    {
+      "id": 13685,
+      "name": "ASIA",
+      "subCategories": [
+        {
+          "id": 13687,
+          "name": "EAST101"
+        },
+        {
+          "id": 13690,
+          "name": "EAST102"
+        },
+        {
+          "id": 13770,
+          "name": "EAST103"
+        },
+        {
+          "id": 13771,
+          "name": "EAST104"
+        },
+        {
+          "id": 13772,
+          "name": "EAST201"
+        },
+        {
+          "id": 13773,
+          "name": "EAST202"
+        },
+        {
+          "id": 13774,
+          "name": "EAST203"
+        },
+        {
+          "id": 13775,
+          "name": "EAST204"
+        },
+        {
+          "id": 13692,
+          "name": "SEA101"
+        },
+        {
+          "id": 13696,
+          "name": "SEA102"
+        },
+        {
+          "id": 13699,
+          "name": "SEA103"
+        },
+        {
+          "id": 13702,
+          "name": "SEA104"
+        },
+        {
+          "id": 13759,
+          "name": "SEA105"
+        },
+        {
+          "id": 13760,
+          "name": "SEA106"
+        },
+        {
+          "id": 13761,
+          "name": "SEA107"
+        },
+        {
+          "id": 13762,
+          "name": "SEA108"
+        },
+        {
+          "id": 13763,
+          "name": "SEA109"
+        },
+        {
+          "id": 13764,
+          "name": "SEA201"
+        },
+        {
+          "id": 13765,
+          "name": "SEA202"
+        },
+        {
+          "id": 13766,
+          "name": "SEA203"
+        },
+        {
+          "id": 13767,
+          "name": "SEA204"
+        },
+        {
+          "id": 13768,
+          "name": "SEA205"
+        },
+        {
+          "id": 13769,
+          "name": "SEA206"
+        }
+      ]
+    },
+    {
+      "id": 13704,
+      "name": "SA",
+      "subCategories": [
+        {
+          "id": 13706,
+          "name": "SA101"
+        },
+        {
+          "id": 13738,
+          "name": "SA102"
+        },
+        {
+          "id": 13739,
+          "name": "SA103"
+        }
+      ]
+    },
+    {
+      "id": 13708,
+      "name": "NAEU",
+      "subCategories": [
+        {
+          "id": 13710,
+          "name": "NAEU101"
+        },
+        {
+          "id": 13740,
+          "name": "NAEU102"
+        },
+        {
+          "id": 13741,
+          "name": "NAEU103"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

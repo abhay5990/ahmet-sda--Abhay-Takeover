@@ -1,0 +1,499 @@
+{
+  "game_id": 3647,
+  "game": "ffxiv",
+  "game_name": "Final Fantasy XIV",
+  "seo_name": "FFXIV",
+  "servers": [
+    {
+      "id": 12416,
+      "name": "NA",
+      "subCategories": [
+        {
+          "id": 12417,
+          "name": "Adamantoise"
+        },
+        {
+          "id": 12433,
+          "name": "Balmung"
+        },
+        {
+          "id": 12425,
+          "name": "Behemoth"
+        },
+        {
+          "id": 12434,
+          "name": "Brynhildr"
+        },
+        {
+          "id": 12418,
+          "name": "Cactuar"
+        },
+        {
+          "id": 12435,
+          "name": "Coeurl"
+        },
+        {
+          "id": 13839,
+          "name": "Cuchulainn"
+        },
+        {
+          "id": 12436,
+          "name": "Diabolos"
+        },
+        {
+          "id": 12426,
+          "name": "Excalibur"
+        },
+        {
+          "id": 12427,
+          "name": "Exodus"
+        },
+        {
+          "id": 12419,
+          "name": "Faerie"
+        },
+        {
+          "id": 12428,
+          "name": "Famfrit"
+        },
+        {
+          "id": 12420,
+          "name": "Gilgamesh"
+        },
+        {
+          "id": 12437,
+          "name": "Goblin"
+        },
+        {
+          "id": 13840,
+          "name": "Golem"
+        },
+        {
+          "id": 13282,
+          "name": "Halicarnassus"
+        },
+        {
+          "id": 12429,
+          "name": "Hyperion"
+        },
+        {
+          "id": 12421,
+          "name": "Jenova"
+        },
+        {
+          "id": 13841,
+          "name": "Kraken"
+        },
+        {
+          "id": 12430,
+          "name": "Lamia"
+        },
+        {
+          "id": 12431,
+          "name": "Leviathan"
+        },
+        {
+          "id": 13283,
+          "name": "Maduin"
+        },
+        {
+          "id": 12438,
+          "name": "Malboro"
+        },
+        {
+          "id": 13284,
+          "name": "Marilith"
+        },
+        {
+          "id": 12439,
+          "name": "Mateus"
+        },
+        {
+          "id": 12422,
+          "name": "Midgardsormr"
+        },
+        {
+          "id": 13842,
+          "name": "Rafflesia"
+        },
+        {
+          "id": 12423,
+          "name": "Sargatanas"
+        },
+        {
+          "id": 13285,
+          "name": "Seraph"
+        },
+        {
+          "id": 12424,
+          "name": "Siren"
+        },
+        {
+          "id": 12432,
+          "name": "Ultros"
+        },
+        {
+          "id": 12440,
+          "name": "Zalera"
+        }
+      ]
+    },
+    {
+      "id": 12441,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 12827,
+          "name": "Alpha"
+        },
+        {
+          "id": 12442,
+          "name": "Cerberus"
+        },
+        {
+          "id": 13843,
+          "name": "Innocence"
+        },
+        {
+          "id": 12448,
+          "name": "Lich"
+        },
+        {
+          "id": 12443,
+          "name": "Louisoix"
+        },
+        {
+          "id": 12444,
+          "name": "Moogle"
+        },
+        {
+          "id": 12449,
+          "name": "Odin"
+        },
+        {
+          "id": 12445,
+          "name": "Omega"
+        },
+        {
+          "id": 12826,
+          "name": "Phantom"
+        },
+        {
+          "id": 12450,
+          "name": "Phoenix"
+        },
+        {
+          "id": 13844,
+          "name": "Pixie"
+        },
+        {
+          "id": 12446,
+          "name": "Ragnarok"
+        },
+        {
+          "id": 12828,
+          "name": "Raiden"
+        },
+        {
+          "id": 12825,
+          "name": "Sagittarius"
+        },
+        {
+          "id": 12451,
+          "name": "Shiva"
+        },
+        {
+          "id": 12447,
+          "name": "Spriggan"
+        },
+        {
+          "id": 13845,
+          "name": "Titania"
+        },
+        {
+          "id": 12452,
+          "name": "Twintania"
+        },
+        {
+          "id": 13846,
+          "name": "Tycoon"
+        },
+        {
+          "id": 12453,
+          "name": "Zodiark"
+        }
+      ]
+    },
+    {
+      "id": 12454,
+      "name": "OA",
+      "subCategories": [
+        {
+          "id": 12455,
+          "name": "Bismarck"
+        },
+        {
+          "id": 12456,
+          "name": "Ravana"
+        },
+        {
+          "id": 12457,
+          "name": "Sephirot"
+        },
+        {
+          "id": 12458,
+          "name": "Sophia"
+        },
+        {
+          "id": 12459,
+          "name": "Zurvan"
+        }
+      ]
+    },
+    {
+      "id": 12460,
+      "name": "JP",
+      "subCategories": [
+        {
+          "id": 12461,
+          "name": "Aegis"
+        },
+        {
+          "id": 12471,
+          "name": "Alexander"
+        },
+        {
+          "id": 12482,
+          "name": "Anima"
+        },
+        {
+          "id": 12483,
+          "name": "Asura"
+        },
+        {
+          "id": 12462,
+          "name": "Atomos"
+        },
+        {
+          "id": 12472,
+          "name": "Bahamut"
+        },
+        {
+          "id": 12484,
+          "name": "Belias"
+        },
+        {
+          "id": 12463,
+          "name": "Carbuncle"
+        },
+        {
+          "id": 12485,
+          "name": "Chocobo"
+        },
+        {
+          "id": 12473,
+          "name": "Durandal"
+        },
+        {
+          "id": 12474,
+          "name": "Fenrir"
+        },
+        {
+          "id": 12464,
+          "name": "Garuda"
+        },
+        {
+          "id": 12465,
+          "name": "Gungnir"
+        },
+        {
+          "id": 12486,
+          "name": "Hades"
+        },
+        {
+          "id": 12475,
+          "name": "Ifrit"
+        },
+        {
+          "id": 12487,
+          "name": "Ixion"
+        },
+        {
+          "id": 12466,
+          "name": "Kujata"
+        },
+        {
+          "id": 12488,
+          "name": "Mandragora"
+        },
+        {
+          "id": 12489,
+          "name": "Masamune"
+        },
+        {
+          "id": 12490,
+          "name": "Pandaemonium"
+        },
+        {
+          "id": 12467,
+          "name": "Ramuh"
+        },
+        {
+          "id": 12476,
+          "name": "Ridill"
+        },
+        {
+          "id": 12491,
+          "name": "Shinryu"
+        },
+        {
+          "id": 12477,
+          "name": "Tiamat"
+        },
+        {
+          "id": 12492,
+          "name": "Titan"
+        },
+        {
+          "id": 12468,
+          "name": "Tonberry"
+        },
+        {
+          "id": 12469,
+          "name": "Typhon"
+        },
+        {
+          "id": 12478,
+          "name": "Ultima"
+        },
+        {
+          "id": 12470,
+          "name": "Unicorn"
+        },
+        {
+          "id": 12479,
+          "name": "Valefor"
+        },
+        {
+          "id": 12480,
+          "name": "Yojimbo"
+        },
+        {
+          "id": 12481,
+          "name": "Zeromus"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

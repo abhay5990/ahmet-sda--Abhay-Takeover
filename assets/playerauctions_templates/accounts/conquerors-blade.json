@@ -1,0 +1,137 @@
+{
+  "game_id": 9356,
+  "game": "conquerors-blade",
+  "game_name": "Conqueror's Blade",
+  "seo_name": "Conquerors-Blade",
+  "servers": [
+    {
+      "id": 9357,
+      "name": "Asterion-NA"
+    },
+    {
+      "id": 9427,
+      "name": "Cloudwing Valley-NA"
+    },
+    {
+      "id": 9358,
+      "name": "Crystal Sea-EU1"
+    },
+    {
+      "id": 9426,
+      "name": "Eagle Range-NA"
+    },
+    {
+      "id": 9459,
+      "name": "EU4"
+    },
+    {
+      "id": 9359,
+      "name": "Sicania-EU2"
+    },
+    {
+      "id": 9361,
+      "name": "Steppes-RU"
+    },
+    {
+      "id": 9360,
+      "name": "Teutatis-EU3"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

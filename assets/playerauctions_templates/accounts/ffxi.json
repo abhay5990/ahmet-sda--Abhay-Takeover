@@ -1,0 +1,169 @@
+{
+  "game_id": 2,
+  "game": "ffxi",
+  "game_name": "Final Fantasy XI",
+  "seo_name": "FFXI",
+  "servers": [
+    {
+      "id": 46,
+      "name": "Asura"
+    },
+    {
+      "id": 2086,
+      "name": "Bahamut"
+    },
+    {
+      "id": 47,
+      "name": "Bismarck"
+    },
+    {
+      "id": 2088,
+      "name": "Carbuncle"
+    },
+    {
+      "id": 2089,
+      "name": "Cerberus"
+    },
+    {
+      "id": 2092,
+      "name": "Fenrir"
+    },
+    {
+      "id": 2098,
+      "name": "Lakshmi"
+    },
+    {
+      "id": 2099,
+      "name": "Leviathan"
+    },
+    {
+      "id": 2101,
+      "name": "Odin"
+    },
+    {
+      "id": 2103,
+      "name": "Phoenix"
+    },
+    {
+      "id": 2104,
+      "name": "Quetzalcoatl"
+    },
+    {
+      "id": 2105,
+      "name": "Ragnarok"
+    },
+    {
+      "id": 39,
+      "name": "Shiva"
+    },
+    {
+      "id": 40,
+      "name": "Siren"
+    },
+    {
+      "id": 41,
+      "name": "Sylph"
+    },
+    {
+      "id": 44,
+      "name": "Valefor"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

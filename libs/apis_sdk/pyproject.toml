@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel>=0.41.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "apis-sdk"
+version = "0.1.0"
+description = "Reusable integration SDK for external provider APIs"
+readme = "README.md"
+license = {text = "Proprietary"}
+requires-python = ">=3.10"
+authors = [
+    {name = "S4G Team"},
+]
+
+dependencies = [
+    "requests>=2.31.0",
+    "pydantic>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "typing-extensions>=4.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "mypy>=1.5.0",
+    "ruff>=0.1.0",
+]
+aws = [
+    "boto3>=1.26.0",
+    "pycognito>=2024.5.1",
+]
+redis = [
+    "redis>=5.0.0",
+]
+scraping = [
+    "curl_cffi>=0.7.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["apis_sdk*"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]

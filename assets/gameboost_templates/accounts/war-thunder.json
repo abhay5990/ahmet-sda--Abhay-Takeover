@@ -1,0 +1,148 @@
+{
+  "game": "war-thunder",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "account_level": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "nations": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string",
+        "required": true,
+        "values": [
+          "United States",
+          "Germany",
+          "USSR",
+          "United Kingdom",
+          "Japan",
+          "China",
+          "Italy",
+          "France",
+          "Sweden",
+          "Israel"
+        ]
+      }
+    },
+    "total_vehicles_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "premium_planes_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "premium_tanks_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "premium_helicopters_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "premium_ships_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "silver_lions_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "golden_eagles_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "convertable_research_points_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    },
+    "gjn_balance_count": {
+      "type": "integer",
+      "required": false,
+      "min": 0
+    }
+  }
+}

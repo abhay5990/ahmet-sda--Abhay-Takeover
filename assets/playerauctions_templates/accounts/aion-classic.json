@@ -1,0 +1,141 @@
+{
+  "game_id": 9754,
+  "game": "aion-classic",
+  "game_name": "Aion Classic",
+  "seo_name": "Aion-Classic",
+  "servers": [
+    {
+      "id": 9755,
+      "name": "NA",
+      "subCategories": [
+        {
+          "id": 9756,
+          "name": "Siel - Asmodian"
+        },
+        {
+          "id": 9758,
+          "name": "Siel - Elyos"
+        }
+      ]
+    },
+    {
+      "id": 13393,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 13394,
+          "name": "Atreia - Asmodian"
+        },
+        {
+          "id": 13395,
+          "name": "Atreia - Elyos"
+        },
+        {
+          "id": 13396,
+          "name": "Tahabata - Asmodian"
+        },
+        {
+          "id": 13397,
+          "name": "Tahabata - Elyos"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "game_id": 10080,
+  "game": "darkorbit",
+  "game_name": "DarkOrbit",
+  "seo_name": "DarkOrbit",
+  "servers": [
+    {
+      "id": 10091,
+      "name": "France"
+    },
+    {
+      "id": 10088,
+      "name": "Germany 2"
+    },
+    {
+      "id": 10089,
+      "name": "Germany 4"
+    },
+    {
+      "id": 10081,
+      "name": "Global"
+    },
+    {
+      "id": 10100,
+      "name": "Global America"
+    },
+    {
+      "id": 10101,
+      "name": "Global America 2"
+    },
+    {
+      "id": 10082,
+      "name": "Global Europe"
+    },
+    {
+      "id": 10083,
+      "name": "Global Europe 2"
+    },
+    {
+      "id": 10084,
+      "name": "Global Europe 3"
+    },
+    {
+      "id": 10085,
+      "name": "Global Europe 4"
+    },
+    {
+      "id": 10086,
+      "name": "Global Europe 5"
+    },
+    {
+      "id": 10087,
+      "name": "Global Europe 7"
+    },
+    {
+      "id": 10099,
+      "name": "Mexico 1"
+    },
+    {
+      "id": 10097,
+      "name": "Poland"
+    },
+    {
+      "id": 10095,
+      "name": "Russia"
+    },
+    {
+      "id": 10096,
+      "name": "Russia 5"
+    },
+    {
+      "id": 10090,
+      "name": "Spain"
+    },
+    {
+      "id": 10092,
+      "name": "Turkey 3"
+    },
+    {
+      "id": 10093,
+      "name": "Turkey 4"
+    },
+    {
+      "id": 10094,
+      "name": "Turkey 5"
+    },
+    {
+      "id": 10103,
+      "name": "USA 2-East Coast"
+    },
+    {
+      "id": 10102,
+      "name": "USA-East Coast"
+    },
+    {
+      "id": 10098,
+      "name": "USA-West Coast"
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

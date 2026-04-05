@@ -1,0 +1,122 @@
+{
+  "game": "rocket-league",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "stock": {
+      "type": "integer",
+      "required": true
+    },
+    "min_quantity": {
+      "type": "integer",
+      "required": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "item_data": {
+    "platform": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "PC",
+        "PSN",
+        "XBOX"
+      ]
+    },
+    "item_type": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Blueprint",
+        "Bodies",
+        "Decals",
+        "Boosts",
+        "Paints",
+        "Wheels",
+        "Trails",
+        "Toppers",
+        "Antennas",
+        "Goal Explosion",
+        "Banners",
+        "Other"
+      ]
+    },
+    "colors": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Default",
+        "Black",
+        "Burnt Sienna",
+        "Cobalt",
+        "Crimson",
+        "Forest Green",
+        "Grey",
+        "Lime",
+        "Orange",
+        "Pink",
+        "Purple",
+        "Saffron",
+        "Sky Blue",
+        "Titanium White"
+      ]
+    },
+    "rarity": {
+      "type": "string",
+      "required": false,
+      "values": [
+        "Default",
+        "Black Market",
+        "Exotic",
+        "Import",
+        "Limited",
+        "Very Rare",
+        "Rare",
+        "Uncommon"
+      ]
+    }
+  }
+}

@@ -1,0 +1,213 @@
+{
+  "game_id": 9027,
+  "game": "lost-ark",
+  "game_name": "Lost Ark",
+  "seo_name": "Lost-Ark",
+  "servers": [
+    {
+      "id": 10762,
+      "name": "North America East",
+      "subCategories": [
+        {
+          "id": 10764,
+          "name": "Azena"
+        },
+        {
+          "id": 13717,
+          "name": "Balthorr"
+        },
+        {
+          "id": 14697,
+          "name": "Brelshaza"
+        },
+        {
+          "id": 13718,
+          "name": "Inanna"
+        },
+        {
+          "id": 13716,
+          "name": "Luterra"
+        },
+        {
+          "id": 13719,
+          "name": "Nineveh"
+        },
+        {
+          "id": 14698,
+          "name": "Thaemine"
+        },
+        {
+          "id": 13832,
+          "name": "Vairgrys"
+        }
+      ]
+    },
+    {
+      "id": 10763,
+      "name": "North America West",
+      "subCategories": [
+        {
+          "id": 13721,
+          "name": "Brelshaza"
+        },
+        {
+          "id": 13720,
+          "name": "Thaemine"
+        },
+        {
+          "id": 10772,
+          "name": "Valtan"
+        }
+      ]
+    },
+    {
+      "id": 10602,
+      "name": "Europe Central",
+      "subCategories": [
+        {
+          "id": 13714,
+          "name": "Arcturus"
+        },
+        {
+          "id": 13712,
+          "name": "Elpon"
+        },
+        {
+          "id": 13715,
+          "name": "Gienah"
+        },
+        {
+          "id": 10753,
+          "name": "Ortuus"
+        },
+        {
+          "id": 13713,
+          "name": "Ratik"
+        },
+        {
+          "id": 14127,
+          "name": "Regulus"
+        }
+      ]
+    },
+    {
+      "id": 9351,
+      "name": "Japan"
+    },
+    {
+      "id": 9029,
+      "name": "Korea"
+    },
+    {
+      "id": 12748,
+      "name": "RU",
+      "subCategories": [
+        {
+          "id": 12750,
+          "name": "Альдеран"
+        },
+        {
+          "id": 12751,
+          "name": "Кратос"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

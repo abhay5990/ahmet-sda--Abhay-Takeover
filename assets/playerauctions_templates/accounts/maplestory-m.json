@@ -1,0 +1,227 @@
+{
+  "game_id": 8357,
+  "game": "maplestory-m",
+  "game_name": "MapleStory M",
+  "seo_name": "MapleStory-M",
+  "servers": [
+    {
+      "id": 8361,
+      "name": "America",
+      "subCategories": [
+        {
+          "id": 8365,
+          "name": "Croa"
+        },
+        {
+          "id": 14985,
+          "name": "Inosys"
+        },
+        {
+          "id": 8366,
+          "name": "Scania"
+        },
+        {
+          "id": 8367,
+          "name": "Union"
+        },
+        {
+          "id": 8368,
+          "name": "Zenith"
+        }
+      ]
+    },
+    {
+      "id": 8363,
+      "name": "Asia 1",
+      "subCategories": [
+        {
+          "id": 8378,
+          "name": "Croa"
+        },
+        {
+          "id": 8379,
+          "name": "Elysium"
+        },
+        {
+          "id": 8373,
+          "name": "Inosys"
+        },
+        {
+          "id": 8374,
+          "name": "Luna"
+        },
+        {
+          "id": 8375,
+          "name": "Scania"
+        },
+        {
+          "id": 8376,
+          "name": "Union"
+        },
+        {
+          "id": 8377,
+          "name": "Zenith"
+        }
+      ]
+    },
+    {
+      "id": 8364,
+      "name": "Asia 2",
+      "subCategories": [
+        {
+          "id": 8380,
+          "name": "Croa"
+        },
+        {
+          "id": 8381,
+          "name": "Luna"
+        },
+        {
+          "id": 8382,
+          "name": "Scania"
+        },
+        {
+          "id": 8383,
+          "name": "Union"
+        },
+        {
+          "id": 8384,
+          "name": "Zenith"
+        }
+      ]
+    },
+    {
+      "id": 8362,
+      "name": "Europe",
+      "subCategories": [
+        {
+          "id": 8369,
+          "name": "Croa"
+        },
+        {
+          "id": 8370,
+          "name": "Scania"
+        },
+        {
+          "id": 8371,
+          "name": "Union"
+        },
+        {
+          "id": 8372,
+          "name": "Zenith"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": true,
+    "cdKey": false,
+    "parentalPassword": true
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "securityQuestion": {
+      "type": "string",
+      "required": true
+    },
+    "securityAnswer": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "parentalPassword": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

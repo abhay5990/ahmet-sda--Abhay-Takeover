@@ -1,0 +1,217 @@
+{
+  "game_id": 9417,
+  "game": "pantheon",
+  "game_name": "Pantheon: Rise of the Fallen",
+  "seo_name": "Pantheon",
+  "servers": [
+    {
+      "id": 14239,
+      "name": "US West",
+      "subCategories": [
+        {
+          "id": 14240,
+          "name": "Aellos"
+        },
+        {
+          "id": 14241,
+          "name": "Havensong"
+        },
+        {
+          "id": 14242,
+          "name": "Khadassa"
+        },
+        {
+          "id": 14243,
+          "name": "Korcera"
+        },
+        {
+          "id": 14244,
+          "name": "Lychandrell"
+        },
+        {
+          "id": 14245,
+          "name": "Ossari"
+        },
+        {
+          "id": 14246,
+          "name": "Runaway Reef"
+        },
+        {
+          "id": 14247,
+          "name": "Syronai"
+        },
+        {
+          "id": 14248,
+          "name": "The Sacred Six"
+        },
+        {
+          "id": 14249,
+          "name": "Wovarren"
+        }
+      ]
+    },
+    {
+      "id": 14250,
+      "name": "US East",
+      "subCategories": [
+        {
+          "id": 14251,
+          "name": "Aevos"
+        },
+        {
+          "id": 14252,
+          "name": "Axecutor"
+        },
+        {
+          "id": 14253,
+          "name": "Black Moon"
+        },
+        {
+          "id": 14254,
+          "name": "Dark Trade"
+        },
+        {
+          "id": 14255,
+          "name": "Ermos"
+        },
+        {
+          "id": 14256,
+          "name": "Khaga"
+        },
+        {
+          "id": 14257,
+          "name": "Lucent Tree"
+        },
+        {
+          "id": 14258,
+          "name": "Revenant"
+        },
+        {
+          "id": 14259,
+          "name": "Stormona"
+        },
+        {
+          "id": 14260,
+          "name": "Veil of Azeris"
+        }
+      ]
+    },
+    {
+      "id": 14261,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 14262,
+          "name": "Whispering Lands"
+        }
+      ]
+    },
+    {
+      "id": 14263,
+      "name": "OCE",
+      "subCategories": [
+        {
+          "id": 14264,
+          "name": "Bakamel"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

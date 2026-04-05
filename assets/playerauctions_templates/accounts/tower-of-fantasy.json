@@ -1,0 +1,623 @@
+{
+  "game_id": 12925,
+  "game": "tower-of-fantasy",
+  "game_name": "Tower of Fantasy",
+  "seo_name": "Tower-of-Fantasy",
+  "servers": [
+    {
+      "id": 12944,
+      "name": "North America",
+      "subCategories": [
+        {
+          "id": 12960,
+          "name": "Azure Plane"
+        },
+        {
+          "id": 12958,
+          "name": "Eternium Phantasy"
+        },
+        {
+          "id": 12948,
+          "name": "Freedom-Oasis"
+        },
+        {
+          "id": 12968,
+          "name": "Frontier"
+        },
+        {
+          "id": 12963,
+          "name": "Libera"
+        },
+        {
+          "id": 12956,
+          "name": "Lighthouse"
+        },
+        {
+          "id": 12953,
+          "name": "Lunalite"
+        },
+        {
+          "id": 12955,
+          "name": "Myriad"
+        },
+        {
+          "id": 12951,
+          "name": "New Era"
+        },
+        {
+          "id": 12967,
+          "name": "Nightfall"
+        },
+        {
+          "id": 12961,
+          "name": "Nirvana"
+        },
+        {
+          "id": 12952,
+          "name": "Observer"
+        },
+        {
+          "id": 12957,
+          "name": "Onumuamua"
+        },
+        {
+          "id": 12962,
+          "name": "Ozera"
+        },
+        {
+          "id": 12949,
+          "name": "Radiant"
+        },
+        {
+          "id": 12965,
+          "name": "Silver Bridge"
+        },
+        {
+          "id": 12959,
+          "name": "Sol-III"
+        },
+        {
+          "id": 12969,
+          "name": "Solaris"
+        },
+        {
+          "id": 12954,
+          "name": "Starlight"
+        },
+        {
+          "id": 12950,
+          "name": "Tempest"
+        },
+        {
+          "id": 12964,
+          "name": "The Glades"
+        },
+        {
+          "id": 12966,
+          "name": "The worlds between"
+        }
+      ]
+    },
+    {
+      "id": 12946,
+      "name": "Europe",
+      "subCategories": [
+        {
+          "id": 13031,
+          "name": "Aimanium"
+        },
+        {
+          "id": 13032,
+          "name": "Alintheus"
+        },
+        {
+          "id": 13033,
+          "name": "Andoes"
+        },
+        {
+          "id": 13002,
+          "name": "Anomora"
+        },
+        {
+          "id": 13003,
+          "name": "Astora"
+        },
+        {
+          "id": 13005,
+          "name": "Blumous"
+        },
+        {
+          "id": 13029,
+          "name": "Celestialrise"
+        },
+        {
+          "id": 13006,
+          "name": "Cosmos"
+        },
+        {
+          "id": 13007,
+          "name": "Dyrnwyn"
+        },
+        {
+          "id": 13008,
+          "name": "Elypium"
+        },
+        {
+          "id": 13030,
+          "name": "Espoir IV"
+        },
+        {
+          "id": 13010,
+          "name": "Estrela"
+        },
+        {
+          "id": 13011,
+          "name": "Ether"
+        },
+        {
+          "id": 13012,
+          "name": "Ex Nihilor"
+        },
+        {
+          "id": 13009,
+          "name": "Excalibur"
+        },
+        {
+          "id": 13013,
+          "name": "Futuria"
+        },
+        {
+          "id": 13014,
+          "name": "Hephaestus"
+        },
+        {
+          "id": 13027,
+          "name": "Iter"
+        },
+        {
+          "id": 13016,
+          "name": "Kuura"
+        },
+        {
+          "id": 13017,
+          "name": "Lycoris"
+        },
+        {
+          "id": 13023,
+          "name": "Lyramiel"
+        },
+        {
+          "id": 13018,
+          "name": "Magenta"
+        },
+        {
+          "id": 13019,
+          "name": "Magia Przygoda Aida"
+        },
+        {
+          "id": 13015,
+          "name": "Midgard"
+        },
+        {
+          "id": 13020,
+          "name": "Olivine"
+        },
+        {
+          "id": 13028,
+          "name": "Omnium Prime"
+        },
+        {
+          "id": 13025,
+          "name": "Seaforth Dock"
+        },
+        {
+          "id": 13026,
+          "name": "Silvercoast Lab"
+        },
+        {
+          "id": 13022,
+          "name": "The Lumina"
+        },
+        {
+          "id": 13021,
+          "name": "Transport Hub"
+        },
+        {
+          "id": 13024,
+          "name": "Turmus"
+        },
+        {
+          "id": 13004,
+          "name": "Valstamm"
+        }
+      ]
+    },
+    {
+      "id": 12945,
+      "name": "Asia-Pacific",
+      "subCategories": [
+        {
+          "id": 12988,
+          "name": "Adventure"
+        },
+        {
+          "id": 12971,
+          "name": "Atlantis"
+        },
+        {
+          "id": 12974,
+          "name": "Babel"
+        },
+        {
+          "id": 12990,
+          "name": "Cocoaiteruyo"
+        },
+        {
+          "id": 12986,
+          "name": "Daybreak"
+        },
+        {
+          "id": 13000,
+          "name": "Eden"
+        },
+        {
+          "id": 13001,
+          "name": "Fate"
+        },
+        {
+          "id": 12991,
+          "name": "Food Fighter"
+        },
+        {
+          "id": 12978,
+          "name": "Galaxy"
+        },
+        {
+          "id": 12975,
+          "name": "Gomap"
+        },
+        {
+          "id": 12985,
+          "name": "Jupiter"
+        },
+        {
+          "id": 12999,
+          "name": "Mars"
+        },
+        {
+          "id": 12979,
+          "name": "Memory"
+        },
+        {
+          "id": 12995,
+          "name": "Moon"
+        },
+        {
+          "id": 12993,
+          "name": "Nepute"
+        },
+        {
+          "id": 12972,
+          "name": "Nova"
+        },
+        {
+          "id": 12980,
+          "name": "Oxygen"
+        },
+        {
+          "id": 12976,
+          "name": "Pluto"
+        },
+        {
+          "id": 12973,
+          "name": "Ruby"
+        },
+        {
+          "id": 12981,
+          "name": "Sakura"
+        },
+        {
+          "id": 12982,
+          "name": "Seeker"
+        },
+        {
+          "id": 12996,
+          "name": "Shinya"
+        },
+        {
+          "id": 12983,
+          "name": "Stella"
+        },
+        {
+          "id": 12977,
+          "name": "Sushi"
+        },
+        {
+          "id": 12970,
+          "name": "Sweetie"
+        },
+        {
+          "id": 12987,
+          "name": "Takoyaki"
+        },
+        {
+          "id": 12994,
+          "name": "Tenpura"
+        },
+        {
+          "id": 12984,
+          "name": "Uranus"
+        },
+        {
+          "id": 12997,
+          "name": "Utopia"
+        },
+        {
+          "id": 12992,
+          "name": "Vega"
+        },
+        {
+          "id": 12998,
+          "name": "Venus"
+        },
+        {
+          "id": 12989,
+          "name": "Yggdrasil"
+        }
+      ]
+    },
+    {
+      "id": 12947,
+      "name": "South America",
+      "subCategories": [
+        {
+          "id": 13189,
+          "name": "Antlia"
+        },
+        {
+          "id": 13039,
+          "name": "Calodesma Seven"
+        },
+        {
+          "id": 13035,
+          "name": "Centaurus"
+        },
+        {
+          "id": 13036,
+          "name": "Corvus"
+        },
+        {
+          "id": 13188,
+          "name": "Hope"
+        },
+        {
+          "id": 13042,
+          "name": "Luna Azul"
+        },
+        {
+          "id": 13037,
+          "name": "Lyra"
+        },
+        {
+          "id": 13040,
+          "name": "Ophiuchus"
+        },
+        {
+          "id": 13041,
+          "name": "Orion"
+        },
+        {
+          "id": 13034,
+          "name": "Pegasus"
+        },
+        {
+          "id": 13187,
+          "name": "Phoenix"
+        },
+        {
+          "id": 13038,
+          "name": "Tanzanite"
+        },
+        {
+          "id": 13043,
+          "name": "Tiamat"
+        }
+      ]
+    },
+    {
+      "id": 13044,
+      "name": "Southeast Asia",
+      "subCategories": [
+        {
+          "id": 13054,
+          "name": "Aeria"
+        },
+        {
+          "id": 13050,
+          "name": "Aestral-Noa"
+        },
+        {
+          "id": 13061,
+          "name": "Animus"
+        },
+        {
+          "id": 13060,
+          "name": "Arcania"
+        },
+        {
+          "id": 13052,
+          "name": "Chandra"
+        },
+        {
+          "id": 13048,
+          "name": "Ethereal Dream"
+        },
+        {
+          "id": 13064,
+          "name": "Famtosyana"
+        },
+        {
+          "id": 13057,
+          "name": "Fantasi"
+        },
+        {
+          "id": 13065,
+          "name": "Fantasia"
+        },
+        {
+          "id": 13067,
+          "name": "Florione"
+        },
+        {
+          "id": 13056,
+          "name": "Gumi Gumi"
+        },
+        {
+          "id": 13062,
+          "name": "Illyrians"
+        },
+        {
+          "id": 13047,
+          "name": "Mechafield"
+        },
+        {
+          "id": 13045,
+          "name": "Mistilteinn"
+        },
+        {
+          "id": 13049,
+          "name": "Odyssey"
+        },
+        {
+          "id": 13063,
+          "name": "Oneiros"
+        },
+        {
+          "id": 13058,
+          "name": "Oryza"
+        },
+        {
+          "id": 13051,
+          "name": "Osillron"
+        },
+        {
+          "id": 13046,
+          "name": "Phantasia"
+        },
+        {
+          "id": 13053,
+          "name": "Saeri"
+        },
+        {
+          "id": 13055,
+          "name": "Scarlet"
+        },
+        {
+          "id": 13059,
+          "name": "Stardust"
+        },
+        {
+          "id": 13066,
+          "name": "Valhala"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}
