@@ -21,6 +21,10 @@ pydantic==2.12.5
 # Image processing
 Pillow==10.4.0
 
+# AWS Cognito auth (Eldorado)
+boto3==1.38.15
+pycognito==2024.5.1
+
 # Utilities
 python-dateutil==2.9.0
 pytz==2024.1

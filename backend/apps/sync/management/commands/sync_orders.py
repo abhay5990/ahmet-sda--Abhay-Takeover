@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
 from apps.integrations.models import IntegrationAccount
+from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
 from apps.sync.enums import CheckpointStatus, ResourceType, SyncMode, SyncPhase
 from apps.sync.exceptions import StopSync
 from apps.sync.models import SyncCheckpoint
@@ -96,10 +97,13 @@ class Command(BaseCommand):
                 f'{", ".join(supported) or "none"}'
             )
 
-        # 3. Build service (provider + client from credential)
+        # 3. Build service (provider + client from credential + proxy)
+        proxy_pool = build_proxy_pool()
+        proxy_group = get_group_name(account)
         try:
             service = build_service(
                 resource, account.provider, credential=account.credential,
+                proxy_pool=proxy_pool, proxy_group=proxy_group,
             )
         except Exception as exc:
             raise CommandError(
@@ -111,6 +115,11 @@ class Command(BaseCommand):
             f"provider={account.provider} resource={resource} "
             f"mode={mode} phase={phase}"
         )
+        if proxy_pool and proxy_group:
+            group_count = len(proxy_pool.get_all(group=proxy_group))
+            self.stdout.write(f"Proxy: group={proxy_group} ({group_count} proxies)")
+        else:
+            self.stdout.write(self.style.WARNING("Proxy: none — using direct IP"))
 
         if dry_run:
             self.stdout.write(
