@@ -81,6 +81,121 @@ Admin panel:
 
 - `http://localhost:8000/admin/`
 
+## Server Deployment (Scheduler Only)
+
+Production sunucusunda sadece scheduler çalıştırmak için:
+
+### 1. Clone & Environment
+
+```bash
+git clone https://github.com/Ahmetcetin3448/e-commerce-management-system.git
+cd e-commerce-management-system
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements/prod.txt
+pip install -e ./libs/apis_sdk
+```
+
+### 2. Configure
+
+```bash
+cp .env.example .env
+```
+
+`.env` dosyasını düzenle:
+
+```env
+DJANGO_SECRET_KEY=<güçlü-rastgele-key>
+DJANGO_DEBUG=False
+DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+
+DB_ENGINE=django.db.backends.mysql
+DB_USER=root
+DB_PASSWORD=<güçlü-şifre>
+DB_HOST=localhost
+DB_PORT=3307
+
+CREDENTIAL_ENCRYPTION_KEY=<fernet-key>
+```
+
+Fernet key oluşturmak için:
+
+```bash
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
+
+### 3. Database
+
+```bash
+docker-compose up -d    # MySQL + phpMyAdmin
+cd backend
+python manage.py migrate
+python manage.py createsuperuser
+```
+
+### 4. Seed Data
+
+```bash
+python manage.py seed_games
+```
+
+### 5. Admin'den Credential Tanımla
+
+`http://localhost:8000/admin/` → IntegrationAccount + IntegrationCredential oluştur.
+
+### 6. LZT Backfill (İlk Import)
+
+```bash
+# API'den (dosya taşımaya gerek yok)
+python manage.py import_lzt_orders lzt-main --source api
+
+# Veya JSON dosyasından (hızlı)
+python manage.py import_lzt_orders lzt-main data.json
+```
+
+### 7. Scheduler'ı Başlat
+
+```bash
+python manage.py runapscheduler
+```
+
+Arka planda sürekli çalışması için systemd servisi:
+
+```ini
+# /etc/systemd/system/ecom-scheduler.service
+[Unit]
+Description=E-Commerce Sync Scheduler
+After=docker.service
+
+[Service]
+Type=simple
+User=<kullanıcı>
+WorkingDirectory=/path/to/e-commerce-management-system/backend
+Environment=DJANGO_SETTINGS_MODULE=config.settings.prod
+ExecStart=/path/to/venv/bin/python manage.py runapscheduler
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl enable ecom-scheduler
+sudo systemctl start ecom-scheduler
+sudo journalctl -u ecom-scheduler -f   # logları izle
+```
+
+### 8. phpMyAdmin'e Local'den Erişim (SSH Tunnel)
+
+```bash
+ssh -L 8080:127.0.0.1:8080 kullanici@sunucu-ip
+```
+
+Tarayıcıda `http://localhost:8080` → phpMyAdmin açılır.
+
+---
+
 ## Documentation
 
 The living documentation is under `docs/`.
@@ -89,12 +204,6 @@ The living documentation is under `docs/`.
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - [`docs/IMPLEMENTATION_PHASES.md`](docs/IMPLEMENTATION_PHASES.md)
 - [`docs/PROJECT_AUDIT_AND_ROADMAP.md`](docs/PROJECT_AUDIT_AND_ROADMAP.md)
-
-Project-management and ADR files remain under `_ai/`.
-
-- [`_ai/spec.md`](_ai/spec.md)
-- [`_ai/decisions.md`](_ai/decisions.md)
-- [`_ai/todo.md`](_ai/todo.md)
 
 ## Current structure
 
@@ -124,10 +233,6 @@ docs/
 
 libs/
   apis_sdk/
-
-_data_samples/
-_helpers_folders/
-_ai/
 ```
 
 ## Provider development workflow
