@@ -106,7 +106,7 @@ def _reconcile_single_order(order: Order) -> None:
     cross_listings = (
         Listing.objects.filter(
             listing_owned_products__owned_product=owned,
-            status=ListingStatus.LISTED,
+            status__in=[ListingStatus.LISTED, ListingStatus.PAUSED],
         )
         .exclude(integration_account=sale_account)
         .select_related('integration_account__credential')

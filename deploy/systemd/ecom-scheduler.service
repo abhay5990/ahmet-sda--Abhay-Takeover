@@ -1,0 +1,18 @@
+[Unit]
+Description=E-Commerce Sync Scheduler
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/ahmet/e-commerce-management-system/backend
+EnvironmentFile=/home/ahmet/e-commerce-management-system/.env
+ExecStart=/home/ahmet/e-commerce-management-system/venv/bin/python manage.py runapscheduler
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
