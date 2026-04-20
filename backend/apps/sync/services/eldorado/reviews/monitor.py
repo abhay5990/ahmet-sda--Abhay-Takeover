@@ -52,8 +52,15 @@ class EldoradoReviewMonitor:
     def __init__(self, notifier: TelegramNotifier | None = None) -> None:
         self._notifier = notifier or TelegramNotifier()
 
-    def check_all_accounts(self) -> None:
-        """Entry point — iterates over every active Eldorado account."""
+    def check_all_accounts(self, *, first_run: bool = False) -> None:
+        """Entry point — iterates over every active Eldorado account.
+
+        Args:
+            first_run: If True, sends a startup notification to Telegram.
+        """
+        if first_run:
+            self._send_startup_message()
+
         accounts = (
             IntegrationAccount.objects
             .select_related("credential")
@@ -67,6 +74,26 @@ class EldoradoReviewMonitor:
                     "Unexpected error in review monitor for account %s",
                     account.slug,
                 )
+
+    def _send_startup_message(self) -> None:
+        """Send a Telegram message indicating the review monitor has started."""
+        from apps.sync.services.eldorado.reviews.notifier import _get_telegram_client
+
+        client, chat_id = _get_telegram_client()
+        if client is None or not chat_id:
+            logger.warning("Telegram not configured — skipping startup message")
+            return
+
+        text = (
+            "✅ Review Monitor Started\n"
+            "Eldorado negative review monitoring is now active.\n"
+            "You will receive alerts for any new negative reviews."
+        )
+        result = client.send_message(chat_id=chat_id, text=text)
+        if result.ok:
+            logger.info("Review monitor startup message sent to Telegram")
+        else:
+            logger.error("Failed to send startup message: %s", result.error)
 
     def _check_account(self, account: IntegrationAccount) -> None:
         checkpoint, _ = SyncCheckpoint.objects.get_or_create(

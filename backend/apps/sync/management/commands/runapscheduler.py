@@ -33,18 +33,15 @@ def run_sync_chain_job():
     run_sync_chain()
 
 
+_review_monitor_first_run = True
+
 @apscheduler_util.close_old_connections
 def run_review_monitor_job():
     """APScheduler wrapper — checks all Eldorado accounts for new negative reviews."""
+    global _review_monitor_first_run
     from apps.sync.services.eldorado.reviews.monitor import EldoradoReviewMonitor
-    EldoradoReviewMonitor().check_all_accounts()
-
-
-@apscheduler_util.close_old_connections
-def run_eldorado_notification_sync_job():
-    """APScheduler wrapper — sync Eldorado notification events to order statuses."""
-    from apps.sync.services.eldorado.notifications.status_sync import EldoradoNotificationStatusSync
-    EldoradoNotificationStatusSync().run()
+    EldoradoReviewMonitor().check_all_accounts(first_run=_review_monitor_first_run)
+    _review_monitor_first_run = False
 
 
 @apscheduler_util.close_old_connections
@@ -93,16 +90,6 @@ class Command(BaseCommand):
             trigger=IntervalTrigger(minutes=10),
             id='eldorado_review_monitor',
             name='Eldorado Negative Review Monitor',
-            max_instances=1,
-            replace_existing=True,
-        )
-
-        # Eldorado notification → order status sync — runs every 10 minutes
-        scheduler.add_job(
-            run_eldorado_notification_sync_job,
-            trigger=IntervalTrigger(minutes=10),
-            id='eldorado_notification_status_sync',
-            name='Eldorado Notification → Order Status Sync',
             max_instances=1,
             replace_existing=True,
         )

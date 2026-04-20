@@ -181,6 +181,15 @@ def run_sync_chain() -> None:
                 notify_unlinked_orders(new_order_ids)
             except Exception as e:
                 log_sync_error('sync_chain', f'Reconciliation phase failed: {e}', exc=e)
+
+        # 5. Eldorado notification → order status sync (runs after orders exist)
+        try:
+            from apps.sync.services.eldorado.notifications.status_sync import (
+                EldoradoNotificationStatusSync,
+            )
+            EldoradoNotificationStatusSync().run()
+        except Exception as e:
+            log_sync_error('sync_chain', f'Notification status sync failed: {e}', exc=e)
     finally:
         clear_client_cache()
 
