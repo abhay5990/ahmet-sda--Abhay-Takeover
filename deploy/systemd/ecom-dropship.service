@@ -1,0 +1,18 @@
+[Unit]
+Description=E-Commerce Dropship Scheduler (Poster + Cleaner)
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/ahmet/e-commerce-management-system/backend
+EnvironmentFile=/home/ahmet/e-commerce-management-system/.env
+ExecStart=/home/ahmet/e-commerce-management-system/venv/bin/python manage.py run_dropship_scheduler
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
