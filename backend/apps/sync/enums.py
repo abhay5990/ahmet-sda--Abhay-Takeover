@@ -5,6 +5,8 @@ class ResourceType(models.TextChoices):
     ORDERS = 'orders', 'Orders'
     LISTINGS = 'listings', 'Listings'
     OWNED_PRODUCTS = 'owned_products', 'Owned Products'
+    REVIEWS = 'reviews', 'Reviews'
+    NOTIFICATIONS = 'notifications', 'Notifications'
 
 
 class SyncMode(models.TextChoices):

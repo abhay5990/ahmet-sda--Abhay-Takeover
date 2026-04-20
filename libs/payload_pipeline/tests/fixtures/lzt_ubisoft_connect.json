@@ -1,0 +1,617 @@
+{
+  "item_id": 221639380,
+  "item_state": "paid",
+  "category_id": 5,
+  "published_date": 1773253944,
+  "title": "Ubisoft R /",
+  "description": "[URL=\"https://r6skins.locker/profile/19332fdb-8ac4-4105-ae51-160f0351b3e1\"]https://r6skins.locker/profile/19332fdb-8ac4-4105-ae51-160f0351b3e1[/URL]",
+  "price": 20.61,
+  "update_stat_date": 1773254143,
+  "refreshed_date": 1773253944,
+  "edit_date": 1773558463,
+  "pending_deletion_date": 0,
+  "login": "CarlMyers4766@hotmail.com",
+  "temp_email": "",
+  "view_count": 14,
+  "is_sticky": 0,
+  "information": "",
+  "item_origin": "stealer",
+  "extended_guarantee": 0,
+  "nsb": 1,
+  "email_login_data": "pDCtpZe5W1rlRq1ZiiQPjWXH03RbKuakh/UCHfgFMX0FIURIFPUS51JFrRblK7eexG7R46ZVSIuJp62VWJ3Cb07AXWbhXw7yUZeED1yNX3MfTMsNfOoxhlkXH/DnRrinEUaOS9sQ+SCexODVBO7+zbeREtunDWvb6rKQ8QGQdDA=",
+  "allow_ask_discount": 1,
+  "title_en": "Ubisoft R /",
+  "description_en": "[URL=\"https://r6skins.locker/profile/19332fdb-8ac4-4105-ae51-160f0351b3e1\"]https://r6skins.locker/profile/19332fdb-8ac4-4105-ae51-160f0351b3e1[/URL]",
+  "information_en": "",
+  "email_type": "autoreg",
+  "email_provider": "outlook",
+  "item_domain": "hotmail.com",
+  "resale_item_origin": "",
+  "auto_bump_period": 0,
+  "discount": false,
+  "uplay_item_id": 221639380,
+  "uplay_id": "19332fdb-8ac4-4105-ae51-160f0351b3e1",
+  "uplay_last_activity": 1772897186,
+  "uplay_country": "JP",
+  "uplay_created_date": 1417777894,
+  "uplay_games": {
+    "3b27ede8-3ff9-435d-a264-e2de2ccbb2ce": {
+      "title": "For Honor",
+      "img": "https://ubistatic3-a.akamaihd.net/orbit/uplay_launcher_3_0/assets/65c2b56f7190d6454072d16fe669fa30.jpg",
+      "abbr": "For Honor",
+      "gameId": "3b27ede8-3ff9-435d-a264-e2de2ccbb2ce"
+    },
+    "d2408c33-775c-416b-b5d4-768bd23ccbad": {
+      "title": "Tom Clancy's Ghost Recon Wildlands",
+      "img": "https://ubistatic3-a.akamaihd.net/orbit/uplay_launcher_3_0/assets/7d2571260cb531e8765eb30a65a6eb6b.jpg",
+      "abbr": "Tom Clancy's Ghost Recon Wildlands",
+      "gameId": "d2408c33-775c-416b-b5d4-768bd23ccbad"
+    },
+    "e3d5ea9e-50bd-43b7-88bf-39794f4e3d40_steam": {
+      "title": "Tom Clancy's Rainbow Six Siege (Steam)",
+      "img": "https://ubistatic3-a.akamaihd.net/orbit/uplay_launcher_3_0/assets/584f3c6f458ae33fcc8ef05f28380fb9.png",
+      "pvpTimePlayed": 160,
+      "pveTimePlayed": 0,
+      "abbr": "Tom Clancy's Rainbow Six Siege (Steam)",
+      "gameId": "e3d5ea9e-50bd-43b7-88bf-39794f4e3d40_steam"
+    },
+    "35c5c607-2717-47d9-9323-7df47c6e1c4d": {
+      "title": "WATCH_DOGS 2",
+      "img": "https://ubistatic3-a.akamaihd.net/orbit/uplay_launcher_3_0/assets/0f946fb03f8bdf913969d1c22df1625e.jpg",
+      "abbr": "WATCH_DOGS 2",
+      "gameId": "35c5c607-2717-47d9-9323-7df47c6e1c4d"
+    },
+    "6c6b8cd7-d901-4cd5-8279-07ba92088f06": {
+      "title": "Tom Clancy's The Division 2",
+      "img": "https://ubistatic3-a.akamaihd.net/orbit/uplay_launcher_3_0/assets/514a93a313459529a69a1019e2b31ed0.jpg",
+      "abbr": "Tom Clancy's The Division 2",
+      "gameId": "6c6b8cd7-d901-4cd5-8279-07ba92088f06"
+    },
+    "b5a56749-f302-46f7-8b17-ace3b0c3410f": {
+      "title": "Assassin's Creed Odyssey",
+      "img": "https://ubistatic3-a.akamaihd.net/orbit/uplay_launcher_3_0/assets/dc483860ed7e46a710bba16bb51671ab.jpg",
+      "abbr": "Assassin's Creed Odyssey",
+      "gameId": "b5a56749-f302-46f7-8b17-ace3b0c3410f"
+    },
+    "e8d2050f-8907-4138-9bbd-2cc7b706d3f8": {
+      "title": "Assassin's Creed III - Remastered",
+      "img": "https://ubistatic3-a.akamaihd.net/orbit/uplay_launcher_3_0/assets/50922c7ffc97b2be2ccdf04342242e6d.jpg",
+      "abbr": "Assassin's Creed III - Remastered",
+      "gameId": "e8d2050f-8907-4138-9bbd-2cc7b706d3f8"
+    },
+    "5033bfb3-8a2e-4748-93e5-2ffa82975a85": {
+      "title": "Tom Clancy's Rainbow Six Extraction",
+      "img": "https://ubistatic3-a.akamaihd.net/orbit/uplay_launcher_3_0/assets/6dd672cd6b336917a36f2e6fbd47e696.jpg",
+      "abbr": "Tom Clancy's Rainbow Six Extraction",
+      "gameId": "5033bfb3-8a2e-4748-93e5-2ffa82975a85"
+    },
+    "9da14e51-9433-421b-a396-2ac916649564": {
+      "title": "Assassin's Creed Valhalla",
+      "img": "https://ubistatic3-a.akamaihd.net/orbit/uplay_launcher_3_0/assets/27c97b4d76c0a26e88030a857a518677.jpg",
+      "abbr": "Assassin's Creed Valhalla",
+      "gameId": "9da14e51-9433-421b-a396-2ac916649564"
+    }
+  },
+  "uplay_game_count": 9,
+  "uplay_r6_level": 93,
+  "uplay_r6_ban": 0,
+  "uplay_r6_operators": "[\"Frost\",\"Nokk\",\"Lesion\",\"Doc\",\"Iq\",\"Ace\",\"Vigil\",\"Grim\",\"Mozzie\",\"Dokkaebi\",\"Bandit\",\"Azami\",\"Warden\",\"Osa\",\"Iana\",\"Kali\",\"Caveira\",\"Valkyrie\",\"Melusi\",\"Nomad\",\"Zero\",\"Oryx\",\"Ela\",\"Striker\",\"Ying\",\"Gridlock\",\"Blackbeard\",\"Mute\",\"Thorn\",\"Pulse\",\"Thatcher\",\"Echo\",\"Sledge\",\"Castle\",\"Kapkan\",\"Lion\",\"Clash\",\"Zofia\",\"Maverick\",\"Glaz\",\"Hibana\",\"Fuze\",\"Smoke\",\"Flores\",\"Ash\",\"Tachanka\",\"Jackal\",\"Amaru\",\"Goyo\",\"Sentry\",\"Kaid\",\"Montagne\",\"Solis\",\"Wamai\",\"Alibi\",\"Maestro\",\"Buck\",\"Thermite\",\"Mira\",\"Aruni\",\"Finka\",\"Blitz\",\"Twitch\",\"Rook\",\"Sens\",\"Capitao\",\"Jager\"]",
+  "uplay_r6_operators_count": 67,
+  "uplay_r6_skins": "[\"7f55441b-dbd6-d176-5acb-8a8d90d13ea5\",\"ff35b92e-2558-6709-2d9c-32ceb54f3d61\",\"8e8fe43c-006c-74b0-6f3d-0f20a169998f\",\"ff23e5d8-7be8-48a9-bdc5-ee20c22027b6\",\"3abbc1fa-d2a4-eeb7-ab21-7cc430a02032\",\"8ddf32ee-f1fe-9821-74ee-9b877b2827bb\",\"103e696e-ad52-45e8-a758-10cc84f07f3e\",\"e0b0ae71-731a-4432-a004-64cc7f300cce\",\"8bceb551-2cd4-4bb1-8320-cfbd0809c5f5\",\"92a17986-9c8f-2965-bb11-ee225e1f9d55\",\"c8909227-7650-6504-b1db-120ca52e1c78\",\"51a36590-56b6-20dd-13af-f760da143382\",\"0a0673f9-5682-4486-8145-d1d0f9859462\",\"a3563052-ffe7-4df2-9519-de8a8ef41006\",\"477fcc34-99b9-a55b-b016-480484b07d4e\",\"44d0a60d-65c4-0d79-9f36-45043d1d94d2\",\"ca311a93-a45d-43da-acdd-44ba958b8730\",\"3eb10d4f-9c4b-4a92-ac73-7f140b2d52cc\",\"9b44e5de-c0e4-3061-0af1-17fd92c540c6\",\"15cd6aa4-3886-4af8-9bd0-88b646b37174\",\"3626bc21-25bf-5e48-2b80-5edf3ad737c9\",\"36e0579c-1cb0-a450-63b6-b36795555755\",\"35634158-ff9d-989a-0828-d2004ece86d1\",\"1d0d4fb4-88a8-4837-83da-3af2a145c5f1\",\"9fc12d63-2e5b-937b-dc85-4c653e37bd8b\",\"64c9346d-bc1f-f19d-313a-5319abac97e1\",\"a3cfb136-7b60-42da-bce1-ec0bbdec39e6\",\"c390467c-985c-b9bc-6769-4963c8df9e66\",\"98174117-b6f4-470d-85ab-7797fb139f5b\",\"c6c4e9c6-286f-3ce4-c8ec-02998fa6f4c0\",\"9b1ec8a5-cc05-0c80-0c7b-b831cd20437b\",\"e292a23e-57cf-4dba-a217-a8c86e956d05\",\"93715d6e-6721-2437-2831-35886e933e11\",\"cf788c8d-4925-4bbd-942c-2f1524430638\",\"92443a79-ed72-40fe-9f2b-ec974540ac8b\",\"e5ff01fb-bcf9-4733-a6df-84461d78e40b\",\"8dff37b7-f689-4bda-a67a-97cad033a380\",\"ac7f416f-6652-4d87-ba03-b73485be3689\",\"b0e9d98e-6de0-4c87-ae55-ea0b12540e23\",\"f4ff91a4-73f5-4f36-8a47-b5059aff303b\",\"00df2eb3-1371-4fe4-917e-c5d579c7be1f\",\"12503f4b-4072-b2d2-4d5e-61281904f0a1\",\"8a66758f-62a4-0b5f-b631-a5a12eb48de6\",\"6aa2adb0-bbc4-497d-9fa9-5391c8d2b592\",\"2ad3ac8f-e0b2-418b-b61e-a9f4cb359f90\",\"37af896f-d894-4734-8ac4-6fda3f915352\",\"26487505-a1e2-44b4-b1ee-431be4c34e2b\",\"5ad2b317-d73f-4e98-97fb-a0a75af60451\",\"19b2f896-0737-4937-a7b1-54bef28ea62f\",\"5df853d5-6735-ba95-2cd8-6d94998ca887\",\"2029a411-3b93-447d-971e-edb9759e2cff\",\"33d30951-aaf3-12c6-e81d-1febcee06991\",\"71a9f89f-2e8b-4bfd-86c5-a8fc61fe92b5\",\"79ae85aa-5125-4471-b4e9-daab0cd6bd61\",\"7a2613ae-f098-4808-d302-5d9664157e39\",\"9f9822d8-4165-4e8b-aa6f-47392c2ce3f6\",\"572c1f10-5815-4b55-8d8f-d32a765db34e\",\"6496c34e-861b-7d17-ed66-dd24358d2d0b\",\"a8d2ba94-c5b3-4325-93cf-822679cab2bf\",\"7738b20f-954f-4ba5-886d-ea94630f5f63\",\"f746ef4a-70bf-4c94-b640-734dfdc5e6a5\",\"6a30f8b8-aa6c-4048-93ba-a7a8ab0bfe71\",\"b5363b94-6c53-4bb5-ae90-11542ddd5c7e\",\"07ffda60-1dc4-4f10-aa72-8f1e689bbc09\",\"3a362ebe-0091-4e8d-aa61-240ed9f2f8be\",\"24edcc2e-6bac-4215-b6f3-6f035f027abd\",\"d016cb9c-9004-4601-ae46-228e84d3d708\",\"b69db973-7813-4b5b-a93e-b246698905af\",\"c44766f1-040a-4569-bcb5-7f4976bd1b08\",\"ee1272d5-de64-4d12-ae1a-51021d62c5d9\",\"c03d2712-7db7-4113-8e9d-67d2e6aa2bc8\",\"046ffbba-3674-b8e0-38f3-97d7c14e4ff2\",\"13aa1180-62c7-4b38-a704-def8b62b4e14\",\"147408bb-8553-4f07-9f41-931e9e794bcd\",\"703d8285-3eea-471c-aa75-08de5a9ba51b\",\"c36a364e-0844-4c07-992b-e3f52dd0fac9\",\"3a67c1d4-6237-4413-b222-2981af949226\",\"570f95b0-d2f2-45a4-832f-deef4f62cadb\",\"501f7a50-cfb0-4e60-961b-c68b85143af6\",\"a1b8ed13-32de-367f-7620-3f12dc387a84\",\"bafdbb8c-5a16-4921-83d8-b4772ec9fb57\",\"1218855e-4075-4338-800c-5eb37d220c62\",\"996476f4-c80a-c29a-bf70-ec6dedf5103b\",\"24b1059d-ceba-4071-a6e4-d04e5899bde6\",\"a7b049c4-656e-4bc2-a22d-2ee0a99aa33a\",\"954bc994-fadc-4d4d-8af3-9242c5f21952\",\"98fde4fc-122a-4bc9-9791-c173a2236ddf\",\"044133b2-b0ab-4cab-99f6-c56b097c30a6\",\"f8511cd9-f39b-47a0-9398-4c4c495ed09b\",\"003fa328-cfc6-49e4-a125-3f67d32ec754\",\"7c17e014-2c96-f48e-6132-7c50a4075015\"]",
+  "uplay_r6_skins_count": 91,
+  "uplay_subscription": "",
+  "uplay_subscription_end_date": 0,
+  "uplay_xbox_connected": 0,
+  "uplay_psn_connected": 1,
+  "uplay_r6_rank": 0,
+  "uplay_transactions": "[{\"date\":1725518208,\"product\":\"16000 Rainbow Credits\",\"type\":\"In-Game Purchase\",\"source\":\"e-wallet\",\"amount\":\"13970.00 \\uffe5\"},{\"date\":1708851509,\"product\":\"PC DIG-THE DIVISION 2-ONE TIME OFFER 4-WW\",\"type\":\"In-Game Purchase\",\"source\":\"paypal\",\"amount\":\"2640.00 \\uffe5\"},{\"date\":1702772522,\"product\":\"1200 Rainbow Credits\",\"type\":\"In-Game Purchase\",\"source\":\"e-wallet\",\"amount\":\"1320.00 \\uffe5\"},{\"date\":1669993509,\"product\":\"The Division 2 - Warlords of New York - Expansion\",\"type\":\"In-Game Purchase\",\"source\":\"paypal\",\"amount\":\"1188.00 \\uffe5\"},{\"date\":1642682285,\"product\":\"PC DIG-RAINBOW SIX EXTRACTION-DELUXE-WW\",\"type\":\"Ubisoft Store\",\"source\":\"Credit card via Xsolla\",\"amount\":\"7920.00 \\uffe5\"},{\"date\":1609559477,\"product\":\"PC DIG-ASSASSIN'S CREED VALHALLA-STANDARD-JP\",\"type\":\"Ubisoft Store\",\"source\":\"konbini\",\"amount\":\"7669.00 \\uffe5\"},{\"date\":1609042309,\"product\":\"2670 Rainbow Credits\",\"type\":\"In-Game Purchase\",\"source\":\"e-wallet\",\"amount\":\"2640.00 \\uffe5\"},{\"date\":1595144936,\"product\":\"Assassin's Creed Odyssey - HELIX CREDITS SMALL PACK \",\"type\":\"In-Game Purchase\",\"source\":\"paypal\",\"amount\":\"1320.00 \\uffe5\"}]",
+  "uplay_balance": "0.00 $",
+  "uplay_converted_balance": 0,
+  "feedback_data": "{\"1\":{\"positive\":698,\"negative\":3},\"3\":{\"positive\":250,\"negative\":2},\"4\":{\"positive\":21,\"negative\":0},\"5\":{\"positive\":340,\"negative\":4},\"9\":{\"positive\":16,\"negative\":0},\"11\":{\"positive\":159,\"negative\":1},\"12\":{\"positive\":87,\"negative\":4},\"13\":{\"positive\":602,\"negative\":5},\"14\":{\"positive\":183,\"negative\":0},\"15\":{\"positive\":63,\"negative\":7},\"16\":{\"positive\":86,\"negative\":0},\"17\":{\"positive\":12,\"negative\":0},\"18\":{\"positive\":1,\"negative\":0},\"19\":{\"positive\":32,\"negative\":7},\"20\":{\"positive\":1,\"negative\":0},\"23\":{\"positive\":4,\"negative\":0},\"26\":{\"positive\":44,\"negative\":3},\"28\":{\"positive\":196,\"negative\":7}}",
+  "max_discount_percent": 30,
+  "isIgnored": false,
+  "priceWithSellerFee": 19.99,
+  "category": {
+    "category_id": 5,
+    "category_title": "Uplay",
+    "category_name": "uplay",
+    "category_url": "uplay"
+  },
+  "guarantee": null,
+  "canViewLoginData": true,
+  "canViewTempEmail": true,
+  "canUpdateItemStats": false,
+  "canReportItem": false,
+  "canViewItemViews": false,
+  "canManagePublicTag": false,
+  "loginData": {
+    "raw": "CarlMyers4766@hotmail.com:lscdCICT6a#",
+    "encodedRaw": "CarlMyers4766%40hotmail.com%3AlscdCICT6a%23",
+    "login": "CarlMyers4766@hotmail.com",
+    "password": "lscdCICT6a#",
+    "encodedPassword": "lscdCICT6a%23",
+    "oldPassword": "IfWg1Gi9#]j?",
+    "encodedOldPassword": "IfWg1Gi9%23%5Dj%3F",
+    "extraPasswords": ""
+  },
+  "canViewEmailLoginData": true,
+  "emailLoginData": {
+    "raw": "CarlMyers4766@hotmail.com:gwrffh781244",
+    "decrypted": "CarlMyers4766@hotmail.com:gwrffh781244",
+    "encodedRaw": "CarlMyers4766%40hotmail.com%3Agwrffh781244",
+    "login": "CarlMyers4766@hotmail.com",
+    "password": "gwrffh781244",
+    "encodedPassword": "gwrffh781244",
+    "oldPassword": "",
+    "encodedOldPassword": null,
+    "newSecretAnswer": "",
+    "extraPasswords": "",
+    "extraInfo": ""
+  },
+  "copyFormatData": {
+    "title_link": "https://lzt.market/221639380/ - Ubisoft R /",
+    "login_data": "CarlMyers4766@hotmail.com:lscdCICT6a#:CarlMyers4766@hotmail.com:gwrffh781244",
+    "full": "https://lzt.market/221639380/ - Ubisoft R / - CarlMyers4766@hotmail.com:lscdCICT6a#:CarlMyers4766@hotmail.com:gwrffh781244"
+  },
+  "showGetEmailCodeButton": false,
+  "getEmailCodeDisplayLogin": null,
+  "canOpenItem": false,
+  "canCloseItem": false,
+  "canEditItem": false,
+  "canDeleteItem": false,
+  "canStickItem": false,
+  "canUnstickItem": false,
+  "canBumpItem": false,
+  "canNotBumpItemReason": "You do not have permission view page",
+  "buyer": {
+    "user_id": 8212367,
+    "operation_date": 1773603879,
+    "visitorIsBuyer": true
+  },
+  "isPersonalAccount": false,
+  "canBuyItem": false,
+  "rub_price": 1695,
+  "price_currency": "usd",
+  "priceWithSellerFeeLabel": "$0.2431",
+  "canValidateAccount": true,
+  "canResellItem": true,
+  "uplayLinkedAccounts": "PSN",
+  "uplay_r6_steam_warning": true,
+  "uplay_r6_external_warning": false,
+  "uplay_r6": true,
+  "uplay_r6_ban_active": false,
+  "isSmallExf": true,
+  "account_last_activity": 1772897186,
+  "r6Skins": [],
+  "r6Operators": [
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/1OWFtfiEXleLSENciCSQQR/8fcced59c0125073e506f2dee0201015/Y1S1_BADGE_Frost_L.png",
+      "name": "Frost",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/frost"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/2qfSHHTdCRVhx9EWycVDNr/9e361e73fb91e571f7470de21edf5c7a/Y4S2_BADGE_Nokk_L.png",
+      "name": "NØKK",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/nokk"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/2CWYSySnPAhsOHdq2OLSjv/f9e54debcfa0c8fe76012d9097b98e6e/Y2S2_BADGE_Lesion_L.png",
+      "name": "Lesion",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/lesion"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/71Nl3v0LqHyo9eXV6xTFQd/1ba4f057b6acad3ec700ca9e60b53d6c/Y0R6_BADGE_Doc_L.png",
+      "name": "Doc",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/doc"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/4xnVj2iZB8Otchiw7j69UO/13c864a4e2eb976c1978dc79411b450c/Y0R6_BADGE_IQ_L.png",
+      "name": "IQ",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/iq"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/dgG7GmXY1HgfeEE2gI1H9/06bd3917c8fc19f61654490019ef25fb/Y5S2_BADGE_Ace_L.png",
+      "name": "Ace",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/ace"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/56A3hXhWZdwO623g3ejeku/a40a0582a7841abfeed723d8fbe238d3/Y2S4_BADGE_Vigil_L.png",
+      "name": "Vigil",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/vigil"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/5VoAYPvRZXIwjcwTD3PWaZ/b9748f007c0c116ca1bcd77b0f91e766/r6s-operators-badge-grim.png",
+      "name": "Grim",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/grim"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/15hUu2PsypX2c1LIJFQNUT/8538c52057420dbf3995cf3117b155c5/Y4S1_BADGE_Mozzie_L.png",
+      "name": "Mozzie",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/mozzie"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/aoQeHLohcuqvubBoyrzsM/d4a230ecba495c58c5521e10d5d84baa/Y2S4_BADGE_Dokkaebi_L.png",
+      "name": "Dokkaebi",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/dokkaebi"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/4Vasjq82J1TNjNE38J7LmV/e1725f8d9ea2b85565e40b54faac85b8/Y0R6_BADGE_Bandit_L.png",
+      "name": "Bandit",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/bandit"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/7KWTXHTk8rxLS5qtyX4Xu4/b51f8691b932fd2b83260ef3fbcd1154/r6s-operators-badge-azami.png",
+      "name": "Azami",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/azami"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/hx1Ljf1qIWbjpgCNmfJbu/2217283b569ef316dc12b93e86649f8f/Y4S2_BADGE_Warden_L.png",
+      "name": "Warden",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/warden"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/5tt27EFHYjiDLo2qbYEgXG/2f1acbb8209e45b136ca7b0e2e5eb1f9/r6s-operators-badge-osa.png",
+      "name": "Osa",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/osa"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/6deSi1vse5iJTkErFksrGq/75bf1038e9698b6b2be75aa0493b092d/Y5S1_BADGE_Iana_L.png",
+      "name": "Iana",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/iana"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/6r1hk1EunQirF1IcY4TG8T/0d3fbb7508a7747fd51249b1b8ea9779/Y4S4_BADGE_Kali_L.png",
+      "name": "Kali",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/kali"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/4H1dOkcdZIKblKkAWjD390/10e57f4829eabda30f4aa1044e49893d/Y1S3_BADGE_Caveira_L.png",
+      "name": "Caveira",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/caveira"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/44qXJmZmAwaD4w44JnPuOx/c54c8b9d3a6813ab8ce3e3f1dd4ef408/Y1S2_BADGE_Valkyrie_L.png",
+      "name": "Valkyrie",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/valkyrie"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/74H52a9GMql8wamIy6WqH5/9fddba49258152835da7cdac8c566663/Y5S2_BADGE_Melusi_L.png",
+      "name": "Melusi",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/melusi"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/UxfU1gJDoZGDrzT3iBsIp/b1aa522cc08e4631b9a857b52afa4f99/Y3S4_BADGE_Nomad_L.png",
+      "name": "Nomad",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/nomad"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/4ZbzOZt1Sur77RZTFwYVJ4/30037e84b2948449652547f06df146e0/Y5S3_BADGE_Zero_L.png",
+      "name": "Zero",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/zero"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/7mLA8GY9ZKlUfDXrfo9Nek/e3dfd0759414f36866a8c80b61a67722/Y5S1_BADGE_Oryx_L.png",
+      "name": "Oryx",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/oryx"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/7zbkJJWMCOj04DNhYDz994/d2cba213d30d7b8cf2ba8cd568c78f20/Y2S3_BADGE_Ela_L.png",
+      "name": "Ela",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/ela"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/2ZC6qMkmnam9bLc1fZJJ0C/fd0719a5b03789e65aa7f41e7c2dc49c/r6s-operators-badge-striker.png",
+      "name": "Striker",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/striker"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/6ZVB1OJxNgs0pR0Fd7Kzt0/74721fe9fd743167508f98dc280a17a3/Y2S2_BADGE_Ying_L.png",
+      "name": "Ying",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/ying"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/5LIyheUROsdMDkX6o0zh6R/f201ce65af771459c374ef71c89827b4/Y4S1_BADGE_Gridlock_LL.png",
+      "name": "Gridlock",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/gridlock"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/4BTbmcs1EtoUbnpk5Am22Y/b7bd4d0708245c78b98455505c0d51a8/Y1S2_BADGE_Blackbeard_L.png",
+      "name": "Blackbeard",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/blackbeard"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/3exeHnxH1tmUmQTequWRKa/e1b6c6f057eb24722dd7860af0276316/Y0R6_BADGE_Mute_L.png",
+      "name": "Mute",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/mute"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/1pzBJsbL1vQT8is7B0Xjxz/440335c080e54ca28eba24858361a03a/r6s-operators-badge-thorn.png",
+      "name": "Thorn",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/thorn"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/ChAeJzdmwxuvhZTrV81rK/8c16116f4c719a3df864df6639e2f52e/Y0R6_BADGE_Pulse_L.png",
+      "name": "Pulse",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/pulse"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/5NbqTdEPmYy9qOZmN9StVT/38b3b2a70cfb4ffbfe6e8a6bd8654d1d/r6s-operators-badge-thatcher.png",
+      "name": "Thatcher",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/thatcher"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/3MRqAdUybJ7GR9gX4wPAI4/992938a70a4e53b91478358634e77ca7/Y1S4_BADGE_Echo_L.png",
+      "name": "Echo",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/echo"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/4lgK1mOTVAoBhoj5qjYuyd/83c83d56e977f96ac0e9621c0d1c07d2/Y0R6_BADGE_Sledge_L.png",
+      "name": "Sledge",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/sledge"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/kzznLctjOsXJZAg0F2HPB/dea28fa008515d6ddaa0d2659f4dc253/Y0R6_BADGE_Castle_L.png",
+      "name": "Castle",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/castle"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/797q7C5YA89eFqw4RB40ka/f9435d1b4d13d41472e22d305c961cb9/Y0R6_BADGE_Kapkan_L.png",
+      "name": "Kapkan",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/kapkan"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/3gfdjXFezusaerCakMpfQ2/4565b28edd241b7fd3b0eba9c97d54f2/Y3S1_BADGE_Lion_L.png",
+      "name": "Lion",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/lion"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/7G4lGl5HPLFTTUdcZW8UOK/3901b44cf2a9423486ffd78531e42f87/Y3S3_BADGE_Clash_L.png",
+      "name": "Clash",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/clash"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/1k09nbCCu2avlIWpK3cJz9/35d60746d67750230f2a020a7be78795/Y2S3_BADGE_Zofia_L.png",
+      "name": "Zofia",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/zofia"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/3DXiYgVT71qGscYmFMgayj/d6c40a7dabdfecb92b637bec83003a58/Y3S3_BADGE_Maverick_L.png",
+      "name": "Maverick",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/maverick"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/5UAZVgyOutPh6bLTV3fGXf/c59d484fd599d09a947ec423b2119620/Y0R6_BADGE_Glaz_L.png",
+      "name": "Glaz",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/glaz"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/1TSA4pMR58vgfrEai69REl/f82b1eba6694b4aa77259d3d0fe8cc08/Y1S4_BADGE_Hibana_L.png",
+      "name": "Hibana",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/hibana"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/1wkdQ0viuTEguji14qXMJG/5858418baa8cca04a6e42a2d6256c093/Y0R6_BADGE_Fuze_L.png",
+      "name": "Fuze",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/fuze"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/6mOMxoc3t27R9Gr9wFtt6T/f5f90a6be6a6710bee686ce69df29906/Y0R6_BADGE_Smoke_L.png",
+      "name": "Smoke",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/smoke"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/75vqJXXKCM2EDO0iiNqRDe/d6289dc9a4fed72ef72b9c1e11738456/Y6S1_BADGE_Flores_L.png",
+      "name": "Flores",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/flores"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/58Y4Q2x7msL8uQUoiA7LGM/b204acc9c5a015029140723ef2e435bb/Y0R6_BADGE_Ash_L.png",
+      "name": "Ash",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/ash"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/7hpI2mcmvyjC2vG6ieltLo/f217b1dc449c0514b55e471193a38c91/Y0R6_BADGE_Tachanka_L.png",
+      "name": "Tachanka",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/tachanka"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/28k7LKWK70lxib7CimPJaZ/f34b2065811df8f0339838922f8c94b1/Y2S1_BADGE_Jackal_L.png",
+      "name": "Jackal",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/jackal"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/2K1uxROLvHGxOIOMpNRFeU/7b4afc5ded3d1b9a937d1b504b5d4d0d/Y4S3_BADGE_Amaru_L.png",
+      "name": "Amaru",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/amaru"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/6AAY4FZt5piHdabOdDokE4/f7f8bd90c20b8a429c78a08684b75aca/Y4S3_BADGE_Goyo_L.png",
+      "name": "Goyo",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/goyo"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/3RhB8rT969t71r0b3iiiQo/3bf85d17ade85b4e5943712b664b6166/r6s-operators-badge-sentry.png",
+      "name": "Sentry",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/sentry"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/5Qblb1ZqAqkN3Wa0Qw5qBq/05630c80672105a1195282d276e8eb05/Y3S4_BADGE_L.png",
+      "name": "Kaid",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/kaid"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/7qWONT0mrNYtUZVTVVT8Yj/e0da552d6bb6548ddf74cf4cc44d75c5/Y0R6_BADGE_Montagne_L.png",
+      "name": "Montagne",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/montagne"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/6YOBUP5JMskklFx9nDJQ49/d9d4b0968f581597feaa0ef4ec0891f3/r6s-operators-badge-solis.png",
+      "name": "Solis",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/solis"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/1vQZ4WsAjhc6M7qNOS4ahQ/92fc4d89632fb87aec0f102d7adbfe26/Y4S4_BADGE_Wamai_L.png",
+      "name": "Wamai",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/wamai"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/3DgGV3hETnXiEvVFOYZrbm/55a6be47761b5cf2c7ff8aaa7991cc7f/Y3S2_BADGE_Alibi_L.png",
+      "name": "Alibi",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/alibi"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/XK43imgD0tc0xrk0tgTCQ/0402cc95cbd525debafa1aab0fdd8385/Y3S2_BADGE_Maestro_L.png",
+      "name": "Maestro",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/maestro"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/2oZZBEZzVLFpRY7Mp85MWq/f62287872dd61b4e0697a93d703b2beb/Y1S1_BADGE_Buck_L.png",
+      "name": "Buck",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/buck"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/6tow5mqLao5TrJVL52csSc/46aa934c9f3f02189e9c04df0114a081/Y0R6_BADGE_Thermite_L.png",
+      "name": "Thermite",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/thermite"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/u1KR6aogjLncAtaVOciTc/ba730583f9c20cad6d3ca996d366a707/Y2S1_BADGE_Mira_L.png",
+      "name": "Mira",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/mira"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/5rOLCYQOh5HH0Nv6NHe38H/29681f901ff71ae5decb5ccb1b9f8a29/Y5S4_BADGE_Aruni_L.png",
+      "name": "Aruni",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/aruni"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/6CzQHWePD3Mi8HE5bdx5ic/2a6b5a6cc653ebf99d062725368eae2a/Y3S1_BADGE_Finka_L.png",
+      "name": "Finka",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/finka"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/2YTGfm1Df9PtldLcGodcTV/9a235b550cdf5066d686cef750eba090/Y0R6_BADGE_Blitz_L.png",
+      "name": "Blitz",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/blitz"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/3YgCpOSM2R4SDgExstxm7P/ff84e6ac53bd9f690deee78870f9c23b/Y0R6_BADGE_Twitch_L.png",
+      "name": "Twitch",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/twitch"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/3Yk1noMd9re0RLlrXJSWtR/7a55e80593c487827293a114835dba63/Y0R6_BADGE_Rook_L.png",
+      "name": "Rook",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/rook"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/7pqZFaPgQwaLi1pFKuAv7e/d3d9af214737fe6a069e5346c50bfd20/r6s-operators-badge-sens.png",
+      "name": "Sens",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/sens"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/73R4IrWJyn0xdkJ0fjOODA/fc70d200a7530dccae2847ab7962e394/Y1S3_BADGE_Capitao_L.png",
+      "name": "CAPITÃO",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/capitao"
+    },
+    {
+      "img": "https://images.ctfassets.net/p0f8o8d25gmk/1cCvTmKwnnovVmpZmDyPkA/b064f5ad6b9e7398d820d9ea90ff9366/Y0R6_BADGE_Jager_L.png",
+      "name": "Jäger",
+      "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/jager"
+    }
+  ],
+  "displayConvertedBalance": true,
+  "uplayTransactions": [
+    {
+      "date": 1725518208,
+      "product": "16000 Rainbow Credits",
+      "type": "In-Game Purchase",
+      "source": "e-wallet",
+      "amount": "13970.00 ￥"
+    },
+    {
+      "date": 1708851509,
+      "product": "PC DIG-THE DIVISION 2-ONE TIME OFFER 4-WW",
+      "type": "In-Game Purchase",
+      "source": "paypal",
+      "amount": "2640.00 ￥"
+    },
+    {
+      "date": 1702772522,
+      "product": "1200 Rainbow Credits",
+      "type": "In-Game Purchase",
+      "source": "e-wallet",
+      "amount": "1320.00 ￥"
+    },
+    {
+      "date": 1669993509,
+      "product": "The Division 2 - Warlords of New York - Expansion",
+      "type": "In-Game Purchase",
+      "source": "paypal",
+      "amount": "1188.00 ￥"
+    },
+    {
+      "date": 1642682285,
+      "product": "PC DIG-RAINBOW SIX EXTRACTION-DELUXE-WW",
+      "type": "Ubisoft Store",
+      "source": "Credit card via Xsolla",
+      "amount": "7920.00 ￥"
+    },
+    {
+      "date": 1609559477,
+      "product": "PC DIG-ASSASSIN'S CREED VALHALLA-STANDARD-JP",
+      "type": "Ubisoft Store",
+      "source": "konbini",
+      "amount": "7669.00 ￥"
+    },
+    {
+      "date": 1609042309,
+      "product": "2670 Rainbow Credits",
+      "type": "In-Game Purchase",
+      "source": "e-wallet",
+      "amount": "2640.00 ￥"
+    },
+    {
+      "date": 1595144936,
+      "product": "Assassin's Creed Odyssey - HELIX CREDITS SMALL PACK ",
+      "type": "In-Game Purchase",
+      "source": "paypal",
+      "amount": "1320.00 ￥"
+    }
+  ],
+  "canViewAccountLink": false,
+  "imagePreviewLinks": [],
+  "emailLoginUrl": "https://outlook.com",
+  "canChangePassword": false,
+  "canChangeEmailPassword": false,
+  "uniqueKeyExists": true,
+  "itemOriginPhrase": "Stealer",
+  "sold_items_category_count": 1953,
+  "restore_items_category_count": 17,
+  "tags": {
+    "1": {
+      "tag_id": 1,
+      "title": "Valid",
+      "isDefault": true,
+      "forOwnedAccountsOnly": true,
+      "bc": ""
+    }
+  },
+  "public_tag": null,
+  "note_text": null,
+  "descriptionHtml": "<a href=\"https://r6skins.locker/profile/19332fdb-8ac4-4105-ae51-160f0351b3e1\" target=\"_blank\" class=\"externalLink\" rel=\"nofollow\">https://r6skins.locker/profile/19332fdb-8ac4-4105-ae51-160f0351b3e1</a>",
+  "descriptionEnHtml": "<a href=\"https://r6skins.locker/profile/19332fdb-8ac4-4105-ae51-160f0351b3e1\" target=\"_blank\" class=\"externalLink\" rel=\"nofollow\">https://r6skins.locker/profile/19332fdb-8ac4-4105-ae51-160f0351b3e1</a>",
+  "descriptionPlain": "https://r6skins.locker/profile/19332fdb-8ac4-4105-ae51-160f0351b3e1",
+  "descriptionEnPlain": "https://r6skins.locker/profile/19332fdb-8ac4-4105-ae51-160f0351b3e1",
+  "seller": {
+    "user_id": 4903275,
+    "sold_items_count": 17403,
+    "active_items_count": 4359,
+    "restore_data": "{\"9\":20,\"2\":2,\"12\":15,\"14\":6,\"10\":1,\"1\":31,\"15\":7,\"5\":17,\"3\":18,\"27\":5,\"16\":1,\"19\":9,\"11\":12,\"13\":25,\"4\":2,\"18\":1}",
+    "username": "shutka",
+    "avatar_date": 1668091960,
+    "is_banned": 0,
+    "display_style_group_id": 23,
+    "restore_percents": 0
+  }
+}

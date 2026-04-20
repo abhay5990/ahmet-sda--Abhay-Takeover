@@ -214,10 +214,11 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR(f'Failed removals: {failed_count}'))
 
         if export_json:
-            tmp_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', '..', 'tmp')
-            os.makedirs(tmp_dir, exist_ok=True)
+            from django.conf import settings
+            tmp_dir = settings.ROOT_DIR / 'tmp'
+            tmp_dir.mkdir(parents=True, exist_ok=True)
             ts = datetime.now().strftime('%Y%m%d_%H%M%S')
-            out_path = os.path.join(tmp_dir, f'sold_active_listings_{ts}.json')
+            out_path = str(tmp_dir / f'sold_active_listings_{ts}.json')
             with open(out_path, 'w', encoding='utf-8') as f:
                 json.dump(json_records, f, ensure_ascii=False, indent=2)
             self.stdout.write(self.style.SUCCESS(f'JSON exported to: {out_path}'))

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import timedelta
 from typing import TYPE_CHECKING
 
 from apps.inventory.services import resolve_game
@@ -17,6 +18,18 @@ logger = logging.getLogger(__name__)
 
 # Statuses to fetch, in order
 _FETCH_STATUSES = ('Active', 'Hidden')
+
+# Default offer duration (days) when details.offerDuration is missing
+_DEFAULT_OFFER_DURATION_DAYS = 30
+
+
+def _expire_to_listed(expire_dt, payload):
+    """Derive listed_at from expired_time by subtracting offerDuration."""
+    if expire_dt is None:
+        return None
+    details = payload.get('details') or {}
+    duration = details.get('offerDuration') or _DEFAULT_OFFER_DURATION_DAYS
+    return expire_dt - timedelta(days=int(duration))
 
 
 class PlayerAuctionsOfferSyncService(BaseSyncService):
@@ -268,10 +281,13 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
             'price': price_value,
             'currency': currency,
             'game': game,
-            'listed_at': mapper.parse_pa_datetime(
-                payload.get('expired_time_string')
-                or payload.get('expiredTimeString')
-                or '',
+            'listed_at': _expire_to_listed(
+                mapper.parse_pa_datetime(
+                    payload.get('expired_time_string')
+                    or payload.get('expiredTimeString')
+                    or '',
+                ),
+                payload,
             ),
             'last_synced_at': raw_payload.fetched_at,
             'raw_data': payload,

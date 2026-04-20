@@ -1,0 +1,5367 @@
+{
+    "userId": "52790a2e-cdb0-420f-a061-e0c2d9ac5686",
+    "username": "Jzck-",
+    "created_at": "2018-07-28T20:54:11.233Z",
+    "added_at": "2025-08-27T22:56:25.660Z",
+    "level": 532,
+    "banned": false,
+    "banSource": "",
+    "banExpiration": null,
+    "ban_info": null,
+    "marketplace_value": 149314,
+    "currency": {
+        "renown": 8997,
+        "credits": 714
+    },
+    "owner_id": null,
+    "flags": 0,
+    "socials": {
+        "xbl": {
+            "username": "FJZ0",
+            "ghost_linked": true
+        }
+    },
+    "inventory": {
+        "Seasonals": [
+            {
+                "name": "Bison Drift",
+                "assetId": "4e5a162a-389f-4142-bf69-af8160da9542"
+            },
+            {
+                "name": "Hibernal Solstice",
+                "assetId": "d16f20c2-644e-4c08-bbf6-48e6de9189f7"
+            },
+            {
+                "name": "Secret Star",
+                "assetId": "4513a0f7-3a5a-49c1-b082-08ae946739a0"
+            },
+            {
+                "name": "Ectoplasm",
+                "assetId": "25f64a9c-873b-429c-9ae5-8dc2f178c3e1"
+            },
+            {
+                "name": "Retro Steel",
+                "assetId": "9c612deb-7944-4c8d-8c68-f71394214f14"
+            },
+            {
+                "name": "Worn Down Friend",
+                "assetId": "0ecedd6e-5049-42b8-9ad4-64d4ec3ee966"
+            },
+            {
+                "name": "S.I 22 Triumphant",
+                "assetId": "a8ef1d29-e2dc-4c4d-8bb0-307e44d27edd"
+            },
+            {
+                "name": "Crossfader",
+                "assetId": "8b7242ad-0f14-4c65-9a12-63a2ce3405f4"
+            },
+            {
+                "name": "Traditional Molas",
+                "assetId": "51805ddc-06f9-47e4-9aa4-50d605825b5a"
+            },
+            {
+                "name": "Suspicious Material",
+                "assetId": "7ffa2269-2a75-447c-adcb-f6d3ecd153df"
+            },
+            {
+                "name": "Piranha",
+                "assetId": "6e2e4c40-a1c2-4acd-b1f3-396a8c807fd8"
+            },
+            {
+                "name": "Spitfire",
+                "assetId": "57941360-3164-4adb-ba4c-12dbef08be59"
+            },
+            {
+                "name": "Watercolor Splash",
+                "assetId": "f1494629-379d-49a0-9a21-51a6fcfb2339"
+            },
+            {
+                "name": "Sombrero Vueltiao",
+                "assetId": "eb9e06ad-e49c-4f59-852a-caf13ed45f71"
+            },
+            {
+                "name": "Mighty Light",
+                "assetId": "60c6ea98-b4b6-4fb6-930d-e5e8632432a8"
+            },
+            {
+                "name": "Volcano",
+                "assetId": "eb6e9220-de8c-4c6c-80f0-342c420d1771"
+            },
+            {
+                "name": "Corrupting Influence",
+                "assetId": "451904b2-1427-4128-8977-c12ea03e0e5e"
+            },
+            {
+                "name": "Weathered Partner",
+                "assetId": "bf7119e6-b2e0-4bf6-9aea-b0299aff009e"
+            },
+            {
+                "name": "Possessed Possession",
+                "assetId": "c1787e55-5c0c-4bd7-b6f1-87a6d26fa611"
+            },
+            {
+                "name": "Destroyer",
+                "assetId": "23d377af-ffa4-4479-9f16-4611e492ce11"
+            },
+            {
+                "name": "Carnevale",
+                "assetId": "81bea4b6-fa2c-4fc3-b214-64d450e7f8dc"
+            },
+            {
+                "name": "Signature Six 2021",
+                "assetId": "971aefc1-1a0a-4e66-9ac9-71b80f5ae050"
+            },
+            {
+                "name": "Gold Impact",
+                "assetId": "e69da898-1267-41fd-8748-ddef6688a359"
+            },
+            {
+                "name": "Olea Europaea",
+                "assetId": "7a75d3ed-0ce1-4030-834c-bbb3c8e252aa"
+            },
+            {
+                "name": "Azulejos",
+                "assetId": "60f663ed-c2f3-41c1-8e27-792c0effabe7"
+            },
+            {
+                "name": "Wooden Carvings",
+                "assetId": "31343136-5ded-45af-bc6b-15b097dd4bff"
+            },
+            {
+                "name": "Sovereign",
+                "assetId": "896c8d0d-9a53-42b7-a142-cc2389601159"
+            },
+            {
+                "name": "Thermal Antipodes",
+                "assetId": "2ced92db-832c-4b44-bab1-83376201c270"
+            },
+            {
+                "name": "Azure Ward",
+                "assetId": "fcee5901-3da8-49ea-9445-f364225e0e51"
+            },
+            {
+                "name": "Deco Artistry",
+                "assetId": "e6ceb775-1dfd-4135-901a-a41518e3616d"
+            },
+            {
+                "name": "Aquamarine Net",
+                "assetId": "7f205096-f444-4168-bcb3-d4bc1bd49e75"
+            },
+            {
+                "name": "El Dorado",
+                "assetId": "ab484ed6-e304-4e44-9024-1469e1941122"
+            },
+            {
+                "name": "Interlaced",
+                "assetId": "38d3d4d9-8a0d-4317-afc6-90adb67c9d5f"
+            },
+            {
+                "name": "Signature Six 19",
+                "assetId": "cbe145b3-e200-4f6d-baeb-9670875e1aba"
+            },
+            {
+                "name": "Sleek Lethality",
+                "assetId": "62ec11ee-6d54-4340-9fe6-39020bac3e48"
+            },
+            {
+                "name": "Year of the Rabbit",
+                "assetId": "ea3f7156-4c22-4bd6-9b90-b273213ca0f0"
+            },
+            {
+                "name": "Poisonous Membrane",
+                "assetId": "a9852c03-c3f9-407c-bb9d-9b030a96f44e"
+            },
+            {
+                "name": "Sleigh Ride",
+                "assetId": "2f10e0fb-2771-42b1-9fcf-c3af62a56fb4"
+            },
+            {
+                "name": "River Scale",
+                "assetId": "eb72b3f4-7ce6-4808-97df-06a3907d1160"
+            },
+            {
+                "name": "Year of the Pig",
+                "assetId": "05aae5a0-9859-461d-83d5-170290557684"
+            },
+            {
+                "name": "Loyalty",
+                "assetId": "2013a442-172e-4025-8432-9187ebba547a"
+            },
+            {
+                "name": "Shattering Point",
+                "assetId": "d70de6d1-1a5d-46c4-9bf0-d0150c607203"
+            },
+            {
+                "name": "Painted Floral",
+                "assetId": "6776eabb-1263-4d01-a959-76cfc3433f97"
+            },
+            {
+                "name": "La Leyenda",
+                "assetId": "569308b0-9625-4949-872c-3419005e8bc0"
+            },
+            {
+                "name": "Wings of Paradise",
+                "assetId": "487b6dd7-3aef-4507-9817-1c5da4785754"
+            },
+            {
+                "name": "Closed Canopy",
+                "assetId": "2ed1ad14-ff70-4189-b358-03b4074dce6b"
+            },
+            {
+                "name": "Aki No Tsuru",
+                "assetId": "a9549396-7e4e-4a58-9f45-f122d44c80e7"
+            },
+            {
+                "name": "Vessel Wave",
+                "assetId": "2db484fe-18c1-4aab-b433-693e1ce1dc6e"
+            },
+            {
+                "name": "Sentient Growth",
+                "assetId": "d79d08cd-cc96-40b1-82f5-1a3757c05ffc"
+            },
+            {
+                "name": "Vermilion Swarm",
+                "assetId": "d5699466-9c92-46ea-b8a1-5b4a78b7406d"
+            },
+            {
+                "name": "Year of the Ox",
+                "assetId": "3bd465de-331a-4a6c-8dc2-400705accbf1"
+            },
+            {
+                "name": "Obsidian",
+                "assetId": "114b0691-218c-4842-a3e9-4f13bd303e8e"
+            },
+            {
+                "name": "Gingerbread",
+                "assetId": "33c0d3a0-2a28-4dd5-9bec-0d09fbdf27c4"
+            },
+            {
+                "name": "White Dragon",
+                "assetId": "c0bc0fec-b34c-4dbe-bb34-63d4588869ac"
+            },
+            {
+                "name": "Alembic",
+                "assetId": "241fda26-5cad-4cfb-829f-96acd3fe1287"
+            },
+            {
+                "name": "Waffle Cone",
+                "assetId": "019addf0-05da-4699-b52f-0133126cfd52"
+            },
+            {
+                "name": "World Class Apparatus",
+                "assetId": "e2445deb-202b-447f-b64a-80aabe1236a4"
+            },
+            {
+                "name": "Superimposed",
+                "assetId": "0b842a7e-21a1-4011-add3-ea812c355a21"
+            },
+            {
+                "name": "Search & Rescue",
+                "assetId": "8a64b2fc-00e9-4430-b496-7279678f268a"
+            },
+            {
+                "name": "Amazonia",
+                "assetId": "2afdaa6d-4b9d-4f76-a6cd-5ed290236113"
+            },
+            {
+                "name": "Year of the Tiger",
+                "assetId": "6c08e6fc-d736-4b99-84ad-55b939cff8f4"
+            },
+            {
+                "name": "Ocean's Teeth",
+                "assetId": "c29f570d-1faf-485c-918b-e7e06df5e2fb"
+            },
+            {
+                "name": "First Class Burglary",
+                "assetId": "e7870df2-0cef-4fc2-bd26-6fc7f2c92465"
+            },
+            {
+                "name": "Viperish Croaker",
+                "assetId": "c593cf83-d866-4e1e-af6b-21ab5954d484"
+            },
+            {
+                "name": "Wisdom and Hospitality",
+                "assetId": "0287af0a-40c1-459a-a6e5-0c940a5da179"
+            },
+            {
+                "name": "Chupinazo",
+                "assetId": "5427bf6e-3c6a-4945-9b5d-4f8a961c3572"
+            },
+            {
+                "name": "Damascus Steel",
+                "assetId": "57376d8c-0a69-4799-8960-d68edaf81d6b"
+            },
+            {
+                "name": "Gossamer Demise",
+                "assetId": "c7f8965f-cf80-416c-bde2-86682d192190"
+            },
+            {
+                "name": "Palace Virtue",
+                "assetId": "f5a06850-2734-4f0c-9feb-fc7f7b86bd37"
+            },
+            {
+                "name": "Triple Neon Diamond",
+                "assetId": "be30b227-d267-40ca-9766-94864d4662f7"
+            },
+            {
+                "name": "Eternal Wind",
+                "assetId": "50c4ce8c-5604-41cb-9988-923b8685ba09"
+            },
+            {
+                "name": "Strike Force",
+                "assetId": "21c5a47e-8a2c-4b2a-9258-61b7216ccb5d"
+            },
+            {
+                "name": "Hot And Spicy",
+                "assetId": "f4ccea4a-fc19-49b6-965e-55680f931dc4"
+            },
+            {
+                "name": "Chroma Streaks",
+                "assetId": "a2d7f226-f810-4920-be04-63addc6c48f8"
+            },
+            {
+                "name": "Leon Furioso",
+                "assetId": "8fa12e5a-c71d-4974-8201-d867b1a63ffb"
+            },
+            {
+                "name": "Enamored",
+                "assetId": "788aacba-954c-47d6-8907-f9e634f0edce"
+            },
+            {
+                "name": "Red Silk",
+                "assetId": "9dc32e21-79f6-4d4f-8e70-847651db97ba"
+            },
+            {
+                "name": "Velveteen",
+                "assetId": "c135a3e7-7956-43fd-b5db-74c130fafaa4"
+            },
+            {
+                "name": "Lifeblood Flower",
+                "assetId": "52e8a235-7221-4543-a04e-8f23e6282ef9"
+            },
+            {
+                "name": "Skull Rain",
+                "assetId": "d53b0d85-7184-40d1-809a-65b9bab69123"
+            },
+            {
+                "name": "Fresh Perspective",
+                "assetId": "71dd1c1d-c9b3-4b8b-b338-1a7321940715"
+            },
+            {
+                "name": "Husaria",
+                "assetId": "ab2f0399-eb3a-4653-b06c-bac311b7c10c"
+            },
+            {
+                "name": "Whitehall 1212",
+                "assetId": "302333fc-4668-4e33-b78c-8cdb8e8a237a"
+            },
+            {
+                "name": "Tidal Wash",
+                "assetId": "9181e35e-4933-48aa-b8ec-bdab6070f5fd"
+            },
+            {
+                "name": "Ryuko",
+                "assetId": "6588f6e3-4d89-48d2-bb7b-5d5ed4e86402"
+            },
+            {
+                "name": "Particle Robotics",
+                "assetId": "36fc73da-0185-4a70-a888-11e4793f8808"
+            },
+            {
+                "name": "Rusty Trigger",
+                "assetId": "ed9b0106-2874-46cc-952f-633224fadce3"
+            },
+            {
+                "name": "Heart Piercer",
+                "assetId": "c88fff26-e76e-4118-ac40-bbc0b3d358c9"
+            },
+            {
+                "name": "Outbreak Code Red",
+                "assetId": "d9bb9a39-bedc-4c75-9e3f-c129712ad07f"
+            },
+            {
+                "name": "Majesty",
+                "assetId": "053b4724-850d-40e2-8237-d216e168ee90"
+            },
+            {
+                "name": "Primsmatic Glisten",
+                "assetId": "fa018089-4419-49c1-9afb-d1db57bcac57"
+            },
+            {
+                "name": "Invitational 2020",
+                "assetId": "cd37a5b2-f547-47a3-874e-741250d8a543"
+            },
+            {
+                "name": "Onami",
+                "assetId": "bc5b9510-4dec-4348-bf47-42a710925129"
+            },
+            {
+                "name": "Legendary Vibrance",
+                "assetId": "f6297b57-182b-40ab-83b8-7e8a26a01786"
+            },
+            {
+                "name": "Crocodylus",
+                "assetId": "4a614ee7-bec5-490c-bfc2-1f8924dba714"
+            },
+            {
+                "name": "Fujin Raijin",
+                "assetId": "e9419276-7136-4611-8c34-74450870f6c8"
+            },
+            {
+                "name": "Dynasty",
+                "assetId": "a6a139cb-db9a-4813-9aeb-5de4c4f0a52b"
+            },
+            {
+                "name": "Bright Foliage",
+                "assetId": "6e9cb159-5fe4-4328-851a-c207a33aa09f"
+            },
+            {
+                "name": "Phoenix",
+                "assetId": "5f899504-b8c8-4fd8-8301-9fa6b191ce88"
+            },
+            {
+                "name": "Tiger Claw",
+                "assetId": "dc6479bb-4ec6-4af1-90e7-f65eec5c216e"
+            }
+        ],
+        "Universals": [
+            {
+                "name": "Saffron",
+                "assetId": "175067d7-a0b0-4a0e-a411-096f92675740"
+            },
+            {
+                "name": "Jungle",
+                "assetId": "147a643b-f563-4bd1-afa2-8512a57ead92"
+            },
+            {
+                "name": "Topaz",
+                "assetId": "db744ee4-2c9e-44ef-9c92-886a79060a61"
+            },
+            {
+                "name": "Ruby",
+                "assetId": "26745c1d-03a7-44de-aafd-3262c0388a47"
+            },
+            {
+                "name": "Emerald",
+                "assetId": "df12de7b-0f3e-48e8-8d68-9b737bb6d75f"
+            },
+            {
+                "name": "Modern USA Camo",
+                "assetId": "f66dd433-ac2c-4cb0-b533-8efdb471e2f5"
+            },
+            {
+                "name": "Crimson",
+                "assetId": "a67ea3b8-16ba-4551-913e-2259be1479b0"
+            },
+            {
+                "name": "Gold",
+                "assetId": "a1f41411-611e-4935-b351-9bf0c29d4a81"
+            },
+            {
+                "name": "Haze",
+                "assetId": "477e04eb-1aed-4aca-91ca-5e9a8cc14118"
+            },
+            {
+                "name": "Black",
+                "assetId": "16575522-c382-400c-964a-2ef21e5c5363"
+            },
+            {
+                "name": "USA Desert Camo",
+                "assetId": "c73f93d7-e32b-48da-ac2b-2270a97ea77f"
+            },
+            {
+                "name": "Cold War-FRA",
+                "assetId": "a8775ae3-8156-41cf-82f3-06504aeb60be"
+            },
+            {
+                "name": "Platinum",
+                "assetId": "49fb2bdc-f825-4c09-8748-dfb910049679"
+            },
+            {
+                "name": "Firefly",
+                "assetId": "ece434a6-99a9-48aa-bc2c-42bf71cdb81c"
+            },
+            {
+                "name": "Teal",
+                "assetId": "9198220f-5d09-4711-9998-5466edc4a18e"
+            },
+            {
+                "name": "Superstorm",
+                "assetId": "af5cdc13-e90c-4790-a245-986443476485"
+            },
+            {
+                "name": "Gray",
+                "assetId": "00a1e6ab-5140-42ec-9f5a-510e2fbda1fb"
+            },
+            {
+                "name": "Aurous Alabaster",
+                "assetId": "fdeba201-81d6-4295-883e-6b2ea53edaec"
+            },
+            {
+                "name": "Cold War-VNM",
+                "assetId": "0f8ec921-f4d7-4a78-a4c2-ed039a3b85a2"
+            },
+            {
+                "name": "Snake",
+                "assetId": "2d27a32e-f267-4a38-b22f-d0d5e468da6f"
+            },
+            {
+                "name": "Arctic",
+                "assetId": "459bc154-6480-4f69-8368-6557b3739315"
+            },
+            {
+                "name": "Zebra",
+                "assetId": "ae21c36b-b205-49c8-8251-d00820478c4c"
+            },
+            {
+                "name": "Elephant",
+                "assetId": "7bfdd0fc-e2b9-4528-b158-9f22ce3834ea"
+            },
+            {
+                "name": "Modern CAN Camo",
+                "assetId": "bc7a98e9-ea83-4789-badb-5ad1d75f18ab"
+            },
+            {
+                "name": "Tiger",
+                "assetId": "65231821-19c1-4d00-ade4-1fa4a623641a"
+            },
+            {
+                "name": "Infinite Swirl",
+                "assetId": "b232d79d-db2b-4b4f-b61c-828e98331b87"
+            },
+            {
+                "name": "Cyan",
+                "assetId": "c7088ba9-91a3-4225-a8fe-84cc450d4822"
+            },
+            {
+                "name": "Blue Nebula",
+                "assetId": "3785bfa8-47e1-49f7-b405-a7610695b4b8"
+            },
+            {
+                "name": "Cobalt",
+                "assetId": "992e508e-d392-4ee7-9fe9-97a9895310c8"
+            },
+            {
+                "name": "Canary",
+                "assetId": "6c3d89e9-f908-4858-a83e-124c272e84b1"
+            },
+            {
+                "name": "Amethyst",
+                "assetId": "e38d509c-4df5-4103-9b7f-8c1242a1aa9f"
+            },
+            {
+                "name": "Leopard",
+                "assetId": "a0d16bf7-fbf3-4e17-99da-8f4f8a84e2f3"
+            },
+            {
+                "name": "Azurite",
+                "assetId": "50b1f315-7af5-4e8e-8d16-f900458318aa"
+            },
+            {
+                "name": "Brown",
+                "assetId": "de8a7b0b-5dd1-4fa8-914a-e8aef9ff36f9"
+            },
+            {
+                "name": "Cold War-USA",
+                "assetId": "2fdfe9ba-6fc7-48f9-a11c-353e4f377c9f"
+            },
+            {
+                "name": "Diamond",
+                "assetId": "d0a46dc0-46e4-4e4d-8d23-634f2049c97d"
+            },
+            {
+                "name": "Rendered Sequence",
+                "assetId": "363ae7bf-9cbb-4c06-9396-346342acbb7f"
+            },
+            {
+                "name": "Cold War-BEL",
+                "assetId": "56249450-0b0b-4352-8f5f-648da25d8a2a"
+            }
+        ],
+        "Black Ices": [
+            {
+                "name": "C7E",
+                "assetId": "7f7907f0-f1df-4086-8f2a-64492dc9e7e7"
+            },
+            {
+                "name": "MP5",
+                "assetId": "33ea4caf-ee25-4032-af06-b30a070084ca"
+            },
+            {
+                "name": "9mm C1",
+                "assetId": "c8e3b4c9-ca63-4abd-8329-787d3b0e7ffa"
+            },
+            {
+                "name": "556XI",
+                "assetId": "e2b414fd-9d22-4215-a837-8efd9b3df964"
+            },
+            {
+                "name": "SPAS-12",
+                "assetId": "88d33dc2-79df-4e73-bca8-5ee6ae3e320e"
+            },
+            {
+                "name": "MP7",
+                "assetId": "d8e5db99-08a9-4c7c-afa6-b96f3bdaf9f9"
+            },
+            {
+                "name": "F2",
+                "assetId": "1be9bae1-22e8-4dc7-b728-765b4fdccd57"
+            },
+            {
+                "name": "CSRX300",
+                "assetId": "92226448-e8e8-402e-8be5-784ed5ca6ff4"
+            },
+            {
+                "name": "ARX200",
+                "assetId": "74b06556-c2d9-415e-9736-f6e2ed80b0b9"
+            },
+            {
+                "name": "P10 Roni",
+                "assetId": "3f7c6c64-dd4c-4435-853e-b4bd857f97f4"
+            },
+            {
+                "name": "Mk 14 EBR",
+                "assetId": "2de57dc0-76f2-4d9d-8ca3-2ff8bddf4153"
+            },
+            {
+                "name": "G8A1",
+                "assetId": "9c67b2be-5273-4c00-ab71-cc4787f9719f"
+            },
+            {
+                "name": "1911 Tacops",
+                "assetId": "4f6682ba-70ef-4692-8f56-ff85d1a382f3"
+            },
+            {
+                "name": "SMG-11",
+                "assetId": "ecdc6a0c-c64c-4d06-b3cc-9334fdb2b4ff"
+            },
+            {
+                "name": "R4C",
+                "assetId": "ac971fcc-3a3a-4d3f-8207-38a8ec86a9e5"
+            },
+            {
+                "name": "MPX",
+                "assetId": "0bf3b687-795d-4599-a83a-375a0f476fa3"
+            },
+            {
+                "name": "UMP45",
+                "assetId": "61b2252b-ee02-4d19-9355-546813b1046f"
+            },
+            {
+                "name": "SMG-12",
+                "assetId": "03784a40-3dbd-40cd-bc83-11524012ae7a"
+            },
+            {
+                "name": "MK17 CQB",
+                "assetId": "16010c54-1ca4-4706-8ea6-5a323242cd2d"
+            },
+            {
+                "name": "SC3000K",
+                "assetId": "4cbec25a-95f1-4d63-9b2f-a05c11bac6cc"
+            },
+            {
+                "name": "Blitz Shield",
+                "assetId": "298dd931-3adc-45e3-92c3-f9e4e683314b"
+            },
+            {
+                "name": "416-C",
+                "assetId": "40c4710f-01cc-4e27-9b8e-913d96ed7b04"
+            },
+            {
+                "name": "ACS12",
+                "assetId": "474129e5-0888-4d36-9eb4-71c61811c124"
+            },
+            {
+                "name": "Spear",
+                "assetId": "08e42e30-5f46-4d34-af80-454c4cd32b6f"
+            },
+            {
+                "name": "M1014",
+                "assetId": "4bec1f07-c8b0-4f89-8dae-34a8efa74297"
+            },
+            {
+                "name": "Bearing-9",
+                "assetId": "9b0c4621-f4e2-4e59-bef2-5df8fa7bb760"
+            },
+            {
+                "name": "SR-25",
+                "assetId": "fef91f81-ad84-4e9c-8f07-516da710f04d"
+            },
+            {
+                "name": "Scorpion",
+                "assetId": "b41fdc8f-6322-42aa-878b-90fda7eac90c"
+            },
+            {
+                "name": "Super 90",
+                "assetId": "5d452252-12d0-4ef5-aaff-7954c13d9b8d"
+            },
+            {
+                "name": "Type-89",
+                "assetId": "a301e03e-cf47-4320-9645-79cc1259f708"
+            },
+            {
+                "name": "GSH-18",
+                "assetId": "f57b7ac2-cfaa-4d19-9972-2a138d6e376b"
+            },
+            {
+                "name": "P229",
+                "assetId": "2cdcfaf9-a0f3-43ba-bde8-38f35eafa1b8"
+            },
+            {
+                "name": "Super Shorty",
+                "assetId": "0d8269d9-1487-48f5-bc2d-2d7c77a8941c"
+            },
+            {
+                "name": "Montagne Shield",
+                "assetId": "ff97f006-164a-4d5d-b731-4dff577f0601"
+            },
+            {
+                "name": "FMG-9",
+                "assetId": "252d03f2-c5a8-4268-a6cf-159208578ba9"
+            },
+            {
+                "name": "PMM",
+                "assetId": "f0b88ee5-cafa-4d8c-b41f-a8265cd70111"
+            },
+            {
+                "name": "K1A",
+                "assetId": "e5cb5d3a-cb7e-472d-8136-46aeba4ec85f"
+            },
+            {
+                "name": "G36C",
+                "assetId": "18149094-9dbe-4428-9766-4d74060daaa9"
+            },
+            {
+                "name": "AR33",
+                "assetId": "a2361d89-3be8-4a82-8a73-c73801785a14"
+            },
+            {
+                "name": "M249 SAW",
+                "assetId": "7d7ae0ea-2a2d-48a6-bee8-70555c7ab35b"
+            },
+            {
+                "name": "P9",
+                "assetId": "1ec32c72-4a22-4e22-b93c-5866638d1093"
+            },
+            {
+                "name": "P90",
+                "assetId": "0a56cfdf-4f80-4233-ade3-e9514e64357c"
+            },
+            {
+                "name": "CAMRS",
+                "assetId": "c612224f-a3ef-416a-bedc-20225a538535"
+            },
+            {
+                "name": "M45 Meusoc",
+                "assetId": "3aa9de56-8825-47df-b347-a83da4a673a6"
+            },
+            {
+                "name": "552 Commando",
+                "assetId": "38798678-8083-45f5-a04e-72bfe40f1339"
+            },
+            {
+                "name": "PDW9",
+                "assetId": "863164f3-66b2-4e98-a44c-bfaf70c24c58"
+            },
+            {
+                "name": "MP5K",
+                "assetId": "a6c2f610-c018-4d53-9ef0-b356493bdcda"
+            },
+            {
+                "name": "L85A2",
+                "assetId": "257d2596-ce4f-457e-a1be-14d700f13375"
+            },
+            {
+                "name": "M4",
+                "assetId": "416416bd-3c90-4f5b-b74a-e0c659f11b82"
+            }
+        ],
+        "Dust Lines": [
+            {
+                "name": "M1014",
+                "assetId": "428d3f31-7054-43fe-aec3-008d4a1c536e"
+            },
+            {
+                "name": "552 Commando",
+                "assetId": "19404705-3744-4c1c-bbd0-d417face4536"
+            },
+            {
+                "name": "LFP586",
+                "assetId": "f3378135-8949-4d10-b4f2-7f08d61b354f"
+            },
+            {
+                "name": "AR33",
+                "assetId": "83f73958-9c11-49b1-bf89-e19aa51cd1e6"
+            }
+        ],
+        "Racer": [
+            {
+                "name": "MP5K",
+                "assetId": "be090f9f-3a54-4c9f-a2ce-3067985e9b85"
+            },
+            {
+                "name": "GSH-18",
+                "assetId": "70c39bfd-6744-4ba9-b012-1e11d8e02d7f"
+            },
+            {
+                "name": "M870",
+                "assetId": "a61c5d95-9351-46a9-890c-40363bb60309"
+            },
+            {
+                "name": "Mk1 9mm",
+                "assetId": "37331b85-9735-4283-b26d-c577c8ad91fc"
+            }
+        ],
+        "Ranked Charms": [
+            {
+                "name": "Silver (Commanding Force)"
+            },
+            {
+                "name": "Copper (Dread Factor)"
+            },
+            {
+                "name": "Gold (Deadly Omen)"
+            },
+            {
+                "name": "Gold (Shadow Legacy)"
+            },
+            {
+                "name": "Bronze (Commanding Force)"
+            },
+            {
+                "name": "Gold (High Calibre)"
+            },
+            {
+                "name": "Bronze (Deep Freeze)"
+            },
+            {
+                "name": "Platinum (Solar Raid)"
+            },
+            {
+                "name": "Bronze (Deadly Omen)"
+            },
+            {
+                "name": "Platinum (Commanding Force)"
+            },
+            {
+                "name": "Copper (Prep Phase)"
+            },
+            {
+                "name": "Gold (Steel Wave)"
+            },
+            {
+                "name": "Platinum (Deadly Omen)"
+            },
+            {
+                "name": "Gold (Neon Dawn)"
+            },
+            {
+                "name": "Silver (Solar Raid)"
+            },
+            {
+                "name": "Silver (Prep Phase)"
+            },
+            {
+                "name": "Silver (Wind Bastion)"
+            },
+            {
+                "name": "Platinum (Brutal Swarm)"
+            },
+            {
+                "name": "Silver (Deadly Omen)"
+            },
+            {
+                "name": "Gold (Demon Veil)"
+            },
+            {
+                "name": "Silver (Shifting Tides)"
+            },
+            {
+                "name": "Copper (Twin Shells)"
+            },
+            {
+                "name": "Gold (Crimson Heist)"
+            },
+            {
+                "name": "Bronze (Burnt Horizon)"
+            },
+            {
+                "name": "Emerald (Solar Raid)"
+            },
+            {
+                "name": "Copper (Solar Raid)"
+            },
+            {
+                "name": "Bronze (Solar Raid)"
+            },
+            {
+                "name": "Copper (Deep Freeze)"
+            },
+            {
+                "name": "Gold (Solar Raid)"
+            },
+            {
+                "name": "Gold (Prep Phase)"
+            },
+            {
+                "name": "Bronze (Phantom Sight)"
+            },
+            {
+                "name": "Silver (Deep Freeze)"
+            },
+            {
+                "name": "Silver (Void Edge)"
+            },
+            {
+                "name": "Copper (Commanding Force)"
+            },
+            {
+                "name": "Platinum (Prep Phase)"
+            },
+            {
+                "name": "Diamond (Solar Raid)"
+            },
+            {
+                "name": "Gold (Commanding Force)"
+            },
+            {
+                "name": "Bronze (Ember Rise)"
+            },
+            {
+                "name": "Copper (Deadly Omen)"
+            },
+            {
+                "name": "Bronze (Prep Phase)"
+            }
+        ],
+        "Attachment Skins": [
+            {
+                "name": "Signature Six 2021",
+                "assetId": "c4046d47-c04a-404b-b26e-d9d44c4e2a66"
+            },
+            {
+                "name": "Sentinel Spirit",
+                "assetId": "52427b8b-73b0-43e7-b2f5-2eac3defbaa2"
+            },
+            {
+                "name": "Animality",
+                "assetId": "36ac5bb6-fb47-4925-918d-d8478436dae7"
+            },
+            {
+                "name": "Suspicious Material",
+                "assetId": "b15cd848-a8b0-489e-b802-330b5ed25ec8"
+            },
+            {
+                "name": "Blue-Hued Camo",
+                "assetId": "0bedbb55-cfc7-4e3f-9f13-de09f9de9c06"
+            },
+            {
+                "name": "S.I. 2021 Orange Team",
+                "assetId": "e19d737a-4f53-48e2-b14a-fd86a6213c92"
+            },
+            {
+                "name": "S.I. 2021 Blue Team",
+                "assetId": "7a1791e4-1182-4a81-bed1-7d13c16ec982"
+            },
+            {
+                "name": "Sentient Growth",
+                "assetId": "b1fff309-04fd-48e0-af64-259cfeeee9a2"
+            },
+            {
+                "name": "Recharging Adder",
+                "assetId": "5805ac01-e683-492a-bfc4-6001911c048d"
+            },
+            {
+                "name": "Cloaked Interloper",
+                "assetId": "babb8917-54c8-4027-a558-9ea00d22ebdf"
+            },
+            {
+                "name": "Gray",
+                "assetId": "4809facb-fd53-4840-893a-0db4865e0ce5"
+            },
+            {
+                "name": "Bone Chills",
+                "assetId": "5b1d84b6-e266-48ca-8e1b-513abf509066"
+            },
+            {
+                "name": "Mizuchi",
+                "assetId": "919e4745-c9eb-481d-bfdf-bf95089845cc"
+            },
+            {
+                "name": "Arctic",
+                "assetId": "e389d34f-1a7c-448b-b901-eec60cce43f5"
+            },
+            {
+                "name": "Red Wolf",
+                "assetId": "1c11c8ed-24e8-4c69-b98b-50dd6cea4048"
+            },
+            {
+                "name": "Experimental Unit",
+                "assetId": "d7810249-2ec5-4bda-9f74-19d19a62df04"
+            },
+            {
+                "name": "Pearl Ripple",
+                "assetId": "0fcbb0d9-dd20-4752-a488-23b55fd39389"
+            },
+            {
+                "name": "First Class Burglary",
+                "assetId": "4fa5d6ae-7d4a-4b15-ba9a-39df06a6ec3f"
+            },
+            {
+                "name": "Velveteen",
+                "assetId": "41bbf95c-8243-4413-b5ec-64960c621bd6"
+            },
+            {
+                "name": "Brown",
+                "assetId": "88a0c1e6-a57f-4407-b76d-6e630fe9d508"
+            },
+            {
+                "name": "S.I. 2021 Red Team",
+                "assetId": "5e087c2c-203b-45ed-b03c-31f29ed5b8f2"
+            },
+            {
+                "name": "Tall Grass",
+                "assetId": "3df7fe71-2b8e-43b4-92d7-b555092a6959"
+            },
+            {
+                "name": "Crimson",
+                "assetId": "edbad98e-3a2c-421b-b071-b39926cca52e"
+            },
+            {
+                "name": "S.I. 2022 Striker",
+                "assetId": "f0077726-6dd6-4d6e-8afc-491a0fda7f7e"
+            },
+            {
+                "name": "La Leyenda",
+                "assetId": "f6e46458-3977-41e5-a06e-dd14c739f35c"
+            },
+            {
+                "name": "Chroma Streaks",
+                "assetId": "e2aa55e5-bf3d-4073-a78c-661c6a4baed7"
+            },
+            {
+                "name": "Haven Troubleshooter",
+                "assetId": "e9ca3c3b-311a-4b4e-89b6-56afb95d4018"
+            },
+            {
+                "name": "S.I. 2022 Frame",
+                "assetId": "8152d698-863b-40e6-b7d5-2771e6470ffc"
+            },
+            {
+                "name": "Sleek Lethality",
+                "assetId": "45b37f33-c257-46df-8a05-0893894b2ca7"
+            },
+            {
+                "name": "Thermal Antipodes",
+                "assetId": "95e4722d-0946-4b41-bacd-dbba34c506f3"
+            },
+            {
+                "name": "Portal Gun (SMG-11)"
+            },
+            {
+                "name": "S.I. 2022 Triumphant",
+                "assetId": "05984231-4231-4cf5-b5c4-f7aafce76070"
+            },
+            {
+                "name": "Plasma Pink",
+                "assetId": "5b72d047-4d8a-479d-ba77-009e748ecb96"
+            },
+            {
+                "name": "Wings Of Paradise",
+                "assetId": "f10c6bf6-d962-4c3d-9e82-101c7e03c5c9"
+            },
+            {
+                "name": "Poisonous Membrane",
+                "assetId": "9b6ae952-c67a-40be-afb6-0e6f94a1137b"
+            },
+            {
+                "name": "Azure Ward",
+                "assetId": "46749c0e-650d-49c3-ba5b-bcbc653ae456"
+            },
+            {
+                "name": "Primus Pilus",
+                "assetId": "92564271-bfcb-4281-bfda-96cc2f83e2f1"
+            },
+            {
+                "name": "Threat Assesment",
+                "assetId": "8cf017e2-1874-4d19-be08-1a290241165d"
+            },
+            {
+                "name": "Triple Neon Diamond",
+                "assetId": "8ffb5de9-617b-4518-b08b-2f51f65b4f41"
+            },
+            {
+                "name": "Colorful Dance",
+                "assetId": "17d9fd11-058a-4582-bda6-3a8259fa2bab"
+            },
+            {
+                "name": "S.I. 2021 Green Team",
+                "assetId": "a34a0b28-b98e-48bf-88cc-cc47edf173ee"
+            },
+            {
+                "name": "Black",
+                "assetId": "924fe568-793a-446a-9292-64d2ab456a53"
+            }
+        ],
+        "Pro Leagues (Old)": [
+            {
+                "name": "Y5S1 - Thermite",
+                "assetId": "48f5aa44-84b7-4955-9654-0a7653b82148"
+            },
+            {
+                "name": "Y4S2 - Gridlock",
+                "assetId": "e69ea6d7-8f0d-4c1a-bb55-77cf87e18988"
+            },
+            {
+                "name": "Y4S1 - Nomad",
+                "assetId": "c6977925-d0d0-487a-97f6-e9fda7f4de94"
+            },
+            {
+                "name": "Y4S2 - Mozzie",
+                "assetId": "7879b2f0-e842-48bf-83ae-515b1ee3564a"
+            },
+            {
+                "name": "Y4S3 - Tachanka",
+                "assetId": "37480a21-942b-483c-8146-ffc7bb0322f7"
+            },
+            {
+                "name": "Y4S1 - Kaid",
+                "assetId": "e37e2413-8d37-45d1-a662-330571916b21"
+            },
+            {
+                "name": "Y4S2 - Gridlock",
+                "assetId": "e69ea6d7-8f0d-4c1a-bb55-77cf87e18988"
+            },
+            {
+                "name": "Y2S4 - Mira",
+                "assetId": "21e621bd-412a-40ff-a75a-a9e2ff0a2a27"
+            },
+            {
+                "name": "Y4S2 - Ash",
+                "assetId": "49eebe72-d3ed-4340-bce3-8f6e27b1c447"
+            },
+            {
+                "name": "Y4S1 - Clash",
+                "assetId": "23fa1612-bdff-4189-a2eb-76946ea3e1aa"
+            },
+            {
+                "name": "Y3S3 - Vigil",
+                "assetId": "414ee0bc-b5ff-42af-897b-9c76e42384b7"
+            },
+            {
+                "name": "Y4S1 - Nomad",
+                "assetId": "c6977925-d0d0-487a-97f6-e9fda7f4de94"
+            },
+            {
+                "name": "Y2S4 - Buck",
+                "assetId": "45b876ff-5c15-464a-aba3-5f1c885aa380"
+            },
+            {
+                "name": "Y4S1 - Clash",
+                "assetId": "23fa1612-bdff-4189-a2eb-76946ea3e1aa"
+            },
+            {
+                "name": "Y2S1 - Pulse",
+                "assetId": "6776b5d9-7a6e-4407-887e-684ed3f00569"
+            },
+            {
+                "name": "Y4S2 - Ash",
+                "assetId": "49eebe72-d3ed-4340-bce3-8f6e27b1c447"
+            },
+            {
+                "name": "Y4S2 - Mozzie",
+                "assetId": "7879b2f0-e842-48bf-83ae-515b1ee3564a"
+            },
+            {
+                "name": "Y4S3 - Warden",
+                "assetId": "a572ba0f-42e7-4346-b5f7-36299ab72110"
+            },
+            {
+                "name": "Y4S2 - Rook",
+                "assetId": "15460263-f7ee-489b-874d-25a7a7bb4b29"
+            },
+            {
+                "name": "Y4S1 - Kaid",
+                "assetId": "e37e2413-8d37-45d1-a662-330571916b21"
+            },
+            {
+                "name": "Y3S3 - Vigil",
+                "assetId": "414ee0bc-b5ff-42af-897b-9c76e42384b7"
+            },
+            {
+                "name": "Y4S1 - Maverick",
+                "assetId": "86c4ad25-2414-4aa6-a888-eff2eb372815"
+            },
+            {
+                "name": "Y3S1 - Ela",
+                "assetId": "6bdf9b16-39db-4a38-b41e-9947c4e9d595"
+            },
+            {
+                "name": "Y4S1 - Maverick",
+                "assetId": "86c4ad25-2414-4aa6-a888-eff2eb372815"
+            },
+            {
+                "name": "Y5S1 - Kali",
+                "assetId": "b1f8f01d-062d-4f4e-827f-858e8bbb902b"
+            },
+            {
+                "name": "Y4S4 - Twitch",
+                "assetId": "e9194a33-cb64-43ce-8c6c-dfad523dc1a7"
+            },
+            {
+                "name": "Y4S2 - Rook",
+                "assetId": "15460263-f7ee-489b-874d-25a7a7bb4b29"
+            }
+        ],
+        "Pro Leagues (New)": [
+            {
+                "name": "Y5S3 - Twitch",
+                "assetId": "88e1cf07-1ad9-4e3e-8da8-65f75a0ea930"
+            },
+            {
+                "name": "Y5S3 - Blitz",
+                "assetId": "3e4329d6-33d1-4f16-86f8-6337a64fae0c"
+            },
+            {
+                "name": "Y6S1 - Ying",
+                "assetId": "e3e3206a-d21b-49d5-83ef-d512aebae6b4"
+            },
+            {
+                "name": "Y6S3 - Doc",
+                "assetId": "312005aa-39ce-44c7-b2a2-3436585b4cc4"
+            },
+            {
+                "name": "Y6S3 - Valkyrie",
+                "assetId": "53c06b95-b780-454f-b521-da6c4d579beb"
+            },
+            {
+                "name": "Y6S1 - Jager",
+                "assetId": "6fe9a5cc-2083-4bad-add1-480084b589e8"
+            },
+            {
+                "name": "Y6S3 - Capitao",
+                "assetId": "55c9d322-63a0-46ba-b65c-69a12402fffe"
+            },
+            {
+                "name": "Y6S1 - Buck",
+                "assetId": "d53a73c4-5b8a-4e23-948a-d18a6431acd8"
+            },
+            {
+                "name": "Y6S3 - Dokkaebi",
+                "assetId": "d3ecfafb-2b28-4c61-b0cf-48ab8e8a89f4"
+            },
+            {
+                "name": "Y5S3 - Smoke",
+                "assetId": "23872aa7-d92a-4da1-accb-db3fcb9c8704"
+            },
+            {
+                "name": "Y6S2 - Melusi",
+                "assetId": "251dc012-c481-4f72-902f-0d7b0127ed9c"
+            },
+            {
+                "name": "Y5S4 - Ela",
+                "assetId": "f03d4ff8-5748-42cb-8153-0a2b62d3bfba"
+            },
+            {
+                "name": "Y6S1 - Mira",
+                "assetId": "e2eeac8a-b783-4e5c-afbe-a83dc1d15e6b"
+            },
+            {
+                "name": "Y5S3 - Caveira",
+                "assetId": "00ccc7ba-91ca-4e3a-95ef-014b31789162"
+            }
+        ],
+        "Invitational/Major": [
+            {
+                "name": "2025 Six Invitational Attendee Charm",
+                "assetId": "1a4e01f4-797a-40ba-ac38-14d87a670119"
+            }
+        ],
+        "Special": [
+            {
+                "name": "Precision Beam (P10 Roni)",
+                "assetId": "1245be1d-643e-4ead-8661-d1cdf0236bab"
+            },
+            {
+                "name": "Convergence (MP5)",
+                "assetId": "b459d2c1-3017-4c22-8e32-189bee3e81d8"
+            },
+            {
+                "name": "Predator Frostblade (F2)",
+                "assetId": "2ea9df96-f25b-42c2-b1e4-d05cc44fe1ea"
+            }
+        ],
+        "Uplay Rewards": [
+            {
+                "name": "Ghost Recon Wildlands (C7E)",
+                "assetId": "b0322a6d-5361-4955-960d-3e6ebae137a9"
+            },
+            {
+                "name": "S.I. Club Reward (MPX)",
+                "assetId": "37ca9ed6-db68-47f4-be65-dceed5db7e87"
+            },
+            {
+                "name": "Division Weaponry (Scorpion)",
+                "assetId": "b6339063-9ddc-4d12-962d-3c2da3acff02"
+            },
+            {
+                "name": "Guerrilla (AK12)",
+                "assetId": "08238648-c8b3-447a-ab67-5de6d609bb06"
+            }
+        ],
+        "R6 Cup Rewards": [
+            {
+                "name": "Cutting Edge (Kali Uniform)",
+                "assetId": "a1104cf5-bac5-423d-85f4-8ab2326e679c"
+            },
+            {
+                "name": "Optimal Fit (Kali Headgear)",
+                "assetId": "8128d769-28b9-44f3-8909-e6a0aa972b56"
+            }
+        ],
+        "Y4 Pilot Programs": [
+            {
+                "name": "Rogue (416-C)",
+                "assetId": "525e5780-b4e9-4278-adf4-83fbdc060315"
+            },
+            {
+                "name": "G2 Esport (L85A2)",
+                "assetId": "2f4810f2-95fa-4b0c-824c-b75330b5df53"
+            },
+            {
+                "name": "Team Liquid (K1A)",
+                "assetId": "5695ed58-60ac-44ee-9c95-98eb66cdeb2b"
+            },
+            {
+                "name": "Cloud9 (MPX)",
+                "assetId": "c06a3849-15e3-4fde-97e0-103d88d3762b"
+            },
+            {
+                "name": "Cloud9 (M590A1)",
+                "assetId": "e86eeea6-f851-4371-a512-d7af0e4118a7"
+            },
+            {
+                "name": "MIBR (C8-SFW)",
+                "assetId": "dca9f2d8-9ac3-43b3-a618-fe73a2625890"
+            },
+            {
+                "name": "Empire (MP7)",
+                "assetId": "a3f3f56a-3b9b-43cb-872d-978ef4b69223"
+            },
+            {
+                "name": "SSG (MP5SD)",
+                "assetId": "aadff512-05d2-4ea2-8184-e2a508087ea3"
+            },
+            {
+                "name": "Penta (T-5 SMG)",
+                "assetId": "d72800a0-ee84-48f2-9848-f5c2d96f7629"
+            },
+            {
+                "name": "Natus Vincere (MP5)",
+                "assetId": "6c2459a1-707e-4ced-be11-c3acb9969f63"
+            },
+            {
+                "name": "Penta (F2)",
+                "assetId": "a97d0b3b-0903-4c9f-91d3-a178e10d0749"
+            },
+            {
+                "name": "SSG (ALDA 5.56)",
+                "assetId": "8cc93691-3288-4a77-a0ce-79a7a7f7b423"
+            },
+            {
+                "name": "FaZe Clan (R4C)",
+                "assetId": "7ad89537-ca75-44c8-bb2f-dd9fb3df987e"
+            },
+            {
+                "name": "Rogue (M762)",
+                "assetId": "9091a82d-e2bd-498f-a760-887a9aed4639"
+            },
+            {
+                "name": "G2 Esport (SMG-11)",
+                "assetId": "21c95b0f-0bea-4d4c-83c8-04a760fc21ba"
+            }
+        ],
+        "Y5 Pilot Programs": [
+            {
+                "name": "Natus Vincere (P10 Roni)",
+                "assetId": "b574f576-52a0-4889-a408-9671352b0f0e"
+            },
+            {
+                "name": "INTZ (C7E)",
+                "assetId": "0d4ddc57-e32a-4155-88af-015555b4896b"
+            },
+            {
+                "name": "G2 Esport (416-C)",
+                "assetId": "fd7a3da4-fd09-4bf6-add9-8e9dba860639"
+            },
+            {
+                "name": "Talon (R4C)",
+                "assetId": "227e1072-e517-4a5d-8d9a-fcd814e94d44"
+            },
+            {
+                "name": "FURIA (416-C)",
+                "assetId": "1a7a86b2-2297-4aa5-bc16-0d808d0ed54a"
+            },
+            {
+                "name": "DarkZero (T-5 SMG)",
+                "assetId": "d9466003-23f1-4727-833b-4aa973c687e9"
+            },
+            {
+                "name": "Virtus.Pro (M590A1)",
+                "assetId": "a2ed75f8-7c2f-42fe-9c60-20eb603f1fe6"
+            },
+            {
+                "name": "Team Vitality (MPX)",
+                "assetId": "ed227872-20a7-46a9-a951-961d6f6a078e"
+            },
+            {
+                "name": "Cyclops (M762)",
+                "assetId": "1a861391-2d6e-4b10-a44a-4334b4cca7f1"
+            },
+            {
+                "name": "SSG (Scorpion)",
+                "assetId": "ae8e8cd8-a029-421b-9073-19c6bb1d3894"
+            },
+            {
+                "name": "Knights (G36C)",
+                "assetId": "cbc7384a-d1c0-48fe-af90-4cc705075c32"
+            },
+            {
+                "name": "Fnatic (G36C)",
+                "assetId": "c76e7227-2949-40aa-8d80-cc341969afda"
+            },
+            {
+                "name": "Team Secret (M762)",
+                "assetId": "91b6fcf1-10a2-453e-9835-8f745bc2b1e9"
+            },
+            {
+                "name": "TSM (M762)",
+                "assetId": "97f7fcf7-26b9-439a-956e-0a258ff649b9"
+            },
+            {
+                "name": "W7M (UMP45)",
+                "assetId": "4f379c33-3ace-4505-907c-cd3f15632328"
+            },
+            {
+                "name": "BDS Esport (Type-89)",
+                "assetId": "79bfce4f-628e-4420-99b5-907ca35e17b0"
+            }
+        ],
+        "Y6 Pilot Programs": [
+            {
+                "name": "Ninjas in Pyjamas (416-C)",
+                "assetId": "31354c64-e3c5-4a6a-9c36-60d7fad0d74a"
+            },
+            {
+                "name": "Beastcoast (MP5)",
+                "assetId": "0b54e5fa-6c9e-4852-8227-a34cba32e9a6"
+            },
+            {
+                "name": "Knights (MP5)",
+                "assetId": "ae5ac98f-a08b-4c47-8171-658f876c69a8"
+            },
+            {
+                "name": "Team Vitality (R4C)",
+                "assetId": "3a7a30e2-e265-4871-af25-e44439f1ab46"
+            },
+            {
+                "name": "BDS Esport (SMG-11)",
+                "assetId": "341f5947-6316-4eaa-b7ee-51193971c0f0"
+            },
+            {
+                "name": "Team Secret (M590A1)",
+                "assetId": "6de52e7c-e452-479b-9d42-a27353ba2fcf"
+            },
+            {
+                "name": "G2 Esport (SMG-12)",
+                "assetId": "32937cb2-4af1-4c47-bb0c-3d18d1999a7a"
+            },
+            {
+                "name": "Oxygen (G36C)",
+                "assetId": "69ede601-f231-493e-86f3-1d23b7d2ce4d"
+            },
+            {
+                "name": "Natus Vincere (M762)",
+                "assetId": "0af0e6f0-0afe-405b-9741-47ddc09a4550"
+            },
+            {
+                "name": "Black Dragons (PARA-308)",
+                "assetId": "d86ac41d-3599-41dd-a6ad-d88458e481c6"
+            },
+            {
+                "name": "DWG K1A (Type-89)",
+                "assetId": "d8606b8d-4f6b-4ff9-b890-16a24370baf8"
+            },
+            {
+                "name": "FaZe Clan (MPX)",
+                "assetId": "69d1ddd3-a20e-4515-9d3a-a54e2a765c8e"
+            },
+            {
+                "name": "SSG (SC3000K)",
+                "assetId": "e7d67778-20e9-4a29-98d5-da4a42788d2a"
+            },
+            {
+                "name": "Talon (Mk 14 EBR)",
+                "assetId": "cae21e89-c4e7-4aca-b504-07131e1f3cf2"
+            },
+            {
+                "name": "Cyclops (P10 Roni)",
+                "assetId": "cb6157c2-863d-4030-9edb-7ee0202a6984"
+            },
+            {
+                "name": "Elevate (Vector)",
+                "assetId": "8e357a78-de1b-4652-b294-6c76bff633a5"
+            }
+        ],
+        "Y7 Pilot Programs": [
+            {
+                "name": "Wildcard (Mx4 Storm)",
+                "assetId": "7d94ba02-453f-463e-9c9a-3f794c76f57b"
+            },
+            {
+                "name": "Cyclops (Mx4 Storm)",
+                "assetId": "01ae684c-1c43-4c3b-acae-6716149dab66"
+            },
+            {
+                "name": "SBXG (6P41)",
+                "assetId": "2e5509b7-88ca-4305-87a9-e737e59ec56c"
+            },
+            {
+                "name": "Team Secret (G36C)",
+                "assetId": "8c831e05-342f-4ffb-84f6-f2dec1e5ae24"
+            },
+            {
+                "name": "Soniqs (MP5)",
+                "assetId": "c4c9689c-d05e-481f-a10f-87f02d870f7d"
+            },
+            {
+                "name": "MIBR (T-5 SMG)",
+                "assetId": "e4615742-d3ac-4037-80fc-dc3c60a868a3"
+            }
+        ],
+        "Y8 Pilot Programs": [
+            {
+                "name": "FaZe Clan (M762)",
+                "assetId": "31dcbfc6-f2fb-4adc-a552-c1a57cc9c202"
+            },
+            {
+                "name": "Faze Full Kit 2023",
+                "assetId": "c3193c0e-53c8-48b6-b5d8-35accdc7b7f8"
+            },
+            {
+                "name": "Fnatic Signature",
+                "assetId": "a178634a-9e45-42c6-a3e7-d586e1873bf1"
+            }
+        ],
+        "Y9 Pilot Programs": [
+            {
+                "name": "Team Liquid (SMG-11)",
+                "assetId": "2537f8be-3af6-4bf0-be39-5a7ab364cac8"
+            },
+            {
+                "name": "Wildcard (R4C)",
+                "assetId": "d9bdc489-516e-4244-a9d2-8a5979699343"
+            }
+        ],
+        "Team Charms": [
+            {
+                "name": "Rogue 2019",
+                "assetId": "93c5f36a-3a18-4d01-89e9-87af77c2df93"
+            },
+            {
+                "name": "Penta 2017",
+                "assetId": "f2e4d69c-73d7-4f7d-9162-4883302950e1"
+            },
+            {
+                "name": "SK Gaming 2018",
+                "assetId": "038bae9c-f4d2-401d-aef8-edaff606e18d"
+            },
+            {
+                "name": "Team Liquid 2019",
+                "assetId": "436a31d0-3c22-4e3e-953b-71274dd931aa"
+            }
+        ],
+        "Elites": [
+            {
+                "name": "Finka (QCR EXO Prototype NH02)",
+                "assetId": "cb7db05c-f0a0-4373-8f97-e702af319f79"
+            },
+            {
+                "name": "Ash (Sidewinder)",
+                "assetId": "386664ea-2e6b-4526-aab6-fc5a2358f5d6"
+            },
+            {
+                "name": "Bandit (Axle 13)",
+                "assetId": "12a2fbac-16bc-4521-808f-b94172e995dd"
+            },
+            {
+                "name": "Valkyrie (War Photographer '72)",
+                "assetId": "e4f36ada-cca8-46de-982a-71ffff7aa725"
+            },
+            {
+                "name": "Echo (Tenkamusou)",
+                "assetId": "526e486d-3bc5-4048-b281-53cb76abc9a0"
+            },
+            {
+                "name": "Thermite (Vintage Bureau)",
+                "assetId": "82c365eb-6995-439c-8ec6-a38320861b87"
+            },
+            {
+                "name": "Ela (Huk Sztuki)",
+                "assetId": "89b527cf-5358-49c9-94c0-55ca318de341"
+            },
+            {
+                "name": "Jackal (Rastreador)",
+                "assetId": "9392e2af-afa6-4e9e-9695-8798047e22cb"
+            },
+            {
+                "name": "Zofia (S.T.A.R.S. Unit)",
+                "assetId": "15215404-68c6-41b4-b619-5b39dd682907"
+            },
+            {
+                "name": "Fuze (2nd Shock Army)",
+                "assetId": "7674f871-53c7-4565-8655-ede36fcc2144"
+            },
+            {
+                "name": "Smoke (Sanguine Arsenic)",
+                "assetId": "c8b6132a-2d9b-4c42-bda6-f8a704e40299"
+            },
+            {
+                "name": "Kapkan (Vympel)",
+                "assetId": "b30aa84e-0ac1-4f43-822f-b4a8e611422e"
+            },
+            {
+                "name": "Tachanka (Slava Korolyu)",
+                "assetId": "0fd18d09-7ee2-48bb-898d-e5306b992884"
+            },
+            {
+                "name": "Ace (Altruistic Ego)",
+                "assetId": "b630d2ad-9993-4ce4-b588-430df9d3a8a7"
+            },
+            {
+                "name": "Capitao (Responsa)",
+                "assetId": "c9bc58f7-be59-4083-909e-52eb674f8642"
+            },
+            {
+                "name": "Dokkaebi (Electro Beat)",
+                "assetId": "4be055e6-3fea-4c85-b7bd-f23d204a4a18"
+            },
+            {
+                "name": "Glaz (Lethal Citizen)",
+                "assetId": "976dbaee-aeb7-4780-96a1-c5f5689099b3"
+            },
+            {
+                "name": "Vigil (Zero-Day Threat)",
+                "assetId": "df3c54ec-9cca-44ad-8434-6ef2b5ea0793"
+            },
+            {
+                "name": "Jager (Flying Ace)",
+                "assetId": "edadd600-e27b-4365-90c4-e9e59d2f40a7"
+            },
+            {
+                "name": "Sledge (L Detachment)",
+                "assetId": "7d4fd945-cddc-4423-b66a-32e1098ba7df"
+            },
+            {
+                "name": "Doc (Trench Medic)",
+                "assetId": "5fce9aad-6a36-4eea-bdb2-3a611fb7912b"
+            },
+            {
+                "name": "IQ (Reunification)",
+                "assetId": "e9fabe92-9494-4422-86ec-c49656595505"
+            },
+            {
+                "name": "Lesion (Nano-Tox 32)",
+                "assetId": "796c9c69-eb39-41ae-a9f3-09e45b3b6fde"
+            },
+            {
+                "name": "Blackbeard (Guerrilla)",
+                "assetId": "6e5206d2-df5d-4a6d-a168-a8fe3dab7f77"
+            },
+            {
+                "name": "Mute (F Squadron)",
+                "assetId": "5904f0a5-3971-4039-a7c3-3a7bae31b8ae"
+            },
+            {
+                "name": "Melusi (Umvikeli)",
+                "assetId": "a1c0fc2d-7eef-4b89-8ad1-2b5551921123"
+            },
+            {
+                "name": "Twitch (Maquis)",
+                "assetId": "e4287922-4eb3-4e31-90dc-de93716765f0"
+            },
+            {
+                "name": "Hibana (Onkochishin)",
+                "assetId": "2f4434cf-cd6d-4c0d-852d-5c7e99e776d9"
+            },
+            {
+                "name": "Maverick (Hotshot Welder)",
+                "assetId": "8682d3e0-8bff-49f1-b53b-a0dbd9cbe5fa"
+            },
+            {
+                "name": "Pulse (Lucky Seventh)",
+                "assetId": "3f40e2f4-fe25-4605-8647-09415921e375"
+            },
+            {
+                "name": "Frost (Huntress)",
+                "assetId": "bce6e604-3168-4cc9-ad65-b66e0fc818a7"
+            },
+            {
+                "name": "Caveira (Mata-Leão)",
+                "assetId": "4764aa58-9941-4990-88ef-08a5003f8658"
+            },
+            {
+                "name": "Thatcher (Operation Nimrod)",
+                "assetId": "f94e8bd1-75c8-4627-8127-985491903d75"
+            },
+            {
+                "name": "Ash (Tomb Raider)",
+                "assetId": "e2fe202b-8929-420f-b3f9-16e42fb18989"
+            }
+        ],
+        "M.U.T.E Protocol": [
+            {
+                "name": "Golden Contruct (Lion Headgear)",
+                "assetId": "2bb458e1-ad09-4e85-9b22-dfea4dbf4d8a"
+            },
+            {
+                "name": "Brutish Cyborg (Oryx Headgear)",
+                "assetId": "56063a5f-e68d-4023-84ba-715b85d312e1"
+            },
+            {
+                "name": "Artificial Host (Mira Headgear)",
+                "assetId": "9d245df4-facf-484b-8052-174441928b46"
+            },
+            {
+                "name": "Metallurgy Luster (V308)",
+                "assetId": "e5c2d4a2-309c-42b5-979f-94d1be51689d"
+            },
+            {
+                "name": "Dayrise Phalanx (Blitz Uniform)",
+                "assetId": "f771527f-713e-4542-a79e-f9681f68026b"
+            },
+            {
+                "name": "Dayrise Agent (Azami Uniform)",
+                "assetId": "633e56d9-9d94-4ce1-b902-c34511df33b7"
+            },
+            {
+                "name": "Cartilage Symbiosis (M12)",
+                "assetId": "e3d348c9-d48a-4ddb-9185-2338acaba099"
+            },
+            {
+                "name": "Intricate Silencer (FMG-9)",
+                "assetId": "e4ed61fe-e390-4fbb-b40c-52748fe11ae2"
+            },
+            {
+                "name": "Hammered Rod (M590A1)",
+                "assetId": "5567a0c8-b4b9-453e-bfae-2ab683a85bdf"
+            },
+            {
+                "name": "Forged Turret (C7E)",
+                "assetId": "2cee8446-05ea-4747-b571-82163c354876"
+            }
+        ],
+        "Snow Brawl": [
+            {
+                "name": "Little Helper (Montagne Headgear)",
+                "assetId": "b00241ce-4ac4-40fe-a329-29e2618f42f3"
+            },
+            {
+                "name": "Little Helper (Montagne Uniform)",
+                "assetId": "dd9ad3a5-3c95-48f8-9ca1-216fb8d1d1fe"
+            },
+            {
+                "name": "Toy Crafter (Ash Uniform)",
+                "assetId": "8de0cc41-ff4a-49d1-ab3b-c787bdce9733"
+            },
+            {
+                "name": "Feline Enforcer (Thorn Uniform)",
+                "assetId": "54c1a550-8eec-4f49-bfa8-5594d81978b9"
+            },
+            {
+                "name": "Jolly Bonnet (Ash Headgear)",
+                "assetId": "8d05119d-1051-47f6-81e8-86036f33bb03"
+            },
+            {
+                "name": "Mythical Cat (UZK50GI)",
+                "assetId": "6a4faa3c-cf77-4b3f-8200-378ea997ef6b"
+            },
+            {
+                "name": "In The Wrong (Vigil Uniform)",
+                "assetId": "a32f6537-84f0-4139-ba4d-cdda9cfa9c86"
+            },
+            {
+                "name": "Rare Sighting (MP5)",
+                "assetId": "05064d28-870f-4098-9759-96a0b3e2f94b"
+            }
+        ],
+        "Outbreak": [
+            {
+                "name": "Ying Headgear",
+                "assetId": "8dfb7946-b07b-4622-972e-88c4d602025c"
+            },
+            {
+                "name": "Hemorrhage (V308)",
+                "assetId": "d52d91a5-d5ff-41d6-9e7d-16ed129e0839"
+            },
+            {
+                "name": "Smoke Uniform",
+                "assetId": "05eaa08a-831a-4766-a178-04dcd7763e40"
+            }
+        ],
+        "Containment": [
+            {
+                "name": "Stiff Condition (Mozzie Headgear)",
+                "assetId": "0594eaf1-bd3a-4837-aa57-4d8b07268cad"
+            },
+            {
+                "name": "Atrocious Gunk (Warden Headgear)",
+                "assetId": "e2470d56-4252-47c2-b31f-c7ea9dfef221"
+            },
+            {
+                "name": "Ambient Air (Blackbeard Headgear)",
+                "assetId": "20be2443-fe83-44dc-914c-b6f6d644376c"
+            },
+            {
+                "name": "False Pretense (Mozzie Uniform)",
+                "assetId": "df4a09dc-0735-4169-b741-586031921e15"
+            },
+            {
+                "name": "Hazard Protection (Hibana Uniform)",
+                "assetId": "00c041e0-c268-4f1b-bf49-31dcb4c5f680"
+            },
+            {
+                "name": "Chimera Suppressor (Zero Uniform)",
+                "assetId": "d9a07219-f7f9-4ed1-a1fa-1ef53e2f2660"
+            },
+            {
+                "name": "Compromised Equipment (MK17 CQB)",
+                "assetId": "4b790855-4342-4ed0-8ff3-afa20b03d1e7"
+            }
+        ],
+        "Crimsonveil": [
+            {
+                "name": "Sanitarium (Valkyrie Headgear)",
+                "assetId": "6db3227b-33da-4eb1-bd9c-b1468721a368"
+            },
+            {
+                "name": "Dead Baron (Jager Headgear)",
+                "assetId": "b51efcb2-bd9b-44c6-99d1-65cf1b585fed"
+            },
+            {
+                "name": "Suture (Vigil Headgear)",
+                "assetId": "27429059-7bf6-43e7-914f-ba9659bd6c49"
+            },
+            {
+                "name": "Wight (Valkyrie Uniform)",
+                "assetId": "df24472a-14fe-4416-92c2-b3c78d2dd829"
+            }
+        ],
+        "Rengoku": [
+            {
+                "name": "Gale Rider (Thunderbird Headgear)",
+                "assetId": "5973123b-244a-44bf-9f9b-1d7b23aa04b2"
+            },
+            {
+                "name": "Skeletal Shroud (Rook Uniform)",
+                "assetId": "72f89612-214c-4e8f-9ddd-5a75a1165c9e"
+            },
+            {
+                "name": "Skeletal Shroud (Rook Headgear)",
+                "assetId": "5cc54c1c-53ff-4dce-80bb-73ef899cf897"
+            },
+            {
+                "name": "Gale Rider (Thunderbird Uniform)",
+                "assetId": "b47f9367-7c36-4e06-86c9-a107cf7c2480"
+            },
+            {
+                "name": "Scorching Zeal (Fuze Headgear)",
+                "assetId": "8b1db151-f186-491c-8c1d-099a5d620602"
+            },
+            {
+                "name": "Hopelessness Incarnate (Hibana Headgear)",
+                "assetId": "9a3350da-df5f-42a8-bdfe-c58a1c6efea5"
+            },
+            {
+                "name": "Dreadful Baboon (Kapkan Headgear)",
+                "assetId": "df0ca3fe-6803-4c63-94c6-4d645b4f923c"
+            }
+        ],
+        "Showdown": [
+            {
+                "name": "Wide Brim (Twitch Headgear)",
+                "assetId": "7432306e-fa20-4ff0-950d-dcd2d59e94ab"
+            },
+            {
+                "name": "Barn Guard (PARA-308)",
+                "assetId": "3590538c-538b-4937-81aa-1bae69aeafe5"
+            },
+            {
+                "name": "Cowboy Classic (Maverick Headgear)",
+                "assetId": "a93af7ae-0bac-46c0-b5de-0315133c9b85"
+            },
+            {
+                "name": "Copper Barrel (LFP586)",
+                "assetId": "3acd87f1-a196-41a9-9fe7-22bc8aa8c2de"
+            },
+            {
+                "name": "Hardee Monocle (Glaz Headgear)",
+                "assetId": "be12385e-b088-4ee3-9afd-7238d097ef6e"
+            },
+            {
+                "name": "Saloon Vest (Glaz Uniform)",
+                "assetId": "1dee8daa-f3dd-4b0c-a3a1-17f7ce807558"
+            }
+        ],
+        "Rainbow Is Magic": [
+            {
+                "name": "Bedazzled (MK17 CQB)",
+                "assetId": "f8fbde06-96a9-4d33-b788-0aba1a2b74b1"
+            },
+            {
+                "name": "Friend Or Doe (C8-SFW)",
+                "assetId": "847f088f-2fbe-43f3-bf80-5ea75858d35f"
+            },
+            {
+                "name": "The Unicorn (Tachanka Headgear)",
+                "assetId": "0f54301f-8622-499c-9807-f4660b5da561"
+            },
+            {
+                "name": "Wings of Plum (LFP586)",
+                "assetId": "e86c9b97-ba16-43f9-bdc8-297c53dd2d73"
+            }
+        ],
+        "Doktors Curse": [
+            {
+                "name": "Risen '24 (Lesion Headgear)",
+                "assetId": "f98981cd-62ad-46ad-b012-68cca6ea8560"
+            },
+            {
+                "name": "Acid Scourge (T-5 SMG)",
+                "assetId": "2cd3bf38-e24c-4bd4-9dde-16ab5ccb0add"
+            },
+            {
+                "name": "Moon Calling (Fenrir Headgear)",
+                "assetId": "18a96b74-1335-43c5-8af3-8e09490c6726"
+            },
+            {
+                "name": "Blind Creation (Pulse Headgear)",
+                "assetId": "0d7d6452-f24a-402f-a166-56d00a6351d7"
+            },
+            {
+                "name": "Infectious Growth (Iana Uniform)",
+                "assetId": "4ee40822-baae-4cf1-b671-8f67d392d697"
+            },
+            {
+                "name": "Devourer (Frost Headgear)",
+                "assetId": "00768432-3230-4e36-ba9c-dee4143a6f63"
+            },
+            {
+                "name": "Sanguinary Host (Kaid Headgear)",
+                "assetId": "3d42ed96-8213-4342-8726-f7f9876d0869"
+            },
+            {
+                "name": "Grim Harbinger (Kapkan Headgear)",
+                "assetId": "0fefc27d-24ee-4c75-bb2b-ed3bc80f2536"
+            },
+            {
+                "name": "Gut-Churner (Thorn Uniform)",
+                "assetId": "4783c730-50a1-4bac-b0a4-ecaa8d8a404f"
+            },
+            {
+                "name": "Dark Lace '24 (Frost Portrait)",
+                "assetId": "6fe59907-4e60-4ac5-af3b-0e271dcc8f47"
+            },
+            {
+                "name": "Released Beast (Fenrir Uniform)",
+                "assetId": "8175a99e-d97a-499d-84cf-eb109c5eac10"
+            },
+            {
+                "name": "Piercing Shrieks (Melusi Headgear)",
+                "assetId": "0ef8480e-2fa7-466e-8a0d-eed3ce180f49"
+            },
+            {
+                "name": "Wrathful Apparition (Melusi Uniform)",
+                "assetId": "05ebe23f-04f3-4691-9c30-4a5b697c02fa"
+            },
+            {
+                "name": "Tender Peepers (Ela Headgear)",
+                "assetId": "b9a952fe-8db0-41a3-9528-adfea671121f"
+            },
+            {
+                "name": "Live Corpse (Bandit Headgear)",
+                "assetId": "a5bc398a-1bb1-4b12-965d-12e0120788bf"
+            },
+            {
+                "name": "Ghoulish Strength (Thorn Headgear)",
+                "assetId": "a04d802b-578c-4f76-a005-49c6e16d27de"
+            },
+            {
+                "name": "Clot Burst (Super 90)",
+                "assetId": "8ec85f2b-284d-4df4-b852-cd6d52016cd8"
+            },
+            {
+                "name": "Parasitic Existence (Iana Headgear)",
+                "assetId": "74fc7500-1a06-4a36-ac7b-9d5ca1267c7a"
+            },
+            {
+                "name": "Cursebound (AK-74M)",
+                "assetId": "3ec725c3-8e68-4611-8143-b5e7eddc7fe3"
+            },
+            {
+                "name": "Rotten (Lesion Uniform)",
+                "assetId": "6e5947c7-9386-47a2-a44f-6df8dc053f84"
+            }
+        ],
+        "Apocalypse": [
+            {
+                "name": "Master Of Upheaval (Maestro Uniform)",
+                "assetId": "3ea55630-7822-496e-956d-3d1978d22044"
+            },
+            {
+                "name": "Signpost (M249 SAW)",
+                "assetId": "81754645-e1b3-4f77-8700-2b0b7c6f22ba"
+            },
+            {
+                "name": "Commander Cap (Gridlock Headgear)",
+                "assetId": "4b5f0243-84b6-41b7-bea5-58aa598d9c05"
+            },
+            {
+                "name": "Makeshift Hair Dye (Maestro Headgear)",
+                "assetId": "1d90571e-52f6-4f9c-b079-9c3f5f88a184"
+            }
+        ],
+        "Sugar Fright": [
+            {
+                "name": "Woven Yarn (FO-12)",
+                "assetId": "feed18ac-d59b-481a-ae91-79967674b952"
+            },
+            {
+                "name": "Slasher Enthusiast (IQ Headgear)",
+                "assetId": "ac73a870-33bf-4d9e-8a97-e467615b7fd1"
+            },
+            {
+                "name": "Impetuous Puppet (Ela Uniform)",
+                "assetId": "4b4711cf-be5e-42e0-9b46-d7b9f6c1f1e7"
+            },
+            {
+                "name": "Woven Yarn (M1014)",
+                "assetId": "a6d704a8-da43-41fe-920b-4f625346a773"
+            },
+            {
+                "name": "Woven Yarn (ARX200)",
+                "assetId": "3b319bf6-629b-4f1f-967a-e016609754ce"
+            }
+        ],
+        "Freeze For All": [
+            {
+                "name": "Doom Of Summer (AK12)",
+                "assetId": "7452a218-b0cf-4568-b8a1-7e8b5fd8890b"
+            },
+            {
+                "name": "Festive Stripes (Valkyrie Uniform)",
+                "assetId": "84958dfe-86c6-4f25-b2de-2ed29981f2e3"
+            },
+            {
+                "name": "Gingerbread-Set (Ying Headgear)",
+                "assetId": "576bd4d6-6a8f-4faf-b719-0731858cbe5e"
+            },
+            {
+                "name": "Candy Microphone (Valkyrie Headgear)",
+                "assetId": "58799175-692f-47c5-99a9-77f5d204dd66"
+            }
+        ],
+        "The Grand Larceny": [
+            {
+                "name": "Flapper Chic (Amaru Headgear)",
+                "assetId": "4513d7e5-c31a-42b4-bc59-e8bebeb5ae14"
+            },
+            {
+                "name": "Grizzly Veteran (Kaid Headgear)",
+                "assetId": "cc312e6b-cb27-428f-a46a-c84ef08373a9"
+            },
+            {
+                "name": "Blue-Collar (Maverick Uniform)",
+                "assetId": "6007786d-6b19-4a5d-acfa-d8d0d03689c0"
+            },
+            {
+                "name": "Dapper Garb (Warden Uniform)",
+                "assetId": "33c17395-7391-4a0f-967a-fd1702ede606"
+            }
+        ],
+        "Rick and Morty": [
+            {
+                "name": "Gromflomite Guard (Sledge Headgear)",
+                "assetId": "f8edc450-59bd-4067-8937-4e994dbfd0e3"
+            },
+            {
+                "name": "Federation Defense (M590A1 Attachment Skin)",
+                "assetId": "cbdf8412-4ad3-45db-843f-ea898086ac6e"
+            },
+            {
+                "name": "Portal Gun (SMG-11 Attachment Skin)",
+                "assetId": "c4707d48-fa89-4aa2-b3ec-08e6b31095f0"
+            },
+            {
+                "name": "Gromflomite Guard (Sledge Uniform)",
+                "assetId": "aa6e20e7-d75f-47dc-8f65-0652acc559de"
+            },
+            {
+                "name": "Portal Gun (SMG-11)",
+                "assetId": "19bbb897-0794-4b12-a402-c5fab38c58bb"
+            },
+            {
+                "name": "Pickle Rick Rat Suit (Smoke Headgear)",
+                "assetId": "1d6a5f7f-008d-4c55-a697-c571bae43cb3"
+            },
+            {
+                "name": "Pickle Rick Rat Suit (Smoke Uniform)",
+                "assetId": "fc619afa-4d0b-4e09-82de-b6c2a76a2a87"
+            },
+            {
+                "name": "Federation Defense (M590A1)",
+                "assetId": "e1ba5344-875f-45ad-b65b-6cabb7a38456"
+            }
+        ],
+        "SI 2019 Packs": [
+            {
+                "name": "Camp Regimen (Pulse Uniform)",
+                "assetId": "86547017-c2ef-49e6-a3b9-48ae883129ff"
+            },
+            {
+                "name": "Target Practice (Ash Headgear)",
+                "assetId": "b69116ec-d289-4d0b-b810-609ab80143f7"
+            },
+            {
+                "name": "Auxiliary Unit (Thatcher Uniform)",
+                "assetId": "8ee442bc-b27f-4c4a-a5ad-f03d3a08b32d"
+            },
+            {
+                "name": "Doc's Humanity (Charm)",
+                "assetId": "95a9910b-9772-4f75-883e-1d8f9bd2054e"
+            },
+            {
+                "name": "Training Grounds (Mira Uniform)",
+                "assetId": "2fa6a29d-bcea-4448-b559-3902aee32684"
+            }
+        ],
+        "Redhammer": [
+            {
+                "name": "Redhammer Standard (Fuze Headgear)",
+                "assetId": "c3c2de11-eecf-4682-bf5d-40f233f53685"
+            },
+            {
+                "name": "Redhammer Standard (Buck Uniform)",
+                "assetId": "26d2ee2b-102e-415d-9c92-441f650197cf"
+            },
+            {
+                "name": "Redhammer Tech (Vector)",
+                "assetId": "1b9de5cd-95f3-40f4-a1d6-5f22ba3f5261"
+            }
+        ],
+        "Sunsplash": [
+            {
+                "name": "Freedive (Dokkaebi Headgear)",
+                "assetId": "5aa96361-e038-412b-aae5-c5fc5bdaa922"
+            },
+            {
+                "name": "Scuba Six (Dokkaebi Uniform)",
+                "assetId": "76922cd5-1d44-4032-8cee-900f7e1b1bfe"
+            },
+            {
+                "name": "Blue Hibiscus (Lesion Uniform)",
+                "assetId": "e818deec-a6be-4ea2-bc32-31b606b7c549"
+            }
+        ],
+        "Assault On Hereford": [
+            {
+                "name": "Casual Friday Crashed (Mozzie Operator Portrait)",
+                "assetId": "9dd7ad4e-5e9a-4158-918a-3b89eeca4e97"
+            },
+            {
+                "name": "Legion Unleashed (Commando 9)",
+                "assetId": "c5e0341a-0c96-4bf4-a5bb-6b0280bc7f8b"
+            },
+            {
+                "name": "Inserted Threat (Sentry Uniform)",
+                "assetId": "b1d69fb1-acc6-42ad-a039-bb9629d2abbe"
+            },
+            {
+                "name": "Hasty Assortment (Ying Uniform)",
+                "assetId": "98b62ae8-9545-4249-bb9b-339e103191a0"
+            },
+            {
+                "name": "Legion Mole (Sentry Headgear)",
+                "assetId": "2c7ad0b6-a364-4760-b3ac-f766b01a36a8"
+            }
+        ],
+        "Wind Bastion": [
+            {
+                "name": "Frost Uniform",
+                "assetId": "3968b9a5-c3f4-43c2-ab94-c44157088c3e"
+            },
+            {
+                "name": "Jager Uniform",
+                "assetId": "48302f90-dd95-4ef8-a136-d79cc6fcf1c8"
+            },
+            {
+                "name": "Hibana Uniform",
+                "assetId": "0333cdcd-a51a-4e71-8353-fe4e19a330cf"
+            },
+            {
+                "name": "Doc Headgear",
+                "assetId": "dd868f60-c186-4622-9f03-1bae9fd053df"
+            },
+            {
+                "name": "Nomad Uniform",
+                "assetId": "39545dc0-b9b0-47e2-88d9-9ffdbc74aa4c"
+            },
+            {
+                "name": "Sledge Uniform",
+                "assetId": "35aee17a-7235-4981-940a-96db0d20df16"
+            },
+            {
+                "name": "Jackal Uniform",
+                "assetId": "4ae2668d-bcf7-4d74-893d-60a9d260fa80"
+            },
+            {
+                "name": "Vigil Uniform",
+                "assetId": "2e1b8e9f-034d-4387-bbfa-567e2e0b75c0"
+            },
+            {
+                "name": "Bandit Headgear",
+                "assetId": "b92be2ee-da89-49f3-8bbf-5d8d7f250d9f"
+            },
+            {
+                "name": "Lion Headgear",
+                "assetId": "6504de4d-8a73-4228-ba2f-61245065a778"
+            },
+            {
+                "name": "Thatcher Uniform",
+                "assetId": "dbf0963c-af56-49d9-90de-b0d0cf76bd81"
+            },
+            {
+                "name": "Nomad Headgear",
+                "assetId": "b3f3661a-3813-454a-86aa-d3fadc16b0a7"
+            },
+            {
+                "name": "Twitch Uniform",
+                "assetId": "d25b02ef-7676-4e19-aabb-e15af11c6340"
+            },
+            {
+                "name": "Clash Uniform",
+                "assetId": "a861e90d-c1b6-45e2-8b37-cf006a4f0de2"
+            },
+            {
+                "name": "Rook Headgear",
+                "assetId": "03e5f6de-8b9e-410b-a4f7-515d1c2332e2"
+            },
+            {
+                "name": "Jager Headgear",
+                "assetId": "1af22859-293e-4026-bdd6-f3570bd4b252"
+            },
+            {
+                "name": "Kaid Uniform",
+                "assetId": "f7ee44de-7eb3-4cb9-a99f-dd9dc38cd7a9"
+            },
+            {
+                "name": "Lesion Uniform",
+                "assetId": "1f84b7d5-b4f0-4e6b-913f-8cad05b33b07"
+            },
+            {
+                "name": "Buck Uniform",
+                "assetId": "7e86fbdb-b6fe-4bb7-bad5-72fb2c993438"
+            }
+        ],
+        "Ember Rise": [
+            {
+                "name": "Ash Headgear",
+                "assetId": "bdca8e41-329b-47d8-8984-85859165961d"
+            },
+            {
+                "name": "IQ Headgear",
+                "assetId": "d78caf4a-e6c9-466c-a1f1-2a9af0c5a363"
+            },
+            {
+                "name": "Capitao Headgear",
+                "assetId": "1273954a-eb73-45c9-a9ba-ca80455a49a1"
+            },
+            {
+                "name": "Glaz Headgear",
+                "assetId": "7bd5cb07-ecde-4a96-a4e2-74877e94c6d4"
+            },
+            {
+                "name": "Frost Headgear",
+                "assetId": "bbbf7aa2-8056-4b11-82cb-6aed6657c85a"
+            },
+            {
+                "name": "Amaru Headgear",
+                "assetId": "64966801-91b4-457a-91d5-dec8066be299"
+            },
+            {
+                "name": "Hibana Uniform",
+                "assetId": "ed7560fe-7430-40f3-a4ed-5d29bfe10ef9"
+            },
+            {
+                "name": "Clash Uniform",
+                "assetId": "b123671e-3cbf-49b4-9a9c-0992591edc83"
+            },
+            {
+                "name": "Blackbeard Headgear",
+                "assetId": "eacd98d1-59b6-4bfe-9937-20412c8cf7bf"
+            },
+            {
+                "name": "Gridlock Headgear",
+                "assetId": "eaeaa82f-b925-476b-a724-10a61656a908"
+            },
+            {
+                "name": "Doc Uniform",
+                "assetId": "f77d24c8-0285-450c-8ea4-704087053ddb"
+            },
+            {
+                "name": "Pulse Headgear",
+                "assetId": "1237e3a4-05a1-4401-9554-a1a7fed0d7b8"
+            },
+            {
+                "name": "Bandit Headgear",
+                "assetId": "945576af-a5dc-4f50-b794-2b1c17762048"
+            },
+            {
+                "name": "Alibi Uniform",
+                "assetId": "01cdc5da-17f1-452e-8e07-3b573e56c47b"
+            },
+            {
+                "name": "Doc Headgear",
+                "assetId": "4b80d75a-d918-4602-99dd-5dd65544e638"
+            },
+            {
+                "name": "Gridlock Uniform",
+                "assetId": "c1b6a096-c122-4748-aff6-9c25527a51a9"
+            },
+            {
+                "name": "Amaru Uniform",
+                "assetId": "88160489-c822-4e52-95b4-f2d4a97b0526"
+            },
+            {
+                "name": "Glaz Uniform",
+                "assetId": "7b95dfa5-cada-4d24-89e3-752b56a3d31f"
+            },
+            {
+                "name": "Valkyrie Headgear",
+                "assetId": "620681fa-4abb-44aa-bf9c-d1f5650ff5e9"
+            }
+        ],
+        "Year Passes": [
+            {
+                "name": "Year 4 Season Pass"
+            },
+            {
+                "name": "Year 5 Season Pass"
+            }
+        ],
+        "Legendary Weapon Skins": [
+            {
+                "name": "Subatomic Beam (PDW9)",
+                "assetId": "efdf7d4c-a237-4a9a-ae4f-f022ba6e9023"
+            },
+            {
+                "name": "Ethereal Marksman (416-C)",
+                "assetId": "8d63fe5f-9bb7-47bd-ad75-eec763270c2a"
+            },
+            {
+                "name": "Gladius (Keratos)",
+                "assetId": "82d05550-3013-44a5-a14d-ca59bffc1a35"
+            },
+            {
+                "name": "Colorful Dance (ARX200)",
+                "assetId": "1b0dcefc-2f62-46b3-a42a-c4512faf7266"
+            },
+            {
+                "name": "Comic Strip (P10 Roni)",
+                "assetId": "87520886-9261-467b-bcab-abcb61e1f58d"
+            },
+            {
+                "name": "Experimental Unit (P90)",
+                "assetId": "165f77be-7ef3-452e-abc4-5f5160bc7572"
+            },
+            {
+                "name": "Air Raid (CSRX300)",
+                "assetId": "342434c2-c872-422a-840f-43d6a4386abf"
+            },
+            {
+                "name": "Urban Graffiti (Type-89)",
+                "assetId": "e3b3de59-ebe6-4453-8c24-de27db39b382"
+            },
+            {
+                "name": "Unerring Versatility (PRB92)",
+                "assetId": "5c110b65-e1d1-4b42-bcef-94341cad2ab9"
+            },
+            {
+                "name": "Lebel (MP5)",
+                "assetId": "d2a116f7-9966-46fb-bf84-3b52fdc319a5"
+            },
+            {
+                "name": "Ferrum (M590A1)",
+                "assetId": "afbe6e73-d134-49a2-9a3a-e76e9ff46b78"
+            },
+            {
+                "name": "Sharp Vendetta (Spear)",
+                "assetId": "08b3fef4-6f8f-47db-97d5-fdc38e7151cc"
+            },
+            {
+                "name": "Golden Repair (Mk 14 EBR)",
+                "assetId": "99ea40d4-af1e-4e70-941b-8630e18fc93b"
+            },
+            {
+                "name": "Retrofit (5.7 USG)",
+                "assetId": "b2758bb7-66c4-4844-a6e3-e546270bd68f"
+            },
+            {
+                "name": "Primus Pilus (V308)",
+                "assetId": "4bcb16fd-28f4-4792-8706-6e946f205bf9"
+            },
+            {
+                "name": "Ferrum (L85A2)",
+                "assetId": "df227454-2d5b-4078-b3cb-e9191dcc4efa"
+            },
+            {
+                "name": "Subatomic Beam (556XI)",
+                "assetId": "9f19fc57-764e-40b0-a867-0ec985849933"
+            },
+            {
+                "name": "The Old Stock (L85A2)",
+                "assetId": "437be92f-f510-4392-9355-f147a3de2dc5"
+            },
+            {
+                "name": "Plaid Allegiance (P-10C)",
+                "assetId": "4a5d5276-403b-4617-bcdf-49fe69eec346"
+            },
+            {
+                "name": "Stripwoven (Super 90)",
+                "assetId": "fb31d110-7885-4ad0-aeb8-04dfb1bdbb57"
+            },
+            {
+                "name": "Scavenged Wonder (CAMRS)",
+                "assetId": "5a1c70fe-00d9-45cd-b921-4310216e04b1"
+            },
+            {
+                "name": "Saddle Up (TCSG12)",
+                "assetId": "c1a46821-eb7c-4a7e-b067-963bc23a1fcc"
+            },
+            {
+                "name": "Intergalactic Cannon (AUG A2)",
+                "assetId": "722c2503-17d7-42bc-a0fd-ea1cc2879d34"
+            },
+            {
+                "name": "High-relief (9mm C1)",
+                "assetId": "078d5db0-7d6e-48ab-a090-529c8112fbf7"
+            },
+            {
+                "name": "Subsea Shooter (M590A1)",
+                "assetId": "427eb5de-90f2-4597-9a86-7370ffea5d8b"
+            },
+            {
+                "name": "Territorial Force (SPAS-12)",
+                "assetId": "f06e9c19-657f-4f6b-a720-c054ba52f48e"
+            },
+            {
+                "name": "Alloy Hull (Scorpion)",
+                "assetId": "160a1133-8e43-4628-975a-bb967cbac315"
+            },
+            {
+                "name": "Soviet Steel (9x19VSN)",
+                "assetId": "93f45a6f-5854-4e72-a799-6669048e6d3a"
+            },
+            {
+                "name": "Grim Tally (Vector)",
+                "assetId": "b1226028-f846-4ab1-826b-0c1c6db61b37"
+            },
+            {
+                "name": "Cleaning Service (FMG-9)",
+                "assetId": "c6265290-1e02-4f5e-b6f7-bc40264a8272"
+            },
+            {
+                "name": "Gladius (ALDA 5.56)",
+                "assetId": "33c9d388-3864-4230-bf25-5b7d3a8cb79d"
+            },
+            {
+                "name": "Retrofit (M1014)",
+                "assetId": "d00e78fd-58ab-4a13-8146-c890cc8636a2"
+            },
+            {
+                "name": "Haven Troubleshooter (M590A1)",
+                "assetId": "2ee11306-3e0f-4c45-9865-f930ae02f522"
+            },
+            {
+                "name": "Bird Of Prey (MK17 CQB)",
+                "assetId": "fc747126-75d1-41fb-880d-2deae68cf787"
+            },
+            {
+                "name": "Crane Railing (MK17 CQB)",
+                "assetId": "83e14c6f-6882-444a-97e7-1cc5d205e2ed"
+            },
+            {
+                "name": "Retrofit (M45 Meusoc)",
+                "assetId": "d4222c89-b81c-4a2a-ac23-0c91f71939d0"
+            },
+            {
+                "name": "Neko Victory (Supernova)",
+                "assetId": "ae5a6513-1d48-4770-bbff-21bfcd577c0b"
+            },
+            {
+                "name": "Threat Assesment (UMP45)",
+                "assetId": "6ac014cb-6b9e-4629-9703-62ab0997e7d6"
+            },
+            {
+                "name": "Rose Thorn (Vector)",
+                "assetId": "4bddff1e-2cd4-4e4d-ae0b-dbedb752d25c"
+            },
+            {
+                "name": "Daebak (Mk 14 EBR)",
+                "assetId": "ef61f500-add4-4d75-a8f6-08946adeda77"
+            },
+            {
+                "name": "Copper Ignition (Scorpion)",
+                "assetId": "4c7b9338-5210-410e-b1f5-4cd08c3eee5e"
+            },
+            {
+                "name": "Pastel Engine (PARA-308)",
+                "assetId": "843050bb-54a7-4c08-b00a-2bfa2c644f9f"
+            },
+            {
+                "name": "Tattered Reprisal (SPAS-15)",
+                "assetId": "e5fd243c-a834-4f20-bc30-efa8c7d3d452"
+            },
+            {
+                "name": "Modern Gleam (SASG-12)",
+                "assetId": "5fad43c6-c17f-44dd-9303-c4dde2d3bb3d"
+            },
+            {
+                "name": "Factory Precursor (LFP586)",
+                "assetId": "f96879b5-0493-4e28-8570-37a6bdf582a1"
+            },
+            {
+                "name": "Retrofit (556XI)",
+                "assetId": "94dd41bb-f6d7-4832-86c5-1c7033c40104"
+            },
+            {
+                "name": "Arctic Range (CAMRS)",
+                "assetId": "4a6c990e-0278-4688-9627-3c3061615588"
+            },
+            {
+                "name": "Recharging Adder (Type-89)",
+                "assetId": "24840d99-4df8-420b-9fad-c26e3ceefed5"
+            },
+            {
+                "name": "Draconic Majesty (P10 Roni)",
+                "assetId": "c741d6ac-7b44-4eea-9f52-76176620a01a"
+            },
+            {
+                "name": "Aquamarlin (CSRX300)",
+                "assetId": "ff52b538-a314-4e94-9530-933978eba5a6"
+            },
+            {
+                "name": "Musa Banana (SPAS-12)",
+                "assetId": "c416ac71-aba3-43cf-bfa5-b269589d9fe7"
+            },
+            {
+                "name": "Red Wolf (F2)",
+                "assetId": "959dcf38-f517-4501-bc5c-c61d346130b4"
+            },
+            {
+                "name": "Ferrum (P226)",
+                "assetId": "cecd40ce-d230-4cd6-91cb-2f881c405562"
+            },
+            {
+                "name": "Cold Sky (416-C)",
+                "assetId": "7e57ea8f-e296-4d04-b0c4-990a3ed33373"
+            },
+            {
+                "name": "Tranquil Ambush (M4)",
+                "assetId": "0d58b221-24df-4461-9446-d3e5440597fb"
+            },
+            {
+                "name": "Soviet Steel (SASG-12)",
+                "assetId": "b6b371c5-dbce-47ff-bf54-89389589ea3f"
+            },
+            {
+                "name": "Glazed Waffle (1911 Tacops)",
+                "assetId": "6452681a-298c-4198-817d-3bb32afea907"
+            },
+            {
+                "name": "Soviet Steel (PMM)",
+                "assetId": "92d1e9bf-8367-4545-a653-996ea217f699"
+            },
+            {
+                "name": "Forerunner (CSRX300)",
+                "assetId": "1fb507f2-7e39-4de1-9780-f77931138457"
+            },
+            {
+                "name": "Ferrum (SMG-11)",
+                "assetId": "55d66e08-e9d6-48f1-9f65-63a818f9262f"
+            },
+            {
+                "name": "Pearl Ripple (M590A1)",
+                "assetId": "1679dcfa-e8d2-4363-a77a-3da431b0349a"
+            },
+            {
+                "name": "Mokume-gane (P10 Roni)",
+                "assetId": "cac6c3f6-23dd-4a8b-bdb4-2274fbce1fe9"
+            },
+            {
+                "name": "Cloaked Interloper (FMG-9)",
+                "assetId": "594be2fd-c66a-44f2-8797-d343a0cb23e3"
+            },
+            {
+                "name": "Soviet Steel (GSH-18)",
+                "assetId": "3039db42-9775-4868-80fe-083093ea2193"
+            }
+        ],
+        "Epic Weapon Skins": [
+            {
+                "name": "Verkh (9x19VSN)",
+                "assetId": "6e3298ba-8ac6-48b5-afc1-6bd430555919"
+            },
+            {
+                "name": "Mission Blacksmith (9mm C1)",
+                "assetId": "2a95f3f6-1341-43b5-acfb-bf7bf7d2642e"
+            },
+            {
+                "name": "Southern Regiment (Super Shorty)",
+                "assetId": "3aa88c11-4a3e-4ab3-99fa-b30a16f5f435"
+            },
+            {
+                "name": "Mission Blacksmith (556XI)",
+                "assetId": "e896f85f-b517-4ec0-a2ec-36fe4ecff033"
+            },
+            {
+                "name": "Snakeskin (P10 Roni)",
+                "assetId": "207a5961-f3b0-40bf-afd4-c9cbde9ebc48"
+            },
+            {
+                "name": "Mission Blacksmith (G8A1)",
+                "assetId": "38eb29da-ae33-4377-8028-cf69ecffee6e"
+            },
+            {
+                "name": "SI22 Mortal Cloud (SMG-11)",
+                "assetId": "749f5a68-ae27-46eb-ad70-c5c5acd8ccb8"
+            },
+            {
+                "name": "Roman Gladiator (Mx4 Storm)",
+                "assetId": "b8cca15b-0525-41eb-82c6-183ae0ce6ab9"
+            },
+            {
+                "name": "Elegans Caeruleum (AUG A2)",
+                "assetId": "dc163fb1-4717-41fa-b09c-c66805fa88eb"
+            },
+            {
+                "name": "S.I. 2022 Frame (R4C)",
+                "assetId": "3e94e46a-bd92-463b-8850-77f3a455dad2"
+            },
+            {
+                "name": "Nighthaven Tech (MP5K)",
+                "assetId": "226554af-2b13-4b6c-912b-08da56b38f18"
+            },
+            {
+                "name": "Jasper Gem (SDP 9mm)",
+                "assetId": "bc00be09-93f8-4d97-8077-0a84a554f94d"
+            },
+            {
+                "name": "Swift Ammunition (MP5)",
+                "assetId": "1914f209-369a-48a7-83f4-cd8c7ba16834"
+            },
+            {
+                "name": "Winged Flight (RG15)",
+                "assetId": "9fd874b9-d78a-4702-82d2-c58bce1a02f9"
+            },
+            {
+                "name": "High Circuitry (Commando 9)",
+                "assetId": "f35bdeb1-ccdb-496a-aa95-9752790e00ef"
+            },
+            {
+                "name": "Smoking Stars (1911 Tacops)",
+                "assetId": "db22967c-7444-449e-afad-75f5718d3ca5"
+            },
+            {
+                "name": "Red White And Blue (M45 Meusoc)",
+                "assetId": "b7793f20-ce55-4ff1-9b57-b3c4b73dfa62"
+            },
+            {
+                "name": "Bundeswehr (P12)",
+                "assetId": "e7a12864-b5ad-436d-be84-7fa163397d35"
+            },
+            {
+                "name": "High Circuitry (M1014)",
+                "assetId": "3d86688d-7c74-4ae6-94a4-22ca0744377f"
+            },
+            {
+                "name": "Tribunal (MP5SD)",
+                "assetId": "11474087-6181-4958-899a-8784f7c22eec"
+            },
+            {
+                "name": "Tentacles (P229)",
+                "assetId": "0fd99e14-3eef-4d93-a150-3ec2f3f71112"
+            },
+            {
+                "name": "Stately Weaponry (GONNE-6)",
+                "assetId": "3807ebfb-e0c2-4b0d-85bc-213bcb0c9ef7"
+            },
+            {
+                "name": "Wild Instinct (Vector)",
+                "assetId": "e6e94eda-d417-440b-8e86-d4e53eb5b5b3"
+            },
+            {
+                "name": "Life Regiment (D-50)",
+                "assetId": "a5fb0a89-7674-4220-9337-91fa5fbc3c77"
+            },
+            {
+                "name": "Octagram Tile (TCSG12)",
+                "assetId": "27c311b4-29b7-4272-aaf2-649b1a482b17"
+            },
+            {
+                "name": "Bundeswehr (552 Commando)",
+                "assetId": "dc813d92-fa11-4364-9017-db396c2fdee9"
+            },
+            {
+                "name": "Blaze (CAMRS)",
+                "assetId": "024731cc-becc-4831-8cc4-d27e3a284468"
+            },
+            {
+                "name": "Snakeskin (Spear)",
+                "assetId": "c6d1d05d-ab14-40ca-9a01-e398287401f5"
+            },
+            {
+                "name": "Smoky Murk (SIX12 SD)",
+                "assetId": "61d855ff-c027-4e1b-abe3-ee0df7dbd639"
+            },
+            {
+                "name": "High Circuitry (T-95 LSW)",
+                "assetId": "b66bfb5c-068e-42ad-981e-da3cb134f0e9"
+            },
+            {
+                "name": "Mission Blacksmith (MP5)",
+                "assetId": "d1ebac5c-59a3-430b-98fe-f7ed18dc70e3"
+            },
+            {
+                "name": "Sharkshot (M1014)",
+                "assetId": "dcbc5150-8f11-4e62-a5b2-e01fbdf9acd1"
+            },
+            {
+                "name": "SI22 Art Explosion (FO-12)",
+                "assetId": "951b9f4a-bf9d-4669-a4e0-f9ed43a3b0d2"
+            },
+            {
+                "name": "Coliseum Polymer (G36C)",
+                "assetId": "95543ee2-5e06-4a37-ad79-2dbdf31c4ec3"
+            },
+            {
+                "name": "Wild Instinct (ITA12S)",
+                "assetId": "9bff9d8c-34ca-47f3-bff3-c6db8ecbbba2"
+            },
+            {
+                "name": "Fatal Koi (Supernova)",
+                "assetId": "7fd90e98-8c21-48c7-bd02-e5e2e967a6de"
+            },
+            {
+                "name": "Warning Bite (AR-15)",
+                "assetId": "c91d20e7-9aa9-4dc9-a1bc-77e8a12e71a7"
+            },
+            {
+                "name": "Oil Spill (GSH-18)",
+                "assetId": "ffd664e9-7da2-41a5-98ec-59f27afb725c"
+            },
+            {
+                "name": "Bygone Remnant (417)",
+                "assetId": "1691ce86-57a9-4046-a1c2-18586b61ea20"
+            },
+            {
+                "name": "Observer (D-50)",
+                "assetId": "dfdb525d-d5da-478e-9d34-90021fd0ac52"
+            },
+            {
+                "name": "Divergent Bronze (Vector)",
+                "assetId": "b09f5f34-7532-4da8-91e7-8523db8024cb"
+            },
+            {
+                "name": "Requin (F2)",
+                "assetId": "ba16c613-0520-438f-8980-32397538e695"
+            },
+            {
+                "name": "Mission Blacksmith (Mk 14 EBR)",
+                "assetId": "edbcdc6e-06cb-4518-8b21-20ec40c96feb"
+            },
+            {
+                "name": "Cloud Streak (ARX200)",
+                "assetId": "d8111594-463a-48fd-80af-009304308d58"
+            },
+            {
+                "name": "New Notches (P226)",
+                "assetId": "8fdfac03-1c3e-4fe2-b271-50f2b4b8ab0b"
+            },
+            {
+                "name": "Target (R4C)",
+                "assetId": "111869d6-f8c9-4adb-b6dd-361d99073353"
+            },
+            {
+                "name": "Black Ops (AK12)",
+                "assetId": "fda4a8e1-69fa-4e13-bb06-1d830ecee036"
+            },
+            {
+                "name": "Engraved (AR33)",
+                "assetId": "4f948a5f-9a25-4cdc-9110-580a5f3c56aa"
+            },
+            {
+                "name": "Wave Splitter (SMG-11)",
+                "assetId": "6deaa9af-aab4-4464-86ab-8e401d028f70"
+            },
+            {
+                "name": "Hive Mind (ARX200)",
+                "assetId": "ef2d2a02-62af-43e8-a396-da3e515a3494"
+            },
+            {
+                "name": "Cloud Streak (G36C)",
+                "assetId": "3b4163f4-dce7-45d4-b73b-c966c8dd42a5"
+            },
+            {
+                "name": "Wolfguard Tech (Spear)",
+                "assetId": "e67909b2-79c8-419a-b926-876b3a112b74"
+            },
+            {
+                "name": "Four Of A Kind (M1014)",
+                "assetId": "a8ef0352-130a-4b19-90a3-32c50accc8e5"
+            },
+            {
+                "name": "Do (MP5SD)",
+                "assetId": "7ea59b76-4250-4f06-b43c-e018ae4cd8f8"
+            },
+            {
+                "name": "Decals (417)",
+                "assetId": "a945f4a3-136c-4202-8a93-a0e57134c192"
+            },
+            {
+                "name": "Floral Death (9x19VSN)",
+                "assetId": "f3047605-7708-402e-a147-21a3f340cf17"
+            },
+            {
+                "name": "Fever Impulse (MP5K)",
+                "assetId": "6aac2867-4f78-4fb3-9b82-1f457318e98c"
+            },
+            {
+                "name": "Datum Processor (R4C)",
+                "assetId": "dc1adaf6-9663-4991-8ad9-21d697b0141e"
+            },
+            {
+                "name": "Snakeskin (M12)",
+                "assetId": "79687c57-4d43-4ab9-8839-81649db09f6d"
+            },
+            {
+                "name": "Animal Hide (UMP45)",
+                "assetId": "149ea61d-4455-469a-8f62-c2a66efc711b"
+            },
+            {
+                "name": "Lliqlla Strips (G8A1)",
+                "assetId": "dba47360-4ad4-491c-bd16-d673b261829f"
+            },
+            {
+                "name": "Coiled Snake (SMG-11)",
+                "assetId": "0c0893a6-87b7-4612-bcde-ab10ca1e4e9b"
+            },
+            {
+                "name": "Bundeswehr (G8A1)",
+                "assetId": "6f17c546-081a-49b9-861c-963e2b142bb2"
+            },
+            {
+                "name": "Wild Instinct (TCSG12)",
+                "assetId": "46677926-7e2c-471c-8da0-df65c7010e77"
+            },
+            {
+                "name": "Venetian Golden Age (Mx4 Storm)",
+                "assetId": "d4b27586-b769-462b-beab-ec42cad9e985"
+            },
+            {
+                "name": "Cramoisi (MP5)",
+                "assetId": "089767f9-d2d4-454c-90a4-404f5a2c9a6f"
+            },
+            {
+                "name": "Leder (M870)",
+                "assetId": "81edb564-978d-4502-acf9-f96624ee840e"
+            },
+            {
+                "name": "Dwyer Hill (C8-SFW)",
+                "assetId": "9b1a615f-3b77-4b8a-9da5-7471fd25293d"
+            },
+            {
+                "name": "Leder (552 Commando)",
+                "assetId": "98cf5f3c-5b88-46d4-b227-7661aeeccd15"
+            },
+            {
+                "name": "Nighthaven Tech (556XI)",
+                "assetId": "1800517c-4d5d-44f3-b5fe-986179805fe0"
+            },
+            {
+                "name": "Ceifador (PARA-308)",
+                "assetId": "3d8c7181-e571-4aa4-996c-747e0f3c4ef3"
+            },
+            {
+                "name": "Coliseum Polymer (M4)",
+                "assetId": "be474ff4-b80d-445b-915b-777157b96fb2"
+            },
+            {
+                "name": "Shocking Pinion (P9)",
+                "assetId": "81c7fd77-ac76-4912-b5c0-78a0c072a0ef"
+            },
+            {
+                "name": "Ghosteyes Tech (P90)",
+                "assetId": "b16f0965-ea60-4bfb-8662-47e21e6e76d0"
+            },
+            {
+                "name": "Ghosteyes Tech (M12)",
+                "assetId": "09628b52-b8e2-4cda-9d58-533c2db038d2"
+            },
+            {
+                "name": "Sharkshot (SASG-12)",
+                "assetId": "9c9539f3-9ed1-4416-afc1-fba254fa82e4"
+            },
+            {
+                "name": "Mission Blacksmith (FMG-9)",
+                "assetId": "70ae09aa-5316-4305-ad94-ca9a24dbdcba"
+            },
+            {
+                "name": "Flowing Winds (T-95 LSW)",
+                "assetId": "1e16f088-286d-404b-8cc6-c68fc82db0e5"
+            },
+            {
+                "name": "Brilliant Cut (SC3000K)",
+                "assetId": "303511fa-4455-4155-a4ac-60d8fca1d6ea"
+            },
+            {
+                "name": "Royal (P90)",
+                "assetId": "514146ef-b179-45c6-84e9-015bab84d1a1"
+            },
+            {
+                "name": "SI Champion 2023 (M590A1)",
+                "assetId": "be8c83a2-bbc8-403a-abf7-40edf5efb86d"
+            },
+            {
+                "name": "Autoroutes (P90)",
+                "assetId": "a244d120-be93-49ef-afb2-6533607a60b8"
+            },
+            {
+                "name": "Shocking Pinion (AK12)",
+                "assetId": "114ef080-647f-4f14-aad2-8f9d060b274a"
+            },
+            {
+                "name": "Haute Couture (G8A1)",
+                "assetId": "7d37ce13-9664-44aa-83f2-5978efdbe164"
+            },
+            {
+                "name": "Mission Blacksmith (MPX)",
+                "assetId": "fb944911-38f6-4338-8c15-8956b146a2bc"
+            },
+            {
+                "name": "Mission Blacksmith (PARA-308)",
+                "assetId": "1453b730-5bd6-4583-aa59-f353483b0051"
+            },
+            {
+                "name": "Wall-marker (Scorpion)",
+                "assetId": "63272b47-ecca-4942-865c-6835dea651db"
+            },
+            {
+                "name": "Vaquero (G36C)",
+                "assetId": "878368b6-7797-47cd-8b5f-c0f929c814b8"
+            },
+            {
+                "name": "Mission Blacksmith (SC3000K)",
+                "assetId": "4c7acc11-d4ff-4d43-b71b-aed4c16997a8"
+            },
+            {
+                "name": "Engraved (MP5K)",
+                "assetId": "97ce4cd0-4683-4c35-95a1-1aaa04c589ab"
+            },
+            {
+                "name": "Datum Processor (M590A1)",
+                "assetId": "5f4bb1a6-1b49-4c3a-91f0-13c13c1c619a"
+            },
+            {
+                "name": "Vintage (SPAS-12)",
+                "assetId": "759ee2c7-d8c6-4f84-87a1-be920a222dfc"
+            },
+            {
+                "name": "Nighthaven Tech (P10 Roni)",
+                "assetId": "f1072dff-bbb1-4a69-965f-b79638820c72"
+            },
+            {
+                "name": "QCR-Supplied Wrecker (SG-CQB)",
+                "assetId": "dfdea95c-8e34-41fd-a561-5525d9ba6410"
+            },
+            {
+                "name": "Bundeswehr (416-C)",
+                "assetId": "42d92ac1-c045-418e-b0e3-6cf5907e3aac"
+            },
+            {
+                "name": "Chaquetilla (C7E)",
+                "assetId": "59430247-dca6-4400-893b-56916fa6649a"
+            },
+            {
+                "name": "Beads And Feathers (PARA-308)",
+                "assetId": "16846bba-2648-42f9-8465-19157d858e86"
+            },
+            {
+                "name": "Elegans Aurantiacus (Spear)",
+                "assetId": "e7e5e755-2d10-4ce7-b9a9-a67eca1f409f"
+            },
+            {
+                "name": "Luxury (F2)",
+                "assetId": "2241534f-5037-4b71-aa21-e59320c5a1ab"
+            },
+            {
+                "name": "Snakeskin (M870)",
+                "assetId": "62fdd0f7-b7b2-48c6-bd4a-8d4f246ea991"
+            },
+            {
+                "name": "Mission Blacksmith (C8-SFW)",
+                "assetId": "7ab33219-a827-4e68-82a6-ceaf84f74234"
+            },
+            {
+                "name": "Mission Blacksmith (TCSG12)",
+                "assetId": "e0c87cb5-b51d-4046-bc8b-e71eeff8a8ed"
+            },
+            {
+                "name": "Oil Spill (D-50)",
+                "assetId": "abe92d60-7208-461a-92d6-0263c1027ea1"
+            },
+            {
+                "name": "Kentucky Long (M590A1)",
+                "assetId": "18877223-2821-4455-99e6-11ca55481153"
+            },
+            {
+                "name": "Silver Tangerine (P10 Roni)",
+                "assetId": "6be40b72-e2ea-4ac6-8c50-8c7ef36bf7c8"
+            },
+            {
+                "name": "Elven (PARA-308)",
+                "assetId": "c1ce5c3e-240a-4f72-bf96-f676f1b4fd2e"
+            },
+            {
+                "name": "Scaled Kiss (R4C)",
+                "assetId": "518fd318-49b3-42c6-bfd5-04ceb699b576"
+            },
+            {
+                "name": "Snakeskin (T-5 SMG)",
+                "assetId": "b6ea9737-2b62-4f34-9653-c54389f7a9a1"
+            },
+            {
+                "name": "Leder (G8A1)",
+                "assetId": "98ba095f-7824-4289-8c20-4ec5d09ee972"
+            },
+            {
+                "name": "Screech (Vector)",
+                "assetId": "02b427f2-208a-4576-bf6d-6fe7928308d3"
+            },
+            {
+                "name": "Steamroller (Vector)",
+                "assetId": "0328c196-2578-4dbe-8649-fd7bc17a9f9e"
+            },
+            {
+                "name": "Broadway (P226)",
+                "assetId": "b0a12720-caf5-4e20-b67f-a046cbc03ce0"
+            },
+            {
+                "name": "Oil Spill (5.7 USG)",
+                "assetId": "7e07805a-b331-4198-9636-5bd6ff9c1b68"
+            },
+            {
+                "name": "Restricted (G36C)",
+                "assetId": "9a32e66f-9bf4-46a0-8185-ed4d23024b77"
+            },
+            {
+                "name": "Primal Soil (SPAS-12)",
+                "assetId": "d53dd8d5-bf1f-42f4-80fd-12bff9e7cb85"
+            },
+            {
+                "name": "Datum Processor (AK12)",
+                "assetId": "836b0567-6f19-4abc-a872-cafbb3c5a1cc"
+            },
+            {
+                "name": "Coliseum Polymer (MP5SD)",
+                "assetId": "317c9c76-bfd9-412e-b891-e0b5edb23ad5"
+            },
+            {
+                "name": "Sponsor (Commando 9)",
+                "assetId": "61d6f0ac-f4bf-4dd1-9bd5-fe0064602125"
+            },
+            {
+                "name": "Ardent Blue (K1A)",
+                "assetId": "f2cdd1e9-e93e-401c-a120-d92af53410e1"
+            },
+            {
+                "name": "Southern Regiment (M249 SAW)",
+                "assetId": "1ded0b7c-a56a-4455-ad57-68d2fb8f2a03"
+            },
+            {
+                "name": "Retrodisaster (AK12)",
+                "assetId": "31aca914-c17b-4e3b-958e-d84137a40cb1"
+            },
+            {
+                "name": "Pearl (Mk1 9mm)",
+                "assetId": "7965ca57-9728-4f7a-972d-f7ea09f0f75c"
+            },
+            {
+                "name": "Royal (F2)",
+                "assetId": "7d285220-d518-491d-ae34-51ef477fca93"
+            },
+            {
+                "name": "Surfacing Darkness (9mm C1)",
+                "assetId": "a2a81a6d-2a21-4028-89dd-ad51b1a5c156"
+            },
+            {
+                "name": "Sharkshot (SPAS-15)",
+                "assetId": "3f6da6f6-2df9-4ea2-b84b-a853695e5cce"
+            },
+            {
+                "name": "Tally (MP5K)",
+                "assetId": "e66261cd-8bcd-41d0-96d5-b49427af2e7d"
+            },
+            {
+                "name": "Bundespolizei (416-C)",
+                "assetId": "037fab3d-577a-43f6-a27e-6518ee748dfb"
+            },
+            {
+                "name": "Art Deco (M45 Meusoc)",
+                "assetId": "486f929b-230f-4d44-a5e2-725ae1fe1679"
+            },
+            {
+                "name": "Oil Spill (P12)",
+                "assetId": "7aecbe85-f0f5-4420-9fda-06b7edd395f1"
+            },
+            {
+                "name": "Khokhloma (9x19VSN)",
+                "assetId": "170e5a4a-5369-454e-8ab2-2cb34c29d65d"
+            },
+            {
+                "name": "Summer Bloom (AUG A2)",
+                "assetId": "d52ca75f-aaaa-46b7-853a-972f09081c0a"
+            },
+            {
+                "name": "Toxic Spray (SIX12 SD)",
+                "assetId": "253e2383-1293-4b12-9962-112a46f309e4"
+            },
+            {
+                "name": "Safety Orange (Bearing-9)",
+                "assetId": "4bda0184-941e-4715-ae35-87b6414af9f1"
+            },
+            {
+                "name": "Ruthless Emerald (MPX)",
+                "assetId": "55ad8a21-9925-48ca-98a8-3bafda10e6d5"
+            },
+            {
+                "name": "Short Circuit (416-C)",
+                "assetId": "46cfdbf9-8c11-4c48-8e90-e11312b77848"
+            },
+            {
+                "name": "Snakeskin (AUG A3)",
+                "assetId": "d02090e7-9ce8-452e-9987-1cd112ee4ffe"
+            },
+            {
+                "name": "Wild Instinct (SMG-11)",
+                "assetId": "c6de04c3-991b-40ff-b683-b6bab94ef4e8"
+            },
+            {
+                "name": "Datum Processor (416-C)",
+                "assetId": "5d1304a2-d3e0-4019-8b7a-aa4c497ba0fb"
+            },
+            {
+                "name": "Unyielding (MP5SD)",
+                "assetId": "93e2699a-38eb-4c5b-a93d-634bb0e53040"
+            },
+            {
+                "name": "Wild Instinct (P229)",
+                "assetId": "8389eaf2-1ecd-4ec3-8373-d1cfa33bccf4"
+            },
+            {
+                "name": "Six Major EU 2020 (TCSG12)",
+                "assetId": "abc60e6e-2f49-4f4b-bb4d-8a67ac6b2fc4"
+            },
+            {
+                "name": "Snakeskin (ALDA 5.56)",
+                "assetId": "5e478b1e-adec-4dbf-8d8f-f5ed69112040"
+            },
+            {
+                "name": "Ka (Type-89)",
+                "assetId": "f1932260-2c2f-4f44-89f5-1971823f881c"
+            },
+            {
+                "name": "Montainous Mimicry (ALDA 5.56)",
+                "assetId": "48133e99-e225-4c28-af13-3a643da2ee8d"
+            },
+            {
+                "name": "Trek (PMM)",
+                "assetId": "135ea481-c1b6-458d-bd73-db18feed3739"
+            },
+            {
+                "name": "Opulent Benefactor (AR33)",
+                "assetId": "b9087b89-d08c-499d-be45-5f5f42a1214f"
+            },
+            {
+                "name": "Mission Blacksmith (F2)",
+                "assetId": "04196335-57d0-4405-988d-49b5cc205845"
+            },
+            {
+                "name": "Graviert (M870)",
+                "assetId": "c0b2cb35-397b-4b45-aeb2-35f8a61a5dc9"
+            },
+            {
+                "name": "Resolute Oaks (416-C)",
+                "assetId": "de39c125-dee8-431b-838b-5367af2e4882"
+            },
+            {
+                "name": "Slate (P12)",
+                "assetId": "bdbd9d85-04bd-436f-b1fa-8c216c8ba9fd"
+            },
+            {
+                "name": "Oil Spill (P226)",
+                "assetId": "b280c2ab-ff19-41e7-b5ec-850cc4828f04"
+            },
+            {
+                "name": "Mission Blacksmith (416-C)",
+                "assetId": "a3d0a77f-05f2-4b30-8b63-a3ccb28ca806"
+            },
+            {
+                "name": "Glory (556XI)",
+                "assetId": "ed5e1a10-a2c8-4988-8094-545e81356a95"
+            },
+            {
+                "name": "Glory (UMP45)",
+                "assetId": "cdd8a98d-062f-4d29-9dc8-8efde0490842"
+            },
+            {
+                "name": "S.I. 2022 Striker (L85A2)",
+                "assetId": "760fd50a-7132-4f4b-8b3b-723a9167b307"
+            },
+            {
+                "name": "Chaquetilla (ITA12L)",
+                "assetId": "e88dc074-5e71-4e8f-9e4d-0ac5151c7113"
+            },
+            {
+                "name": "Mission Blacksmith (Super 90)",
+                "assetId": "863ce574-20ac-4980-a0fc-81f488380494"
+            },
+            {
+                "name": "Banknotes (G36C)",
+                "assetId": "4fcacff9-b1f4-49c3-87b0-2d1dee4263b3"
+            },
+            {
+                "name": "Red Captain Ash (G36C)",
+                "assetId": "1f1233b5-d632-42d4-8c4f-4264240991dc"
+            },
+            {
+                "name": "Trafalgar (SMG-11)",
+                "assetId": "19799658-12b0-4f28-8c76-cd14e698b472"
+            },
+            {
+                "name": "Brass Tsar (9x19VSN)",
+                "assetId": "17abf401-f785-4ea3-a818-20e68b523631"
+            },
+            {
+                "name": "Oil Spill (PMM)",
+                "assetId": "58ae807b-1318-46a0-8646-fe50bee19423"
+            },
+            {
+                "name": "Oil Spill (PRB92)",
+                "assetId": "f7359f3d-3613-43e2-9ff5-5604aa0e9595"
+            },
+            {
+                "name": "S.I.22 Beating Heart (UMP45)",
+                "assetId": "0603f6c3-8a74-4c0a-99aa-467523da152d"
+            },
+            {
+                "name": "SI22 Vengeful Flight (CSRX300)",
+                "assetId": "d065260c-0c4d-47eb-99bc-08e45ec40b4e"
+            },
+            {
+                "name": "Khokhloma (OTs-03)",
+                "assetId": "f0fbeff7-6930-4abb-9770-a60e3da4a600"
+            },
+            {
+                "name": "Mission Blacksmith (Type-89)",
+                "assetId": "631b4fcb-4d35-46b7-80d6-053dde27888e"
+            },
+            {
+                "name": "Sharkshot (M590A1)",
+                "assetId": "dbbfb9c3-f5fb-4789-9ba9-d809cc9156fc"
+            },
+            {
+                "name": "Equatorial Zest (M249)",
+                "assetId": "9ac1ac3d-463e-464d-84bd-0e511a62ae85"
+            },
+            {
+                "name": "Mission Blacksmith (T-95 LSW)",
+                "assetId": "be5fb045-0aa2-42e1-a14b-c25962b50958"
+            },
+            {
+                "name": "Mission Blacksmith (V308)",
+                "assetId": "397963d8-1bca-493e-9ce2-5ea02284e4fe"
+            },
+            {
+                "name": "Bundeswehr (AUG A2)",
+                "assetId": "429267ce-ade0-4989-bf12-7172e4c0cb5b"
+            },
+            {
+                "name": "Dwyer Hill (9mm C1)",
+                "assetId": "daa1071e-0724-4d96-aa52-6481995135aa"
+            },
+            {
+                "name": "Snakeskin (AK-74M)",
+                "assetId": "4e67e162-25b0-4650-97ea-c7e7f743264a"
+            },
+            {
+                "name": "Mission Blacksmith (M1014)",
+                "assetId": "a279316e-f8d0-462d-af75-920ff38ed1ca"
+            },
+            {
+                "name": "Circling Hunters (V308)",
+                "assetId": "8f2c19d2-4cfe-486e-8ba1-180594103104"
+            },
+            {
+                "name": "Royal (P9)",
+                "assetId": "72ce4b66-c208-4274-b31a-76659db74e24"
+            },
+            {
+                "name": "Dwyer Hill (Super 90)",
+                "assetId": "f17db6ce-256f-43b7-9ed6-7548a2ecf0e6"
+            },
+            {
+                "name": "Padded Hide (AR-15)",
+                "assetId": "70b21774-944c-4792-becd-93d1717805a0"
+            },
+            {
+                "name": "Coliseum Polymer (V308)",
+                "assetId": "4ee7a451-9d26-4db9-ad82-20d974260475"
+            },
+            {
+                "name": "Lace (M1014)",
+                "assetId": "cb6327e7-5c2c-4703-9bf2-584e56233bf9"
+            },
+            {
+                "name": "Sturdy (C8-SFW)",
+                "assetId": "827bbc5a-a836-43d1-8da0-38d329211789"
+            },
+            {
+                "name": "Precious Ingots (Mx4 Storm)",
+                "assetId": "77a802c5-c573-4dfa-aaf3-22bcae8d1947"
+            },
+            {
+                "name": "Glory (R4C)",
+                "assetId": "82856753-9100-47b5-a082-af28e60fa498"
+            },
+            {
+                "name": "Dragon's Breath (FMG-9)",
+                "assetId": "6fcdb58f-22ae-484e-aac7-06ddfa8dc9d0"
+            },
+            {
+                "name": "Clockwork (FMG-9)",
+                "assetId": "3736ced4-a059-453d-9296-4256cb11d1c3"
+            },
+            {
+                "name": "Pustoy (6P41)",
+                "assetId": "1f13d930-fcff-4d15-87cc-d4293c104224"
+            },
+            {
+                "name": "Mod (L85A2)",
+                "assetId": "38d10340-4bed-4e70-a72e-6dc9db520051"
+            },
+            {
+                "name": "Leaf Litter Camo (OTs-03)",
+                "assetId": "d2b19c28-0c22-4573-b87b-363d626dadd1"
+            },
+            {
+                "name": "Metropolitan (Mk1 9mm)",
+                "assetId": "5648f797-5601-4716-847a-7e0a5d7afd70"
+            },
+            {
+                "name": "Oil Spill (P229)",
+                "assetId": "6c3cf691-994e-42cd-976d-208c14061f91"
+            },
+            {
+                "name": "S.I.22 Soaring Flame (LMG-E)",
+                "assetId": "00291669-92b9-4bff-89ee-f221e6d91ccf"
+            },
+            {
+                "name": "Glory (G36C)",
+                "assetId": "855fd79b-4686-4ea7-a210-39e29ed84330"
+            },
+            {
+                "name": "Oil Spill (Mk1 9mm)",
+                "assetId": "ecc0afe3-b027-4ab3-b622-3db900851877"
+            },
+            {
+                "name": "Mech (C8-SFW)",
+                "assetId": "8dda6f32-c395-4de7-b59f-e145d32afdda"
+            },
+            {
+                "name": "Radiant Dignity (MP5)",
+                "assetId": "4b498045-6b05-41f3-80ea-80b6cdca38d0"
+            },
+            {
+                "name": "Chaquetilla (Vector)",
+                "assetId": "5bd4c0dc-ec31-4fa4-beea-7dc3e5458699"
+            },
+            {
+                "name": "Break Light (R4C)",
+                "assetId": "35750947-ed50-4680-83b0-a53c74e4cea3"
+            },
+            {
+                "name": "Venetian LMG (ALDA 5.56)",
+                "assetId": "0ca12d7e-ef44-436e-8c18-a8961c5fabe6"
+            },
+            {
+                "name": "Nighthaven Tech (CSRX300)",
+                "assetId": "542457b8-562e-482e-ada2-bab2587ffbc5"
+            },
+            {
+                "name": "Datum Processor (SIX12 SD)",
+                "assetId": "6f191917-94e8-4a48-b788-724dce048bf9"
+            },
+            {
+                "name": "Runner Track (Commando 9)",
+                "assetId": "eae91642-7b5a-41fb-acf8-14d50f9b6450"
+            },
+            {
+                "name": "Limits Removed (CAMRS)",
+                "assetId": "55b1179a-fd12-41a9-901a-15a50a82f6e5"
+            },
+            {
+                "name": "Saddlebag (MP7)",
+                "assetId": "1e577b46-e5e8-48e1-b5d4-1fd799a601e2"
+            },
+            {
+                "name": "Natural Shroud (M12)",
+                "assetId": "2f7d2e82-9a7a-4153-91d9-049eee249a96"
+            },
+            {
+                "name": "Spanish Coffee (USP40)",
+                "assetId": "51ede801-1fa5-46a8-99dd-dd970c147cf2"
+            },
+            {
+                "name": "Wide Plains (C8-SFW)",
+                "assetId": "ff59bbe9-a718-45ad-96b6-972e20b3c80f"
+            },
+            {
+                "name": "Viperstrike Tech (Bearing-9)",
+                "assetId": "c6e1e4b5-50c5-4773-89b8-662eef591e06"
+            },
+            {
+                "name": "Royal (417)",
+                "assetId": "f71d21c7-f643-46d6-976b-bc6dd1bca1e5"
+            },
+            {
+                "name": "Engraved (FMG-9)",
+                "assetId": "bf8496b1-69ed-461b-9106-fb7021695910"
+            },
+            {
+                "name": "Wakizashi (MP5SD)",
+                "assetId": "a1320077-cff5-41af-9779-27ca2d2a7d40"
+            },
+            {
+                "name": "Mission Blacksmith (F90)",
+                "assetId": "89c77144-0227-4cb7-974c-cf39ced0d876"
+            },
+            {
+                "name": "Leder (P12)",
+                "assetId": "94e54bd4-58d6-483b-88b3-c5086a46413f"
+            },
+            {
+                "name": "Tumbaga Rush (Mk1 9mm)",
+                "assetId": "3de22c25-e17f-4fc9-acee-b173937c55c9"
+            },
+            {
+                "name": "Emergency Chopper (AK-74M)",
+                "assetId": "04f8ac54-19d7-4070-a550-5f2aad3a65e1"
+            },
+            {
+                "name": "Mayhem (M249)",
+                "assetId": "fdb37241-e0a6-4779-bfac-1de174d5e04a"
+            },
+            {
+                "name": "Chaquetilla (USP40)",
+                "assetId": "32d52634-79d7-4de0-a263-a5f71f494c1a"
+            },
+            {
+                "name": "Swarming Lights (552 Commando)",
+                "assetId": "54314301-5f46-42e1-9c29-e9d90414d3b0"
+            },
+            {
+                "name": "Southern Regiment (F90)",
+                "assetId": "5c0701a4-b851-4894-8232-ca4c0a567736"
+            },
+            {
+                "name": "High Circuitry (Spear)",
+                "assetId": "3fc1fbbc-f0dd-40f1-b297-25a77c72ead4"
+            },
+            {
+                "name": "Caulking (M12)",
+                "assetId": "53834905-4b94-4603-a1df-bd94a3f6baad"
+            },
+            {
+                "name": "Shocking Pinion (M1014)",
+                "assetId": "76a5af2d-48e3-4bfc-99d2-4323d91ef153"
+            },
+            {
+                "name": "Khokhloma (GSH-18)",
+                "assetId": "22109ffe-a4aa-47e4-97e9-54e5ec5637c8"
+            },
+            {
+                "name": "Geode (MPX)",
+                "assetId": "7219cac2-ac5a-4d74-9864-4513e5c08da6"
+            },
+            {
+                "name": "Viridescence (PARA-308)",
+                "assetId": "8c1b13a3-006d-472c-a263-416ceaf3bfe2"
+            },
+            {
+                "name": "Leder (416-C)",
+                "assetId": "b70cc8f6-7cf7-4808-9e84-0bcba29a4403"
+            },
+            {
+                "name": "Roman Scrapper (Bailiff)",
+                "assetId": "2aa334f2-d9d6-4931-8b2f-8c3fde57dd00"
+            },
+            {
+                "name": "Compact Intruder (D-50)",
+                "assetId": "75016813-00ad-4084-98b1-ab74ffa5c4b8"
+            },
+            {
+                "name": "Khokhloma (6P41)",
+                "assetId": "f78e04b3-5ca6-454a-a562-ba75b1eb7e9f"
+            },
+            {
+                "name": "Eye-catcher (Vector)",
+                "assetId": "782d61cc-b4ce-4c10-91d9-b5dcdabcc91f"
+            },
+            {
+                "name": "SI22 Nano-revolution (6P41)",
+                "assetId": "afb6a42b-e18e-4673-a6cf-d19714f7bb5c"
+            },
+            {
+                "name": "Dance of Death (V308)",
+                "assetId": "950dda7d-db63-49ba-8463-e115724c39f4"
+            },
+            {
+                "name": "Flamboyant Shot (Type-89)",
+                "assetId": "1bcb0ecd-748e-4fb7-9af7-a88bea5499b6"
+            },
+            {
+                "name": "Grinded Edges (PARA-308)",
+                "assetId": "42fea1e9-b441-4cb6-a57a-6136b563f10b"
+            },
+            {
+                "name": "Blazing Aqua (AUG A2)",
+                "assetId": "6835de0a-657b-4da4-9c11-107b748a20fa"
+            },
+            {
+                "name": "Sulfur Glint (T-5 SMG)",
+                "assetId": "7f08e7e8-7143-45a8-9de5-52aeca7846fd"
+            },
+            {
+                "name": "Salvamento Marítimo (C7E)",
+                "assetId": "9fcf7d2d-67a4-4ad6-9a88-1c2f36bf4753"
+            },
+            {
+                "name": "Royal (MP5)",
+                "assetId": "3eaeb994-6565-40f0-9063-802edaaf2c45"
+            },
+            {
+                "name": "Royal (LFP586)",
+                "assetId": "8563be67-c96a-429a-ba8e-4ecc852fa6fa"
+            },
+            {
+                "name": "Engraved (P226)",
+                "assetId": "34d3b4b5-4594-4ac1-a924-08a71da377eb"
+            },
+            {
+                "name": "QCR-Supplied Crossfire (SMG-11)",
+                "assetId": "d3ab056f-133a-4f92-bfbc-b1312f2c6b67"
+            },
+            {
+                "name": "Monolithic (D-50)",
+                "assetId": "e3f40533-8cd8-4fad-a2b7-ea5c4ddc8c17"
+            },
+            {
+                "name": "Mission Blacksmith (ARX200)",
+                "assetId": "74ae9f5a-f35a-4ebf-988e-8833bfdbca49"
+            },
+            {
+                "name": "S.I. 2020 Chevron Dark (MPX)",
+                "assetId": "f09e4a0b-95e0-40f9-a341-8abd64f69ffb"
+            },
+            {
+                "name": "Fresh Paper (K1A)",
+                "assetId": "4f8df2f5-44f1-4eeb-8fb4-233539331b13"
+            },
+            {
+                "name": "Glory (M1014)",
+                "assetId": "bd989c9d-7795-4152-b943-670d1719108b"
+            }
+        ],
+        "Rare Weapon Skins": [
+            {
+                "name": "Health Hazard (SASG-12)",
+                "assetId": "c9e62b0d-56d1-41fd-bb00-dcbdbee51aad"
+            },
+            {
+                "name": "Triple Helix (PMM)",
+                "assetId": "166730e6-dd6c-4a0d-8a3b-335d24fea678"
+            },
+            {
+                "name": "Plus Ultra (PDW9)",
+                "assetId": "85368f3c-9a8c-465a-9192-aec9bff31568"
+            },
+            {
+                "name": "Crawling Morass (L85A2)",
+                "assetId": "5f968179-8e8c-4daf-b46e-ce987f7549d4"
+            },
+            {
+                "name": "Vaal (MPX)",
+                "assetId": "dbd3385c-6f45-4937-9d06-9c4e7e27d1e3"
+            },
+            {
+                "name": "Black Tiger (SIX12)",
+                "assetId": "97209b91-ba0f-493e-a568-cf1ffffeb8ea"
+            },
+            {
+                "name": "HK Police (T-5 SMG)",
+                "assetId": "20b55ea2-67d5-46aa-b696-147493fea451"
+            },
+            {
+                "name": "Berlin Wall (Blitz Shield)",
+                "assetId": "202b3763-8a7c-460e-8cef-0cf84d89bfe9"
+            },
+            {
+                "name": "Luxury Goods (AR33)",
+                "assetId": "d6d31521-1b20-4eff-977f-a0a147e9d0af"
+            },
+            {
+                "name": "Fearless (BOSG)",
+                "assetId": "4753d56a-f6cd-4cfe-a091-383fb3743aa0"
+            },
+            {
+                "name": "Blue-hued Camo (MP7)",
+                "assetId": "26ee8bfb-a7d0-491d-abeb-1fba730b2502"
+            },
+            {
+                "name": "Rookie (P226)",
+                "assetId": "096bfd00-7be7-4c46-a6ab-1c57d965fb1f"
+            },
+            {
+                "name": "Victory (C8-SFW)",
+                "assetId": "e1accb6c-5b57-40a8-a2e5-9cc6ec438db8"
+            },
+            {
+                "name": "Rough Skies (AK12)",
+                "assetId": "63e403dd-04c1-4b8c-b23d-167e6fc3618d"
+            },
+            {
+                "name": "Hindernis (552 Commando)",
+                "assetId": "7439e2da-b3dc-4403-afba-2dfecf07eca0"
+            },
+            {
+                "name": "Acid Rain (F2)",
+                "assetId": "1fd119b3-509c-47da-94fd-44c30c81d113"
+            },
+            {
+                "name": "Spores (R4C)",
+                "assetId": "049a65bb-9478-47a6-8fbf-50d90a40519d"
+            },
+            {
+                "name": "Hinomaru (Bearing-9)",
+                "assetId": "ab728b4e-dc7d-4e8d-bd5b-4e2803789547"
+            },
+            {
+                "name": "Tri-flora (9x19VSN)",
+                "assetId": "706fd163-c8aa-46b9-8968-30285b128bf0"
+            },
+            {
+                "name": "Triple Helix (M762)",
+                "assetId": "04674448-0ef2-49f3-89e7-09224c578f58"
+            },
+            {
+                "name": "Brasil (PARA-308)",
+                "assetId": "591d6098-c943-4b9d-b188-b1ca796bc07c"
+            },
+            {
+                "name": "Fallen Sun (C75)",
+                "assetId": "9cb20e73-60b7-404f-8df5-440150be966c"
+            },
+            {
+                "name": "Baustelle (416-C)",
+                "assetId": "dd88e4f8-1f38-497e-b168-438fdf025054"
+            },
+            {
+                "name": "Waves (L85A2)",
+                "assetId": "e83c981c-526c-46a9-ab94-6008acdb66e9"
+            },
+            {
+                "name": "Equites (P9)",
+                "assetId": "631c8b76-3de0-4bf4-9b1f-c4043bced1a8"
+            },
+            {
+                "name": "Health Hazard (6P41)",
+                "assetId": "2856892b-9ba8-44b3-b5be-59f9cec95d38"
+            },
+            {
+                "name": "Acid Rain (GONNE-6)",
+                "assetId": "1bbd6ef4-15be-4e40-ae93-fd11a117466f"
+            },
+            {
+                "name": "Icy Marble (ACS12)",
+                "assetId": "c78a3d76-345e-4357-8060-98ad0bbb303f"
+            },
+            {
+                "name": "Brasil (M12)",
+                "assetId": "3472f915-38c1-4ade-9c0d-bb3539510017"
+            },
+            {
+                "name": "Wolfguard Tech (V308)",
+                "assetId": "2ab04c16-21dc-4689-a4a5-10825f8a510e"
+            },
+            {
+                "name": "Ironwood (Super 90)",
+                "assetId": "d12969bc-eb7f-460b-bedd-b0702dc5685e"
+            },
+            {
+                "name": "Primal Soil (Bailiff)",
+                "assetId": "82bae4f5-0c59-45a2-a5ad-4da98a8b034d"
+            },
+            {
+                "name": "Ca (9mm C1)",
+                "assetId": "6942be9b-642d-4e38-852a-14b4e1e563bf"
+            },
+            {
+                "name": "Dust Storm (556XI)",
+                "assetId": "5b1d30f9-0deb-40ce-8146-9a67eb24e555"
+            },
+            {
+                "name": "Waves (FMG-9)",
+                "assetId": "2cd9f845-5185-4564-a712-2d0ef764cd74"
+            },
+            {
+                "name": "Spores (LFP586)",
+                "assetId": "a9811cc1-cac6-4621-a701-1f0ffbd8418f"
+            },
+            {
+                "name": "Measured (SPAS-12)",
+                "assetId": "75d62ccf-7f63-4fb9-b42b-2823be641055"
+            },
+            {
+                "name": "Animality (AK12)",
+                "assetId": "bc1c3651-1aaa-4e28-beca-b91b336fe121"
+            },
+            {
+                "name": "Health Hazard (V308)",
+                "assetId": "7b370a38-07d6-455b-afcc-c6ffe5c1197f"
+            },
+            {
+                "name": "Chameleon (P226)",
+                "assetId": "a3dd1312-0a11-40d8-813b-0a0ca7efd93f"
+            },
+            {
+                "name": "Winter Needles (Mk 14 EBR)",
+                "assetId": "3f0e389b-ce77-48f9-b3a5-89c320bc8ea9"
+            },
+            {
+                "name": "Politsiya (SASG-12)",
+                "assetId": "48092fce-78f0-441a-8e55-0f26b8633ae8"
+            },
+            {
+                "name": "Pfennig (P12)",
+                "assetId": "4bdf0cd9-fb38-4571-b72d-5850c7f00675"
+            },
+            {
+                "name": "Triple Helix (RG15)",
+                "assetId": "f6aaacdf-916b-4b53-b95d-afad4efc392f"
+            },
+            {
+                "name": "Blackjack (MP7)",
+                "assetId": "77f9be6b-5d20-4432-a32b-bfe3fa9a6321"
+            },
+            {
+                "name": "Compass (MPX)",
+                "assetId": "d8f9102b-8d95-450a-8ae0-0053536b8b10"
+            },
+            {
+                "name": "Sapien (M1014)",
+                "assetId": "1532c7ea-8806-42ab-a556-5a03f8d9be27"
+            },
+            {
+                "name": "Spores (M45 Meusoc)",
+                "assetId": "012ae55b-f32c-414b-92ec-864ba3b32225"
+            },
+            {
+                "name": "Woodwork (SDP 9mm)",
+                "assetId": "c0254d35-901c-44b8-8c37-76ff544f81c3"
+            },
+            {
+                "name": "Waves (PDW9)",
+                "assetId": "99475d75-b62b-431f-ba59-2302d81b07f7"
+            },
+            {
+                "name": "Crust Punk (Super 90)",
+                "assetId": "261b9ef1-e792-420a-bb7a-fbcb24f719e0"
+            },
+            {
+                "name": "Lightning (AR33)",
+                "assetId": "3013d997-7764-4a0b-879b-41e8fb9cdc3a"
+            },
+            {
+                "name": "Chameleon (GSH-18)",
+                "assetId": "72e6028e-6eec-4abc-b5f0-a27bd5c204ce"
+            },
+            {
+                "name": "Vaal (M12)",
+                "assetId": "e62b0d25-0ba6-4156-9acf-8a530d09f2dd"
+            },
+            {
+                "name": "Wolfguard Tech (SG-CQB)",
+                "assetId": "c143256a-14aa-431e-9642-19ff1f9012b7"
+            },
+            {
+                "name": "Victory (Super 90)",
+                "assetId": "981b2aa9-bbb7-4c0e-8000-5c29e55ec296"
+            },
+            {
+                "name": "Gator By Zoe Love (P90)",
+                "assetId": "4d7c9bcd-fa1d-464d-87b5-55883f8a89cd"
+            },
+            {
+                "name": "Dahlia (LMG-E)",
+                "assetId": "118b5081-a06a-4909-b787-bf0ca3ba0bbc"
+            },
+            {
+                "name": "Wolfguard Tech (SPSMG9)",
+                "assetId": "bccda80d-6f53-4a3c-b14f-5baa5e6519a2"
+            },
+            {
+                "name": "Intelligence and Security (R4C)",
+                "assetId": "9c9af101-0e4d-4a46-8c77-46fca2d37519"
+            },
+            {
+                "name": "HK Police (SIX12 SD)",
+                "assetId": "8da9d449-3ce1-4ddc-9915-651c91067057"
+            },
+            {
+                "name": "Spores (556XI)",
+                "assetId": "4bd1fd12-df5c-4a13-9d44-19ba745a7b13"
+            },
+            {
+                "name": "CA (C8-SFW)",
+                "assetId": "39624941-cf0b-4d6c-a373-5c937fd4df31"
+            },
+            {
+                "name": "Dahlia (GONNE-6)",
+                "assetId": "af541a9c-e6df-4eab-baf4-05b01014372a"
+            },
+            {
+                "name": "Triple Helix (9x19VSN)",
+                "assetId": "2d7c8046-4b17-4b26-98b2-d676637ab364"
+            },
+            {
+                "name": "Spores (5.7 USG)",
+                "assetId": "3b842389-ac17-4cc3-b69e-cfa37be75284"
+            },
+            {
+                "name": "Warhorse (Super 90)",
+                "assetId": "382bc055-2394-4d27-b8c0-e21347f4ef9c"
+            },
+            {
+                "name": "Mud-soaked (MP7)",
+                "assetId": "1eca2aaf-671c-4125-b65e-3806f867c0bc"
+            },
+            {
+                "name": "Acid Rain (.44 MAG)",
+                "assetId": "051b9565-ff5d-4373-b02d-3c620de60850"
+            },
+            {
+                "name": "Hometown Shot (M590A1)",
+                "assetId": "1e8f3ba7-ab19-4b90-8e86-c3cffa744f77"
+            },
+            {
+                "name": "Scarlet Ambush (AK12)",
+                "assetId": "f247f02a-345b-4118-8f5c-3891882f95d9"
+            },
+            {
+                "name": "Compass (SR-25)",
+                "assetId": "7d1e975c-597f-452f-b3bd-6a1bb23100e7"
+            },
+            {
+                "name": "Red Herring (UMP45)",
+                "assetId": "e1ea93b4-bf0d-47d4-85a2-207a74828238"
+            },
+            {
+                "name": "Wetland Oxidation (MP5K)",
+                "assetId": "55f6d592-446c-4b8f-b410-966a5a97cd06"
+            },
+            {
+                "name": "Dahlia (9x19VSN)",
+                "assetId": "de29d071-8b7e-48bc-afc2-a0cce01124d8"
+            },
+            {
+                "name": "Houndstooth (M4)",
+                "assetId": "336c7db2-92ec-4c9e-8432-3f7a635c5f46"
+            },
+            {
+                "name": "Plus Ultra (ITA12L)",
+                "assetId": "f817f56f-538a-461b-9dba-ea77d2506706"
+            },
+            {
+                "name": "Triple Helix (AK12)",
+                "assetId": "13085683-1336-48bf-b7e8-7c467d9be3e5"
+            },
+            {
+                "name": "Wolfguard Tech (POF-9)",
+                "assetId": "f7770d7c-db5d-4867-8d34-d58473cb4b09"
+            },
+            {
+                "name": "Vacuum Drop (V308)",
+                "assetId": "f5121d84-be50-4a4a-ac80-2ad9352e2af8"
+            },
+            {
+                "name": "Triple Helix (6P41)",
+                "assetId": "221db11d-0af8-4b5b-b2ba-e2aad307c37b"
+            },
+            {
+                "name": "Union Jack (P226)",
+                "assetId": "d99a3352-5231-44cb-b8a5-cf937596d873"
+            },
+            {
+                "name": "Steppe Camo (PMM)",
+                "assetId": "84796c93-c348-4a09-b20a-ce1b15335c35"
+            },
+            {
+                "name": "She-devil (SPAS-12)",
+                "assetId": "26a9556d-8e87-4696-99b1-a1879cee49eb"
+            },
+            {
+                "name": "Lacquered Piece (556XI)",
+                "assetId": "df226a0e-a373-4524-9858-bac8353ab684"
+            },
+            {
+                "name": "Liberte (SG-CQB)",
+                "assetId": "9d76c41f-26f0-41b7-abbe-3fb8db2eb081"
+            },
+            {
+                "name": "Gridlock (Type-89)",
+                "assetId": "967120b6-d343-4e3e-9593-4fe2b6503698"
+            },
+            {
+                "name": "Dawning Flare (AK-74M)",
+                "assetId": "1b20f694-0d20-4cfc-9931-5f9bf209436a"
+            },
+            {
+                "name": "Tall Grass (ARX200)",
+                "assetId": "430f1f65-37e3-4c26-bf31-9365b3126ea9"
+            },
+            {
+                "name": "Sapien (M590A1)",
+                "assetId": "cec499f9-c79d-4134-8efc-0ff9f271847a"
+            },
+            {
+                "name": "Monocerose (M870)",
+                "assetId": "168ce055-e7af-4536-acfa-6d9f6d1d8dc2"
+            },
+            {
+                "name": "Gridlock (552 Commando)",
+                "assetId": "07941604-9c55-4db6-bdb6-c3c017699728"
+            },
+            {
+                "name": "Chameleon (LFP586)",
+                "assetId": "5920670f-5f19-4806-bc2b-185c4c6f6c5c"
+            },
+            {
+                "name": "Acid Rain (SG-CQB)",
+                "assetId": "7f61736f-3b27-4fe8-ab15-5888782f34b2"
+            },
+            {
+                "name": "Waves (Scorpion)",
+                "assetId": "8ec66dd8-2be4-4cde-b069-7014fcd3e672"
+            },
+            {
+                "name": "Scorpius (416-C)",
+                "assetId": "4be617c3-6980-4596-8dc9-9b37c3b2cae2"
+            },
+            {
+                "name": "Roulette Wheel (AK12)",
+                "assetId": "65096256-5a23-4d41-a35f-6b4136376705"
+            },
+            {
+                "name": "Armor (M590A1)",
+                "assetId": "bfc9fbde-378b-4d24-a86f-e482ad951473"
+            },
+            {
+                "name": "Chameleon (5.7 USG)",
+                "assetId": "df509fcf-7ca2-4807-bd81-b7779045fe9a"
+            },
+            {
+                "name": "Girih (UMP45)",
+                "assetId": "bebe5d9b-f451-4ced-a6f3-f83baff1bc4a"
+            },
+            {
+                "name": "Dreams Of Tumbaga (LMG-E)",
+                "assetId": "ddce377a-1f87-4275-b679-c43f26111df4"
+            },
+            {
+                "name": "Darkness Glow (K1A)",
+                "assetId": "6b559465-68d2-4710-a3e7-f6f1f9e3bcae"
+            },
+            {
+                "name": "Ceifador (M249)",
+                "assetId": "6dc1f31b-c455-4301-bcdd-271051421275"
+            },
+            {
+                "name": "Flowery Meadow (UZK50GI)",
+                "assetId": "871d53b6-9595-42db-bc3b-a6b00aee6b42"
+            },
+            {
+                "name": "Acid Rain (SC3000K)",
+                "assetId": "8d8dee70-c150-4fba-831a-adbd66a8efd6"
+            },
+            {
+                "name": "Intelligence and Security (Super Shorty)",
+                "assetId": "c075d847-e783-4e08-bcdf-5361313f72d6"
+            },
+            {
+                "name": "Vaal (P90)",
+                "assetId": "a4945de1-ce14-4b1c-8816-50a9169df0e7"
+            },
+            {
+                "name": "Union Jack (M590A1)",
+                "assetId": "3391858a-ece9-477c-b3cf-3a9626216279"
+            },
+            {
+                "name": "Old Faithful (MK17 CQB)",
+                "assetId": "e2e73165-eff5-4185-a194-e5ed357386de"
+            },
+            {
+                "name": "Gridlock (R4C)",
+                "assetId": "9ccd76d5-fbcd-472f-9a4b-a8c725857ab7"
+            },
+            {
+                "name": "Triple Helix (GSH-18)",
+                "assetId": "3fad5fd9-e660-4065-90e4-797e5b1da846"
+            },
+            {
+                "name": "Triple Helix (UMP45)",
+                "assetId": "55950b2c-b10d-4672-bb46-ea733d15454a"
+            },
+            {
+                "name": "Spores (UMP45)",
+                "assetId": "a94900a8-774a-4a45-958d-708022d3ce9d"
+            },
+            {
+                "name": "Wolfguard Tech (T-95 LSW)",
+                "assetId": "885a6c9b-837c-48cc-8b6f-332d78eb3ffb"
+            },
+            {
+                "name": "The Big Gun (UMP45)",
+                "assetId": "b5b32940-ba4e-4bc1-a423-9644b5fc2fd7"
+            },
+            {
+                "name": "Pointed (9mm C1)",
+                "assetId": "131333d4-d024-4e5b-97d8-e1dcbb4ae7e7"
+            },
+            {
+                "name": "Gridlock (PARA-308)",
+                "assetId": "512de52b-5bf8-4794-b7f5-3039ea00497f"
+            },
+            {
+                "name": "HK Police (Q-929)",
+                "assetId": "b11355c1-d730-46ed-bbf9-8439108cc9ba"
+            },
+            {
+                "name": "Checkpoint (P12)",
+                "assetId": "999cfc1f-7769-46e9-af26-2e776004c754"
+            },
+            {
+                "name": "Hunter Prerogative (AK-74M)",
+                "assetId": "1f4df6e7-acb9-4065-a629-6fa001c7d521"
+            },
+            {
+                "name": "Girih (556XI)",
+                "assetId": "979c25d6-4857-4ea1-94de-330f9dd5349b"
+            },
+            {
+                "name": "Dahlia (OTs-03)",
+                "assetId": "bdfa0a31-90ce-4d60-962e-6e0fa5294405"
+            },
+            {
+                "name": "Blue Electric (6P41)",
+                "assetId": "6a5a132c-6b58-480e-b516-be0c0e453210"
+            },
+            {
+                "name": "Triple Helix (GONNE-6)",
+                "assetId": "4deed1cb-c5eb-437b-b59c-283d0a775bd1"
+            },
+            {
+                "name": "S.I. 2021 Power Prism (MK17 CQB)",
+                "assetId": "221c00f2-dbff-42ac-bc22-3d0366d651c4"
+            },
+            {
+                "name": "Nighthaven Tech (M1014)",
+                "assetId": "0df80243-cd62-4fc2-b0fe-6d5e68d9133b"
+            },
+            {
+                "name": "Slick Professionalism (AUG A2)",
+                "assetId": "1feb6d1e-1ea0-4ace-b7c7-db81cfe7ec07"
+            },
+            {
+                "name": "Paint Splash (5.7 USG)",
+                "assetId": "e61c22fb-b0e6-43bc-b8d9-bbd5a28b92b8"
+            },
+            {
+                "name": "Sapien (AR33)",
+                "assetId": "f57ffb4f-d0e1-4538-8bbb-0763d12e2900"
+            },
+            {
+                "name": "Scratched Surface (MP5)",
+                "assetId": "aeb48a53-8534-452d-8be0-a992678e5d11"
+            },
+            {
+                "name": "Sapien (T-95 LSW)",
+                "assetId": "bc117701-77ff-40a7-bdd2-06d5295ecdd6"
+            },
+            {
+                "name": "Chameleon (Mk1 9mm)",
+                "assetId": "0ece0c5e-d007-418d-9413-de9294d24397"
+            },
+            {
+                "name": "Liberte (417)",
+                "assetId": "1ec81333-20af-4824-809b-8e11ed0fba02"
+            },
+            {
+                "name": "Invaders (Mk1 9mm)",
+                "assetId": "fbf4bc83-db19-4052-96db-40b9a503d52c"
+            },
+            {
+                "name": "Agent Of Change (Type-89)",
+                "assetId": "81b45b93-4f40-4671-8c91-4ba3ce7a3c7a"
+            },
+            {
+                "name": "Spores (SG-CQB)",
+                "assetId": "11cdb3c7-b74d-4ff9-8408-3ed2eced5bfa"
+            },
+            {
+                "name": "Crisis Protection (P9)",
+                "assetId": "d3f6c59a-60f2-4758-886b-0cfb9d02cd7c"
+            },
+            {
+                "name": "Sepiolida (416-C)",
+                "assetId": "9569cfb4-2e7e-4c2a-911d-a99a86fc7094"
+            },
+            {
+                "name": "Acid Rain (417)",
+                "assetId": "e1a9ac45-6442-411e-8209-7b868f37bdec"
+            },
+            {
+                "name": "Spores (SC3000K)",
+                "assetId": "5851a4a7-1558-4e62-9bd4-8ff9bf3d18ad"
+            },
+            {
+                "name": "Union Jack (SMG-11)",
+                "assetId": "6b0b49f0-b729-4a78-8475-74e706114124"
+            },
+            {
+                "name": "Shoreline Floatsam (MPX)",
+                "assetId": "1ce243a2-182f-49e9-a313-693c40c802c9"
+            },
+            {
+                "name": "Soil-caked (AK-74M)",
+                "assetId": "c82cc593-6022-4805-b6ce-7118f73ad5e3"
+            },
+            {
+                "name": "Triple Helix (P12)",
+                "assetId": "1a9f2aa5-8c0a-47be-af90-4c2adde4cedd"
+            },
+            {
+                "name": "Twilight Flare (AUG A3)",
+                "assetId": "1fedb551-1d61-431d-9807-987972a4bc2c"
+            },
+            {
+                "name": "Union Jack (FMG-9)",
+                "assetId": "16e3f46d-ac72-44d7-87f4-69a29bb87715"
+            },
+            {
+                "name": "Measured (MPX)",
+                "assetId": "6c3d90f8-2043-4e02-9e01-4d3f03a73d62"
+            },
+            {
+                "name": "Dahlia (MP5SD)",
+                "assetId": "9d5305f3-b4e3-49e5-8105-3e7df69d06d7"
+            },
+            {
+                "name": "Radical Tone (GONNE-6)",
+                "assetId": "98d9587b-5508-44dd-8696-3f703a98c654"
+            },
+            {
+                "name": "Spectral Scan (MK17 CQB)",
+                "assetId": "77118044-6105-4c4a-8d9f-db782d41ecce"
+            },
+            {
+                "name": "Ca (Super 90)",
+                "assetId": "6fd973af-1632-4520-abb0-38485d1d8bff"
+            },
+            {
+                "name": "S.I. 2023 Scintilla (Commando 9)",
+                "assetId": "a17eac81-b2c9-4cc3-a017-d55f87803d4d"
+            },
+            {
+                "name": "Gem (556XI)",
+                "assetId": "b53ce85a-f3df-41c4-9ea5-cd00d0a14101"
+            },
+            {
+                "name": "Spores (M1014)",
+                "assetId": "78f082ce-80a7-478b-aecd-3a266a73d742"
+            },
+            {
+                "name": "Brasil (M12)",
+                "assetId": "3472f915-38c1-4ade-9c0d-bb3539510017"
+            },
+            {
+                "name": "Dragonfly (MPX)",
+                "assetId": "0b36eb4f-c52a-444e-b5fa-a2df97d86b89"
+            },
+            {
+                "name": "Navy Coating (AK12)",
+                "assetId": "b186e47a-b202-49f7-9418-25ce806cf1e0"
+            },
+            {
+                "name": "Gridlock (417)",
+                "assetId": "2dc2c949-41d1-4901-a0c9-4622d03be1cd"
+            },
+            {
+                "name": "Ca (Mk1 9mm)",
+                "assetId": "d47030ee-13e3-4b42-90ac-a88ff6ce598b"
+            },
+            {
+                "name": "Wisteria (AUG A2)",
+                "assetId": "2e81cac3-7e74-4175-9965-a3ecfdd09869"
+            },
+            {
+                "name": "Fearless (K1A)",
+                "assetId": "5c21242c-19a2-49db-8a02-02e845a23390"
+            },
+            {
+                "name": "Measured (MK17 CQB)",
+                "assetId": "fe35afd4-4f02-46bb-9bc0-ef8aedc99bbe"
+            },
+            {
+                "name": "Sapien (UZK50GI)",
+                "assetId": "62cbe5ef-2683-44f7-b083-dd8119e44da5"
+            },
+            {
+                "name": "Vital Flow (MP7)",
+                "assetId": "590921da-a9e9-40c1-90e2-d3c822350218"
+            },
+            {
+                "name": "Growling Rumble (SPAS-15)",
+                "assetId": "700ac84f-9d05-45f8-b4b6-6a8ee2181da5"
+            },
+            {
+                "name": "Radical Tone (F90)",
+                "assetId": "68696638-d44a-404c-8fbe-5da43bd1f748"
+            },
+            {
+                "name": "Yucca Flats (UMP45)",
+                "assetId": "dd0add91-3921-4c98-8d02-37e12f2d1d6f"
+            },
+            {
+                "name": "Compass (SPAS-12)",
+                "assetId": "cf238ed2-55b6-4f0a-824c-5866e68259e0"
+            },
+            {
+                "name": "Pablo (OTs-03)",
+                "assetId": "51479150-3632-4b5d-b161-ba4f27c47d5c"
+            },
+            {
+                "name": "Snow (Super 90)",
+                "assetId": "a32060a3-506c-4dfd-bd7c-c4516dcad387"
+            },
+            {
+                "name": "Dahlia (PMM)",
+                "assetId": "7b93504e-f875-4871-a5f1-572f13054a4c"
+            },
+            {
+                "name": "Practical Green (UZK50GI)",
+                "assetId": "ff0a049b-d5e5-4934-ab72-fbee92f7672c"
+            },
+            {
+                "name": "Intelligence and Security (556XI)",
+                "assetId": "efe6d1e1-e4e5-471b-8e03-87e3a98ba6ff"
+            },
+            {
+                "name": "Intelligence and Security (M45 Meusoc)",
+                "assetId": "e54b48a7-c8c6-41f3-a106-8e2e2eda58ea"
+            },
+            {
+                "name": "Schneien (MP7)",
+                "assetId": "8cf4a3c4-71dd-4d10-8b0c-c2bbdb1a042c"
+            },
+            {
+                "name": "Comet (UMP45)",
+                "assetId": "88855bb0-93b3-4c8e-bba6-0c81638af64b"
+            },
+            {
+                "name": "Chameleon (P9)",
+                "assetId": "819445a5-2329-4963-8c77-29a8625f5684"
+            },
+            {
+                "name": "Acid Rain (G36C)",
+                "assetId": "6fb31822-4273-4ff3-a024-68ce2ceb5924"
+            },
+            {
+                "name": "Intelligence and Security (5.7 USG)",
+                "assetId": "5c38457b-dea3-4a5b-b0fb-fec7246695e7"
+            },
+            {
+                "name": "Triple Helix (SC3000K)",
+                "assetId": "1664aecb-18fe-4964-89bd-ee09e42416eb"
+            },
+            {
+                "name": "Bulldozer (LMG-E)",
+                "assetId": "a07485f5-6fd6-456a-9faf-775c92b5f52a"
+            },
+            {
+                "name": "Health Hazard (Spear)",
+                "assetId": "f44259cf-6ccf-4f4a-ba32-fae8f17de2b4"
+            },
+            {
+                "name": "Sector Service (P12)",
+                "assetId": "edff676e-7265-405a-8196-e6c3a194b189"
+            },
+            {
+                "name": "Paint Splash (UMP45)",
+                "assetId": "f52a96f1-cc05-40ee-9d2e-b611613dfdf6"
+            },
+            {
+                "name": "Schar (G8A1)",
+                "assetId": "bc21fb5e-b518-4cb7-a469-53448a39d761"
+            },
+            {
+                "name": "Acid Rain (MP5)",
+                "assetId": "ece1043e-aaba-46e0-918f-b04f9d560464"
+            },
+            {
+                "name": "Ca (CAMRS)",
+                "assetId": "d6c89955-49af-40d1-bc71-83f135c413f4"
+            },
+            {
+                "name": "Acid Rain (P90)",
+                "assetId": "1f325534-a0c0-4a02-8a9d-fc763197f972"
+            },
+            {
+                "name": "Gridlock (AK12)",
+                "assetId": "9c36f7e6-736e-4b6f-8cd8-ab5f20006cbc"
+            },
+            {
+                "name": "Evolution (417)",
+                "assetId": "21dff4d5-9661-4d06-8eca-bdc0086bc75d"
+            },
+            {
+                "name": "Sapien (SC3000K)",
+                "assetId": "3496f5d3-2711-4a6d-8f50-86a03740fa11"
+            },
+            {
+                "name": "Brasil (SPAS-15)",
+                "assetId": "0853e41c-84b2-4703-a216-404c3a995f04"
+            },
+            {
+                "name": "Paint Splash (Super Shorty)",
+                "assetId": "800e5913-cd11-47a0-9573-66601581680b"
+            },
+            {
+                "name": "Health Hazard (GSH-18)",
+                "assetId": "6767fa26-e326-4ad4-808d-33e7d5fdc77a"
+            },
+            {
+                "name": "Dahlia (GSH-18)",
+                "assetId": "75f0e59f-bfa2-4ea8-ab3f-9571e590dd28"
+            },
+            {
+                "name": "Rusty Relic (M590A1)",
+                "assetId": "820f4deb-7c94-478b-9d75-031e46e28a2f"
+            },
+            {
+                "name": "Spores (GONNE-6)",
+                "assetId": "468b5805-034f-4129-9be6-2b63bda90c82"
+            },
+            {
+                "name": "Pixel Malachite (C7E)",
+                "assetId": "f9eb4e96-d99e-4186-b904-17a87f20a985"
+            },
+            {
+                "name": "Plus Ultra (Vector)",
+                "assetId": "5eda1d10-5a09-4e3b-adac-8b06444cd506"
+            },
+            {
+                "name": "Confidential (D-50)",
+                "assetId": "57900077-5fac-4af4-bb35-7192705e26f7"
+            },
+            {
+                "name": "Cartography (MK17 CQB)",
+                "assetId": "3c990e37-b6c8-42a8-80f2-d198076faa0b"
+            },
+            {
+                "name": "Victory (Mk1 9mm)",
+                "assetId": "107ef6a6-4f50-4d2e-82e5-7b25458ce820"
+            },
+            {
+                "name": "Elven (PRB92)",
+                "assetId": "5bcef0cd-dee6-4a8e-bf02-11e0f0e5d03c"
+            },
+            {
+                "name": "Waves (UZK50GI)",
+                "assetId": "5f5aca1b-3819-4597-a8bb-63fb6326b807"
+            },
+            {
+                "name": "Acid Rain (P9)",
+                "assetId": "96ae2529-01f0-443c-99d2-beb29a1e8bbf"
+            },
+            {
+                "name": "S.I. 2023 Fragments (AK12)",
+                "assetId": "ac385816-c40f-4289-9683-6a4c1ed14e75"
+            },
+            {
+                "name": "Intelligence and Security (M1014)",
+                "assetId": "94a40e9c-3ca2-4786-99be-301ddf782d6a"
+            },
+            {
+                "name": "VIPerstrike Tech (9x19VSN)",
+                "assetId": "0609ca7d-b682-4dc8-a7f1-2d8e0c14d7c0"
+            },
+            {
+                "name": "Sang (P90)",
+                "assetId": "974e64a8-3128-4165-bc52-b4d2857b8ace"
+            },
+            {
+                "name": "Smiths (AR33)",
+                "assetId": "5d10f714-f46d-4a2a-af22-79ca3e176ac5"
+            },
+            {
+                "name": "Radical Tone (SDP 9mm)",
+                "assetId": "898cbccb-6c5e-4bd7-9ebd-92e691036c06"
+            },
+            {
+                "name": "Risunok (GSH-18)",
+                "assetId": "2e3e4bff-fec8-41db-aaf6-5bc5ae8917ac"
+            },
+            {
+                "name": "Desert Infantry (9x19VSN)",
+                "assetId": "994443ec-a281-4707-b3b3-ed83f54d971a"
+            },
+            {
+                "name": "Jade (P9)",
+                "assetId": "dec05055-9903-4f30-9f9d-e2b02aea5c9a"
+            },
+            {
+                "name": "Measured (SR-25)",
+                "assetId": "47f93099-1e94-4020-80d9-0d8ec281eb60"
+            },
+            {
+                "name": "Sapien (CSRX300)",
+                "assetId": "4e4fd0cd-3c2b-427e-93c2-944c40b3d783"
+            },
+            {
+                "name": "Smooth Operator (UMP45)",
+                "assetId": "e60907ec-0e15-457f-96bb-d20c2a4d1abc"
+            },
+            {
+                "name": "Ethereal Marksman (R4C)",
+                "assetId": "a28bbb34-ab6c-46f8-aa75-0ccbc93692e8"
+            },
+            {
+                "name": "Saturated (F2)",
+                "assetId": "70d374a1-7575-4003-b9ee-07e3dfe39b6b"
+            },
+            {
+                "name": "Wild Soaring (Vector)",
+                "assetId": "91d45083-f294-443e-b87f-a3691581a258"
+            },
+            {
+                "name": "Waves (AR33)",
+                "assetId": "6d07a4c0-966a-4ccd-8b8a-b8017f4668cc"
+            },
+            {
+                "name": "Gwlanen Finish (AR33)",
+                "assetId": "e677ec02-7b6a-4dfa-a40c-5efb03785d5e"
+            },
+            {
+                "name": "Retribution (UMP45)",
+                "assetId": "7f77ddb5-ecdf-4823-919a-6580f776f3a6"
+            },
+            {
+                "name": "Dahlia (SASG-12)",
+                "assetId": "d3234e5f-0da6-45d1-a2af-17d802a60f1f"
+            },
+            {
+                "name": "Acid Rain (LFP586)",
+                "assetId": "592fa712-4600-4133-b2af-0d010721c22f"
+            },
+            {
+                "name": "Dirt-encrusted (9mm C1)",
+                "assetId": "a7ae4c82-54fb-44a7-9040-ddbe4bdf467b"
+            },
+            {
+                "name": "Bulldozer (Scorpion)",
+                "assetId": "7cac6966-006a-4b93-8c75-efaf3567c898"
+            },
+            {
+                "name": "Splatter (9mm C1)",
+                "assetId": "f620092e-e745-434e-b0f3-7ee023461a5d"
+            },
+            {
+                "name": "Wolfguard Tech (F2)",
+                "assetId": "b4a6c312-3c2b-4913-bad1-49cf9d28bb5c"
+            },
+            {
+                "name": "Waves (MP5K)",
+                "assetId": "74f7ddc0-b744-4070-80eb-53756d3e9775"
+            },
+            {
+                "name": "Liberte (MP5)",
+                "assetId": "460c62c0-0918-4094-aa07-88705c2d339b"
+            },
+            {
+                "name": "Sapien (MP5K)",
+                "assetId": "d0edbd88-d63c-48d9-907f-121e778be227"
+            },
+            {
+                "name": "Union Jack (L85A2)",
+                "assetId": "b02b7f4d-155e-4da9-9f9f-8d0f94595700"
+            }
+        ],
+        "Uncommon Weapon Skins": [
+            {
+                "name": "Molokai (UZK50GI)",
+                "assetId": "b53a1a6a-626f-4bc0-8080-ca07152a78a5"
+            },
+            {
+                "name": "Tread (AUG A2)",
+                "assetId": "5e779fa0-bf64-4e99-9e3c-bf2c150ebcd5"
+            },
+            {
+                "name": "Oahu (416-C)",
+                "assetId": "8e6f47ed-833a-4fed-9d6a-68a929f046e8"
+            },
+            {
+                "name": "Hull (SPAS-12)",
+                "assetId": "b10deb24-7172-4e4b-a634-09cdca3e0938"
+            },
+            {
+                "name": "Kona (SMG-11)",
+                "assetId": "ddf82644-0533-4738-8b31-5cc759054e62"
+            },
+            {
+                "name": "Mushroom (MP7)",
+                "assetId": "06c71a7b-52f6-4c46-8b32-136c357b2b75"
+            },
+            {
+                "name": "Mute's Gift (MP5K)",
+                "assetId": "06bf6eed-e498-4bda-b31e-79cda1d50707"
+            },
+            {
+                "name": "Ice (UZK50GI)",
+                "assetId": "a7e5cc8d-a098-430b-baad-6cd34648a9b8"
+            },
+            {
+                "name": "Gear (GSH-18)",
+                "assetId": "465fbfc9-e6f0-42fd-b153-425bb98800c9"
+            },
+            {
+                "name": "Templar (LFP586)",
+                "assetId": "54e97676-999e-401d-869e-3d28b27c0348"
+            },
+            {
+                "name": "Icicle (C8-SFW)",
+                "assetId": "4d0266e3-5be5-4a15-bec3-7428eda128c5"
+            },
+            {
+                "name": "Mushroom (M870)",
+                "assetId": "ff2cad1d-1da3-48b8-b790-9ddd2d569b26"
+            },
+            {
+                "name": "Maui (UMP45)",
+                "assetId": "b8264aa3-6ef7-40ae-8f01-4a45d77d19bd"
+            },
+            {
+                "name": "Zygote (5.7 USG)",
+                "assetId": "d6d09929-2ab0-417b-8ca5-2560541dc5c0"
+            },
+            {
+                "name": "Maui (556XI)",
+                "assetId": "22e1fbb1-f7c1-4fe6-833e-ce71e48afe84"
+            },
+            {
+                "name": "Tattoo (SPAS-12)",
+                "assetId": "f04c7706-1577-4693-b81e-2fc6d4d4dd92"
+            },
+            {
+                "name": "Diner (CAMRS)",
+                "assetId": "e7acd481-8fff-435d-b951-e6ac1a995996"
+            },
+            {
+                "name": "Castle's Gift (UMP45)",
+                "assetId": "d923b388-8734-46a5-b8e2-fa26f8de713b"
+            },
+            {
+                "name": "Lupus (552 Commando)",
+                "assetId": "4ea3576e-1d87-4b0a-a260-72fd46a44cd1"
+            },
+            {
+                "name": "Paisley (AK12)",
+                "assetId": "d395a5d7-a343-448b-9d70-627c0b2bd791"
+            },
+            {
+                "name": "Kamehameha (Bearing-9)",
+                "assetId": "6df84b8c-0a8c-491d-9315-e0ec20903491"
+            },
+            {
+                "name": "Dissociate (CAMRS)",
+                "assetId": "f95aac67-ca7c-40da-8b58-dd82da64f0ab"
+            },
+            {
+                "name": "Weave (M1014)",
+                "assetId": "8c84543e-c440-47a8-a30a-fdb265ec9aec"
+            },
+            {
+                "name": "Kamehameha (9x19VSN)",
+                "assetId": "71526e50-ecfe-4d25-8554-1142c8539685"
+            },
+            {
+                "name": "Oryx's Gift (MP5)",
+                "assetId": "52145a59-7a31-457b-89f9-82b950830c49"
+            },
+            {
+                "name": "Robotics (GSH-18)",
+                "assetId": "1cfeebe7-2e5c-4529-87bd-0823d288cc33"
+            },
+            {
+                "name": "Knútr (556XI)",
+                "assetId": "a6ebf0a6-8e9a-460f-b04c-8e57e4ec3bb5"
+            },
+            {
+                "name": "Ice (MP7)",
+                "assetId": "5f73c223-8f7b-42d9-9f3c-2132cec43366"
+            },
+            {
+                "name": "Weave (GONNE-6)",
+                "assetId": "231e6f8e-3f4b-40be-a465-75f8b813df58"
+            },
+            {
+                "name": "Royalty (F2)",
+                "assetId": "861c6d01-834c-4686-a813-042934de1c6d"
+            },
+            {
+                "name": "Milky Way (9mm C1)",
+                "assetId": "4d0cd7a5-bafb-4d29-bbcd-bc4a7ed01f35"
+            },
+            {
+                "name": "Lesion's Gift (SIX12 SD)",
+                "assetId": "c8753850-895f-47d0-861d-f82e0b9f63d5"
+            },
+            {
+                "name": "Hjálmr (UMP45)",
+                "assetId": "d3f74bde-970f-4bba-a305-84d3ac28d343"
+            },
+            {
+                "name": "Mushroom (416-C)",
+                "assetId": "b9590b8d-ba2c-40d4-abcc-a5b6fc0a5ec0"
+            },
+            {
+                "name": "Saint (SG-CQB)",
+                "assetId": "3049aa90-945e-4749-ab48-4ff142546275"
+            },
+            {
+                "name": "Oahu (MP7)",
+                "assetId": "85cefe1f-08bb-426e-a588-f8b339a966e8"
+            },
+            {
+                "name": "Maui (R4C)",
+                "assetId": "6a1340f3-09aa-4af2-ba1b-b7d35479a95b"
+            },
+            {
+                "name": "Safari (SR-25)",
+                "assetId": "870014fc-a7cd-4450-a05f-982108a58bb2"
+            },
+            {
+                "name": "Molokai (P226)",
+                "assetId": "42d348bb-a0e7-4442-b082-10a4d7c5e0d0"
+            },
+            {
+                "name": "Flare Dunes (556XI)",
+                "assetId": "6f8f8ddf-7113-41af-b918-6642205adfdc"
+            },
+            {
+                "name": "Hull (MK17 CQB)",
+                "assetId": "bab10e23-f833-4cbc-850c-90192bf75ee8"
+            },
+            {
+                "name": "Mushroom (552 Commando)",
+                "assetId": "ee4fc01d-9275-48e4-b196-106867995359"
+            },
+            {
+                "name": "Tiger's Breath (C8-SFW)",
+                "assetId": "d37fee63-9d97-4d3e-8cec-5bc564b074e6"
+            },
+            {
+                "name": "Iceman (417)",
+                "assetId": "02737384-e511-4a1f-a5e1-2811b7a2efcd"
+            },
+            {
+                "name": "Maui (V308)",
+                "assetId": "2bd7d8d9-4288-4627-a901-f05090cab633"
+            },
+            {
+                "name": "Burial (MP5)",
+                "assetId": "f44207e2-b9b5-401a-9431-61ac4ab50084"
+            },
+            {
+                "name": "Ice (P12)",
+                "assetId": "7a2d448f-2d4d-40a4-80a4-1398289f2977"
+            },
+            {
+                "name": "3-Bit Ocean (G36C)",
+                "assetId": "a91f8398-ad9f-4d09-8cb9-0c7c654acde6"
+            },
+            {
+                "name": "Hibana's Gift (Supernova)",
+                "assetId": "efb68e98-e934-4c72-aa63-2ada8cbaa6fc"
+            },
+            {
+                "name": "Rocket (6P41)",
+                "assetId": "7af8cb4e-06fa-4bfe-ab02-c09ba4ef62fb"
+            },
+            {
+                "name": "Aries (G8A1)",
+                "assetId": "c15967df-24c8-4ef2-ad02-b0b7dbd4c95e"
+            },
+            {
+                "name": "Ice (552 Commando)",
+                "assetId": "7bc1c9c9-cb9d-4305-ba2a-192c2f491ce6"
+            },
+            {
+                "name": "Welder (9x19VSN)",
+                "assetId": "59321467-24dd-4078-a02b-5fe801231b17"
+            },
+            {
+                "name": "Sledge's Gift (M590A1)",
+                "assetId": "a1818959-87c4-41b3-a305-b9f59f4ef936"
+            },
+            {
+                "name": "Branches (M590A1)",
+                "assetId": "eddea93e-b9c5-4bba-a244-58e7953170b6"
+            },
+            {
+                "name": "Maui (M1014)",
+                "assetId": "82b4ce96-7598-4ae1-abe4-722ce4cf6932"
+            },
+            {
+                "name": "Ice (9x19VSN)",
+                "assetId": "7d782eb0-a585-46ce-b8bb-3cc66f495eec"
+            },
+            {
+                "name": "Mushroom (Mk 14 EBR)",
+                "assetId": "1aa0fc5c-045f-495d-81d8-dd5f60524a0b"
+            },
+            {
+                "name": "Oahu (M870)",
+                "assetId": "3358dbce-1719-4ca5-bb00-5d494b25e0a4"
+            },
+            {
+                "name": "Maverick's Gift (AR-15)",
+                "assetId": "8d2b6398-9728-4928-87d6-09abde7784ee"
+            },
+            {
+                "name": "Virtual Destruction (M4)",
+                "assetId": "f67f4f8d-b06b-4e39-8b1d-ab7885f5b771"
+            },
+            {
+                "name": "Guard (P12)",
+                "assetId": "d1f899a4-eb76-4ebc-aec4-1e2894bacb1a"
+            },
+            {
+                "name": "Bloom (MK17 CQB)",
+                "assetId": "5c7b94e6-e7cc-4c6f-9c52-eec6ce59bcf6"
+            },
+            {
+                "name": "Zap (M1014)",
+                "assetId": "4e54d5c9-db4b-4ecc-9fc3-c4d9fba8871d"
+            },
+            {
+                "name": "Aero (G8A1)",
+                "assetId": "95e9d25d-e9e1-4600-a7ea-3afff54aaab6"
+            },
+            {
+                "name": "Guardian (6P41)",
+                "assetId": "a1961cb3-bcf8-4d86-8fa6-38b7eaee9f9a"
+            },
+            {
+                "name": "Weave (556XI)",
+                "assetId": "45b7783f-4a4b-4ba9-839c-56ec07c2a16c"
+            },
+            {
+                "name": "Verdant (5.7 USG)",
+                "assetId": "4ef16a9f-16bd-4e20-a823-e43db626fe4f"
+            },
+            {
+                "name": "Maui (P229)",
+                "assetId": "f2d818da-914c-411b-a7bd-9f2bd2c76a6e"
+            },
+            {
+                "name": "Oahu (UZK50GI)",
+                "assetId": "e022c14f-a36b-493a-92d1-0f861459d63f"
+            },
+            {
+                "name": "Hull (SR-25)",
+                "assetId": "a1495df5-94fa-44ed-928b-01eeaf7864f3"
+            },
+            {
+                "name": "Flux (M870)",
+                "assetId": "2717c416-11b5-4739-8f18-678437f5552f"
+            },
+            {
+                "name": "Goyo's Gift (Vector)",
+                "assetId": "9f8ec7a8-e9f0-4c0a-8b22-d3c5335a373e"
+            },
+            {
+                "name": "Sapien (P226)",
+                "assetId": "349e39cb-5b9b-47ed-a577-fcdd6bde59b4"
+            },
+            {
+                "name": "Mushroom (P12)",
+                "assetId": "a03f95ac-10a3-45fe-802b-19e4fbb97548"
+            },
+            {
+                "name": "Traction (Mk1 9mm)",
+                "assetId": "bbed52b4-6351-4eae-9b2e-abffce0902c7"
+            },
+            {
+                "name": "Ice (SMG-12)",
+                "assetId": "f0998201-30bd-4a23-b201-341fc50f5a12"
+            },
+            {
+                "name": "Iceman (LFP586)",
+                "assetId": "b60e4856-90e8-4445-93e0-04493ac7e143"
+            },
+            {
+                "name": "Mushroom (AUG A2)",
+                "assetId": "64272601-b460-4d65-ae16-4dae5409ec61"
+            },
+            {
+                "name": "Iceman (P9)",
+                "assetId": "b25464f1-6cba-44d6-bac0-02a2eede3357"
+            },
+            {
+                "name": "Hreinn (G36C)",
+                "assetId": "261da820-9259-48b4-9c4a-4d5c46a866a6"
+            },
+            {
+                "name": "Woodlands (D-50)",
+                "assetId": "31bd1994-4b23-4768-9370-d34130e63766"
+            },
+            {
+                "name": "Iceman (SG-CQB)",
+                "assetId": "ede16419-a58e-41d4-b19d-2ee97f265b06"
+            },
+            {
+                "name": "Firefox (SASG-12)",
+                "assetId": "0ceb4f2c-ef29-4b9b-b1b1-71f7a8545964"
+            },
+            {
+                "name": "Oh Hamburgers (416-C)",
+                "assetId": "37409fda-3f4a-41cf-937f-73701445abac"
+            },
+            {
+                "name": "Bandit's Gift (M870)",
+                "assetId": "e81706e3-8cc0-4126-b64a-63919b629c9a"
+            },
+            {
+                "name": "Cubist (OTs-03)",
+                "assetId": "4b116683-5653-4320-9eb6-142fdad0c8e3"
+            },
+            {
+                "name": "Slater (R4C)",
+                "assetId": "ce1e24ce-ca9a-43cd-aa07-cbd355776563"
+            },
+            {
+                "name": "Maui (PMM)",
+                "assetId": "4bb17b30-b457-494b-9a41-9ac512288900"
+            },
+            {
+                "name": "Zod (Super 90)",
+                "assetId": "433be7b7-75cc-4053-aac2-ab75be547e1a"
+            },
+            {
+                "name": "Sonic (M45 Meusoc)",
+                "assetId": "d0becb6e-06bc-401a-a98b-563f447e65ec"
+            },
+            {
+                "name": "Molokai (SMG-11)",
+                "assetId": "04a1a164-782f-4d3d-9ac1-243d254c3521"
+            },
+            {
+                "name": "Trail (F2)",
+                "assetId": "c534e5ab-7f16-48fd-9b40-fe8fb7090faf"
+            },
+            {
+                "name": "Maui (ITA12L)",
+                "assetId": "69fdc1f2-26a5-4b1c-9976-d19c1d93691c"
+            },
+            {
+                "name": "Iceman (Supernova)",
+                "assetId": "e9e5e5e3-ce5c-4d64-bfe8-bf26edef3c21"
+            },
+            {
+                "name": "Oahu (SC3000K)",
+                "assetId": "46219f94-98d6-4106-b288-6a01ec8dc452"
+            },
+            {
+                "name": "Smoke's Gift (FMG-9)",
+                "assetId": "a8abc56d-85b6-4752-ac1a-f70171a269ac"
+            },
+            {
+                "name": "Badge (L85A2)",
+                "assetId": "b188f1e1-6b0c-45bd-b2f7-a4d3874762e1"
+            },
+            {
+                "name": "Kamehameha (AK12)",
+                "assetId": "e2ce9739-adc3-420f-8630-374c1f423d34"
+            },
+            {
+                "name": "Iceman (P90)",
+                "assetId": "899c7be1-0dfa-46a1-b41b-2d98112e8e89"
+            },
+            {
+                "name": "Ice (C75)",
+                "assetId": "b0d47980-fdc9-4be2-8364-5b5456c3086e"
+            },
+            {
+                "name": "Strawberry Fields (FMG-9)",
+                "assetId": "6ed6593d-2232-48d1-bf25-82d15f7b0e99"
+            },
+            {
+                "name": "Ice (AUG A3)",
+                "assetId": "274bdfd2-9cc7-4d33-8431-449cb28537c2"
+            },
+            {
+                "name": "Maui (GONNE-6)",
+                "assetId": "56422ae3-61ee-4e5d-be55-e51769182d87"
+            },
+            {
+                "name": "Molokai (FMG-9)",
+                "assetId": "c6e7b253-7c6f-47c3-a54b-da189f917a08"
+            },
+            {
+                "name": "Tiger's Breath (CAMRS)",
+                "assetId": "de9b901b-551e-4ddb-b067-f9da19fbf5b5"
+            },
+            {
+                "name": "Lion's Gift (417)",
+                "assetId": "2e2341cd-098a-44a9-ace8-2d68822dda85"
+            },
+            {
+                "name": "Oahu (552 Commando)",
+                "assetId": "4afaabfc-fe33-467c-bd81-75f7740a2049"
+            },
+            {
+                "name": "Hull (D-50)",
+                "assetId": "1ba16d49-4fc2-4e8b-a4bc-388f46850a06"
+            },
+            {
+                "name": "Geothermal (6P41)",
+                "assetId": "c0cc85e1-7b96-463a-b55d-03a8b0729d61"
+            },
+            {
+                "name": "Maui (G36C)",
+                "assetId": "edb9e02c-6d1c-4da2-b668-36e5e6217240"
+            },
+            {
+                "name": "Nomad's Gift (AK-74M)",
+                "assetId": "403a945b-a397-4178-a850-70b80afa2ba4"
+            },
+            {
+                "name": "Ice (M870)",
+                "assetId": "48973222-8ab2-4028-9a2a-0aa63703bc04"
+            },
+            {
+                "name": "Phoenix (AUG A2)",
+                "assetId": "1f5a3792-3bc7-4651-b3f2-7a2e3f66b9e2"
+            },
+            {
+                "name": "Under The Sea (P9)",
+                "assetId": "de8fd54d-6272-4c02-b8e8-c4cd95fdc513"
+            },
+            {
+                "name": "Kamehameha (SASG-12)",
+                "assetId": "91a46327-74c8-4e05-8880-1e08478c8764"
+            },
+            {
+                "name": "Grassland (MPX)",
+                "assetId": "117065a4-95b7-403e-baa1-fcffebb1eb43"
+            },
+            {
+                "name": "Molokai (MP5K)",
+                "assetId": "405b7a26-c875-4cc7-a133-ca4121e5bc4e"
+            },
+            {
+                "name": "Mushroom (SMG-12)",
+                "assetId": "9e3c2f34-3b2b-4b14-99e2-5c28335cc15e"
+            },
+            {
+                "name": "Weave (SC3000K)",
+                "assetId": "530ca0d2-12c1-4c10-a06b-997ef3e9db6a"
+            },
+            {
+                "name": "Mushroom (SC3000K)",
+                "assetId": "15a8835d-7951-40d8-81a7-69ae1f0d6dad"
+            },
+            {
+                "name": "The Emperor (AR33)",
+                "assetId": "61a7091d-0817-4782-bcbb-5dd123091893"
+            },
+            {
+                "name": "Weave (R4C)",
+                "assetId": "de37c5b1-78ff-4b28-9cb9-b19516137e09"
+            },
+            {
+                "name": "Oahu (SR-25)",
+                "assetId": "618fe2a1-fec1-4f21-a309-d535919034ef"
+            },
+            {
+                "name": "Bitter Steel (F90)",
+                "assetId": "38f29f51-da1b-4035-9d03-c8520e0195bd"
+            },
+            {
+                "name": "Iceman (Commando 9)",
+                "assetId": "6d93b296-6a6b-4223-a42e-fe92aaaec99c"
+            },
+            {
+                "name": "Kona (SG-CQB)",
+                "assetId": "283200a8-fba9-4a94-ba38-6ca3196c746b"
+            },
+            {
+                "name": "The Fool (M590A1)",
+                "assetId": "8f9d24a9-db32-43f4-ac5c-1041d1876b4d"
+            },
+            {
+                "name": "Turbine (SASG-12)",
+                "assetId": "c8c0edec-f754-475f-a9aa-d167f50c0524"
+            },
+            {
+                "name": "Kona (Vector)",
+                "assetId": "0a244f28-69fb-4fa9-b119-36ed8264e811"
+            },
+            {
+                "name": "Frost's Gift (Super 90)",
+                "assetId": "0ea810be-74a5-439f-bfec-c9a8356bbe95"
+            },
+            {
+                "name": "Iceman (F2)",
+                "assetId": "74b36d9d-152f-4e03-9f86-ea43f1e8afb7"
+            },
+            {
+                "name": "Tattoo (MK17 CQB)",
+                "assetId": "93f3a867-4ce5-40a4-8c09-5467671ffd58"
+            },
+            {
+                "name": "Weave (OTs-03)",
+                "assetId": "9da4ae9f-8837-40c4-b89e-d82395ee3f8d"
+            },
+            {
+                "name": "Dissociate (9mm C1)",
+                "assetId": "e3324532-87dc-4959-a9d4-95ce87c049fc"
+            },
+            {
+                "name": "Gridlock's Gift (M249 SAW)",
+                "assetId": "a3a3e95d-3b92-41b2-9fa8-7de4d6695ebb"
+            },
+            {
+                "name": "Kona (LFP586)",
+                "assetId": "c85d2059-37c7-436b-83f1-a4d5f3f2b42b"
+            },
+            {
+                "name": "Crossroads (MP7)",
+                "assetId": "cc73ee2b-4cca-4f06-886c-ef6522ee82f5"
+            },
+            {
+                "name": "Web (SMG-11)",
+                "assetId": "cf1530e0-6a4f-4b23-9e06-1f4cacf7de71"
+            },
+            {
+                "name": "Kansas (Super 90)",
+                "assetId": "651087d1-ebcf-4fce-a124-e3ff963dc40a"
+            },
+            {
+                "name": "Pipeline (PMM)",
+                "assetId": "a6e2f21d-a05e-45cf-af60-7e165b375633"
+            },
+            {
+                "name": "Maui (CSRX300)",
+                "assetId": "e512d7db-c699-4e02-abc1-34b10d8ac200"
+            },
+            {
+                "name": "Belladonna (LFP586)",
+                "assetId": "6733e509-8235-4c5d-8109-a2c486a20173"
+            },
+            {
+                "name": "Iq's Gift (552 Commando)",
+                "assetId": "d0855602-e7c5-4ddb-9ae3-1133261cd931"
+            },
+            {
+                "name": "Stain Glass (P90)",
+                "assetId": "ecf02676-9402-4717-9f14-ecf37d91c670"
+            },
+            {
+                "name": "Buck's Gift (CAMRS)",
+                "assetId": "bee89f00-ec40-41fd-99c2-bf63efb8cb93"
+            },
+            {
+                "name": "Weave (M45 Meusoc)",
+                "assetId": "6409a463-74a8-4a36-a770-7a057195d7e6"
+            },
+            {
+                "name": "Kona (MP5)",
+                "assetId": "603617f9-a1ef-434d-84fd-5ad10c0940db"
+            },
+            {
+                "name": "Mushroom (GONNE-6)",
+                "assetId": "79e62326-8db1-421b-9a00-1bfb2d114da4"
+            },
+            {
+                "name": "Ice (GONNE-6)",
+                "assetId": "773b2ae9-b949-4aa0-b2e1-3ad8864378bd"
+            },
+            {
+                "name": "Tattoo (SR-25)",
+                "assetId": "1d30e9b9-2573-4ee2-a136-b1af905ccfa2"
+            },
+            {
+                "name": "Infinity (FMG-9)",
+                "assetId": "20d75a28-0370-4a88-af66-5b497b615ed4"
+            },
+            {
+                "name": "Cluster (AK12)",
+                "assetId": "3431f890-1ef0-4a04-a5c7-302c7a0ef224"
+            },
+            {
+                "name": "Molokai (CSRX300)",
+                "assetId": "709abe85-7878-4f6b-b06f-f56f4a12dca6"
+            },
+            {
+                "name": "Iceman (MP7)",
+                "assetId": "d10b582a-bc90-4843-a036-b57450b2d7f6"
+            },
+            {
+                "name": "Nitro (556XI)",
+                "assetId": "93f25806-226f-4fe9-9b2a-e92ffed0adc8"
+            },
+            {
+                "name": "November (M870)",
+                "assetId": "fdeab437-a3ba-492b-a8c9-f695cf609971"
+            },
+            {
+                "name": "Valkyrie's Gift (SPAS-12)",
+                "assetId": "7f84c0ef-0e34-4b3a-8e10-d35afdca2705"
+            },
+            {
+                "name": "Oahu (G8A1)",
+                "assetId": "2914a7ca-fa78-474b-8982-892008697633"
+            },
+            {
+                "name": "Fractyl (MP7)",
+                "assetId": "a32cd8e6-54e6-481a-81b0-833787859dd3"
+            },
+            {
+                "name": "Wamai's Gift (MP5K)",
+                "assetId": "104d856f-b32c-4434-a35f-6e50d57f2dcd"
+            },
+            {
+                "name": "Bayside (G36C)",
+                "assetId": "8a419c65-4d3f-428e-b466-bfbf788db348"
+            },
+            {
+                "name": "Martinete (MPX)",
+                "assetId": "a9149909-7fb8-4627-85e6-035de2cbc0fa"
+            },
+            {
+                "name": "Ice (G8A1)",
+                "assetId": "8305429e-2710-490d-a12d-b3f80e371bcd"
+            },
+            {
+                "name": "Sapien (SMG-11)",
+                "assetId": "c02b1b6e-9fcf-4005-8119-eda33704eda4"
+            },
+            {
+                "name": "Monster (SMG-11)",
+                "assetId": "a9b97dbd-9ade-4dd9-8300-22f5b3d5252f"
+            },
+            {
+                "name": "Iceman (MP5)",
+                "assetId": "c455b346-84bb-4357-9427-cd2f3a0219e5"
+            },
+            {
+                "name": "Oahu (AUG A2)",
+                "assetId": "0a55bb09-1609-433e-b88a-05217939af6c"
+            },
+            {
+                "name": "Weave (MK17 CQB)",
+                "assetId": "dc449ec3-76b6-4f0e-9f09-b73900ae2bcd"
+            },
+            {
+                "name": "Wetlands (MK17 CQB)",
+                "assetId": "67909f7e-e340-4b1e-98ed-9a463279cd15"
+            },
+            {
+                "name": "Justice (MP5K)",
+                "assetId": "f0e2efaf-c4ff-45a4-b4d3-b0abde5e740e"
+            },
+            {
+                "name": "Ice (Super 90)",
+                "assetId": "7b3f5969-fc88-4219-ab61-428774ce5ba2"
+            },
+            {
+                "name": "Ode (MP5)",
+                "assetId": "8c6e3e72-22ed-4cae-a6b3-aa3003dfd120"
+            },
+            {
+                "name": "Kamehameha (AUG A2)",
+                "assetId": "9430811c-c4d8-4325-b46d-6ae82f4e110f"
+            },
+            {
+                "name": "Twitch's Gift (417)",
+                "assetId": "132a8b6b-11f8-49a6-a183-8e94bc0ca321"
+            },
+            {
+                "name": "Sketchy (9mm C1)",
+                "assetId": "4903b4df-ae97-44cb-a22e-39c072808735"
+            },
+            {
+                "name": "Kapkan's Gift (SASG-12)",
+                "assetId": "190ca0e8-48b1-4083-a741-309bcb4b287c"
+            },
+            {
+                "name": "Pit Crew (9x19VSN)",
+                "assetId": "375906ae-524e-47b2-806e-4f0fbf5283f5"
+            },
+            {
+                "name": "Oahu (FO-12)",
+                "assetId": "cd3c407b-359f-4d89-9d28-b64100ce2d86"
+            },
+            {
+                "name": "Molokai (DP27)",
+                "assetId": "f079c003-ef57-406e-8bb2-fc842e84ca2a"
+            },
+            {
+                "name": "Jellyfish (G8A1)",
+                "assetId": "3694d55a-5f06-4222-8448-c9d15ae22465"
+            },
+            {
+                "name": "Molokai (M590A1)",
+                "assetId": "4f657f44-472b-4d05-9322-b187a1761a39"
+            },
+            {
+                "name": "Mushroom (CSRX300)",
+                "assetId": "d8958847-9fab-42ed-8fc5-aaf4964774ec"
+            },
+            {
+                "name": "Badlands (SR-25)",
+                "assetId": "fad4877a-c1b5-49cb-95ed-a00cc028a8ab"
+            },
+            {
+                "name": "Eagle (D-50)",
+                "assetId": "836086e9-1bf3-4db2-9473-d3c46eaf2be3"
+            },
+            {
+                "name": "Kamehameha (6P41)",
+                "assetId": "9c31c7ab-c036-4d2c-b5b6-07e6c144de11"
+            },
+            {
+                "name": "Madness (C8-SFW)",
+                "assetId": "b48cb144-fa0e-4384-a27a-e1c647825319"
+            },
+            {
+                "name": "Bulldozer (SG-CQB)",
+                "assetId": "3686a8a3-c0b2-49cd-b25f-1c3deb81997a"
+            },
+            {
+                "name": "Portal (Mk1 9mm)",
+                "assetId": "e5ee8eaf-2e07-4627-ab1f-30701f30f9e3"
+            },
+            {
+                "name": "Rond (5.7 USG)",
+                "assetId": "6a64d31e-af94-420e-97c2-44659f20a873"
+            },
+            {
+                "name": "Doc's Gift (P90)",
+                "assetId": "ebad2e6a-a1d9-4da2-9759-63d18e6c1360"
+            },
+            {
+                "name": "Ice (416-C)",
+                "assetId": "4a43003c-ec6d-4a46-8589-9b93d455bb06"
+            },
+            {
+                "name": "Mushroom (G8A1)",
+                "assetId": "662057ff-b04d-4a16-b21c-df212e22adfd"
+            },
+            {
+                "name": "Glaz's Gift (OTs-03)",
+                "assetId": "c9982b5d-0baf-4e36-97f1-63c5ec006d90"
+            },
+            {
+                "name": "Gleizes (L85A2)",
+                "assetId": "f726523c-69cb-48c8-a5a1-d324bdc57ff6"
+            },
+            {
+                "name": "Ursa (MP7)",
+                "assetId": "96147379-0ee8-4bd7-a7eb-f9917e5f753c"
+            },
+            {
+                "name": "Neon Dreams (C8-SFW)",
+                "assetId": "bf0ec99d-1ea0-4bc0-b72a-d2b3f6ec09eb"
+            },
+            {
+                "name": "Kamehameha (GONNE-6)",
+                "assetId": "3ba5383b-85d8-4533-8261-02fb4005212f"
+            },
+            {
+                "name": "Solar (AK12)",
+                "assetId": "65c3886e-607f-4f01-b0f6-ddee5d133b89"
+            },
+            {
+                "name": "Mechanical (9x19VSN)",
+                "assetId": "05b40863-bf22-4f36-b119-0cd627db91f4"
+            },
+            {
+                "name": "Rose Red (SPAS-12)",
+                "assetId": "d7fc6150-eaae-4786-9b47-181be5952e49"
+            },
+            {
+                "name": "Kona (P9)",
+                "assetId": "aa041b04-ec2f-4556-ad44-7024b1c601e2"
+            },
+            {
+                "name": "Weave (SMG-11)",
+                "assetId": "28fe4424-d8b9-4c0c-84dc-becc5fd651bf"
+            },
+            {
+                "name": "Nirvana (552 Commando)",
+                "assetId": "a8e13d92-4c52-4ef8-babf-04b87d348d48"
+            },
+            {
+                "name": "Weave (UMP45)",
+                "assetId": "3e4e4d16-c3c1-4bdd-8c6c-5aca2f662904"
+            },
+            {
+                "name": "Weave (M4)",
+                "assetId": "35be90dc-526c-42a5-bed7-be2a132bf581"
+            }
+        ]
+    }
+}

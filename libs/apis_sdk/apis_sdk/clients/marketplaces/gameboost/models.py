@@ -147,6 +147,66 @@ class GameBoostBulkDeleteCredentialsResponse(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Account Offer action / template models
+# ---------------------------------------------------------------------------
+
+class GameBoostAccountOfferActionResponse(BaseModel):
+    """Response from list/unlist/duplicate account offer actions.
+
+    These POST endpoints return the offer data plus action metadata.
+    """
+
+    data: dict[str, Any] = Field(default_factory=dict)  # raw offer dict (reuses GameBoostOffer shape)
+    message: str = ""
+    action: str = ""
+    previous_status: str = ""
+
+
+class GameBoostAccountOfferTemplate(BaseModel):
+    """Template for creating an account offer for a specific game."""
+
+    game: str = ""
+    title: str = ""
+    slug: str = ""
+    price: float = 0.0
+    login: str = ""
+    password: str = ""
+    email_login: str = ""
+    email_password: str = ""
+    is_manual: str = ""
+    delivery_time: dict[str, Any] = Field(default_factory=dict)
+    description: str = ""
+    dump: str = ""
+    delivery_instructions: str = ""
+    image_urls: list[str] = Field(default_factory=list)
+    account_data: dict[str, Any] = Field(default_factory=dict)
+    game_items: dict[str, Any] = Field(default_factory=dict)
+
+
+# ---------------------------------------------------------------------------
+# Order message models
+# ---------------------------------------------------------------------------
+
+class GameBoostMessageSender(BaseModel):
+    """Sender info nested inside message responses."""
+
+    id: int = 0
+    username: str = ""
+    is_admin: bool | None = None
+
+
+class GameBoostMessage(BaseModel):
+    """A single message from an account order message thread."""
+
+    id: str = ""
+    type: str = ""
+    text: str = ""
+    attachment: Any = None
+    sender: GameBoostMessageSender = Field(default_factory=GameBoostMessageSender)
+    sent_at: int | None = None
+
+
+# ---------------------------------------------------------------------------
 # Offer model
 # ---------------------------------------------------------------------------
 
@@ -247,6 +307,359 @@ class GameBoostOrder(BaseModel):
     refunded_at: int | None = None
 
     model_config = {"populate_by_name": True}
+
+
+# ---------------------------------------------------------------------------
+# Item Offer model
+# ---------------------------------------------------------------------------
+
+class GameBoostItemOffer(BaseModel):
+    """An item offer as returned by the GameBoost API.
+
+    Unlike account offers, item offers use string prices (not nested objects)
+    and have stock/min_quantity instead of credentials.
+    """
+
+    id: int = 0
+    external_id: str | None = None
+    game: GameBoostGame = Field(default_factory=GameBoostGame)
+
+    title: str = ""
+    slug: str = ""
+    description: str = ""
+    parameters: dict[str, Any] | list[Any] | None = None
+
+    status: str = ""
+    delivery_time: GameBoostDeliveryTime = Field(default_factory=GameBoostDeliveryTime)
+    delivery_instructions: str | None = None
+
+    stock: int = 0
+    min_quantity: int = 1
+
+    # Prices are plain strings for item offers (e.g. "19.99")
+    price_eur: str = ""
+    price_usd: str = ""
+
+    views: int = 0
+    image_urls: list[str] = Field(default_factory=list)
+
+    created_at: int | None = None
+    updated_at: int | None = None
+    listed_at: int | None = None
+
+    model_config = {"populate_by_name": True}
+
+
+class GameBoostItemOfferActionResponse(BaseModel):
+    """Response from list/unlist/archive item offer actions.
+
+    These POST endpoints return the offer data plus action metadata.
+    """
+
+    data: GameBoostItemOffer = Field(default_factory=GameBoostItemOffer)
+    message: str = ""
+    action: str = ""
+    previous_status: str = ""
+
+
+class GameBoostItemOfferTemplate(BaseModel):
+    """Template for creating an item offer for a specific game."""
+
+    game: str = ""
+    title: str = ""
+    slug: str = ""
+    description: str = ""
+    price: float = 0.0
+    stock: int = 0
+    min_quantity: int = 1
+    delivery_time: dict[str, Any] = Field(default_factory=dict)
+    delivery_instructions: str = ""
+    image_urls: list[str] = Field(default_factory=list)
+    item_data: Any = None
+
+
+# ---------------------------------------------------------------------------
+# Item Order model
+# ---------------------------------------------------------------------------
+
+class GameBoostItemOrder(BaseModel):
+    """An item order as returned by the GameBoost API.
+
+    Item orders have quantity, string prices, and unit prices.
+    No credentials field — items are delivered differently from accounts.
+    """
+
+    id: int = 0
+    item_offer_id: int | None = None
+
+    game: GameBoostGame = Field(default_factory=GameBoostGame)
+    buyer: GameBoostBuyer = Field(default_factory=GameBoostBuyer)
+    rating: Any = None
+    title: str = ""
+    description: str = ""
+    quantity: int = 0
+    parameters: dict[str, Any] | list[Any] = Field(default_factory=dict)
+    status: str = ""
+
+    delivery_time: GameBoostDeliveryTime = Field(default_factory=GameBoostDeliveryTime)
+
+    # Prices are plain strings for item orders
+    price_eur: str = ""
+    price_usd: str = ""
+    unit_price_eur: str = ""
+    unit_price_usd: str = ""
+
+    created_at: int | None = None
+    updated_at: int | None = None
+    purchased_at: int | None = None
+    completed_at: int | None = None
+    refunded_at: int | None = None
+
+    model_config = {"populate_by_name": True}
+
+
+class GameBoostItemOrderActionResponse(BaseModel):
+    """Response from complete item order action."""
+
+    data: GameBoostItemOrder = Field(default_factory=GameBoostItemOrder)
+    message: str = ""
+    action: str = ""
+
+
+# ---------------------------------------------------------------------------
+# Gift Card Catalog sub-models
+# ---------------------------------------------------------------------------
+
+class GameBoostGiftCardRegion(BaseModel):
+    """Region info for gift cards."""
+
+    id: int = 0
+    code: str = ""
+    name: str = ""
+    slug: str = ""
+    is_country: bool = False
+
+
+class GameBoostGiftCardBrand(BaseModel):
+    """Brand info for gift cards."""
+
+    id: int = 0
+    name: str = ""
+    slug: str = ""
+
+
+class GameBoostGiftCard(BaseModel):
+    """A gift card catalog entry.
+
+    Represents a specific denomination/region combination (e.g. $50 Steam US).
+    """
+
+    id: int = 0
+    region_id: int = 0
+    brand_id: int = 0
+    region: GameBoostGiftCardRegion = Field(default_factory=GameBoostGiftCardRegion)
+    brand: GameBoostGiftCardBrand = Field(default_factory=GameBoostGiftCardBrand)
+    title: str = ""
+    face_value_amount: str = ""
+    face_value_unit: str | None = None
+    face_value_unit_slug: str | None = None
+    lowest_price_eur: str | None = None
+    lowest_price_usd: str | None = None
+    highest_price_eur: str | None = None
+    highest_price_usd: str | None = None
+    is_enabled: bool = True
+    created_at: int | None = None
+    updated_at: int | None = None
+
+    model_config = {"populate_by_name": True}
+
+
+# ---------------------------------------------------------------------------
+# Gift Card Offer model
+# ---------------------------------------------------------------------------
+
+class GameBoostGiftCardOffer(BaseModel):
+    """A gift card offer as returned by the GameBoost API.
+
+    Gift card offers link to a catalog gift card and have stock + pricing.
+    No list/unlist/archive lifecycle — just create/update/delete.
+    """
+
+    id: int = 0
+    gift_card_id: int = 0
+    price_eur: str = ""
+    price_usd: str = ""
+    stock: int = 0
+    gift_card: GameBoostGiftCard = Field(default_factory=GameBoostGiftCard)
+    created_at: int | None = None
+    updated_at: int | None = None
+
+    model_config = {"populate_by_name": True}
+
+
+class GameBoostGiftCardAddStockResponse(BaseModel):
+    """Response from POST /gift-cards/offers/{id}/stock.
+
+    The exact response shape is not fully documented; fields are permissive.
+    """
+
+    message: str = ""
+    data: list[dict[str, Any]] = Field(default_factory=list)
+
+
+# ---------------------------------------------------------------------------
+# Gift Card Order model
+# ---------------------------------------------------------------------------
+
+class GameBoostGiftCardOrderKey(BaseModel):
+    """A single delivered key in a gift card order."""
+
+    id: int = 0
+    gift_card_order_id: int = 0
+    key: str = ""
+    type: dict[str, Any] = Field(default_factory=dict)
+    created_at: int | None = None
+    revealed_at: int | None = None
+
+
+class GameBoostGiftCardOrder(BaseModel):
+    """A gift card order as returned by the GameBoost API.
+
+    Gift card orders have quantity, string prices, and delivered keys.
+    """
+
+    id: int = 0
+    gift_card_id: int = 0
+    gift_card_offer_id: int | None = None
+    region_id: int = 0
+    brand_id: int = 0
+    buyer: GameBoostBuyer = Field(default_factory=GameBoostBuyer)
+    title: str = ""
+    face_value_amount: str = ""
+    face_value_unit: str = ""
+    quantity: int = 0
+    unit_price_eur: str = ""
+    unit_price_usd: str = ""
+    price_eur: str = ""
+    price_usd: str = ""
+    status: str = ""
+    keys: list[GameBoostGiftCardOrderKey] = Field(default_factory=list)
+    created_at: int | None = None
+    updated_at: int | None = None
+    completed_at: int | None = None
+    refunded_at: int | None = None
+
+    model_config = {"populate_by_name": True}
+
+
+# ---------------------------------------------------------------------------
+# Currency Offer model
+# ---------------------------------------------------------------------------
+
+class GameBoostCurrencyOffer(BaseModel):
+    """A currency offer as returned by the GameBoost API.
+
+    Currency offers sell in-game currency (e.g. gold, Robux) with per-unit pricing.
+    They have list/unlist/archive lifecycle like item offers.
+    """
+
+    id: int = 0
+    uuid: str = ""
+    external_id: str | None = None
+    game: GameBoostGame = Field(default_factory=GameBoostGame)
+    currency_unit: GameBoostCurrencyUnit | None = None
+
+    title: str = ""
+    description: str | None = None
+    parameters: dict[str, Any] | list[Any] | None = None
+    base_currency: str = ""
+
+    status: str = ""
+    delivery_time: GameBoostDeliveryTime = Field(default_factory=GameBoostDeliveryTime)
+    delivery_instructions: str | None = None
+
+    stock: int = 0
+    min_quantity: int = 1
+
+    price_eur: str = ""
+    price_usd: str = ""
+
+    views: int = 0
+    icon_url: str | None = None
+
+    created_at: int | None = None
+    updated_at: int | None = None
+    listed_at: int | None = None
+
+    model_config = {"populate_by_name": True}
+
+
+class GameBoostCurrencyOfferActionResponse(BaseModel):
+    """Response from list/unlist/archive currency offer actions."""
+
+    data: GameBoostCurrencyOffer = Field(default_factory=GameBoostCurrencyOffer)
+    message: str = ""
+    action: str = ""
+    previous_status: str | None = None
+
+
+class GameBoostCurrencyOfferTemplate(BaseModel):
+    """Template for creating a currency offer for a specific game."""
+
+    game: str = ""
+    description: str = ""
+    price: float = 0.0
+    currency: str = ""
+    stock: int = 0
+    min_quantity: int = 1
+    delivery_time: dict[str, Any] = Field(default_factory=dict)
+    delivery_instructions: str = ""
+    currency_data: dict[str, Any] | None = None
+
+
+# ---------------------------------------------------------------------------
+# Currency Order model
+# ---------------------------------------------------------------------------
+
+class GameBoostCurrencyOrder(BaseModel):
+    """A currency order as returned by the GameBoost API.
+
+    Currency orders have quantity, per-unit prices, and optional credentials/proof.
+    """
+
+    id: int = 0
+    currency_offer_id: int | None = None
+    game: GameBoostGame = Field(default_factory=GameBoostGame)
+    buyer: GameBoostBuyer = Field(default_factory=GameBoostBuyer)
+    rating: Any = None
+    title: str = ""
+    description: str | None = None
+    quantity: int = 0
+    currency_unit: GameBoostCurrencyUnit | None = None
+    parameters: dict[str, Any] | list[Any] | None = None
+    status: str = ""
+
+    delivery_time: GameBoostDeliveryTime = Field(default_factory=GameBoostDeliveryTime)
+    credentials: Any = None
+    completion_proof_url: str | None = None
+
+    price_eur: str = ""
+    price_usd: str = ""
+    unit_price_eur: str = ""
+    unit_price_usd: str = ""
+
+    created_at: int | None = None
+    updated_at: int | None = None
+
+    model_config = {"populate_by_name": True}
+
+
+class GameBoostCurrencyOrderActionResponse(BaseModel):
+    """Response from complete currency order action."""
+
+    data: GameBoostCurrencyOrder = Field(default_factory=GameBoostCurrencyOrder)
+    message: str = ""
+    action: str = ""
 
 
 # ---------------------------------------------------------------------------

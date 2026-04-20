@@ -56,7 +56,11 @@ _data_samples/
 
 # Temporary/debug output
 tmp/
+.tmp/
 backend/tmp/
+
+# Generated output (all tools write here)
+output/
 
 # AI orchestrator (local-only)
 _ai/

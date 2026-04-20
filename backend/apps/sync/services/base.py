@@ -582,10 +582,17 @@ class BaseSyncService:
     ) -> str:
         """Shared Order upsert. Returns ``'created'`` or ``'updated'``.
 
+        If our_fee is None, it is auto-calculated from FeeRule
+        (percent only, flat fee excluded).
+
         OwnedProduct status is updated automatically via post_save signal
         (see apps.inventory.signals).
         """
         from apps.orders.models import Order
+
+        # Auto-calculate fee if not provided by the marketplace API
+        if defaults.get('our_fee') is None:
+            self._auto_calculate_fee(raw_payload, defaults)
 
         _, created = Order.objects.update_or_create(
             integration_account=raw_payload.integration_account,
@@ -594,6 +601,33 @@ class BaseSyncService:
         )
 
         return 'created' if created else 'updated'
+
+    @staticmethod
+    def _auto_calculate_fee(raw_payload: RawPayload, defaults: dict) -> None:
+        """Calculate our_fee from FeeRule (percent only, no flat fee)."""
+        from apps.orders.enums import FeeType
+        from apps.orders.fees import calculate_fee, compute_fee_amount
+
+        provider = ''
+        if raw_payload.integration_account:
+            provider = raw_payload.integration_account.provider
+        if not provider:
+            return
+
+        sold_at = defaults.get('sold_at')
+        ref_date = sold_at.date() if sold_at else None
+
+        rule = calculate_fee(
+            marketplace=provider,
+            fee_type=FeeType.SALE,
+            product_category=defaults.get('product_category') or '',
+            game_id=defaults['game'].pk if defaults.get('game') else None,
+            ref_date=ref_date,
+        )
+        if rule:
+            defaults['our_fee'] = compute_fee_amount(
+                defaults['price'], rule, include_flat=False,
+            )
 
     # ── Utilities ────────────────────────────────────────────────────
 

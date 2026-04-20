@@ -42,7 +42,7 @@ class EldoradoOfferDetails(BaseModel):
     """The 'details' block of an Eldorado offer."""
 
     pricing: EldoradoPricing = Field(default_factory=EldoradoPricing)
-    description: str = ""
+    description: str | None = ""
     guaranteedDeliveryTime: str = "Instant"
     offerTitle: str = ""
     mainOfferImage: EldoradoOfferImage = Field(default_factory=EldoradoOfferImage)
@@ -99,7 +99,7 @@ class EldoradoOfferSearchItem(BaseModel):
     category: str = ""
     gameCategoryTitle: str = ""
     offerTitle: str = ""
-    description: str = ""
+    description: str | None = ""
     offerState: str = ""
     guaranteedDeliveryTime: str = ""
     quantity: int = 1
@@ -267,3 +267,139 @@ class EldoradoImageUploadResponse(BaseModel):
     """Response from Eldorado image upload endpoint."""
 
     paths: list[str] = Field(default_factory=list)
+
+
+# ---------------------------------------------------------------------------
+# Review models
+# ---------------------------------------------------------------------------
+
+class EldoradoReviewFeedback(BaseModel):
+    """Feedback block within an order review."""
+
+    feedbackRating: str = ""          # "Positive" | "Negative" | "Neutral"
+    feedbackTags: list[str] = Field(default_factory=list)
+    reviewMessage: str = ""
+    isReviewMessageVisible: bool = True
+    wasInitialRatingPositive: bool | None = None
+
+
+class EldoradoOrderReviewEntry(BaseModel):
+    """orderReview block within a review result item."""
+
+    id: str = ""
+    gameCategoryTitle: str = ""
+    date: str = ""
+    review: EldoradoReviewFeedback = Field(default_factory=EldoradoReviewFeedback)
+
+
+class EldoradoReviewBuyer(BaseModel):
+    """Buyer info returned alongside a review."""
+
+    maskedUsername: str = ""
+    createdDate: str = ""
+    isVerifiedSeller: bool = False
+
+
+class EldoradoReviewItem(BaseModel):
+    """A single result item from the reviews endpoint."""
+
+    orderReview: EldoradoOrderReviewEntry = Field(
+        default_factory=EldoradoOrderReviewEntry,
+    )
+    buyer: EldoradoReviewBuyer = Field(default_factory=EldoradoReviewBuyer)
+
+
+class EldoradoReviewsPage(BaseModel):
+    """Paginated reviews block (nested under 'reviews' key in the response)."""
+
+    cursor: str | None = None
+    pageDirection: str = ""
+    previousPageCursor: str | None = None
+    nextPageCursor: str | None = None
+    pageSize: int = 7
+    results: list[EldoradoReviewItem] = Field(default_factory=list)
+
+
+class EldoradoUserOrderInfo(BaseModel):
+    """Aggregate seller stats returned alongside reviews."""
+
+    userId: str = ""
+    positiveCount: int = 0
+    negativeCount: int = 0
+    ratingCount: int = 0
+    feedbackScore: float = 0.0
+
+
+class EldoradoReviewsResponse(BaseModel):
+    """Top-level response from GET /api/orders/me/reviews."""
+
+    userOrderInfo: EldoradoUserOrderInfo = Field(
+        default_factory=EldoradoUserOrderInfo,
+    )
+    reviews: EldoradoReviewsPage = Field(default_factory=EldoradoReviewsPage)
+
+
+# ---------------------------------------------------------------------------
+# Notification models
+# ---------------------------------------------------------------------------
+
+class EldoradoNotificationPrice(BaseModel):
+    """Price info within a notification."""
+
+    amount: float = 0.0
+    currency: str = "USD"
+
+
+class EldoradoNotificationDetails(BaseModel):
+    """Details block of a notification."""
+
+    price: EldoradoNotificationPrice = Field(default_factory=EldoradoNotificationPrice)
+    detailsId: str | None = None
+    title: str | None = None
+    buyerUsername: str | None = None
+    sellerUsername: str | None = None
+    gameId: str | None = None
+    gameCategoryTitle: str | None = None
+
+
+class EldoradoCustomNotificationData(BaseModel):
+    """Custom data for buyer-contact notifications."""
+
+    reason: str = ""
+    additionalDetails: str = ""
+    orderId: str = ""
+
+
+class EldoradoNotification(BaseModel):
+    """A single notification entry."""
+
+    id: str = ""
+    type: str = ""
+    event: str = ""
+    notificationReadStatus: str = ""
+    recipientRole: str = ""
+    details: EldoradoNotificationDetails = Field(
+        default_factory=EldoradoNotificationDetails,
+    )
+    notificationDate: str = ""
+    customNotificationData: EldoradoCustomNotificationData | None = None
+
+
+class EldoradoNotificationItem(BaseModel):
+    """Wrapper for a notification result item."""
+
+    customNotification: dict[str, object] | None = None
+    notification: EldoradoNotification = Field(
+        default_factory=EldoradoNotification,
+    )
+
+
+class EldoradoNotificationsPage(BaseModel):
+    """Paginated response from the notifications endpoint."""
+
+    cursor: str | None = None
+    pageDirection: str = ""
+    previousPageCursor: str | None = None
+    nextPageCursor: str | None = None
+    pageSize: int = 20
+    results: list[EldoradoNotificationItem] = Field(default_factory=list)

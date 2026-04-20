@@ -62,6 +62,14 @@ class LztApiClient(Protocol):
         proxy_url: str | None = None,
     ) -> ApiResult[LztOrderPage]: ...
 
+    def get_user_items(
+        self,
+        *,
+        params: dict[str, Any] | None = None,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[LztOrderPage]: ...
+
     def check_account(
         self,
         item_id: str,
@@ -69,6 +77,15 @@ class LztApiClient(Protocol):
         auth_headers: dict[str, str],
         proxy_url: str | None = None,
     ) -> ApiResult[LztCheckAccountResult]: ...
+
+    def get_email_letters(
+        self,
+        *,
+        email_password: str,
+        limit: int,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[dict[str, Any]]: ...
 
     def confirm_buy(
         self,
@@ -199,6 +216,57 @@ class LztFacade:
         return self._exec.execute_with_retry(
             lambda proxy_url: self._client.get_user_orders(
                 params=params,
+                auth_headers=self._exec.get_auth_headers(),
+                proxy_url=proxy_url,
+            ),
+            proxy_group=proxy_group,
+        )
+
+    # ---------------------------------------------------------------------------
+    # User Items (own listings)
+    # ---------------------------------------------------------------------------
+
+    def get_user_items(
+        self,
+        *,
+        params: dict[str, Any] | None = None,
+        proxy_group: str | None = None,
+    ) -> ApiResult[LztOrderPage]:
+        """Fetch user's own items/listings (e.g. closed/sold accounts)."""
+        return self._exec.execute_with_retry(
+            lambda proxy_url: self._client.get_user_items(
+                params=params,
+                auth_headers=self._exec.get_auth_headers(),
+                proxy_url=proxy_url,
+            ),
+            proxy_group=proxy_group,
+        )
+
+    # ---------------------------------------------------------------------------
+    # Mail Access (email:password validation + inbox)
+    # ---------------------------------------------------------------------------
+
+    def get_email_letters(
+        self,
+        email_password: str,
+        *,
+        limit: int = 50,
+        proxy_group: str | None = None,
+    ) -> ApiResult[dict[str, Any]]:
+        """Validate an ``email:password`` pair and fetch recent inbox letters.
+
+        Wraps ``LztClient.get_email_letters`` with the standard retry,
+        proxy rotation, and rate-limit plumbing.  Returns the raw LZT
+        response body (``letters``, ``system_info``, ...) on success.
+
+        A 403 result indicates invalid credentials (wrong password or the
+        mailbox is locked).  A body-level ``retry_request`` is surfaced as
+        a retryable ``SERVER_ERROR`` so the policy will re-issue the call.
+        """
+        return self._exec.execute_with_retry(
+            lambda proxy_url: self._client.get_email_letters(
+                email_password=email_password,
+                limit=limit,
                 auth_headers=self._exec.get_auth_headers(),
                 proxy_url=proxy_url,
             ),

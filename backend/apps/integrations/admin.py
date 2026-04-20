@@ -1,9 +1,10 @@
 from django import forms
 from django.contrib import admin
-from django.utils.html import format_html
+from django.utils.html import format_html, mark_safe
 
-from .models import IntegrationAccount, AccountGroup, IntegrationCredential, Proxy
+from .models import IntegrationAccount, AccountGroup, IntegrationCredential, Proxy, ServiceCredential
 from .providers.registry import get_credential_fields
+from .services.registry import get_service_fields
 
 
 class IntegrationCredentialInlineForm(forms.ModelForm):
@@ -140,6 +141,99 @@ class IntegrationAccountAdmin(admin.ModelAdmin):
         return hasattr(obj, 'credential') and obj.credential.is_active
 
 
+class ServiceCredentialForm(forms.ModelForm):
+    """Dynamic form that renders service-type-specific credential fields.
+
+    Mirrors IntegrationCredentialInlineForm but for ServiceCredential (standalone).
+    Field schema comes from integrations/services/ registry.
+    """
+
+    class Meta:
+        model = ServiceCredential
+        fields = ('name', 'service_type', 'slug', 'base_url', 'is_active', 'notes')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        service_type = self._get_service_type()
+        if not service_type:
+            return
+
+        credential_fields = get_service_fields(service_type)
+        existing_creds = {}
+        if self.instance and self.instance.pk:
+            existing_creds = self.instance.credentials or {}
+
+        for field_def in credential_fields:
+            if field_def.field_type == 'password':
+                self.fields[f'cred_{field_def.name}'] = forms.CharField(
+                    label=field_def.label,
+                    required=field_def.required and not self.instance.pk,
+                    initial='',
+                    help_text=field_def.help_text or ('Leave blank to keep current value' if self.instance.pk else ''),
+                    widget=forms.PasswordInput(attrs={'class': 'vTextField', 'autocomplete': 'off'}),
+                )
+            elif field_def.field_type == 'url':
+                self.fields[f'cred_{field_def.name}'] = forms.URLField(
+                    label=field_def.label,
+                    required=False,
+                    initial=existing_creds.get(field_def.name, ''),
+                    help_text=field_def.help_text,
+                    widget=forms.URLInput(attrs={'class': 'vTextField'}),
+                )
+            else:
+                self.fields[f'cred_{field_def.name}'] = forms.CharField(
+                    label=field_def.label,
+                    required=field_def.required and not self.instance.pk,
+                    initial=existing_creds.get(field_def.name, ''),
+                    help_text=field_def.help_text,
+                    widget=forms.TextInput(attrs={'class': 'vTextField'}),
+                )
+
+    def _get_service_type(self) -> str:
+        if self.instance and self.instance.pk:
+            return self.instance.service_type
+        if self.data:
+            return self.data.get('service_type', '')
+        return ''
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        service_type = instance.service_type
+        credential_fields = get_service_fields(service_type)
+
+        existing_creds = instance.credentials.copy() if instance.credentials else {}
+
+        for field_def in credential_fields:
+            value = self.cleaned_data.get(f'cred_{field_def.name}', '')
+            if field_def.field_type == 'password' and not value:
+                continue  # Keep existing value
+            if value:
+                existing_creds[field_def.name] = value
+
+        instance.credentials = existing_creds
+        if commit:
+            instance.save()
+        return instance
+
+
+@admin.register(ServiceCredential)
+class ServiceCredentialAdmin(admin.ModelAdmin):
+    form = ServiceCredentialForm
+    list_display  = ('name', 'service_type', 'slug', 'is_active', 'updated_at')
+    list_filter   = ('service_type', 'is_active')
+    search_fields = ('name', 'slug', 'notes')
+    prepopulated_fields = {'slug': ('service_type', 'name')}
+    readonly_fields = ('created_at', 'updated_at')
+
+    def get_fields(self, request, obj=None):
+        base = ['name', 'service_type', 'slug', 'base_url', 'is_active', 'notes']
+        if obj and obj.service_type:
+            credential_fields = get_service_fields(obj.service_type)
+            base += [f'cred_{f.name}' for f in credential_fields]
+        base += ['created_at', 'updated_at']
+        return base
+
+
 @admin.register(IntegrationCredential)
 class IntegrationCredentialAdmin(admin.ModelAdmin):
     list_display = ('account', 'provider_display', 'is_active', 'token_status', 'updated_at')
@@ -153,7 +247,7 @@ class IntegrationCredentialAdmin(admin.ModelAdmin):
     @admin.display(description='Token Status')
     def token_status(self, obj):
         if obj.token_expires_at is None:
-            return format_html('<span style="color: gray;">N/A</span>')
+            return mark_safe('<span style="color: gray;">N/A</span>')
         if obj.is_token_expired:
-            return format_html('<span style="color: red;">Expired</span>')
-        return format_html('<span style="color: green;">Valid</span>')
+            return mark_safe('<span style="color: red;">Expired</span>')
+        return mark_safe('<span style="color: green;">Valid</span>')

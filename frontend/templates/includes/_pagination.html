@@ -1,0 +1,38 @@
+{% comment %}
+Unified pagination partial.
+Context variables:
+  - page_obj: Django Page object (required)
+{% endcomment %}
+
+{% if page_obj.has_other_pages %}
+<nav class="flex flex-col sm:flex-row items-center justify-between mt-4 gap-2" aria-label="Pagination">
+    <div class="text-sm text-gray-500">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        <span class="text-gray-400">({{ page_obj.paginator.count }} items)</span>
+    </div>
+    <div class="flex gap-1">
+        {% if page_obj.has_previous %}
+        <a href="?{% for key, val in request.GET.items %}{% if key != 'page' %}{{ key }}={{ val }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
+           class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+            Prev
+        </a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <span class="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-md">{{ num }}</span>
+            {% elif num > page_obj.number|add:"-4" and num < page_obj.number|add:"4" %}
+            <a href="?{% for key, val in request.GET.items %}{% if key != 'page' %}{{ key }}={{ val }}&{% endif %}{% endfor %}page={{ num }}"
+               class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?{% for key, val in request.GET.items %}{% if key != 'page' %}{{ key }}={{ val }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
+           class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+            Next
+        </a>
+        {% endif %}
+    </div>
+</nav>
+{% endif %}

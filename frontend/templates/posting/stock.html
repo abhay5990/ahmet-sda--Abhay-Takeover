@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+
+{% block title %}Stock Posting — Inventory Manager{% endblock %}
+
+{% block content %}
+<div x-data="stockPosting()" x-init="init()">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Stock Posting</h1>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- LEFT: Job Creation Form -->
+        <div class="lg:col-span-2 space-y-4">
+
+            <!-- Game Selection -->
+            <div class="bg-white rounded-lg shadow p-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Game</label>
+                <select x-model="selectedGame" @change="onGameChange()"
+                        class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
+                    <option value="">Select a game...</option>
+                    {% for game in games %}
+                    <option value="{{ game.id }}" data-slug="{{ game.slug }}">{{ game.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Login Textarea -->
+            <div class="bg-white rounded-lg shadow p-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Logins <span class="text-gray-400">(one per line)</span>
+                </label>
+                <textarea x-model="logins" rows="6" placeholder="Enter logins, one per line..."
+                          class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 font-mono text-sm"></textarea>
+                <p class="mt-1 text-xs text-gray-500">
+                    <span x-text="loginCount"></span> login(s) entered
+                </p>
+            </div>
+
+            <!-- Store Selection -->
+            <div class="bg-white rounded-lg shadow p-4">
+                <label class="block text-sm font-medium text-gray-700 mb-3">Stores</label>
+                <div class="space-y-2">
+                    {% for store in stores %}
+                    <div class="border rounded-md">
+                        <div class="flex items-center justify-between p-3">
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="checkbox" value="{{ store.id }}"
+                                       x-model="selectedStores"
+                                       @change="onStoreToggle('{{ store.provider }}')"
+                                       class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                <span class="text-sm font-medium text-gray-700">{{ store.name }}</span>
+                                <span class="text-xs px-2 py-0.5 rounded-full
+                                    {% if store.provider == 'gameboost' %}bg-blue-100 text-blue-700
+                                    {% elif store.provider == 'eldorado' %}bg-yellow-100 text-yellow-700
+                                    {% elif store.provider == 'playerauctions' %}bg-purple-100 text-purple-700
+                                    {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                    {{ store.get_provider_display }}
+                                </span>
+                            </label>
+                            <button @click="toggleSettings('{{ store.provider }}')"
+                                    x-show="selectedStores.includes('{{ store.id }}')"
+                                    class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Pricing Settings (collapsible) -->
+                        <div x-show="showSettings['{{ store.provider }}']" x-collapse
+                             class="border-t px-3 pb-3 pt-2 bg-gray-50">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Low (&le;$10)</label>
+                                    <input type="number" step="0.01"
+                                           x-model="defaults['{{ store.provider }}'].multiplier_low"
+                                           class="w-full text-sm border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Mid ($10-$100)</label>
+                                    <input type="number" step="0.01"
+                                           x-model="defaults['{{ store.provider }}'].multiplier_mid"
+                                           class="w-full text-sm border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">High (&gt;$100)</label>
+                                    <input type="number" step="0.01"
+                                           x-model="defaults['{{ store.provider }}'].multiplier_high"
+                                           class="w-full text-sm border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Min Price</label>
+                                    <input type="number" step="0.01"
+                                           x-model="defaults['{{ store.provider }}'].min_price"
+                                           class="w-full text-sm border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Forced Ending</label>
+                                    <input type="number" step="0.01" placeholder="0.99"
+                                           x-model="defaults['{{ store.provider }}'].forced_ending"
+                                           class="w-full text-sm border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Sub-Platform</label>
+                                    <select x-model="defaults['{{ store.provider }}'].sub_platform"
+                                            class="w-full text-sm border-gray-300 rounded-md">
+                                        <option value="">Default</option>
+                                        <option value="Auto">Auto</option>
+                                        <option value="pc">PC</option>
+                                        <option value="psn">PSN</option>
+                                        <option value="xbox">Xbox</option>
+                                        <option value="ios">iOS</option>
+                                        <option value="android">Android</option>
+                                        <option value="switch">Switch</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="flex items-center space-x-4">
+                <button @click="submitJob()" :disabled="!canSubmit || submitting"
+                        class="px-6 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg
+                               hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500
+                               disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    <span x-show="!submitting">Start Posting</span>
+                    <span x-show="submitting">Submitting...</span>
+                </button>
+                <p x-show="submitError" class="text-sm text-red-600" x-text="submitError"></p>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: Progress + Recent Jobs -->
+        <div class="space-y-4">
+
+            <!-- Active Job Progress -->
+            <div x-show="activeJobId" class="bg-white rounded-lg shadow p-4">
+                <h3 class="text-sm font-medium text-gray-700 mb-3">
+                    Job #<span x-text="activeJobId"></span> Progress
+                </h3>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-3">
+                    <div class="h-2.5 rounded-full transition-all duration-300"
+                         :class="jobProgress.fail_count > 0 ? 'bg-yellow-500' : 'bg-emerald-500'"
+                         :style="'width: ' + progressPercent + '%'"></div>
+                </div>
+                <p class="text-xs text-gray-500 mb-3">
+                    <span x-text="processedCount"></span> / <span x-text="jobProgress.total_count || 0"></span>
+                    (<span class="text-emerald-600" x-text="jobProgress.success_count || 0"></span> ok,
+                     <span class="text-red-600" x-text="jobProgress.fail_count || 0"></span> failed)
+                </p>
+
+                <!-- Item List -->
+                <div class="space-y-1 max-h-64 overflow-y-auto">
+                    <template x-for="item in jobProgress.items" :key="item.item_id">
+                        <div class="flex items-center justify-between text-xs py-1 border-b border-gray-100">
+                            <div class="truncate flex-1 mr-2">
+                                <span x-text="item.login" class="font-mono"></span>
+                                <span class="text-gray-400" x-text="' → ' + item.store"></span>
+                            </div>
+                            <span class="flex-shrink-0 px-1.5 py-0.5 rounded text-xs font-medium"
+                                  :class="{
+                                      'bg-gray-100 text-gray-600': item.status === 'pending',
+                                      'bg-blue-100 text-blue-700': item.status === 'processing',
+                                      'bg-emerald-100 text-emerald-700': item.status === 'success',
+                                      'bg-red-100 text-red-700': item.status === 'failed',
+                                      'bg-yellow-100 text-yellow-700': item.status === 'skipped',
+                                  }" x-text="item.status"></span>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Job Complete Banner -->
+                <div x-show="jobProgress.status === 'completed'" class="mt-3 p-2 bg-emerald-50 rounded text-sm text-emerald-700">
+                    Job completed.
+                </div>
+            </div>
+
+            <!-- Skipped Logins -->
+            <div x-show="skippedLogins.length > 0" class="bg-white rounded-lg shadow p-4">
+                <h3 class="text-sm font-medium text-red-600 mb-2">Skipped Logins</h3>
+                <div class="space-y-1">
+                    <template x-for="s in skippedLogins" :key="s.login">
+                        <div class="text-xs">
+                            <span class="font-mono" x-text="s.login"></span>
+                            <span class="text-gray-400" x-text="' — ' + s.reason"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Recent Jobs -->
+            <div class="bg-white rounded-lg shadow p-4">
+                <h3 class="text-sm font-medium text-gray-700 mb-3">Recent Jobs</h3>
+                <div class="space-y-1">
+                    {% for job in recent_jobs %}
+                    <a href="{% url 'posting:stock_job_detail' job.id %}"
+                       class="flex items-center justify-between text-xs py-1.5 px-2 rounded hover:bg-gray-50 transition-colors">
+                        <div>
+                            <span class="font-medium">#{{ job.id }}</span>
+                            <span class="text-gray-500">{{ job.game.name }}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="{% if job.status == 'completed' %}text-emerald-600{% elif job.status == 'running' %}text-blue-600{% elif job.status == 'failed' %}text-red-600{% else %}text-gray-500{% endif %}">
+                                {{ job.status }}
+                            </span>
+                            <span class="text-gray-400">{{ job.success_count }}/{{ job.total_count }}</span>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <p class="text-xs text-gray-400">No jobs yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function stockPosting() {
+    return {
+        selectedGame: '',
+        logins: '',
+        selectedStores: [],
+        defaults: {},
+        showSettings: {},
+        activeJobId: null,
+        jobProgress: {},
+        skippedLogins: [],
+        submitting: false,
+        submitError: '',
+        eventSource: null,
+
+        get loginCount() {
+            return this.logins.split('\n').filter(l => l.trim()).length;
+        },
+
+        get canSubmit() {
+            return this.selectedGame && this.loginCount > 0 && this.selectedStores.length > 0;
+        },
+
+        get processedCount() {
+            if (!this.jobProgress.items) return 0;
+            return this.jobProgress.items.filter(i => !['pending', 'processing'].includes(i.status)).length;
+        },
+
+        get progressPercent() {
+            const total = this.jobProgress.total_count || 1;
+            return Math.round((this.processedCount / total) * 100);
+        },
+
+        init() {
+            // Initialize defaults for each known provider
+            {% for store in stores %}
+            if (!this.defaults['{{ store.provider }}']) {
+                this.defaults['{{ store.provider }}'] = {
+                    multiplier_low: '2.00',
+                    multiplier_mid: '1.80',
+                    multiplier_high: '1.50',
+                    min_price: '0.00',
+                    forced_ending: '0.99',
+                    sub_platform: '',
+                    account_type: '',
+                };
+            }
+            this.showSettings['{{ store.provider }}'] = false;
+            {% endfor %}
+        },
+
+        async onGameChange() {
+            if (!this.selectedGame) return;
+            // Load saved defaults for each marketplace
+            for (const provider of Object.keys(this.defaults)) {
+                try {
+                    const resp = await fetch(`/posting/api/defaults/${this.selectedGame}/${provider}/`);
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        this.defaults[provider] = { ...this.defaults[provider], ...data };
+                    }
+                } catch (e) {
+                    // Use defaults already set
+                }
+            }
+        },
+
+        onStoreToggle(provider) {
+            // No-op for now, just tracks selection
+        },
+
+        toggleSettings(provider) {
+            this.showSettings[provider] = !this.showSettings[provider];
+        },
+
+        async submitJob() {
+            this.submitting = true;
+            this.submitError = '';
+            this.skippedLogins = [];
+
+            const loginList = this.logins.split('\n').filter(l => l.trim()).map(l => l.trim());
+            const storeIds = this.selectedStores.map(Number);
+
+            // Build defaults per marketplace (only for selected stores)
+            const defaultsPayload = {};
+            {% for store in stores %}
+            if (storeIds.includes({{ store.id }})) {
+                const mp = '{{ store.provider }}';
+                if (this.defaults[mp]) {
+                    defaultsPayload[mp] = this.defaults[mp];
+                }
+            }
+            {% endfor %}
+
+            try {
+                const resp = await fetch('/posting/api/jobs/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken(),
+                    },
+                    body: JSON.stringify({
+                        game_id: Number(this.selectedGame),
+                        logins: loginList,
+                        stores: storeIds,
+                        defaults: defaultsPayload,
+                    }),
+                });
+
+                const data = await resp.json();
+
+                if (!resp.ok) {
+                    this.submitError = data.error || 'Failed to create job';
+                    if (data.skipped) this.skippedLogins = data.skipped;
+                    this.submitting = false;
+                    return;
+                }
+
+                this.activeJobId = data.job_id;
+                if (data.skipped) this.skippedLogins = data.skipped;
+
+                // Initialize progress tracking
+                this.jobProgress = {
+                    status: 'running',
+                    total_count: data.total_count,
+                    success_count: 0,
+                    fail_count: 0,
+                    items: [],
+                };
+
+                // Start SSE stream
+                this.startStream(data.job_id);
+
+            } catch (e) {
+                this.submitError = 'Network error: ' + e.message;
+            }
+
+            this.submitting = false;
+        },
+
+        startStream(jobId) {
+            if (this.eventSource) {
+                this.eventSource.close();
+            }
+
+            this.eventSource = new EventSource(`/posting/api/jobs/${jobId}/stream/`);
+
+            this.eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                if (data.type === 'item_update') {
+                    // Update or add item in the list
+                    const idx = this.jobProgress.items.findIndex(i => i.item_id === data.item_id);
+                    if (idx >= 0) {
+                        this.jobProgress.items[idx] = data;
+                    } else {
+                        this.jobProgress.items.push(data);
+                    }
+
+                    // Recalculate counts
+                    this.jobProgress.success_count = this.jobProgress.items.filter(i => i.status === 'success').length;
+                    this.jobProgress.fail_count = this.jobProgress.items.filter(i => i.status === 'failed').length;
+
+                } else if (data.type === 'job_complete') {
+                    this.jobProgress.status = data.status;
+                    this.jobProgress.success_count = data.success_count;
+                    this.jobProgress.fail_count = data.fail_count;
+                    this.eventSource.close();
+                    this.eventSource = null;
+                }
+            };
+
+            this.eventSource.onerror = () => {
+                // Auto-reconnect is built into EventSource
+            };
+        },
+
+        getCsrfToken() {
+            const cookie = document.cookie.split(';').find(c => c.trim().startsWith('csrftoken='));
+            return cookie ? cookie.split('=')[1] : '';
+        },
+    };
+}
+</script>
+{% endblock %}

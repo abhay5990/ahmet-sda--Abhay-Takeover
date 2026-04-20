@@ -1,0 +1,33 @@
+{
+  "item_id": 330012001,
+  "category_id": 22,
+  "price": 450.0,
+  "login": "rockstar_user@example.com",
+  "loginData": {
+    "login": "rockstar_user@example.com",
+    "password": "RockstarPass123"
+  },
+  "emailLoginData": {
+    "login": "backup_email@example.com",
+    "password": "EmailPass456"
+  },
+  "emailLoginUrl": "https://mail.example.com/login",
+  "security_email": "security@example.com",
+  "security_email_password": "SecPass789",
+  "security_email_login_link": "https://secmail.example.com/login",
+  "birthday": "1995-06-15",
+  "email_backup_codes": "CODE1-ABCD\nCODE2-EFGH\nCODE3-IJKL",
+  "offer_details": {
+    "main_platform": "PC - Enhanced",
+    "level": 350,
+    "cash_amount": 120,
+    "cash_unit": "Million",
+    "cars_count": 45,
+    "tags": ["Modded", "High Level", "Full Access"],
+    "title": "GTA V | Level 350 | 120M Cash | 45 Cars | PC Enhanced",
+    "description": "High quality GTA V account with modded cash and vehicles.",
+    "eldorado_price": 399.99,
+    "gameboost_price": 449.99,
+    "playerauctions_price": 379.99
+  }
+}

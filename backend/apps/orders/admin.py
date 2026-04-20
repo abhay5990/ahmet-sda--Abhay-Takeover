@@ -7,7 +7,7 @@ from apps.inventory.services import resolve_game
 from apps.sync.services.shared.credentials import parse_credentials_text
 from apps.sync.services.shared.owned_product import get_or_create_owned_product
 
-from .models import Order
+from .models import FeeRule, Order
 
 
 # ---------------------------------------------------------------------------
@@ -210,7 +210,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_per_page = 50
     actions = [create_owned_product_and_link]
 
-    @admin.display(description='Parsed Credentials')
+    @admin.display(description='Parsed Credentials')  # noqa: E303
     def credentials_preview(self, obj):
         """Show parsed credentials from raw_data on the detail page."""
         text = _extract_credentials_text(obj.raw_data)
@@ -243,3 +243,61 @@ class OrderAdmin(admin.ModelAdmin):
             '<table style="border-collapse:collapse;">{}</table>',
             mark_safe(''.join(rows)),
         )
+
+
+# ---------------------------------------------------------------------------
+# FeeRuleAdmin
+# ---------------------------------------------------------------------------
+
+@admin.register(FeeRule)
+class FeeRuleAdmin(admin.ModelAdmin):
+    list_display = (
+        'marketplace',
+        'fee_type',
+        'product_category_display',
+        'game',
+        'fee_percent',
+        'flat_fee_display',
+        'effective_from',
+        'effective_until',
+        'is_active',
+    )
+    list_filter = ('marketplace', 'fee_type', 'product_category')
+    list_select_related = ('game',)
+    raw_id_fields = ('game',)
+    ordering = ('marketplace', 'fee_type', 'product_category', '-effective_from')
+    list_per_page = 100
+
+    fieldsets = (
+        ('Rule Definition', {
+            'fields': ('marketplace', 'fee_type', 'product_category', 'game'),
+        }),
+        ('Fee Values', {
+            'fields': ('fee_percent', 'flat_fee', 'flat_fee_currency'),
+        }),
+        ('Validity Period', {
+            'fields': ('effective_from', 'effective_until'),
+        }),
+        ('Note', {
+            'fields': ('note',),
+            'classes': ('collapse',),
+        }),
+    )
+
+    @admin.display(description='Category')
+    def product_category_display(self, obj):
+        return obj.get_product_category_display() if obj.product_category else '(all)'
+
+    @admin.display(description='Flat Fee')
+    def flat_fee_display(self, obj):
+        if obj.flat_fee:
+            return f'{obj.flat_fee} {obj.flat_fee_currency}'
+        return '-'
+
+    @admin.display(description='Active', boolean=True)
+    def is_active(self, obj):
+        from django.utils import timezone
+        today = timezone.now().date()
+        if obj.effective_until and obj.effective_until < today:
+            return False
+        return obj.effective_from <= today

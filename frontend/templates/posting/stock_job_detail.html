@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Job #{{ job.id }} — Stock Posting{% endblock %}
+
+{% block content %}
+<div x-data="jobDetail()" x-init="init()">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <a href="{% url 'posting:stock_active' %}" class="text-sm text-gray-500 hover:text-gray-700">&larr; Back to Active Jobs</a>
+            <h1 class="text-2xl font-bold text-gray-900 mt-1">Job #{{ job.id }}</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <button x-show="jobData.status === 'running' || jobData.status === 'pending'"
+                    @click="cancelJob()"
+                    class="px-3 py-1.5 text-sm text-red-600 border border-red-300 rounded-md hover:bg-red-50 transition-colors">
+                Cancel Job
+            </button>
+            <span class="px-3 py-1 rounded-full text-sm font-medium"
+                  :class="{
+                      'bg-emerald-100 text-emerald-700': jobData.status === 'completed',
+                      'bg-blue-100 text-blue-700': jobData.status === 'running',
+                      'bg-red-100 text-red-700': jobData.status === 'failed',
+                      'bg-gray-100 text-gray-600': jobData.status === 'pending' || jobData.status === 'cancelled',
+                  }"
+                  x-text="jobData.status">
+                {{ job.status }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-xs text-gray-500">Game</p>
+            <p class="text-lg font-semibold">{{ job.game.name }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-xs text-gray-500">Total</p>
+            <p class="text-lg font-semibold" x-text="jobData.total_count">{{ job.total_count }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-xs text-gray-500">Success</p>
+            <p class="text-lg font-semibold text-emerald-600" x-text="jobData.success_count">{{ job.success_count }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-xs text-gray-500">Failed</p>
+            <p class="text-lg font-semibold text-red-600" x-text="jobData.fail_count">{{ job.fail_count }}</p>
+        </div>
+    </div>
+
+    <!-- Progress Bar (for running jobs) -->
+    <template x-if="jobData.status === 'running' || jobData.status === 'pending'">
+        <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+            <div class="h-2 rounded-full bg-emerald-500 transition-all duration-300"
+                 :style="'width: ' + progressPercent + '%'"></div>
+        </div>
+    </template>
+
+    <!-- Items Table -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Login</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Store</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Offer ID</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Error</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200" id="items-body">
+                {% for item in items %}
+                <tr class="hover:bg-gray-50" id="item-{{ item.id }}">
+                    <td class="px-4 py-3 text-sm font-mono">{{ item.login }}</td>
+                    <td class="px-4 py-3 text-sm">
+                        <span class="px-2 py-0.5 rounded-full text-xs
+                            {% if item.marketplace == 'gameboost' %}bg-blue-100 text-blue-700
+                            {% elif item.marketplace == 'eldorado' %}bg-yellow-100 text-yellow-700
+                            {% elif item.marketplace == 'playerauctions' %}bg-purple-100 text-purple-700
+                            {% else %}bg-gray-100 text-gray-700{% endif %}">
+                            {{ item.marketplace }}
+                        </span>
+                        <span class="ml-1 text-gray-600">{{ item.store.name }}</span>
+                    </td>
+                    <td class="px-4 py-3 text-sm" id="item-status-{{ item.id }}">
+                        <span class="px-2 py-0.5 rounded text-xs font-medium
+                            {% if item.status == 'success' %}bg-emerald-100 text-emerald-700
+                            {% elif item.status == 'failed' %}bg-red-100 text-red-700
+                            {% elif item.status == 'processing' %}bg-blue-100 text-blue-700
+                            {% elif item.status == 'skipped' %}bg-yellow-100 text-yellow-700
+                            {% else %}bg-gray-100 text-gray-600{% endif %}">
+                            {{ item.status }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm font-mono text-gray-700" id="item-offer-id-{{ item.id }}">
+                        {% if item.listing %}
+                            {{ item.listing.store_listing_id }}
+                        {% else %}
+                            <span class="text-gray-400">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-700 max-w-xs truncate" id="item-offer-title-{{ item.id }}"
+                        title="{% if item.listing %}{{ item.listing.title }}{% endif %}">
+                        {% if item.listing %}
+                            {{ item.listing.title|truncatechars:50 }}
+                        {% else %}
+                            <span class="text-gray-400">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-xs text-red-600 max-w-xs truncate" id="item-error-{{ item.id }}"
+                        title="{{ item.error_message }}">
+                        {{ item.error_message|truncatechars:80 }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function jobDetail() {
+    return {
+        jobData: {
+            status: '{{ job.status }}',
+            total_count: {{ job.total_count }},
+            success_count: {{ job.success_count }},
+            fail_count: {{ job.fail_count }},
+        },
+        eventSource: null,
+
+        get processedCount() {
+            return this.jobData.success_count + this.jobData.fail_count;
+        },
+
+        get progressPercent() {
+            return Math.round((this.processedCount / (this.jobData.total_count || 1)) * 100);
+        },
+
+        init() {
+            if (this.jobData.status === 'running' || this.jobData.status === 'pending') {
+                this.startStream();
+            }
+        },
+
+        startStream() {
+            this.eventSource = new EventSource(`/posting/api/jobs/{{ job.id }}/stream/`);
+
+            this.eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                if (data.type === 'item_update') {
+                    this.updateItemRow(data);
+                    if (data.status === 'success') this.jobData.success_count++;
+                    if (data.status === 'failed') this.jobData.fail_count++;
+                } else if (data.type === 'job_complete') {
+                    this.jobData.status = data.status;
+                    this.jobData.success_count = data.success_count;
+                    this.jobData.fail_count = data.fail_count;
+                    this.eventSource.close();
+                    this.eventSource = null;
+                }
+            };
+
+            this.eventSource.onerror = () => {};
+        },
+
+        updateItemRow(data) {
+            const statusCell = document.getElementById(`item-status-${data.item_id}`);
+            const errorCell = document.getElementById(`item-error-${data.item_id}`);
+            const offerIdCell = document.getElementById(`item-offer-id-${data.item_id}`);
+            const offerTitleCell = document.getElementById(`item-offer-title-${data.item_id}`);
+            if (!statusCell) return;
+
+            const badgeClass = {
+                success: 'bg-emerald-100 text-emerald-700',
+                failed: 'bg-red-100 text-red-700',
+                processing: 'bg-blue-100 text-blue-700',
+                skipped: 'bg-yellow-100 text-yellow-700',
+                pending: 'bg-gray-100 text-gray-600',
+            }[data.status] || 'bg-gray-100 text-gray-600';
+
+            statusCell.innerHTML = `<span class="px-2 py-0.5 rounded text-xs font-medium ${badgeClass}">${data.status}</span>`;
+            if (offerIdCell) {
+                offerIdCell.innerHTML = data.offer_id
+                    ? `<span class="font-mono">${data.offer_id}</span>`
+                    : '<span class="text-gray-400">—</span>';
+            }
+            if (offerTitleCell) {
+                const title = data.offer_title || '';
+                offerTitleCell.textContent = title.substring(0, 50);
+                offerTitleCell.title = title;
+                if (!title) offerTitleCell.innerHTML = '<span class="text-gray-400">—</span>';
+            }
+            if (errorCell && data.error) {
+                errorCell.textContent = data.error.substring(0, 80);
+                errorCell.title = data.error;
+            }
+        },
+
+        async cancelJob() {
+            if (!confirm('Cancel this job?')) return;
+            const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+            const resp = await fetch(`/posting/api/jobs/{{ job.id }}/cancel/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrf },
+            });
+            if (resp.ok) {
+                this.jobData.status = 'cancelled';
+                if (this.eventSource) {
+                    this.eventSource.close();
+                    this.eventSource = null;
+                }
+            }
+        },
+    };
+}
+</script>
+{% endblock %}

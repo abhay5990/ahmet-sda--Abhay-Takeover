@@ -27,8 +27,14 @@ class EldoradoEndpoints:
     GET_ORDER_BY_ID = "/api/orders/me/{order_id}"
     ORDER_STATES_COUNT = "/api/orders/me/statesCount"
 
+    # Reviews
+    SELLER_REVIEWS = "/api/orders/me/reviews"
+
+    # Notifications
+    NOTIFICATIONS_ME = "/api/notifications/me"
+
     # Images
-    UPLOAD_IMAGE = "/api/images/upload"
+    UPLOAD_IMAGE = "/api/files/me/Offer"
 
     @classmethod
     def offer(cls, offer_id: str) -> str:

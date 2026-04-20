@@ -5,11 +5,17 @@ from django.conf import settings
 from django.db import models
 
 
+_fernet_instance = None
+
+
 def _get_fernet():
-    key = getattr(settings, 'CREDENTIAL_ENCRYPTION_KEY', None)
-    if not key:
-        raise ValueError("CREDENTIAL_ENCRYPTION_KEY is not set in settings/environment.")
-    return Fernet(key.encode() if isinstance(key, str) else key)
+    global _fernet_instance
+    if _fernet_instance is None:
+        key = getattr(settings, 'CREDENTIAL_ENCRYPTION_KEY', None)
+        if not key:
+            raise ValueError("CREDENTIAL_ENCRYPTION_KEY is not set in settings/environment.")
+        _fernet_instance = Fernet(key.encode() if isinstance(key, str) else key)
+    return _fernet_instance
 
 
 def encrypt_value(data: dict) -> str:

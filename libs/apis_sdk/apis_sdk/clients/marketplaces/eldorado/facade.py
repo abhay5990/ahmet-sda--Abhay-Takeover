@@ -40,12 +40,14 @@ from apis_sdk.clients.marketplaces.eldorado.exceptions import (
     EldoradoProviderNotReadyError,
 )
 from apis_sdk.clients.marketplaces.eldorado.models import (
+    EldoradoNotificationsPage,
     EldoradoOffer,
     EldoradoOfferCredentialsResponse,
     EldoradoOfferSearchPage,
     EldoradoOfferStateCount,
     EldoradoOrder,
     EldoradoOrderAccountDetails,
+    EldoradoReviewsResponse,
     EldoradoSellerOrdersPage,
 )
 
@@ -141,6 +143,24 @@ class EldoradoApiClient(Protocol):
         auth_headers: dict[str, str],
         proxy_url: str | None = None,
     ) -> ApiResult[EldoradoOfferCredentialsResponse]:
+        ...
+
+    def get_seller_reviews(
+        self,
+        *,
+        auth_headers: dict[str, str],
+        params: dict[str, Any] | None = None,
+        proxy_url: str | None = None,
+    ) -> ApiResult[EldoradoReviewsResponse]:
+        ...
+
+    def get_notifications(
+        self,
+        *,
+        auth_headers: dict[str, str],
+        params: dict[str, Any] | None = None,
+        proxy_url: str | None = None,
+    ) -> ApiResult[EldoradoNotificationsPage]:
         ...
 
 
@@ -370,6 +390,46 @@ class EldoradoFacade:
             lambda proxy_url: self._client.get_offer_account_details(
                 offer_id,
                 auth_headers=self._exec.get_auth_headers(),
+                proxy_url=proxy_url,
+            ),
+            proxy_group=proxy_group,
+        )
+
+    # ---------------------------------------------------------------------------
+    # Reviews
+    # ---------------------------------------------------------------------------
+
+    def get_seller_reviews(
+        self,
+        *,
+        params: dict[str, Any] | None = None,
+        proxy_group: str | None = None,
+    ) -> ApiResult[EldoradoReviewsResponse]:
+        """Fetch paginated seller reviews."""
+        return self._exec.execute_with_retry(
+            lambda proxy_url: self._client.get_seller_reviews(
+                auth_headers=self._exec.get_auth_headers(),
+                params=params,
+                proxy_url=proxy_url,
+            ),
+            proxy_group=proxy_group,
+        )
+
+    # ---------------------------------------------------------------------------
+    # Notifications
+    # ---------------------------------------------------------------------------
+
+    def get_notifications(
+        self,
+        *,
+        params: dict[str, Any] | None = None,
+        proxy_group: str | None = None,
+    ) -> ApiResult[EldoradoNotificationsPage]:
+        """Fetch paginated notifications for the authenticated user."""
+        return self._exec.execute_with_retry(
+            lambda proxy_url: self._client.get_notifications(
+                auth_headers=self._exec.get_auth_headers(),
+                params=params,
                 proxy_url=proxy_url,
             ),
             proxy_group=proxy_group,

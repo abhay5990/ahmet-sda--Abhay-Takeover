@@ -117,6 +117,45 @@ class IntegrationCredential(models.Model):
         self.save(update_fields=['credentials', 'token_expires_at', 'updated_at'])
 
 
+class ServiceType(models.TextChoices):
+    PROXY         = 'proxy',         'Proxy Provider'
+    IMAGE         = 'image',         'Image Hosting'
+    STORAGE       = 'storage',       'Cloud Storage'
+    GAME          = 'game-service',  'Game Service'
+    NOTIFICATION  = 'notification',  'Notification Service'
+    OTHER         = 'other',         'Other'
+
+
+class ServiceCredential(models.Model):
+    """Encrypted credential storage for non-marketplace external services.
+
+    Examples: Proxyline (proxy provider), RobuxCrate (game service),
+    Imgur/ImageShack (image hosting), Dropbox (cloud storage).
+
+    Unlike IntegrationCredential, this model has no account/role/group concept.
+    Each service type defines its own field schema via integrations/services/ registry.
+    Adding a new service type requires no migration — only a new Python file.
+    """
+
+    name         = models.CharField(max_length=100, help_text='e.g. "Proxyline Main", "Imgur Production"')
+    service_type = models.CharField(max_length=50, choices=ServiceType.choices)
+    slug         = models.SlugField(unique=True, help_text='e.g. "proxyline-main", "imgur-prod"')
+    credentials  = EncryptedJSONField(default=dict, help_text='Service-specific credentials (encrypted at rest)')
+    base_url     = models.URLField(blank=True, help_text='Optional: override default API endpoint')
+    is_active    = models.BooleanField(default=True)
+    notes        = models.TextField(blank=True)
+
+    created_at   = models.DateTimeField(auto_now_add=True)
+    updated_at   = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'service_credentials'
+        ordering = ['service_type', 'name']
+
+    def __str__(self):
+        return f"{self.name} ({self.get_service_type_display()})"
+
+
 class Proxy(models.Model):
     """Proxy assigned to an AccountGroup for IP isolation."""
 

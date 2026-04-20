@@ -1,0 +1,37 @@
+"""PlayerAuctions builder for resolved Clash of Clans accounts."""
+
+from __future__ import annotations
+
+from ..models import CocResolvedAccount
+from .....marketplaces.playerauctions import BasePlayerAuctionsBuilder
+
+
+_COVER_IMAGE_URL = (
+    "https://image-cdn-p.azureedge.net/title-image/Coc/clash-of-clans_cover.png"
+)
+
+
+class CocPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
+    """Build PlayerAuctions payloads for the Clash of Clans account slice."""
+
+    @property
+    def game_name(self) -> str:
+        return "clash-of-clans"
+
+    @property
+    def game_id(self) -> int:
+        return 8455
+
+    @property
+    def cover_image_url(self) -> str:
+        return _COVER_IMAGE_URL
+
+    @property
+    def _platform_name(self) -> str:
+        return "Supercell ID"
+
+    def _get_server(self, account: CocResolvedAccount) -> list[str]:
+        return ["IOS", "Android"]
+
+    def _get_server_id(self, account: CocResolvedAccount) -> list[str] | None:
+        return ["8455", "8456"]

@@ -8,6 +8,7 @@ The facade layer handles mapping, auth header injection, and error normalization
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from apis_sdk.core.enums import ErrorCategory, HttpMethod
@@ -18,12 +19,14 @@ from apis_sdk.infrastructure.logging.logger import NullLogger, SdkLogger
 from apis_sdk.clients.marketplaces.eldorado.config import EldoradoConfig
 from apis_sdk.clients.marketplaces.eldorado.endpoints import EldoradoEndpoints
 from apis_sdk.clients.marketplaces.eldorado.models import (
+    EldoradoNotificationsPage,
     EldoradoOffer,
     EldoradoOfferCredentialsResponse,
     EldoradoOfferSearchPage,
     EldoradoOfferStateCount,
     EldoradoOrder,
     EldoradoOrderAccountDetails,
+    EldoradoReviewsResponse,
     EldoradoSellerOrdersPage,
 )
 
@@ -217,6 +220,48 @@ class EldoradoClient:
         )
 
     # ---------------------------------------------------------------------------
+    # Reviews
+    # ---------------------------------------------------------------------------
+
+    def get_seller_reviews(
+        self,
+        *,
+        auth_headers: dict[str, str],
+        params: dict[str, Any] | None = None,
+        proxy_url: str | None = None,
+    ) -> ApiResult[EldoradoReviewsResponse]:
+        """Fetch paginated seller reviews."""
+        return self._request(
+            HttpMethod.GET,
+            EldoradoEndpoints.SELLER_REVIEWS,
+            auth_headers=auth_headers,
+            params=params,
+            proxy_url=proxy_url,
+            response_type=EldoradoReviewsResponse,
+        )
+
+    # ---------------------------------------------------------------------------
+    # Notifications
+    # ---------------------------------------------------------------------------
+
+    def get_notifications(
+        self,
+        *,
+        auth_headers: dict[str, str],
+        params: dict[str, Any] | None = None,
+        proxy_url: str | None = None,
+    ) -> ApiResult[EldoradoNotificationsPage]:
+        """Fetch paginated notifications for the authenticated user."""
+        return self._request(
+            HttpMethod.GET,
+            EldoradoEndpoints.NOTIFICATIONS_ME,
+            auth_headers=auth_headers,
+            params=params,
+            proxy_url=proxy_url,
+            response_type=EldoradoNotificationsPage,
+        )
+
+    # ---------------------------------------------------------------------------
     # Image Upload
     # ---------------------------------------------------------------------------
 
@@ -240,7 +285,7 @@ class EldoradoClient:
                     HttpMethod.POST,
                     url,
                     headers=auth_headers,
-                    files={"file": (file_path, f)},
+                    files={"image": (Path(file_path).name, f, "image/png")},
                     timeout=self._config.timeout,
                     proxy_url=proxy_url,
                 )
@@ -261,7 +306,8 @@ class EldoradoClient:
 
         try:
             data = response.json()
-            paths = data if isinstance(data, list) else data.get("paths", [])
+            local_paths = data if isinstance(data, list) else data.get("localPaths", [])
+            paths = [p.replace("/offerimages/", "") for p in local_paths]
         except Exception as exc:
             return ApiResult.from_error(
                 ErrorCategory.UNKNOWN,
@@ -344,11 +390,14 @@ class EldoradoClient:
             except (ValueError, TypeError, AttributeError):
                 retry_after = 5.0
 
+        body: dict = {}
         try:
             body = response.json() if hasattr(response, "json") else {}
             message = str(body.get("message", body.get("error", f"HTTP {status_code}")))
         except Exception:
-            message = f"HTTP {status_code}"
+            # Fallback: try raw text
+            raw_text = getattr(response, 'text', '') or ''
+            message = raw_text[:500] if raw_text else f"HTTP {status_code}"
 
         # Detect password lockout from Cognito (mirrors legacy behavior)
         if "password attempts exceeded" in message.lower():
@@ -362,4 +411,5 @@ class EldoradoClient:
             provider=self.PROVIDER,
             retry_after=retry_after,
             is_retryable=is_retryable,
+            details=body if body else None,
         )

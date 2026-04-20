@@ -14,7 +14,7 @@ class LztConfig(BaseModel):
     """Configuration for the LZT Market API client."""
 
     base_url: str = Field(
-        default="https://api.lzt.market",
+        default="https://prod-api.lzt.market",
         description="LZT Market API base URL.",
     )
     timeout: float = Field(

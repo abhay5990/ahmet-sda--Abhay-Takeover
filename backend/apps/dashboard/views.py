@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
+from apps.accounts.decorators import role_required
 from apps.inventory.models import OwnedProduct, DropshipProduct
 from apps.inventory.enums import OwnedProductStatus
 from apps.listings.models import Listing
@@ -29,3 +30,12 @@ def index(request):
         'recent_products': OwnedProduct.objects.select_related('game')[:10],
     }
     return render(request, 'dashboard/index.html', context)
+
+
+@role_required('admin')
+def finance(request):
+    """Financial dashboard page (HTML). Data is fetched client-side.
+
+    Access: admin role only (user/viewer restricted).
+    """
+    return render(request, 'dashboard/finance.html')

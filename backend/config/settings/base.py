@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'apps.sync',
     'apps.dashboard',
     'apps.settings',
+    'apps.posting',
+    'apps.email_checker',
 ]
 
 # APScheduler
@@ -75,6 +77,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.accounts.context_processors.user_role',
             ],
         },
     },

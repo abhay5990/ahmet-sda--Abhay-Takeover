@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}{{ service.name }} - Inventory Manager{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <a href="{% url 'settings:service_list' %}" class="text-sm text-emerald-600 hover:text-emerald-700">&larr; Back to Services</a>
+</div>
+
+<div class="flex items-center justify-between mb-6">
+    <div class="flex items-center space-x-3">
+        <h1 class="text-2xl font-bold text-gray-900">{{ service.name }}</h1>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+            {{ service.get_service_type_display }}
+        </span>
+        {% if service.is_active %}
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Active</span>
+        {% else %}
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Inactive</span>
+        {% endif %}
+    </div>
+    <div class="flex items-center space-x-2">
+        <button id="test-btn" onclick="testConnection()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition">
+            Test Connection
+        </button>
+        <a href="{% url 'settings:service_edit' slug=service.slug %}"
+           class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+            Edit
+        </a>
+    </div>
+</div>
+
+<!-- Test result toast -->
+<div id="test-result" class="hidden rounded-md p-4 mb-4"></div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Service Info -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Service Details</h2>
+        <dl class="space-y-3">
+            <div class="flex justify-between">
+                <dt class="text-sm text-gray-500">Name</dt>
+                <dd class="text-sm font-medium text-gray-900">{{ service.name }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-sm text-gray-500">Type</dt>
+                <dd class="text-sm font-medium text-gray-900">{{ service.get_service_type_display }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-sm text-gray-500">Slug</dt>
+                <dd class="text-sm font-mono text-gray-600">{{ service.slug }}</dd>
+            </div>
+            {% if service.base_url %}
+            <div class="flex justify-between">
+                <dt class="text-sm text-gray-500">Base URL</dt>
+                <dd class="text-sm text-gray-600 truncate ml-4">{{ service.base_url }}</dd>
+            </div>
+            {% endif %}
+            {% if service.notes %}
+            <div class="pt-3 border-t border-gray-100">
+                <dt class="text-sm text-gray-500 mb-1">Notes</dt>
+                <dd class="text-sm text-gray-700">{{ service.notes }}</dd>
+            </div>
+            {% endif %}
+            <div class="flex justify-between pt-3 border-t border-gray-100">
+                <dt class="text-sm text-gray-500">Created</dt>
+                <dd class="text-sm text-gray-600">{{ service.created_at|date:"M d, Y H:i" }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-sm text-gray-500">Updated</dt>
+                <dd class="text-sm text-gray-600">{{ service.updated_at|date:"M d, Y H:i" }}</dd>
+            </div>
+        </dl>
+    </div>
+
+    <!-- Credentials -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Credentials</h2>
+        {% if cred_status %}
+        <dl class="space-y-3">
+            {% for field in cred_status %}
+            <div class="flex justify-between">
+                <dt class="text-sm text-gray-500">{{ field.label }}</dt>
+                <dd class="text-sm font-medium">
+                    {% if field.is_set %}
+                        {% if field.is_password %}
+                        <span class="text-emerald-600">********</span>
+                        {% else %}
+                        <span class="text-emerald-600">Set</span>
+                        {% endif %}
+                    {% else %}
+                    <span class="text-red-500">Not set</span>
+                    {% endif %}
+                </dd>
+            </div>
+            {% endfor %}
+        </dl>
+        {% else %}
+        <p class="text-sm text-gray-500">No credential fields defined for this service type.</p>
+        {% endif %}
+        <div class="mt-4 pt-4 border-t border-gray-100">
+            <a href="{% url 'settings:service_edit' slug=service.slug %}" class="text-sm text-emerald-600 hover:text-emerald-700">
+                Update credentials &rarr;
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function testConnection() {
+    const btn = document.getElementById('test-btn');
+    const result = document.getElementById('test-result');
+    btn.disabled = true;
+    btn.textContent = 'Testing...';
+    result.className = 'hidden';
+
+    fetch("{% url 'settings:service_test' slug=service.slug %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(r => r.json())
+    .then(data => {
+        result.className = data.status === 'ok'
+            ? 'rounded-md p-4 mb-4 bg-green-50 text-green-700'
+            : 'rounded-md p-4 mb-4 bg-red-50 text-red-700';
+        result.textContent = data.message;
+    })
+    .catch(() => {
+        result.className = 'rounded-md p-4 mb-4 bg-red-50 text-red-700';
+        result.textContent = 'Connection test failed.';
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.textContent = 'Test Connection';
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,134 @@
+"""
+Eldorado negative-review monitor.
+
+Polls /api/orders/me/reviews for each active Eldorado account and fires
+Telegram notifications for newly seen negative reviews.
+
+State strategy
+--------------
+Uses ``SyncCheckpoint(resource_type='reviews', mode='incremental')`` per
+account.  The ``last_seen_remote_id`` field stores the review ID of the most
+recently seen review (newest-first ordering).
+
+Why NOT cursor-based:
+  The API cursor goes *backward* in time (pageDirection=Next → older reviews).
+  There is no reliable way to reconstruct a "forward" cursor without the
+  opaque value from the API response.  Storing last_seen_remote_id and always
+  fetching the first page (newest) is simpler and correct.
+
+Poll logic:
+  1. Fetch first page (newest → oldest) with sentinel cursor.
+  2. Collect every result that appears BEFORE last_seen_remote_id in the list.
+     These are reviews newer than what we last saw.
+  3. Bootstrap (no stored ID): save first result's ID, do NOT notify.
+  4. Normal run: notify new reviews, update last_seen_remote_id to the
+     first (most recent) result's ID.
+
+Edge case: if more than PAGE_SIZE new reviews arrive between polls, the
+extras are missed until the next run.  At a 10-min interval this is
+acceptable; escalation to multi-page sweep can be added later.
+"""
+
+import logging
+
+from django.utils import timezone
+
+from apps.integrations.models import IntegrationAccount
+from apps.integrations.providers.registry import get_or_build_client
+from apps.sync.enums import ResourceType, SyncMode
+from apps.sync.models import SyncCheckpoint
+from apps.sync.services.eldorado.reviews.notifier import TelegramNotifier
+
+logger = logging.getLogger(__name__)
+
+_PROVIDER = "eldorado"
+_PAGE_SIZE = 20
+_CURSOR_TOP = "9999-99-99 99:99:99.999999999999999-9999-9999-9999-999999999999"
+
+
+class EldoradoReviewMonitor:
+    """Checks all active Eldorado accounts for new negative reviews."""
+
+    def __init__(self, notifier: TelegramNotifier | None = None) -> None:
+        self._notifier = notifier or TelegramNotifier()
+
+    def check_all_accounts(self) -> None:
+        """Entry point — iterates over every active Eldorado account."""
+        accounts = (
+            IntegrationAccount.objects
+            .select_related("credential")
+            .filter(provider=_PROVIDER, is_active=True)
+        )
+        for account in accounts:
+            try:
+                self._check_account(account)
+            except Exception:
+                logger.exception(
+                    "Unexpected error in review monitor for account %s",
+                    account.slug,
+                )
+
+    def _check_account(self, account: IntegrationAccount) -> None:
+        checkpoint, _ = SyncCheckpoint.objects.get_or_create(
+            integration_account=account,
+            resource_type=ResourceType.REVIEWS,
+            mode=SyncMode.INCREMENTAL,
+            defaults={"last_seen_remote_id": "", "cursor": ""},
+        )
+
+        facade = get_or_build_client(_PROVIDER, account.credential)
+        result = facade.get_seller_reviews(
+            params={
+                "cursorValue": _CURSOR_TOP,
+                "pageDirection": "Next",
+                "pageSize": str(_PAGE_SIZE),
+                "feedbackRating": "Negative",
+            },
+        )
+
+        if not result.ok:
+            logger.error(
+                "Reviews fetch failed for %s: %s", account.slug, result.error
+            )
+            return
+
+        results = result.data.reviews.results
+        if not results:
+            logger.debug("No negative reviews found for %s", account.slug)
+            return
+
+        last_seen_id = checkpoint.last_seen_remote_id
+        most_recent_id = results[0].orderReview.id
+
+        # Bootstrap — first run, just save the watermark, don't notify
+        if not last_seen_id:
+            checkpoint.last_seen_remote_id = most_recent_id
+            checkpoint.last_run_at = timezone.now()
+            checkpoint.save(update_fields=["last_seen_remote_id", "last_run_at", "updated_at"])
+            logger.info(
+                "Review monitor bootstrap for %s — watermark set to %s (%d reviews on page)",
+                account.slug, most_recent_id, len(results),
+            )
+            return
+
+        # Collect reviews newer than last_seen_id (they appear before it in the list)
+        new_reviews = []
+        for item in results:
+            if item.orderReview.id == last_seen_id:
+                break
+            new_reviews.append(item)
+
+        if not new_reviews:
+            logger.debug("No new negative reviews for %s", account.slug)
+        else:
+            logger.info("%d new negative review(s) for %s", len(new_reviews), account.slug)
+            for item in new_reviews:
+                self._notifier.send_negative_review(
+                    account_slug=account.slug,
+                    review_item=item,
+                )
+
+        # Advance watermark to the most recent review on this page
+        checkpoint.last_seen_remote_id = most_recent_id
+        checkpoint.last_run_at = timezone.now()
+        checkpoint.save(update_fields=["last_seen_remote_id", "last_run_at", "updated_at"])

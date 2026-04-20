@@ -1,8 +1,9 @@
 from django import forms
 from django.utils.text import slugify
 
-from .models import IntegrationAccount, IntegrationCredential
+from .models import IntegrationAccount, IntegrationCredential, ServiceCredential
 from .providers.registry import get_credential_fields
+from .services.registry import get_service_fields
 
 TAILWIND_INPUT = 'w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm'
 TAILWIND_SELECT = TAILWIND_INPUT
@@ -111,3 +112,94 @@ class CredentialForm(forms.Form):
         credential.credentials = existing_creds
         credential.save()
         return credential
+
+
+class ServiceCredentialForm(forms.ModelForm):
+    """Form for ServiceCredential with dynamic credential fields per service_type."""
+
+    class Meta:
+        model = ServiceCredential
+        fields = ('name', 'service_type', 'base_url', 'is_active', 'notes')
+        widgets = {
+            'name': forms.TextInput(attrs={'class': TAILWIND_INPUT}),
+            'service_type': forms.Select(attrs={'class': TAILWIND_SELECT}),
+            'base_url': forms.URLInput(attrs={'class': TAILWIND_INPUT}),
+            'is_active': forms.CheckboxInput(attrs={'class': TAILWIND_CHECKBOX}),
+            'notes': forms.Textarea(attrs={'class': TAILWIND_TEXTAREA, 'rows': 3}),
+        }
+
+    def __init__(self, *args, is_edit=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        if is_edit:
+            self.fields['service_type'].disabled = True
+
+        service_type = self._get_service_type()
+        if not service_type:
+            return
+
+        existing_creds = {}
+        if self.instance and self.instance.pk:
+            existing_creds = self.instance.credentials or {}
+
+        for field_def in get_service_fields(service_type):
+            field_name = f'cred_{field_def.name}'
+            if field_def.field_type == 'password':
+                is_existing = self.instance and self.instance.pk
+                self.fields[field_name] = forms.CharField(
+                    label=field_def.label,
+                    required=field_def.required and not is_existing,
+                    initial='',
+                    help_text=field_def.help_text or ('Leave blank to keep current value' if is_existing else ''),
+                    widget=forms.PasswordInput(attrs={'class': TAILWIND_INPUT, 'autocomplete': 'off'}),
+                )
+            elif field_def.field_type == 'url':
+                self.fields[field_name] = forms.URLField(
+                    label=field_def.label,
+                    required=False,
+                    initial=existing_creds.get(field_def.name, ''),
+                    help_text=field_def.help_text,
+                    widget=forms.URLInput(attrs={'class': TAILWIND_INPUT}),
+                )
+            else:
+                self.fields[field_name] = forms.CharField(
+                    label=field_def.label,
+                    required=field_def.required and not (self.instance and self.instance.pk),
+                    initial=existing_creds.get(field_def.name, ''),
+                    help_text=field_def.help_text,
+                    widget=forms.TextInput(attrs={'class': TAILWIND_INPUT}),
+                )
+
+    def _get_service_type(self) -> str:
+        if self.instance and self.instance.pk:
+            return self.instance.service_type
+        if self.data:
+            return self.data.get('service_type', '')
+        return ''
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        # Auto-generate slug
+        if not instance.slug:
+            base_slug = slugify(f"{instance.service_type}-{instance.name}")
+            slug = base_slug
+            counter = 2
+            while ServiceCredential.objects.filter(slug=slug).exclude(pk=instance.pk).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            instance.slug = slug
+
+        service_type = instance.service_type
+        existing_creds = instance.credentials.copy() if instance.credentials else {}
+
+        for field_def in get_service_fields(service_type):
+            value = self.cleaned_data.get(f'cred_{field_def.name}', '')
+            if field_def.field_type == 'password' and not value:
+                continue
+            if value:
+                existing_creds[field_def.name] = value
+
+        instance.credentials = existing_creds
+        if commit:
+            instance.save()
+        return instance

@@ -1,0 +1,2672 @@
+{
+  "item_id": 218341709,
+  "item_state": "paid",
+  "category_id": 1,
+  "published_date": 1771850677,
+  "title": "Game",
+  "description": "",
+  "price": 30.4,
+  "update_stat_date": 0,
+  "refreshed_date": 1771850677,
+  "edit_date": 1772875733,
+  "pending_deletion_date": 0,
+  "login": "selebie",
+  "temp_email": "icazaezabekqpvf6o@outlook.com",
+  "view_count": 20,
+  "is_sticky": 0,
+  "information": "",
+  "item_origin": "brute",
+  "extended_guarantee": 0,
+  "nsb": 0,
+  "email_login_data": "",
+  "allow_ask_discount": 1,
+  "title_en": "Game (NO PRIME STATUS) (NO SOCIAL CLUB ACCESS)",
+  "description_en": "",
+  "information_en": "",
+  "email_type": "",
+  "email_provider": "outlook",
+  "item_domain": "outlook.com",
+  "resale_item_origin": "",
+  "auto_bump_period": 0,
+  "discount": false,
+  "steam_item_id": 218341709,
+  "steam_id": 76561198357720958,
+  "steam_country": "Belgium",
+  "steam_register_date": 1484006400,
+  "steam_last_activity": 1732137783,
+  "steam_full_games": {
+    "list": {
+      "294100": {
+        "appid": 294100,
+        "playtime_forever": 691.92,
+        "internal_game_id": 60,
+        "abbr": "RimWorld",
+        "title": "RimWorld",
+        "url": "rimworld",
+        "parentGameId": 294100,
+        "img": "https://nztcdn.com/steam/header/294100.webp"
+      },
+      "1258080": {
+        "appid": 1258080,
+        "playtime_forever": 351.7,
+        "internal_game_id": 17952,
+        "abbr": "Shop Titans",
+        "title": "Shop Titans",
+        "url": "shop-titans",
+        "parentGameId": 1258080,
+        "img": "https://nztcdn.com/steam/header/1258080.webp"
+      },
+      "1454400": {
+        "appid": 1454400,
+        "playtime_forever": 211.67,
+        "internal_game_id": 8876,
+        "abbr": "Cookie Clicker",
+        "title": "Cookie Clicker",
+        "url": "cookie-clicker",
+        "parentGameId": 1454400,
+        "img": "https://nztcdn.com/steam/header/1454400.webp"
+      },
+      "489830": {
+        "appid": 489830,
+        "playtime_forever": 201.55,
+        "internal_game_id": 32,
+        "abbr": "The Elder Scrolls V: Skyrim Special Edition",
+        "title": "The Elder Scrolls V: Skyrim Special Edition",
+        "url": "the-elder-scrolls-v-skyrim-special-edition",
+        "parentGameId": 489830,
+        "img": "https://nztcdn.com/steam/header/489830.webp"
+      },
+      "1009560": {
+        "appid": 1009560,
+        "playtime_forever": 155.45,
+        "internal_game_id": 7880,
+        "abbr": "The Tenants",
+        "title": "The Tenants",
+        "url": "the-tenants",
+        "parentGameId": 1009560,
+        "img": "https://nztcdn.com/steam/header/1009560.webp"
+      },
+      "377160": {
+        "appid": 377160,
+        "playtime_forever": 131.5,
+        "internal_game_id": 20,
+        "abbr": "Fallout 4",
+        "title": "Fallout 4",
+        "url": "fallout-4",
+        "parentGameId": 377160,
+        "img": "https://nztcdn.com/steam/header/377160.webp"
+      },
+      "304930": {
+        "appid": 304930,
+        "playtime_forever": 120.22,
+        "internal_game_id": 16,
+        "abbr": "Unturned",
+        "title": "Unturned",
+        "url": "unturned",
+        "parentGameId": 304930,
+        "img": "https://nztcdn.com/steam/header/304930.webp"
+      },
+      "599140": {
+        "appid": 599140,
+        "playtime_forever": 112.85,
+        "internal_game_id": 2749,
+        "abbr": "Graveyard Keeper",
+        "title": "Graveyard Keeper",
+        "url": "graveyard-keeper",
+        "parentGameId": 599140,
+        "img": "https://nztcdn.com/steam/header/599140.webp"
+      },
+      "495420": {
+        "appid": 495420,
+        "playtime_forever": 107.03,
+        "internal_game_id": 4947,
+        "abbr": "State of Decay 2: Juggernaut Edition",
+        "title": "State of Decay 2: Juggernaut Edition",
+        "url": "state-of-decay-2-juggernaut-edition",
+        "parentGameId": 495420,
+        "img": "https://nztcdn.com/steam/header/495420.webp"
+      },
+      "22380": {
+        "appid": 22380,
+        "playtime_forever": 103.68,
+        "internal_game_id": 19514,
+        "abbr": "Fallout: New Vegas",
+        "title": "Fallout: New Vegas",
+        "url": "fallout-new-vegas-22380",
+        "parentGameId": 22380,
+        "img": "https://nztcdn.com/steam/header/22380.webp"
+      },
+      "413150": {
+        "appid": 413150,
+        "playtime_forever": 81.72,
+        "internal_game_id": 51,
+        "abbr": "Stardew Valley",
+        "title": "Stardew Valley",
+        "url": "stardew-valley",
+        "parentGameId": 413150,
+        "img": "https://nztcdn.com/steam/header/413150.webp"
+      },
+      "1222670": {
+        "appid": 1222670,
+        "playtime_forever": 80.42,
+        "internal_game_id": 6363,
+        "abbr": "The Sims 4",
+        "title": "The Sims 4",
+        "url": "the-sims-4",
+        "parentGameId": 1222670,
+        "img": "https://nztcdn.com/steam/header/1222670.webp"
+      },
+      "1493760": {
+        "appid": 1493760,
+        "playtime_forever": 80.08,
+        "internal_game_id": 9219,
+        "abbr": "Youtubers Life 2",
+        "title": "Youtubers Life 2",
+        "url": "youtubers-life-2",
+        "parentGameId": 1493760,
+        "img": "https://nztcdn.com/steam/header/1493760.webp"
+      },
+      "1574900": {
+        "appid": 1574900,
+        "playtime_forever": 79.47,
+        "internal_game_id": 22401,
+        "abbr": "Salt 2: Shores of Gold",
+        "title": "Salt 2: Shores of Gold",
+        "url": "salt-2-shores-of-gold",
+        "parentGameId": 1574900,
+        "img": "https://nztcdn.com/steam/header/1574900.webp"
+      },
+      "356190": {
+        "appid": 356190,
+        "playtime_forever": 62.3,
+        "internal_game_id": 114,
+        "abbr": "Middle-earth: Shadow of War",
+        "title": "Middle-earth: Shadow of War",
+        "url": "middle-earth-shadow-of-war",
+        "parentGameId": 356190,
+        "img": "https://nztcdn.com/steam/header/356190.webp"
+      },
+      "225540": {
+        "appid": 225540,
+        "playtime_forever": 56.38,
+        "internal_game_id": 290,
+        "abbr": "Just Cause 3",
+        "title": "Just Cause 3",
+        "url": "just-cause-3",
+        "parentGameId": 225540,
+        "img": "https://nztcdn.com/steam/header/225540.webp"
+      },
+      "1172620": {
+        "appid": 1172620,
+        "playtime_forever": 52.98,
+        "internal_game_id": 6261,
+        "abbr": "Sea of Thieves",
+        "title": "Sea of Thieves",
+        "url": "sea-of-thieves",
+        "parentGameId": 1172620,
+        "img": "https://nztcdn.com/steam/header/1172620.webp"
+      },
+      "666140": {
+        "appid": 666140,
+        "playtime_forever": 50.37,
+        "internal_game_id": 2651,
+        "abbr": "My Time At Portia",
+        "title": "My Time At Portia",
+        "url": "my-time-at-portia",
+        "parentGameId": 666140,
+        "img": "https://nztcdn.com/steam/header/666140.webp"
+      },
+      "266840": {
+        "appid": 266840,
+        "playtime_forever": 44.08,
+        "internal_game_id": 2580,
+        "abbr": "Age of Mythology: Extended Edition",
+        "title": "Age of Mythology: Extended Edition",
+        "url": "age-of-mythology-extended-edition",
+        "parentGameId": 266840,
+        "img": "https://nztcdn.com/steam/header/266840.webp"
+      },
+      "459820": {
+        "appid": 459820,
+        "playtime_forever": 38.93,
+        "internal_game_id": 19527,
+        "abbr": "Crush Crush",
+        "title": "Crush Crush",
+        "url": "crush-crush",
+        "parentGameId": 459820,
+        "img": "https://nztcdn.com/steam/header/459820.webp"
+      },
+      "867290": {
+        "appid": 867290,
+        "playtime_forever": 36.55,
+        "internal_game_id": 3886,
+        "abbr": "Crossroads Inn",
+        "title": "Crossroads Inn",
+        "url": "crossroads-inn",
+        "parentGameId": 867290,
+        "img": "https://nztcdn.com/steam/header/867290.webp"
+      },
+      "960090": {
+        "appid": 960090,
+        "playtime_forever": 35.4,
+        "internal_game_id": 3480,
+        "abbr": "Bloons TD 6",
+        "title": "Bloons TD 6",
+        "url": "bloons-td-6",
+        "parentGameId": 960090,
+        "img": "https://nztcdn.com/steam/header/960090.webp"
+      },
+      "1525700": {
+        "appid": 1525700,
+        "playtime_forever": 32.78,
+        "internal_game_id": 9339,
+        "abbr": "Tavern Master",
+        "title": "Tavern Master",
+        "url": "tavern-master",
+        "parentGameId": 1525700,
+        "img": "https://nztcdn.com/steam/header/1525700.webp"
+      },
+      "241930": {
+        "appid": 241930,
+        "playtime_forever": 29.57,
+        "internal_game_id": 15235,
+        "abbr": "Middle-earth: Shadow of Mordor",
+        "title": "Middle-earth: Shadow of Mordor",
+        "url": "middle-earth-shadow-of-mordor",
+        "parentGameId": 241930,
+        "img": "https://nztcdn.com/steam/header/241930.webp"
+      },
+      "428690": {
+        "appid": 428690,
+        "playtime_forever": 27.72,
+        "internal_game_id": 3096,
+        "abbr": "Youtubers Life",
+        "title": "Youtubers Life",
+        "url": "youtubers-life",
+        "parentGameId": 428690,
+        "img": "https://nztcdn.com/steam/header/428690.webp"
+      },
+      "311770": {
+        "appid": 311770,
+        "playtime_forever": 23.77,
+        "internal_game_id": 6721,
+        "abbr": "LEGO Pirates of the Caribbean: The Video Game",
+        "title": "LEGO Pirates of the Caribbean: The Video Game",
+        "url": "lego-pirates-of-the-caribbean-the-video-game",
+        "parentGameId": 311770,
+        "img": "https://nztcdn.com/steam/header/311770.webp"
+      },
+      "1206560": {
+        "appid": 1206560,
+        "playtime_forever": 20.5,
+        "internal_game_id": 9375,
+        "abbr": "WorldBox - God Simulator",
+        "title": "WorldBox - God Simulator",
+        "url": "worldbox-god-simulator",
+        "parentGameId": 1206560,
+        "img": "https://nztcdn.com/steam/header/1206560.webp"
+      },
+      "704850": {
+        "appid": 704850,
+        "playtime_forever": 14.63,
+        "internal_game_id": 3080,
+        "abbr": "Thief Simulator",
+        "title": "Thief Simulator",
+        "url": "thief-simulator",
+        "parentGameId": 704850,
+        "img": "https://nztcdn.com/steam/header/704850.webp"
+      },
+      "288470": {
+        "appid": 288470,
+        "playtime_forever": 14.1,
+        "internal_game_id": 2649,
+        "abbr": "Fable Anniversary",
+        "title": "Fable Anniversary",
+        "url": "fable-anniversary",
+        "parentGameId": 288470,
+        "img": "https://nztcdn.com/steam/header/288470.webp"
+      },
+      "1332720": {
+        "appid": 1332720,
+        "playtime_forever": 11.47,
+        "internal_game_id": 15398,
+        "abbr": "Thief Simulator 2",
+        "title": "Thief Simulator 2",
+        "url": "thief-simulator-2",
+        "parentGameId": 1332720,
+        "img": "https://nztcdn.com/steam/header/1332720.webp"
+      },
+      "239160": {
+        "appid": 239160,
+        "playtime_forever": 10.53,
+        "internal_game_id": 6107,
+        "abbr": "Thief",
+        "title": "Thief",
+        "url": "thief",
+        "parentGameId": 239160,
+        "img": "https://nztcdn.com/steam/header/239160.webp"
+      },
+      "648350": {
+        "appid": 648350,
+        "playtime_forever": 8.75,
+        "internal_game_id": 2603,
+        "abbr": "Jurassic World Evolution",
+        "title": "Jurassic World Evolution",
+        "url": "jurassic-world-evolution",
+        "parentGameId": 648350,
+        "img": "https://nztcdn.com/steam/header/648350.webp"
+      },
+      "703080": {
+        "appid": 703080,
+        "playtime_forever": 7.92,
+        "internal_game_id": 3659,
+        "abbr": "Planet Zoo",
+        "title": "Planet Zoo",
+        "url": "planet-zoo",
+        "parentGameId": 703080,
+        "img": "https://nztcdn.com/steam/header/703080.webp"
+      },
+      "404530": {
+        "appid": 404530,
+        "playtime_forever": 7.38,
+        "internal_game_id": 500,
+        "abbr": "Voxel Turf",
+        "title": "Voxel Turf",
+        "url": "voxel-turf",
+        "parentGameId": 404530,
+        "img": "https://nztcdn.com/steam/header/404530.webp"
+      },
+      "327030": {
+        "appid": 327030,
+        "playtime_forever": 6.55,
+        "internal_game_id": 2590,
+        "abbr": "Worms W.M.D",
+        "title": "Worms W.M.D",
+        "url": "worms-w-m-d",
+        "parentGameId": 327030,
+        "img": "https://nztcdn.com/steam/header/327030.webp"
+      },
+      "552700": {
+        "appid": 552700,
+        "playtime_forever": 5.95,
+        "internal_game_id": 2635,
+        "abbr": "WORLD OF FINAL FANTASY",
+        "title": "WORLD OF FINAL FANTASY",
+        "url": "world-of-final-fantasy",
+        "parentGameId": 552700,
+        "img": "https://nztcdn.com/steam/header/552700.webp"
+      },
+      "17390": {
+        "appid": 17390,
+        "playtime_forever": 5.62,
+        "internal_game_id": 798,
+        "abbr": "SPORE",
+        "title": "SPORE",
+        "url": "spore",
+        "parentGameId": 17390,
+        "img": "https://nztcdn.com/steam/header/17390.webp"
+      },
+      "976730": {
+        "appid": 976730,
+        "playtime_forever": 5.5,
+        "internal_game_id": 8691,
+        "abbr": "Halo: The Master Chief Collection",
+        "title": "Halo: The Master Chief Collection",
+        "url": "halo-the-master-chief-collection",
+        "parentGameId": 976730,
+        "img": "https://nztcdn.com/steam/header/976730.webp"
+      },
+      "313690": {
+        "appid": 313690,
+        "playtime_forever": 5.25,
+        "internal_game_id": 16826,
+        "abbr": "LEGO Batman 3: Beyond Gotham",
+        "title": "LEGO Batman 3: Beyond Gotham",
+        "url": "lego-batman-3-beyond-gotham",
+        "parentGameId": 313690,
+        "img": "https://nztcdn.com/steam/header/313690.webp"
+      },
+      "1476970": {
+        "appid": 1476970,
+        "playtime_forever": 5.13,
+        "internal_game_id": 18029,
+        "abbr": "IdleOn - The Idle RPG",
+        "title": "IdleOn - The Idle RPG",
+        "url": "idleon-the-idle-rpg",
+        "parentGameId": 1476970,
+        "img": "https://nztcdn.com/steam/header/1476970.webp"
+      },
+      "223470": {
+        "appid": 223470,
+        "playtime_forever": 5.13,
+        "internal_game_id": 574,
+        "abbr": "POSTAL 2",
+        "title": "POSTAL 2",
+        "url": "postal-2",
+        "parentGameId": 223470,
+        "img": "https://nztcdn.com/steam/header/223470.webp"
+      },
+      "1210320": {
+        "appid": 1210320,
+        "playtime_forever": 4.63,
+        "internal_game_id": 9013,
+        "abbr": "Potion Craft: Alchemist Simulator",
+        "title": "Potion Craft: Alchemist Simulator",
+        "url": "potion-craft-alchemist-simulator",
+        "parentGameId": 1210320,
+        "img": "https://nztcdn.com/steam/header/1210320.webp"
+      },
+      "206420": {
+        "appid": 206420,
+        "playtime_forever": 4.3,
+        "internal_game_id": 408,
+        "abbr": "Saints Row IV",
+        "title": "Saints Row IV",
+        "url": "saints-row-iv",
+        "parentGameId": 206420,
+        "img": "https://nztcdn.com/steam/header/206420.webp"
+      },
+      "211820": {
+        "appid": 211820,
+        "playtime_forever": 3.77,
+        "internal_game_id": 84,
+        "abbr": "Starbound",
+        "title": "Starbound",
+        "url": "starbound",
+        "parentGameId": 211820,
+        "img": "https://nztcdn.com/steam/header/211820.webp"
+      },
+      "431960": {
+        "appid": 431960,
+        "playtime_forever": 3.5,
+        "internal_game_id": 55,
+        "abbr": "Wallpaper Engine",
+        "title": "Wallpaper Engine",
+        "url": "wallpaper-engine",
+        "parentGameId": 431960,
+        "img": "https://nztcdn.com/steam/header/431960.webp"
+      },
+      "205100": {
+        "appid": 205100,
+        "playtime_forever": 3.38,
+        "internal_game_id": 2488,
+        "abbr": "Dishonored",
+        "title": "Dishonored",
+        "url": "dishonored",
+        "parentGameId": 205100,
+        "img": "https://nztcdn.com/steam/header/205100.webp"
+      },
+      "1017900": {
+        "appid": 1017900,
+        "playtime_forever": 3.3,
+        "internal_game_id": 3798,
+        "abbr": "Age of Empires: Definitive Edition",
+        "title": "Age of Empires: Definitive Edition",
+        "url": "age-of-empires-definitive-edition",
+        "parentGameId": 1017900,
+        "img": "https://nztcdn.com/steam/header/1017900.webp"
+      },
+      "1273260": {
+        "appid": 1273260,
+        "playtime_forever": 3.15,
+        "internal_game_id": 9192,
+        "abbr": "Corpse Party (2021)",
+        "title": "Corpse Party (2021)",
+        "url": "corpse-party-2021",
+        "parentGameId": 1273260,
+        "img": "https://nztcdn.com/steam/header/1273260.webp"
+      },
+      "329430": {
+        "appid": 329430,
+        "playtime_forever": 3.05,
+        "internal_game_id": 221,
+        "abbr": "State of Decay: YOSE",
+        "title": "State of Decay: YOSE",
+        "url": "state-of-decay-yose",
+        "parentGameId": 329430,
+        "img": "https://nztcdn.com/steam/header/329430.webp"
+      },
+      "381210": {
+        "appid": 381210,
+        "playtime_forever": 3.05,
+        "internal_game_id": 26,
+        "abbr": "Dead by Daylight",
+        "title": "Dead by Daylight",
+        "url": "dead-by-daylight",
+        "parentGameId": 381210,
+        "img": "https://nztcdn.com/steam/header/381210.webp"
+      },
+      "459220": {
+        "appid": 459220,
+        "playtime_forever": 2.87,
+        "internal_game_id": 2636,
+        "abbr": "Halo Wars: Definitive Edition",
+        "title": "Halo Wars: Definitive Edition",
+        "url": "halo-wars-definitive-edition",
+        "parentGameId": 459220,
+        "img": "https://nztcdn.com/steam/header/459220.webp"
+      },
+      "352400": {
+        "appid": 352400,
+        "playtime_forever": 2.77,
+        "internal_game_id": 6573,
+        "abbr": "LEGO Jurassic World",
+        "title": "LEGO Jurassic World",
+        "url": "lego-jurassic-world",
+        "parentGameId": 352400,
+        "img": "https://nztcdn.com/steam/header/352400.webp"
+      },
+      "1672970": {
+        "appid": 1672970,
+        "playtime_forever": 2.67,
+        "internal_game_id": 8998,
+        "abbr": "Minecraft Dungeons",
+        "title": "Minecraft Dungeons",
+        "url": "minecraft-dungeons",
+        "parentGameId": 1672970,
+        "img": "https://nztcdn.com/steam/header/1672970.webp"
+      },
+      "218620": {
+        "appid": 218620,
+        "playtime_forever": 2.62,
+        "internal_game_id": 15,
+        "abbr": "PAYDAY 2",
+        "title": "PAYDAY 2",
+        "url": "payday-2",
+        "parentGameId": 218620,
+        "img": "https://nztcdn.com/steam/header/218620.webp"
+      },
+      "105600": {
+        "appid": 105600,
+        "playtime_forever": 2.53,
+        "internal_game_id": 21,
+        "abbr": "Terraria",
+        "title": "Terraria",
+        "url": "terraria",
+        "parentGameId": 105600,
+        "img": "https://nztcdn.com/steam/header/105600.webp"
+      },
+      "851930": {
+        "appid": 851930,
+        "playtime_forever": 2.25,
+        "internal_game_id": 3258,
+        "abbr": "Battle Royale Tycoon",
+        "title": "Battle Royale Tycoon",
+        "url": "battle-royale-tycoon",
+        "parentGameId": 851930,
+        "img": "https://nztcdn.com/steam/header/851930.webp"
+      },
+      "268500": {
+        "appid": 268500,
+        "playtime_forever": 2.18,
+        "internal_game_id": 19,
+        "abbr": "XCOM 2",
+        "title": "XCOM 2",
+        "url": "xcom-2",
+        "parentGameId": 268500,
+        "img": "https://nztcdn.com/steam/header/268500.webp"
+      },
+      "761890": {
+        "appid": 761890,
+        "playtime_forever": 2.15,
+        "internal_game_id": 2381,
+        "abbr": "Albion Online",
+        "title": "Albion Online",
+        "url": "albion-online",
+        "parentGameId": 761890,
+        "img": "https://nztcdn.com/steam/header/761890.webp"
+      },
+      "251570": {
+        "appid": 251570,
+        "playtime_forever": 2.13,
+        "internal_game_id": 36,
+        "abbr": "7 Days to Die",
+        "title": "7 Days to Die",
+        "url": "7-days-to-die",
+        "parentGameId": 251570,
+        "img": "https://nztcdn.com/steam/header/251570.webp"
+      },
+      "239820": {
+        "appid": 239820,
+        "playtime_forever": 1.97,
+        "internal_game_id": 524,
+        "abbr": "Game Dev Tycoon",
+        "title": "Game Dev Tycoon",
+        "url": "game-dev-tycoon",
+        "parentGameId": 239820,
+        "img": "https://nztcdn.com/steam/header/239820.webp"
+      },
+      "12120": {
+        "appid": 12120,
+        "playtime_forever": 1.95,
+        "internal_game_id": 336,
+        "abbr": "GTA SA",
+        "title": "GTA San Andreas",
+        "url": "gta-sa",
+        "parentGameId": 12120,
+        "img": "https://nztcdn.com/steam/header/12120.webp"
+      },
+      "965320": {
+        "appid": 965320,
+        "playtime_forever": 1.92,
+        "internal_game_id": 3968,
+        "abbr": "The Settlers 7 : History Edition",
+        "title": "The Settlers 7 : History Edition",
+        "url": "the-settlers-7-history-edition",
+        "parentGameId": 965320,
+        "img": "https://nztcdn.com/steam/header/965320.webp"
+      },
+      "242640": {
+        "appid": 242640,
+        "playtime_forever": 1.9,
+        "internal_game_id": 676,
+        "abbr": "Styx: Master of Shadows",
+        "title": "Styx: Master of Shadows",
+        "url": "styx-master-of-shadows",
+        "parentGameId": 242640,
+        "img": "https://nztcdn.com/steam/header/242640.webp"
+      },
+      "356040": {
+        "appid": 356040,
+        "playtime_forever": 1.83,
+        "internal_game_id": 11134,
+        "abbr": "Sheltered",
+        "title": "Sheltered",
+        "url": "sheltered",
+        "parentGameId": 356040,
+        "img": "https://nztcdn.com/steam/header/356040.webp"
+      },
+      "486860": {
+        "appid": 486860,
+        "playtime_forever": 1.62,
+        "internal_game_id": 4728,
+        "abbr": "MMORPG Tycoon 2",
+        "title": "MMORPG Tycoon 2",
+        "url": "mmorpg-tycoon-2",
+        "parentGameId": 486860,
+        "img": "https://nztcdn.com/steam/header/486860.webp"
+      },
+      "24790": {
+        "appid": 24790,
+        "playtime_forever": 1.62,
+        "internal_game_id": 583,
+        "abbr": "Command & Conquer 3: Tiberium Wars",
+        "title": "Command & Conquer 3: Tiberium Wars",
+        "url": "command-conquer-3-tiberium-wars",
+        "parentGameId": 24790,
+        "img": "https://nztcdn.com/steam/header/24790.webp"
+      },
+      "32330": {
+        "appid": 32330,
+        "playtime_forever": 1.48,
+        "internal_game_id": 8957,
+        "abbr": "LEGO Indiana Jones: The Original Adventures",
+        "title": "LEGO Indiana Jones: The Original Adventures",
+        "url": "lego-indiana-jones-the-original-adventures",
+        "parentGameId": 32330,
+        "img": "https://nztcdn.com/steam/header/32330.webp"
+      },
+      "22330": {
+        "appid": 22330,
+        "playtime_forever": 1.37,
+        "internal_game_id": 3280,
+        "abbr": "The Elder Scrolls IV: Oblivion Game of the Year Edition",
+        "title": "The Elder Scrolls IV: Oblivion Game of the Year Edition",
+        "url": "the-elder-scrolls-iv-oblivion-game-of-the-year-edition",
+        "parentGameId": 22330,
+        "img": "https://nztcdn.com/steam/header/22330.webp"
+      },
+      "12200": {
+        "appid": 12200,
+        "playtime_forever": 1.32,
+        "internal_game_id": 832,
+        "abbr": "Bully: Scholarship Edition",
+        "title": "Bully: Scholarship Edition",
+        "url": "bully-scholarship-edition",
+        "parentGameId": 12200,
+        "img": "https://nztcdn.com/steam/header/12200.webp"
+      },
+      "403640": {
+        "appid": 403640,
+        "playtime_forever": 1.15,
+        "internal_game_id": 207,
+        "abbr": "Dishonored 2",
+        "title": "Dishonored 2",
+        "url": "dishonored-2",
+        "parentGameId": 403640,
+        "img": "https://nztcdn.com/steam/header/403640.webp"
+      },
+      "1139980": {
+        "appid": 1139980,
+        "playtime_forever": 1.08,
+        "internal_game_id": 6520,
+        "abbr": "Travellers Rest",
+        "title": "Travellers Rest",
+        "url": "travellers-rest",
+        "parentGameId": 1139980,
+        "img": "https://nztcdn.com/steam/header/1139980.webp"
+      },
+      "1419170": {
+        "appid": 1419170,
+        "playtime_forever": 0.82,
+        "internal_game_id": 18170,
+        "abbr": "My Singing Monsters",
+        "title": "My Singing Monsters",
+        "url": "my-singing-monsters",
+        "parentGameId": 1419170,
+        "img": "https://nztcdn.com/steam/header/1419170.webp"
+      },
+      "1343400": {
+        "appid": 1343400,
+        "playtime_forever": 0.68,
+        "internal_game_id": 15805,
+        "abbr": "RuneScape",
+        "title": "RuneScape",
+        "url": "runescape",
+        "parentGameId": 1343400,
+        "img": "https://nztcdn.com/steam/header/1343400.webp"
+      },
+      "897450": {
+        "appid": 897450,
+        "playtime_forever": 0.5,
+        "internal_game_id": 6525,
+        "abbr": "The Survivalists",
+        "title": "The Survivalists",
+        "url": "the-survivalists",
+        "parentGameId": 897450,
+        "img": "https://nztcdn.com/steam/header/897450.webp"
+      },
+      "744900": {
+        "appid": 744900,
+        "playtime_forever": 0.12,
+        "internal_game_id": 21699,
+        "abbr": "Dead Frontier 2",
+        "title": "Dead Frontier 2",
+        "url": "dead-frontier-2",
+        "parentGameId": 744900,
+        "img": "https://nztcdn.com/steam/header/744900.webp"
+      },
+      "407530": {
+        "appid": 407530,
+        "playtime_forever": 0,
+        "internal_game_id": 20561,
+        "abbr": "ARK: The Survival Of The Fittest",
+        "title": "ARK: The Survival Of The Fittest",
+        "url": "ark-the-survival-of-the-fittest",
+        "parentGameId": 407530,
+        "img": "https://nztcdn.com/steam/header/407530.webp"
+      },
+      "7301": {
+        "appid": 7301,
+        "playtime_forever": 8.07,
+        "internal_game_id": 7846,
+        "abbr": "Free CS2 (No Prime)",
+        "title": "Free CS2 (No Prime)",
+        "url": "free-cs2-no-prime",
+        "parentGameId": 730,
+        "img": "https://nztcdn.com/steam/header/730.webp"
+      },
+      "570": {
+        "appid": 570,
+        "playtime_forever": 7.7,
+        "internal_game_id": 2,
+        "abbr": "Dota 2",
+        "title": "Dota 2",
+        "url": "dota-2",
+        "parentGameId": 570,
+        "img": "https://nztcdn.com/steam/header/570.webp"
+      }
+    },
+    "total": 133
+  },
+  "steam_community_ban": 0,
+  "steam_bans": "",
+  "steam_cs2_profile_rank": 1,
+  "steam_balance": "0,02€",
+  "steam_cs2_rank_id": 0,
+  "steam_is_limited": 0,
+  "steam_level": 15,
+  "steam_friend_count": 0,
+  "steam_cs2_last_activity": 1618575084,
+  "steam_dota2_solo_mmr": 0,
+  "steam_cs2_ban_date": 0,
+  "steam_converted_balance": 0.012160688729705065,
+  "steam_cards_count": 78,
+  "steam_cards_games": 24,
+  "steam_pubg_inv_value": 0,
+  "steam_cs2_inv_value": 0,
+  "steam_dota2_inv_value": 0,
+  "steam_tf2_inv_value": 0,
+  "steam_rust_inv_value": 0,
+  "steam_cs2_wingman_rank_id": 0,
+  "steam_game_count": 133,
+  "steam_steam_inv_value": 8,
+  "steam_inv_value": 0.09728550983764052,
+  "steam_cs2_medal_count": 0,
+  "steam_cs2_win_count": 0,
+  "steam_dota2_game_count": 4,
+  "steam_dota2_lose_count": 2,
+  "steam_dota2_win_count": 2,
+  "steam_hours_played_recently": "0.00",
+  "steam_has_faceit": 0,
+  "steam_faceit_cs2_level": 0,
+  "steam_faceit_csgo_level": 0,
+  "steam_points": 98,
+  "steam_last_transaction_date": 1730332800,
+  "steam_relevant_game_count": 77,
+  "steam_gift_count": 0,
+  "steam_limit_spent": "",
+  "steam_dota2_behavior": 0,
+  "steam_mfa": 0,
+  "steam_market": 0,
+  "steam_market_restrictions": 16672,
+  "steam_market_ban_end_date": 1774442635,
+  "steam_unturned_inv_value": 0,
+  "steam_cs2_last_launched": 1730738040,
+  "steam_kf2_inv_value": 0,
+  "steam_dst_inv_value": 0,
+  "steam_cs2_premier_elo": 0,
+  "steam_has_activated_keys": 0,
+  "steam_cs2_ban_type": 0,
+  "steam_external_accounts": "[]",
+  "steam_rust_kill_player": 0,
+  "steam_rust_deaths": 0,
+  "steam_total_gifts_rub": 0,
+  "steam_total_refunds_rub": 472.5035605926903,
+  "steam_total_ingame_rub": 281.51994409267223,
+  "steam_total_games_rub": 1452.0348770817036,
+  "steam_total_purchased_rub": 979.5313164890132,
+  "steam_dota2_last_match_date": 1730384945,
+  "steam_trade_ban": 0,
+  "steam_trade_ban_end_date": 0,
+  "feedback_data": "{\"1\":{\"positive\":1537,\"negative\":2},\"12\":{\"positive\":5,\"negative\":0}}",
+  "max_discount_percent": 30,
+  "isIgnored": false,
+  "priceWithSellerFee": 29.49,
+  "category": {
+    "category_id": 1,
+    "category_title": "Steam",
+    "category_name": "steam",
+    "category_url": "steam"
+  },
+  "guarantee": {
+    "duration": 86400,
+    "class": "simpleGuarantee",
+    "durationPhrase": "24 hours",
+    "endDate": 1773532363,
+    "active": false,
+    "cancelled": true,
+    "remainingTime": -279730,
+    "remainingTimePhrase": "",
+    "cancelledReason": "gotMailPassword",
+    "cancelledReasonPhrase": "Gotten mail password"
+  },
+  "canViewLoginData": true,
+  "canViewTempEmail": true,
+  "canUpdateItemStats": false,
+  "canReportItem": false,
+  "canViewItemViews": false,
+  "canManagePublicTag": false,
+  "tempEmailData": {
+    "raw": "icazaezabekqpvf6o@outlook.com:vLzFIvZ19rUw4Q",
+    "encodedRaw": "icazaezabekqpvf6o%40outlook.com%3AvLzFIvZ19rUw4Q",
+    "login": "icazaezabekqpvf6o@outlook.com",
+    "password": "vLzFIvZ19rUw4Q",
+    "encodedPassword": "vLzFIvZ19rUw4Q"
+  },
+  "loginData": {
+    "raw": "selebie:E6GMZZ8DKSD5",
+    "encodedRaw": "selebie%3AE6GMZZ8DKSD5",
+    "login": "selebie",
+    "password": "E6GMZZ8DKSD5",
+    "encodedPassword": "E6GMZZ8DKSD5",
+    "oldPassword": "ekxjtfmf1",
+    "encodedOldPassword": "ekxjtfmf1",
+    "extraPasswords": ""
+  },
+  "canViewEmailLoginData": false,
+  "copyFormatData": {
+    "title_link": "https://lzt.market/218341709/ - Game",
+    "login_data": "selebie:E6GMZZ8DKSD5:icazaezabekqpvf6o@outlook.com:vLzFIvZ19rUw4Q",
+    "full": "https://lzt.market/218341709/ - Game - selebie:E6GMZZ8DKSD5:icazaezabekqpvf6o@outlook.com:vLzFIvZ19rUw4Q"
+  },
+  "showGetEmailCodeButton": true,
+  "getEmailCodeDisplayLogin": "icazaezabekqpvf6o@outlook.com",
+  "canOpenItem": false,
+  "canCloseItem": false,
+  "canEditItem": false,
+  "canDeleteItem": false,
+  "canStickItem": false,
+  "canUnstickItem": false,
+  "canBumpItem": false,
+  "canNotBumpItemReason": "You do not have permission view page",
+  "buyer": {
+    "user_id": 8212367,
+    "operation_date": 1773445963,
+    "visitorIsBuyer": true
+  },
+  "isPersonalAccount": false,
+  "canBuyItem": false,
+  "rub_price": 2500,
+  "price_currency": "usd",
+  "priceWithSellerFeeLabel": "$0.3586",
+  "canValidateAccount": true,
+  "canResellItem": true,
+  "canAddMfa": true,
+  "canManageMfa": false,
+  "steamData": {
+    "steam_ban_type_id": [],
+    "steam_ban_type_ids": []
+  },
+  "steamRelevantGameCount": 78,
+  "isSmallExf": false,
+  "account_last_activity": 1732137783,
+  "hasCs2": true,
+  "hasDota2": true,
+  "hasPubg": false,
+  "hasTf2": false,
+  "hasRust": false,
+  "steam_cs2_ban_date_active": false,
+  "dota2CalibrationWarning": true,
+  "displayConvertedBalance": true,
+  "inventoryValue": [
+    {
+      "title": "Steam",
+      "value": 0.09728550983764052,
+      "column": "steam_steam_inv_value"
+    },
+    {
+      "title": "Dota 2",
+      "value": 0,
+      "column": "steam_dota2_inv_value"
+    },
+    {
+      "title": "Unturned",
+      "value": 0,
+      "column": "steam_unturned_inv_value"
+    }
+  ],
+  "steamCs2Medals": [],
+  "steamGifts": [],
+  "cs2RankExpired": true,
+  "steamDota2WinRate": 50,
+  "steamTransactions": [
+    {
+      "date": "1730332800",
+      "product": "Steam Community Market",
+      "type": "Market Transaction",
+      "source": "Wallet",
+      "amount": "− 0,42€"
+    },
+    {
+      "date": "1714176000",
+      "product": "Age of Empires: Definitive Edition",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 4,99€"
+    },
+    {
+      "date": "1712361600",
+      "product": "Thief Simulator 2",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 17,99€"
+    },
+    {
+      "date": "1712361600",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1712102400",
+      "product": "RimWorld - Biotech",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 23,49€"
+    },
+    {
+      "date": "1712102400",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1707782400",
+      "product": "Dungeon Village 2",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 5,99€"
+    },
+    {
+      "date": "1706400000",
+      "product": "Ninja Village",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 3,11€"
+    },
+    {
+      "date": "1706313600",
+      "product": "Captain Bones\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 9,23€"
+    },
+    {
+      "date": "1706313600",
+      "product": "POSTAL 2",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 0,97€"
+    },
+    {
+      "date": "1706140800",
+      "product": "The Survivalists - Deluxe Edition",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 3,29€"
+    },
+    {
+      "date": "1706054400",
+      "product": "Clanfolk\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 14,99€"
+    },
+    {
+      "date": "1705968000",
+      "product": "High Sea Saga DX",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 5,99€"
+    },
+    {
+      "date": "1705881600",
+      "product": "Palworld\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 26,09€"
+    },
+    {
+      "date": "1705881600",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1695772800",
+      "product": "Little King's Story",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 14,99€"
+    },
+    {
+      "date": "1695772800",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1695772800",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1679097600",
+      "product": "Dishonored 2",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 5,99€"
+    },
+    {
+      "date": "1678752000",
+      "product": "State of Decay: Year One Survival Edition",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 16,79€"
+    },
+    {
+      "date": "1678752000",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1677024000",
+      "product": "Townsmen - A Kingdom Rebuilt: The Seaside Empire",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 9,99€"
+    },
+    {
+      "date": "1677024000",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1672876800",
+      "product": "RimWorld - Royalty",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 17,09€"
+    },
+    {
+      "date": "1672790400",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1669593600",
+      "product": "Shop Titans\n\n Royal Merchant",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $9.99 USD"
+    },
+    {
+      "date": "1669593600",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1664323200",
+      "product": "Salt 2",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 16,79€"
+    },
+    {
+      "date": "1664323200",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1664323200",
+      "product": "Shop Titans\n\n Royal Merchant",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $9.99 USD"
+    },
+    {
+      "date": "1659052800",
+      "product": "Worms W.M.D",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 5,99€"
+    },
+    {
+      "date": "1658966400",
+      "product": "RPG Maker MV\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 14,79€"
+    },
+    {
+      "date": "1658966400",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1657670400",
+      "product": "Shop Titans\n\n Royal Merchant",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $9.99 USD"
+    },
+    {
+      "date": "1657670400",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1656460800",
+      "product": "Shop Titans\n\n Marvelous item bundle!",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $18.99 USD"
+    },
+    {
+      "date": "1656460800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1655510400",
+      "product": "Oblivion Game of the Year Deluxe",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 19,99€"
+    },
+    {
+      "date": "1655510400",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1655337600",
+      "product": "Shop Titans\n\n Boosted item bundle!",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $12.99 USD"
+    },
+    {
+      "date": "1655337600",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1655251200",
+      "product": "Shop Titans\n\n Marvelous item bundle!",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $18.99 USD"
+    },
+    {
+      "date": "1655251200",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1655078400",
+      "product": "Shop Titans\n\n Royal Merchant",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $9.99 USD"
+    },
+    {
+      "date": "1654560000",
+      "product": "RimWorld - Ideology",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 16,79€"
+    },
+    {
+      "date": "1654560000",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1654214400",
+      "product": "Shop Titans\n\n Marvelous item bundle!",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $18.99 USD"
+    },
+    {
+      "date": "1654214400",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1653436800",
+      "product": "Shop Titans\n\n Plucky item bundle!",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $19.99 USD"
+    },
+    {
+      "date": "1653436800",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1652486400",
+      "product": "Shop Titans\n\n Royal Merchant",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $9.99 USD"
+    },
+    {
+      "date": "1652486400",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1651449600",
+      "product": "Potion Craft",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 12,49€"
+    },
+    {
+      "date": "1651363200",
+      "product": "Lego Star Wars 3: The Clone Wars\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 4,19€"
+    },
+    {
+      "date": "1651363200",
+      "product": "Jerez's Arena 赫雷斯的角鬥場\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 8,39€"
+    },
+    {
+      "date": "1651276800",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1650499200",
+      "product": "Fallout New Vegas: Gun Runners' Arsenal ROW\n\nFallout New Vegas: Lonesome Road ROW\n\nFallout New Vegas: Old World Blues ROW\n\nFallout New Vegas: Courier's Stash ROW\n\nFallout New Vegas Honest Hearts DLC\n\nFallout: New Vegas - Dead Money ROW",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 22,94€"
+    },
+    {
+      "date": "1650499200",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1650499200",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1649894400",
+      "product": "Halo: The Master Chief Collection",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 15,99€"
+    },
+    {
+      "date": "1649894400",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1649894400",
+      "product": "Halo Wars: Definitive Edition",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 4,99€"
+    },
+    {
+      "date": "1649894400",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1646697600",
+      "product": "Hero's Hour\n\nHero's Hour - Supporter Pack",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 15,71€"
+    },
+    {
+      "date": "1646092800",
+      "product": "Saints Row IV: Re-Elected",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 14,99€"
+    },
+    {
+      "date": "1646092800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1645056000",
+      "product": "Super WorldBox",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 16,79€"
+    },
+    {
+      "date": "1644969600",
+      "product": "Stonehearth\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 16,79€"
+    },
+    {
+      "date": "1644969600",
+      "product": "Stonehearth\n\nTravellers Rest",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 30,78€"
+    },
+    {
+      "date": "1644969600",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1644969600",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1644624000",
+      "product": "Kingdom Come: Deliverance\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 8,99€"
+    },
+    {
+      "date": "1644451200",
+      "product": "Winkeltje: The Little Shop",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 10,79€"
+    },
+    {
+      "date": "1644451200",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1644451200",
+      "product": "My Little Blacksmith Shop\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 8,19€"
+    },
+    {
+      "date": "1644364800",
+      "product": "My Little Blacksmith Shop\n\nTreasure Hunter Claire",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 24,98€"
+    },
+    {
+      "date": "1644364800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1644364800",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1643932800",
+      "product": "Corpse Party (2021)\n\nMad Father\n\nMisao - 2024 HD Remaster",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 31,85€"
+    },
+    {
+      "date": "1643932800",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1643932800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1643241600",
+      "product": "Dishonored GOTY",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 4,99€"
+    },
+    {
+      "date": "1642291200",
+      "product": "Youtubers Life 2",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 23,99€"
+    },
+    {
+      "date": "1642204800",
+      "product": "Age of Empires III: Definitive Edition\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 19,99€"
+    },
+    {
+      "date": "1642118400",
+      "product": "Mafia Trilogy\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 29,99€"
+    },
+    {
+      "date": "1642118400",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1642118400",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1641686400",
+      "product": "Townsmen - A Kingdom Rebuilt",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 1,99€"
+    },
+    {
+      "date": "1641427200",
+      "product": "Graveyard Keeper - Better Save Soul",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 7,99€"
+    },
+    {
+      "date": "1641427200",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1641168000",
+      "product": "Jurassic World Evolution Deluxe",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 9,99€"
+    },
+    {
+      "date": "1641168000",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1641081600",
+      "product": "LEGO Jurassic World",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 4,99€"
+    },
+    {
+      "date": "1640908800",
+      "product": "State of Decay 2: Juggernaut Edition\n\nLEGO Indiana Jones",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 19,18€"
+    },
+    {
+      "date": "1640736000",
+      "product": "Tropico 6\n\nTropico 6 - The Llama of Wall Street\n\nTropico 6 Soundtrack\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 19,92€"
+    },
+    {
+      "date": "1640736000",
+      "product": "Crossroads Inn",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 6,24€"
+    },
+    {
+      "date": "1640736000",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1640649600",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1639180800",
+      "product": "The Elder Scrolls V: Skyrim Anniversary Upgrade",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 19,99€"
+    },
+    {
+      "date": "1639180800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1639008000",
+      "product": "XCOM 2",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 4,99€"
+    },
+    {
+      "date": "1638921600",
+      "product": "SpellForce 3: Soul Harvest\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 4,99€"
+    },
+    {
+      "date": "1638835200",
+      "product": "Minecraft Dungeons",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 19,99€"
+    },
+    {
+      "date": "1638748800",
+      "product": "Stonehearth\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 16,79€"
+    },
+    {
+      "date": "1638748800",
+      "product": "Tavern Master\n\nStonehearth",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 31,78€"
+    },
+    {
+      "date": "1638748800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1638748800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1636416000",
+      "product": "Shop Titans\n\n Royal Merchant",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $9.99 USD"
+    },
+    {
+      "date": "1636416000",
+      "product": "Purchased 5,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 5,--€"
+    },
+    {
+      "date": "1635897600",
+      "product": "HuniePop 2: Double Date",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 16,79€"
+    },
+    {
+      "date": "1635724800",
+      "product": "Watch_Dogs2 Gold Edition\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 19,99€"
+    },
+    {
+      "date": "1635206400",
+      "product": "Grand Theft Auto V\n\nGrand Theft Auto V - Criminal Enterprise Starter Pack\nGrand Theft Auto V Legacy\n\n Criminal Enterprise Starter Pack\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 14,80€"
+    },
+    {
+      "date": "1635206400",
+      "product": "Cookie Clicker",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 3,99€"
+    },
+    {
+      "date": "1635120000",
+      "product": "Fallout 3 - Game of the Year\n\nRefund",
+      "type": "Refund",
+      "source": "6,95€\t\t\t\t\t\tWallet\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t1,04€\t\t\t\t\t\tPayPal",
+      "amount": "− 7,99€"
+    },
+    {
+      "date": "1635120000",
+      "product": "Divinity: Original Sin 2 Launch\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 17,99€"
+    },
+    {
+      "date": "1635120000",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1633737600",
+      "product": "AER",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 1,49€"
+    },
+    {
+      "date": "1633305600",
+      "product": "Shop Titans\n\n Rapid item bundle!",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $7.99 USD"
+    },
+    {
+      "date": "1633305600",
+      "product": "Shop Titans\n\n Magical item bundle!",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $17.99 USD"
+    },
+    {
+      "date": "1633305600",
+      "product": "Shop Titans\n\n Plucky item bundle!",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $19.99 USD"
+    },
+    {
+      "date": "1633305600",
+      "product": "Shop Titans\n\n Tasteful item bundle!",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $29.99 USD"
+    },
+    {
+      "date": "1633305600",
+      "product": "Shop Titans\n\n Royal Merchant",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $9.99 USD"
+    },
+    {
+      "date": "1633305600",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1633305600",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1633305600",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1633305600",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1631750400",
+      "product": "Beyond Good and Evil",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 4,99€"
+    },
+    {
+      "date": "1631491200",
+      "product": "Fallout 4 - Far Harbor",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 14,99€"
+    },
+    {
+      "date": "1631491200",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1630540800",
+      "product": "Middle-earth: Shadow of War",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 39,99€"
+    },
+    {
+      "date": "1630540800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1630540800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1629331200",
+      "product": "Middle-earth: Shadow of Mordor Game of the Year Edition",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 19,99€"
+    },
+    {
+      "date": "1629331200",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1628899200",
+      "product": "Wallpaper Engine",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 3,99€"
+    },
+    {
+      "date": "1628899200",
+      "product": "West of Loathing\n\nWest of Loathing: Reckonin' at Gun Manor",
+      "type": "Purchase",
+      "source": "7,08€\t\t\t\t\t\tWallet\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t0,87€\t\t\t\t\t\tPayPal",
+      "amount": "− 7,95€"
+    },
+    {
+      "date": "1628812800",
+      "product": "Dishonored 2\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 4,49€"
+    },
+    {
+      "date": "1628812800",
+      "product": "Dead by Daylight",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 19,99€"
+    },
+    {
+      "date": "1628812800",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1628726400",
+      "product": "Empyrion - Galactic Survival\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 19,99€"
+    },
+    {
+      "date": "1628726400",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1628553600",
+      "product": "The Elder Scrolls V: Skyrim Special Edition",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 39,99€"
+    },
+    {
+      "date": "1628553600",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1628553600",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1628294400",
+      "product": "Crush Crush\n\n Purchase 130 in-game diamond currency.",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $10.00 USD"
+    },
+    {
+      "date": "1628294400",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1627689600",
+      "product": "Fallout 4 Nuka-World",
+      "type": "Purchase",
+      "source": "6,09€\t\t\t\t\t\tWallet\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t3,90€\t\t\t\t\t\tPayPal",
+      "amount": "− 9,99€"
+    },
+    {
+      "date": "1627689600",
+      "product": "Fallout 4 Vault-Tec Workshop",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 4,99€"
+    },
+    {
+      "date": "1627689600",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1627430400",
+      "product": "Fallout 4",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 19,99€"
+    },
+    {
+      "date": "1627430400",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1626739200",
+      "product": "Sheltered",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 3,24€"
+    },
+    {
+      "date": "1626652800",
+      "product": "MMORPG Tycoon 2\n\nYoutubers Life\n\nLEGO Batman 3: Beyond Gotham",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 59,22€"
+    },
+    {
+      "date": "1626652800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1626652800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1626652800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1626048000",
+      "product": "Crush Crush\n\n Purchase Explora in-game character.",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $2.00 USD"
+    },
+    {
+      "date": "1625961600",
+      "product": "Styx: Master of Shadows",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 1,99€"
+    },
+    {
+      "date": "1625788800",
+      "product": "My Time At Portia\n\nMy Time At Portia - Player Attire Package\n\nMy Time At Portia - NPC Attire Package",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 15,11€"
+    },
+    {
+      "date": "1625788800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1624838400",
+      "product": "Sea of Thieves: 2025 Edition\n\n 1000 Ancient Coins - Hidden Trove of the Ancients",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− 8,50€"
+    },
+    {
+      "date": "1624752000",
+      "product": "Assassin's Creed Syndicate\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 9,99€"
+    },
+    {
+      "date": "1624579200",
+      "product": "Spore",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 4,99€"
+    },
+    {
+      "date": "1624579200",
+      "product": "LEGO&reg; Pirates of the Caribbean The Video Game",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 4,19€"
+    },
+    {
+      "date": "1624579200",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1624406400",
+      "product": "Sex with the Devil",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 3,29€"
+    },
+    {
+      "date": "1624233600",
+      "product": "Game Dev Tycoon",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 2,99€"
+    },
+    {
+      "date": "1623456000",
+      "product": "Graveyard Keeper\n\nGraveyard Keeper OST\n\nGraveyard Keeper Artbook\n\nGraveyard Keeper - Stranger Sins\n\nGraveyard Keeper - Game of Crone",
+      "type": "Purchase",
+      "source": "19,41€\t\t\t\t\t\tWallet\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t3,16€\t\t\t\t\t\tPayPal",
+      "amount": "− 22,57€"
+    },
+    {
+      "date": "1623456000",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1623110400",
+      "product": "The Tenants",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 16,79€"
+    },
+    {
+      "date": "1623024000",
+      "product": "Oblivion Game of the Year Deluxe\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 19,99€"
+    },
+    {
+      "date": "1623024000",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1622937600",
+      "product": "RimWorld",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 29,99€"
+    },
+    {
+      "date": "1622678400",
+      "product": "Material Girl",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 0,59€"
+    },
+    {
+      "date": "1622678400",
+      "product": "Naked Story\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 4,99€"
+    },
+    {
+      "date": "1622678400",
+      "product": "Thief: Master Thief Edition",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 6,24€"
+    },
+    {
+      "date": "1622592000",
+      "product": "Just Cause™ 4: Deathstalker Scorpion Pack\n\nJust Cause™ 4: Digital Deluxe Content\n\nJust Cause™ 4: Golden Gear Pack\n\nJust Cause&trade; 4: Expansion Pass\n\nJust Cause™ 4: Neon Racer Pack\n\nJust Cause™ 4: Renegade Pack\n\nJust Cause™ 4\n\nJust Cause™ 4: Dragon Gun\n\nJust Cause™ 4: Toy Vehicle Pack\n\nJust Cause™ 4: Soaring Speed Vehicle Pack\n\nJust Cause™ 4: Adversary Vehicle Pack\n\nJust Cause™ 4: Sea Dogs Vehicle Pack\n\nJust Cause™ 4: Brawler Mech\n\nJust Cause™ 4 : Shark & Bark Vehicle Pack\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 13,63€"
+    },
+    {
+      "date": "1622592000",
+      "product": "Dying Light Enhanced Edition ROW\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 14,99€"
+    },
+    {
+      "date": "1622592000",
+      "product": "PAYDAY 2 - Pre-2024-08\n\nDying Light Enhanced Edition ROW\n\nJust Cause™ 4: Deathstalker Scorpion Pack\n\nJust Cause™ 4: Digital Deluxe Content\n\nJust Cause™ 4: Golden Gear Pack\n\nJust Cause&trade; 4: Expansion Pass\n\nJust Cause™ 4: Neon Racer Pack\n\nJust Cause™ 4: Renegade Pack\n\nJust Cause™ 4\n\nJust Cause™ 4: Dragon Gun\n\nJust Cause™ 4: Toy Vehicle Pack\n\nJust Cause™ 4: Soaring Speed Vehicle Pack\n\nJust Cause™ 4: Adversary Vehicle Pack\n\nJust Cause™ 4: Sea Dogs Vehicle Pack\n\nJust Cause™ 4: Brawler Mech\n\nJust Cause™ 4 : Shark & Bark Vehicle Pack",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 38,61€"
+    },
+    {
+      "date": "1622592000",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1622592000",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1622592000",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1622419200",
+      "product": "Thief Simulator",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 6,99€"
+    },
+    {
+      "date": "1622419200",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1621555200",
+      "product": "Just Cause 3\n\nJust Cause 3 - Combat Buggy\n\nJust Cause 3 - Mini-Gun Racing Boat\n\nJust Cause 3 - Rocket Launcher Sports Car\n\nJust Cause 3 - Final Argument Sniper Rifle\n\nJust Cause 3 - Capstone Bloodhound RPG\n\nJust Cause 3 DLC: Sky Fortress Pack\n\nJust Cause™ 3 DLC: Mech Land Assault Pack\n\nJust Cause™ 3 DLC: Bavarium Sea Heist Pack\n\nJust Cause™ 3 DLC: Kousavá Rifle\n\nJust Cause™ 3 DLC: Reaper Missile Mech\n\nJust Cause 3: Air, Land & Sea Expansion Pass\n\nJust Cause 3 - Firestarter Customization Skins",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 4,19€"
+    },
+    {
+      "date": "1621296000",
+      "product": "Bloons TD 6",
+      "type": "Purchase",
+      "source": "0,59€\t\t\t\t\t\tWallet\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t7,60€\t\t\t\t\t\tPayPal",
+      "amount": "− 8,19€"
+    },
+    {
+      "date": "1620777600",
+      "product": "Command & Conquer 3 Tiberium Wars™",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 3,74€"
+    },
+    {
+      "date": "1620259200",
+      "product": "WORLD OF FINAL FANTASY®",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 12,49€"
+    },
+    {
+      "date": "1620172800",
+      "product": "Kenshi\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 16,19€"
+    },
+    {
+      "date": "1620000000",
+      "product": "Crush Crush\n\n Purchase 55 in-game diamond currency.",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $4.50 USD"
+    },
+    {
+      "date": "1620000000",
+      "product": "Crush Crush\n\n Purchase Charlotte in-game character.",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $3.00 USD"
+    },
+    {
+      "date": "1620000000",
+      "product": "Fable Anniversary\n\nFable Anniversary - Heroes and Villains Content Pack\n\nKenshi",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 63,17€"
+    },
+    {
+      "date": "1620000000",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1620000000",
+      "product": "Purchased 50,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 50,--€"
+    },
+    {
+      "date": "1619654400",
+      "product": "Bully: Scholarship Edition",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 9,99€"
+    },
+    {
+      "date": "1619654400",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1618790400",
+      "product": "The Settlers 7 : History Edition",
+      "type": "Purchase",
+      "source": "0,74€\t\t\t\t\t\tWallet\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t14,25€\t\t\t\t\t\tPayPal",
+      "amount": "− 14,99€"
+    },
+    {
+      "date": "1617494400",
+      "product": "Crush Crush\n\n Purchase Suzu in-game character.",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $4.00 USD"
+    },
+    {
+      "date": "1617494400",
+      "product": "Planet Zoo",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 22,49€"
+    },
+    {
+      "date": "1617494400",
+      "product": "Purchased 25,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 25,--€"
+    },
+    {
+      "date": "1617235200",
+      "product": "Sea of Thieves: 2025 Edition\n\n Kraken Starter Bundle",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− 8,50€"
+    },
+    {
+      "date": "1617235200",
+      "product": "Sea of Thieves 2025 Edition",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 39,99€"
+    },
+    {
+      "date": "1617235200",
+      "product": "Purchased 50,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 50,--€"
+    },
+    {
+      "date": "1616716800",
+      "product": "Fallout: New Vegas",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 9,99€"
+    },
+    {
+      "date": "1616716800",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1614988800",
+      "product": "Battle Royale Tycoon",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 4,91€"
+    },
+    {
+      "date": "1614816000",
+      "product": "7 Days to Die\n\nAge of Mythology EX plus Tale of the Dragon",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 54,98€"
+    },
+    {
+      "date": "1614729600",
+      "product": "Red Dead Redemption 2\n\nRefund",
+      "type": "Refund",
+      "source": "Wallet Credit",
+      "amount": "− 59,99€"
+    },
+    {
+      "date": "1614556800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1614556800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1614556800",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1614211200",
+      "product": "Swords and Sandals 5 Redux",
+      "type": "Purchase",
+      "source": "4,05€\t\t\t\t\t\tWallet\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t0,94€\t\t\t\t\t\tPayPal",
+      "amount": "− 4,99€"
+    },
+    {
+      "date": "1614211200",
+      "product": "Terraria\n\nStarbound\n\nStardew Valley",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 37,97€"
+    },
+    {
+      "date": "1614211200",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1614211200",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1613692800",
+      "product": "The Sims™ 4",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 9,99€"
+    },
+    {
+      "date": "1613520000",
+      "product": "Voxel Turf",
+      "type": "Purchase",
+      "source": "Wallet",
+      "amount": "− 7,99€"
+    },
+    {
+      "date": "1613520000",
+      "product": "Purchased 20,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "Retail",
+      "amount": "− 20,--€"
+    },
+    {
+      "date": "1613174400",
+      "product": "Grand Theft Auto IV: The Complete Edition",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 5,99€"
+    },
+    {
+      "date": "1613174400",
+      "product": "Grand Theft Auto: San Andreas (EU)",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 3,49€"
+    },
+    {
+      "date": "1613001600",
+      "product": "Virtual Families 2",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 6,59€"
+    },
+    {
+      "date": "1613001600",
+      "product": "Virtual Villagers 3: The Secret City",
+      "type": "Purchase",
+      "source": "1,84€\t\t\t\t\t\tWallet\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t8,15€\t\t\t\t\t\tPayPal",
+      "amount": "− 9,99€"
+    },
+    {
+      "date": "1610668800",
+      "product": "Crush Crush\n\n Purchase Starter Pack.",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $7.00 USD"
+    },
+    {
+      "date": "1610668800",
+      "product": "Purchased 5,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 5,--€"
+    },
+    {
+      "date": "1610668800",
+      "product": "Crush Crush\n\n Purchase Catara in-game character.",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $5.00 USD"
+    },
+    {
+      "date": "1610668800",
+      "product": "Purchased 5,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 5,--€"
+    },
+    {
+      "date": "1610668800",
+      "product": "Crush Crush\n\n Purchase 130 in-game diamond currency.",
+      "type": "In-Game Purchase",
+      "source": "Wallet",
+      "amount": "− $10.00 USD"
+    },
+    {
+      "date": "1610668800",
+      "product": "Purchased 10,--€ Wallet Credit",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 10,--€"
+    },
+    {
+      "date": "1610668800",
+      "product": "Crush Crush - NSFW Naughty DLC",
+      "type": "Purchase",
+      "source": "PayPal",
+      "amount": "− 5,69€"
+    }
+  ],
+  "hasPossibleBanInDota2": false,
+  "chineseAccount": false,
+  "cs2MapsRanks": [],
+  "cs2PremierElo": [],
+  "external_accounts": [],
+  "steamLifetimeTradeBan": false,
+  "steamGuardTradeBan": false,
+  "canViewAccountLink": true,
+  "accountLinks": [
+    {
+      "link": "https://steamcommunity.com/profiles/76561198357720958",
+      "text": "Steam profile: 76561198357720958",
+      "iconClass": "steam"
+    },
+    {
+      "link": "https://steamcommunity.com/profiles/76561198357720958/games/?tab=all",
+      "text": "Steam games: 76561198357720958",
+      "iconClass": "steam"
+    },
+    {
+      "link": "https://ru.dotabuff.com/search?utf8=%E2%9C%93&q=76561198357720958",
+      "text": "Dotabuff profile",
+      "iconClass": "dota2"
+    },
+    {
+      "link": "https://lzt.market/218341709/steam-preview?type=profiles",
+      "text": "Steam Preview: Profile",
+      "iconClass": "steam"
+    },
+    {
+      "link": "https://lzt.market/218341709/steam-preview?type=games",
+      "text": "Steam Preview: Games",
+      "iconClass": "steam"
+    }
+  ],
+  "accountLink": "https://steamcommunity.com/profiles/76561198357720958",
+  "imagePreviewLinks": {
+    "download": {
+      "games": "https://prod-api.lzt.market/218341709/image?type=games"
+    }
+  },
+  "emailLoginUrl": "https://outlook.com",
+  "canChangePassword": true,
+  "canChangeEmailPassword": false,
+  "uniqueKeyExists": true,
+  "itemOriginPhrase": "Brute-force",
+  "sold_items_category_count": 14497,
+  "restore_items_category_count": 33,
+  "tags": {
+    "1": {
+      "tag_id": 1,
+      "title": "Valid",
+      "isDefault": true,
+      "forOwnedAccountsOnly": true,
+      "bc": ""
+    }
+  },
+  "public_tag": null,
+  "note_text": null,
+  "descriptionHtml": "",
+  "descriptionEnHtml": "",
+  "descriptionPlain": "",
+  "descriptionEnPlain": "",
+  "seller": {
+    "user_id": 211472,
+    "sold_items_count": 16667,
+    "active_items_count": 454,
+    "restore_data": "{\"7\":2,\"5\":2,\"1\":33,\"12\":28}",
+    "username": "NHGroup",
+    "avatar_date": 1699172322,
+    "is_banned": 0,
+    "display_style_group_id": 26,
+    "restore_percents": 0
+  }
+}

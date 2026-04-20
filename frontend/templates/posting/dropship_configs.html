@@ -1,0 +1,826 @@
+{% extends "base.html" %}
+
+{% block title %}Dropship Configs{% endblock %}
+
+{% block content %}
+<div x-data="dropshipManager()" x-init="init()">
+
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Dropship Configs</h1>
+        <div class="flex items-center gap-3">
+            <button @click="stopAll()"
+                    x-show="hasRunning"
+                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium transition-colors">
+                Stop All
+            </button>
+            <button @click="showCreateModal = true"
+                    class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
+                + New Config
+            </button>
+        </div>
+    </div>
+
+    <!-- Scheduler Status Banner -->
+    <div class="rounded-lg shadow mb-6 p-4 flex items-center justify-between"
+         :class="scheduler.alive ? 'bg-emerald-50 border border-emerald-200' : 'bg-red-50 border border-red-200'">
+        <div class="flex items-center gap-3">
+            <!-- Pulse dot -->
+            <span class="relative flex h-3 w-3">
+                <span class="absolute inline-flex h-full w-full rounded-full opacity-75"
+                      :class="scheduler.alive ? 'bg-emerald-400 animate-ping' : 'bg-red-400'"
+                      x-show="scheduler.alive"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3"
+                      :class="scheduler.alive ? 'bg-emerald-500' : 'bg-red-500'"></span>
+            </span>
+            <div>
+                <span class="font-semibold text-sm"
+                      :class="scheduler.alive ? 'text-emerald-800' : 'text-red-800'"
+                      x-text="scheduler.alive ? 'Scheduler Active' : 'Scheduler Offline'"></span>
+                <template x-if="scheduler.alive && scheduler.started_at">
+                    <span class="text-xs text-emerald-600 ml-2"
+                          x-text="'PID ' + scheduler.pid + ' | up since ' + formatTime(scheduler.started_at)"></span>
+                </template>
+                <template x-if="!scheduler.alive">
+                    <span class="text-xs text-red-600 ml-2">
+                        Configs with enabled=true will start automatically when scheduler is running.
+                    </span>
+                </template>
+            </div>
+        </div>
+
+        <!-- Cleaner Controls (per source account) -->
+        <div class="flex items-center gap-3">
+            <template x-for="cc in scheduler.cleaners" :key="cc.id">
+                <div class="flex items-center gap-2 border-l border-gray-200 pl-3">
+                    <div class="text-right mr-1">
+                        <p class="text-xs font-medium text-gray-700" x-text="'Cleaner: ' + cc.source_account"></p>
+                        <p class="text-xs" :class="{
+                            'text-emerald-600': cc.running,
+                            'text-yellow-600': !cc.enabled && cc.disabled_reason,
+                            'text-gray-500': !cc.running && cc.enabled,
+                        }">
+                            <span x-text="cc.running ? 'RUNNING' : (cc.enabled ? 'IDLE' : 'DISABLED')"></span>
+                            <template x-if="cc.disabled_reason">
+                                <span class="italic" x-text="' - ' + cc.disabled_reason"></span>
+                            </template>
+                        </p>
+                    </div>
+                    <button @click="cleanerToggle(cc.id)"
+                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+                            :class="cc.enabled ? 'bg-emerald-500' : 'bg-gray-300'"
+                            title="Toggle cleaner">
+                        <span class="inline-block h-4 w-4 rounded-full bg-white transition-transform"
+                              :class="cc.enabled ? 'translate-x-6' : 'translate-x-1'"></span>
+                    </button>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-xs text-gray-500">Active Items</p>
+            <p class="text-2xl font-bold text-indigo-600" x-text="stats.active_items">0</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-xs text-gray-500">Active Configs</p>
+            <p class="text-2xl font-bold text-emerald-600" x-text="stats.active_configs">0</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-xs text-gray-500">Recent Logs</p>
+            <p class="text-2xl font-bold text-gray-600" x-text="stats.recent_logs.length">0</p>
+        </div>
+    </div>
+
+    <!-- Configs List -->
+    <div class="space-y-4 mb-8">
+        <template x-for="config in configs" :key="config.id">
+            <div class="bg-white rounded-lg shadow"
+                 :class="{
+                     'ring-2 ring-emerald-300': config.poster_running,
+                     'ring-2 ring-yellow-300': !config.enabled && config.disabled_reason,
+                 }">
+                <!-- Config Header -->
+                <div class="flex items-center justify-between p-4 border-b border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <!-- Enable/Disable toggle -->
+                        <button @click="toggleConfig(config)"
+                                class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+                                :class="config.enabled ? 'bg-emerald-500' : 'bg-gray-300'">
+                            <span class="inline-block h-4 w-4 rounded-full bg-white transition-transform"
+                                  :class="config.enabled ? 'translate-x-6' : 'translate-x-1'"></span>
+                        </button>
+                        <div>
+                            <span class="font-semibold text-gray-900" x-text="config.source_account.name"></span>
+                            <span class="text-gray-400 mx-1">&rarr;</span>
+                            <span class="font-semibold text-gray-900" x-text="config.store.name"></span>
+                            <span class="ml-2 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700"
+                                  x-text="config.store.provider"></span>
+                        </div>
+
+                        <!-- Poster Status Badge -->
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold"
+                              :class="{
+                                  'bg-emerald-100 text-emerald-700': config.poster_running,
+                                  'bg-yellow-100 text-yellow-700': !config.enabled && config.disabled_reason,
+                                  'bg-gray-100 text-gray-500': !config.poster_running && config.enabled,
+                              }"
+                              x-text="config.poster_running ? 'RUNNING' : (config.enabled ? 'IDLE' : 'DISABLED')"></span>
+                    </div>
+
+                    <div class="flex items-center gap-3 text-sm text-gray-500">
+                        <span x-text="config.game.name"></span>
+
+                        <!-- Inline config editing (delays + cycle) -->
+                        <template x-if="config._editing">
+                            <div class="flex items-center gap-2 text-xs">
+                                <label class="text-gray-500">item:</label>
+                                <input type="number" step="0.5" min="0.5" max="300"
+                                       x-model.number="config._editForm.item_delay"
+                                       class="w-16 border border-gray-300 rounded px-1.5 py-0.5 text-xs text-center">
+                                <label class="text-gray-500">src:</label>
+                                <input type="number" step="0.5" min="0.5" max="300"
+                                       x-model.number="config._editForm.source_delay"
+                                       class="w-16 border border-gray-300 rounded px-1.5 py-0.5 text-xs text-center">
+                                <label class="text-gray-500">cycle(m):</label>
+                                <input type="number" step="1" min="1" max="1440"
+                                       x-model.number="config._editForm.poster_cycle_minutes"
+                                       class="w-16 border border-gray-300 rounded px-1.5 py-0.5 text-xs text-center">
+                                <button @click="saveConfigEdit(config)"
+                                        class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-xs font-medium hover:bg-indigo-200">Save</button>
+                                <button @click="config._editing = false"
+                                        class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs hover:bg-gray-200">Cancel</button>
+                            </div>
+                        </template>
+                        <template x-if="!config._editing">
+                            <span class="text-xs cursor-pointer hover:text-indigo-600 transition-colors"
+                                  @click="startConfigEdit(config)"
+                                  title="Click to edit">
+                                delay: <span x-text="config.item_delay"></span>s / <span x-text="config.source_delay"></span>s
+                                | cycle: <span x-text="Math.floor(config.poster_cycle_interval / 60)"></span>m
+                            </span>
+                        </template>
+
+                        <!-- Poster Stop button (when RUNNING) -->
+                        <template x-if="config.poster_running">
+                            <button @click="posterStop(config.id)"
+                                    class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-md hover:bg-yellow-200 text-xs font-medium transition-colors">
+                                <svg class="w-4 h-4 inline -mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"/>
+                                </svg>
+                                Stop
+                            </button>
+                        </template>
+
+                        <!-- Poster Resume button (when PAUSED) -->
+                        <template x-if="!config.enabled && config.disabled_reason">
+                            <button @click="posterResume(config.id)"
+                                    class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-md hover:bg-emerald-200 text-xs font-medium transition-colors">
+                                <svg class="w-4 h-4 inline -mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/>
+                                </svg>
+                                Resume
+                            </button>
+                        </template>
+
+                        <!-- Delete button -->
+                        <button @click="deleteConfig(config)"
+                                x-show="config.poster_status !== 'RUNNING'"
+                                class="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200 text-xs font-medium transition-colors"
+                                title="Delete Config">
+                            <svg class="w-4 h-4 inline -mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                            </svg>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pause Reason (if PAUSED) -->
+                <template x-if="!config.enabled && config.disabled_reason">
+                    <div class="px-4 py-2 bg-yellow-50 border-b border-yellow-100 flex items-center gap-2 text-sm text-yellow-700">
+                        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                        </svg>
+                        <span>Disabled: <span class="font-medium" x-text="config.disabled_reason"></span></span>
+                    </div>
+                </template>
+
+                <!-- Last Cycle Info -->
+                <template x-if="config.poster_last_cycle_at">
+                    <div class="px-4 py-1.5 border-b border-gray-50 text-xs text-gray-400">
+                        Last cycle: <span x-text="formatTime(config.poster_last_cycle_at)"></span>
+                    </div>
+                </template>
+
+                <!-- Subplatform Limits (only for games that support subplatforms) -->
+                <template x-if="config.has_subplatforms">
+                    <div class="p-4 border-b border-gray-100">
+                        <!-- Warning: no limits configured -->
+                        <template x-if="!config.subplatform_limits.some(sp => sp.max_offers !== null && sp.max_offers > 0)">
+                            <div class="mb-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-2 text-xs text-amber-700">
+                                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                                </svg>
+                                <span>No subplatform limits configured. This config cannot be enabled until at least one limit is set.</span>
+                            </div>
+                        </template>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-medium text-gray-700">Subplatform Limits</h3>
+                            <span class="text-xs font-medium transition-colors"
+                                  :class="config._savingSp ? 'text-gray-400' : (config._spError ? 'text-red-600' : (config._spMessage ? 'text-emerald-600' : 'text-gray-400'))"
+                                  x-text="config._savingSp ? 'Saving...' : (config._spMessage || 'Auto-save')">
+                            </span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="text-xs text-gray-500 border-b border-gray-100">
+                                        <th class="text-left py-1.5 pr-3 font-medium">Platform</th>
+                                        <th class="text-left py-1.5 px-3 font-medium">Max Offers</th>
+                                        <th class="text-left py-1.5 px-3 font-medium">Stock Reserve</th>
+                                        <th class="text-left py-1.5 pl-3 font-medium">Active</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="sp in config.subplatform_limits" :key="sp.sub_platform">
+                                        <tr class="border-b border-gray-50">
+                                            <td class="py-1.5 pr-3">
+                                                <span class="font-medium text-gray-700" x-text="sp.sub_platform"></span>
+                                            </td>
+                                            <td class="py-1.5 px-3">
+                                                <input type="number" min="0" step="1"
+                                                       x-model.number="sp.max_offers"
+                                                       @change="debounceSaveSubplatformLimits(config)"
+                                                       placeholder="—"
+                                                       class="w-20 border border-gray-300 rounded px-2 py-1 text-sm text-center focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400">
+                                            </td>
+                                            <td class="py-1.5 px-3">
+                                                <input type="number" min="0" step="1"
+                                                       x-model.number="sp.stock_reserve"
+                                                       @change="debounceSaveSubplatformLimits(config)"
+                                                       placeholder="—"
+                                                       class="w-20 border border-gray-300 rounded px-2 py-1 text-sm text-center focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400">
+                                            </td>
+                                            <td class="py-1.5 pl-3">
+                                                <span class="text-xs font-mono"
+                                                      :class="sp.active > 0 ? 'text-indigo-600 font-semibold' : 'text-gray-400'"
+                                                      x-text="sp.active"></span>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                        <template x-if="config._spMessage">
+                            <p class="mt-2 text-xs"
+                               :class="config._spError ? 'text-red-600' : 'text-emerald-600'"
+                               x-text="config._spMessage"></p>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- URLs Table -->
+                <div class="p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-medium text-gray-700">Target URLs</h3>
+                        <button @click="openAddUrl(config)"
+                                class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
+                            + Add URL
+                        </button>
+                    </div>
+
+                    <template x-if="config.urls.length === 0">
+                        <p class="text-sm text-gray-400 italic">No URLs configured</p>
+                    </template>
+
+                    <div class="space-y-2">
+                        <template x-for="url in config.urls" :key="url.id">
+                            <div class="flex items-start justify-between p-3 bg-gray-50 rounded-lg text-sm">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="inline-block w-2 h-2 rounded-full"
+                                              :class="url.enabled ? 'bg-emerald-500' : 'bg-gray-300'"></span>
+                                        <a :href="url.url" target="_blank"
+                                           class="text-indigo-600 hover:underline truncate block max-w-md"
+                                           x-text="url.url"></a>
+                                    </div>
+                                    <div class="flex gap-4 text-xs text-gray-500 ml-4">
+                                        <span>low: <span x-text="url.multiplier_low"></span>x</span>
+                                        <span>mid: <span x-text="url.multiplier_mid"></span>x</span>
+                                        <span>high: <span x-text="url.multiplier_high"></span>x</span>
+                                        <span>min: $<span x-text="url.min_price"></span></span>
+                                        <template x-if="url.forced_ending">
+                                            <span>ending: .<span x-text="url.forced_ending"></span></span>
+                                        </template>
+                                    </div>
+                                    <div class="flex gap-4 text-xs text-gray-400 ml-4 mt-1">
+                                        <span>Found: <span x-text="url.items_found"></span></span>
+                                        <span>Posted: <span x-text="url.items_posted"></span></span>
+                                        <template x-if="url.last_fetched_at">
+                                            <span>Last: <span x-text="formatTime(url.last_fetched_at)"></span></span>
+                                        </template>
+                                        <template x-if="url.last_error">
+                                            <span class="text-red-500" x-text="url.last_error"></span>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2 ml-3 shrink-0">
+                                    <button @click="openEditUrl(url)"
+                                            class="text-gray-400 hover:text-indigo-600" title="Edit">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                    </button>
+                                    <button @click="toggleUrl(url)"
+                                            class="text-gray-400 hover:text-yellow-600"
+                                            :title="url.enabled ? 'Disable' : 'Enable'">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </button>
+                                    <button @click="deleteUrl(url)"
+                                            class="text-gray-400 hover:text-red-600" title="Delete">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template x-if="configs.length === 0">
+            <div class="bg-white rounded-lg shadow p-8 text-center text-gray-400">
+                No dropship configs yet. Click "New Config" to create one.
+            </div>
+        </template>
+    </div>
+
+    <!-- Create Config Modal -->
+    <template x-if="showCreateModal">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showCreateModal = false">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+                <h2 class="text-lg font-bold mb-4">New Dropship Config</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Source Account (LZT)</label>
+                        <select x-model="newConfig.source_account_id"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="">Select...</option>
+                            {% for acc in source_accounts %}
+                            <option value="{{ acc.id }}">{{ acc.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Target Store</label>
+                        <select x-model="newConfig.store_id"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="">Select...</option>
+                            {% for store in target_stores %}
+                            <option value="{{ store.id }}">{{ store.name }} ({{ store.provider }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Game</label>
+                        <select x-model="newConfig.game_id"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="">Select...</option>
+                            {% for game in games %}
+                            <option value="{{ game.id }}">{{ game.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Item Delay (s)</label>
+                            <input type="number" step="0.5" x-model="newConfig.item_delay"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Source Delay (s)</label>
+                            <input type="number" step="0.5" x-model="newConfig.source_delay"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cycle (min)</label>
+                            <input type="number" step="1" min="1" x-model="newConfig.poster_cycle_minutes"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button @click="showCreateModal = false"
+                            class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+                    <button @click="createConfig()"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
+                        Create
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add URL Modal -->
+    <template x-if="showUrlModal">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showUrlModal = false">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
+                <h2 class="text-lg font-bold mb-4" x-text="editingUrl ? 'Edit URL' : 'Add URL'"></h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">LZT Filter URL</label>
+                        <input type="url" x-model="urlForm.url" placeholder="https://lzt.market/fortnite?pmin=5&pmax=50"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                               :disabled="!!editingUrl">
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Low (&le;$10)</label>
+                            <input type="number" step="0.01" x-model="urlForm.multiplier_low"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Mid ($10-100)</label>
+                            <input type="number" step="0.01" x-model="urlForm.multiplier_mid"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">High (>$100)</label>
+                            <input type="number" step="0.01" x-model="urlForm.multiplier_high"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Min Price</label>
+                            <input type="number" step="0.01" x-model="urlForm.min_price"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Forced Ending</label>
+                            <input type="number" step="0.01" x-model="urlForm.forced_ending"
+                                   placeholder="0.99"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button @click="showUrlModal = false; editingUrl = null;"
+                            class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+                    <button @click="editingUrl ? saveUrlEdit() : addUrl()"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
+                        <span x-text="editingUrl ? 'Save' : 'Add'"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function dropshipManager() {
+    return {
+        configs: [],
+        stats: { active_items: 0, active_configs: 0, recent_logs: [] },
+        scheduler: {
+            alive: false,
+            pid: null,
+            started_at: null,
+            cleaners: [],
+        },
+        showCreateModal: false,
+        showUrlModal: false,
+        editingUrl: null,
+        activeConfigId: null,
+        newConfig: {
+            source_account_id: '', store_id: '', game_id: '',
+            item_delay: 3.0, source_delay: 1.0, poster_cycle_minutes: 5,
+        },
+        urlForm: {
+            url: '', multiplier_low: 2.0, multiplier_mid: 1.8,
+            multiplier_high: 1.5, min_price: 0, forced_ending: 0.99,
+        },
+        _pollTimer: null,
+
+        get hasRunning() {
+            return this.configs.some(c => c.poster_running) ||
+                   this.scheduler.cleaners.some(cc => cc.running);
+        },
+
+        async init() {
+            await Promise.all([this.loadConfigs(), this.loadStats(), this.loadScheduler()]);
+            this._pollTimer = setInterval(() => this.poll(), 10000);
+        },
+
+        destroy() {
+            if (this._pollTimer) clearInterval(this._pollTimer);
+        },
+
+        async poll() {
+            await Promise.all([this.loadConfigs(), this.loadScheduler()]);
+        },
+
+        async loadConfigs() {
+            try {
+                const res = await fetch('/posting/api/dropship/configs/');
+                const data = await res.json();
+                this.configs = data.configs || [];
+            } catch (e) { /* silent */ }
+        },
+
+        async loadStats() {
+            try {
+                const res = await fetch('/posting/api/dropship/stats/');
+                this.stats = await res.json();
+            } catch (e) { /* silent */ }
+        },
+
+        async loadScheduler() {
+            try {
+                const res = await fetch('/posting/api/dropship/scheduler/status/');
+                const data = await res.json();
+                this.scheduler.alive = data.scheduler_alive || false;
+                this.scheduler.pid = data.pid || null;
+                this.scheduler.started_at = data.started_at || null;
+                this.scheduler.cleaners = data.cleaners || [];
+            } catch (e) {
+                this.scheduler.alive = false;
+            }
+        },
+
+        // --- Config CRUD ---
+
+        async createConfig() {
+            const payload = {
+                source_account_id: this.newConfig.source_account_id,
+                store_id: this.newConfig.store_id,
+                game_id: this.newConfig.game_id,
+                item_delay: this.newConfig.item_delay,
+                source_delay: this.newConfig.source_delay,
+                poster_cycle_interval: (this.newConfig.poster_cycle_minutes || 5) * 60,
+            };
+            const res = await fetch('/posting/api/dropship/configs/create/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                body: JSON.stringify(payload),
+            });
+            if (res.ok) {
+                this.showCreateModal = false;
+                this.newConfig = {source_account_id: '', store_id: '', game_id: '', item_delay: 3.0, source_delay: 1.0, poster_cycle_minutes: 5};
+                await this.loadConfigs();
+            } else {
+                const err = await res.json();
+                alert(err.error || 'Error creating config');
+            }
+        },
+
+        async toggleConfig(config) {
+            const res = await fetch(`/posting/api/dropship/configs/${config.id}/`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                body: JSON.stringify({enabled: !config.enabled}),
+            });
+            if (res.ok) {
+                config.enabled = !config.enabled;
+                if (config.enabled) config.disabled_reason = '';
+            } else {
+                const err = await res.json();
+                alert(err.error || 'Failed to toggle config');
+            }
+        },
+
+        // --- Inline config editing ---
+
+        startConfigEdit(config) {
+            config._editing = true;
+            config._editForm = {
+                item_delay: parseFloat(config.item_delay),
+                source_delay: parseFloat(config.source_delay),
+                poster_cycle_minutes: Math.floor(config.poster_cycle_interval / 60),
+            };
+        },
+
+        async saveConfigEdit(config) {
+            const payload = {
+                item_delay: config._editForm.item_delay,
+                source_delay: config._editForm.source_delay,
+                poster_cycle_interval: (config._editForm.poster_cycle_minutes || 5) * 60,
+            };
+            const res = await fetch(`/posting/api/dropship/configs/${config.id}/`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                body: JSON.stringify(payload),
+            });
+            if (res.ok) {
+                config.item_delay = String(payload.item_delay);
+                config.source_delay = String(payload.source_delay);
+                config.poster_cycle_interval = payload.poster_cycle_interval;
+                config._editing = false;
+            } else {
+                const err = await res.json();
+                alert(err.error || 'Save failed');
+            }
+        },
+
+        async deleteConfig(config) {
+            if (!confirm(`Delete config "${config.source_account.name} \u2192 ${config.store.name}" and all its URLs?`)) return;
+            const res = await fetch(`/posting/api/dropship/configs/${config.id}/delete/`, {
+                method: 'DELETE',
+                headers: {'X-CSRFToken': this.getCsrf()},
+            });
+            if (res.ok) {
+                await this.loadConfigs();
+                await this.loadStats();
+            }
+        },
+
+        // --- Poster control ---
+
+        async posterStop(configId) {
+            await fetch(`/posting/api/dropship/configs/${configId}/poster/stop/`, {
+                method: 'POST',
+                headers: {'X-CSRFToken': this.getCsrf()},
+            });
+            await this.loadConfigs();
+        },
+
+        async posterResume(configId) {
+            const res = await fetch(`/posting/api/dropship/configs/${configId}/poster/resume/`, {
+                method: 'POST',
+                headers: {'X-CSRFToken': this.getCsrf()},
+            });
+            if (!res.ok) {
+                const err = await res.json();
+                alert(err.error || 'Failed to resume');
+            }
+            await this.loadConfigs();
+        },
+
+        // --- Cleaner control ---
+
+        async cleanerToggle(cleanerId) {
+            await fetch(`/posting/api/dropship/cleaners/${cleanerId}/toggle/`, {
+                method: 'POST',
+                headers: {'X-CSRFToken': this.getCsrf()},
+            });
+            await this.loadScheduler();
+        },
+
+        // --- Bulk ---
+
+        async stopAll() {
+            if (!confirm('Stop all running posters and cleaner?')) return;
+            await fetch('/posting/api/dropship/stop-all/', {
+                method: 'POST',
+                headers: {'X-CSRFToken': this.getCsrf()},
+            });
+            await Promise.all([this.loadConfigs(), this.loadScheduler()]);
+        },
+
+        // --- URL CRUD ---
+
+        openAddUrl(config) {
+            this.activeConfigId = config.id;
+            this.editingUrl = null;
+            this.urlForm = {url: '', multiplier_low: 2.0, multiplier_mid: 1.8, multiplier_high: 1.5, min_price: 0, forced_ending: 0.99};
+            this.showUrlModal = true;
+        },
+
+        openEditUrl(url) {
+            this.editingUrl = url;
+            this.urlForm = {
+                url: url.url,
+                multiplier_low: parseFloat(url.multiplier_low),
+                multiplier_mid: parseFloat(url.multiplier_mid),
+                multiplier_high: parseFloat(url.multiplier_high),
+                min_price: parseFloat(url.min_price),
+                forced_ending: url.forced_ending ? parseFloat(url.forced_ending) : null,
+            };
+            this.showUrlModal = true;
+        },
+
+        async addUrl() {
+            const res = await fetch(`/posting/api/dropship/configs/${this.activeConfigId}/urls/`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                body: JSON.stringify(this.urlForm),
+            });
+            if (res.ok) {
+                this.showUrlModal = false;
+                await this.loadConfigs();
+            } else {
+                const err = await res.json();
+                alert(err.error || 'Error adding URL');
+            }
+        },
+
+        async saveUrlEdit() {
+            const res = await fetch(`/posting/api/dropship/urls/${this.editingUrl.id}/`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                body: JSON.stringify(this.urlForm),
+            });
+            if (res.ok) {
+                this.showUrlModal = false;
+                this.editingUrl = null;
+                await this.loadConfigs();
+            }
+        },
+
+        async toggleUrl(url) {
+            const res = await fetch(`/posting/api/dropship/urls/${url.id}/`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                body: JSON.stringify({enabled: !url.enabled}),
+            });
+            if (res.ok) url.enabled = !url.enabled;
+        },
+
+        async deleteUrl(url) {
+            if (!confirm('Delete this URL?')) return;
+            const res = await fetch(`/posting/api/dropship/urls/${url.id}/delete/`, {
+                method: 'DELETE',
+                headers: {'X-CSRFToken': this.getCsrf()},
+            });
+            if (res.ok) await this.loadConfigs();
+        },
+
+        // --- Subplatform Limits ---
+
+        _spTimers: {},
+
+        debounceSaveSubplatformLimits(config) {
+            const key = config.id;
+            if (this._spTimers[key]) clearTimeout(this._spTimers[key]);
+            this._spTimers[key] = setTimeout(() => {
+                this.saveSubplatformLimits(config);
+            }, 600);
+        },
+
+        async saveSubplatformLimits(config) {
+            config._savingSp = true;
+            config._spMessage = '';
+            config._spError = false;
+
+            // Only send rows where max_offers is set (non-null, non-empty)
+            const limits = (config.subplatform_limits || [])
+                .filter(sp => sp.max_offers !== null && sp.max_offers !== '' && sp.max_offers !== undefined)
+                .map(sp => ({
+                    sub_platform: sp.sub_platform,
+                    max_offers: parseInt(sp.max_offers) || 0,
+                    stock_reserve: parseInt(sp.stock_reserve) || 0,
+                }));
+
+            try {
+                const res = await fetch('/posting/api/dropship/subplatform-limits/save/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                    body: JSON.stringify({
+                        store_id: config.store.id,
+                        game_id: config.game.id,
+                        limits,
+                    }),
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    config._spMessage = `Saved ${data.saved} limit(s)`;
+                    config._spError = false;
+                } else {
+                    config._spMessage = data.error || 'Save failed';
+                    config._spError = true;
+                }
+            } catch (e) {
+                config._spMessage = 'Network error';
+                config._spError = true;
+            }
+            config._savingSp = false;
+            setTimeout(() => { config._spMessage = ''; }, 4000);
+        },
+
+        // --- Helpers ---
+
+        formatTime(iso) {
+            if (!iso) return '-';
+            return new Date(iso).toLocaleString();
+        },
+
+        getCsrf() {
+            return document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+        },
+    };
+}
+</script>
+{% endblock %}

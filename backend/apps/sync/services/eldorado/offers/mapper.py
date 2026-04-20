@@ -85,9 +85,35 @@ def parse_iso_timestamp(ts: str | None) -> datetime | None:
     if not ts:
         return None
     try:
-        return datetime.fromisoformat(ts.replace('Z', '+00:00'))
+        dt = datetime.fromisoformat(ts.replace('Z', '+00:00'))
+        # Ensure timezone-aware (Eldorado sometimes omits tz info)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt
     except (ValueError, AttributeError):
         return None
+
+
+# ---------------------------------------------------------------------------
+# Sub-platform extraction
+# ---------------------------------------------------------------------------
+
+def extract_sub_platform(item: dict) -> str:
+    """Extract sub-platform from tradeEnvironmentValues.
+
+    Eldorado API returns::
+
+        "tradeEnvironmentValues": [
+            {"id": "0", "name": "Device", "value": "PC", "imageLocation": null}
+        ]
+
+    The ``value`` field gives the human-readable platform name (PC, PlayStation,
+    Xbox, iOS, Android, Switch).  Returns empty string when not present.
+    """
+    trade_envs = item.get('tradeEnvironmentValues') or []
+    if not trade_envs:
+        return ''
+    return (trade_envs[0].get('value') or '').strip()
 
 
 # ---------------------------------------------------------------------------

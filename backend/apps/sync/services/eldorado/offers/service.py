@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import timedelta
 from typing import TYPE_CHECKING
 
 from apps.inventory.services import resolve_game, resolve_owned_product_status
@@ -21,6 +22,16 @@ _FETCH_STATUSES = ('Active', 'Paused')
 
 # Eldorado search default page size
 _PAGE_SIZE = 40
+
+# Eldorado offer lifetime is fixed at 21 days
+_OFFER_LIFETIME_DAYS = 21
+
+
+def _expire_to_listed(expire_dt):
+    """Derive listed_at from expireDate by subtracting the fixed offer lifetime."""
+    if expire_dt is None:
+        return None
+    return expire_dt - timedelta(days=_OFFER_LIFETIME_DAYS)
 
 
 class EldoradoOfferSyncService(BaseSyncService):
@@ -290,8 +301,9 @@ class EldoradoOfferSyncService(BaseSyncService):
             'price': price_value,
             'currency': currency,
             'game': game,
-            'listed_at': mapper.parse_iso_timestamp(
-                payload.get('expireDate'),
+            'sub_platform': mapper.extract_sub_platform(payload),
+            'listed_at': _expire_to_listed(
+                mapper.parse_iso_timestamp(payload.get('expireDate')),
             ),
             'last_synced_at': raw_payload.fetched_at,
             'raw_data': payload,

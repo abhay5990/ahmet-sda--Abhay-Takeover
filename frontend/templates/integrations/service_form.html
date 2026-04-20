@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_edit %}Edit {{ service.name }}{% else %}Add Service{% endif %} - Inventory Manager{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <a href="{% url 'settings:service_list' %}" class="text-sm text-emerald-600 hover:text-emerald-700">&larr; Back to Services</a>
+</div>
+
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">{% if is_edit %}Edit Service{% else %}Add Service{% endif %}</h1>
+    {% if is_edit %}
+    <div x-data="{ showDelete: false }">
+        <button @click="showDelete = true" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+            Delete
+        </button>
+        <div x-show="showDelete" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm mx-4" @click.away="showDelete = false">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Delete Service</h3>
+                <p class="text-sm text-gray-500 mb-4">Are you sure you want to delete "{{ service.name }}"? This action cannot be undone.</p>
+                <div class="flex justify-end space-x-3">
+                    <button @click="showDelete = false" class="px-4 py-2 rounded-md text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200">Cancel</button>
+                    <form method="post" action="{% url 'settings:service_delete' slug=service.slug %}">
+                        {% csrf_token %}
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<form method="post" class="space-y-6">
+    {% csrf_token %}
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Service Details</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for field in form %}
+            {% with fname=field.name %}
+            {% if fname != 'notes' and fname != 'is_active' and fname|slice:":5" != "cred_" %}
+            <div>
+                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                </label>
+                {{ field }}
+                {% if field.help_text %}<p class="mt-1 text-xs text-gray-500">{{ field.help_text }}</p>{% endif %}
+                {% for error in field.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+            {% endfor %}
+        </div>
+
+        <!-- is_active -->
+        {% for field in form %}
+        {% if field.name == 'is_active' %}
+        <div class="mt-4 flex items-center space-x-2">
+            {{ field }}
+            <label for="{{ field.id_for_label }}" class="text-sm font-medium text-gray-700">{{ field.label }}</label>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        <!-- notes -->
+        {% for field in form %}
+        {% if field.name == 'notes' %}
+        <div class="mt-4">
+            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<p class="mt-1 text-xs text-gray-500">{{ field.help_text }}</p>{% endif %}
+            {% for error in field.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Credentials</h2>
+        <div id="credential-fields">
+            {% with has_cred=False %}
+            {% for field in form %}
+            {% if field.name|slice:":5" == "cred_" %}
+            <div class="mb-4">
+                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                </label>
+                {{ field }}
+                {% if field.help_text %}<p class="mt-1 text-xs text-gray-500">{{ field.help_text }}</p>{% endif %}
+                {% for error in field.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endwith %}
+            {% if not is_edit %}
+            <p class="text-sm text-gray-500 js-placeholder">Select a service type to see credential fields.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="flex justify-end">
+        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-md text-sm font-medium transition">
+            {% if is_edit %}Update Service{% else %}Create Service{% endif %}
+        </button>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+{% if not is_edit %}
+<script>
+(function() {
+    const typeSelect = document.querySelector('[name=service_type]');
+    const container = document.getElementById('credential-fields');
+    const baseUrl = "{% url 'settings:service_fields' service_type='__TYPE__' %}";
+
+    typeSelect.addEventListener('change', function() {
+        const serviceType = this.value;
+        if (!serviceType) {
+            container.innerHTML = '<p class="text-sm text-gray-500">Select a service type to see credential fields.</p>';
+            return;
+        }
+        fetch(baseUrl.replace('__TYPE__', encodeURIComponent(serviceType)))
+            .then(r => r.json())
+            .then(data => { container.innerHTML = data.html; });
+    });
+
+    // Trigger on load if already selected
+    if (typeSelect.value) typeSelect.dispatchEvent(new Event('change'));
+})();
+</script>
+{% endif %}
+{% endblock %}

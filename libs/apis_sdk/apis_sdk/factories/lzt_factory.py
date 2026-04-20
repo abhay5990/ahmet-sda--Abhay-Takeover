@@ -26,7 +26,7 @@ class LztFactory:
         token: str = "",
         token_ttl_seconds: float = 86400.0,
         transport: BaseHttpTransport,
-        base_url: str = "https://api.lzt.market",
+        base_url: str = "https://prod-api.lzt.market",
         timeout: float = 30.0,
         rate_limit_delay: float = 0.2,
         proxy_pool: ProxyPool | None = None,

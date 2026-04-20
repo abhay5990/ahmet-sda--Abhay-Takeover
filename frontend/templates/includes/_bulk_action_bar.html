@@ -1,0 +1,32 @@
+{% comment %}
+Bulk action bar partial (requires Alpine.js context with `selected` array).
+Context variables:
+  - bulk_actions: list of dicts with keys: value, label
+    Example: [{"value": "delete", "label": "Delete Selected"}]
+  - bulk_entity_name: string like "item(s)" or "listing(s)"
+{% endcomment %}
+
+<div x-show="selected.length > 0" x-cloak
+     class="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-3 mb-4 flex flex-wrap items-center gap-3">
+    <span class="text-sm font-medium text-emerald-800"
+          x-text="selected.length + ' {{ bulk_entity_name|default:"item(s)" }} selected'"></span>
+
+    {% if bulk_actions|length > 1 %}
+    <select x-model="bulkAction"
+            class="border-emerald-300 rounded-md text-sm focus:ring-emerald-500 focus:border-emerald-500">
+        {% for action in bulk_actions %}
+        <option value="{{ action.value }}">{{ action.label }}</option>
+        {% endfor %}
+    </select>
+    {% endif %}
+
+    <button @click="applyBulkAction()"
+            class="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700 font-medium transition-colors">
+        {% if bulk_actions|length == 1 %}{{ bulk_actions.0.label }}{% else %}Apply{% endif %}
+    </button>
+
+    <button @click="selected = []"
+            class="text-sm text-gray-500 hover:text-gray-700 ml-auto">
+        Deselect all
+    </button>
+</div>

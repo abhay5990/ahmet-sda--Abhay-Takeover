@@ -1,0 +1,14 @@
+{% comment %}
+Loading overlay partial (requires Alpine.js context with `loading` and `loadingMsg`).
+{% endcomment %}
+
+<div x-show="loading" x-cloak
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div class="bg-white rounded-xl shadow-xl px-8 py-6 flex flex-col items-center gap-3 min-w-[220px]">
+        <svg class="animate-spin h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+        </svg>
+        <span class="text-sm font-medium text-gray-700" x-text="loadingMsg"></span>
+    </div>
+</div>

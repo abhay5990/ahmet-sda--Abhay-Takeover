@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Dropship Activity{% endblock %}
+
+{% block content %}
+<div>
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Dropship Activity</h1>
+        <span class="text-sm text-gray-500">{{ logs.paginator.count }} total</span>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+        <form method="get" class="flex flex-wrap items-center gap-4">
+            <select name="config" onchange="this.form.submit()"
+                    class="border-gray-300 rounded-md text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                <option value="">All Configs</option>
+                {% for config in configs %}
+                <option value="{{ config.id }}" {% if selected_config == config.id|stringformat:"d" %}selected{% endif %}>
+                    {{ config.source_account.name }} &rarr; {{ config.store.name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <select name="level" onchange="this.form.submit()"
+                    class="border-gray-300 rounded-md text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                <option value="">All Levels</option>
+                <option value="success" {% if selected_level == 'success' %}selected{% endif %}>Success</option>
+                <option value="error" {% if selected_level == 'error' %}selected{% endif %}>Error</option>
+                <option value="warning" {% if selected_level == 'warning' %}selected{% endif %}>Warning</option>
+                <option value="info" {% if selected_level == 'info' %}selected{% endif %}>Info</option>
+            </select>
+
+            <a href="{% url 'posting:dropship_activity' %}" class="text-sm text-gray-500 hover:text-gray-700">Clear</a>
+        </form>
+    </div>
+
+    <!-- Log Table -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Level</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Task</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Store</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Message</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for log in logs %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{{ log.created_at|date:"M d, H:i:s" }}</td>
+                    <td class="px-4 py-3 text-sm">
+                        <span class="px-2 py-0.5 rounded text-xs font-medium
+                            {% if log.level == 'success' %}bg-emerald-100 text-emerald-700
+                            {% elif log.level == 'error' %}bg-red-100 text-red-700
+                            {% elif log.level == 'warning' %}bg-yellow-100 text-yellow-700
+                            {% else %}bg-gray-100 text-gray-600{% endif %}">
+                            {{ log.level }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-xs text-gray-500">{{ log.task_name }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-700">
+                        {% if log.integration_account %}{{ log.integration_account.name }}{% else %}-{% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-700 max-w-md truncate" title="{{ log.message }}">
+                        {{ log.message }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-4 py-8 text-center text-gray-400">No logs found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if logs.has_other_pages %}
+    <div class="flex items-center justify-between mt-4">
+        <div class="text-sm text-gray-500">
+            Page {{ logs.number }} of {{ logs.paginator.num_pages }}
+        </div>
+        <div class="flex gap-1">
+            {% if logs.has_previous %}
+            <a href="?page={{ logs.previous_page_number }}{% if selected_level %}&level={{ selected_level }}{% endif %}{% if selected_config %}&config={{ selected_config }}{% endif %}"
+               class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">Prev</a>
+            {% endif %}
+            {% for num in logs.paginator.page_range %}
+                {% if logs.number == num %}
+                <span class="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-md">{{ num }}</span>
+                {% elif num > logs.number|add:"-3" and num < logs.number|add:"3" %}
+                <a href="?page={{ num }}{% if selected_level %}&level={{ selected_level }}{% endif %}{% if selected_config %}&config={{ selected_config }}{% endif %}"
+                   class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if logs.has_next %}
+            <a href="?page={{ logs.next_page_number }}{% if selected_level %}&level={{ selected_level }}{% endif %}{% if selected_config %}&config={{ selected_config }}{% endif %}"
+               class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -6,9 +6,10 @@ from django.template.loader import render_to_string
 from django.views import View
 from django.views.generic import DetailView, ListView
 
-from .forms import AccountForm, CredentialForm
-from .models import IntegrationAccount
+from .forms import AccountForm, CredentialForm, ServiceCredentialForm
+from .models import IntegrationAccount, ServiceCredential
 from .providers.registry import get_provider
+from .services.registry import get_service, get_service_fields
 
 
 class AccountListView(LoginRequiredMixin, ListView):
@@ -141,5 +142,112 @@ class TestConnectionView(LoginRequiredMixin, View):
             client = provider.build_client(credential)
             provider.fetch_products(client)
             return JsonResponse({'status': 'ok', 'message': 'Connection successful!'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+# ---------------------------------------------------------------------------
+# Service Credential views
+# ---------------------------------------------------------------------------
+
+class ServiceListView(LoginRequiredMixin, ListView):
+    model = ServiceCredential
+    template_name = 'integrations/service_list.html'
+    context_object_name = 'services'
+
+
+class ServiceCreateView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = ServiceCredentialForm()
+        return render(request, 'integrations/service_form.html', {'form': form, 'is_edit': False})
+
+    def post(self, request):
+        form = ServiceCredentialForm(request.POST)
+        if form.is_valid():
+            service = form.save()
+            messages.success(request, f'Service "{service.name}" created successfully.')
+            return redirect('settings:service_detail', slug=service.slug)
+        return render(request, 'integrations/service_form.html', {'form': form, 'is_edit': False})
+
+
+class ServiceUpdateView(LoginRequiredMixin, View):
+    def get(self, request, slug):
+        service = get_object_or_404(ServiceCredential, slug=slug)
+        form = ServiceCredentialForm(instance=service, is_edit=True)
+        return render(request, 'integrations/service_form.html', {
+            'form': form, 'is_edit': True, 'service': service,
+        })
+
+    def post(self, request, slug):
+        service = get_object_or_404(ServiceCredential, slug=slug)
+        form = ServiceCredentialForm(request.POST, instance=service, is_edit=True)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Service "{service.name}" updated successfully.')
+            return redirect('settings:service_detail', slug=service.slug)
+        return render(request, 'integrations/service_form.html', {
+            'form': form, 'is_edit': True, 'service': service,
+        })
+
+
+class ServiceDeleteView(LoginRequiredMixin, View):
+    def post(self, request, slug):
+        service = get_object_or_404(ServiceCredential, slug=slug)
+        name = service.name
+        service.delete()
+        messages.success(request, f'Service "{name}" deleted successfully.')
+        return redirect('settings:service_list')
+
+
+class ServiceDetailView(LoginRequiredMixin, DetailView):
+    model = ServiceCredential
+    template_name = 'integrations/service_detail.html'
+    context_object_name = 'service'
+    slug_field = 'slug'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        service = self.object
+        cred_fields = get_service_fields(service.service_type)
+        existing_creds = service.credentials or {}
+        ctx['cred_status'] = [
+            {
+                'label': f.label,
+                'is_set': bool(existing_creds.get(f.name)),
+                'is_password': f.field_type == 'password',
+            }
+            for f in cred_fields
+        ]
+        return ctx
+
+
+class ServiceFieldsView(LoginRequiredMixin, View):
+    """AJAX endpoint: returns rendered credential fields for a given service_type."""
+    def get(self, request, service_type):
+        form = ServiceCredentialForm(data={'service_type': service_type})
+        # Build a list of only the cred_* fields for the partial template
+        cred_form = [field for field in form if field.name.startswith('cred_')]
+        html = render_to_string(
+            'integrations/_service_credential_fields.html',
+            {'cred_form': cred_form},
+            request=request,
+        )
+        return JsonResponse({'html': html})
+
+
+class ServiceTestView(LoginRequiredMixin, View):
+    def post(self, request, slug):
+        service = get_object_or_404(ServiceCredential, slug=slug)
+        svc = get_service(service.service_type)
+        if svc is None:
+            return JsonResponse({'status': 'error', 'message': 'No service handler registered for this type.'}, status=400)
+        if not hasattr(svc, 'build_client'):
+            return JsonResponse({'status': 'error', 'message': 'This service does not support connection testing yet.'}, status=400)
+        try:
+            client = svc.build_client(service)
+            success, message = svc.test_connection(client)
+            if success:
+                return JsonResponse({'status': 'ok', 'message': message})
+            return JsonResponse({'status': 'error', 'message': message}, status=400)
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)

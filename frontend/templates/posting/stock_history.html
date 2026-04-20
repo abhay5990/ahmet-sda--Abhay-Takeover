@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Job History — Stock Posting{% endblock %}
+
+{% block content %}
+<div x-data="stockHistory()">
+
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Job History</h1>
+        <span class="text-sm text-gray-500">{{ jobs.paginator.count }} total</span>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+        <div class="flex flex-wrap items-center gap-4">
+            <!-- Status Tabs -->
+            <div class="flex rounded-lg border border-gray-200 overflow-hidden text-sm">
+                <a href="{% url 'posting:stock_history' %}"
+                   class="px-3 py-1.5 {% if not selected_status %}bg-emerald-50 text-emerald-700 font-medium{% else %}text-gray-600 hover:bg-gray-50{% endif %}">
+                    All
+                </a>
+                <a href="{% url 'posting:stock_history' %}?status=completed{% if selected_game %}&game={{ selected_game }}{% endif %}"
+                   class="px-3 py-1.5 border-l {% if selected_status == 'completed' %}bg-emerald-50 text-emerald-700 font-medium{% else %}text-gray-600 hover:bg-gray-50{% endif %}">
+                    Completed
+                </a>
+                <a href="{% url 'posting:stock_history' %}?status=failed{% if selected_game %}&game={{ selected_game }}{% endif %}"
+                   class="px-3 py-1.5 border-l {% if selected_status == 'failed' %}bg-red-50 text-red-700 font-medium{% else %}text-gray-600 hover:bg-gray-50{% endif %}">
+                    Failed
+                </a>
+                <a href="{% url 'posting:stock_history' %}?status=cancelled{% if selected_game %}&game={{ selected_game }}{% endif %}"
+                   class="px-3 py-1.5 border-l {% if selected_status == 'cancelled' %}bg-gray-100 text-gray-700 font-medium{% else %}text-gray-600 hover:bg-gray-50{% endif %}">
+                    Cancelled
+                </a>
+            </div>
+
+            <!-- Game Filter -->
+            <select onchange="applyGameFilter(this.value)"
+                    class="border-gray-300 rounded-md text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                <option value="">All Games</option>
+                {% for game in games %}
+                <option value="{{ game.id }}" {% if selected_game == game.id|stringformat:"d" %}selected{% endif %}>
+                    {{ game.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Jobs Table -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left">
+                        <input type="checkbox" @change="toggleAll($event)" class="rounded border-gray-300 text-emerald-600">
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Job #</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Game</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Result</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for job in jobs %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3">
+                        <input type="checkbox" value="{{ job.id }}" x-model="selectedJobs"
+                               class="rounded border-gray-300 text-emerald-600">
+                    </td>
+                    <td class="px-4 py-3 text-sm font-medium">#{{ job.id }}</td>
+                    <td class="px-4 py-3 text-sm">{{ job.game.name }}</td>
+                    <td class="px-4 py-3 text-sm">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-medium
+                            {% if job.status == 'completed' %}bg-emerald-100 text-emerald-700
+                            {% elif job.status == 'failed' %}bg-red-100 text-red-700
+                            {% elif job.status == 'cancelled' %}bg-gray-100 text-gray-600{% endif %}">
+                            {{ job.status }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm">
+                        <span class="text-emerald-600">{{ job.success_count }}</span>
+                        / {{ job.total_count }}
+                        {% if job.fail_count %}
+                        <span class="text-red-500">({{ job.fail_count }} failed)</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-500">{{ job.created_at|date:"M d, H:i" }}</td>
+                    <td class="px-4 py-3 text-sm">
+                        <a href="{% url 'posting:stock_job_detail' job.id %}"
+                           class="text-emerald-600 hover:text-emerald-700">Detail</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-4 py-8 text-center text-gray-400">No jobs found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if jobs.has_other_pages %}
+    <div class="flex items-center justify-between mt-4">
+        <div class="text-sm text-gray-500">
+            Page {{ jobs.number }} of {{ jobs.paginator.num_pages }}
+        </div>
+        <div class="flex gap-1">
+            {% if jobs.has_previous %}
+            <a href="?page={{ jobs.previous_page_number }}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_game %}&game={{ selected_game }}{% endif %}"
+               class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">Prev</a>
+            {% endif %}
+            {% for num in jobs.paginator.page_range %}
+                {% if jobs.number == num %}
+                <span class="px-3 py-1.5 text-sm bg-emerald-600 text-white rounded-md">{{ num }}</span>
+                {% elif num > jobs.number|add:"-3" and num < jobs.number|add:"3" %}
+                <a href="?page={{ num }}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_game %}&game={{ selected_game }}{% endif %}"
+                   class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if jobs.has_next %}
+            <a href="?page={{ jobs.next_page_number }}{% if selected_status %}&status={{ selected_status }}{% endif %}{% if selected_game %}&game={{ selected_game }}{% endif %}"
+               class="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Repost Button -->
+    <div x-show="selectedJobs.length > 0" class="mt-4">
+        <button @click="repostSelected()"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
+            Repost Selected (<span x-text="selectedJobs.length"></span> jobs)
+        </button>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function applyGameFilter(gameId) {
+    const params = new URLSearchParams(window.location.search);
+    if (gameId) params.set('game', gameId);
+    else params.delete('game');
+    window.location.search = params.toString();
+}
+
+function stockHistory() {
+    return {
+        selectedJobs: [],
+
+        toggleAll(e) {
+            if (e.target.checked) {
+                this.selectedJobs = Array.from(document.querySelectorAll('tbody input[type=checkbox]'))
+                    .map(cb => cb.value);
+            } else {
+                this.selectedJobs = [];
+            }
+        },
+
+        async repostSelected() {
+            const params = this.selectedJobs.map(id => `job_id=${id}`).join('&');
+            const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+            try {
+                const resp = await fetch(`/posting/api/repost-data/?${params}&item_ids=failed`, {
+                    headers: { 'X-CSRFToken': csrf },
+                });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.logins && data.logins.length > 0) {
+                        const loginsStr = data.logins.join(',');
+                        window.location.href = `/posting/stock/start/?game=${data.game_id}&logins=${encodeURIComponent(loginsStr)}`;
+                    } else {
+                        alert('No failed items to repost.');
+                    }
+                }
+            } catch (e) {
+                alert('Error fetching repost data.');
+            }
+        },
+    };
+}
+</script>
+{% endblock %}

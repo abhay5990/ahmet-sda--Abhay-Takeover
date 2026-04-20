@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Active Jobs — Stock Posting{% endblock %}
+
+{% block content %}
+<div x-data="stockActive()" x-init="init()">
+
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Active Jobs</h1>
+        <a href="{% url 'posting:stock_start' %}"
+           class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium">
+            + New Job
+        </a>
+    </div>
+
+    {% if active_jobs %}
+    <div class="space-y-4">
+        {% for job in active_jobs %}
+        <div class="bg-white rounded-lg shadow p-4" x-data="{ jobId: {{ job.id }} }">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'posting:stock_job_detail' job.id %}" class="text-lg font-semibold text-gray-900 hover:text-emerald-600">
+                        Job #{{ job.id }}
+                    </a>
+                    <span class="text-sm text-gray-500">{{ job.game.name }}</span>
+                    <span class="px-2 py-0.5 rounded-full text-xs font-medium
+                        {% if job.status == 'running' %}bg-blue-100 text-blue-700{% else %}bg-gray-100 text-gray-600{% endif %}"
+                        x-text="jobs[{{ job.id }}]?.status || '{{ job.status }}'">
+                        {{ job.status }}
+                    </span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button @click="cancelJob({{ job.id }})"
+                            x-show="jobs[{{ job.id }}]?.status !== 'completed' && jobs[{{ job.id }}]?.status !== 'cancelled'"
+                            class="px-3 py-1 text-xs text-red-600 border border-red-300 rounded-md hover:bg-red-50 transition-colors">
+                        Cancel
+                    </button>
+                    <a href="{% url 'posting:stock_job_detail' job.id %}"
+                       class="text-sm text-emerald-600 hover:text-emerald-700">Detail &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                <div class="h-2 rounded-full transition-all duration-300"
+                     :class="(jobs[{{ job.id }}]?.fail_count || 0) > 0 ? 'bg-yellow-500' : 'bg-emerald-500'"
+                     :style="'width: ' + getProgress({{ job.id }}, {{ job.total_count }}, {{ job.success_count }}, {{ job.fail_count }}) + '%'">
+                </div>
+            </div>
+            <p class="text-xs text-gray-500">
+                <span x-text="getProcessed({{ job.id }}, {{ job.success_count }}, {{ job.fail_count }})"></span>
+                / <span>{{ job.total_count }}</span>
+                (<span class="text-emerald-600" x-text="jobs[{{ job.id }}]?.success_count ?? {{ job.success_count }}"></span> ok,
+                 <span class="text-red-600" x-text="jobs[{{ job.id }}]?.fail_count ?? {{ job.fail_count }}"></span> failed)
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white rounded-lg shadow p-12 text-center">
+        <p class="text-gray-400 mb-4">No active jobs running.</p>
+        <a href="{% url 'posting:stock_start' %}"
+           class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium">
+            Start New Job
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function stockActive() {
+    return {
+        jobs: {},
+        eventSources: {},
+
+        init() {
+            {% for job in active_jobs %}
+            this.jobs[{{ job.id }}] = {
+                status: '{{ job.status }}',
+                success_count: {{ job.success_count }},
+                fail_count: {{ job.fail_count }},
+                total_count: {{ job.total_count }},
+            };
+            if ('{{ job.status }}' === 'running' || '{{ job.status }}' === 'pending') {
+                this.startStream({{ job.id }});
+            }
+            {% endfor %}
+        },
+
+        getProcessed(jobId, defaultSuccess, defaultFail) {
+            const j = this.jobs[jobId];
+            if (!j) return defaultSuccess + defaultFail;
+            return (j.success_count || 0) + (j.fail_count || 0);
+        },
+
+        getProgress(jobId, total, defaultSuccess, defaultFail) {
+            const processed = this.getProcessed(jobId, defaultSuccess, defaultFail);
+            return Math.round((processed / (total || 1)) * 100);
+        },
+
+        startStream(jobId) {
+            const es = new EventSource(`/posting/api/jobs/${jobId}/stream/`);
+            this.eventSources[jobId] = es;
+
+            es.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'item_update') {
+                    const j = this.jobs[jobId];
+                    if (data.status === 'success') j.success_count = (j.success_count || 0) + 1;
+                    if (data.status === 'failed') j.fail_count = (j.fail_count || 0) + 1;
+                } else if (data.type === 'job_complete') {
+                    this.jobs[jobId].status = data.status;
+                    this.jobs[jobId].success_count = data.success_count;
+                    this.jobs[jobId].fail_count = data.fail_count;
+                    es.close();
+                    delete this.eventSources[jobId];
+                }
+            };
+
+            es.onerror = () => {};
+        },
+
+        async cancelJob(jobId) {
+            if (!confirm('Cancel this job?')) return;
+            const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+            const resp = await fetch(`/posting/api/jobs/${jobId}/cancel/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrf },
+            });
+            if (resp.ok) {
+                this.jobs[jobId].status = 'cancelled';
+                if (this.eventSources[jobId]) {
+                    this.eventSources[jobId].close();
+                    delete this.eventSources[jobId];
+                }
+            }
+        },
+    };
+}
+</script>
+{% endblock %}

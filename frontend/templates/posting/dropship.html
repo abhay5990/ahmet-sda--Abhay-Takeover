@@ -1,0 +1,427 @@
+{% extends "base.html" %}
+
+{% block title %}Dropship Posting{% endblock %}
+
+{% block content %}
+<div x-data="dropshipManager()" x-init="init()">
+
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Dropship Posting</h1>
+        <button @click="showCreateModal = true"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
+            + New Config
+        </button>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-xs text-gray-500">Active Items</p>
+            <p class="text-2xl font-bold text-indigo-600" x-text="stats.active_items">0</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-xs text-gray-500">Active Configs</p>
+            <p class="text-2xl font-bold text-emerald-600" x-text="stats.active_configs">0</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <p class="text-xs text-gray-500">Recent Logs</p>
+            <p class="text-2xl font-bold text-gray-600" x-text="stats.recent_logs.length">0</p>
+        </div>
+    </div>
+
+    <!-- Configs List -->
+    <div class="space-y-4 mb-8">
+        <template x-for="config in configs" :key="config.id">
+            <div class="bg-white rounded-lg shadow">
+                <!-- Config Header -->
+                <div class="flex items-center justify-between p-4 border-b border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <button @click="toggleConfig(config)"
+                                class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+                                :class="config.enabled ? 'bg-emerald-500' : 'bg-gray-300'">
+                            <span class="inline-block h-4 w-4 rounded-full bg-white transition-transform"
+                                  :class="config.enabled ? 'translate-x-6' : 'translate-x-1'"></span>
+                        </button>
+                        <div>
+                            <span class="font-semibold text-gray-900" x-text="config.source_account.name"></span>
+                            <span class="text-gray-400 mx-1">&rarr;</span>
+                            <span class="font-semibold text-gray-900" x-text="config.store.name"></span>
+                            <span class="ml-2 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700"
+                                  x-text="config.store.provider"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-gray-500">
+                        <span x-text="config.game.name"></span>
+                        <span>delay: <span x-text="config.item_delay"></span>s / <span x-text="config.source_delay"></span>s</span>
+                    </div>
+                </div>
+
+                <!-- URLs Table -->
+                <div class="p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-medium text-gray-700">Target URLs</h3>
+                        <button @click="openAddUrl(config)"
+                                class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
+                            + Add URL
+                        </button>
+                    </div>
+
+                    <template x-if="config.urls.length === 0">
+                        <p class="text-sm text-gray-400 italic">No URLs configured</p>
+                    </template>
+
+                    <div class="space-y-2">
+                        <template x-for="url in config.urls" :key="url.id">
+                            <div class="flex items-start justify-between p-3 bg-gray-50 rounded-lg text-sm">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="inline-block w-2 h-2 rounded-full"
+                                              :class="url.enabled ? 'bg-emerald-500' : 'bg-gray-300'"></span>
+                                        <a :href="url.url" target="_blank"
+                                           class="text-indigo-600 hover:underline truncate block max-w-md"
+                                           x-text="url.url"></a>
+                                    </div>
+                                    <div class="flex gap-4 text-xs text-gray-500 ml-4">
+                                        <span>low: <span x-text="url.multiplier_low"></span>x</span>
+                                        <span>mid: <span x-text="url.multiplier_mid"></span>x</span>
+                                        <span>high: <span x-text="url.multiplier_high"></span>x</span>
+                                        <span>min: $<span x-text="url.min_price"></span></span>
+                                        <template x-if="url.forced_ending">
+                                            <span>ending: .<span x-text="url.forced_ending"></span></span>
+                                        </template>
+                                    </div>
+                                    <div class="flex gap-4 text-xs text-gray-400 ml-4 mt-1">
+                                        <span>Found: <span x-text="url.items_found"></span></span>
+                                        <span>Posted: <span x-text="url.items_posted"></span></span>
+                                        <template x-if="url.last_fetched_at">
+                                            <span>Last: <span x-text="new Date(url.last_fetched_at).toLocaleString()"></span></span>
+                                        </template>
+                                        <template x-if="url.last_error">
+                                            <span class="text-red-500" x-text="url.last_error"></span>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2 ml-3 shrink-0">
+                                    <button @click="openEditUrl(url)"
+                                            class="text-gray-400 hover:text-indigo-600" title="Edit">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                    </button>
+                                    <button @click="toggleUrl(url)"
+                                            class="text-gray-400 hover:text-yellow-600"
+                                            :title="url.enabled ? 'Disable' : 'Enable'">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </button>
+                                    <button @click="deleteUrl(url)"
+                                            class="text-gray-400 hover:text-red-600" title="Delete">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template x-if="configs.length === 0">
+            <div class="bg-white rounded-lg shadow p-8 text-center text-gray-400">
+                No dropship configs yet. Click "New Config" to create one.
+            </div>
+        </template>
+    </div>
+
+    <!-- Recent Logs -->
+    <div class="bg-white rounded-lg shadow">
+        <div class="p-4 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Recent Logs</h2>
+        </div>
+        <div class="divide-y divide-gray-100 max-h-64 overflow-y-auto">
+            <template x-for="log in stats.recent_logs" :key="log.id">
+                <div class="px-4 py-2 flex items-center gap-3 text-sm">
+                    <span class="px-2 py-0.5 rounded text-xs font-medium"
+                          :class="{
+                              'bg-emerald-100 text-emerald-700': log.level === 'success',
+                              'bg-red-100 text-red-700': log.level === 'error',
+                              'bg-yellow-100 text-yellow-700': log.level === 'warning',
+                              'bg-gray-100 text-gray-600': log.level === 'info',
+                          }"
+                          x-text="log.level"></span>
+                    <span class="text-gray-500 text-xs" x-text="log.task_name"></span>
+                    <span class="flex-1 text-gray-700" x-text="log.message"></span>
+                    <span class="text-xs text-gray-400" x-text="new Date(log.created_at).toLocaleString()"></span>
+                </div>
+            </template>
+            <template x-if="stats.recent_logs.length === 0">
+                <div class="px-4 py-6 text-center text-gray-400 text-sm">No logs yet</div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Create Config Modal -->
+    <template x-if="showCreateModal">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showCreateModal = false">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+                <h2 class="text-lg font-bold mb-4">New Dropship Config</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Source Account (LZT)</label>
+                        <select x-model="newConfig.source_account_id"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="">Select...</option>
+                            {% for acc in source_accounts %}
+                            <option value="{{ acc.id }}">{{ acc.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Target Store</label>
+                        <select x-model="newConfig.store_id"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="">Select...</option>
+                            {% for store in target_stores %}
+                            <option value="{{ store.id }}">{{ store.name }} ({{ store.provider }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Game</label>
+                        <select x-model="newConfig.game_id"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="">Select...</option>
+                            {% for game in games %}
+                            <option value="{{ game.id }}">{{ game.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Item Delay (s)</label>
+                            <input type="number" step="0.5" x-model="newConfig.item_delay"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Source Delay (s)</label>
+                            <input type="number" step="0.5" x-model="newConfig.source_delay"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button @click="showCreateModal = false"
+                            class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+                    <button @click="createConfig()"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
+                        Create
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Add URL Modal -->
+    <template x-if="showUrlModal">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showUrlModal = false">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
+                <h2 class="text-lg font-bold mb-4" x-text="editingUrl ? 'Edit URL' : 'Add URL'"></h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">LZT Filter URL</label>
+                        <input type="url" x-model="urlForm.url" placeholder="https://lzt.market/fortnite?pmin=5&pmax=50"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                               :disabled="!!editingUrl">
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Low (&le;$10)</label>
+                            <input type="number" step="0.01" x-model="urlForm.multiplier_low"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Mid ($10-100)</label>
+                            <input type="number" step="0.01" x-model="urlForm.multiplier_mid"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">High (>$100)</label>
+                            <input type="number" step="0.01" x-model="urlForm.multiplier_high"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Min Price</label>
+                            <input type="number" step="0.01" x-model="urlForm.min_price"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">Forced Ending</label>
+                            <input type="number" step="0.01" x-model="urlForm.forced_ending"
+                                   placeholder="0.99"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button @click="showUrlModal = false; editingUrl = null;"
+                            class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+                    <button @click="editingUrl ? saveUrlEdit() : addUrl()"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
+                        <span x-text="editingUrl ? 'Save' : 'Add'"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function dropshipManager() {
+    return {
+        configs: [],
+        stats: { active_items: 0, active_configs: 0, recent_logs: [] },
+        showCreateModal: false,
+        showUrlModal: false,
+        editingUrl: null,
+        activeConfigId: null,
+        newConfig: {
+            source_account_id: '',
+            store_id: '',
+            game_id: '',
+            item_delay: 3.0,
+            source_delay: 1.0,
+        },
+        urlForm: {
+            url: '',
+            multiplier_low: 2.0,
+            multiplier_mid: 1.8,
+            multiplier_high: 1.5,
+            min_price: 0,
+            forced_ending: 0.99,
+        },
+
+        async init() {
+            await this.loadConfigs();
+            await this.loadStats();
+        },
+
+        async loadConfigs() {
+            const res = await fetch('/posting/api/dropship/configs/');
+            const data = await res.json();
+            this.configs = data.configs || [];
+        },
+
+        async loadStats() {
+            const res = await fetch('/posting/api/dropship/stats/');
+            this.stats = await res.json();
+        },
+
+        async createConfig() {
+            const res = await fetch('/posting/api/dropship/configs/create/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                body: JSON.stringify(this.newConfig),
+            });
+            if (res.ok) {
+                this.showCreateModal = false;
+                this.newConfig = {source_account_id: '', store_id: '', game_id: '', item_delay: 3.0, source_delay: 1.0};
+                await this.loadConfigs();
+            } else {
+                const err = await res.json();
+                alert(err.error || 'Error creating config');
+            }
+        },
+
+        async toggleConfig(config) {
+            const res = await fetch(`/posting/api/dropship/configs/${config.id}/`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                body: JSON.stringify({enabled: !config.enabled}),
+            });
+            if (res.ok) config.enabled = !config.enabled;
+        },
+
+        openAddUrl(config) {
+            this.activeConfigId = config.id;
+            this.editingUrl = null;
+            this.urlForm = {url: '', multiplier_low: 2.0, multiplier_mid: 1.8, multiplier_high: 1.5, min_price: 0, forced_ending: 0.99};
+            this.showUrlModal = true;
+        },
+
+        openEditUrl(url) {
+            this.editingUrl = url;
+            this.urlForm = {
+                url: url.url,
+                multiplier_low: parseFloat(url.multiplier_low),
+                multiplier_mid: parseFloat(url.multiplier_mid),
+                multiplier_high: parseFloat(url.multiplier_high),
+                min_price: parseFloat(url.min_price),
+                forced_ending: url.forced_ending ? parseFloat(url.forced_ending) : null,
+            };
+            this.showUrlModal = true;
+        },
+
+        async addUrl() {
+            const res = await fetch(`/posting/api/dropship/configs/${this.activeConfigId}/urls/`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                body: JSON.stringify(this.urlForm),
+            });
+            if (res.ok) {
+                this.showUrlModal = false;
+                await this.loadConfigs();
+            } else {
+                const err = await res.json();
+                alert(err.error || 'Error adding URL');
+            }
+        },
+
+        async saveUrlEdit() {
+            const res = await fetch(`/posting/api/dropship/urls/${this.editingUrl.id}/`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                body: JSON.stringify(this.urlForm),
+            });
+            if (res.ok) {
+                this.showUrlModal = false;
+                this.editingUrl = null;
+                await this.loadConfigs();
+            }
+        },
+
+        async toggleUrl(url) {
+            const res = await fetch(`/posting/api/dropship/urls/${url.id}/`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                body: JSON.stringify({enabled: !url.enabled}),
+            });
+            if (res.ok) url.enabled = !url.enabled;
+        },
+
+        async deleteUrl(url) {
+            if (!confirm('Delete this URL?')) return;
+            const res = await fetch(`/posting/api/dropship/urls/${url.id}/delete/`, {
+                method: 'DELETE',
+                headers: {'X-CSRFToken': this.getCsrf()},
+            });
+            if (res.ok) await this.loadConfigs();
+        },
+
+        getCsrf() {
+            return document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+        },
+    };
+}
+</script>
+{% endblock %}

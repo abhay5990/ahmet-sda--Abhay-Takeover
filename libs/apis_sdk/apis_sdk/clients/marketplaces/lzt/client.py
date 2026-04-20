@@ -213,6 +213,154 @@ class LztClient:
         return ApiResult.success(page, status_code=response.status_code, meta=meta)
 
     # ---------------------------------------------------------------------------
+    # User Items (own listings)
+    # ---------------------------------------------------------------------------
+
+    def get_user_items(
+        self,
+        *,
+        params: dict[str, Any] | None = None,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[LztOrderPage]:
+        """Fetch user's own items/listings (e.g. closed/sold accounts)."""
+        url = self._build_url(LztEndpoints.USER_ITEMS)
+
+        try:
+            response = self._transport.request(
+                HttpMethod.GET,
+                url,
+                headers=auth_headers,
+                params=params,
+                timeout=self._config.timeout,
+                proxy_url=proxy_url,
+            )
+        except TransportError as exc:
+            return ApiResult.from_error(
+                ErrorCategory.NETWORK, str(exc),
+                provider=self.PROVIDER, is_retryable=True,
+            )
+
+        if not response.is_success:
+            return self._handle_error(response.status_code, response)
+
+        try:
+            body = response.json()
+            page = LztOrderPage.model_validate(body)
+        except Exception as exc:
+            return ApiResult.from_error(
+                ErrorCategory.UNKNOWN,
+                f"Failed to parse user items response: {exc}",
+                provider=self.PROVIDER,
+            )
+
+        meta = self._extract_meta(response)
+        return ApiResult.success(page, status_code=response.status_code, meta=meta)
+
+    # ---------------------------------------------------------------------------
+    # Mail Access (email:password validation + inbox)
+    # ---------------------------------------------------------------------------
+
+    def get_email_letters(
+        self,
+        *,
+        email_password: str,
+        limit: int = 50,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[dict[str, Any]]:
+        """
+        Fetch inbox letters for ``email:password`` via the LZT Mail Access API.
+
+        Single-call semantics: if letters are returned, the password is valid.
+        A 403 response indicates invalid credentials (wrong password / locked).
+        A 401 indicates the API token itself is unauthorized.
+
+        Body-level ``retry_request`` responses are mapped to a retryable
+        SERVER_ERROR so the facade retry policy transparently re-issues the call.
+
+        Args:
+            email_password: ``email:password`` string passed verbatim to LZT.
+            limit: Number of letters to fetch (LZT clamps to 10..50).
+            auth_headers: Bearer headers injected by the facade.
+            proxy_url: Proxy URL injected by the facade.
+        """
+        url = self._build_url(LztEndpoints.LETTERS2)
+        params: dict[str, Any] = {
+            "email_password": email_password,
+            "limit": max(10, min(50, int(limit))),
+        }
+
+        try:
+            response = self._transport.request(
+                HttpMethod.GET,
+                url,
+                headers=auth_headers,
+                params=params,
+                timeout=self._config.timeout,
+                proxy_url=proxy_url,
+            )
+        except TransportError as exc:
+            return ApiResult.from_error(
+                ErrorCategory.NETWORK, str(exc),
+                provider=self.PROVIDER, is_retryable=True,
+            )
+
+        try:
+            body = response.json() if hasattr(response, "json") else {}
+        except Exception:
+            body = {}
+        if not isinstance(body, dict):
+            body = {}
+
+        # Body-level 'retry_request' — re-issue via retry policy
+        errors = body.get("errors") or []
+        error_text = (
+            " ".join(errors) if isinstance(errors, list) else str(errors)
+        ).strip()
+        if error_text and "retry_request" in error_text.lower():
+            return ApiResult.from_error(
+                ErrorCategory.SERVER_ERROR,
+                "retry_request",
+                status_code=response.status_code,
+                provider=self.PROVIDER,
+                is_retryable=True,
+                details={"errors": errors},
+            )
+
+        if response.is_success and body.get("letters") is not None:
+            meta = self._extract_meta(response)
+            return ApiResult.success(body, status_code=response.status_code, meta=meta)
+
+        if not response.is_success:
+            # LZT returns rate-limit as 403 with "must wait N seconds" body.
+            # Detect and remap to RATE_LIMIT so facade retry policy handles it.
+            import re
+            if error_text:
+                wait_match = re.search(r"wait at least (\d+) seconds", error_text)
+                if wait_match:
+                    retry_after = float(wait_match.group(1)) + 1
+                    return ApiResult.from_error(
+                        ErrorCategory.RATE_LIMIT,
+                        error_text,
+                        status_code=response.status_code,
+                        provider=self.PROVIDER,
+                        retry_after=retry_after,
+                        is_retryable=True,
+                        details={"errors": errors},
+                    )
+            return self._handle_error(response.status_code, response)
+
+        # 2xx but no letters field — treat as unknown success shape
+        return ApiResult.from_error(
+            ErrorCategory.UNKNOWN,
+            error_text or "Unexpected response shape (no 'letters' field)",
+            status_code=response.status_code,
+            provider=self.PROVIDER,
+            details={"body_keys": list(body.keys())},
+        )
+
+    # ---------------------------------------------------------------------------
     # Check Account (pre-purchase availability check)
     # ---------------------------------------------------------------------------
 

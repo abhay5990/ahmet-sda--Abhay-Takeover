@@ -10,6 +10,10 @@ class LztEndpoints:
 
     # User endpoints
     USER_ORDERS = "/user/orders"
+    USER_ITEMS = "/user/items"
+
+    # Mail access (email:password validation + inbox)
+    LETTERS2 = "/letters2"
 
     # Category listings (dynamic)
     @classmethod

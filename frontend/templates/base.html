@@ -16,10 +16,18 @@
 <div x-data="{
     open: localStorage.getItem('sidebar') !== 'closed',
     mobileOpen: false,
+    stockOpen: false,
+    dropshipOpen: false,
+    inventoryOpen: false,
+    ordersOpen: false,
     marketplacesOpen: false,
     settingsOpen: false,
     toggle() { this.open = !this.open; localStorage.setItem('sidebar', this.open ? 'open' : 'closed'); }
 }" x-init="
+    stockOpen = window.location.pathname.startsWith('/posting/stock');
+    dropshipOpen = window.location.pathname.startsWith('/posting/dropship');
+    inventoryOpen = window.location.pathname.startsWith('/inventory') || window.location.pathname.startsWith('/listings');
+    ordersOpen = window.location.pathname.startsWith('/orders');
     marketplacesOpen = window.location.pathname.startsWith('/integrations');
     settingsOpen = window.location.pathname.startsWith('/settings');
 " class="flex h-screen">
@@ -49,28 +57,171 @@
 
         <!-- Navigation -->
         <nav class="flex-1 py-4 overflow-y-auto overflow-x-hidden">
-            <!-- Dashboard -->
+
+            <!-- Dashboard — herkes -->
+            {% if user_role %}
             <a href="{% url 'dashboard:index' %}"
                class="flex items-center px-4 py-2.5 text-sm hover:bg-gray-800 hover:text-white transition-colors
-                      {% if request.resolver_match.app_name == 'dashboard' %}bg-gray-800 text-white{% endif %}">
-                <span class="w-8 flex-shrink-0 text-center text-base">D</span>
+                      {% if request.resolver_match.app_name == 'dashboard' and request.resolver_match.url_name == 'index' %}bg-gray-800 text-white{% endif %}">
+                <span class="w-8 flex-shrink-0 flex justify-center">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
+                    </svg>
+                </span>
                 <span x-show="open || mobileOpen" x-cloak class="ml-2 truncate">Dashboard</span>
             </a>
+            {% endif %}
 
-            <!-- Inventory -->
-            <a href="{% url 'inventory:index' %}"
+            <!-- Finance — admin only -->
+            {% if user_role == 'admin' %}
+            <a href="{% url 'dashboard:finance' %}"
                class="flex items-center px-4 py-2.5 text-sm hover:bg-gray-800 hover:text-white transition-colors
-                      {% if request.resolver_match.app_name == 'inventory' %}bg-gray-800 text-white{% endif %}">
-                <span class="w-8 flex-shrink-0 text-center text-base">I</span>
-                <span x-show="open || mobileOpen" x-cloak class="ml-2 truncate">Inventory</span>
+                      {% if request.resolver_match.url_name == 'finance' %}bg-gray-800 text-white{% endif %}">
+                <span class="w-8 flex-shrink-0 flex justify-center">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/>
+                    </svg>
+                </span>
+                <span x-show="open || mobileOpen" x-cloak class="ml-2 truncate">Finance</span>
             </a>
+            {% endif %}
 
-            <!-- Marketplaces (expandable) -->
+            <!-- Inventory (expandable) — herkes (viewer read-only) -->
+            {% if user_role %}
+            <div>
+                <button @click="inventoryOpen = !inventoryOpen"
+                        class="flex items-center w-full px-4 py-2.5 text-sm hover:bg-gray-800 hover:text-white transition-colors text-left
+                               {% if request.resolver_match.app_name == 'inventory' or request.resolver_match.app_name == 'listings' %}bg-gray-800/50 text-white{% endif %}">
+                    <span class="w-8 flex-shrink-0 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"/>
+                        </svg>
+                    </span>
+                    <span x-show="open || mobileOpen" x-cloak class="ml-2 truncate flex-1">Inventory</span>
+                    <svg x-show="open || mobileOpen" x-cloak class="w-4 h-4 transition-transform flex-shrink-0" :class="inventoryOpen && 'rotate-90'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+                <div x-show="(open || mobileOpen) && inventoryOpen" x-cloak x-collapse class="bg-gray-950/50">
+                    <a href="{% url 'inventory:index' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.app_name == 'inventory' and request.resolver_match.url_name == 'index' %}text-emerald-400{% endif %}">
+                        Owned Products
+                    </a>
+                    <a href="{% url 'inventory:dropship' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.app_name == 'inventory' and request.resolver_match.url_name == 'dropship' %}text-emerald-400{% endif %}">
+                        Dropship Products
+                    </a>
+                    <a href="{% url 'listings:list' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.app_name == 'listings' %}text-emerald-400{% endif %}">
+                        Listings
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Orders — herkes (viewer read-only) -->
+            {% if user_role %}
+            <a href="{% url 'orders:list' %}"
+               class="flex items-center px-4 py-2.5 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                      {% if request.resolver_match.app_name == 'orders' %}bg-gray-800 text-white{% endif %}">
+                <span class="w-8 flex-shrink-0 flex justify-center">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
+                    </svg>
+                </span>
+                <span x-show="open || mobileOpen" x-cloak class="ml-2 truncate">Orders</span>
+            </a>
+            {% endif %}
+
+            <!-- Stock Posting (expandable) — admin, user -->
+            {% if user_role == 'admin' or user_role == 'user' %}
+            <div>
+                <button @click="stockOpen = !stockOpen"
+                        class="flex items-center w-full px-4 py-2.5 text-sm hover:bg-gray-800 hover:text-white transition-colors text-left
+                               {% if request.resolver_match.app_name == 'posting' and 'stock' in request.path %}bg-gray-800/50 text-white{% endif %}">
+                    <span class="w-8 flex-shrink-0 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                        </svg>
+                    </span>
+                    <span x-show="open || mobileOpen" x-cloak class="ml-2 truncate flex-1">Stock Posting</span>
+                    <svg x-show="open || mobileOpen" x-cloak class="w-4 h-4 transition-transform flex-shrink-0" :class="stockOpen && 'rotate-90'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+                <div x-show="(open || mobileOpen) && stockOpen" x-cloak x-collapse class="bg-gray-950/50">
+                    <a href="{% url 'posting:stock_start' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.url_name == 'stock_start' %}text-emerald-400{% endif %}">
+                        Start
+                    </a>
+                    <a href="{% url 'posting:stock_active' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.url_name == 'stock_active' or request.resolver_match.url_name == 'stock_job_detail' %}text-emerald-400{% endif %}">
+                        Active
+                    </a>
+                    <a href="{% url 'posting:stock_history' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.url_name == 'stock_history' %}text-emerald-400{% endif %}">
+                        History
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Dropshipping (expandable) — admin, user -->
+            {% if user_role == 'admin' or user_role == 'user' %}
+            <div>
+                <button @click="dropshipOpen = !dropshipOpen"
+                        class="flex items-center w-full px-4 py-2.5 text-sm hover:bg-gray-800 hover:text-white transition-colors text-left
+                               {% if request.resolver_match.app_name == 'posting' and 'dropship' in request.path %}bg-gray-800/50 text-white{% endif %}">
+                    <span class="w-8 flex-shrink-0 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"/>
+                        </svg>
+                    </span>
+                    <span x-show="open || mobileOpen" x-cloak class="ml-2 truncate flex-1">Dropshipping</span>
+                    <svg x-show="open || mobileOpen" x-cloak class="w-4 h-4 transition-transform flex-shrink-0" :class="dropshipOpen && 'rotate-90'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+                <div x-show="(open || mobileOpen) && dropshipOpen" x-cloak x-collapse class="bg-gray-950/50">
+                    <a href="{% url 'posting:dropship_configs' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.url_name == 'dropship_configs' %}text-emerald-400{% endif %}">
+                        Configs
+                    </a>
+                    <a href="{% url 'posting:dropship_items' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.url_name == 'dropship_items' %}text-emerald-400{% endif %}">
+                        Items
+                    </a>
+                    <a href="{% url 'posting:dropship_activity' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.url_name == 'dropship_activity' %}text-emerald-400{% endif %}">
+                        Activity
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Divider -->
+            <div class="my-3 border-t border-gray-800"></div>
+
+            <!-- Marketplaces (expandable) — admin only -->
+            {% if user_role == 'admin' %}
             <div>
                 <button @click="marketplacesOpen = !marketplacesOpen"
                         class="flex items-center w-full px-4 py-2.5 text-sm hover:bg-gray-800 hover:text-white transition-colors text-left
                                {% if request.resolver_match.app_name == 'integrations' %}bg-gray-800/50 text-white{% endif %}">
-                    <span class="w-8 flex-shrink-0 text-center text-base">M</span>
+                    <span class="w-8 flex-shrink-0 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z"/>
+                        </svg>
+                    </span>
                     <span x-show="open || mobileOpen" x-cloak class="ml-2 truncate flex-1">Marketplaces</span>
                     <svg x-show="open || mobileOpen" x-cloak class="w-4 h-4 transition-transform flex-shrink-0" :class="marketplacesOpen && 'rotate-90'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -89,23 +240,20 @@
                     </a>
                 </div>
             </div>
+            {% endif %}
 
-            <!-- Orders -->
-            <a href="#"
-               class="flex items-center px-4 py-2.5 text-sm hover:bg-gray-800 hover:text-white transition-colors">
-                <span class="w-8 flex-shrink-0 text-center text-base">O</span>
-                <span x-show="open || mobileOpen" x-cloak class="ml-2 truncate">Orders</span>
-            </a>
-
-            <!-- Divider -->
-            <div class="my-3 border-t border-gray-800"></div>
-
-            <!-- Settings (expandable) -->
+            <!-- Settings (expandable) — admin only -->
+            {% if user_role == 'admin' %}
             <div>
                 <button @click="settingsOpen = !settingsOpen"
                         class="flex items-center w-full px-4 py-2.5 text-sm hover:bg-gray-800 hover:text-white transition-colors text-left
                                {% if 'settings' in request.path %}bg-gray-800/50 text-white{% endif %}">
-                    <span class="w-8 flex-shrink-0 text-center text-base">S</span>
+                    <span class="w-8 flex-shrink-0 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </span>
                     <span x-show="open || mobileOpen" x-cloak class="ml-2 truncate flex-1">Settings</span>
                     <svg x-show="open || mobileOpen" x-cloak class="w-4 h-4 transition-transform flex-shrink-0" :class="settingsOpen && 'rotate-90'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -117,6 +265,11 @@
                               {% if request.resolver_match.url_name == 'group_list' or request.resolver_match.url_name == 'group_create' or request.resolver_match.url_name == 'group_edit' %}text-emerald-400{% endif %}">
                         Account Groups
                     </a>
+                    <a href="{% url 'settings:service_list' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.url_name == 'service_list' or request.resolver_match.url_name == 'service_detail' or request.resolver_match.url_name == 'service_edit' or request.resolver_match.url_name == 'service_create' %}text-emerald-400{% endif %}">
+                        Services
+                    </a>
                     <a href="{% url 'settings:game_list' %}"
                        class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
                               {% if request.resolver_match.url_name == 'game_list' %}text-emerald-400{% endif %}">
@@ -124,6 +277,7 @@
                     </a>
                 </div>
             </div>
+            {% endif %}
         </nav>
 
         <!-- User info -->

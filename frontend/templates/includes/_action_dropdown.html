@@ -1,0 +1,29 @@
+{% comment %}
+Row-level action dropdown shell (requires Alpine.js).
+This partial provides only the 3-dot button and animated dropdown container.
+Menu items are rendered by the calling template AFTER this include.
+
+Usage pattern in parent template:
+    <td class="px-4 py-3 text-sm">
+        <div class="relative" x-data="{ open: false }">
+            {% include "includes/_action_dropdown.html" %}
+            <div x-show="open" x-cloak ...classes...>
+                <!-- your menu items here -->
+            </div>
+        </div>
+    </td>
+
+NOTE: Since Django {% include %} can't pass blocks, each page renders
+its own menu items inline. This partial standardizes the trigger button
+and transition classes only.
+{% endcomment %}
+
+{# Trigger button #}
+<button @click="open = !open"
+        @click.outside="open = false"
+        class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+        aria-label="Actions">
+    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+    </svg>
+</button>

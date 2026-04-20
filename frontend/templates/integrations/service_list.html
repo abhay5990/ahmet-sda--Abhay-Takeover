@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Services - Inventory Manager{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">External Services</h1>
+    <a href="{% url 'settings:service_create' %}"
+       class="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 text-sm font-medium transition">
+        + Add Service
+    </a>
+</div>
+
+{% if services %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for service in services %}
+    <a href="{% url 'settings:service_detail' slug=service.slug %}" class="block bg-white rounded-lg shadow p-6 hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-3">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                {{ service.get_service_type_display }}
+            </span>
+            <span class="flex items-center text-xs">
+                {% if service.is_active %}
+                <span class="h-2 w-2 rounded-full bg-emerald-500 mr-1"></span>
+                <span class="text-gray-500">Active</span>
+                {% else %}
+                <span class="h-2 w-2 rounded-full bg-gray-400 mr-1"></span>
+                <span class="text-gray-500">Inactive</span>
+                {% endif %}
+            </span>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900 mb-1">{{ service.name }}</h3>
+        <p class="text-xs font-mono text-gray-500">{{ service.slug }}</p>
+        {% if service.notes %}
+        <p class="mt-2 text-xs text-gray-500 truncate">{{ service.notes }}</p>
+        {% endif %}
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="bg-white rounded-lg shadow p-12 text-center">
+    <p class="text-gray-500">No external services configured yet.</p>
+    <a href="{% url 'settings:service_create' %}" class="mt-4 inline-block text-emerald-600 hover:text-emerald-700 text-sm font-medium">
+        + Add your first service
+    </a>
+</div>
+{% endif %}
+{% endblock %}

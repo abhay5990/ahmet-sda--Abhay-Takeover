@@ -1,0 +1,732 @@
+[
+  {
+    "name": "Knight",
+    "id": 26000000,
+    "rarity": "Common"
+  },
+  {
+    "name": "Archer",
+    "id": 26000001,
+    "rarity": "Common"
+  },
+  {
+    "name": "Goblins",
+    "id": 26000002,
+    "rarity": "Common"
+  },
+  {
+    "name": "Giant",
+    "id": 26000003,
+    "rarity": "Rare"
+  },
+  {
+    "name": "Pekka",
+    "id": 26000004,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Minions",
+    "id": 26000005,
+    "rarity": "Common"
+  },
+  {
+    "name": "Balloon",
+    "id": 26000006,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Witch",
+    "id": 26000007,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Barbarians",
+    "id": 26000008,
+    "rarity": "Common"
+  },
+  {
+    "name": "Golem",
+    "id": 26000009,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Skeletons",
+    "id": 26000010,
+    "rarity": "Common"
+  },
+  {
+    "name": "Valkyrie",
+    "id": 26000011,
+    "rarity": "Rare"
+  },
+  {
+    "name": "SkeletonArmy",
+    "id": 26000012,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Bomber",
+    "id": 26000013,
+    "rarity": "Common"
+  },
+  {
+    "name": "Musketeer",
+    "id": 26000014,
+    "rarity": "Rare"
+  },
+  {
+    "name": "BabyDragon",
+    "id": 26000015,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Prince",
+    "id": 26000016,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Wizard",
+    "id": 26000017,
+    "rarity": "Rare"
+  },
+  {
+    "name": "MiniPekka",
+    "id": 26000018,
+    "rarity": "Rare"
+  },
+  {
+    "name": "SpearGoblins",
+    "id": 26000019,
+    "rarity": "Common"
+  },
+  {
+    "name": "GiantSkeleton",
+    "id": 26000020,
+    "rarity": "Epic"
+  },
+  {
+    "name": "HogRider",
+    "id": 26000021,
+    "rarity": "Rare"
+  },
+  {
+    "name": "MinionHorde",
+    "id": 26000022,
+    "rarity": "Common"
+  },
+  {
+    "name": "IceWizard",
+    "id": 26000023,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "RoyalGiant",
+    "id": 26000024,
+    "rarity": "Common"
+  },
+  {
+    "name": "SkeletonWarriors",
+    "id": 26000025,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Princess",
+    "id": 26000026,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "DarkPrince",
+    "id": 26000027,
+    "rarity": "Epic"
+  },
+  {
+    "name": "ThreeMusketeers",
+    "id": 26000028,
+    "rarity": "Rare"
+  },
+  {
+    "name": "LavaHound",
+    "id": 26000029,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "IceSpirits",
+    "id": 26000030,
+    "rarity": "Common"
+  },
+  {
+    "name": "FireSpirits",
+    "id": 26000031,
+    "rarity": "Common"
+  },
+  {
+    "name": "Miner",
+    "id": 26000032,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "ZapMachine",
+    "id": 26000033,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "Bowler",
+    "id": 26000034,
+    "rarity": "Epic"
+  },
+  {
+    "name": "RageBarbarian",
+    "id": 26000035,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "BattleRam",
+    "id": 26000036,
+    "rarity": "Rare"
+  },
+  {
+    "name": "InfernoDragon",
+    "id": 26000037,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "IceGolemite",
+    "id": 26000038,
+    "rarity": "Rare"
+  },
+  {
+    "name": "MegaMinion",
+    "id": 26000039,
+    "rarity": "Rare"
+  },
+  {
+    "name": "BlowdartGoblin",
+    "id": 26000040,
+    "rarity": "Rare"
+  },
+  {
+    "name": "GoblinGang",
+    "id": 26000041,
+    "rarity": "Common"
+  },
+  {
+    "name": "ElectroWizard",
+    "id": 26000042,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "AngryBarbarians",
+    "id": 26000043,
+    "rarity": "Common"
+  },
+  {
+    "name": "Hunter",
+    "id": 26000044,
+    "rarity": "Epic"
+  },
+  {
+    "name": "AxeMan",
+    "id": 26000045,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Assassin",
+    "id": 26000046,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "RoyalRecruits",
+    "id": 26000047,
+    "rarity": "Common"
+  },
+  {
+    "name": "DarkWitch",
+    "id": 26000048,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "Bats",
+    "id": 26000049,
+    "rarity": "Common"
+  },
+  {
+    "name": "Ghost",
+    "id": 26000050,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "RamRider",
+    "id": 26000051,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "MiniSparkys",
+    "id": 26000052,
+    "rarity": "Rare"
+  },
+  {
+    "name": "Rascals",
+    "id": 26000053,
+    "rarity": "Common"
+  },
+  {
+    "name": "MovingCannon",
+    "id": 26000054,
+    "rarity": "Epic"
+  },
+  {
+    "name": "MegaKnight",
+    "id": 26000055,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "SkeletonBalloon",
+    "id": 26000056,
+    "rarity": "Common"
+  },
+  {
+    "name": "DartBarrell",
+    "id": 26000057,
+    "rarity": "Rare"
+  },
+  {
+    "name": "Wallbreakers",
+    "id": 26000058,
+    "rarity": "Epic"
+  },
+  {
+    "name": "RoyalHogs",
+    "id": 26000059,
+    "rarity": "Rare"
+  },
+  {
+    "name": "GoblinGiant",
+    "id": 26000060,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Fisherman",
+    "id": 26000061,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "EliteArcher",
+    "id": 26000062,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "ElectroDragon",
+    "id": 26000063,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Firecracker",
+    "id": 26000064,
+    "rarity": "Common"
+  },
+  {
+    "name": "MightyMiner",
+    "id": 26000065,
+    "rarity": "Champion"
+  },
+  {
+    "name": "SuperWitch",
+    "id": 26000066,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "ElixirGolem",
+    "id": 26000067,
+    "rarity": "Rare"
+  },
+  {
+    "name": "BattleHealer",
+    "id": 26000068,
+    "rarity": "Rare"
+  },
+  {
+    "name": "SkeletonKing",
+    "id": 26000069,
+    "rarity": "Champion"
+  },
+  {
+    "name": "SuperLavaHound",
+    "id": 26000070,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "SuperEliteArcher",
+    "id": 26000071,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "ArcherQueen",
+    "id": 26000072,
+    "rarity": "Champion"
+  },
+  {
+    "name": "SuperHogRider",
+    "id": 26000073,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "GoldenKnight",
+    "id": 26000074,
+    "rarity": "Champion"
+  },
+  {
+    "name": "SuperIceGolemite",
+    "id": 26000075,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "Monk",
+    "id": 26000077,
+    "rarity": "Champion"
+  },
+  {
+    "name": "SuperArcher",
+    "id": 26000078,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "RoyalRecruits_Chess",
+    "id": 26000079,
+    "rarity": "Common"
+  },
+  {
+    "name": "SkeletonDragons",
+    "id": 26000080,
+    "rarity": "Common"
+  },
+  {
+    "name": "SuperHogRiderTerry",
+    "id": 26000081,
+    "rarity": "Champion"
+  },
+  {
+    "name": "SuperMiniPekka",
+    "id": 26000082,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "WitchMother",
+    "id": 26000083,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "ElectroSpirit",
+    "id": 26000084,
+    "rarity": "Common"
+  },
+  {
+    "name": "ElectroGiant",
+    "id": 26000085,
+    "rarity": "Epic"
+  },
+  {
+    "name": "PrinceBuff",
+    "id": 26000086,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Phoenix",
+    "id": 26000087,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "LittlePrince",
+    "id": 26000093,
+    "rarity": "Champion"
+  },
+  {
+    "name": "TriWizards",
+    "id": 26000094,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "GoblinDemolisher",
+    "id": 26000095,
+    "rarity": "Rare"
+  },
+  {
+    "name": "GoblinMachine",
+    "id": 26000096,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "SuspiciousBush",
+    "id": 26000097,
+    "rarity": "Rare"
+  },
+  {
+    "name": "SuperKnight",
+    "id": 26000098,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "Goblinstein",
+    "id": 26000099,
+    "rarity": "Champion"
+  },
+  {
+    "name": "SkeletonWarriors_SpookyChess",
+    "id": 26000100,
+    "rarity": "Common"
+  },
+  {
+    "name": "GiantBuffer",
+    "id": 26000101,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Berserker",
+    "id": 26000102,
+    "rarity": "Common"
+  },
+  {
+    "name": "BossBandit",
+    "id": 26000103,
+    "rarity": "Champion"
+  },
+  {
+    "name": "MergeMaiden_Normal",
+    "id": 26000104,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "MergeMaiden_Mounted",
+    "id": 26000105,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "Cannon",
+    "id": 27000000,
+    "rarity": "Common"
+  },
+  {
+    "name": "GoblinHut",
+    "id": 27000001,
+    "rarity": "Rare"
+  },
+  {
+    "name": "Mortar",
+    "id": 27000002,
+    "rarity": "Common"
+  },
+  {
+    "name": "InfernoTower",
+    "id": 27000003,
+    "rarity": "Rare"
+  },
+  {
+    "name": "BombTower",
+    "id": 27000004,
+    "rarity": "Rare"
+  },
+  {
+    "name": "BarbarianHut",
+    "id": 27000005,
+    "rarity": "Rare"
+  },
+  {
+    "name": "Tesla",
+    "id": 27000006,
+    "rarity": "Common"
+  },
+  {
+    "name": "Elixir Collector",
+    "id": 27000007,
+    "rarity": "Rare"
+  },
+  {
+    "name": "Xbow",
+    "id": 27000008,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Tombstone",
+    "id": 27000009,
+    "rarity": "Rare"
+  },
+  {
+    "name": "FirespiritHut",
+    "id": 27000010,
+    "rarity": "Rare"
+  },
+  {
+    "name": "BarbarianLauncher",
+    "id": 27000011,
+    "rarity": "Common"
+  },
+  {
+    "name": "GoblinCage",
+    "id": 27000012,
+    "rarity": "Rare"
+  },
+  {
+    "name": "GoblinDrill",
+    "id": 27000013,
+    "rarity": "Epic"
+  },
+  {
+    "name": "GoblinPartyHut",
+    "id": 27000014,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "GoblinRocketSilo",
+    "id": 27000017,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "Fireball",
+    "id": 28000000,
+    "rarity": "Rare"
+  },
+  {
+    "name": "Arrows",
+    "id": 28000001,
+    "rarity": "Common"
+  },
+  {
+    "name": "Rage",
+    "id": 28000002,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Rocket",
+    "id": 28000003,
+    "rarity": "Rare"
+  },
+  {
+    "name": "GoblinBarrel",
+    "id": 28000004,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Freeze",
+    "id": 28000005,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Mirror",
+    "id": 28000006,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Lightning",
+    "id": 28000007,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Zap",
+    "id": 28000008,
+    "rarity": "Common"
+  },
+  {
+    "name": "Poison",
+    "id": 28000009,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Graveyard",
+    "id": 28000010,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "Log",
+    "id": 28000011,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "Tornado",
+    "id": 28000012,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Clone",
+    "id": 28000013,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Earthquake",
+    "id": 28000014,
+    "rarity": "Rare"
+  },
+  {
+    "name": "BarbLog",
+    "id": 28000015,
+    "rarity": "Epic"
+  },
+  {
+    "name": "Heal",
+    "id": 28000016,
+    "rarity": "Rare"
+  },
+  {
+    "name": "Snowball",
+    "id": 28000017,
+    "rarity": "Common"
+  },
+  {
+    "name": "RoyalDelivery",
+    "id": 28000018,
+    "rarity": "Common"
+  },
+  {
+    "name": "GlobalClone",
+    "id": 28000019,
+    "rarity": "Epic"
+  },
+  {
+    "name": "GoblinPartyRocket",
+    "id": 28000020,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "WarmSpell",
+    "id": 28000021,
+    "rarity": "Common"
+  },
+  {
+    "name": "GlobalLightning",
+    "id": 28000022,
+    "rarity": "Epic"
+  },
+  {
+    "name": "DarkMagic",
+    "id": 28000023,
+    "rarity": "Epic"
+  },
+  {
+    "name": "GoblinCurse",
+    "id": 28000024,
+    "rarity": "Epic"
+  },
+  {
+    "name": "MergeMaiden",
+    "id": 28000025,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "King_PrincessTowers",
+    "id": 159000000,
+    "rarity": "Common"
+  },
+  {
+    "name": "King_CannonTowers",
+    "id": 159000001,
+    "rarity": "Epic"
+  },
+  {
+    "name": "King_KnifeTowers",
+    "id": 159000002,
+    "rarity": "Legendary"
+  },
+  {
+    "name": "King_ChefTowers",
+    "id": 159000004,
+    "rarity": "Legendary"
+  }
+]

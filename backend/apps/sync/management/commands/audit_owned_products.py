@@ -1,8 +1,8 @@
 """Audit OwnedProduct table for bad/suspicious login values.
 
 Usage:
-    python manage.py audit_owned_products          # sadece raporla
-    python manage.py audit_owned_products --delete  # bozuklari sil
+    python manage.py audit_owned_products          # report only
+    python manage.py audit_owned_products --delete  # delete bad records
 """
 
 from django.core.management.base import BaseCommand
@@ -35,7 +35,7 @@ class Command(BaseCommand):
         delete = options['delete']
 
         total = OwnedProduct.objects.count()
-        self.stdout.write(f'\nToplam OwnedProduct: {total}\n')
+        self.stdout.write(f'\nTotal OwnedProduct: {total}\n')
 
         # 1. Known bad logins (exact match)
         q_known = Q()
@@ -60,12 +60,12 @@ class Command(BaseCommand):
         dupe_total = sum(d['cnt'] for d in dupes)
 
         # Report
-        self.stdout.write(self.style.WARNING('=== AUDIT SONUCLARI ===\n'))
+        self.stdout.write(self.style.WARNING('=== AUDIT RESULTS ===\n'))
 
         # Known bad
         if known_count:
             self.stdout.write(self.style.ERROR(
-                f'[HATA] Bilinen bozuk login: {known_count} kayit'
+                f'[ERROR] Known bad logins: {known_count} records'
             ))
             by_login = (
                 known_bad.values('login')
@@ -76,7 +76,7 @@ class Command(BaseCommand):
                 self.stdout.write(f"  {row['cnt']:4d}  {row['login']}")
         else:
             self.stdout.write(self.style.SUCCESS(
-                '[OK] Bilinen bozuk login yok'
+                '[OK] No known bad logins'
             ))
 
         self.stdout.write('')
@@ -84,25 +84,25 @@ class Command(BaseCommand):
         # Multi-word
         if multi_count:
             self.stdout.write(self.style.ERROR(
-                f'[HATA] Bosluklu login: {multi_count} kayit'
+                f'[ERROR] Logins with spaces: {multi_count} records'
             ))
             for item in multi_word[:20]:
                 self.stdout.write(
                     f'  id={item.id}  login={item.login!r:.50}'
                 )
             if multi_count > 20:
-                self.stdout.write(f'  ... ve {multi_count - 20} daha')
+                self.stdout.write(f'  ... and {multi_count - 20} more')
         else:
             self.stdout.write(self.style.SUCCESS(
-                '[OK] Bosluklu login yok'
+                '[OK] No logins with spaces'
             ))
 
         self.stdout.write('')
 
         # Duplicates summary
         self.stdout.write(
-            f'[INFO] Duplicate login: {dupe_login_count} login, '
-            f'{dupe_total} toplam kayit'
+            f'[INFO] Duplicate logins: {dupe_login_count} logins, '
+            f'{dupe_total} total records'
         )
         for d in list(dupes)[:10]:
             self.stdout.write(f"  {d['cnt']:4d}  {d['login']}")
@@ -115,20 +115,20 @@ class Command(BaseCommand):
 
         if bad_total == 0:
             self.stdout.write(self.style.SUCCESS(
-                'Silinecek bozuk kayit yok - tablo temiz!'
+                'No bad records to delete — table is clean!'
             ))
             return
 
         if delete:
             deleted = bad_qs.delete()
             self.stdout.write(self.style.SUCCESS(
-                f'Silindi: {deleted[0]} kayit ({deleted[1]})'
+                f'Deleted: {deleted[0]} records ({deleted[1]})'
             ))
             self.stdout.write(
-                f'Kalan OwnedProduct: {OwnedProduct.objects.count()}'
+                f'Remaining OwnedProduct: {OwnedProduct.objects.count()}'
             )
         else:
             self.stdout.write(self.style.WARNING(
-                f'{bad_total} bozuk kayit bulundu. '
-                f'Silmek icin: python manage.py audit_owned_products --delete'
+                f'{bad_total} bad records found. '
+                f'To delete: python manage.py audit_owned_products --delete'
             ))

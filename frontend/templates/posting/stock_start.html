@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}Start Stock Posting — Inventory Manager{% endblock %}
+
+{% block content %}
+<div x-data="stockStart()" x-init="init()">
+
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Start Stock Posting</h1>
+    </div>
+
+    <div class="max-w-3xl space-y-4">
+
+        <!-- Game Selection -->
+        <div class="bg-white rounded-lg shadow p-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Game</label>
+            <select x-model="selectedGame" @change="onGameChange()"
+                    class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
+                <option value="">Select a game...</option>
+                {% for game in games %}
+                <option value="{{ game.id }}" data-slug="{{ game.slug }}">{{ game.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Source Account (fallback) -->
+        {% if source_accounts %}
+        <div class="bg-white rounded-lg shadow p-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Source Account</label>
+            <select x-model="sourceAccountId"
+                    class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
+                <option value="">None (no fallback)</option>
+                {% for acc in source_accounts %}
+                <option value="{{ acc.id }}" {% if forloop.first %}selected{% endif %}>{{ acc.name }} ({{ acc.provider }})</option>
+                {% endfor %}
+            </select>
+            <p class="mt-1 text-xs text-gray-500">
+                If OwnedProduct is not found, it will be fetched via API from this account
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Login Textarea -->
+        <div class="bg-white rounded-lg shadow p-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+                Logins <span class="text-gray-400">(one per line)</span>
+            </label>
+            <textarea x-model="logins" rows="6" placeholder="Enter logins, one per line..."
+                      class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 font-mono text-sm"></textarea>
+            <p class="mt-1 text-xs text-gray-500">
+                <span x-text="loginCount"></span> login(s) entered
+            </p>
+        </div>
+
+        <!-- Store Selection -->
+        <div class="bg-white rounded-lg shadow p-4">
+            <label class="block text-sm font-medium text-gray-700 mb-3">Stores</label>
+            <div class="space-y-2">
+                {% for store in stores %}
+                <div class="border rounded-md">
+                    <div class="flex items-center justify-between p-3">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" value="{{ store.id }}"
+                                   x-model="selectedStores"
+                                   @change="onStoreToggle('{{ store.slug }}')"
+                                   class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                            <span class="text-sm font-medium text-gray-700">{{ store.name }}</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full
+                                {% if store.provider == 'gameboost' %}bg-blue-100 text-blue-700
+                                {% elif store.provider == 'eldorado' %}bg-yellow-100 text-yellow-700
+                                {% elif store.provider == 'playerauctions' %}bg-purple-100 text-purple-700
+                                {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                {{ store.get_provider_display }}
+                            </span>
+                        </label>
+                        <button @click="toggleSettings('{{ store.slug }}')"
+                                x-show="selectedStores.includes('{{ store.id }}')"
+                                class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Pricing Settings (collapsible) -->
+                    <div x-show="showSettings['{{ store.slug }}']" x-collapse
+                         class="border-t px-3 pb-3 pt-2 bg-gray-50">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Low (&le;$10)</label>
+                                <input type="number" step="0.01"
+                                       x-model="defaults['{{ store.slug }}'].multiplier_low"
+                                       class="w-full text-sm border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Mid ($10-$100)</label>
+                                <input type="number" step="0.01"
+                                       x-model="defaults['{{ store.slug }}'].multiplier_mid"
+                                       class="w-full text-sm border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">High (&gt;$100)</label>
+                                <input type="number" step="0.01"
+                                       x-model="defaults['{{ store.slug }}'].multiplier_high"
+                                       class="w-full text-sm border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Min Price</label>
+                                <input type="number" step="0.01"
+                                       x-model="defaults['{{ store.slug }}'].min_price"
+                                       class="w-full text-sm border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Forced Ending</label>
+                                <input type="number" step="0.01" placeholder="0.99"
+                                       x-model="defaults['{{ store.slug }}'].forced_ending"
+                                       class="w-full text-sm border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Sub-Platform</label>
+                                <select x-model="defaults['{{ store.slug }}'].sub_platform"
+                                        class="w-full text-sm border-gray-300 rounded-md">
+                                    <option value="">Default</option>
+                                    <option value="Auto" x-show="gameSubplatforms.length > 0">Auto</option>
+                                    <template x-for="sp in gameSubplatforms" :key="sp">
+                                        <option :value="sp" x-text="sp"></option>
+                                    </template>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="flex items-center space-x-4">
+            <button @click="submitJob()" :disabled="!canSubmit || submitting"
+                    class="px-6 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg
+                           hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500
+                           disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                <span x-show="!submitting">Start Posting</span>
+                <span x-show="submitting">Submitting...</span>
+            </button>
+            <p x-show="submitError" class="text-sm text-red-600" x-text="submitError"></p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Game slug → supported sub-platforms (mirrors backend GAME_SUBPLATFORMS registry)
+const GAME_SUBPLATFORMS = {{ game_subplatforms_json|safe }};
+
+// Game ID → slug lookup
+const GAME_SLUGS = {
+    {% for game in games %}'{{ game.id }}': '{{ game.slug }}',{% endfor %}
+};
+
+function stockStart() {
+    return {
+        selectedGame: new URLSearchParams(window.location.search).get('game') || '',
+        logins: (new URLSearchParams(window.location.search).get('logins') || '').replace(/,/g, '\n'),
+        sourceAccountId: '{% if source_accounts %}{{ source_accounts.0.id }}{% endif %}',
+        selectedStores: [],
+        defaults: {},
+        showSettings: {},
+        submitting: false,
+        submitError: '',
+
+        get loginCount() {
+            return this.logins.split('\n').filter(l => l.trim()).length;
+        },
+
+        get canSubmit() {
+            return this.selectedGame && this.loginCount > 0 && this.selectedStores.length > 0;
+        },
+
+        get gameSubplatforms() {
+            const slug = GAME_SLUGS[this.selectedGame] || '';
+            return GAME_SUBPLATFORMS[slug] || [];
+        },
+
+        init() {
+            {% for store in stores %}
+            if (!this.defaults['{{ store.slug }}']) {
+                this.defaults['{{ store.slug }}'] = {
+                    multiplier_low: '2.00', multiplier_mid: '1.80', multiplier_high: '1.50',
+                    min_price: '0.00', forced_ending: '0.99', sub_platform: '', account_type: '',
+                };
+            }
+            this.showSettings['{{ store.slug }}'] = false;
+            {% endfor %}
+
+            if (this.selectedGame) this.onGameChange();
+        },
+
+        async onGameChange() {
+            if (!this.selectedGame) return;
+            // Reset sub_platform selections when game changes (available platforms differ)
+            for (const slug of Object.keys(this.defaults)) {
+                this.defaults[slug].sub_platform = '';
+            }
+            // Load saved defaults per provider (UI convenience pre-fill)
+            const providers = new Set();
+            {% for store in stores %}
+            providers.add('{{ store.provider }}');
+            {% endfor %}
+            for (const provider of providers) {
+                try {
+                    const resp = await fetch(`/posting/api/defaults/${this.selectedGame}/${provider}/`);
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        // Apply to all stores with this provider
+                        {% for store in stores %}
+                        if ('{{ store.provider }}' === provider && this.defaults['{{ store.slug }}']) {
+                            this.defaults['{{ store.slug }}'] = { ...this.defaults['{{ store.slug }}'], ...data };
+                        }
+                        {% endfor %}
+                    }
+                } catch (e) {}
+            }
+        },
+
+        onStoreToggle(slug) {},
+
+        toggleSettings(slug) {
+            this.showSettings[slug] = !this.showSettings[slug];
+        },
+
+        async submitJob() {
+            this.submitting = true;
+            this.submitError = '';
+
+            const loginList = this.logins.split('\n').filter(l => l.trim()).map(l => l.trim());
+            const storeIds = this.selectedStores.map(Number);
+
+            const defaultsPayload = {};
+            {% for store in stores %}
+            if (storeIds.includes({{ store.id }})) {
+                const slug = '{{ store.slug }}';
+                if (this.defaults[slug]) defaultsPayload[slug] = this.defaults[slug];
+            }
+            {% endfor %}
+
+            try {
+                const resp = await fetch('/posting/api/jobs/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken(),
+                    },
+                    body: JSON.stringify({
+                        game_id: Number(this.selectedGame),
+                        logins: loginList,
+                        stores: storeIds,
+                        defaults: defaultsPayload,
+                        source_account_id: this.sourceAccountId ? Number(this.sourceAccountId) : null,
+                    }),
+                });
+
+                const data = await resp.json();
+
+                if (!resp.ok) {
+                    this.submitError = data.error || 'Failed to create job';
+                    this.submitting = false;
+                    return;
+                }
+
+                // Redirect to Active page
+                window.location.href = '/posting/stock/active/';
+            } catch (e) {
+                this.submitError = 'Network error: ' + e.message;
+                this.submitting = false;
+            }
+        },
+
+        getCsrfToken() {
+            const cookie = document.cookie.split(';').find(c => c.trim().startsWith('csrftoken='));
+            return cookie ? cookie.split('=')[1] : '';
+        },
+    };
+}
+</script>
+{% endblock %}

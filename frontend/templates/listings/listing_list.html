@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Listings — Inventory Manager{% endblock %}
+
+{% block content %}
+<div x-data="listingsBrowser()" x-init="init()">
+
+    {% include "includes/_loading_overlay.html" %}
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+        <h1 class="text-2xl font-bold text-gray-900">Listings</h1>
+        <span class="text-sm text-gray-500">{{ page_obj.paginator.count }} total{% if selected_status or selected_game or selected_store or selected_is_instant or q %} (filtered){% endif %}</span>
+    </div>
+
+    <!-- Stats -->
+    {% include "includes/_stats_bar.html" %}
+
+    <!-- Filters -->
+    {% regroup stores by provider as stores_by_provider %}
+    <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mb-4">
+        <form method="get" class="flex flex-wrap items-center gap-3">
+            {% include "includes/_search_input.html" with placeholder="Title, listing ID, or login..." value=q %}
+            {% include "includes/_filter_select.html" with name="status" default_label="All Statuses" options=listing_statuses selected=selected_status %}
+            {% include "includes/_filter_select.html" with name="game" default_label="All Games" options=games selected=selected_game is_object=True %}
+            {% include "includes/_filter_select.html" with name="store" default_label="All Stores" grouped_options=stores_by_provider selected=selected_store %}
+            {% include "includes/_filter_select.html" with name="is_instant" default_label="All Types" options=instant_types selected=selected_is_instant %}
+            {% if q or selected_status or selected_game or selected_store or selected_is_instant %}
+            <a href="{% url 'listings:list' %}" class="text-sm text-gray-500 hover:text-gray-700">Clear all</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Bulk Action Bar -->
+    <div x-show="selected.length > 0" x-cloak
+         class="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-3 mb-4 flex flex-wrap items-center gap-3">
+        <span class="text-sm font-medium text-emerald-800"
+              x-text="selected.length + ' listing(s) selected'"></span>
+        <button @click="bulkDelete()"
+                class="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 font-medium transition-colors">
+            Delete Selected
+        </button>
+        <button @click="selected = []"
+                class="text-sm text-gray-500 hover:text-gray-700 ml-auto">Deselect all</button>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-3 py-3 text-left">
+                            <input type="checkbox" @change="toggleAll($event)"
+                                   class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Login / Source</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Game</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Marketplace</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Store</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Platform</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listed</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for listing in page_obj %}
+                    <tr class="hover:bg-gray-50" :class="isSelected({{ listing.id }}) ? 'bg-emerald-50' : ''">
+                        <td class="px-3 py-3">
+                            {% if listing.status == 'listed' or listing.status == 'paused' %}
+                            <input type="checkbox"
+                                   :checked="isSelected({{ listing.id }})"
+                                   @change="toggleOne({{ listing.id }})"
+                                   class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-900 max-w-xs truncate" title="{{ listing.title }}">
+                            {{ listing.title|truncatechars:50|default:listing.store_listing_id }}
+                        </td>
+                        <td class="px-4 py-3 text-sm font-mono text-gray-600 max-w-[160px] truncate">
+                            {% if listing.is_instant %}
+                                {% for lop in listing.listing_owned_products.all %}
+                                    {{ lop.owned_product.login }}{% if not forloop.last %}, {% endif %}
+                                {% empty %}-{% endfor %}
+                            {% else %}
+                                {% if listing.dropship_product %}
+                                    <span class="text-gray-400 text-xs font-sans">src:</span>{{ listing.dropship_product.source_product_id }}
+                                {% else %}-{% endif %}
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500">{{ listing.game.name|default:"-" }}</td>
+                        <td class="px-4 py-3 text-sm">
+                            {% if listing.integration_account %}
+                            <span class="px-2 py-0.5 rounded text-xs font-medium
+                                {% if listing.integration_account.provider == 'eldorado' %}bg-purple-100 text-purple-700
+                                {% elif listing.integration_account.provider == 'gameboost' %}bg-blue-100 text-blue-700
+                                {% elif listing.integration_account.provider == 'playerauctions' %}bg-orange-100 text-orange-700
+                                {% elif listing.integration_account.provider == 'lzt' %}bg-cyan-100 text-cyan-700
+                                {% elif listing.integration_account.provider == 'g2g' %}bg-pink-100 text-pink-700
+                                {% else %}bg-gray-100 text-gray-600{% endif %}">
+                                {{ listing.integration_account.provider }}
+                            </span>
+                            {% else %}-{% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-500">{{ listing.integration_account.name|default:"-" }}</td>
+                        <td class="px-4 py-3 text-sm">
+                            <span class="px-2 py-0.5 rounded text-xs font-medium
+                                {% if listing.status == 'listed' %}bg-emerald-100 text-emerald-700
+                                {% elif listing.status == 'paused' %}bg-yellow-100 text-yellow-700
+                                {% elif listing.status == 'closed' %}bg-gray-100 text-gray-600
+                                {% elif listing.status == 'deleted' %}bg-red-100 text-red-700
+                                {% else %}bg-gray-100 text-gray-600{% endif %}">
+                                {{ listing.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">${{ listing.price }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-500">{{ listing.sub_platform|default:"-" }}</td>
+                        <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{{ listing.listed_at|date:"M d, H:i"|default:"-" }}</td>
+                        <!-- Actions dropdown -->
+                        <td class="px-4 py-3 text-sm">
+                            {% if listing.status == 'listed' or listing.status == 'paused' %}
+                            <div class="relative" x-data="{ open: false }">
+                                {% include "includes/_action_dropdown.html" %}
+                                <div x-show="open" x-cloak
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     class="absolute right-0 z-30 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                                    <button @click="deleteSingle({{ listing.id }}); open = false"
+                                            class="w-full text-left px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                        Delete (remote + local)
+                                    </button>
+                                </div>
+                            </div>
+                            {% else %}
+                            <span class="text-gray-300 text-xs">&mdash;</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="11" class="px-4 py-8 text-center text-gray-400">No listings found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% include "includes/_pagination.html" %}
+</div>
+
+<script>
+function listingsBrowser() {
+    return {
+        selected: [],
+        loading: false,
+        loadingMsg: '',
+
+        init() {},
+
+        deletableIds() {
+            return [{% for listing in page_obj %}{% if listing.status == 'listed' or listing.status == 'paused' %}{{ listing.id }},{% endif %}{% endfor %}];
+        },
+
+        toggleAll(e) { this.selected = e.target.checked ? this.deletableIds() : []; },
+        isSelected(id) { return this.selected.includes(id); },
+        toggleOne(id) {
+            const idx = this.selected.indexOf(id);
+            if (idx === -1) this.selected.push(id); else this.selected.splice(idx, 1);
+        },
+
+        csrfToken() {
+            return document.cookie.split('; ').find(r => r.startsWith('csrftoken='))?.split('=')[1] || '';
+        },
+
+        async deleteSingle(id) {
+            if (!confirm('Delete this listing and remove its marketplace offer?')) return;
+            this.loading = true;
+            this.loadingMsg = 'Removing offer from marketplace\u2026';
+            try {
+                const res = await fetch(`/listings/api/${id}/delete/`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRFToken': this.csrfToken() },
+                });
+                if (res.ok) location.reload();
+                else {
+                    this.loading = false;
+                    const data = await res.json().catch(() => ({}));
+                    alert('Failed: ' + (data.error || 'Unknown error'));
+                }
+            } catch (e) { this.loading = false; alert('Request failed: ' + e.message); }
+        },
+
+        async bulkDelete() {
+            if (!this.selected.length) return;
+            if (!confirm(`Delete ${this.selected.length} listing(s) and remove their marketplace offer(s)?`)) return;
+            this.loading = true;
+            this.loadingMsg = `Removing ${this.selected.length} offer(s) from marketplace\u2026`;
+            try {
+                const res = await fetch('/listings/api/bulk-delete/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.csrfToken() },
+                    body: JSON.stringify({ ids: this.selected }),
+                });
+                const data = await res.json().catch(() => ({}));
+                if (res.status === 207) {
+                    this.loading = false;
+                    alert(`Succeeded: ${data.succeeded?.length ?? 0}  |  Failed: ${data.failed?.length ?? 0}`);
+                    location.reload();
+                } else if (res.ok) {
+                    location.reload();
+                } else {
+                    this.loading = false;
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            } catch (e) { this.loading = false; alert('Request failed: ' + e.message); }
+        },
+    };
+}
+</script>
+{% endblock %}

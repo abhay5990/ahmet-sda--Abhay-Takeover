@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel>=0.41.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "payload_pipeline"
+version = "0.1.0"
+description = "Marketplace payload builder — game-specific listing content and marketplace payloads"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["payload_pipeline*"]
