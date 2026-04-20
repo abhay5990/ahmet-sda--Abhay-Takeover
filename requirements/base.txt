@@ -25,7 +25,7 @@ pydantic==2.12.5
 
 # Image processing
 Pillow==10.4.0
-numpy==2.4.4
+numpy==2.2.6
 
 # AWS Cognito auth (Eldorado)
 boto3==1.38.15
