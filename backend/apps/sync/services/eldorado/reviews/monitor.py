@@ -125,25 +125,51 @@ class EldoradoReviewMonitor:
             return
 
         last_seen_id = checkpoint.last_seen_remote_id
-        most_recent_id = results[0].orderReview.id
+        last_seen_date = (checkpoint.meta or {}).get("last_seen_date", "")
+        most_recent = results[0].orderReview
 
         # Bootstrap — first run, just save the watermark, don't notify
         if not last_seen_id:
-            checkpoint.last_seen_remote_id = most_recent_id
+            checkpoint.last_seen_remote_id = most_recent.id
+            checkpoint.meta = {**(checkpoint.meta or {}), "last_seen_date": most_recent.date}
             checkpoint.last_run_at = timezone.now()
-            checkpoint.save(update_fields=["last_seen_remote_id", "last_run_at", "updated_at"])
+            checkpoint.save(update_fields=["last_seen_remote_id", "meta", "last_run_at", "updated_at"])
             logger.info(
                 "Review monitor bootstrap for %s — watermark set to %s (%d reviews on page)",
-                account.slug, most_recent_id, len(results),
+                account.slug, most_recent.id, len(results),
             )
             return
 
         # Collect reviews newer than last_seen_id (they appear before it in the list)
         new_reviews = []
+        found_watermark = False
         for item in results:
             if item.orderReview.id == last_seen_id:
+                found_watermark = True
                 break
             new_reviews.append(item)
+
+        if not found_watermark:
+            # Watermark review is no longer in the Negative list — the buyer likely
+            # changed their rating from Negative to Neutral/Positive, or an admin
+            # removed it. Fall back to date comparison to avoid sending 20 notifications.
+            if last_seen_date:
+                new_reviews = [
+                    item for item in results
+                    if item.orderReview.date > last_seen_date
+                ]
+                logger.warning(
+                    "Watermark review %s not found for %s (rating probably changed) "
+                    "— date fallback: %d new review(s)",
+                    last_seen_id, account.slug, len(new_reviews),
+                )
+            else:
+                logger.warning(
+                    "Watermark review %s not found for %s, no date fallback — skipping "
+                    "to avoid duplicate notifications",
+                    last_seen_id, account.slug,
+                )
+                new_reviews = []
 
         if not new_reviews:
             logger.debug("No new negative reviews for %s", account.slug)
@@ -156,6 +182,7 @@ class EldoradoReviewMonitor:
                 )
 
         # Advance watermark to the most recent review on this page
-        checkpoint.last_seen_remote_id = most_recent_id
+        checkpoint.last_seen_remote_id = most_recent.id
+        checkpoint.meta = {**(checkpoint.meta or {}), "last_seen_date": most_recent.date}
         checkpoint.last_run_at = timezone.now()
-        checkpoint.save(update_fields=["last_seen_remote_id", "last_run_at", "updated_at"])
+        checkpoint.save(update_fields=["last_seen_remote_id", "meta", "last_run_at", "updated_at"])
