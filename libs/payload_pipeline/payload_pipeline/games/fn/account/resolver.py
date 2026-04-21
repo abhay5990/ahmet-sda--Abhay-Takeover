@@ -43,6 +43,8 @@ class FortniteResolver:
             psn_linkable=lzt.psn_linkable,
             xbox_linkable=lzt.xbox_linkable,
             has_email_access=not lzt.credentials.is_empty and bool(lzt.credentials.email_login),
+            fortnite_next_change_email_date=lzt.fortnite_next_change_email_date,
             cosmetic_titles=lzt.cosmetic_titles,
+            cosmetics_by_category=lzt.cosmetics_by_category,
             preview_urls=lzt.preview_urls,
         )

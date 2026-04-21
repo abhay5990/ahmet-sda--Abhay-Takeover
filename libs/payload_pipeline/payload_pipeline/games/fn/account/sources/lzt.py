@@ -30,7 +30,9 @@ class FortniteLztSource:
     has_real_purchases: bool = False
     psn_linkable: bool = False
     xbox_linkable: bool = False
+    fortnite_next_change_email_date: int = 0
     cosmetic_titles: list[str] = field(default_factory=list)
+    cosmetics_by_category: dict[str, list[str]] = field(default_factory=dict)
     preview_urls: dict[str, str] = field(default_factory=dict)
 
 
@@ -70,7 +72,9 @@ class FortniteLztSourceAdapter:
             has_real_purchases=bool(payload.get("fortnite_rl_purchases")),
             psn_linkable=bool(payload.get("fortnite_psn_linkable")),
             xbox_linkable=bool(payload.get("fortnite_xbox_linkable")),
+            fortnite_next_change_email_date=self._to_int(payload.get("fortnite_next_change_email_date"), default=0),
             cosmetic_titles=self._extract_cosmetic_titles(payload),
+            cosmetics_by_category=self._extract_cosmetics_by_category(payload),
             preview_urls=self._resolve_preview_urls(payload),
         )
 
@@ -82,10 +86,17 @@ class FortniteLztSourceAdapter:
         except (TypeError, ValueError):
             return default
 
-    @staticmethod
-    def _extract_cosmetic_titles(payload: dict[str, Any]) -> list[str]:
+    _LZT_KEY_TO_CATEGORY: dict[str, str] = {
+        "fortniteSkins":    "outfit",
+        "fortnitePickaxe":  "pickaxe",
+        "fortniteDance":    "emote",
+        "fortniteGliders":  "glider",
+    }
+
+    @classmethod
+    def _extract_cosmetic_titles(cls, payload: dict[str, Any]) -> list[str]:
         titles: list[str] = []
-        for key in ("fortniteSkins", "fortnitePickaxe", "fortniteDance", "fortniteGliders"):
+        for key in cls._LZT_KEY_TO_CATEGORY:
             items = payload.get(key)
             if not isinstance(items, list):
                 continue
@@ -95,6 +106,22 @@ class FortniteLztSourceAdapter:
                     if title:
                         titles.append(title)
         return titles
+
+    @classmethod
+    def _extract_cosmetics_by_category(cls, payload: dict[str, Any]) -> dict[str, list[str]]:
+        result: dict[str, list[str]] = {}
+        for key, category in cls._LZT_KEY_TO_CATEGORY.items():
+            items = payload.get(key)
+            if not isinstance(items, list):
+                continue
+            titles = [
+                str(item.get("title") or "").strip()
+                for item in items
+                if isinstance(item, dict) and item.get("title")
+            ]
+            if titles:
+                result[category] = titles
+        return result
 
     def _resolve_preview_urls(self, payload: dict[str, Any]) -> dict[str, str]:
         preview_links = payload.get("imagePreviewLinks")

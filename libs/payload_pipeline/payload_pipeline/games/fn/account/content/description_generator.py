@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from .....core.contracts import MediaBundle
-from ..catalog import category_of, prioritize
+from ..catalog import prioritize
 from ..models import FortniteResolvedAccount
 
 _CHAR_LIMIT = 1990
@@ -45,14 +47,7 @@ class FortniteDescriptionGenerator:
         if account.platform == "EpicPC" and account.v_bucks >= 100:
             lines.append(f"V-Bucks: {account.v_bucks}")
 
-        if account.battle_pass_level > 0:
-            lines.append(f"Battle Pass Level: {account.battle_pass_level}")
-
-        if account.lifetime_wins > 0:
-            lines.append(f"Wins: {account.lifetime_wins}")
-
-        if account.has_email_access:
-            lines.append("Changeable Email")
+        lines.append(_format_email_line(account.fortnite_next_change_email_date))
 
         lines.extend([
             "Only playable on platforms mentioned in the title.",
@@ -64,8 +59,7 @@ class FortniteDescriptionGenerator:
         header = "\n".join(lines)
 
         # Cosmetic sections — fill within remaining char budget
-        ordered = prioritize(account.cosmetic_titles)
-        sections = _group_by_category(ordered)
+        sections = {cat: prioritize(items) for cat, items in account.cosmetics_by_category.items()}
         items_text = _build_item_sections(sections, budget=_CHAR_LIMIT - len(header))
 
         description = (header + items_text).rstrip()
@@ -80,23 +74,19 @@ class FortniteDescriptionGenerator:
 # Helpers
 # ---------------------------------------------------------------------------
 
+def _format_email_line(timestamp: int) -> str:
+    if timestamp:
+        date = datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime("%B %d, %Y")
+        return f"Mail can be changed on {date}."
+    return "Changeable Email"
+
+
 def _format_link(url: str | None) -> str:
     if not url:
         return ""
     clean = url.removeprefix("https://").removeprefix("http://")
     return f"Images:\n{clean}\n"
 
-
-def _group_by_category(cosmetics: list[str]) -> dict[str, list[str]]:
-    """Group cosmetic names by their catalog category.
-
-    Items not in the catalog go into "_other".
-    """
-    groups: dict[str, list[str]] = {}
-    for name in cosmetics:
-        cat = category_of(name) or "_other"
-        groups.setdefault(cat, []).append(name)
-    return groups
 
 
 def _build_item_sections(

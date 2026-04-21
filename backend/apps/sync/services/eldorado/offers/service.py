@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import timedelta
+from datetime import timedelta, timezone as dt_timezone
 from typing import TYPE_CHECKING
 
 from apps.inventory.services import resolve_game, resolve_owned_product_status
@@ -220,15 +220,21 @@ class EldoradoOfferSyncService(BaseSyncService):
 
         if self._stop_timestamp:
             item_ts = self.extract_remote_timestamp(item)
-            if item_ts and item_ts < self._stop_timestamp:
-                logger.info(
-                    "Timestamp-based stop: offer %s (expireDate=%s) "
-                    "is older than checkpoint (%s)",
-                    self.extract_remote_id(item),
-                    item_ts.isoformat(),
-                    self._stop_timestamp.isoformat(),
-                )
-                return True
+            if item_ts:
+                # Normalise both sides to UTC-aware before comparison —
+                # MySQL DATETIME has no tz info; defensive guard prevents
+                # TypeError if either value arrives naive.
+                ts = item_ts if item_ts.tzinfo is not None else item_ts.replace(tzinfo=dt_timezone.utc)
+                stop = self._stop_timestamp if self._stop_timestamp.tzinfo is not None else self._stop_timestamp.replace(tzinfo=dt_timezone.utc)
+                if ts < stop:
+                    logger.info(
+                        "Timestamp-based stop: offer %s (expireDate=%s) "
+                        "is older than checkpoint (%s)",
+                        self.extract_remote_id(item),
+                        ts.isoformat(),
+                        stop.isoformat(),
+                    )
+                    return True
 
         return False
 
@@ -256,14 +262,21 @@ class EldoradoOfferSyncService(BaseSyncService):
             if result.ok and result.data:
                 entries = []
                 details = result.data
-                if hasattr(details, 'accountsDetails'):
-                    for entry in details.accountsDetails:
+
+                def _collect(source):
+                    for entry in source:
                         if hasattr(entry, 'model_dump'):
                             entries.append(entry.model_dump())
                         elif isinstance(entry, dict):
                             entries.append(entry)
                         else:
                             entries.append(dict(entry))
+
+                if hasattr(details, 'accountsDetails') and details.accountsDetails:
+                    _collect(details.accountsDetails)
+                elif hasattr(details, 'secretDetails') and details.secretDetails:
+                    # Eldorado migrated credentials from accountsDetails → secretDetails
+                    _collect(details.secretDetails)
 
                 item = {**item, '_credential_entries': entries}
                 return item, {'credentials_source': 'api'}

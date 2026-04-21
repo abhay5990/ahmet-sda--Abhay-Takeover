@@ -329,5 +329,23 @@
 </div>
 
 {% block extra_js %}{% endblock %}
+<script>
+function fmtLocalDt(isoStr) {
+    if (!isoStr) return '-';
+    const d = new Date(isoStr);
+    if (isNaN(d)) return '-';
+    const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const dd = String(d.getDate()).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    return `${mo[d.getMonth()]}-${dd}-${yyyy} ${hh}:${mm}`;
+}
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-utc]').forEach(function (el) {
+        el.textContent = fmtLocalDt(el.dataset.utc);
+    });
+});
+</script>
 </body>
 </html>

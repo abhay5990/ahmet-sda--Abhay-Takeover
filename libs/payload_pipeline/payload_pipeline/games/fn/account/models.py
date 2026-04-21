@@ -26,5 +26,7 @@ class FortniteResolvedAccount(ResolvedAccountBase):
     psn_linkable: bool = False
     xbox_linkable: bool = False
     has_email_access: bool = False
+    fortnite_next_change_email_date: int = 0
     cosmetic_titles: list[str] = field(default_factory=list)
+    cosmetics_by_category: dict[str, list[str]] = field(default_factory=dict)
     preview_urls: dict[str, str] = field(default_factory=dict)

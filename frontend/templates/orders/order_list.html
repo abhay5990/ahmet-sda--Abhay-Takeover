@@ -121,7 +121,7 @@
                             <span class="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">Manual</span>
                             {% endif %}
                         </td>
-                        <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{{ order.sold_at|date:"M d, H:i"|default:"-" }}</td>
+                        <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{% if order.sold_at %}<span data-utc="{{ order.sold_at|date:'c' }}">{{ order.sold_at|date:"M-d-Y g:i A" }}</span>{% else %}-{% endif %}</td>
                         <!-- Actions dropdown -->
                         <td class="px-4 py-3 text-sm">
                             <div class="relative" x-data="{ open: false }">

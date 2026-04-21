@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone as dt_timezone
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
@@ -116,7 +116,14 @@ class EldoradoOrderSyncService(BaseSyncService):
         if not raw_ts:
             return None
         try:
-            return datetime.fromisoformat(raw_ts.replace('Z', '+00:00'))
+            # Eldorado sends 4-7 digit fractional seconds; Python 3.10
+            # fromisoformat only accepts 3 or 6 — normalize to 6 digits.
+            import re as _re
+            def _norm(m):
+                frac = m.group(1).ljust(6, '0')[:6]
+                return '.' + frac
+            raw_ts = _re.sub(r'\.(\d+)', _norm, raw_ts.replace('Z', '+00:00'))
+            return datetime.fromisoformat(raw_ts)
         except (ValueError, AttributeError):
             return None
 
@@ -144,15 +151,18 @@ class EldoradoOrderSyncService(BaseSyncService):
         # Fallback: timestamp-based stop
         if self._stop_timestamp:
             item_ts = self.extract_remote_timestamp(item)
-            if item_ts and item_ts < self._stop_timestamp:
-                logger.info(
-                    "Timestamp-based stop: order %s (%s) is older "
-                    "than checkpoint (%s)",
-                    self.extract_remote_id(item),
-                    item_ts.isoformat(),
-                    self._stop_timestamp.isoformat(),
-                )
-                return True
+            if item_ts:
+                ts = item_ts if item_ts.tzinfo is not None else item_ts.replace(tzinfo=dt_timezone.utc)
+                stop = self._stop_timestamp if self._stop_timestamp.tzinfo is not None else self._stop_timestamp.replace(tzinfo=dt_timezone.utc)
+                if ts < stop:
+                    logger.info(
+                        "Timestamp-based stop: order %s (%s) is older "
+                        "than checkpoint (%s)",
+                        self.extract_remote_id(item),
+                        ts.isoformat(),
+                        stop.isoformat(),
+                    )
+                    return True
 
         return False
 

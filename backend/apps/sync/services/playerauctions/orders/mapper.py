@@ -148,16 +148,13 @@ def parse_pa_datetime(dt_str: str) -> datetime | None:
     """Parse a PlayerAuctions datetime string.
 
     Tries multiple known formats. Returns timezone-aware UTC datetime.
-
-    NOTE: PlayerAuctions does not specify timezone in the datetime string.
-    We assume UTC for consistency. This is a known business ambiguity —
-    the actual timezone may be US Pacific or the buyer's local time.
+    PA sends times in UTC — confirmed by cross-checking order timestamps
+    against the PA dashboard (raw value matches DB UTC value exactly).
     """
     if not dt_str:
         return None
 
     dt_str = dt_str.strip()
-    # Strip trailing timezone tag e.g. "(PST)" — we treat all as UTC
     dt_str = _TZ_TAG_RE.sub('', dt_str).strip()
 
     for fmt in _PA_DATETIME_FORMATS:
