@@ -43,6 +43,13 @@ logger = logging.getLogger(__name__)
 # Default delay between source checks (seconds)
 DEFAULT_CHECK_DELAY = 1.0
 
+# How long to sleep when LZT is in maintenance mode (seconds)
+MAINTENANCE_WAIT = 120.0
+
+
+class _MaintenanceDetected(Exception):
+    """Internal signal — source platform is in maintenance mode."""
+
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -102,6 +109,10 @@ def cleaner_loop(cleaner_config: CleanerConfig, stop_event: Event) -> None:
                 )
             except PauseRequired:
                 raise  # propagate to wrapper
+            except _MaintenanceDetected:
+                # Platform maintenance — skip remaining products, wait, retry cycle
+                stop_event.wait(timeout=MAINTENANCE_WAIT)
+                break
             except Exception as e:
                 logger.exception("Cleaner failed for DropshipProduct #%d: %s", dp.id, e)
                 PostingLog.objects.create(
@@ -146,6 +157,22 @@ def _check_single_product(
         if api_result is not None:
             error_type = classify_api_error(api_result)
 
+            if error_type == 'maintenance':
+                # LZT is in scheduled maintenance — don't count as error,
+                # just wait and let the cycle retry after the window passes.
+                logger.info(
+                    "LZT maintenance detected — waiting %ds before next check",
+                    int(MAINTENANCE_WAIT),
+                )
+                PostingLog.objects.create(
+                    task_name='dropship_cleaner',
+                    level=PostingLogLevel.INFO,
+                    message="LZT maintenance — pausing checks",
+                    detail={'wait_seconds': MAINTENANCE_WAIT},
+                    integration_account=dp.source_account,
+                )
+                raise _MaintenanceDetected()
+
             if error_type == 'rate_limit':
                 tracker.on_rate_limit()
                 return
@@ -186,17 +213,20 @@ def _check_single_product(
         _handle_item_gone(dp, reason=check.status or 'deleted')
         return
 
-    # Check price change — use 0.01 tolerance to ignore floating-point noise
-    # from LZT API returning high-precision floats (e.g. 4.029... stored as 4.03)
+    # Check price change — only act if price moved more than 3% from
+    # the price recorded when the DP was first posted.  Small fluctuations
+    # (floating-point noise, minor marketplace adjustments) are ignored.
     if (
         check.current_price
         and check.current_price > 0
-        and abs(check.current_price - dp.price) >= Decimal('0.01')
+        and dp.price > 0
     ):
-        _handle_price_change(dp, check.current_price, check.raw_data)
-        return
+        pct_change = abs(check.current_price - dp.price) / dp.price
+        if pct_change > Decimal('0.03'):
+            _handle_price_change(dp, check.current_price, check.raw_data)
+            return
 
-    # No change — just update last_checked_at
+    # No change (or within tolerance) — just update last_checked_at
     dp.last_checked_at = timezone.now()
     dp.save(update_fields=['last_checked_at'])
 

@@ -496,6 +496,18 @@ class LztClient:
                     message = error_text or message
                     details["errors"] = errors
 
+                    # LZT-specific: detect maintenance mode (503)
+                    if "engineering works" in error_text.lower():
+                        details["maintenance"] = True
+                        return ApiResult.from_error(
+                            ErrorCategory.SERVER_ERROR,
+                            message,
+                            status_code=status_code,
+                            provider=self.PROVIDER,
+                            is_retryable=True,
+                            details=details,
+                        )
+
                     # LZT-specific: detect account-deleted via 403 body
                     if status_code == 403:
                         lower = error_text.lower()

@@ -56,7 +56,8 @@ class PauseRequired(Exception):
 def classify_api_error(api_result: ApiResult) -> str:
     """Classify an ApiResult failure into an error category.
 
-    Returns one of: 'rate_limit', 'validation', 'server', 'auth', 'not_found', 'success'.
+    Returns one of: 'rate_limit', 'validation', 'server', 'auth',
+    'not_found', 'maintenance', 'success'.
     Falls back to 'unknown' for unrecognised errors.
 
     Uses ErrorCategory enum from the SDK when available, with status_code
@@ -68,6 +69,11 @@ def classify_api_error(api_result: ApiResult) -> str:
     error = api_result.error
     if error is None:
         return 'unknown'
+
+    # LZT maintenance mode — SDK tags this in details
+    details = getattr(error, 'details', {}) or {}
+    if details.get('maintenance'):
+        return 'maintenance'
 
     # Primary: use ErrorCategory enum (set by all SDK clients)
     from apis_sdk.core.enums import ErrorCategory

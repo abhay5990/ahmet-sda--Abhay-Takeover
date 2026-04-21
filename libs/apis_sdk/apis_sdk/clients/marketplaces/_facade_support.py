@@ -41,6 +41,15 @@ T = TypeVar("T")
 # ApiResult ↔ exception conversion functions
 # ---------------------------------------------------------------------------
 
+# Maps HTTP status codes to ErrorCategory for ProviderError round-trips.
+# Used by exception_to_result to recover the original category that would
+# otherwise be lost when a typed ApiResult passes through raise→catch.
+_STATUS_CATEGORY: dict[int, ErrorCategory] = {
+    404: ErrorCategory.NOT_FOUND,
+    400: ErrorCategory.VALIDATION,
+    422: ErrorCategory.VALIDATION,
+}
+
 # Type for the narrow provider-specific exception hook.
 # Returns an ApiResult if it handled the exception, None to fall through.
 ExceptionHook = Callable[[Exception], ApiResult[Any] | None]
@@ -96,6 +105,14 @@ def result_to_exception(result: ApiResult[Any], *, fallback_provider: str) -> Sd
         return ValidationError(
             error.message,
             provider=provider,
+            details=details,
+        )
+    if error.category == ErrorCategory.NOT_FOUND:
+        return ProviderError(
+            error.message,
+            provider=provider,
+            status_code=error.status_code,
+            is_retryable=False,
             details=details,
         )
     return ProviderError(
@@ -157,8 +174,15 @@ def exception_to_result(exc: Exception, *, fallback_provider: str) -> ApiResult[
             details=exc.details,
         )
     if isinstance(exc, ProviderError):
+        # Preserve the original error category when the status_code gives a
+        # clear signal.  Without this, NOT_FOUND (404) round-trips through
+        # result→exception→result and becomes SERVER_ERROR — breaking the
+        # cleaner's ability to detect deleted items.
+        category = ErrorCategory.SERVER_ERROR
+        if exc.status_code is not None:
+            category = _STATUS_CATEGORY.get(exc.status_code, ErrorCategory.SERVER_ERROR)
         return ApiResult.from_error(
-            ErrorCategory.SERVER_ERROR,
+            category,
             str(exc),
             provider=exc.provider,
             status_code=exc.status_code,
