@@ -84,7 +84,8 @@ class LztSourceProvider:
                 raw_data={'api_result': result},
             )
 
-        item_data = result.data or {}
+        response_data = result.data or {}
+        item_data = response_data.get('item', response_data)
         item_status = item_data.get('item_state', item_data.get('status', ''))
 
         if item_status in _GONE_STATUSES:

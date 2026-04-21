@@ -186,8 +186,13 @@ def _check_single_product(
         _handle_item_gone(dp, reason=check.status or 'deleted')
         return
 
-    # Check price change
-    if check.current_price and check.current_price > 0 and check.current_price != dp.price:
+    # Check price change — use 0.01 tolerance to ignore floating-point noise
+    # from LZT API returning high-precision floats (e.g. 4.029... stored as 4.03)
+    if (
+        check.current_price
+        and check.current_price > 0
+        and abs(check.current_price - dp.price) >= Decimal('0.01')
+    ):
         _handle_price_change(dp, check.current_price, check.raw_data)
         return
 
