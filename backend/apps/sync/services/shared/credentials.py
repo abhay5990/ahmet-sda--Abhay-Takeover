@@ -50,8 +50,25 @@ _LABEL_MAP: dict[str, str] = {
     'login': 'login',
     'username': 'login',
     'account': 'login',
+    'id': 'login',                 # "ID: username" — standalone id label
     'device id': 'login',
     'account login': 'login',
+    # Platform/game name inline labels — these appear as "Epic: user@x.com" style.
+    # The section-header regex handles bare "epic\n" lines (no value on same line);
+    # these entries handle the inline "Epic: value" colon format.
+    'epic': 'login',
+    'riot': 'login',
+    'steam': 'login',
+    'ubi': 'login',
+    'ubisoft': 'login',
+    'valorant': 'login',
+    'fortnite': 'login',
+    'roblox': 'login',
+    'apex': 'login',
+    'cod': 'login',
+    'pubg': 'login',
+    'genshin': 'login',
+    'minecraft': 'login',
     'epic games': 'login',
     'epic mail': 'login',
     'supercell id': 'login',
@@ -141,12 +158,15 @@ _SPACE_LABEL_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Section headers that introduce a login:password pair on the next line
+# Section headers that introduce a login:password pair on the next line.
+# Includes verbose forms ("Epic Games Details:") and bare platform keywords
+# ("epic", "riot", "mail") that sellers use as section dividers.
 _SECTION_HEADER_RE = re.compile(
     r'^(Epic\s+Games\s+Details|E-?mail\s+(?:Details|Sign\s*in\s+Details)'
     r'|Riot\s+Sign\s*in\s+Details|Rainbow\s+Sign\s*in\s+Details'
     r'|Ubisoft\s+Sign\s+Details|Account\s+(?:Login\s+)?Details'
-    r'|account\s+info|mail\s+info)\s*[-:>]*\s*$',
+    r'|account\s+info|mail\s+info'
+    r'|epic|riot|ubi|ubisoft|steam|mail)\s*[-:>]*\s*$',
     re.IGNORECASE,
 )
 
@@ -159,6 +179,8 @@ _SECTION_FIELD_MAP: dict[str, tuple[str, str]] = {
     'riot': ('login', 'password'),
     'rainbow': ('login', 'password'),
     'ubisoft': ('login', 'password'),
+    'ubi': ('login', 'password'),
+    'steam': ('login', 'password'),
     'account': ('login', 'password'),
     'e-mail': ('email', 'email_password'),
     'email': ('email', 'email_password'),
@@ -630,6 +652,17 @@ def _parse_section_pair(
     if match:
         login_val = match.group(1).strip()
         pass_val = match.group(2).strip()
+
+        # If the pair_line is itself a labeled line (e.g. "Login: user123" inside a
+        # STEAM section), use the labeled value rather than treating "Login" as
+        # the username.  This handles multi-line sections like:
+        #   STEAM:↵Login: user123↵Password: pass  (remaining lines parsed by main loop)
+        if login_val and '@' not in login_val:
+            normalized = login_val.lower()
+            if _LABEL_MAP.get(normalized) or _suffix_match_label(normalized):
+                _assign_labeled(login_val, pass_val, result)
+                return
+
         if login_val and not getattr(result, login_field):
             setattr(result, login_field, login_val)
         if pass_val and not getattr(result, pass_field):
@@ -665,14 +698,15 @@ def _assign_labeled(label: str, value: str, result: ParsedCredentials) -> bool:
         field_name = _suffix_match_label(normalized)
 
     if field_name:
-        # Value may contain "email:password" when label maps to login/email
-        # e.g. "Epic mail :user@x.com:pass123" → value="user@x.com:pass123"
-        # The password portion is the email password, not the account password.
-        if field_name == 'login' and '@' in value and ':' in value:
+        # Value may contain "email:password" when label maps to login/email.
+        # e.g. "epic : user@x.com : pass"  → login=user@x.com, epic_pass (→ password via post_process)
+        # e.g. "mail : user@x.com : pass"  → email=user@x.com, email_password=pass
+        if field_name in ('login', 'email') and '@' in value and ':' in value:
             parts = value.split(':', 1)
             if '@' in parts[0]:
-                if not result.login:
-                    result.login = parts[0].strip()
+                target = 'login' if field_name == 'login' else 'email'
+                if not getattr(result, target):
+                    setattr(result, target, parts[0].strip())
                 if parts[1].strip() and not result.email_password:
                     result.email_password = parts[1].strip()
                 return True
@@ -1041,6 +1075,10 @@ def _clear_bogus_values(result: ParsedCredentials) -> None:
             continue
         # Value is a known label name → template text (e.g. "Mail password", "Account")
         if field_name in ('password', 'email', 'email_password') and lower.rstrip(':') in _LABEL_MAP:
+            setattr(result, field_name, '')
+            continue
+        # Login: reject if it's a bare platform/label keyword (parser artefact)
+        if field_name == 'login' and lower.rstrip(':') in _LABEL_MAP and '@' not in val:
             setattr(result, field_name, '')
             continue
         # Login: reject if it looks like a sentence (4+ words, not an email)

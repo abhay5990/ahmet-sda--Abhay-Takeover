@@ -16,7 +16,7 @@ from decimal import Decimal
 # ---------------------------------------------------------------------------
 
 SOURCE_ACCOUNT_SLUG = "lzt-gandalfrivendell"
-ITEM_IDS = ["220112698"]           # test etmek istedigin item ID'leri
+ITEM_IDS = ["230113412"]           # test etmek istedigin item ID'leri
 SHOW_RAW = False                  # True yaparsan full raw_data basilir
 
 # ---------------------------------------------------------------------------

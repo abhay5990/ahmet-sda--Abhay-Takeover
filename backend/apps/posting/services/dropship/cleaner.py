@@ -31,6 +31,7 @@ from apps.posting.models import (
 from apps.posting.services.dropship.backoff import (
     ErrorTracker,
     PauseRequired,
+    TemporaryPauseRequired,
     classify_api_error,
 )
 from apps.posting.services.dropship.source_provider import get_source_provider
@@ -61,7 +62,8 @@ def cleaner_loop(cleaner_config: CleanerConfig, stop_event: Event) -> None:
     * Scoped to ``cleaner_config.source_account`` — checks all its DPs.
     * Each cycle: query LISTED DPs for this source, check each against source.
     * After each cycle: wait ``cycle_interval`` (interruptible).
-    * Raises ``PauseRequired`` when ErrorTracker thresholds are hit.
+    * Raises ``PauseRequired`` when ErrorTracker thresholds are hit (permanent).
+    * Handles ``TemporaryPauseRequired`` internally: sleeps 1 hour, then resumes.
     * Returns normally when ``stop_event`` is set (user disable / shutdown).
     """
     tracker = ErrorTracker(stop_event=stop_event)
@@ -108,7 +110,27 @@ def cleaner_loop(cleaner_config: CleanerConfig, stop_event: Event) -> None:
                     source_provider=source_provider, proxy_group=proxy_group,
                 )
             except PauseRequired:
-                raise  # propagate to wrapper
+                raise  # propagate to wrapper — permanent disable
+            except TemporaryPauseRequired as e:
+                # Transient server errors — sleep, reset counter, resume automatically
+                logger.warning(
+                    "Cleaner temporary cooldown: %s — waiting %.0fs then resuming",
+                    e.reason, e.wait_seconds,
+                )
+                PostingLog.objects.create(
+                    task_name='dropship_cleaner',
+                    level=PostingLogLevel.WARNING,
+                    message=f"Temporary cooldown: {e.reason}",
+                    detail={
+                        'reason': e.reason,
+                        'wait_seconds': e.wait_seconds,
+                        'cleaner_config_id': cleaner_config.id,
+                    },
+                    integration_account=source_account,
+                )
+                stop_event.wait(timeout=e.wait_seconds)
+                tracker = ErrorTracker(stop_event=stop_event)  # reset counters
+                break
             except _MaintenanceDetected:
                 # Platform maintenance — skip remaining products, wait, retry cycle
                 stop_event.wait(timeout=MAINTENANCE_WAIT)
@@ -178,6 +200,11 @@ def _check_single_product(
                 return
 
             if error_type == 'server':
+                err_msg = str(api_result.error.message) if api_result.error else ''
+                logger.warning(
+                    "Source check server error for item %d: %s",
+                    dp.source_product_id, err_msg[:200],
+                )
                 tracker.on_server_error()
                 return
 

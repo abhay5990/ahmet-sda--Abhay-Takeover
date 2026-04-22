@@ -2,7 +2,8 @@
 
 Provides:
 - ErrorTracker: per-thread error counter with exponential backoff
-- PauseRequired: exception signalling thread should enter PAUSED state
+- PauseRequired: exception signalling thread should enter PAUSED state (permanent)
+- TemporaryPauseRequired: exception signalling a timed cooldown, then auto-resume
 - classify_api_error: maps ApiResult failures to error categories
 """
 
@@ -27,14 +28,15 @@ logger = logging.getLogger(__name__)
 BACKOFF_BASE: float = 4.0       # Initial wait: 4s
 BACKOFF_FACTOR: float = 2.0     # Multiplier: 4 -> 8 -> 16 -> 32 -> 64
 BACKOFF_MAX: float = 64.0       # Cap at 64s
-MAX_CONSECUTIVE_429: int = 5    # 5 consecutive 429s -> PAUSE
+MAX_CONSECUTIVE_429: int = 5    # 5 consecutive 429s -> 1-hour cooldown, then resume
 
 # Validation error sliding window
 ERROR_WINDOW = timedelta(hours=1)
-MAX_ERRORS_IN_WINDOW: int = 3   # 3 validation errors in 1hr -> PAUSE
+MAX_ERRORS_IN_WINDOW: int = 3   # 3 validation errors in 1hr -> permanent PAUSE
 
-# Server error retries
-MAX_SERVER_RETRIES: int = 3     # 3 consecutive 5xx -> PAUSE
+# Server error retries — temporary cooldown, not permanent disable
+MAX_SERVER_RETRIES: int = 5     # 5 consecutive 5xx -> 1-hour cooldown, then resume
+SERVER_COOLDOWN: float = 3600.0  # 1 hour
 
 
 # ---------------------------------------------------------------------------
@@ -42,10 +44,28 @@ MAX_SERVER_RETRIES: int = 3     # 3 consecutive 5xx -> PAUSE
 # ---------------------------------------------------------------------------
 
 class PauseRequired(Exception):
-    """Raised when ErrorTracker decides the thread must pause."""
+    """Raised when ErrorTracker decides the thread must be permanently paused.
+
+    Used for validation error floods — conditions that require a code fix
+    before the thread should resume.
+    """
 
     def __init__(self, reason: str) -> None:
         self.reason = reason
+        super().__init__(reason)
+
+
+class TemporaryPauseRequired(Exception):
+    """Raised when ErrorTracker decides a timed cooldown is needed.
+
+    Used for consecutive server errors (5xx / network) — transient platform
+    outages that should resolve on their own.  The caller sleeps for
+    ``wait_seconds`` and resumes automatically without human intervention.
+    """
+
+    def __init__(self, reason: str, wait_seconds: float = SERVER_COOLDOWN) -> None:
+        self.reason = reason
+        self.wait_seconds = wait_seconds
         super().__init__(reason)
 
 
@@ -118,7 +138,8 @@ class ErrorTracker:
     Each poster/cleaner thread owns its own instance. Counters are in-memory
     only — no DB writes needed.
 
-    Raises PauseRequired when thresholds are exceeded.
+    Raises PauseRequired (permanent) for rate-limit / validation floods.
+    Raises TemporaryPauseRequired (1-hour cooldown) for server error streaks.
     """
 
     stop_event: Event
@@ -146,7 +167,7 @@ class ErrorTracker:
         """Handle 429 rate limit.
 
         1. Increments counter.
-        2. If threshold reached -> raises PauseRequired.
+        2. If threshold reached -> raises TemporaryPauseRequired (1-hour cooldown).
         3. Otherwise, sleeps with exponential backoff (interruptible via stop_event).
 
         Args:
@@ -156,8 +177,9 @@ class ErrorTracker:
         self._consecutive_server_errors = 0
 
         if self._consecutive_429 >= MAX_CONSECUTIVE_429:
-            raise PauseRequired(
-                f"{MAX_CONSECUTIVE_429}x consecutive rate limit (429)"
+            raise TemporaryPauseRequired(
+                f"{MAX_CONSECUTIVE_429}x consecutive rate limit (429)",
+                wait_seconds=SERVER_COOLDOWN,
             )
 
         delay = _backoff_delay(self._consecutive_429)
@@ -174,8 +196,8 @@ class ErrorTracker:
         """Handle 400/422 validation error.
 
         Tracks errors in a 1-hour sliding window. If threshold is exceeded,
-        raises PauseRequired. The caller is responsible for skipping the item
-        and writing a PostingLog entry.
+        raises PauseRequired (permanent). The caller is responsible for
+        skipping the item and writing a PostingLog entry.
         """
         self._consecutive_429 = 0
         self._consecutive_server_errors = 0
@@ -200,15 +222,16 @@ class ErrorTracker:
         """Handle 5xx / network / timeout error.
 
         1. Increments counter.
-        2. If threshold reached -> raises PauseRequired.
+        2. If threshold reached -> raises TemporaryPauseRequired (1-hour cooldown).
         3. Otherwise, sleeps with exponential backoff (interruptible via stop_event).
         """
         self._consecutive_server_errors += 1
         self._consecutive_429 = 0
 
         if self._consecutive_server_errors >= MAX_SERVER_RETRIES:
-            raise PauseRequired(
-                f"{MAX_SERVER_RETRIES}x consecutive server errors (5xx)"
+            raise TemporaryPauseRequired(
+                f"{MAX_SERVER_RETRIES}x consecutive server errors (5xx)",
+                wait_seconds=SERVER_COOLDOWN,
             )
 
         delay = _backoff_delay(self._consecutive_server_errors)

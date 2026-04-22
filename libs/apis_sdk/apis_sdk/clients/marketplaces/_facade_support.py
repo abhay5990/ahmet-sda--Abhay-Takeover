@@ -46,6 +46,9 @@ T = TypeVar("T")
 # otherwise be lost when a typed ApiResult passes through raise→catch.
 _STATUS_CATEGORY: dict[int, ErrorCategory] = {
     404: ErrorCategory.NOT_FOUND,
+    # 403 ProviderError specifically means NOT_FOUND (e.g. LZT "Account deleted").
+    # Auth 403s go through AuthenticationError, never reach this path.
+    403: ErrorCategory.NOT_FOUND,
     400: ErrorCategory.VALIDATION,
     422: ErrorCategory.VALIDATION,
 }

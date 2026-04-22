@@ -497,7 +497,9 @@ class LztClient:
                     details["errors"] = errors
 
                     # LZT-specific: detect maintenance mode (503)
-                    if "engineering works" in error_text.lower():
+                    # LZT returns: "Технические работы // Technical works."
+                    _lower = error_text.lower()
+                    if "technical works" in _lower or "технические работы" in _lower:
                         details["maintenance"] = True
                         return ApiResult.from_error(
                             ErrorCategory.SERVER_ERROR,

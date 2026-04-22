@@ -17,7 +17,7 @@ from apps.posting.services.dropship.source_provider import (
 logger = logging.getLogger(__name__)
 
 # Statuses that mean the item is no longer available
-_GONE_STATUSES = frozenset({'closed', 'sold', 'deleted'})
+_GONE_STATUSES = frozenset({'closed', 'sold', 'deleted', 'paid'})
 
 
 class LztSourceProvider:
