@@ -83,8 +83,38 @@ def build_item_payload(
                         'error_category': 'capacity',
                     }
 
-        # --- PA: special Excel-row path (lib not used for build) ---
+        # --- PA routing: single (API JSON) or bulk (Excel row) ---
         if item.marketplace == 'playerauctions':
+            pa_mode = store_settings.get('pa_mode', 'bulk')
+
+            if pa_mode == 'single':
+                # Single post: use pipeline → build_payload() → API JSON
+                pipeline_result = adapter.build(
+                    prepared=prepared,
+                    marketplace=item.marketplace,
+                    pricing_defaults=pricing,
+                    store=item.store,
+                    kind=ListingKind.STOCK,
+                    sub_platform=sub_platform,
+                )
+                if not pipeline_result.success:
+                    return {
+                        'ok': False,
+                        'stage': pipeline_result.error_stage or stage,
+                        'error': pipeline_result.error or 'Build failed',
+                        'error_category': 'pipeline_error',
+                    }
+                return {
+                    'ok': True, 'stage': stage,
+                    'data': {
+                        'payload': pipeline_result.payload,
+                        'final_price': final_price,
+                        'sub_platform': sub_platform,
+                        'mode': 'json',
+                    },
+                }
+
+            # Bulk mode: Excel row (existing path)
             excel_row = build_row(
                 resolved_account=prepared.subject,
                 final_price=final_price,

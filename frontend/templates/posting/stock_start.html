@@ -88,6 +88,30 @@
                     <!-- Pricing Settings (collapsible) -->
                     <div x-show="showSettings['{{ store.slug }}']" x-collapse
                          class="border-t px-3 pb-3 pt-2 bg-gray-50">
+                        {% if store.provider == 'playerauctions' %}
+                        <!-- PA Posting Mode -->
+                        <div class="mb-3">
+                            <label class="block text-xs font-medium text-purple-700 mb-1">Posting Mode</label>
+                            <div class="flex space-x-4">
+                                <label class="flex items-center space-x-1.5 cursor-pointer">
+                                    <input type="radio" value="bulk"
+                                           x-model="defaults['{{ store.slug }}'].pa_mode"
+                                           class="text-purple-600 focus:ring-purple-500">
+                                    <span class="text-sm text-gray-700">Bulk (Excel)</span>
+                                </label>
+                                <label class="flex items-center space-x-1.5 cursor-pointer">
+                                    <input type="radio" value="single"
+                                           x-model="defaults['{{ store.slug }}'].pa_mode"
+                                           class="text-purple-600 focus:ring-purple-500">
+                                    <span class="text-sm text-gray-700">Single (API)</span>
+                                </label>
+                            </div>
+                            <p class="mt-1 text-xs text-gray-400"
+                               x-show="defaults['{{ store.slug }}'].pa_mode === 'single'">
+                                Level 0 accounts require single post mode
+                            </p>
+                        </div>
+                        {% endif %}
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1">Low (&le;$10)</label>
@@ -193,6 +217,7 @@ function stockStart() {
                 this.defaults['{{ store.slug }}'] = {
                     multiplier_low: '2.00', multiplier_mid: '1.80', multiplier_high: '1.50',
                     min_price: '0.00', forced_ending: '0.99', sub_platform: '', account_type: '',
+                    {% if store.provider == 'playerauctions' %}pa_mode: 'bulk',{% endif %}
                 };
             }
             this.showSettings['{{ store.slug }}'] = false;
@@ -254,7 +279,7 @@ function stockStart() {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': this.getCsrfToken(),
+                        'X-CSRFToken': '{{ csrf_token }}',
                     },
                     body: JSON.stringify({
                         game_id: Number(this.selectedGame),
@@ -281,10 +306,6 @@ function stockStart() {
             }
         },
 
-        getCsrfToken() {
-            const cookie = document.cookie.split(';').find(c => c.trim().startsWith('csrftoken='));
-            return cookie ? cookie.split('=')[1] : '';
-        },
     };
 }
 </script>

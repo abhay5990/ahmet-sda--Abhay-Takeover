@@ -1,6 +1,7 @@
 import json
 
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from django.core.paginator import Paginator
 from django.db.models import Count, Prefetch, Q
@@ -18,6 +19,7 @@ from apps.posting.services.shared.subplatform import GAME_SUBPLATFORMS
 
 # ── Stock Posting ──────────────────────────────────────────────────
 
+@ensure_csrf_cookie
 @role_required('admin', 'user')
 def stock_start_page(request):
     """Job creation form."""

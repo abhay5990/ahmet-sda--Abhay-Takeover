@@ -123,6 +123,7 @@ class ServiceType(models.TextChoices):
     STORAGE       = 'storage',       'Cloud Storage'
     GAME          = 'game-service',  'Game Service'
     NOTIFICATION  = 'notification',  'Notification Service'
+    EMAIL         = 'email',         'Email Service'
     OTHER         = 'other',         'Other'
 
 

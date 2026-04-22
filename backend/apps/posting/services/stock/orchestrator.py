@@ -174,7 +174,9 @@ class StockOrchestrator:
             for store_id in store_groups:
                 first_item = store_groups[store_id][0]
                 if first_item.marketplace == 'playerauctions':
-                    fn = consumer.consume_store_pa
+                    store_slug = first_item.store.slug if first_item.store else ''
+                    pa_mode = job.settings.get(store_slug, {}).get('pa_mode', 'bulk')
+                    fn = consumer.consume_store if pa_mode == 'single' else consumer.consume_store_pa
                 else:
                     fn = consumer.consume_store
                 futures[pool.submit(fn, store_id, store_queues[store_id], job)] = store_id

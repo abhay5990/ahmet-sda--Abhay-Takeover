@@ -44,4 +44,4 @@ def _ensure_loaded():
     """Lazily import all service modules so their @register_service decorators run."""
     if _services:
         return
-    from . import dropbox, imageshack, proxyline, robuxcrate, telegram  # noqa: F401 — trigger registration
+    from . import dropbox, firstmail, imageshack, proxyline, robuxcrate, telegram  # noqa: F401 — trigger registration

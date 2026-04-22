@@ -112,13 +112,17 @@ class StockResolver:
             logger.info("LZT fallback: '%s' not found in LZT", login)
             return existing  # return whatever we had (None or empty raw_data)
 
-        # Category mismatch check — catch wrong game selection early
-        lzt_cat = (item.get('category') or {}).get('category_name', '')
-        our_cat = game.category.name if game.category else ''
-        if lzt_cat and our_cat and lzt_cat.lower() != our_cat.lower():
+        # Category mismatch check — catch wrong game selection early.
+        # Compare by numeric category_id (LZT external ID) stored on our
+        # Category model, not by name which may differ between systems.
+        lzt_cat_id = (item.get('category') or {}).get('category_id')
+        our_cat_id = game.category.category_id if game.category else None
+        if lzt_cat_id is not None and our_cat_id is not None and int(lzt_cat_id) != int(our_cat_id):
+            lzt_cat_name = (item.get('category') or {}).get('category_name', '?')
             raise DataMissing(
                 login,
-                f"Category mismatch: account is '{lzt_cat}' but job game is '{game.name}' ({our_cat})",
+                f"Category mismatch: account is '{lzt_cat_name}' (id={lzt_cat_id})"
+                f" but job game is '{game.name}' (category_id={our_cat_id})",
             )
 
         # Upsert RawPayload

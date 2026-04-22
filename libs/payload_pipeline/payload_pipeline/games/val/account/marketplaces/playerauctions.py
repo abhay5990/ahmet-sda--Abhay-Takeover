@@ -1,4 +1,10 @@
-"""PlayerAuctions builder for resolved Valorant accounts."""
+"""PlayerAuctions builder for resolved Valorant accounts.
+
+Template reference: ``assets/playerauctions_templates/accounts/valorant.json``
+  - game_id: 9078
+  - requiredFields: securityQA=true, parentalPassword=true
+  - servers: NA(9089), EU(9128), LATAM(9207), APAC(9309), BR(9208), KR(9206), TR(14995)
+"""
 
 from __future__ import annotations
 
@@ -21,13 +27,13 @@ _REGION_MAP: dict[str, str] = {
 }
 
 _SERVER_ID_MAP: dict[str, str] = {
-    "EU": "9128",
     "NA": "9089",
-    "AP": "9309",
+    "EU": "9128",
     "LA": "9207",
+    "AP": "9309",
     "BR": "9208",
     "KR": "9206",
-    "TR": "9128",
+    "TR": "14995",
 }
 
 _FALLBACK_REGION = "KR"
@@ -37,13 +43,16 @@ _FALLBACK_SERVER_ID = "9206"
 class ValorantPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     """Build PlayerAuctions payloads for the Valorant account slice."""
 
+    requires_security_qa = True
+    requires_parental_password = True
+
     @property
     def game_name(self) -> str:
         return "valorant"
 
     @property
     def game_id(self) -> int:
-        return 8470
+        return 9078
 
     @property
     def cover_image_url(self) -> str:
