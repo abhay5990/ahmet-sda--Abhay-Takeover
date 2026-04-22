@@ -50,9 +50,9 @@ class R6GameBoostBuilder(BaseGameBoostBuilder):
 
     @staticmethod
     def _get_primary_platform(account: R6ResolvedAccount) -> str:
-        if account.platform_flags.get("psn"):
+        if account.psn_connected:
             return "PlayStation"
-        if account.platform_flags.get("xbox"):
+        if account.xbox_connected:
             return "Xbox"
         return "PC"
 

@@ -48,7 +48,7 @@ from apps.posting.services.shared import (
     extract_title_from_response,
     serialize_response,
 )
-from apps.posting.services.shared.subplatform import SubplatformCache
+from apps.posting.services.shared.subplatform import SubplatformCache, get_allowed_platforms
 from apps.posting.services.shared.tracker_fetcher import fetch_tracker_data
 from payload_pipeline.core.contracts import ListingKind
 from payload_pipeline.pricing.rules import PricingRule as LibPricingRule, calculate_price
@@ -333,9 +333,8 @@ def _attempt_post(
     final_price = Decimal(str(calculate_price(raw_price_float, pricing)))
     raw_price = Decimal(str(raw_price_float))
 
-    # Subplatform selection (cached per cycle)
-    sub_platform = subplatform_cache.resolve(fallback='')
-    if sub_platform is None:
+    # Early slot check — skip before expensive prepare() if all slots are full
+    if subplatform_cache.resolve(fallback='') is None:
         logger.info(
             "No available sub-platform slots for %s/%s, skipping item %s",
             config.store.name, game.name, item.get('item_id'),
@@ -359,6 +358,16 @@ def _attempt_post(
         raise RuntimeError(
             f"Pipeline prepare failed [{prepare_result.error_stage}]: {prepare_result.error}"
         )
+
+    # Final sub-platform selection — filter by account compatibility
+    allowed = get_allowed_platforms(game.slug, prepare_result.prepared.subject)
+    sub_platform = subplatform_cache.resolve(fallback='', allowed_platforms=allowed)
+    if sub_platform is None:
+        logger.info(
+            "No compatible sub-platform slot for %s/%s, skipping item %s",
+            config.store.name, game.name, item.get('item_id'),
+        )
+        return False
 
     pipeline_result = adapter.build(
         prepared=prepare_result.prepared,

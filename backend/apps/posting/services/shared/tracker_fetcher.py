@@ -19,7 +19,12 @@ Usage (both stock and dropship):
 from __future__ import annotations
 
 import logging
+import re
 from typing import Any
+
+_R6SKINS_LOCKER_RE = re.compile(
+    r'r6skins\.locker/(?:profile|masked)/([a-f0-9-]+)', re.IGNORECASE
+)
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +41,9 @@ def fetch_tracker_data(
     raw_data: dict[str, Any],
     *,
     proxy_group: str | None = None,
+    _r6_facade=None,
+    _cr_facade=None,
+    _coc_facade=None,
 ) -> dict[str, Any] | None:
     """Fetch tracker data for supported games.
 
@@ -48,16 +56,19 @@ def fetch_tracker_data(
         game_slug:   Canonical game slug (e.g. 'rainbow-six-siege').
         raw_data:    LZT raw_data dict from OwnedProduct or dropship item.
         proxy_group: Optional proxy group name for the tracker request.
+        _r6_facade:  Injected R6Locker facade (tests only).
+        _cr_facade:  Injected StatsRoyale facade (tests only).
+        _coc_facade: Injected ClashOfStats facade (tests only).
     """
     if game_slug not in _TRACKER_GAMES:
         return None
 
     if game_slug == "rainbow-six-siege":
-        return _fetch_r6(raw_data, proxy_group=proxy_group)
+        return _fetch_r6(raw_data, proxy_group=proxy_group, facade=_r6_facade)
     if game_slug == "clash-royale":
-        return _fetch_cr(raw_data, proxy_group=proxy_group)
+        return _fetch_cr(raw_data, proxy_group=proxy_group, facade=_cr_facade)
     if game_slug == "clash-of-clans":
-        return _fetch_coc(raw_data, proxy_group=proxy_group)
+        return _fetch_coc(raw_data, proxy_group=proxy_group, facade=_coc_facade)
 
     return None
 
@@ -70,13 +81,15 @@ def _fetch_r6(
     raw_data: dict[str, Any],
     *,
     proxy_group: str | None,
+    facade=None,
 ) -> dict[str, Any] | None:
     account_id = _extract_r6_account_id(raw_data)
     if not account_id:
-        logger.debug("R6 tracker: no tracker_link in raw_data, skipping")
+        logger.debug("R6 tracker: no uplay_id or tracker_link in raw_data, skipping")
         return None
 
-    facade = _get_r6locker_facade()
+    if facade is None:
+        facade = _get_r6locker_facade()
     if facade is None:
         return None
 
@@ -101,13 +114,15 @@ def _fetch_cr(
     raw_data: dict[str, Any],
     *,
     proxy_group: str | None,
+    facade=None,
 ) -> dict[str, Any] | None:
     player_tag = _extract_supercell_tag(raw_data, tag_key="scroll")
     if not player_tag:
         logger.debug("CR tracker: no player_tag (scroll) in raw_data, skipping")
         return None
 
-    facade = _get_statsroyale_facade()
+    if facade is None:
+        facade = _get_statsroyale_facade()
     if facade is None:
         return None
 
@@ -132,13 +147,15 @@ def _fetch_coc(
     raw_data: dict[str, Any],
     *,
     proxy_group: str | None,
+    facade=None,
 ) -> dict[str, Any] | None:
     player_tag = _extract_supercell_tag(raw_data, tag_key="magic")
     if not player_tag:
         logger.debug("CoC tracker: no player_tag (magic) in raw_data, skipping")
         return None
 
-    facade = _get_clashofstats_facade()
+    if facade is None:
+        facade = _get_clashofstats_facade()
     if facade is None:
         return None
 
@@ -181,6 +198,13 @@ def _extract_r6_account_id(raw_data: dict[str, Any]) -> str:
     tracker_link = str(payload.get("tracker_link") or "").strip()
     if tracker_link:
         return tracker_link.rstrip("/").rsplit("/", 1)[-1]
+
+    for key in ("descriptionPlain", "descriptionEnPlain"):
+        text = str(payload.get(key) or "").strip()
+        if text:
+            match = _R6SKINS_LOCKER_RE.search(text)
+            if match:
+                return match.group(1)
 
     return ""
 

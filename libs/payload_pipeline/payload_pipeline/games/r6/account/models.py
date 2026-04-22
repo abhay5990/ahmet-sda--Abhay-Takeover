@@ -93,13 +93,8 @@ class R6ResolvedAccount(ResolvedAccountBase):
 
     inventory: R6InventoryBreakdown = field(default_factory=R6InventoryBreakdown)
 
-    platform_flags: dict[str, bool] = field(
-        default_factory=lambda: {
-            "pc": True,
-            "psn": False,
-            "xbox": False,
-        }
-    )
+    psn_connected: bool = False
+    xbox_connected: bool = False
 
     @property
     def ranked_ready(self) -> bool:
@@ -107,13 +102,12 @@ class R6ResolvedAccount(ResolvedAccountBase):
 
     @property
     def available_platforms(self) -> list[str]:
-        mapping = {
-            "pc": "PC",
-            "psn": "PlayStation",
-            "xbox": "Xbox",
-        }
-        platforms = [mapping[key] for key, enabled in self.platform_flags.items() if enabled]
-        return platforms or ["PC"]
+        platforms = ["PC"]
+        if self.psn_connected:
+            platforms.append("PlayStation")
+        if self.xbox_connected:
+            platforms.append("Xbox")
+        return platforms
 
     @property
     def ownership_text(self) -> str:

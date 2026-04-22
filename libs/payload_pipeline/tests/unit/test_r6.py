@@ -70,3 +70,58 @@ def test_r6_resolver_and_composer_use_normalized_contract(load_fixture) -> None:
     assert "Diamond" in listing.default.title
     assert "1168 Skins" in listing.default.title
     assert "Skin Count: 1168" in listing.default.description
+
+
+# ---------------------------------------------------------------------------
+# Dropship listing item tests (real LZT data, no credentials)
+# ---------------------------------------------------------------------------
+
+def test_lzt_dropship_item_parses_tracker_url_from_description(load_fixture) -> None:
+    """Real dropship item: no uplay_id/tracker_link fields, tracker URL in descriptionPlain."""
+    source = R6LztSourceAdapter().parse(load_fixture("lzt_r6_dropship.json"))
+
+    assert source is not None
+    assert source.uplay_id == ""
+    assert source.tracker_url == "r6skins.locker/profile/d2262a5b-d6c4-4030-8059-3f3ad4c0c9e4"
+    assert source.level == 52
+    assert source.skin_count == 5
+    assert source.operator_count == 14
+
+
+def test_lzt_dropship_item_parses_psn_connected(load_fixture) -> None:
+    """Real dropship item: PSN linked via uplayLinkedAccounts."""
+    source = R6LztSourceAdapter().parse(load_fixture("lzt_r6_dropship.json"))
+
+    assert source is not None
+    assert source.psn_connected is True
+    assert source.xbox_connected is False
+
+
+def test_r6_resolver_tracker_url_from_description_plain(load_fixture) -> None:
+    """Resolver picks up tracker_url extracted from descriptionPlain."""
+    request = PipelineRequest(
+        game="rainbow-six-siege",
+        kind="dropshipping",
+        sources={"lzt": load_fixture("lzt_r6_dropship.json")},
+    )
+    account = R6Resolver().resolve(request)
+
+    assert account.tracker_url == "r6skins.locker/profile/d2262a5b-d6c4-4030-8059-3f3ad4c0c9e4"
+
+
+def test_r6_resolver_lzt_only_dropship_resolves_rank_from_title(load_fixture) -> None:
+    """Real dropship data: uplay_r6_rank=0 (Unranked direct field), Silver from title."""
+    request = PipelineRequest(
+        game="rainbow-six-siege",
+        kind="dropshipping",
+        sources={"lzt": load_fixture("lzt_r6_dropship.json")},
+    )
+    account = R6Resolver().resolve(request)
+
+    # uplay_r6_rank=0 is falsy → no lzt_rank signal → Unranked
+    assert account.current_rank == "Unranked"
+    # Title "Silver Y1S3" → peak rank via lzt_title signal
+    assert account.peak_rank == "Silver"
+    assert account.level == 52
+
+

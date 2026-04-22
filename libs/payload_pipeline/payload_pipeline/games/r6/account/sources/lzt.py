@@ -3,8 +3,13 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from typing import Any
+
+_R6SKINS_LOCKER_RE = re.compile(
+    r'r6skins\.locker/(profile|masked)/([a-f0-9-]+)', re.IGNORECASE
+)
 
 from .. import skin_lookup
 from ..rank_parsing import (
@@ -126,7 +131,7 @@ class R6LztSourceAdapter:
                 linked_accounts=linked_accounts,
                 platform_token="xbox",
             ),
-            tracker_url=str(payload.get("tracker_link") or "").strip(),
+            tracker_url=self._parse_tracker_url(payload),
             uplay_id=str(payload.get("uplay_id") or "").strip(),
             ownership_state=ownership_state,
             has_game=has_game,
@@ -201,8 +206,8 @@ class R6LztSourceAdapter:
         if normalized_token in linked_accounts:
             return True
 
-        value = self._to_int(raw_value, default=1)
-        return value == 0
+        value = self._to_int(raw_value, default=0)
+        return bool(value)
 
     def _resolve_current_rank(self, payload: dict[str, Any]) -> str:
         direct_rank = pick_best_rank(
@@ -284,6 +289,20 @@ class R6LztSourceAdapter:
                 )
             )
         return skins
+
+    def _parse_tracker_url(self, payload: dict[str, Any]) -> str:
+        tracker_link = str(payload.get("tracker_link") or "").strip()
+        if tracker_link:
+            return tracker_link
+
+        for key in ("descriptionPlain", "descriptionEnPlain"):
+            text = str(payload.get(key) or "").strip()
+            if text:
+                match = _R6SKINS_LOCKER_RE.search(text)
+                if match:
+                    return f"r6skins.locker/{match.group(1)}/{match.group(2)}"
+
+        return ""
 
     def _parse_ownership(self, value: Any) -> tuple[bool | None, str]:
         if not isinstance(value, dict) or not value:

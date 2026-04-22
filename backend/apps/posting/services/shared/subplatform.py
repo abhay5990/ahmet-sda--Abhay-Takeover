@@ -14,9 +14,9 @@ from apps.posting.models import SubplatformLimit
 # ---------------------------------------------------------------------------
 
 GAME_SUBPLATFORMS: dict[str, list[str]] = {
-    'valorant': ['PC', 'PSN', 'Xbox'],
+    'valorant': ['PC', 'PlayStation', 'Xbox'],
     'fortnite': ['PC', 'PlayStation', 'Xbox', 'Android', 'iOS', 'Switch'],
-    'rainbow-six-siege': ['PC', 'PSN', 'Xbox'],
+    'rainbow-six-siege': ['PC', 'PlayStation', 'Xbox'],
 }
 
 
@@ -60,13 +60,41 @@ def get_active_offer_counts(store, game) -> dict[str, int]:
     )
 
 
-def select_best_subplatform(limits, counts: dict[str, int], mode: str = 'stock') -> str | None:
+def get_allowed_platforms(game_slug: str, subject) -> set[str] | None:
+    """Return sub-platforms this account is eligible for, or None if no filtering.
+
+    None means the game has no per-account compatibility constraints.
+    """
+    if game_slug == 'fortnite':
+        allowed = {'PC', 'Android', 'iOS', 'Switch'}
+        if getattr(subject, 'psn_linkable', False):
+            allowed.add('PlayStation')
+        if getattr(subject, 'xbox_linkable', False):
+            allowed.add('Xbox')
+        return allowed
+    if game_slug == 'rainbow-six-siege':
+        allowed: set[str] = {'PC'}
+        if not getattr(subject, 'psn_connected', True):
+            allowed.add('PlayStation')
+        if not getattr(subject, 'xbox_connected', True):
+            allowed.add('Xbox')
+        return allowed
+    return None
+
+
+def select_best_subplatform(
+    limits,
+    counts: dict[str, int],
+    mode: str = 'stock',
+    allowed_platforms: set[str] | None = None,
+) -> str | None:
     """Select the sub-platform with the most available slots.
 
     Args:
         limits: QuerySet of SubplatformLimit objects.
         counts: Current active offer counts per sub-platform.
         mode: 'stock' or 'dropship'. Dropship mode subtracts stock_reserve.
+        allowed_platforms: If given, only consider sub-platforms in this set.
 
     Returns:
         Sub-platform name, or None if no slots available.
@@ -75,6 +103,8 @@ def select_best_subplatform(limits, counts: dict[str, int], mode: str = 'stock')
     best_available = -1
 
     for limit in limits:
+        if allowed_platforms is not None and limit.sub_platform not in allowed_platforms:
+            continue
         current = counts.get(limit.sub_platform, 0)
         effective_max = limit.max_offers
         if mode == 'dropship':
@@ -111,11 +141,23 @@ class SubplatformCache:
             get_active_offer_counts(store, game) if self._limits else {}
         )
 
-    def resolve(self, fallback: str = '') -> str | None:
-        """Return best sub-platform using cached data."""
+    def resolve(
+        self,
+        fallback: str = '',
+        allowed_platforms: set[str] | None = None,
+    ) -> str | None:
+        """Return best sub-platform using cached data.
+
+        Args:
+            fallback: Returned when no limits are configured.
+            allowed_platforms: If given, only consider sub-platforms in this set.
+        """
         if not self._limits:
             return fallback
-        return select_best_subplatform(self._limits, self._counts, mode=self._mode)
+        return select_best_subplatform(
+            self._limits, self._counts, mode=self._mode,
+            allowed_platforms=allowed_platforms,
+        )
 
     def record_post(self, sub_platform: str) -> None:
         """Increment in-memory count after a successful post."""

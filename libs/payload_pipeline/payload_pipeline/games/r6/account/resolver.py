@@ -46,6 +46,8 @@ class R6Resolver:
         skin_count = self._resolve_skin_count(lzt, tracker)
         black_ice_count = self._resolve_black_ice_count(lzt, tracker, preferred_skins)
 
+        psn_connected, xbox_connected = self._resolve_platform_connections(lzt, tracker)
+
         return R6ResolvedAccount(
             item_id=lzt.item_id if lzt else "",
             category_id=lzt.category_id if lzt else 5,
@@ -71,33 +73,21 @@ class R6Resolver:
             has_game=lzt.has_game if lzt else None,
             use_fixed_price=bool(tracker and not lzt),
             inventory=self._build_inventory_breakdown(tracker),
-            platform_flags=self._resolve_platform_flags(lzt, tracker),
+            psn_connected=psn_connected,
+            xbox_connected=xbox_connected,
         )
 
     def _resolve_credentials(self, kind, lzt, tracker):
         return resolve_credentials(lzt, tracker, kind=kind, game_name="R6")
 
-    def _resolve_platform_flags(
+    def _resolve_platform_connections(
         self,
         lzt: R6LztSource | None,
         tracker: R6TrackerSource | None,
-    ) -> dict[str, bool]:
-        psn = False
-        xbox = False
-
-        if lzt is not None:
-            psn = psn or lzt.psn_connected
-            xbox = xbox or lzt.xbox_connected
-
-        if tracker is not None:
-            psn = psn or tracker.psn_linked
-            xbox = xbox or tracker.xbox_linked
-
-        return {
-            "pc": True,
-            "psn": psn,
-            "xbox": xbox,
-        }
+    ) -> tuple[bool, bool]:
+        psn = (lzt.psn_connected if lzt else False) or (tracker.psn_linked if tracker else False)
+        xbox = (lzt.xbox_connected if lzt else False) or (tracker.xbox_linked if tracker else False)
+        return psn, xbox
 
     def _resolve_current_rank(
         self,

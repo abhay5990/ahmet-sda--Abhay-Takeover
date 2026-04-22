@@ -1,0 +1,204 @@
+{
+  "nsb": 1,
+  "tags": [],
+  "buyer": null,
+  "price": 15.26,
+  "title": "E | Silver Y1S3 | Ranked Charms 2 | Universal 1 | доступ к почте",
+  "seller": {
+      "user_id": 47133,
+      "username": "Gus0n",
+      "is_banned": 0,
+      "avatar_date": 1709268342,
+      "restore_data": "{\"1\":2,\"9\":24,\"12\":20,\"5\":9}",
+      "restore_percents": 0,
+      "sold_items_count": 22667,
+      "active_items_count": 784,
+      "display_style_group_id": 265
+  },
+  "item_id": 228266257,
+  "r6Skins": [],
+  "category": {
+      "category_id": 5,
+      "category_url": "uplay",
+      "category_name": "uplay",
+      "category_title": "Uplay"
+  },
+  "discount": false,
+  "title_en": "E | Silver Y1S3 | Ranked Charms 2 | Universal 1 | mail access",
+  "uplay_r6": true,
+  "edit_date": 1776268688,
+  "guarantee": null,
+  "is_sticky": 0,
+  "note_text": null,
+  "rub_price": 1143,
+  "canBuyItem": true,
+  "email_type": "autoreg",
+  "isSmallExf": false,
+  "item_state": "active",
+  "public_tag": null,
+  "view_count": 1,
+  "canAutoBump": false,
+  "canBumpItem": false,
+  "canEditItem": false,
+  "canOpenItem": false,
+  "category_id": 5,
+  "description": "[unfurl=\"https://r6skins.locker/profile/d2262a5b-d6c4-4030-8059-3f3ad4c0c9e4\"]https://r6skins.locker/profile/d2262a5b-d6c4-4030-8059-3f3ad4c0c9e4[/unfurl]",
+  "item_domain": "outlook.com",
+  "item_origin": "brute",
+  "r6Operators": [
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/4xnVj2iZB8Otchiw7j69UO/13c864a4e2eb976c1978dc79411b450c/Y0R6_BADGE_IQ_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/iq",
+          "name": "IQ"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/3exeHnxH1tmUmQTequWRKa/e1b6c6f057eb24722dd7860af0276316/Y0R6_BADGE_Mute_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/mute",
+          "name": "Mute"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/ChAeJzdmwxuvhZTrV81rK/8c16116f4c719a3df864df6639e2f52e/Y0R6_BADGE_Pulse_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/pulse",
+          "name": "Pulse"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/5NbqTdEPmYy9qOZmN9StVT/38b3b2a70cfb4ffbfe6e8a6bd8654d1d/r6s-operators-badge-thatcher.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/thatcher",
+          "name": "Thatcher"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/4lgK1mOTVAoBhoj5qjYuyd/83c83d56e977f96ac0e9621c0d1c07d2/Y0R6_BADGE_Sledge_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/sledge",
+          "name": "Sledge"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/kzznLctjOsXJZAg0F2HPB/dea28fa008515d6ddaa0d2659f4dc253/Y0R6_BADGE_Castle_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/castle",
+          "name": "Castle"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/797q7C5YA89eFqw4RB40ka/f9435d1b4d13d41472e22d305c961cb9/Y0R6_BADGE_Kapkan_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/kapkan",
+          "name": "Kapkan"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/5UAZVgyOutPh6bLTV3fGXf/c59d484fd599d09a947ec423b2119620/Y0R6_BADGE_Glaz_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/glaz",
+          "name": "Glaz"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/1wkdQ0viuTEguji14qXMJG/5858418baa8cca04a6e42a2d6256c093/Y0R6_BADGE_Fuze_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/fuze",
+          "name": "Fuze"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/58Y4Q2x7msL8uQUoiA7LGM/b204acc9c5a015029140723ef2e435bb/Y0R6_BADGE_Ash_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/ash",
+          "name": "Ash"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/7qWONT0mrNYtUZVTVVT8Yj/e0da552d6bb6548ddf74cf4cc44d75c5/Y0R6_BADGE_Montagne_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/montagne",
+          "name": "Montagne"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/6tow5mqLao5TrJVL52csSc/46aa934c9f3f02189e9c04df0114a081/Y0R6_BADGE_Thermite_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/thermite",
+          "name": "Thermite"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/3YgCpOSM2R4SDgExstxm7P/ff84e6ac53bd9f690deee78870f9c23b/Y0R6_BADGE_Twitch_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/twitch",
+          "name": "Twitch"
+      },
+      {
+          "img": "https://images.ctfassets.net/p0f8o8d25gmk/1cCvTmKwnnovVmpZmDyPkA/b064f5ad6b9e7398d820d9ea90ff9366/Y0R6_BADGE_Jager_L.png",
+          "url": "https://www.ubisoft.com/en-US/game/rainbow-six/siege/game-info/operators/jager",
+          "name": "Jäger"
+      }
+  ],
+  "uplay_games": {
+      "e3d5ea9e-50bd-43b7-88bf-39794f4e3d40_external": {
+          "img": "https://ubistatic3-a.akamaihd.net/orbit/uplay_launcher_3_0/assets/584f3c6f458ae33fcc8ef05f28380fb9.png",
+          "abbr": "Tom Clancy's Rainbow Six Siege (External)",
+          "title": "Tom Clancy's Rainbow Six Siege (External)",
+          "gameId": "e3d5ea9e-50bd-43b7-88bf-39794f4e3d40_external",
+          "pveTimePlayed": 0,
+          "pvpTimePlayed": 0
+      }
+  },
+  "canCloseItem": false,
+  "canStickItem": false,
+  "uplay_r6_ban": 0,
+  "canDeleteItem": false,
+  "canReportItem": false,
+  "canResellItem": false,
+  "emailLoginUrl": "https://outlook.com",
+  "feedback_data": "{\"5\":{\"positive\":2455,\"negative\":9},\"9\":{\"positive\":549,\"negative\":5},\"12\":{\"positive\":297,\"negative\":6}}",
+  "uplay_balance": "0.00 $",
+  "uplay_country": "CH",
+  "uplay_item_id": 228266257,
+  "uplay_r6_rank": 0,
+  "canUnstickItem": false,
+  "copyFormatData": {
+      "title_link": "https://lzt.market/228266257/ - E | Silver Y1S3 | Ranked Charms 2 | Universal 1 | доступ к почте"
+  },
+  "description_en": "[unfurl=\"https://r6skins.locker/profile/d2262a5b-d6c4-4030-8059-3f3ad4c0c9e4\"]https://r6skins.locker/profile/d2262a5b-d6c4-4030-8059-3f3ad4c0c9e4[/unfurl]",
+  "email_provider": "outlook",
+  "price_currency": "usd",
+  "published_date": 1776058328,
+  "refreshed_date": 1776058328,
+  "uplay_r6_level": 52,
+  "uplay_r6_skins": "[\"37af896f-d894-4734-8ac4-6fda3f915352\",\"71a9f89f-2e8b-4bfd-86c5-a8fc61fe92b5\",\"44185071-5c12-46d3-9f56-036dd7a30f63\",\"65cce539-adb2-4f77-90ba-0f7a81b9745f\",\"a93cd12d-ad9c-4d51-acf7-335c090b65e8\"]",
+  "descriptionHtml": "<!--<link rel=\"stylesheet\" href=\"https://prod-api.lzt.market/css.php?css=unfurl&amp;style=48&amp;dir=LTR&amp;d=1776858185\" />--><div class=\"bbCodeBlock bbCodeBlock--unfurl js-unfurl fauxBlockLink PendingUnfurl\" data-unfurl-id=\"825883\"  data-unfurl-hash=\"8958441f2e9a0bc9d009b22d3d1442de\">\n    <div class=\"contentRow\">\n        <div class=\"contentRow-figure contentRow-figure--fixedSmall js-unfurl-figure\">\n            <img src=\"/styles/ajaxloader.gif\" loading=\"lazy\" class=\"bbCodeBlockUnfurl-image\" data-onerror=\"hide-parent\">\n        </div>\n\n        <div class=\"contentRow-main\">\n            <h3 class=\"contentRow-header js-unfurl-title\">\n                <a href=\"https://r6skins.locker/profile/d2262a5b-d6c4-4030-8059-3f3ad4c0c9e4\" data-plain=\"https://r6skins.locker/profile/d2262a5b-d6c4-4030-8059-3f3ad4c0c9e4\" class=\"link link--external fauxBlockLink-blockLink\" target=\"_blank\" rel=\"nofollow ugc noopener\">\n                    Loading...\n                </a>\n            </h3>\n\n            <div class=\"contentRow-snippet js-unfurl-desc\"></div>\n\n            <div class=\"contentRow-minor contentRow-minor--hideLinks\">\n                <span class=\"js-unfurl-favicon\" style=\"display: none;\">\n                        <img src=\"\" loading=\"lazy\" class=\"bbCodeBlockUnfurl-icon\" data-onerror=\"hide-parent\">\n                </span>\n                r6skins.locker\n            </div>\n        </div>\n    </div>\n</div>",
+  "uniqueKeyExists": true,
+  "auto_bump_period": 0,
+  "canViewItemViews": false,
+  "canViewLoginData": false,
+  "canViewTempEmail": false,
+  "descriptionPlain": "https://r6skins.locker/profile/d2262a5b-d6c4-4030-8059-3f3ad4c0c9e4",
+  "itemOriginPhrase": "Brute-force",
+  "update_stat_date": 0,
+  "uplay_game_count": 1,
+  "canChangePassword": false,
+  "descriptionEnHtml": "<!--<link rel=\"stylesheet\" href=\"https://prod-api.lzt.market/css.php?css=unfurl&amp;style=48&amp;dir=LTR&amp;d=1776858185\" />--><div class=\"bbCodeBlock bbCodeBlock--unfurl js-unfurl fauxBlockLink PendingUnfurl\" data-unfurl-id=\"825883\"  data-unfurl-hash=\"8958441f2e9a0bc9d009b22d3d1442de\">\n    <div class=\"contentRow\">\n        <div class=\"contentRow-figure contentRow-figure--fixedSmall js-unfurl-figure\">\n            <img src=\"/styles/ajaxloader.gif\" loading=\"lazy\" class=\"bbCodeBlockUnfurl-image\" data-onerror=\"hide-parent\">\n        </div>\n\n        <div class=\"contentRow-main\">\n            <h3 class=\"contentRow-header js-unfurl-title\">\n                <a href=\"https://r6skins.locker/profile/d2262a5b-d6c4-4030-8059-3f3ad4c0c9e4\" data-plain=\"https://r6skins.locker/profile/d2262a5b-d6c4-4030-8059-3f3ad4c0c9e4\" class=\"link link--external fauxBlockLink-blockLink\" target=\"_blank\" rel=\"nofollow ugc noopener\">\n                    Loading...\n                </a>\n            </h3>\n\n            <div class=\"contentRow-snippet js-unfurl-desc\"></div>\n\n            <div class=\"contentRow-minor contentRow-minor--hideLinks\">\n                <span class=\"js-unfurl-favicon\" style=\"display: none;\">\n                        <img src=\"\" loading=\"lazy\" class=\"bbCodeBlockUnfurl-icon\" data-onerror=\"hide-parent\">\n                </span>\n                r6skins.locker\n            </div>\n        </div>\n    </div>\n</div>",
+  "imagePreviewLinks": [],
+  "isPersonalAccount": false,
+  "uplayTransactions": [],
+  "allow_ask_discount": 0,
+  "canManagePublicTag": false,
+  "canUpdateItemStats": false,
+  "canValidateAccount": false,
+  "canViewAccountLink": false,
+  "descriptionEnPlain": "https://r6skins.locker/profile/d2262a5b-d6c4-4030-8059-3f3ad4c0c9e4",
+  "extended_guarantee": 0,
+  "guarantee_duration": 0,
+  "priceWithSellerFee": 14.81,
+  "resale_item_origin": "",
+  "uplay_created_date": 1456005841,
+  "uplay_r6_operators": "[\"Iq\",\"Mute\",\"Pulse\",\"Thatcher\",\"Sledge\",\"Castle\",\"Kapkan\",\"Glaz\",\"Fuze\",\"Ash\",\"Montagne\",\"Thermite\",\"Twitch\",\"Jager\"]",
+  "uplay_subscription": "",
+  "uplay_transactions": "[]",
+  "uplayLinkedAccounts": "PSN",
+  "uplay_last_activity": 1773151892,
+  "uplay_psn_connected": 1,
+  "uplay_r6_ban_active": false,
+  "canNotBumpItemReason": "You do not have permission view page",
+  "max_discount_percent": 10,
+  "uplay_r6_skins_count": 5,
+  "uplay_xbox_connected": 0,
+  "account_last_activity": 1773151892,
+  "canViewEmailLoginData": false,
+  "pending_deletion_date": 0,
+  "canChangeEmailPassword": false,
+  "showGetEmailCodeButton": false,
+  "uplay_r6_steam_warning": false,
+  "displayConvertedBalance": false,
+  "priceWithSellerFeeLabel": "$0.1978",
+  "uplay_converted_balance": 0,
+  "uplay_r6_operators_count": 14,
+  "sold_items_category_count": 14840,
+  "uplay_r6_external_warning": true,
+  "uplay_subscription_end_date": 0,
+  "restore_items_category_count": 9
+}

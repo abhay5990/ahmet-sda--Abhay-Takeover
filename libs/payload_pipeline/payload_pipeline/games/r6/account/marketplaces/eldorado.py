@@ -46,9 +46,9 @@ class R6EldoradoBuilder(BaseEldoradoBuilder):
         )
 
     def _resolve_trade_environment_id(self, account: R6ResolvedAccount) -> str:
-        if account.platform_flags.get("psn"):
+        if account.psn_connected:
             return "1"
-        if account.platform_flags.get("xbox"):
+        if account.xbox_connected:
             return "2"
         return "0"
 

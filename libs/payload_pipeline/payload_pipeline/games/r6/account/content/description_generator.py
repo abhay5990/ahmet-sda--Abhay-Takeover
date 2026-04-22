@@ -210,8 +210,6 @@ class R6ResolvedDescriptionGenerator:
             "\n"
             "Has Warranty\n"
             f"{instant}\n"
-            "Note: If the linked email is on Outlook, you must add your own security email after first login.\n"
-            "Failure to do so may result in loss of access, and we won't be responsible.\n"
         )
 
     def _fit_with_reserved_footer(self, body: str, footer: str, limit: int) -> str:
