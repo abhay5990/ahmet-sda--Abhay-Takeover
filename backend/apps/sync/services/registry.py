@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 def _build_registry() -> dict[tuple[str, str], type[BaseSyncService]]:
     """Lazy import to avoid circular dependencies."""
     from apps.sync.services.eldorado.orders.service import EldoradoOrderSyncService
+    from apps.sync.services.eldorado.orders.historical_service import EldoradoHistoricalOrderSyncService
     from apps.sync.services.eldorado.offers.service import EldoradoOfferSyncService
     from apps.sync.services.gameboost.offers.service import GameboostOfferSyncService
     from apps.sync.services.gameboost.orders.service import GameboostOrderSyncService
@@ -32,6 +33,7 @@ def _build_registry() -> dict[tuple[str, str], type[BaseSyncService]]:
 
     return {
         (ResourceType.ORDERS, 'eldorado'): EldoradoOrderSyncService,
+        (ResourceType.HISTORICAL_ORDERS, 'eldorado'): EldoradoHistoricalOrderSyncService,
         (ResourceType.LISTINGS, 'eldorado'): EldoradoOfferSyncService,
         (ResourceType.ORDERS, 'gameboost'): GameboostOrderSyncService,
         (ResourceType.LISTINGS, 'gameboost'): GameboostOfferSyncService,

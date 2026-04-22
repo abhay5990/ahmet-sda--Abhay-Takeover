@@ -3,6 +3,7 @@ from django.db import models
 
 class ResourceType(models.TextChoices):
     ORDERS = 'orders', 'Orders'
+    HISTORICAL_ORDERS = 'historical_orders', 'Historical Orders'
     LISTINGS = 'listings', 'Listings'
     OWNED_PRODUCTS = 'owned_products', 'Owned Products'
     REVIEWS = 'reviews', 'Reviews'

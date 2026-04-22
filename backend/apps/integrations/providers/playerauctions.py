@@ -131,8 +131,7 @@ def _encrypt_pa_passwords(payload: dict[str, Any]) -> dict[str, Any]:
     result = copy.copy(payload)
     encrypted_auto = dict(auto)
 
-    for field in ('password', 'retypePassword', 'parentalPassword',
-                  'securityAnswer', 'retypeSecurityAnswer'):
+    for field in ('password', 'retypePassword', 'parentalPassword'):
         value = encrypted_auto.get(field)
         if value is not None:
             encrypted_auto[field] = _encryptor.encrypt(value)
