@@ -63,6 +63,7 @@ _PERMANENT_PATTERNS: frozenset[str] = frozenset({
     "insufficient balance",
     "not real xlsx file",
     "please check!",
+    "please input",
 })
 
 

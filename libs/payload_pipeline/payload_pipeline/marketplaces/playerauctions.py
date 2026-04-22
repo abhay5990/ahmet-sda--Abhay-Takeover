@@ -74,7 +74,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
 
     @property
     @abstractmethod
-    def game_şname(self) -> str:
+    def game_name(self) -> str:
         """PlayerAuctions game slug (e.g. ``"valorant"``)."""
 
     @property
@@ -134,7 +134,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
             "retypeLoginName": creds.login,
             "password": creds.password,
             "retypePassword": creds.password,
-            "characterName": "",
+            "characterName": f"{random.choice(['James', 'John', 'Robert', 'Michael', 'David', 'William', 'Richard', 'Joseph', 'Thomas', 'Charles'])}{random.randint(100, 9999)}",
             "isInfoSame": True,
             "original": owner_info,
             "current": dict(owner_info),
@@ -142,13 +142,11 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
             "instruction": delivery_instructions,
         }
 
-        if self.requires_security_qa:
-            auto_delivery["securityQuestion"] = ""
-            auto_delivery["securityAnswer"] = ""
-            auto_delivery["retypeSecurityAnswer"] = ""
+        auto_delivery["securityQuestion"] = ""
+        auto_delivery["securityAnswer"] = ""
+        auto_delivery["retypeSecurityAnswer"] = ""
 
-        if self.requires_parental_password:
-            auto_delivery["parentalPassword"] = ""
+        auto_delivery["parentalPassword"] = ""
 
         auto_delivery["firstCDKey"] = ""
 
