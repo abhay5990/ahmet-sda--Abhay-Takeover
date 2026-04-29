@@ -9,6 +9,7 @@ both CS2 and Steam media strategies.  Matches the legacy output of
 from __future__ import annotations
 
 import logging
+import math
 import os
 from datetime import datetime
 from io import BytesIO
@@ -21,9 +22,8 @@ from requests.adapters import HTTPAdapter
 
 logger = logging.getLogger(__name__)
 
-# Layout constants (match legacy generators)
+# Layout constants (based on the legacy generators)
 _CANVAS_WIDTH = 950
-_GRID_COLS = 5
 _GAME_WIDTH = 150
 _GAME_HEIGHT = 110
 _GAME_SPACING = 40
@@ -86,20 +86,23 @@ class SteamGameGridRenderer:
     # ── grid assembly ─────────────────────────────────────────────────
 
     def _generate_grid(self, sorted_games: list[dict[str, Any]]) -> Image.Image:
-        rows = (len(sorted_games) + _GRID_COLS - 1) // _GRID_COLS
+        cols = self._grid_columns(len(sorted_games))
+        rows = math.ceil(len(sorted_games) / cols)
+        canvas_width = self._canvas_width(cols)
         canvas_height = (
             _HEADER_HEIGHT
             + (_GAME_HEIGHT + _GAME_SPACING) * rows
             + _GAME_SPACING
         )
-        canvas = Image.new("RGB", (_CANVAS_WIDTH, canvas_height), _BG_COLOR)
+        canvas = Image.new("RGB", (canvas_width, canvas_height), _BG_COLOR)
         draw = ImageDraw.Draw(canvas)
 
         self._draw_header(draw, len(sorted_games))
 
+        x_offset = self._grid_x_offset(canvas_width, cols)
         for i, game in enumerate(sorted_games):
-            row, col = divmod(i, _GRID_COLS)
-            x = _GAME_SPACING + col * (_GAME_WIDTH + _GAME_SPACING)
+            row, col = divmod(i, cols)
+            x = x_offset + col * (_GAME_WIDTH + _GAME_SPACING)
             y = _HEADER_HEIGHT + _GAME_SPACING + row * (_GAME_HEIGHT + _GAME_SPACING)
             self._draw_game(canvas, draw, game, x, y)
 
@@ -252,3 +255,41 @@ class SteamGameGridRenderer:
         while tmp.textlength(text + "...", font=font) > max_width and len(text) > 0:
             text = text[:-1]
         return text + "..."
+
+    @classmethod
+    def _grid_columns(cls, item_count: int) -> int:
+        """Choose a column count that keeps large Steam grids readable."""
+        if item_count <= 0:
+            return 1
+
+        best_cols = 1
+        best_score = float("inf")
+        for cols in range(1, item_count + 1):
+            rows = math.ceil(item_count / cols)
+            width = cls._ideal_canvas_width(cols)
+            height = cls._canvas_height(rows)
+            score = abs(math.log(width / height))
+            if score < best_score:
+                best_cols = cols
+                best_score = score
+        return best_cols
+
+    @staticmethod
+    def _grid_width(cols: int) -> int:
+        return cols * _GAME_WIDTH + max(0, cols - 1) * _GAME_SPACING
+
+    @classmethod
+    def _ideal_canvas_width(cls, cols: int) -> int:
+        return cls._grid_width(cols) + (_GAME_SPACING * 2)
+
+    @classmethod
+    def _canvas_width(cls, cols: int) -> int:
+        return max(_CANVAS_WIDTH, cls._ideal_canvas_width(cols))
+
+    @staticmethod
+    def _canvas_height(rows: int) -> int:
+        return _HEADER_HEIGHT + (_GAME_HEIGHT + _GAME_SPACING) * rows + _GAME_SPACING
+
+    @classmethod
+    def _grid_x_offset(cls, canvas_width: int, cols: int) -> int:
+        return max(_GAME_SPACING, (canvas_width - cls._grid_width(cols)) // 2)

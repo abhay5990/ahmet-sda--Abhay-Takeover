@@ -1,9 +1,11 @@
+import json
+
 from django import forms
 from django.utils.text import slugify
 
 from .models import IntegrationAccount, IntegrationCredential, ServiceCredential
 from .providers.registry import get_credential_fields
-from .services.registry import get_service_fields
+from .services.registry import get_service, get_service_fields
 
 TAILWIND_INPUT = 'w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm'
 TAILWIND_SELECT = TAILWIND_INPUT
@@ -143,7 +145,38 @@ class ServiceCredentialForm(forms.ModelForm):
 
         for field_def in get_service_fields(service_type):
             field_name = f'cred_{field_def.name}'
-            if field_def.field_type == 'password':
+            if field_def.field_type == 'readonly':
+                self.fields[field_name] = forms.CharField(
+                    label=field_def.label,
+                    required=False,
+                    initial=existing_creds.get(field_def.name, ''),
+                    help_text=field_def.help_text,
+                    widget=forms.TextInput(attrs={
+                        'class': TAILWIND_INPUT,
+                        'readonly': 'readonly',
+                        'tabindex': '-1',
+                    }),
+                )
+            elif field_def.field_type == 'file_json':
+                # File upload field for JSON — also accepts paste via hidden textarea
+                is_existing = self.instance and self.instance.pk
+                self.fields[field_name] = forms.CharField(
+                    label=field_def.label,
+                    required=field_def.required and not is_existing,
+                    initial='',
+                    help_text=field_def.help_text or ('Leave blank to keep current value' if is_existing else ''),
+                    widget=forms.HiddenInput(attrs={'class': 'file-json-value'}),
+                )
+                # Companion file input (rendered in template, JS fills hidden field)
+                self.fields[f'{field_name}__file'] = forms.FileField(
+                    label=f'{field_def.label} (upload)',
+                    required=False,
+                    widget=forms.ClearableFileInput(attrs={
+                        'class': TAILWIND_INPUT,
+                        'accept': '.json,application/json',
+                    }),
+                )
+            elif field_def.field_type == 'password':
                 is_existing = self.instance and self.instance.pk
                 self.fields[field_name] = forms.CharField(
                     label=field_def.label,
@@ -169,6 +202,30 @@ class ServiceCredentialForm(forms.ModelForm):
                     widget=forms.TextInput(attrs={'class': TAILWIND_INPUT}),
                 )
 
+    def clean(self):
+        cleaned = super().clean()
+        service_type = self._get_service_type()
+        for field_def in get_service_fields(service_type):
+            if field_def.field_type != 'file_json':
+                continue
+            field_name = f'cred_{field_def.name}'
+            file_field_name = f'{field_name}__file'
+            uploaded_file = self.files.get(file_field_name)
+            if uploaded_file:
+                try:
+                    content = uploaded_file.read().decode('utf-8')
+                    json.loads(content)  # validate JSON
+                    cleaned[field_name] = content
+                except (UnicodeDecodeError, json.JSONDecodeError):
+                    self.add_error(file_field_name, 'Uploaded file is not valid JSON.')
+            elif not cleaned.get(field_name):
+                # No file uploaded and no pasted value — keep existing if editing
+                if self.instance and self.instance.pk:
+                    existing = (self.instance.credentials or {}).get(field_def.name)
+                    if existing:
+                        cleaned[field_name] = json.dumps(existing) if isinstance(existing, dict) else existing
+        return cleaned
+
     def _get_service_type(self) -> str:
         if self.instance and self.instance.pk:
             return self.instance.service_type
@@ -193,11 +250,20 @@ class ServiceCredentialForm(forms.ModelForm):
         existing_creds = instance.credentials.copy() if instance.credentials else {}
 
         for field_def in get_service_fields(service_type):
+            if field_def.field_type == 'readonly':
+                continue
             value = self.cleaned_data.get(f'cred_{field_def.name}', '')
             if field_def.field_type == 'password' and not value:
                 continue
+            if field_def.field_type == 'file_json' and not value:
+                continue
             if value:
                 existing_creds[field_def.name] = value
+
+        # Call on_credentials_save hook if the service defines it
+        svc = get_service(service_type)
+        if svc and hasattr(svc, 'on_credentials_save'):
+            existing_creds = svc.on_credentials_save(existing_creds)
 
         instance.credentials = existing_creds
         if commit:

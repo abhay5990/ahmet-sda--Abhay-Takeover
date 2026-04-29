@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from io import BytesIO
 import json
 import logging
+import math
 from pathlib import Path
 import re
 import unicodedata
@@ -17,17 +18,22 @@ import requests
 from requests.adapters import HTTPAdapter
 
 
-_SKIN_BACKGROUND = (211, 211, 211)
-_OPERATOR_BACKGROUND = (255, 228, 225)
-_CARD_BACKGROUND = (255, 255, 255)
-_TEXT_COLOR = (0, 0, 0)
-_SKIN_COLUMNS = 5
-_OPERATOR_COLUMNS = 6
-_BORDER_PADDING = 20
-_BOTTOM_TEXT_AREA = 50
-_SPACING = 10
-_TOP_PADDING = 10
+_SKIN_BACKGROUND = (13, 15, 20)
+_OPERATOR_BACKGROUND = (16, 14, 21)
+_CARD_BACKGROUND = (25, 28, 34, 255)
+_CARD_BORDER = (70, 76, 88, 255)
+_CARD_HIGHLIGHT = (255, 190, 70, 255)
+_LABEL_BACKGROUND = (0, 0, 0, 150)
+_TEXT_COLOR = (244, 247, 250, 255)
+_MUTED_TEXT_COLOR = (178, 186, 198, 255)
+_PLACEHOLDER_FILL = (35, 39, 47, 255)
+_PLACEHOLDER_BORDER = (96, 104, 120, 255)
+_GAP = 5
+_TOP_PADDING = 14
 _BOTTOM_PADDING = 10
+_HEADER_HEIGHT = 78
+_CARD_RADIUS = 7
+_CACHE_VERSION = "v2"
 _SKIN_SPLIT_THRESHOLDS = (
     (300, 3),
     (160, 2),
@@ -56,6 +62,51 @@ class R6ImageRenderEntry:
     image_urls: list[str]
 
 
+@dataclass(frozen=True, slots=True)
+class _R6RenderLayout:
+    """Canvas layout for one R6 inventory media type."""
+
+    max_columns: int
+    card_width: int
+    card_height: int
+    image_box: tuple[int, int]
+    image_top: int
+    label_height: int
+    font_size: int
+
+
+_COMPACT_SKIN_LAYOUT = _R6RenderLayout(
+    max_columns=15,
+    card_width=192,
+    card_height=124,
+    image_box=(176, 72),
+    image_top=8,
+    label_height=30,
+    font_size=12,
+)
+_READABLE_SKIN_LAYOUT = _R6RenderLayout(
+    max_columns=12,
+    card_width=220,
+    card_height=140,
+    image_box=(206, 78),
+    image_top=8,
+    label_height=34,
+    font_size=15,
+)
+_SKIN_LAYOUT = _COMPACT_SKIN_LAYOUT
+_OPERATOR_LAYOUT = _R6RenderLayout(
+    max_columns=8,
+    card_width=176,
+    card_height=196,
+    image_box=(140, 140),
+    image_top=13,
+    label_height=32,
+    font_size=17,
+)
+
+_FONT_CACHE: dict[tuple[str, bool, int], ImageFont.FreeTypeFont | ImageFont.ImageFont] = {}
+
+
 class R6ImageRenderer:
     """Cache, download, and collage rendering shared by R6 image generators."""
 
@@ -71,16 +122,15 @@ class R6ImageRenderer:
             skins_json_path = str(Path(_SLICE_RESOURCES_DIR) / "RainbowSkins.json")
         if operators_json_path is None:
             operators_json_path = str(Path(_SLICE_RESOURCES_DIR) / "RainbowOperators.json")
-        if font_path is None:
-            font_path = str(Path(_SHARED_RESOURCES_DIR) / "cmss10.ttf")
         if cache_base_dir is None:
             cache_base_dir = _DEFAULT_CACHE_BASE
         self.skins_json_path = skins_json_path
         self.operators_json_path = operators_json_path
         self.font_path = font_path
+        self.fallback_font_path = str(Path(_SHARED_RESOURCES_DIR) / "cmss10.ttf")
         self.cache_base_dir = Path(cache_base_dir)
-        self.skin_cache_dir = self.cache_base_dir / "skins"
-        self.operator_cache_dir = self.cache_base_dir / "operators"
+        self.skin_cache_dir = self.cache_base_dir / f"skins_{_CACHE_VERSION}"
+        self.operator_cache_dir = self.cache_base_dir / f"operators_{_CACHE_VERSION}"
         self.skin_cache_dir.mkdir(parents=True, exist_ok=True)
         self.operator_cache_dir.mkdir(parents=True, exist_ok=True)
         self._skins_by_id: dict[str, R6ImageRenderEntry] | None = None
@@ -111,10 +161,9 @@ class R6ImageRenderer:
 
             image = self._render_collage(
                 chunk,
-                columns=_SKIN_COLUMNS,
+                layout=_SKIN_LAYOUT,
                 background=_SKIN_BACKGROUND,
-                font_size=30,
-                side_padding=0,
+                heading="Weapon Skins",
             )
             if image is None:
                 continue
@@ -128,7 +177,7 @@ class R6ImageRenderer:
                 )
 
             save_path = output_dir / filename
-            image.save(save_path, "PNG")
+            image.convert("RGB").save(save_path, "PNG", optimize=True)
             created.append(str(save_path))
 
         return created
@@ -146,16 +195,15 @@ class R6ImageRenderer:
 
         image = self._render_collage(
             entries,
-            columns=_OPERATOR_COLUMNS,
+            layout=_OPERATOR_LAYOUT,
             background=_OPERATOR_BACKGROUND,
-            font_size=30,
-            side_padding=20,
+            heading="Operators",
         )
         if image is None:
             return None
 
         save_path = output_dir / f"r6_operators.{self._sanitize_filename(product_id)}.png"
-        image.save(save_path, "PNG")
+        image.convert("RGB").save(save_path, "PNG", optimize=True)
         return str(save_path)
 
     def _resolve_output_dir(self, output_folder: str) -> Path:
@@ -167,92 +215,220 @@ class R6ImageRenderer:
         self,
         entries: list[R6ImageRenderEntry],
         *,
-        columns: int,
+        layout: _R6RenderLayout,
         background: tuple[int, int, int],
-        font_size: int,
-        side_padding: int,
+        heading: str,
     ) -> Image.Image | None:
-        cards: list[tuple[Image.Image, str]] = []
+        cards: list[tuple[Image.Image | None, str]] = []
         for entry in entries:
             card_image = self._load_or_download_cached(entry)
-            if card_image is None:
-                continue
             cards.append((card_image, entry.title))
 
         if not cards:
             return None
 
-        max_width = max(image.width for image, _ in cards)
-        max_height = max(image.height for image, _ in cards)
-        target_width = min(300, max_width)
-        target_height = min(300, max_height)
-
-        card_width = target_width + (_BORDER_PADDING * 2) + (side_padding * 2)
-        card_height = target_height + (_BORDER_PADDING * 2) + _BOTTOM_TEXT_AREA
-
-        rows = (len(cards) + columns - 1) // columns
-        canvas_width = columns * card_width + max(0, columns - 1) * _SPACING
+        effective_columns = self._grid_columns(len(cards), layout)
+        rows = (len(cards) + effective_columns - 1) // effective_columns
+        canvas_width = (
+            effective_columns * layout.card_width
+            + max(0, effective_columns - 1) * _GAP
+        )
         canvas_height = (
-            _TOP_PADDING
+            _HEADER_HEIGHT
+            + _TOP_PADDING
             + _BOTTOM_PADDING
-            + rows * card_height
-            + max(0, rows - 1) * _SPACING
+            + rows * layout.card_height
+            + max(0, rows - 1) * _GAP
         )
 
-        canvas = Image.new("RGB", (canvas_width, canvas_height), background)
+        canvas = self._create_canvas(canvas_width, canvas_height, background)
+        self._draw_header(canvas, heading=heading, count=len(cards))
 
         x = 0
-        y = _TOP_PADDING
+        y = _HEADER_HEIGHT + _TOP_PADDING
         for index, (raw_image, title) in enumerate(cards, start=1):
             card = self._build_card(
                 raw_image,
                 title=title,
-                card_width=card_width,
-                card_height=card_height,
-                target_width=target_width,
-                target_height=target_height,
-                font_size=font_size,
+                layout=layout,
             )
-            canvas.paste(card, (x, y))
+            canvas.alpha_composite(card, (x, y))
 
-            if index % columns == 0:
+            if index % effective_columns == 0:
                 x = 0
-                y += card_height + _SPACING
+                y += layout.card_height + _GAP
             else:
-                x += card_width + _SPACING
+                x += layout.card_width + _GAP
 
         return canvas
 
+    @staticmethod
+    def _grid_columns(item_count: int, layout: _R6RenderLayout) -> int:
+        if item_count <= 0:
+            return 1
+
+        best_columns = 1
+        best_score = float("inf")
+        max_columns = max(1, min(item_count, layout.max_columns))
+        for columns in range(1, max_columns + 1):
+            rows = math.ceil(item_count / columns)
+            width = columns * layout.card_width + max(0, columns - 1) * _GAP
+            height = (
+                _HEADER_HEIGHT
+                + _TOP_PADDING
+                + _BOTTOM_PADDING
+                + rows * layout.card_height
+                + max(0, rows - 1) * _GAP
+            )
+            score = abs(math.log(width / height))
+            if score < best_score:
+                best_columns = columns
+                best_score = score
+
+        return best_columns
+
+    def _create_canvas(
+        self,
+        width: int,
+        height: int,
+        background: tuple[int, int, int],
+    ) -> Image.Image:
+        top = tuple(min(255, channel + 12) for channel in background)
+        bottom = tuple(max(0, channel - 4) for channel in background)
+        strip = Image.new("RGB", (1, 256))
+        pixels = strip.load()
+        for y in range(256):
+            ratio = y / 255.0
+            pixels[0, y] = (
+                int(top[0] + (bottom[0] - top[0]) * ratio),
+                int(top[1] + (bottom[1] - top[1]) * ratio),
+                int(top[2] + (bottom[2] - top[2]) * ratio),
+            )
+        return strip.resize((width, height), Image.Resampling.BILINEAR).convert("RGBA")
+
+    def _draw_header(self, canvas: Image.Image, *, heading: str, count: int) -> None:
+        draw = ImageDraw.Draw(canvas)
+        title_font = self._load_font(34, bold=True)
+        subtitle_font = self._load_font(16)
+
+        title = f"{count} {heading}"
+        subtitle = "Rainbow Six Siege Inventory"
+        draw.text(
+            (16, 12),
+            title,
+            font=title_font,
+            fill=_TEXT_COLOR,
+            stroke_width=1,
+            stroke_fill=(0, 0, 0, 180),
+        )
+        draw.text((18, 50), subtitle, font=subtitle_font, fill=_MUTED_TEXT_COLOR)
+        draw.line(
+            [(0, _HEADER_HEIGHT - 1), (canvas.width, _HEADER_HEIGHT - 1)],
+            fill=(255, 255, 255, 34),
+            width=1,
+        )
+
     def _build_card(
         self,
-        image: Image.Image,
+        image: Image.Image | None,
         *,
         title: str,
-        card_width: int,
-        card_height: int,
-        target_width: int,
-        target_height: int,
-        font_size: int,
+        layout: _R6RenderLayout,
     ) -> Image.Image:
-        card = Image.new("RGB", (card_width, card_height), _CARD_BACKGROUND)
+        card_width = layout.card_width
+        card_height = layout.card_height
+        card = Image.new("RGBA", (card_width, card_height), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(card)
+        draw.rounded_rectangle(
+            [(0, 0), (card_width - 1, card_height - 1)],
+            radius=_CARD_RADIUS,
+            fill=_CARD_BACKGROUND,
+            outline=_CARD_BORDER,
+            width=1,
+        )
+        draw.line(
+            [(_CARD_RADIUS, 1), (card_width - _CARD_RADIUS, 1)],
+            fill=_CARD_HIGHLIGHT,
+            width=1,
+        )
 
-        contained = ImageOps.contain(image, (target_width, target_height))
-        image_x = (card_width - contained.width) // 2
-        image_y = _BORDER_PADDING
-        if contained.mode == "RGBA":
-            card.paste(contained, (image_x, image_y), contained)
+        if image is None:
+            self._draw_placeholder(card, title=title, layout=layout)
         else:
-            card.paste(contained, (image_x, image_y))
+            contained = self._prepare_card_image(image, layout.image_box)
+            image_x = (card_width - contained.width) // 2
+            image_y = layout.image_top + (layout.image_box[1] - contained.height) // 2
+            if contained.mode == "RGBA":
+                card.paste(contained, (image_x, image_y), contained)
+            else:
+                card.paste(contained, (image_x, image_y))
+
+        label_overlay = Image.new("RGBA", card.size, (0, 0, 0, 0))
+        label_draw = ImageDraw.Draw(label_overlay)
+        label_y = card_height - layout.label_height
+        label_draw.rounded_rectangle(
+            [
+                (4, label_y + 2),
+                (card_width - 4, card_height - 5),
+            ],
+            radius=5,
+            fill=_LABEL_BACKGROUND,
+        )
+        card.alpha_composite(label_overlay)
 
         draw = ImageDraw.Draw(card)
         text_area = (
-            _BORDER_PADDING,
-            card_height - _BOTTOM_TEXT_AREA,
-            card_width - _BORDER_PADDING,
-            card_height,
+            8,
+            label_y,
+            card_width - 8,
+            card_height - 1,
         )
-        self._draw_centered_text(draw, title, text_area, font_size)
+        self._draw_centered_text(draw, title, text_area, layout.font_size)
         return card
+
+    @staticmethod
+    def _prepare_card_image(image: Image.Image, size: tuple[int, int]) -> Image.Image:
+        prepared = image.copy().convert("RGBA")
+        alpha_bbox = prepared.getchannel("A").getbbox()
+        if alpha_bbox:
+            prepared = prepared.crop(alpha_bbox)
+        return ImageOps.contain(prepared, size, method=Image.Resampling.LANCZOS)
+
+    def _draw_placeholder(
+        self,
+        card: Image.Image,
+        *,
+        title: str,
+        layout: _R6RenderLayout,
+    ) -> None:
+        draw = ImageDraw.Draw(card)
+        box_width, box_height = layout.image_box
+        x1 = (layout.card_width - box_width) // 2
+        y1 = layout.image_top
+        x2 = x1 + box_width
+        y2 = y1 + box_height
+        draw.rounded_rectangle(
+            [(x1, y1), (x2, y2)],
+            radius=5,
+            fill=_PLACEHOLDER_FILL,
+            outline=_PLACEHOLDER_BORDER,
+            width=1,
+        )
+
+        initials = "".join(part[:1] for part in title.split()[:2]).upper() or "R6"
+        font = self._load_font(max(18, min(28, box_height // 2)), bold=True)
+        bbox = draw.textbbox((0, 0), initials, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+        draw.text(
+            (
+                x1 + (box_width - text_width) // 2 - bbox[0],
+                y1 + (box_height - text_height) // 2 - bbox[1] - 1,
+            ),
+            initials,
+            font=font,
+            fill=_MUTED_TEXT_COLOR,
+        )
 
     def _draw_centered_text(
         self,
@@ -266,7 +442,7 @@ class R6ImageRenderer:
         font = self._load_font(font_size)
         current_size = font_size
 
-        while current_size > 10:
+        while current_size > 8:
             bbox = draw.textbbox((0, 0), text, font=font)
             if (bbox[2] - bbox[0]) <= max_width:
                 break
@@ -274,11 +450,22 @@ class R6ImageRenderer:
             font = self._load_font(current_size)
 
         bbox = draw.textbbox((0, 0), text, font=font)
+        while (bbox[2] - bbox[0]) > max_width and len(text) > 4:
+            text = text[:-4].rstrip() + "..."
+            bbox = draw.textbbox((0, 0), text, font=font)
+
         text_width = bbox[2] - bbox[0]
         text_height = bbox[3] - bbox[1]
-        text_x = x1 + (max_width - text_width) // 2
-        text_y = y1 + ((y2 - y1) - text_height) // 2
-        draw.text((text_x, text_y), text, fill=_TEXT_COLOR, font=font)
+        text_x = x1 + (max_width - text_width) // 2 - bbox[0]
+        text_y = y1 + ((y2 - y1) - text_height) // 2 - bbox[1] - 2
+        draw.text(
+            (text_x, text_y),
+            text,
+            fill=_TEXT_COLOR,
+            font=font,
+            stroke_width=1,
+            stroke_fill=(0, 0, 0, 190),
+        )
 
     def _load_or_download_cached(self, entry: R6ImageRenderEntry) -> Image.Image | None:
         current_cache_path = self._cache_path(entry.cache_key)
@@ -317,7 +504,10 @@ class R6ImageRenderer:
         else:
             safe_name = self._sanitize_filename(cache_key.removeprefix("skin:"))
             file_name = f"skin_{safe_name}.png"
-        return [Path(base_dir) / folder / file_name for base_dir in _LEGACY_CACHE_DIRS]
+        return [
+            self.cache_base_dir / folder / file_name,
+            *[Path(base_dir) / folder / file_name for base_dir in _LEGACY_CACHE_DIRS],
+        ]
 
     def _load_cached_image(self, path: Path) -> Image.Image | None:
         if not path.exists():
@@ -337,8 +527,8 @@ class R6ImageRenderer:
                 return None
 
             image = Image.open(BytesIO(response.content)).convert("RGBA")
-            background = Image.new("RGBA", image.size, (255, 255, 255, 255))
-            return Image.alpha_composite(background, image)
+            image.load()
+            return image
         except Exception as exc:
             logger.debug("Failed to download image from %s: %s", url, exc)
             return None
@@ -440,12 +630,53 @@ class R6ImageRenderer:
             logger.debug("Failed to load JSON from %s: %s", path, exc)
             return {}
 
-    def _load_font(self, size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-        try:
-            return ImageFont.truetype(self.font_path, size)
-        except Exception as exc:
-            logger.debug("Font load failed, using default: %s", exc)
-            return ImageFont.load_default()
+    def _load_font(
+        self,
+        size: int,
+        *,
+        bold: bool = False,
+    ) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+        key = (self.font_path or "", bold, size)
+        cached = _FONT_CACHE.get(key)
+        if cached is not None:
+            return cached
+
+        candidates: list[str] = []
+        if self.font_path:
+            candidates.append(self.font_path)
+        if bold:
+            candidates.extend(
+                [
+                    "C:/Windows/Fonts/arialbd.ttf",
+                    "C:/Windows/Fonts/segoeuib.ttf",
+                    "arialbd.ttf",
+                    "Arial Bold.ttf",
+                    "DejaVuSans-Bold.ttf",
+                ]
+            )
+        else:
+            candidates.extend(
+                [
+                    "C:/Windows/Fonts/arial.ttf",
+                    "C:/Windows/Fonts/segoeui.ttf",
+                    "arial.ttf",
+                    "Arial.ttf",
+                    "DejaVuSans.ttf",
+                ]
+            )
+        candidates.append(self.fallback_font_path)
+
+        for candidate in candidates:
+            try:
+                font = ImageFont.truetype(candidate, size)
+                _FONT_CACHE[key] = font
+                return font
+            except Exception:
+                continue
+
+        font = ImageFont.load_default()
+        _FONT_CACHE[key] = font
+        return font
 
     def _resolve_skin_split_count(self, skin_count: int) -> int:
         for threshold, split_count in _SKIN_SPLIT_THRESHOLDS:

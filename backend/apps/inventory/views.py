@@ -2,12 +2,14 @@ import json
 import logging
 
 from django.core.paginator import Paginator
-from django.db.models import Count, Q
+from django.db.models import Count, Exists, OuterRef, Q
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
 
 from apps.accounts.decorators import role_required
+from apps.integrations.models import IntegrationAccount
+from apps.listings.models import Listing
 from .enums import DropshipProductStatus, OwnedProductStatus
 from .models import Category, DropshipProduct, Game, OwnedProduct
 
@@ -17,6 +19,51 @@ PAGE_SIZE = 50
 BULK_LIMIT = 100
 _VALID_OWNED_STATUSES = {s.value for s in OwnedProductStatus}
 _VALID_DROPSHIP_STATUSES = {s.value for s in DropshipProductStatus}
+
+
+def _apply_owned_product_filters(request, queryset):
+    """Apply standard OwnedProduct filters from GET params. Returns (queryset, filter_state)."""
+    search = request.GET.get('q', '').strip()
+    if search:
+        queryset = queryset.filter(Q(login__icontains=search))
+
+    status = request.GET.get('status')
+    if status:
+        queryset = queryset.filter(status=status)
+
+    game_id = request.GET.get('game')
+    if game_id:
+        queryset = queryset.filter(game_id=game_id)
+
+    category_id = request.GET.get('category')
+    if category_id:
+        queryset = queryset.filter(category_id=category_id)
+
+    missing_on = request.GET.get('missing_on')
+    if missing_on:
+        _active_listings = ['listed', 'paused']
+        has_on_target = Listing.objects.filter(
+            listing_owned_products__owned_product=OuterRef('pk'),
+            integration_account_id=missing_on,
+            status__in=_active_listings,
+        )
+        has_on_any_other = Listing.objects.filter(
+            listing_owned_products__owned_product=OuterRef('pk'),
+            status__in=_active_listings,
+        ).exclude(integration_account_id=missing_on)
+        queryset = queryset.filter(
+            status__in=['draft', 'listed'],
+        ).filter(
+            Exists(has_on_any_other),
+        ).exclude(
+            Exists(has_on_target),
+        )
+
+    return queryset, {
+        'search': search, 'status': status or '',
+        'game_id': game_id or '', 'category_id': category_id or '',
+        'missing_on': missing_on or '',
+    }
 
 
 @role_required('admin', 'user', 'viewer')
@@ -31,23 +78,7 @@ def index(request):
         'raw_data',
     ).order_by('-created_at')
 
-    # Search
-    search = request.GET.get('q', '').strip()
-    if search:
-        products = products.filter(Q(login__icontains=search))
-
-    # Filters
-    status = request.GET.get('status')
-    if status:
-        products = products.filter(status=status)
-
-    game_id = request.GET.get('game')
-    if game_id:
-        products = products.filter(game_id=game_id)
-
-    category_id = request.GET.get('category')
-    if category_id:
-        products = products.filter(category_id=category_id)
+    products, fs = _apply_owned_product_filters(request, products)
 
     # Stats
     stats_qs = OwnedProduct.objects.values('status').annotate(cnt=Count('id'))
@@ -60,6 +91,13 @@ def index(request):
         {'label': 'Banned', 'value': stats_map.get('banned', 0), 'color': 'red'},
     ]
 
+    sell_stores = [
+        (str(s.id), str(s))
+        for s in IntegrationAccount.objects.filter(
+            is_active=True, role__in=['sell', 'both'],
+        ).order_by('provider', 'name')
+    ]
+
     paginator = Paginator(products, PAGE_SIZE)
     page_obj = paginator.get_page(request.GET.get('page'))
 
@@ -69,10 +107,13 @@ def index(request):
         'games': Game.objects.filter(is_active=True).order_by('name'),
         'categories': [(str(c.id), c.title) for c in Category.objects.order_by('title')],
         'statuses': OwnedProductStatus.choices,
-        'selected_game': game_id or '',
-        'selected_category': category_id or '',
-        'selected_status': status or '',
-        'search_query': search,
+        'stores': sell_stores,
+        'selected_game': fs['game_id'],
+        'selected_category': fs['category_id'],
+        'selected_status': fs['status'],
+        'selected_missing_on': fs['missing_on'],
+        'search_query': fs['search'],
+        'has_sheets_credential': _is_admin(request) and _has_sheets_credential(),
     })
 
 
@@ -229,3 +270,72 @@ def dropship_product_bulk_update_status(request):
     logger.info("Bulk DropshipProduct status -> %s: %d/%d (by %s)", new_status, updated, len(ids), request.user)
 
     return JsonResponse({'ok': True, 'updated': updated})
+
+
+# ── Google Sheets Export ──
+
+
+def _is_admin(request) -> bool:
+    u = request.user
+    return u.is_authenticated and (u.is_superuser or getattr(u, 'role', '') == 'admin')
+
+
+def _has_sheets_credential() -> bool:
+    from .services.sheets_export import get_google_sheets_credential
+    return get_google_sheets_credential() is not None
+
+
+@role_required('admin')
+@require_POST
+def export_to_sheet(request):
+    """POST: Export filtered OwnedProducts to a Google Sheet."""
+    from .services.sheets_export import (
+        ALL_EXTRA_KEYS,
+        SheetsExportService,
+        get_google_sheets_credential,
+    )
+
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    spreadsheet_id = (data.get('spreadsheet_id') or '').strip()
+    sheet_name = (data.get('sheet_name') or '').strip()
+    extra_fields = data.get('extra_fields', [])
+    row_limit = int(data.get('limit', 0) or 0)
+
+    if not spreadsheet_id:
+        return JsonResponse({'error': 'spreadsheet_id is required'}, status=400)
+    if not sheet_name:
+        return JsonResponse({'error': 'sheet_name is required'}, status=400)
+    if not isinstance(extra_fields, list):
+        return JsonResponse({'error': 'extra_fields must be a list'}, status=400)
+
+    # Validate extra field keys
+    invalid = set(extra_fields) - ALL_EXTRA_KEYS
+    if invalid:
+        return JsonResponse({'error': f'Invalid extra fields: {", ".join(invalid)}'}, status=400)
+
+    # Get credential
+    credential = get_google_sheets_credential()
+    if not credential:
+        return JsonResponse({'error': 'No active Google Sheets credential configured.'}, status=400)
+
+    # Build filtered queryset (same filters as the list page)
+    queryset = OwnedProduct.objects.select_related(
+        'game', 'category', 'source_account',
+    ).order_by('-created_at')
+    queryset, _fs = _apply_owned_product_filters(request, queryset)
+
+    try:
+        svc = SheetsExportService.from_credential(credential)
+        count = svc.export(queryset, spreadsheet_id, sheet_name, extra_fields, limit=row_limit)
+    except Exception as exc:
+        logger.exception("Google Sheets export failed")
+        msg = str(exc)
+        if 'not found' in msg.lower() or 'PERMISSION_DENIED' in msg:
+            msg = f"Cannot access spreadsheet. Make sure it's shared with the service account. ({msg})"
+        return JsonResponse({'error': msg}, status=500)
+
+    return JsonResponse({'ok': True, 'rows_exported': count})

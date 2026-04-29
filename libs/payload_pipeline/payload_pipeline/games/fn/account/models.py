@@ -7,6 +7,18 @@ from dataclasses import dataclass, field
 from ....core.contracts import ResolvedAccountBase
 
 
+@dataclass(slots=True, frozen=True)
+class CosmeticItem:
+    """A single Fortnite cosmetic (skin, pickaxe, emote, or glider)."""
+
+    id: str
+    title: str
+    rarity: str
+    type: str
+    from_shop: bool = False
+    shop_price: int = 0
+
+
 @dataclass(slots=True)
 class FortniteResolvedAccount(ResolvedAccountBase):
     """Single resolved Fortnite account after source normalization."""
@@ -29,4 +41,5 @@ class FortniteResolvedAccount(ResolvedAccountBase):
     fortnite_next_change_email_date: int = 0
     cosmetic_titles: list[str] = field(default_factory=list)
     cosmetics_by_category: dict[str, list[str]] = field(default_factory=dict)
+    cosmetic_items: dict[str, list[CosmeticItem]] = field(default_factory=dict)
     preview_urls: dict[str, str] = field(default_factory=dict)

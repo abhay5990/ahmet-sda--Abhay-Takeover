@@ -9,13 +9,17 @@ Generates 4 PNG images from resolved account data:
 
 from __future__ import annotations
 
+from datetime import datetime
 import os
 from pathlib import Path
-from datetime import datetime
 from typing import Any
 
 from PIL import Image, ImageDraw, ImageFont
 
+from .....shared.paths import default_cache_base_dir
+
+_RESOURCES_DIR = Path(__file__).resolve().parent.parent / "resources"
+_DEFAULT_IMAGE_MAP_DIR = _RESOURCES_DIR / "image_map"
 
 # Hero ID -> name mapping
 _HERO_NAMES = {
@@ -35,16 +39,13 @@ BUILDER_HEROES = [3, 5]
 class CocImageRenderer:
     """Render Clash of Clans account images from resolved data arrays."""
 
-    def __init__(self, cache_folder: str = "assets/coc/cache_images") -> None:
-        self.cache_folder = Path(cache_folder)
-        self.cache_paths = {
-            "hero": self.cache_folder / "hero",
-            "he": self.cache_folder / "he",
-            "troop": self.cache_folder / "troop",
-            "spell": self.cache_folder / "spell",
-            "super-troop": self.cache_folder / "super-troop",
-            "pet": self.cache_folder / "pet",
-        }
+    def __init__(self, cache_folder: str | None = None) -> None:
+        default_icon_cache = Path(default_cache_base_dir("clash-of-clans")) / "icons"
+        self.cache_folder = Path(cache_folder) if cache_folder else default_icon_cache
+        self.cache_roots = [self.cache_folder, _DEFAULT_IMAGE_MAP_DIR]
+        if cache_folder:
+            self.cache_roots.append(default_icon_cache)
+        default_icon_cache.mkdir(parents=True, exist_ok=True)
 
         self.colors = {
             "bg_dark": (30, 30, 35, 255),
@@ -120,8 +121,8 @@ class CocImageRenderer:
     # Font loading
     # ------------------------------------------------------------------
 
-    def _load_fonts(self) -> dict[str, ImageFont.FreeTypeFont]:
-        fonts: dict[str, ImageFont.FreeTypeFont] = {}
+    def _load_fonts(self) -> dict[str, ImageFont.FreeTypeFont | ImageFont.ImageFont]:
+        fonts: dict[str, ImageFont.FreeTypeFont | ImageFont.ImageFont] = {}
         font_paths = [
             "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
             "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
@@ -155,30 +156,33 @@ class CocImageRenderer:
     def _load_icon(
         self, category: str, item_id: int, owned: bool = True
     ) -> Image.Image | None:
-        cache_path = self.cache_paths.get(category)
-        if not cache_path:
-            return None
+        for root in self.cache_roots:
+            for filepath in self._candidate_icon_paths(root, category, item_id):
+                if not filepath.exists():
+                    continue
 
-        filename = f"{category}-{item_id}.png"
-        filepath = cache_path / filename
+                try:
+                    img = Image.open(filepath).convert("RGBA")
+                    if category == "hero":
+                        img = img.resize(self.hero_icon_size, Image.Resampling.LANCZOS)
+                    else:
+                        img = img.resize(self.icon_size, Image.Resampling.LANCZOS)
+                    if not owned:
+                        img = self._make_grayscale(img)
+                    return img
+                except Exception:
+                    continue
 
-        if not filepath.exists():
-            alt_filename = f"{item_id}.png"
-            filepath = cache_path / alt_filename
-            if not filepath.exists():
-                return self._create_placeholder(category, item_id, owned)
+        return self._create_placeholder(category, item_id, owned)
 
-        try:
-            img = Image.open(filepath).convert("RGBA")
-            if category == "hero":
-                img = img.resize(self.hero_icon_size, Image.Resampling.LANCZOS)
-            else:
-                img = img.resize(self.icon_size, Image.Resampling.LANCZOS)
-            if not owned:
-                img = self._make_grayscale(img)
-            return img
-        except Exception:
-            return self._create_placeholder(category, item_id, owned)
+    @staticmethod
+    def _candidate_icon_paths(root: Path, category: str, item_id: int) -> list[Path]:
+        return [
+            root / category / f"{category}-{item_id}.png",
+            root / category / f"{item_id}.png",
+            root / f"{category}-{item_id}.png",
+            root / f"{item_id}.png",
+        ]
 
     def _create_placeholder(
         self, category: str, item_id: int, owned: bool

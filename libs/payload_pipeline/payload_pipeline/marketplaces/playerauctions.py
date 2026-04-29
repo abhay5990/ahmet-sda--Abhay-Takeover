@@ -159,7 +159,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
             "freeInsurance": 7,
             "offerDuration": 30,
             "title": content.title,
-            "offerDesc": content.description,
+            "offerDesc": content.description.replace("\n", "<br>"),
             "screenShot": "",
             "agreeCheck": True,
             "isAuto": is_stock,

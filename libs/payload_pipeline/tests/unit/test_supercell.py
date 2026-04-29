@@ -111,6 +111,32 @@ def test_coc_pipeline_builds_all_marketplaces(load_fixture) -> None:
     assert results["playerauctions"]["server_id"] == ["8455", "8456"]
 
 
+def test_cr_lzt_source_extracts_player_tag_from_json_string(load_fixture) -> None:
+    """CrLztSourceAdapter must parse player_tag from supercell_systems JSON string."""
+    from payload_pipeline.games.cr.account.sources.lzt import CrLztSourceAdapter
+
+    raw = load_fixture("lzt_cr.json")
+    source = CrLztSourceAdapter().parse(raw)
+
+    assert source is not None
+    assert source.player_tag == "92RLL8U0Y"
+
+
+def test_cr_resolver_lzt_only_populates_tracker_link(load_fixture) -> None:
+    """CrResolver builds account_tracker_link from LZT-only source (no tracker needed)."""
+    request = PipelineRequest(
+        game="clash-royale",
+        category="account",
+        kind="stock",
+        sources={"lzt": load_fixture("lzt_cr.json")},
+    )
+
+    account = CrResolver().resolve(request)
+
+    assert account.player_tag == "92RLL8U0Y"
+    assert "92RLL8U0Y" in account.account_tracker_link
+
+
 def test_cr_resolver_populates_builder_ready_fields(load_fixture) -> None:
     request = PipelineRequest(
         game="clash-royale",

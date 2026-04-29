@@ -2,6 +2,7 @@
 
 from .resolver import RobloxResolver
 from .content import RobloxComposer
+from .media import RobloxMediaStrategy
 from .sources import RobloxLztSourceAdapter
 from .marketplaces import RobloxEldoradoBuilder, RobloxGameBoostBuilder, RobloxG2GBuilder
 from ....core.enums import ListingCategory
@@ -15,6 +16,7 @@ def register(registry) -> None:
             category=ListingCategory.ACCOUNT,
             resolver=RobloxResolver(),
             composer=RobloxComposer(),
+            media_strategy=RobloxMediaStrategy(),
             marketplaces={
                 "eldorado": RobloxEldoradoBuilder(),
                 "gameboost": RobloxGameBoostBuilder(),
@@ -30,6 +32,7 @@ __all__ = [
     "RobloxGameBoostBuilder",
     "RobloxG2GBuilder",
     "RobloxLztSourceAdapter",
+    "RobloxMediaStrategy",
     "RobloxResolver",
     "register",
 ]

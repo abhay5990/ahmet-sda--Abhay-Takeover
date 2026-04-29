@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from .....core.contracts import CredentialBundle
+from ..models import CosmeticItem
 
 
 @dataclass(slots=True)
@@ -33,6 +34,7 @@ class FortniteLztSource:
     fortnite_next_change_email_date: int = 0
     cosmetic_titles: list[str] = field(default_factory=list)
     cosmetics_by_category: dict[str, list[str]] = field(default_factory=dict)
+    cosmetic_items: dict[str, list[CosmeticItem]] = field(default_factory=dict)
     preview_urls: dict[str, str] = field(default_factory=dict)
 
 
@@ -75,6 +77,7 @@ class FortniteLztSourceAdapter:
             fortnite_next_change_email_date=self._to_int(payload.get("fortnite_next_change_email_date"), default=0),
             cosmetic_titles=self._extract_cosmetic_titles(payload),
             cosmetics_by_category=self._extract_cosmetics_by_category(payload),
+            cosmetic_items=self._extract_cosmetic_items(payload),
             preview_urls=self._resolve_preview_urls(payload),
         )
 
@@ -121,6 +124,33 @@ class FortniteLztSourceAdapter:
             ]
             if titles:
                 result[category] = titles
+        return result
+
+    @classmethod
+    def _extract_cosmetic_items(cls, payload: dict[str, Any]) -> dict[str, list[CosmeticItem]]:
+        result: dict[str, list[CosmeticItem]] = {}
+        for key, category in cls._LZT_KEY_TO_CATEGORY.items():
+            raw_items = payload.get(key)
+            if not isinstance(raw_items, list):
+                continue
+            items: list[CosmeticItem] = []
+            for entry in raw_items:
+                if not isinstance(entry, dict):
+                    continue
+                item_id = str(entry.get("id") or "").strip()
+                title = str(entry.get("title") or "").strip()
+                if not item_id or not title:
+                    continue
+                items.append(CosmeticItem(
+                    id=item_id,
+                    title=title,
+                    rarity=str(entry.get("rarity") or "common").strip().lower(),
+                    type=category,
+                    from_shop=bool(entry.get("from_shop")),
+                    shop_price=int(entry.get("shop_price") or 0),
+                ))
+            if items:
+                result[category] = items
         return result
 
     def _resolve_preview_urls(self, payload: dict[str, Any]) -> dict[str, str]:

@@ -39,6 +39,10 @@ redis = [
 scraping = [
     "curl_cffi>=0.7.0",
 ]
+google-sheets = [
+    "gspread>=6.0.0",
+    "google-auth>=2.20.0",
+]
 
 [tool.setuptools.packages.find]
 where = ["."]

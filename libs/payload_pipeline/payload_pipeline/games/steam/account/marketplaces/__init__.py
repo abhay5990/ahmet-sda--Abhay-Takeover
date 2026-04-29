@@ -3,5 +3,11 @@
 from .eldorado import SteamEldoradoBuilder
 from .gameboost import SteamGameBoostBuilder
 from .g2g import SteamG2GBuilder
+from .playerauctions import SteamPlayerAuctionsBuilder
 
-__all__ = ["SteamEldoradoBuilder", "SteamGameBoostBuilder", "SteamG2GBuilder"]
+__all__ = [
+    "SteamEldoradoBuilder",
+    "SteamGameBoostBuilder",
+    "SteamG2GBuilder",
+    "SteamPlayerAuctionsBuilder",
+]

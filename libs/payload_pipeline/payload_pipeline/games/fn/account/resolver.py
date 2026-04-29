@@ -46,5 +46,6 @@ class FortniteResolver:
             fortnite_next_change_email_date=lzt.fortnite_next_change_email_date,
             cosmetic_titles=lzt.cosmetic_titles,
             cosmetics_by_category=lzt.cosmetics_by_category,
+            cosmetic_items=lzt.cosmetic_items,
             preview_urls=lzt.preview_urls,
         )

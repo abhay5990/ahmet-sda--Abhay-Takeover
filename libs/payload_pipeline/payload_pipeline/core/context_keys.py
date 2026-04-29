@@ -69,7 +69,9 @@ ELDORADO_IMAGE_RETRIES: ContextKey[int] = ContextKey("eldorado_image_retries")
 # ── Media control ────────────────────────────────────────────────────
 
 DISABLE_MEDIA: ContextKey[bool] = ContextKey("disable_media")
+MEDIA_SOURCE_POLICY: ContextKey[str] = ContextKey("media_source_policy")
 MEDIA_OUTPUT_DIR: ContextKey[str] = ContextKey("media_output_dir")
+FILE_OUTPUT_DIR: ContextKey[str] = ContextKey("file_output_dir")
 CACHE_BASE_DIR: ContextKey[str] = ContextKey("cache_base_dir")
 
 # ── Subplatform / slot management ────────────────────────────────────

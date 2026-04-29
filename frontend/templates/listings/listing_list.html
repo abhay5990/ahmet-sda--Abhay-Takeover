@@ -10,7 +10,7 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-4">
         <h1 class="text-2xl font-bold text-gray-900">Listings</h1>
-        <span class="text-sm text-gray-500">{{ page_obj.paginator.count }} total{% if selected_status or selected_game or selected_store or selected_is_instant or q %} (filtered){% endif %}</span>
+        <span class="text-sm text-gray-500">{{ page_obj.paginator.count }} total{% if selected_status or selected_game or selected_store or selected_is_instant or selected_missing_on or q %} (filtered){% endif %}</span>
     </div>
 
     <!-- Stats -->
@@ -25,7 +25,8 @@
             {% include "includes/_filter_select.html" with name="game" default_label="All Games" options=games selected=selected_game is_object=True %}
             {% include "includes/_filter_select.html" with name="store" default_label="All Stores" grouped_options=stores_by_provider selected=selected_store %}
             {% include "includes/_filter_select.html" with name="is_instant" default_label="All Types" options=instant_types selected=selected_is_instant %}
-            {% if q or selected_status or selected_game or selected_store or selected_is_instant %}
+            {% include "includes/_filter_select.html" with name="missing_on" default_label="Missing on store..." options=missing_on_stores selected=selected_missing_on %}
+            {% if q or selected_status or selected_game or selected_store or selected_is_instant or selected_missing_on %}
             <a href="{% url 'listings:list' %}" class="text-sm text-gray-500 hover:text-gray-700">Clear all</a>
             {% endif %}
         </form>

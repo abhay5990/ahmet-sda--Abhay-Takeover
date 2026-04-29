@@ -183,3 +183,53 @@ class PayloadPipeline:
             marketplace=build_ctx.marketplace,
             warnings=warnings,
         )
+
+    def build_bulk(
+        self,
+        prepared: PreparedListing[object],
+        build_ctx: BuildContext,
+    ) -> PipelineResult[object]:
+        """Build a bulk/Excel payload from a prepared listing.
+
+        Same as :meth:`build` but calls ``build_bulk_payload`` on the builder
+        instead of ``build_payload``.  Used for PA Excel bulk uploads.
+        """
+        warnings = list(prepared.warnings)
+
+        try:
+            definition = self.registry.get_game(prepared.game, prepared.category)
+            builder = definition.get_builder(build_ctx.marketplace)
+        except Exception as exc:
+            logger.error("Registry lookup failed for %s/%s: %s", prepared.game, build_ctx.marketplace, exc)
+            return PipelineResult(
+                success=False,
+                subject=prepared.subject,
+                listing=prepared.listing,
+                marketplace=build_ctx.marketplace,
+                error=str(exc),
+                error_stage="registry",
+                warnings=warnings,
+            )
+
+        try:
+            payload = builder.build_bulk_payload(prepared.subject, prepared.listing, build_ctx)
+        except Exception as exc:
+            logger.error("Bulk payload build failed for %s/%s: %s", prepared.game, build_ctx.marketplace, exc)
+            return PipelineResult(
+                success=False,
+                subject=prepared.subject,
+                listing=prepared.listing,
+                marketplace=build_ctx.marketplace,
+                error=str(exc),
+                error_stage="build_bulk",
+                warnings=warnings,
+            )
+
+        return PipelineResult(
+            success=True,
+            subject=prepared.subject,
+            listing=prepared.listing,
+            payload=payload,
+            marketplace=build_ctx.marketplace,
+            warnings=warnings,
+        )

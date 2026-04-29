@@ -1,14 +1,15 @@
 """PlayerAuctions builder for resolved GTA V accounts.
 
-``server = ["IOS", "Android"]`` and ``server_id = ["8458", "8459"]`` are the
-seller-wide PlayerAuctions defaults shared by nearly all games in this repo
-(CoC, CS2, Rainbow, Steam, Roblox, Ubisoft, Fortnite, Genshin).  They are not
-mobile-game-specific despite the names.
+Template reference: ``assets/playerauctions_templates/accounts/gta_v.json``
+  - game_id: 5917
+  - requiredFields: securityQA=false, parentalPassword=false
+  - servers: PS5(9874), Xbox Series(9889), PS4(5921), XBOX ONE(5922),
+    PC-Epic-Enhanced(14271), PC-Steam-Enhanced(14270),
+    PC-Rockstar-Enhanced(14272), PC-Epic-Legacy(5919),
+    PC-Rockstar-Legacy(7706), PC-Steam-Legacy(5920)
 
-``game_id = 8458`` and ``game_name = "grand-theft-auto-5"`` match the legacy
-builder exactly.  The old builder randomly selected one server/server_id via
-probability weights; here both values are passed as a list, which is already
-deterministic.
+Note: ``main_platform`` does not distinguish launcher (Epic/Steam/Rockstar)
+for PC variants; Steam is used as the default mapping.
 """
 
 from __future__ import annotations
@@ -26,6 +27,29 @@ _COVER_IMAGE_URL = (
     "https://image-cdn-p.azureedge.net/title-image/Gta/gta-v_cover.png"
 )
 
+# main_platform -> PA server name (Steam default for PC variants)
+_SERVER_NAME_MAP: dict[str, str] = {
+    "PlayStation 5": "PS5",
+    "Xbox Series X/S": "Xbox Series",
+    "PlayStation 4": "PS4",
+    "Xbox One": "XBOX ONE",
+    "PC - Enhanced": "PC-Steam-Enhanced",
+    "PC - Legacy": "PC-Steam-Legacy",
+}
+
+# main_platform -> PA server ID (Steam default for PC variants)
+_SERVER_ID_MAP: dict[str, str] = {
+    "PlayStation 5": "9874",
+    "Xbox Series X/S": "9889",
+    "PlayStation 4": "5921",
+    "Xbox One": "5922",
+    "PC - Enhanced": "14270",
+    "PC - Legacy": "5920",
+}
+
+_FALLBACK_SERVER = "PC-Steam-Legacy"
+_FALLBACK_SERVER_ID = "5920"
+
 
 class GtavPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     """Build PlayerAuctions payloads for the GTA V account slice."""
@@ -36,7 +60,7 @@ class GtavPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
 
     @property
     def game_id(self) -> int:
-        return 8458
+        return 5917
 
     @property
     def cover_image_url(self) -> str:
@@ -47,10 +71,12 @@ class GtavPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
         return "Rockstar Login"
 
     def _get_server(self, account: GtavResolvedAccount) -> list[str]:
-        return ["IOS", "Android"]
+        platform = account.main_platform or ""
+        return [_SERVER_NAME_MAP.get(platform, _FALLBACK_SERVER)]
 
     def _get_server_id(self, account: GtavResolvedAccount) -> list[str] | None:
-        return ["8458", "8459"]
+        platform = account.main_platform or ""
+        return [_SERVER_ID_MAP.get(platform, _FALLBACK_SERVER_ID)]
 
     def build_payload(
         self,

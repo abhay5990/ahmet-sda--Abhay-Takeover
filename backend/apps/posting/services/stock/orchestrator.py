@@ -49,6 +49,7 @@ _SENTINEL = object()
 _BACKOFF_BASE = 1.0
 _BACKOFF_MAX = 30.0
 _BACKOFF_FACTOR = 2.0
+_MAX_RETRIES = 5  # Give up after 5 consecutive 429s
 
 
 class StockOrchestrator:
@@ -65,6 +66,7 @@ class StockOrchestrator:
         self._image_fetcher = None  # ImageFetcher protocol instance
         self._cancel_event = Event()
         self._pa_uploader = PABulkUploader()
+        self._proxy_pool = None  # Built once at execute() start
 
     # ------------------------------------------------------------------
     # Setup
@@ -115,6 +117,7 @@ class StockOrchestrator:
             post_with_backoff=self._post_with_backoff,
             is_cancelled=self._is_cancelled,
             sentinel=_SENTINEL,
+            proxy_pool=self._proxy_pool,
         )
 
     # ------------------------------------------------------------------
@@ -133,6 +136,15 @@ class StockOrchestrator:
 
         # Build resolver from job's source_account
         self._resolver = self._build_resolver(job.source_account)
+
+        # Clear stale clients so they get rebuilt with fresh proxy pool
+        registry.clear_client_cache()
+
+        # Build proxy pool once — ensures all clients use proxies
+        from apps.integrations.proxy_pool import build_proxy_pool
+        self._proxy_pool = build_proxy_pool()
+        if self._proxy_pool:
+            logger.info("Proxy pool ready: %d proxies", self._proxy_pool.size)
 
         job.status = PostingJobStatus.RUNNING
         job.save(update_fields=['status'])
@@ -228,8 +240,11 @@ class StockOrchestrator:
             prepared = self._prepare_once(login, first_item.owned_product, job)
 
             if not prepared['ok']:
+                is_skip = prepared.get('error_category') == 'source_unsupported'
+                status = PostingJobItemStatus.SKIPPED if is_skip else PostingJobItemStatus.FAILED
+                log_level = PostingLogLevel.INFO if is_skip else PostingLogLevel.ERROR
                 for item in items:
-                    item.status = PostingJobItemStatus.FAILED
+                    item.status = status
                     item.error_message = (
                         f"[{prepared['stage']}] {prepared['error']}"
                     )
@@ -238,8 +253,8 @@ class StockOrchestrator:
                     ])
                     PostingLog.objects.create(
                         task_name='stock_post',
-                        level=PostingLogLevel.ERROR,
-                        message=f"prepare_once failed: {login}",
+                        level=log_level,
+                        message=f"prepare_once {'skipped' if is_skip else 'failed'}: {login}",
                         detail={
                             'item_id': item.id,
                             'job_id': job.id,
@@ -316,6 +331,19 @@ class StockOrchestrator:
             if owned_product.source_account and owned_product.source_account.provider:
                 provider = owned_product.source_account.provider
 
+            # Pipeline resolvers only understand LZT-format raw_data.
+            # Skip non-LZT sourced products until multi-source support is added.
+            if provider != 'lzt':
+                return {
+                    'ok': False,
+                    'stage': 'prepare_once',
+                    'error': (
+                        f"Source '{provider}' is not supported for stock posting"
+                        f" (login='{login}'). Only LZT-sourced accounts can be posted."
+                    ),
+                    'error_category': 'source_unsupported',
+                }
+
             if not owned_product.raw_data:
                 return {
                     'ok': False,
@@ -365,29 +393,66 @@ class StockOrchestrator:
     # ------------------------------------------------------------------
 
     def _post_with_backoff(self, item: PostingJobItem, payload: dict):
-        """POST to marketplace with exponential backoff on 429."""
+        """POST to marketplace with exponential backoff on 429.
+
+        Gives up after _MAX_RETRIES consecutive rate limits or if the job is
+        cancelled, returning the last failed result.
+        """
         from apps.integrations.proxy_pool import get_group_name
 
         provider = registry.get_provider(item.marketplace)
         credential = item.store.credential
         proxy_group = get_group_name(item.store)
 
-        facade = registry.get_or_build_client(item.marketplace, credential)
+        facade = registry.get_or_build_client(
+            item.marketplace, credential,
+            proxy_pool=self._proxy_pool,
+            proxy_group=proxy_group,
+        )
 
         product_data = {'payload': payload}
         if proxy_group:
             product_data['proxy_group'] = proxy_group
 
         delay = _BACKOFF_BASE
+        retries = 0
         while True:
             result = provider.create_listing(facade, product_data)
 
-            if not result.ok and self._is_rate_limited(result):
-                logger.warning(
-                    "Rate limited on %s (store=%s), backing off %.1fs",
-                    item.marketplace, item.store.name, delay,
+            if not result.ok:
+                error = result.error
+                logger.info(
+                    "API error on %s (store=%s): status=%s category=%s message=%s details=%s",
+                    item.marketplace, item.store.name,
+                    result.status_code,
+                    getattr(error, 'category', None),
+                    getattr(error, 'message', None),
+                    getattr(error, 'details', None),
                 )
-                time.sleep(delay)
+
+            if not result.ok and self._is_rate_limited(result):
+                retries += 1
+                if retries >= _MAX_RETRIES:
+                    logger.error(
+                        "Rate limit retry exhausted on %s (store=%s) after %d attempts",
+                        item.marketplace, item.store.name, retries,
+                    )
+                    return result
+
+                if self._cancel_event.is_set():
+                    logger.info(
+                        "Rate limit backoff aborted — job cancelled (store=%s)",
+                        item.store.name,
+                    )
+                    return result
+
+                logger.warning(
+                    "Rate limited on %s (store=%s), backing off %.1fs (%d/%d)",
+                    item.marketplace, item.store.name, delay, retries, _MAX_RETRIES,
+                )
+                # Use cancel_event.wait instead of time.sleep so cancel
+                # interrupts the backoff immediately.
+                self._cancel_event.wait(timeout=delay)
                 delay = min(delay * _BACKOFF_FACTOR, _BACKOFF_MAX)
                 continue
 

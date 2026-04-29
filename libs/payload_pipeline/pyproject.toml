@@ -7,8 +7,19 @@ name = "payload_pipeline"
 version = "0.1.0"
 description = "Marketplace payload builder — game-specific listing content and marketplace payloads"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "openpyxl",
+    "opencv-python",
+]
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["payload_pipeline*"]
+
+[tool.setuptools.package-data]
+payload_pipeline = [
+    "games/*/account/resources/*.json",
+    "games/*/account/resources/media/*.png",
+    "games/*/account/resources/image_map/*/*.png",
+    "shared/resources/*.ttf",
+]

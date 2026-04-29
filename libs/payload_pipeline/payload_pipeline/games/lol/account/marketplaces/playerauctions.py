@@ -1,4 +1,13 @@
-"""PlayerAuctions builder for resolved League of Legends accounts."""
+"""PlayerAuctions builder for resolved League of Legends accounts.
+
+Template reference: ``assets/playerauctions_templates/accounts/league_of_legends.json``
+  - game_id: 3637
+  - requiredFields: securityQA=true, parentalPassword=false
+  - servers: North America(3638), EU West(4143), EU Nordic and East(4144),
+    Oceania(5769), Turkey(5770), Russia(5771), Latin America North(5772),
+    Latin America South(5773), Brazil(6001), PBE(8605), Japan(8928),
+    Southeast Asia(9496), Middle East(13870)
+"""
 
 from __future__ import annotations
 
@@ -11,7 +20,6 @@ _COVER_IMAGE_URL = (
 )
 
 # region_phrase -> PlayerAuctions region name
-# Sourced from old builder: src/games/games/lol/builders/playerauctions_payload_builder.py
 _REGION_MAP: dict[str, str] = {
     "Latin America North": "Latin America North",
     "Europe Nordic & East": "EU Nordic and East",
@@ -31,7 +39,7 @@ _REGION_MAP: dict[str, str] = {
     "PBE": "PBE",
 }
 
-# region_phrase -> PlayerAuctions server ID
+# region_phrase -> PlayerAuctions server ID (from template)
 _SERVER_ID_MAP: dict[str, str] = {
     "Latin America North": "5772",
     "Europe Nordic & East": "4144",
@@ -47,8 +55,8 @@ _SERVER_ID_MAP: dict[str, str] = {
     "Thailand": "9496",
     "Oceania": "5769",
     "Philippines": "9496",
-    "Middle East": "9496",
-    "PBE": "9496",
+    "Middle East": "13870",
+    "PBE": "8605",
 }
 
 _FALLBACK_REGION = "Southeast Asia"
@@ -58,13 +66,16 @@ _FALLBACK_SERVER_ID = "9496"
 class LolPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     """Build PlayerAuctions payloads for the League of Legends account slice."""
 
+    requires_security_qa = True
+    requires_parental_password = False
+
     @property
     def game_name(self) -> str:
         return "league-of-legends"
 
     @property
     def game_id(self) -> int:
-        return 8445
+        return 3637
 
     @property
     def cover_image_url(self) -> str:

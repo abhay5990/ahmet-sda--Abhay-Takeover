@@ -17,7 +17,6 @@ from payload_pipeline.pricing.rules import calculate_price
 
 from apps.posting.models import PostingJob, PostingJobItem, SubplatformLimit
 from apps.posting.pipeline import adapter
-from apps.posting.pipeline.playerauctions.valorant import build_row
 from apps.posting.services.shared.pricing import (
     STOCK_PRICING_BASELINE,
     build_pricing_rule,
@@ -114,16 +113,26 @@ def build_item_payload(
                     },
                 }
 
-            # Bulk mode: Excel row (existing path)
-            excel_row = build_row(
-                resolved_account=prepared.subject,
-                final_price=final_price,
+            # Bulk mode: Excel row via pipeline build_bulk_payload()
+            pipeline_result = adapter.build_bulk(
+                prepared=prepared,
+                marketplace=item.marketplace,
+                pricing_defaults=pricing,
+                store=item.store,
+                kind=ListingKind.STOCK,
                 sub_platform=sub_platform,
             )
+            if not pipeline_result.success:
+                return {
+                    'ok': False,
+                    'stage': pipeline_result.error_stage or stage,
+                    'error': pipeline_result.error or 'Bulk build failed',
+                    'error_category': 'pipeline_error',
+                }
             return {
                 'ok': True, 'stage': stage,
                 'data': {
-                    'payload': excel_row,
+                    'payload': pipeline_result.payload,
                     'final_price': final_price,
                     'sub_platform': sub_platform,
                     'mode': 'excel_row',

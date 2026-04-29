@@ -56,12 +56,14 @@ class StockConsumer:
         post_with_backoff: Callable[[PostingJobItem, dict], object],
         is_cancelled: Callable[[PostingJob], bool],
         sentinel: object,
+        proxy_pool=None,
     ):
         self._cancel_event = cancel_event
         self._pa_uploader = pa_uploader
         self._post_with_backoff = post_with_backoff
         self._is_cancelled = is_cancelled
         self._sentinel = sentinel
+        self._proxy_pool = proxy_pool
 
     # ------------------------------------------------------------------
     # Non-PA consumer
@@ -200,10 +202,12 @@ class StockConsumer:
 
                 # Build facade lazily from first item
                 if facade is None:
+                    proxy_group = get_group_name(item.store)
                     facade = registry.get_or_build_client(
                         item.marketplace, item.store.credential,
+                        proxy_pool=self._proxy_pool,
+                        proxy_group=proxy_group,
                     )
-                    proxy_group = get_group_name(item.store)
 
                 build_result = build_item_payload(item, prepared_data, job)
 

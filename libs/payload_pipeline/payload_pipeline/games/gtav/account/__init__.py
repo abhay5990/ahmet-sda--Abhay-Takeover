@@ -2,6 +2,7 @@
 
 from .resolver import GtavResolver
 from .content import GtavComposer
+from .media import GtavMediaStrategy
 from .sources import GtavLztSourceAdapter
 from .marketplaces import (
     GtavEldoradoBuilder,
@@ -20,6 +21,7 @@ def register(registry) -> None:
             category=ListingCategory.ACCOUNT,
             resolver=GtavResolver(),
             composer=GtavComposer(),
+            media_strategy=GtavMediaStrategy(),
             marketplaces={
                 "eldorado": GtavEldoradoBuilder(),
                 "g2g": GtavG2GBuilder(),
@@ -36,6 +38,7 @@ __all__ = [
     "GtavG2GBuilder",
     "GtavGameBoostBuilder",
     "GtavLztSourceAdapter",
+    "GtavMediaStrategy",
     "GtavPlayerAuctionsBuilder",
     "GtavResolver",
     "register",

@@ -1,11 +1,9 @@
-"""Media generation for Valorant using prepared preview URLs."""
+"""Media generation for Valorant using LZT previews or generated media."""
 
 from __future__ import annotations
 
 import logging
 from pathlib import Path
-
-logger = logging.getLogger(__name__)
 
 from PIL import Image
 
@@ -13,7 +11,13 @@ from ..models import ValorantResolvedAccount
 from .....core import context_keys as ctx
 from .....core.contracts import PipelineRequest
 from .....shared.lzt_image_fetcher import LztImageFetcher
+from .....shared.media_policy import MediaSource, media_source_order
 from .....shared.paths import default_media_output_dir
+from .image_renderer import ValorantImageRenderer
+
+logger = logging.getLogger(__name__)
+
+_VALORANT_CATEGORIES = ("weapons", "agents", "buddies")
 
 
 class ValorantPreviewDownloader:
@@ -32,7 +36,7 @@ class ValorantPreviewDownloader:
         output_path.mkdir(parents=True, exist_ok=True)
 
         saved_paths: list[str] = []
-        for category in ("weapons", "agents", "buddies"):
+        for category in _VALORANT_CATEGORIES:
             image_path = output_path / f"valorant_{category}.png"
 
             ok = self.fetcher.fetch_to_file(
@@ -48,7 +52,7 @@ class ValorantPreviewDownloader:
 
     @staticmethod
     def _normalize_image(path: Path) -> None:
-        """Ensure the saved file is a valid PNG with correct colour mode."""
+        """Ensure the saved file is a valid PNG with a predictable colour mode."""
         image = Image.open(path)
         image.load()
         if image.mode not in ("RGB", "RGBA"):
@@ -59,24 +63,79 @@ class ValorantPreviewDownloader:
 class ValorantMediaStrategy:
     """Prepare local preview images before optional external publication."""
 
-    def __init__(self, downloader: ValorantPreviewDownloader | None = None) -> None:
+    def __init__(
+        self,
+        downloader: ValorantPreviewDownloader | None = None,
+        renderer: ValorantImageRenderer | None = None,
+    ) -> None:
         self._downloader = downloader
+        self._renderer = renderer
 
     def prepare(self, subject: ValorantResolvedAccount, request: PipelineRequest) -> list[str]:
         if bool(request.context.get(ctx.DISABLE_MEDIA)):
             return []
+
+        output_dir = self._resolve_output_dir(request, subject.item_id)
+        for source in media_source_order(request):
+            paths = (
+                self._render_generated(subject, output_dir)
+                if source is MediaSource.GENERATED
+                else self._download_lzt(subject, request, output_dir)
+            )
+            if paths:
+                return paths
+
+        return []
+
+    def _render_generated(
+        self,
+        subject: ValorantResolvedAccount,
+        output_dir: str,
+    ) -> list[str]:
+        if not subject.skin_names and not subject.agent_names and not subject.buddy_names:
+            return []
+
+        renderer = self._renderer or ValorantImageRenderer()
+        try:
+            return renderer.render(
+                skin_names=subject.skin_names,
+                agent_names=subject.agent_names,
+                buddy_names=subject.buddy_names,
+                output_dir=output_dir,
+                item_id=subject.item_id,
+            )
+        except Exception as exc:
+            logger.warning(
+                "Valorant generated media failed for item %s: %s",
+                subject.item_id,
+                exc,
+            )
+            return []
+
+    def _download_lzt(
+        self,
+        subject: ValorantResolvedAccount,
+        request: PipelineRequest,
+        output_dir: str,
+    ) -> list[str]:
         if not subject.preview_urls:
             return []
 
         image_fetcher = request.context.get(ctx.LZT_IMAGE_FETCHER)
         fetcher = LztImageFetcher(image_fetcher)
         downloader = self._downloader or ValorantPreviewDownloader(fetcher)
-
-        output_dir = self._resolve_output_dir(request, subject.item_id)
         try:
-            return downloader.download(subject.preview_urls, output_dir, item_id=subject.item_id)
+            return downloader.download(
+                subject.preview_urls,
+                output_dir,
+                item_id=subject.item_id,
+            )
         except Exception as exc:
-            logger.warning("Valorant media download failed for item %s: %s", subject.item_id, exc)
+            logger.warning(
+                "Valorant LZT media download failed for item %s: %s",
+                subject.item_id,
+                exc,
+            )
             return []
 
     def _resolve_output_dir(self, request: PipelineRequest, item_id: str) -> str:

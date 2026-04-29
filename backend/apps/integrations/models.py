@@ -124,6 +124,7 @@ class ServiceType(models.TextChoices):
     GAME          = 'game-service',  'Game Service'
     NOTIFICATION  = 'notification',  'Notification Service'
     EMAIL         = 'email',         'Email Service'
+    GOOGLE_SHEETS = 'google-sheets', 'Google Sheets'
     OTHER         = 'other',         'Other'
 
 

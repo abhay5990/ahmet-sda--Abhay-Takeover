@@ -8,6 +8,7 @@ from payload_pipeline import PayloadPipeline, build_default_registry
 from payload_pipeline.core.contracts import BuildContext, MediaBundle, PipelineRequest
 from payload_pipeline.marketplaces.eldorado import EldoradoConfig
 from payload_pipeline.marketplaces.g2g import G2GConfig
+from payload_pipeline.shared.paths import default_media_output_dir
 from payload_pipeline.games.val.account import (
     ValorantComposer,
     ValorantG2GBuilder,
@@ -83,7 +84,7 @@ def test_valorant_pipeline_builds_eldorado_payload(load_fixture) -> None:
 
 def test_valorant_media_strategy_uses_resolved_preview_urls(load_fixture) -> None:
     raw = load_fixture("lzt_val.json")
-    output_dir = Path("output/payload_pipeline/tests/valorant_media")
+    output_dir = Path(default_media_output_dir("valorant", suffix="tests/valorant_media"))
     request = PipelineRequest(
         game="valorant",
         category="account",

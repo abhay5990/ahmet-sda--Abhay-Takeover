@@ -3,9 +3,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from apis_sdk.factories.eldorado_factory import EldoradoFactory
+from apis_sdk.infrastructure.logging.logger import StdlibLogger
 
 from .base import AbstractProvider, CredentialField
 from .registry import register_provider
+
+_sdk_logger = StdlibLogger("apis_sdk.eldorado")
 
 if TYPE_CHECKING:
     from apps.integrations.models import IntegrationCredential
@@ -40,6 +43,7 @@ class EldoradoProvider(AbstractProvider):
             enable_cognito_auth=bool(creds.get('email') and creds.get('password')),
             transport=transport,
             proxy_pool=proxy_pool,
+            logger=_sdk_logger,
         )
 
     def fetch_products(self, client: Any, **kwargs) -> Any:

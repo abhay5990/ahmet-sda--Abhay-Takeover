@@ -10,7 +10,83 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-4">
         <h1 class="text-2xl font-bold text-gray-900">Owned Products</h1>
-        <span class="text-sm text-gray-500">{{ page_obj.paginator.count }} total</span>
+        <div class="flex items-center gap-3">
+            <span class="text-sm text-gray-500">{{ page_obj.paginator.count }} total</span>
+            {% if has_sheets_credential and user_role == 'admin' %}
+            <button @click="showExportModal = true"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 font-medium transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Export to Sheet
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div x-show="showExportModal" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+         @keydown.escape.window="showExportModal = false">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6"
+             @click.outside="showExportModal = false">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Export to Google Sheet</h2>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Spreadsheet ID or URL</label>
+                    <input type="text" x-model="exportForm.spreadsheetId"
+                           placeholder="Paste spreadsheet URL or ID..."
+                           class="w-full border-gray-300 rounded-md text-sm focus:ring-green-500 focus:border-green-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Sheet Name</label>
+                    <input type="text" x-model="exportForm.sheetName"
+                           placeholder="e.g. Products"
+                           class="w-full border-gray-300 rounded-md text-sm focus:ring-green-500 focus:border-green-500">
+                    <p class="text-xs text-gray-400 mt-1">If this sheet doesn't exist, it will be created.</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Row Limit</label>
+                    <input type="number" x-model.number="exportForm.limit" min="0"
+                           placeholder="0 = export all"
+                           class="w-full border-gray-300 rounded-md text-sm focus:ring-green-500 focus:border-green-500">
+                    <p class="text-xs text-gray-400 mt-1">Leave 0 or empty to export all matching rows.</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Extra Fields</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <template x-for="field in extraFieldOptions" :key="field.key">
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                                <input type="checkbox" :value="field.key"
+                                       x-model="exportForm.extraFields"
+                                       class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                                <span x-text="field.label"></span>
+                            </label>
+                        </template>
+                    </div>
+                </div>
+
+                <p class="text-xs text-gray-500">
+                    Exporting <strong>{{ page_obj.paginator.count }}</strong> products matching current filters.
+                </p>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button @click="showExportModal = false"
+                        class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors">
+                    Cancel
+                </button>
+                <button @click="doExport()"
+                        :disabled="!exportForm.spreadsheetId || !exportForm.sheetName"
+                        class="px-4 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    Export
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Stats -->
@@ -23,7 +99,8 @@
             {% include "includes/_filter_select.html" with name="category" default_label="All Categories" options=categories selected=selected_category %}
             {% include "includes/_filter_select.html" with name="status" default_label="All Statuses" options=statuses selected=selected_status %}
             {% include "includes/_filter_select.html" with name="game" default_label="All Games" options=games selected=selected_game is_object=True %}
-            {% if search_query or selected_status or selected_game or selected_category %}
+            {% include "includes/_filter_select.html" with name="missing_on" default_label="Missing on store..." options=stores selected=selected_missing_on %}
+            {% if search_query or selected_status or selected_game or selected_category or selected_missing_on %}
             <a href="{% url 'inventory:index' %}" class="text-sm text-gray-500 hover:text-gray-700">Clear all</a>
             {% endif %}
         </form>
@@ -141,8 +218,41 @@ function ownedProductsBrowser() {
         bulkStatus: 'listed',
         loading: false,
         loadingMsg: '',
+        showExportModal: false,
+        exportForm: {
+            spreadsheetId: '',
+            sheetName: '',
+            extraFields: [],
+            limit: 0,
+        },
+        extraFieldOptions: [
+            { key: 'password', label: 'Password' },
+            { key: 'email', label: 'Email' },
+            { key: 'email_password', label: 'Email Password' },
+            { key: 'security_email', label: 'Security Email' },
+            { key: 'security_email_password', label: 'Security Email Pwd' },
+            { key: 'email_login_link', label: 'Email Login Link' },
+            { key: 'source_product_id', label: 'Source Product ID' },
+            { key: 'purchased_at', label: 'Purchased At' },
+        ],
 
-        init() {},
+        init() {
+            try {
+                const saved = JSON.parse(localStorage.getItem('exportSheetForm'));
+                if (saved) {
+                    this.exportForm.spreadsheetId = saved.spreadsheetId || '';
+                    this.exportForm.sheetName = saved.sheetName || '';
+                    this.exportForm.extraFields = saved.extraFields || [];
+                    this.exportForm.limit = saved.limit || 0;
+                }
+            } catch (_) {}
+        },
+
+        saveExportPrefs() {
+            try {
+                localStorage.setItem('exportSheetForm', JSON.stringify(this.exportForm));
+            } catch (_) {}
+        },
 
         pageIds() {
             return [{% for product in page_obj %}{{ product.id }},{% endfor %}];
@@ -195,6 +305,34 @@ function ownedProductsBrowser() {
                     alert('Error: ' + (data.error || 'Unknown error'));
                 }
             } catch (e) { this.loading = false; alert('Request failed: ' + e.message); }
+        },
+
+        async doExport() {
+            this.saveExportPrefs();
+            this.showExportModal = false;
+            this.loading = true;
+            this.loadingMsg = 'Exporting to Google Sheet\u2026';
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const url = '/inventory/api/products/export-sheet/?' + params.toString();
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.csrfToken() },
+                    body: JSON.stringify({
+                        spreadsheet_id: this.exportForm.spreadsheetId,
+                        sheet_name: this.exportForm.sheetName,
+                        extra_fields: this.exportForm.extraFields,
+                        limit: this.exportForm.limit || 0,
+                    }),
+                });
+                const data = await res.json().catch(() => ({}));
+                this.loading = false;
+                if (res.ok) {
+                    alert(`Exported ${data.rows_exported} rows successfully.`);
+                } else {
+                    alert('Export failed: ' + (data.error || 'Unknown error'));
+                }
+            } catch (e) { this.loading = false; alert('Export failed: ' + e.message); }
         },
     };
 }

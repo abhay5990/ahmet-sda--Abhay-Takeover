@@ -12,7 +12,7 @@ from core.enums import ProductCategory
 GAMEBOOST_STATUS_MAP = {
     'new': OrderStatus.PENDING,
     'in_delivery': OrderStatus.PENDING,
-    'delivered': OrderStatus.DELIVERED,
+    'delivered': OrderStatus.COMPLETED,
     'completed': OrderStatus.COMPLETED,
     'refunded': OrderStatus.REFUNDED,
     'cancelled': OrderStatus.CANCELLED,

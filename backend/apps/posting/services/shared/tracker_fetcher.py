@@ -18,6 +18,7 @@ Usage (both stock and dropship):
 
 from __future__ import annotations
 
+import json
 import logging
 import re
 from typing import Any
@@ -217,6 +218,11 @@ def _extract_supercell_tag(raw_data: dict[str, Any], *, tag_key: str) -> str:
     """
     payload = raw_data.get("item") if isinstance(raw_data.get("item"), dict) else raw_data
     systems = payload.get("supercell_systems") or payload.get("systems") or {}
+    if isinstance(systems, str):
+        try:
+            systems = json.loads(systems)
+        except (json.JSONDecodeError, ValueError):
+            return ""
     if isinstance(systems, dict):
         tag = str(systems.get(tag_key) or "").strip()
         if tag:
@@ -268,10 +274,12 @@ def _get_clashofstats_facade():
     if _clashofstats_facade is not None:
         return _clashofstats_facade
     try:
+        from apis_sdk.clients.trackers.clashofstats.config import ClashOfStatsConfig
         from apis_sdk.factories.clashofstats_factory import ClashOfStatsFactory
         from apis_sdk.infrastructure.http.curl_cffi_transport import CurlCffiTransport
 
-        transport = CurlCffiTransport()
+        config = ClashOfStatsConfig()
+        transport = CurlCffiTransport(default_headers=config.get_default_headers())
         _clashofstats_facade = ClashOfStatsFactory.create(transport=transport)
         logger.debug("ClashOfStatsFacade initialised")
     except Exception:

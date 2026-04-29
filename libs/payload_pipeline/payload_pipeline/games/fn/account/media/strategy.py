@@ -1,4 +1,4 @@
-"""Media generation for Fortnite using the LZT image API."""
+"""Media generation for Fortnite using LZT previews or local grid rendering."""
 
 from __future__ import annotations
 
@@ -8,19 +8,20 @@ from pathlib import Path
 from PIL import Image
 
 from ..models import FortniteResolvedAccount
+from .grid_renderer import FortniteGridRenderer
 from .....core import context_keys as ctx
 from .....core.contracts import PipelineRequest
 from .....shared.lzt_image_fetcher import LztImageFetcher
+from .....shared.media_policy import MediaSource, media_source_order
 from .....shared.paths import default_media_output_dir
 
 logger = logging.getLogger(__name__)
 
-# Fortnite LZT image categories (pipeline name → used by ImageFetcher)
 _FORTNITE_CATEGORIES = ("skins", "pickaxes", "dances", "gliders")
 
 
 class FortnitePreviewDownloader:
-    """Download Fortnite preview images via LZT API and save them locally."""
+    """Download Fortnite preview images via the injected LZT image fetcher."""
 
     def __init__(self, fetcher: LztImageFetcher | None = None) -> None:
         self.fetcher = fetcher or LztImageFetcher()
@@ -51,7 +52,7 @@ class FortnitePreviewDownloader:
 
     @staticmethod
     def _normalize_image(path: Path) -> None:
-        """Ensure the saved file is a valid PNG with correct colour mode."""
+        """Ensure the saved file is a valid PNG with a predictable colour mode."""
         image = Image.open(path)
         image.load()
         if image.mode not in ("RGB", "RGBA"):
@@ -62,24 +63,69 @@ class FortnitePreviewDownloader:
 class FortniteMediaStrategy:
     """Prepare local preview images before optional external publication."""
 
-    def __init__(self, downloader: FortnitePreviewDownloader | None = None) -> None:
+    def __init__(
+        self,
+        downloader: FortnitePreviewDownloader | None = None,
+        renderer: FortniteGridRenderer | None = None,
+    ) -> None:
         self._downloader = downloader
+        self._renderer = renderer
 
     def prepare(self, subject: FortniteResolvedAccount, request: PipelineRequest) -> list[str]:
         if bool(request.context.get(ctx.DISABLE_MEDIA)):
             return []
 
+        output_dir = self._resolve_output_dir(request, subject.item_id)
+        for source in media_source_order(request):
+            paths = (
+                self._render_generated(subject, output_dir)
+                if source is MediaSource.GENERATED
+                else self._download_lzt(subject, request, output_dir)
+            )
+            if paths:
+                return paths
+
+        return []
+
+    def _render_generated(self, subject: FortniteResolvedAccount, output_dir: str) -> list[str]:
+        if not subject.cosmetic_items:
+            return []
+
+        renderer = self._renderer or FortniteGridRenderer()
+        try:
+            return renderer.render_all(subject.cosmetic_items, output_dir)
+        except Exception as exc:
+            logger.warning(
+                "Fortnite grid rendering failed for item %s: %s",
+                subject.item_id,
+                exc,
+            )
+            return []
+
+    def _download_lzt(
+        self,
+        subject: FortniteResolvedAccount,
+        request: PipelineRequest,
+        output_dir: str,
+    ) -> list[str]:
+        if not subject.preview_urls:
+            return []
+
         image_fetcher = request.context.get(ctx.LZT_IMAGE_FETCHER)
         fetcher = LztImageFetcher(image_fetcher)
         downloader = self._downloader or FortnitePreviewDownloader(fetcher)
-
-        output_dir = self._resolve_output_dir(request, subject.item_id)
         try:
             return downloader.download(
-                subject.preview_urls, output_dir, item_id=subject.item_id,
+                subject.preview_urls,
+                output_dir,
+                item_id=subject.item_id,
             )
         except Exception as exc:
-            logger.warning("Fortnite media generation failed for item %s: %s", subject.item_id, exc)
+            logger.warning(
+                "Fortnite LZT media download failed for item %s: %s",
+                subject.item_id,
+                exc,
+            )
             return []
 
     def _resolve_output_dir(self, request: PipelineRequest, item_id: str) -> str:

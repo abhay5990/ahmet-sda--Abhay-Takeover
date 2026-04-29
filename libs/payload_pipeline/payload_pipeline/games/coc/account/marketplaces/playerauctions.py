@@ -1,4 +1,10 @@
-"""PlayerAuctions builder for resolved Clash of Clans accounts."""
+"""PlayerAuctions builder for resolved Clash of Clans accounts.
+
+Template reference: ``assets/playerauctions_templates/accounts/clash_of_clans.json``
+  - game_id: 6156
+  - requiredFields: securityQA=false, parentalPassword=false
+  - servers: Main Server(6157)
+"""
 
 from __future__ import annotations
 
@@ -20,7 +26,7 @@ class CocPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
 
     @property
     def game_id(self) -> int:
-        return 8455
+        return 6156
 
     @property
     def cover_image_url(self) -> str:
@@ -31,7 +37,7 @@ class CocPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
         return "Supercell ID"
 
     def _get_server(self, account: CocResolvedAccount) -> list[str]:
-        return ["IOS", "Android"]
+        return ["Main Server"]
 
     def _get_server_id(self, account: CocResolvedAccount) -> list[str] | None:
-        return ["8455", "8456"]
+        return ["6157"]

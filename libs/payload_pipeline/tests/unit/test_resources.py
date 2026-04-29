@@ -87,12 +87,10 @@ def test_r6_image_renderer_cache_writes_to_output_dir() -> None:
     cache_path = Path(_DEFAULT_CACHE_BASE)
     # Should not be under assets/
     assert "assets" not in str(cache_path)
-    # Should contain output/payload_pipeline pattern
     parts = cache_path.parts
     assert "output" in parts
-    assert "payload_pipeline" in parts
-    assert "cache" in parts
-    assert "r6" in parts
+    assert "image-cache" in parts
+    assert "rainbow-six-siege" in parts
 
 
 def test_r6_default_output_dir_is_centralized() -> None:
@@ -105,7 +103,8 @@ def test_r6_default_output_dir_is_centralized() -> None:
     assert tracker_dir == _DEFAULT_R6_OUTPUT_DIR
     output_path = Path(_DEFAULT_R6_OUTPUT_DIR)
     assert "output" in output_path.parts
-    assert "r6" in output_path.parts
+    assert "rainbow-six-siege" in output_path.parts
+    assert "images" in output_path.parts
 
 
 def test_lol_catalog_resources_dir_is_file_relative() -> None:
@@ -117,7 +116,7 @@ def test_lol_catalog_resources_dir_is_file_relative() -> None:
 
 
 def test_shared_paths_default_media_output_dir() -> None:
-    """shared.paths produces CWD-relative output dirs by default."""
+    """shared.paths produces repo-root output dirs by default."""
     from payload_pipeline.shared.paths import default_media_output_dir
 
     r6_dir = Path(default_media_output_dir("r6"))
@@ -125,7 +124,6 @@ def test_shared_paths_default_media_output_dir() -> None:
 
     # Both should contain the expected game slug and structure
     assert "output" in r6_dir.parts
-    assert "payload_pipeline" in r6_dir.parts
     assert "r6" in r6_dir.parts
     assert "images" in r6_dir.parts
 
@@ -133,30 +131,47 @@ def test_shared_paths_default_media_output_dir() -> None:
     assert "abc123" in val_dir.parts
 
 
+def test_shared_paths_default_file_output_dir() -> None:
+    from payload_pipeline.shared.paths import default_file_output_dir
+
+    files_dir = Path(default_file_output_dir("clash-royale", suffix="194728419"))
+
+    assert "output" in files_dir.parts
+    assert "clash-royale" in files_dir.parts
+    assert "files" in files_dir.parts
+    assert "194728419" in files_dir.parts
+
+
 def test_shared_paths_default_cache_base_dir() -> None:
     from payload_pipeline.shared.paths import default_cache_base_dir
 
     cache_dir = Path(default_cache_base_dir("r6"))
     assert "output" in cache_dir.parts
-    assert "payload_pipeline" in cache_dir.parts
-    assert "cache" in cache_dir.parts
+    assert "image-cache" in cache_dir.parts
     assert "r6" in cache_dir.parts
 
 
 def test_shared_paths_env_override(monkeypatch) -> None:
-    """PAYLOAD_PIPELINE_OUTPUT_DIR env var overrides the CWD-relative default."""
-    from payload_pipeline.shared.paths import default_media_output_dir, default_cache_base_dir
+    """PAYLOAD_PIPELINE_OUTPUT_DIR env var overrides the repo-root default."""
+    from payload_pipeline.shared.paths import (
+        default_cache_base_dir,
+        default_file_output_dir,
+        default_media_output_dir,
+    )
 
     # Use a distinctive marker that won't collide with CWD path parts
     monkeypatch.setenv("PAYLOAD_PIPELINE_OUTPUT_DIR", "CUSTOM_OVERRIDE_ROOT")
 
     media = default_media_output_dir("r6")
+    files = default_file_output_dir("r6")
     cache = default_cache_base_dir("r6")
 
     assert "CUSTOM_OVERRIDE_ROOT" in media
     assert "r6" in Path(media).parts
+    assert "CUSTOM_OVERRIDE_ROOT" in files
+    assert "files" in Path(files).parts
     assert "CUSTOM_OVERRIDE_ROOT" in cache
-    assert "cache" in Path(cache).parts
+    assert "image-cache" in Path(cache).parts
 
 
 def test_hosted_media_publisher_requires_explicit_uploaders() -> None:

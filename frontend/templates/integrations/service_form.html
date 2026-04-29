@@ -31,7 +31,7 @@
     {% endif %}
 </div>
 
-<form method="post" class="space-y-6">
+<form method="post" enctype="multipart/form-data" class="space-y-6">
     {% csrf_token %}
 
     <div class="bg-white rounded-lg shadow p-6">
@@ -125,7 +125,10 @@
         }
         fetch(baseUrl.replace('__TYPE__', encodeURIComponent(serviceType)))
             .then(r => r.json())
-            .then(data => { container.innerHTML = data.html; });
+            .then(data => {
+                container.innerHTML = data.html;
+                initFileJsonFields();
+            });
     });
 
     // Trigger on load if already selected
@@ -133,4 +136,69 @@
 })();
 </script>
 {% endif %}
+<script>
+/* file_json field handler: reads uploaded JSON file into the hidden input */
+function initFileJsonFields() {
+    document.querySelectorAll('input[type=file][accept*=".json"]').forEach(function(fileInput) {
+        if (fileInput._fileJsonBound) return;
+        fileInput._fileJsonBound = true;
+
+        /* Replace browser-locale file input with custom English button */
+        fileInput.style.display = 'none';
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex items-center gap-2';
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md border border-gray-300 font-medium transition-colors';
+        btn.textContent = 'Choose File';
+        const fileLabel = document.createElement('span');
+        fileLabel.className = 'text-sm text-gray-500';
+        fileLabel.textContent = 'No file chosen';
+        btn.addEventListener('click', function() { fileInput.click(); });
+        wrapper.appendChild(btn);
+        wrapper.appendChild(fileLabel);
+        fileInput.parentElement.insertBefore(wrapper, fileInput);
+
+        /* Find the companion hidden field (name without __file suffix) */
+        const hiddenName = fileInput.name.replace('__file', '');
+        const hiddenInput = document.querySelector('input[name="' + hiddenName + '"]');
+        if (!hiddenInput) return;
+
+        /* Status display element */
+        let status = fileInput.parentElement.querySelector('.file-json-status');
+        if (!status) {
+            status = document.createElement('p');
+            status.className = 'file-json-status mt-1 text-xs';
+            fileInput.parentElement.appendChild(status);
+        }
+
+        fileInput.addEventListener('change', function() {
+            fileLabel.textContent = this.files[0] ? this.files[0].name : 'No file chosen';
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    hiddenInput.value = e.target.result;
+                    const email = parsed.client_email || '';
+                    status.textContent = email ? 'Loaded: ' + email : 'JSON loaded successfully.';
+                    status.className = 'file-json-status mt-1 text-xs text-emerald-600';
+
+                    /* Auto-fill service_account_email readonly field if present */
+                    const emailField = document.querySelector('input[name="cred_service_account_email"]');
+                    if (emailField && email) emailField.value = email;
+                } catch (err) {
+                    status.textContent = 'Invalid JSON file.';
+                    status.className = 'file-json-status mt-1 text-xs text-red-600';
+                    hiddenInput.value = '';
+                }
+            };
+            reader.readAsText(file);
+        });
+    });
+}
+/* Init on page load (for edit forms that already have fields rendered) */
+document.addEventListener('DOMContentLoaded', initFileJsonFields);
+</script>
 {% endblock %}

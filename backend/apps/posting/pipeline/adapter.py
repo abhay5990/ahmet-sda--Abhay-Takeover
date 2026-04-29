@@ -134,12 +134,11 @@ def build(
 ) -> PipelineResult:
     """Run the marketplace-specific build phase.
 
-    Called once per store in consumer threads (non-PA only).
-    PA uses ``prepared.subject`` directly via playerauctions/valorant.py.
+    Called once per store in consumer threads.
 
     Args:
         prepared:         Output of ``prepare()`` — resolved subject + listing draft.
-        marketplace:      Provider slug ('eldorado', 'g2g', 'gameboost').
+        marketplace:      Provider slug ('eldorado', 'g2g', 'gameboost', 'playerauctions').
         pricing_defaults: PricingDefaults dataclass (stock) or DropshipTargetURL
                           (dropship). Duck-typed: must expose multiplier_low/mid/high,
                           min_price, forced_ending fields.
@@ -158,3 +157,27 @@ def build(
         sub_platform=sub_platform,
     )
     return _get_pipeline().build(prepared, ctx)
+
+
+def build_bulk(
+    *,
+    prepared: PreparedListing,
+    marketplace: str,
+    pricing_defaults,
+    store,
+    kind: ListingKind,
+    sub_platform: str = '',
+) -> PipelineResult:
+    """Run the marketplace-specific bulk build phase (Excel row dict).
+
+    Same as :func:`build` but produces a bulk/Excel payload via
+    ``build_bulk_payload()`` instead of ``build_payload()``.
+    """
+    ctx = build_context(
+        marketplace=marketplace,
+        pricing_defaults=pricing_defaults,
+        store=store,
+        kind=kind,
+        sub_platform=sub_platform,
+    )
+    return _get_pipeline().build_bulk(prepared, ctx)

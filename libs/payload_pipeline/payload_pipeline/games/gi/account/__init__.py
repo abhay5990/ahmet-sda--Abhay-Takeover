@@ -2,6 +2,7 @@
 
 from .resolver import GenshinResolver
 from .content import GenshinComposer
+from .media import GenshinMediaStrategy
 from .sources import GenshinLztSourceAdapter
 from .marketplaces import (
     GenshinImpactEldoradoBuilder,
@@ -19,6 +20,7 @@ def register(registry) -> None:
             category=ListingCategory.ACCOUNT,
             resolver=GenshinResolver(),
             composer=GenshinComposer(),
+            media_strategy=GenshinMediaStrategy(),
             marketplaces={
                 "eldorado": GenshinImpactEldoradoBuilder(),
                 "gameboost": GenshinImpactGameBoostBuilder(),
@@ -34,6 +36,7 @@ __all__ = [
     "GenshinImpactGameBoostBuilder",
     "GenshinImpactPlayerAuctionsBuilder",
     "GenshinLztSourceAdapter",
+    "GenshinMediaStrategy",
     "GenshinResolver",
     "register",
 ]

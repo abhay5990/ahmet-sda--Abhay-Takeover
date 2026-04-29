@@ -1,4 +1,10 @@
-"""PlayerAuctions builder for resolved Brawl Stars accounts."""
+"""PlayerAuctions builder for resolved Brawl Stars accounts.
+
+Template reference: ``assets/playerauctions_templates/accounts/brawl_stars.json``
+  - game_id: 8463
+  - requiredFields: securityQA=true, parentalPassword=true
+  - servers: Main Server(8465)
+"""
 
 from __future__ import annotations
 
@@ -13,6 +19,9 @@ _COVER_IMAGE_URL = (
 
 class BSPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     """Build PlayerAuctions payloads for the Brawl Stars account slice."""
+
+    requires_security_qa = True
+    requires_parental_password = True
 
     @property
     def game_name(self) -> str:
@@ -34,4 +43,4 @@ class BSPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
         return ["Main Server"]
 
     def _get_server_id(self, account: BSResolvedAccount) -> list[str] | None:
-        return ["8464"]
+        return ["8465"]

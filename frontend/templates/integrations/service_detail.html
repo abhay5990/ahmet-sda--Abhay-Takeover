@@ -82,7 +82,9 @@
             <div class="flex justify-between">
                 <dt class="text-sm text-gray-500">{{ field.label }}</dt>
                 <dd class="text-sm font-medium">
-                    {% if field.is_set %}
+                    {% if field.display_value %}
+                        <span class="text-gray-900 font-mono">{{ field.display_value }}</span>
+                    {% elif field.is_set %}
                         {% if field.is_password %}
                         <span class="text-emerald-600">********</span>
                         {% else %}

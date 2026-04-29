@@ -162,7 +162,7 @@ class ServiceCreateView(LoginRequiredMixin, View):
         return render(request, 'integrations/service_form.html', {'form': form, 'is_edit': False})
 
     def post(self, request):
-        form = ServiceCredentialForm(request.POST)
+        form = ServiceCredentialForm(request.POST, request.FILES)
         if form.is_valid():
             service = form.save()
             messages.success(request, f'Service "{service.name}" created successfully.')
@@ -180,7 +180,7 @@ class ServiceUpdateView(LoginRequiredMixin, View):
 
     def post(self, request, slug):
         service = get_object_or_404(ServiceCredential, slug=slug)
-        form = ServiceCredentialForm(request.POST, instance=service, is_edit=True)
+        form = ServiceCredentialForm(request.POST, request.FILES, instance=service, is_edit=True)
         if form.is_valid():
             form.save()
             messages.success(request, f'Service "{service.name}" updated successfully.')
@@ -210,14 +210,18 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
         service = self.object
         cred_fields = get_service_fields(service.service_type)
         existing_creds = service.credentials or {}
-        ctx['cred_status'] = [
-            {
+        cred_status = []
+        for f in cred_fields:
+            entry = {
                 'label': f.label,
                 'is_set': bool(existing_creds.get(f.name)),
-                'is_password': f.field_type == 'password',
+                'is_password': f.field_type in ('password', 'file_json'),
             }
-            for f in cred_fields
-        ]
+            if f.field_type == 'readonly':
+                entry['is_password'] = False
+                entry['display_value'] = existing_creds.get(f.name, '')
+            cred_status.append(entry)
+        ctx['cred_status'] = cred_status
         return ctx
 
 

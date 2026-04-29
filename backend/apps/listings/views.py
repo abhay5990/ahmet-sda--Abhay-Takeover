@@ -14,6 +14,8 @@ from apps.posting.services.dropship.delist import _delete_one_listing
 from .enums import ListingStatus
 from .models import Listing, ListingOwnedProduct
 
+_ACTIVE_LISTING_STATUSES = ['listed', 'paused']
+
 logger = logging.getLogger(__name__)
 
 BULK_DELETE_LIMIT = 100
@@ -69,6 +71,22 @@ def listing_list(request):
             pass
         listings = listings.filter(q_filter).distinct()
 
+    # "Missing on store" — active listings whose linked OwnedProducts
+    # do NOT have an active listing on the selected target store.
+    missing_on = request.GET.get('missing_on')
+    if missing_on:
+        products_on_target = ListingOwnedProduct.objects.filter(
+            listing__integration_account_id=missing_on,
+            listing__status__in=_ACTIVE_LISTING_STATUSES,
+        ).values('owned_product_id')
+        listings = listings.filter(
+            status__in=_ACTIVE_LISTING_STATUSES,
+        ).exclude(
+            integration_account_id=missing_on,
+        ).exclude(
+            listing_owned_products__owned_product_id__in=products_on_target,
+        )
+
     # Stats (global, not filtered)
     all_status_counts = dict(
         Listing.objects.order_by().values('status').annotate(n=Count('id')).values_list('status', 'n')
@@ -84,6 +102,7 @@ def listing_list(request):
     stores = IntegrationAccount.objects.filter(
         is_active=True, role__in=['sell', 'both'],
     ).order_by('provider', 'name')
+    missing_on_stores = [(str(s.id), str(s)) for s in stores]
 
     paginator = Paginator(listings, 50)
     page_obj = paginator.get_page(request.GET.get('page'))
@@ -95,10 +114,12 @@ def listing_list(request):
         'instant_types': [('true', 'Instant'), ('false', 'Manual')],
         'games': games,
         'stores': stores,
+        'missing_on_stores': missing_on_stores,
         'selected_status': status or '',
         'selected_game': game_id or '',
         'selected_store': store_id or '',
         'selected_is_instant': is_instant or '',
+        'selected_missing_on': missing_on or '',
         'q': q,
     })
 
