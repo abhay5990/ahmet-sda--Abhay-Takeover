@@ -246,7 +246,7 @@ def _build_refresh_checkpoint(account, service) -> SyncCheckpoint:
     Gameboost's fetch_page calls checkpoint.save() internally, so the
     checkpoint must be a real persisted DB object.
     """
-    _REFRESH_RESOURCE = 'orders_status_refresh'
+    _REFRESH_RESOURCE = 'orders_refresh'
 
     checkpoint, _ = SyncCheckpoint.objects.get_or_create(
         integration_account=account,

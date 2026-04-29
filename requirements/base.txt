@@ -31,6 +31,9 @@ numpy==2.2.6
 boto3==1.38.15
 pycognito==2024.5.1
 
+# Google Sheets
+gspread==6.2.1
+
 # Utilities
 python-dateutil==2.9.0
 pytz==2024.1
