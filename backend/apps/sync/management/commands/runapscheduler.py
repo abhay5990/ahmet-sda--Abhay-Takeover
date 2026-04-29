@@ -10,6 +10,7 @@ Usage:
 """
 
 import logging
+from datetime import datetime
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -42,6 +43,13 @@ def run_review_monitor_job():
     from apps.sync.services.eldorado.reviews.monitor import EldoradoReviewMonitor
     EldoradoReviewMonitor().check_all_accounts(first_run=_review_monitor_first_run)
     _review_monitor_first_run = False
+
+
+@apscheduler_util.close_old_connections
+def run_order_status_refresh_job():
+    """APScheduler wrapper — refreshes non-final order statuses (Eldorado/Gameboost)."""
+    from apps.sync.services.order_status_refresh import run_order_status_refresh
+    run_order_status_refresh()
 
 
 @apscheduler_util.close_old_connections
@@ -92,6 +100,17 @@ class Command(BaseCommand):
             name='Eldorado Negative Review Monitor',
             max_instances=1,
             replace_existing=True,
+        )
+
+        # Order status refresh — runs every 60 minutes, starts immediately
+        scheduler.add_job(
+            run_order_status_refresh_job,
+            trigger=IntervalTrigger(minutes=60),
+            id='order_status_refresh',
+            name='Order Status Refresh (Eldorado/Gameboost)',
+            max_instances=1,
+            replace_existing=True,
+            next_run_time=datetime.now(),
         )
 
         # Cleanup old execution logs — runs daily
