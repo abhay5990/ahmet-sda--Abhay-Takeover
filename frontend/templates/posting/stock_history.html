@@ -51,9 +51,6 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-3 text-left">
-                        <input type="checkbox" @change="toggleAll($event)" class="rounded border-gray-300 text-emerald-600">
-                    </th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Job #</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Game</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -65,10 +62,6 @@
             <tbody class="divide-y divide-gray-200">
                 {% for job in jobs %}
                 <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-3">
-                        <input type="checkbox" value="{{ job.id }}" x-model="selectedJobs"
-                               class="rounded border-gray-300 text-emerald-600">
-                    </td>
                     <td class="px-4 py-3 text-sm font-medium">#{{ job.id }}</td>
                     <td class="px-4 py-3 text-sm">{{ job.game.name }}</td>
                     <td class="px-4 py-3 text-sm">
@@ -127,13 +120,6 @@
     </div>
     {% endif %}
 
-    <!-- Repost Button -->
-    <div x-show="selectedJobs.length > 0" class="mt-4">
-        <button @click="repostSelected()"
-                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
-            Repost Selected (<span x-text="selectedJobs.length"></span> jobs)
-        </button>
-    </div>
 
 </div>
 {% endblock %}
@@ -148,39 +134,7 @@ function applyGameFilter(gameId) {
 }
 
 function stockHistory() {
-    return {
-        selectedJobs: [],
-
-        toggleAll(e) {
-            if (e.target.checked) {
-                this.selectedJobs = Array.from(document.querySelectorAll('tbody input[type=checkbox]'))
-                    .map(cb => cb.value);
-            } else {
-                this.selectedJobs = [];
-            }
-        },
-
-        async repostSelected() {
-            const params = this.selectedJobs.map(id => `job_id=${id}`).join('&');
-            const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
-            try {
-                const resp = await fetch(`/posting/api/repost-data/?${params}&item_ids=failed`, {
-                    headers: { 'X-CSRFToken': csrf },
-                });
-                if (resp.ok) {
-                    const data = await resp.json();
-                    if (data.logins && data.logins.length > 0) {
-                        const loginsStr = data.logins.join(',');
-                        window.location.href = `/posting/stock/start/?game=${data.game_id}&logins=${encodeURIComponent(loginsStr)}`;
-                    } else {
-                        alert('No failed items to repost.');
-                    }
-                }
-            } catch (e) {
-                alert('Error fetching repost data.');
-            }
-        },
-    };
+    return {};
 }
 </script>
 {% endblock %}

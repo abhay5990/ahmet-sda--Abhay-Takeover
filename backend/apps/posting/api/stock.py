@@ -426,4 +426,5 @@ def repost_data(request):
         'game_id': job.game_id,
         'game_name': job.game.name,
         'logins': logins,
+        'source_account_id': job.source_account_id,
     })

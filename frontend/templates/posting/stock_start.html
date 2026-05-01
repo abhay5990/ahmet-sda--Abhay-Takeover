@@ -191,7 +191,7 @@ function stockStart() {
     return {
         selectedGame: new URLSearchParams(window.location.search).get('game') || '',
         logins: (new URLSearchParams(window.location.search).get('logins') || '').replace(/,/g, '\n'),
-        sourceAccountId: '{% if source_accounts %}{{ source_accounts.0.id }}{% endif %}',
+        sourceAccountId: new URLSearchParams(window.location.search).get('source') || '{% if source_accounts %}{{ source_accounts.0.id }}{% endif %}',
         selectedStores: [],
         defaults: {},
         showSettings: {},

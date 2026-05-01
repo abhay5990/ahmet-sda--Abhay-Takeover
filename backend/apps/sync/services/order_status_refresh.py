@@ -167,7 +167,7 @@ def _refresh_account(
 
     count = 0
     pages = 0
-    max_pages = 50  # Safety limit
+    max_pages = 500
 
     while pages < max_pages:
         items, next_cursor = service.fetch_page(account, checkpoint)
@@ -184,20 +184,13 @@ def _refresh_account(
                 passed_cutoff = True
                 break
 
-            # Re-ingest: if payload hash changed → re-parse → status update
             remote_id = service.extract_remote_id(item)
             if not remote_id:
                 continue
 
-            try:
-                prepared_item, extra_meta = service.prepare_item(item, account)
-            except Exception:
-                continue
-
-            raw = service._ingest_raw(account, remote_id, prepared_item)
-            if extra_meta:
-                raw.meta = {**raw.meta, **extra_meta}
-                raw.save(update_fields=['meta', 'updated_at'])
+            # Skip prepare_item (enrichment) — we only care about status changes,
+            # credentials are irrelevant here and would cause unnecessary API calls.
+            raw = service._ingest_raw(account, remote_id, item)
 
             # _ingest_raw sets parse_status=PENDING when hash changes,
             # but doesn't call parse. We must trigger parse ourselves.

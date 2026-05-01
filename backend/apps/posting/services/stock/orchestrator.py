@@ -65,6 +65,7 @@ class StockOrchestrator:
         self._resolver: StockResolver | None = None
         self._image_fetcher = None  # ImageFetcher protocol instance
         self._cancel_event = Event()
+        self._rate_limit_event = Event()
         self._pa_uploader = PABulkUploader()
         self._proxy_pool = None  # Built once at execute() start
 
@@ -113,6 +114,7 @@ class StockOrchestrator:
         """Build the StockConsumer with shared collaborators."""
         return StockConsumer(
             cancel_event=self._cancel_event,
+            rate_limit_event=self._rate_limit_event,
             pa_uploader=self._pa_uploader,
             post_with_backoff=self._post_with_backoff,
             is_cancelled=self._is_cancelled,
@@ -434,9 +436,10 @@ class StockOrchestrator:
                 retries += 1
                 if retries >= _MAX_RETRIES:
                     logger.error(
-                        "Rate limit retry exhausted on %s (store=%s) after %d attempts",
+                        "Rate limit retry exhausted on %s (store=%s) after %d attempts — stopping job",
                         item.marketplace, item.store.name, retries,
                     )
+                    self._rate_limit_event.set()
                     return result
 
                 if self._cancel_event.is_set():
@@ -538,7 +541,7 @@ class StockOrchestrator:
         from django.utils import timezone
 
         orphan_count = job.items.filter(
-            status=PostingJobItemStatus.PENDING,
+            status__in=[PostingJobItemStatus.PENDING, PostingJobItemStatus.PROCESSING],
         ).update(
             status=PostingJobItemStatus.FAILED,
             error_message='Item was not processed (orphan)',

@@ -52,6 +52,7 @@ class StockConsumer:
         self,
         *,
         cancel_event: Event,
+        rate_limit_event: Event,
         pa_uploader: PABulkUploader,
         post_with_backoff: Callable[[PostingJobItem, dict], object],
         is_cancelled: Callable[[PostingJob], bool],
@@ -59,6 +60,7 @@ class StockConsumer:
         proxy_pool=None,
     ):
         self._cancel_event = cancel_event
+        self._rate_limit_event = rate_limit_event
         self._pa_uploader = pa_uploader
         self._post_with_backoff = post_with_backoff
         self._is_cancelled = is_cancelled
@@ -94,7 +96,18 @@ class StockConsumer:
                     ])
                     continue
 
+                if self._rate_limit_event.is_set():
+                    item.status = PostingJobItemStatus.SKIPPED
+                    item.error_message = 'Job stopped: rate limit exhausted'
+                    item.save(update_fields=[
+                        'status', 'error_message', 'updated_at',
+                    ])
+                    continue
+
                 self._process_item(item, prepared_data, job)
+
+                # Throttle between items — wake immediately on cancel
+                self._cancel_event.wait(timeout=10)
 
         finally:
             close_old_connections()
