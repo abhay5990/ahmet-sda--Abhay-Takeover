@@ -1,0 +1,32 @@
+[Unit]
+Description=Gunicorn — E-Commerce Management System
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=notify
+User=root
+WorkingDirectory=/home/ahmet/e-commerce-management-system/backend
+EnvironmentFile=/home/ahmet/e-commerce-management-system/.env
+
+ExecStart=/home/ahmet/e-commerce-management-system/venv/bin/gunicorn \
+    --workers ${GUNICORN_WORKERS} \
+    --bind 127.0.0.1:8000 \
+    --access-logfile /home/ahmet/e-commerce-management-system/backend/logs/gunicorn.access.log \
+    --error-logfile  /home/ahmet/e-commerce-management-system/backend/logs/gunicorn.error.log \
+    --log-level info \
+    --timeout 120 \
+    --keep-alive 5 \
+    --forwarded-allow-ips="127.0.0.1" \
+    config.wsgi:application
+
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

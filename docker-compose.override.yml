@@ -1,0 +1,17 @@
+version: '3.8'
+
+# Dev-only overrides — loaded automatically by `docker compose up`.
+# NEVER deploy this file to production.
+
+services:
+  db:
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-devpassword}
+    ports:
+      - "3307:3306"   # Dev: accessible from host without 127.0.0.1 restriction
+
+  phpmyadmin:
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-devpassword}
+    ports:
+      - "8082:80"     # Dev: open directly in browser at http://localhost:8082

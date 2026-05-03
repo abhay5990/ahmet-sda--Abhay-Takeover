@@ -98,13 +98,15 @@ class DropshipScheduler:
                 try:
                     close_old_connections()
                     self._poll_once()
-
-                    # Heartbeat every Nth poll
-                    if self._poll_count % HEARTBEAT_EVERY == 0:
-                        self._write_heartbeat()
-
                 except Exception:
                     logger.exception("Poll loop error (will retry next cycle)")
+
+                # Heartbeat is independent of poll success — reflects process liveness
+                if self._poll_count % HEARTBEAT_EVERY == 0:
+                    try:
+                        self._write_heartbeat()
+                    except Exception:
+                        logger.exception("Heartbeat write failed")
 
                 self._shutdown_event.wait(timeout=POLL_INTERVAL)
 

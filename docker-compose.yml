@@ -1,20 +1,28 @@
 version: '3.8'
 
+# Base config — used in ALL environments.
+# Dev: run `docker compose up` (auto-loads docker-compose.override.yml)
+# Prod: run `docker compose -f docker-compose.yml up -d`
+
 services:
   db:
     image: mysql:8.0
     container_name: inventory_manager_db
     restart: always
     environment:
-      MYSQL_DATABASE: inventory_manager
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-devpassword}
+      MYSQL_DATABASE: ${DB_NAME:-inventory_manager}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    # Prod: only localhost — never exposed to internet
     ports:
       - "127.0.0.1:3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    command: --default-authentication-plugin=mysql_native_password
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --skip-log-bin
+      --innodb_buffer_pool_size=256M
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-devpassword}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,11 +35,15 @@ services:
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-devpassword}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    # Only localhost — SSH tunnel: ssh -L 8082:127.0.0.1:8082 root@<server>
+    # To apply after file change: docker-compose -f docker-compose.yml up -d phpmyadmin
+    # Dev: docker-compose.override.yml re-exposes 8082 openly
     ports:
-      - "8082:80"
+      - "127.0.0.1:8082:80"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
   mysql_data:
