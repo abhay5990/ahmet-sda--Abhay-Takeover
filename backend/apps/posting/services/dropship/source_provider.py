@@ -80,12 +80,18 @@ def register_source(provider_name: str, cls: type[DropshipSourceProvider]) -> No
     _REGISTRY[provider_name] = cls
 
 
-def get_source_provider(provider_name: str, credential: Any) -> DropshipSourceProvider:
+def get_source_provider(
+    provider_name: str,
+    credential: Any,
+    *,
+    proxy_pool: Any | None = None,
+) -> DropshipSourceProvider:
     """Instantiate and return the source provider for *provider_name*.
 
     Args:
         provider_name: Matches ``IntegrationAccount.provider`` (e.g. ``'lzt'``).
         credential: The credential object passed to the provider constructor.
+        proxy_pool: Optional SDK ProxyPool for proxy-group-based routing.
 
     Raises:
         KeyError: If no provider is registered for *provider_name*.
@@ -97,4 +103,4 @@ def get_source_provider(provider_name: str, credential: Any) -> DropshipSourcePr
             f"No DropshipSourceProvider registered for '{provider_name}'. "
             f"Registered: {registered}"
         )
-    return cls(credential=credential)
+    return cls(credential=credential, proxy_pool=proxy_pool)

@@ -28,7 +28,7 @@ class G2gProvider(AbstractProvider):
             CredentialField('seller_id', 'Seller ID'),
         ]
 
-    def build_client(self, credential: IntegrationCredential) -> Any:
+    def build_client(self, credential: IntegrationCredential, *, proxy_pool=None, proxy_group=None) -> Any:
         creds = credential.credentials
         transport = self._create_transport()
         return G2GFactory.create(
@@ -38,6 +38,7 @@ class G2gProvider(AbstractProvider):
             active_device_token=creds.get('active_device_token', ''),
             long_lived_token=creds.get('long_lived_token', ''),
             seller_id=creds.get('seller_id', ''),
+            proxy_pool=proxy_pool,
         )
 
     def fetch_products(self, client: Any, **kwargs) -> Any:

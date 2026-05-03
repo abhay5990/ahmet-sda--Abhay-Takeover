@@ -23,8 +23,8 @@ _GONE_STATUSES = frozenset({'closed', 'sold', 'deleted', 'paid'})
 class LztSourceProvider:
     """DropshipSourceProvider implementation for LZT Market."""
 
-    def __init__(self, *, credential: Any) -> None:
-        self._facade = registry.get_or_build_client('lzt', credential)
+    def __init__(self, *, credential: Any, proxy_pool: Any | None = None) -> None:
+        self._facade = registry.get_or_build_client('lzt', credential, proxy_pool=proxy_pool)
 
     # ------------------------------------------------------------------
     # fetch_items

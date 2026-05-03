@@ -18,7 +18,7 @@ from threading import Event
 from django.utils import timezone
 
 from apps.integrations.providers import registry
-from apps.integrations.proxy_pool import get_group_name
+from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
 from apps.inventory.enums import DropshipProductStatus
 from apps.inventory.models import DropshipProduct
 from apps.listings.enums import ListingStatus
@@ -69,9 +69,14 @@ def cleaner_loop(cleaner_config: CleanerConfig, stop_event: Event) -> None:
     tracker = ErrorTracker(stop_event=stop_event)
     source_account = cleaner_config.source_account
 
+    # Load proxy pool once — shared by source + target facades for this cleaner
+    proxy_pool = build_proxy_pool()
+
     # Build source provider once — reused across all products for this source
     source_type = source_account.provider
-    source_provider = get_source_provider(source_type, source_account.credential)
+    source_provider = get_source_provider(
+        source_type, source_account.credential, proxy_pool=proxy_pool,
+    )
     proxy_group = get_group_name(source_account)
 
     while not stop_event.is_set():
@@ -108,6 +113,7 @@ def cleaner_loop(cleaner_config: CleanerConfig, stop_event: Event) -> None:
                 _check_single_product(
                     dp, tracker=tracker,
                     source_provider=source_provider, proxy_group=proxy_group,
+                    proxy_pool=proxy_pool,
                 )
             except PauseRequired:
                 raise  # propagate to wrapper — permanent disable
@@ -163,6 +169,7 @@ def _check_single_product(
     tracker: ErrorTracker,
     source_provider,
     proxy_group: str | None,
+    proxy_pool=None,
 ) -> None:
     """Check a single dropship product against its source platform.
 
@@ -237,7 +244,7 @@ def _check_single_product(
 
     # Item gone (sold/closed/deleted)
     if not check.exists:
-        _handle_item_gone(dp, reason=check.status or 'deleted')
+        _handle_item_gone(dp, reason=check.status or 'deleted', proxy_pool=proxy_pool)
         return
 
     # Check price change — only act if price moved more than 3% from
@@ -250,7 +257,7 @@ def _check_single_product(
     ):
         pct_change = abs(check.current_price - dp.price) / dp.price
         if pct_change > Decimal('0.03'):
-            _handle_price_change(dp, check.current_price, check.raw_data)
+            _handle_price_change(dp, check.current_price, check.raw_data, proxy_pool=proxy_pool)
             return
 
     # No change (or within tolerance) — just update last_checked_at
@@ -262,7 +269,7 @@ def _check_single_product(
 # Handlers
 # ---------------------------------------------------------------------------
 
-def _remove_all_offers(dp: DropshipProduct) -> bool:
+def _remove_all_offers(dp: DropshipProduct, *, proxy_pool=None) -> bool:
     """Delete all LISTED marketplace offers for a DropshipProduct.
 
     Returns True if all offers were removed, False if any failed (retry next cycle).
@@ -274,7 +281,7 @@ def _remove_all_offers(dp: DropshipProduct) -> bool:
 
     all_deleted = True
     for listing in listings:
-        if not _delete_marketplace_offer(listing):
+        if not _delete_marketplace_offer(listing, proxy_pool=proxy_pool):
             all_deleted = False
 
     if not all_deleted:
@@ -284,9 +291,9 @@ def _remove_all_offers(dp: DropshipProduct) -> bool:
     return all_deleted
 
 
-def _handle_item_gone(dp: DropshipProduct, *, reason: str) -> None:
+def _handle_item_gone(dp: DropshipProduct, *, reason: str, proxy_pool=None) -> None:
     """Item sold/deleted on source — delete marketplace offer, update status."""
-    if not _remove_all_offers(dp):
+    if not _remove_all_offers(dp, proxy_pool=proxy_pool):
         return
 
     new_status = (
@@ -312,12 +319,12 @@ def _handle_item_gone(dp: DropshipProduct, *, reason: str) -> None:
 
 
 def _handle_price_change(
-    dp: DropshipProduct, new_price: Decimal, item_data: dict,
+    dp: DropshipProduct, new_price: Decimal, item_data: dict, *, proxy_pool=None,
 ) -> None:
     """Price changed on source — delete marketplace offers, mark DP as DELETED."""
     old_price = dp.price
 
-    if not _remove_all_offers(dp):
+    if not _remove_all_offers(dp, proxy_pool=proxy_pool):
         return
 
     dp.status = DropshipProductStatus.DELETED
@@ -341,7 +348,7 @@ def _handle_price_change(
     )
 
 
-def _delete_marketplace_offer(listing: Listing) -> bool:
+def _delete_marketplace_offer(listing: Listing, *, proxy_pool=None) -> bool:
     """Delete an offer from the marketplace and update listing status.
 
     Returns True if the offer was successfully deleted (or store is gone),
@@ -359,7 +366,7 @@ def _delete_marketplace_offer(listing: Listing) -> bool:
     marketplace = store.provider
     try:
         provider = registry.get_provider(marketplace)
-        facade = registry.get_or_build_client(marketplace, store.credential)
+        facade = registry.get_or_build_client(marketplace, store.credential, proxy_pool=proxy_pool)
         provider.delete_listing(facade, listing.store_listing_id)
     except Exception as e:
         logger.warning(

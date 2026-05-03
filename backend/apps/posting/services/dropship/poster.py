@@ -16,7 +16,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from apps.integrations.providers import registry
-from apps.integrations.proxy_pool import get_group_name
+from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
 from apps.inventory.enums import DropshipProductStatus
 from apps.inventory.models import DropshipProduct
 from apps.listings.enums import ListingStatus
@@ -34,6 +34,7 @@ from apps.posting.services.dropship.backoff import (
     PauseRequired,
     classify_api_error,
 )
+from apps.posting.services.dropship.asset_scrubber import scrub_sources
 from apps.posting.services.dropship.source_provider import (
     DropshipSourceProvider,
     get_source_provider,
@@ -90,9 +91,14 @@ def poster_loop(config: DropshippingJobConfig, stop_event: Event) -> None:
     """
     tracker = ErrorTracker(stop_event=stop_event)
 
+    # Load proxy pool once — shared by source + target facades for this job
+    proxy_pool = build_proxy_pool()
+
     # Source provider (LZT, etc.) — built once, reused across cycles
     source_type = config.source_account.provider
-    source_provider = get_source_provider(source_type, config.source_account.credential)
+    source_provider = get_source_provider(
+        source_type, config.source_account.credential, proxy_pool=proxy_pool,
+    )
     source_proxy_group = get_group_name(config.source_account)
 
     # LZT image fetcher (needed for media pipeline when source is LZT)
@@ -101,7 +107,7 @@ def poster_loop(config: DropshippingJobConfig, stop_event: Event) -> None:
     # Target marketplace facade — built once
     marketplace = config.store.provider
     target_facade = registry.get_or_build_client(
-        marketplace, config.store.credential,
+        marketplace, config.store.credential, proxy_pool=proxy_pool,
     )
     target_provider = registry.get_provider(marketplace)
     target_proxy_group = get_group_name(config.store)
@@ -346,6 +352,8 @@ def _attempt_post(
     tracker_data = fetch_tracker_data(game.slug, item)
     if tracker_data is not None:
         sources['tracker'] = tracker_data
+
+    sources = scrub_sources(sources, game_slug=game.slug)
 
     prepare_result = adapter.prepare(
         game_slug=game.slug,

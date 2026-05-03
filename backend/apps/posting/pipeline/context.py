@@ -71,10 +71,11 @@ def _build_eldorado_uploader(store):
     """
     try:
         from apps.integrations.providers import registry
-        from apps.integrations.proxy_pool import get_group_name
+        from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
         from .media import EldoradoMarketplaceUploader
 
-        facade = registry.get_or_build_client('eldorado', store.credential)
+        proxy_pool = build_proxy_pool()
+        facade = registry.get_or_build_client('eldorado', store.credential, proxy_pool=proxy_pool)
         proxy_group = get_group_name(store)
         return EldoradoMarketplaceUploader(facade, proxy_group=proxy_group)
     except Exception as exc:

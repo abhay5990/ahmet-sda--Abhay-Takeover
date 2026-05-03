@@ -24,6 +24,7 @@ from typing import NamedTuple
 from django.utils import timezone
 
 from apps.integrations.providers import registry
+from apps.integrations.proxy_pool import build_proxy_pool
 from apps.inventory.enums import DropshipProductStatus
 from apps.inventory.models import DropshipProduct
 from apps.listings.enums import ListingStatus
@@ -73,9 +74,10 @@ def delist_single(dp: DropshipProduct) -> DelistResult:
         _mark_dp_deleted(dp)
         return DelistResult(ok=True)
 
+    proxy_pool = build_proxy_pool()
     all_ok = True
     for listing in listings:
-        if not _delete_one_listing(listing):
+        if not _delete_one_listing(listing, proxy_pool=proxy_pool):
             all_ok = False
 
     if all_ok:
@@ -125,14 +127,15 @@ def delist_bulk(dps: list[DropshipProduct]) -> BulkDelistResult:
 
     # Per-listing success tracker: listing.id → bool
     listing_ok: dict[int, bool] = {}
+    proxy_pool = build_proxy_pool()
 
     # 1. PA bulk cancel (one call per store account)
     for store_listings in pa_by_store.values():
-        _cancel_pa_bulk(store_listings, listing_ok)
+        _cancel_pa_bulk(store_listings, listing_ok, proxy_pool=proxy_pool)
 
     # 2. Other marketplaces: one by one
     for listing in other_listings:
-        listing_ok[listing.id] = _delete_one_listing(listing)
+        listing_ok[listing.id] = _delete_one_listing(listing, proxy_pool=proxy_pool)
 
     # 3. Evaluate per-DP result
     to_mark_deleted: list[int] = []
@@ -187,7 +190,9 @@ def _mark_dp_deleted_bulk(dp_ids: list[int]) -> None:
     )
 
 
-def _cancel_pa_bulk(listings: list[Listing], results: dict[int, bool]) -> None:
+def _cancel_pa_bulk(
+    listings: list[Listing], results: dict[int, bool], *, proxy_pool=None,
+) -> None:
     """Cancel multiple PlayerAuctions listings in a single API call.
 
     Updates results dict in-place: listing.id → True/False.
@@ -202,7 +207,7 @@ def _cancel_pa_bulk(listings: list[Listing], results: dict[int, bool]) -> None:
         return
 
     try:
-        facade = registry.get_or_build_client('playerauctions', store.credential)
+        facade = registry.get_or_build_client('playerauctions', store.credential, proxy_pool=proxy_pool)
         offer_ids = [int(lst.store_listing_id) for lst in listings]
         facade.cancel_offers(PlayerAuctionsCancelRequest(offerIds=offer_ids))
 
@@ -236,7 +241,7 @@ def _cancel_pa_bulk(listings: list[Listing], results: dict[int, bool]) -> None:
             results[lst.id] = False
 
 
-def _delete_one_listing(listing: Listing) -> bool:
+def _delete_one_listing(listing: Listing, *, proxy_pool=None) -> bool:
     """Delete a single marketplace offer and mark listing as CLOSED.
 
     Returns True on success (including when store/credential is missing),
@@ -253,7 +258,7 @@ def _delete_one_listing(listing: Listing) -> bool:
     marketplace = store.provider
     try:
         provider = registry.get_provider(marketplace)
-        facade = registry.get_or_build_client(marketplace, store.credential)
+        facade = registry.get_or_build_client(marketplace, store.credential, proxy_pool=proxy_pool)
         provider.delete_listing(facade, listing.store_listing_id)
     except Exception as e:
         logger.warning(
