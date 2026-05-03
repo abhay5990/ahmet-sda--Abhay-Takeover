@@ -26,7 +26,7 @@ class R6GameBoostBuilder(BaseGameBoostBuilder):
     ) -> dict[str, Any]:
         return {
             "platform": self._get_primary_platform(account),
-            "linkable_platforms": account.available_platforms,
+            "linkable_platforms": account.linkable_platforms,
             "operators_count": account.operator_count,
             "current_level": account.level,
             "current_tier": self._extract_tier(account.current_rank),

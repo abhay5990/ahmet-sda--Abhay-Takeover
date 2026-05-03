@@ -102,10 +102,21 @@ class R6ResolvedAccount(ResolvedAccountBase):
 
     @property
     def available_platforms(self) -> list[str]:
+        """Platforms the account is currently connected to."""
         platforms = ["PC"]
         if self.psn_connected:
             platforms.append("PlayStation")
         if self.xbox_connected:
+            platforms.append("Xbox")
+        return platforms
+
+    @property
+    def linkable_platforms(self) -> list[str]:
+        """Platforms a buyer can still link (not yet connected)."""
+        platforms = ["PC"]
+        if not self.psn_connected:
+            platforms.append("PlayStation")
+        if not self.xbox_connected:
             platforms.append("Xbox")
         return platforms
 
