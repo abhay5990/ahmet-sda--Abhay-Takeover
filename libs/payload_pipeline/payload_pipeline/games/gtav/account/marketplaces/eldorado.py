@@ -8,11 +8,11 @@ from .....marketplaces.eldorado import BaseEldoradoBuilder, EldoradoConfig
 
 _PLATFORM_TO_TRADE_ENV = {
     "PC - Legacy": "0",
-    "PC - Enhanced": "0",
     "PlayStation 4": "1",
-    "PlayStation 5": "3",
     "Xbox One": "2",
+    "PlayStation 5": "3",
     "Xbox Series X/S": "4",
+    "PC - Enhanced": "5",
 }
 
 
@@ -25,14 +25,13 @@ class GtavEldoradoBuilder(BaseEldoradoBuilder):
         listing: ListingDraft,
         ctx: BuildContext,
     ) -> dict:
-        price = account.eldorado_price or account.price or 399
         trade_env = self._resolve_trade_environment(account, ctx)
 
         payload = self.build_base_payload(
             game_id="25",
             listing=listing,
             ctx=ctx,
-            price=price,
+            price=account.price,
             credentials=account.credentials,
             trade_environment_id=trade_env,
         )

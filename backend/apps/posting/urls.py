@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 from .api import stock as stock_api
 from .api import dropship as dropship_api
+from .api import pool as pool_api
 
 app_name = 'posting'
 
@@ -18,10 +19,14 @@ urlpatterns = [
     path('dropship/items/', views.dropship_items_page, name='dropship_items'),
     path('dropship/activity/', views.dropship_activity_page, name='dropship_activity'),
 
+    # Auto Restock UI
+    path('restock/pools/', views.restock_pools_page, name='restock_pools'),
+    path('restock/pools/<int:pool_id>/', views.restock_pool_detail_page, name='restock_pool_detail'),
+
     # API — job lifecycle
     path('api/jobs/', stock_api.create_job, name='api_create_job'),
     path('api/jobs/<int:job_id>/', stock_api.job_status, name='api_job_status'),
-    path('api/jobs/<int:job_id>/stream/', stock_api.job_stream, name='api_job_stream'),
+
 
     # API — job actions
     path('api/jobs/<int:job_id>/cancel/', stock_api.cancel_job, name='api_cancel_job'),
@@ -66,4 +71,16 @@ urlpatterns = [
     # API — dropship item actions
     path('api/dropship/items/<int:item_id>/', dropship_api.dropship_item_action, name='api_dropship_item_action'),
     path('api/dropship/items/bulk/', dropship_api.dropship_item_bulk_action, name='api_dropship_item_bulk_action'),
+
+    # API — offer pools (auto restock)
+    path('api/pools/', pool_api.list_pools, name='api_list_pools'),
+    path('api/pools/create/', pool_api.create_pool, name='api_create_pool'),
+    path('api/pools/<int:pool_id>/', pool_api.pool_detail, name='api_pool_detail'),
+    path('api/pools/<int:pool_id>/update/', pool_api.update_pool, name='api_update_pool'),
+    path('api/pools/<int:pool_id>/delete/', pool_api.delete_pool, name='api_delete_pool'),
+    path('api/pools/<int:pool_id>/items/', pool_api.add_pool_items, name='api_add_pool_items'),
+    path('api/pools/<int:pool_id>/items/<int:item_id>/remove/', pool_api.remove_pool_item, name='api_remove_pool_item'),
+    path('api/pools/<int:pool_id>/replenish/', pool_api.trigger_replenish, name='api_trigger_replenish'),
+    path('api/pools/accounts/', pool_api.available_accounts, name='api_pool_accounts'),
+    path('api/pools/listings/', pool_api.available_listings, name='api_pool_listings'),
 ]

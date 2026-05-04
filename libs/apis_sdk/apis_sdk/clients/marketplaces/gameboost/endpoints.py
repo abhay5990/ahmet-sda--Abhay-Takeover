@@ -10,6 +10,7 @@ class GameBoostEndpoints:
 
     # Account Offers
     ACCOUNT_OFFERS = "/account-offers"
+    ACCOUNT_OFFERS_CREATE = "/account-offers/create"
 
     # Account Orders
     ACCOUNT_ORDERS = "/account-orders"

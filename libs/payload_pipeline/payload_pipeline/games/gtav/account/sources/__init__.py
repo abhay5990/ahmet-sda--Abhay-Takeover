@@ -1,5 +1,5 @@
 """Prepared source adapters for GTA V."""
 
-from .lzt import GtavLztSourceAdapter
+from .manual import GtavManualSourceAdapter
 
-__all__ = ["GtavLztSourceAdapter"]
+__all__ = ["GtavManualSourceAdapter"]

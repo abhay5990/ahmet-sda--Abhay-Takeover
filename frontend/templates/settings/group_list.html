@@ -18,6 +18,7 @@
             <tr>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Accounts</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Proxies</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Notes</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -28,6 +29,7 @@
             <tr class="hover:bg-gray-50">
                 <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ group.name }}</td>
                 <td class="px-6 py-4 text-sm text-gray-500">{{ group.accounts.count }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">{{ group.proxies.count }}</td>
                 <td class="px-6 py-4 text-sm text-gray-500">{{ group.notes|truncatechars:50|default:"—" }}</td>
                 <td class="px-6 py-4 text-sm text-gray-500">{{ group.created_at|date:"M d, Y" }}</td>
                 <td class="px-6 py-4 text-right" x-data="{ showDelete: false }">

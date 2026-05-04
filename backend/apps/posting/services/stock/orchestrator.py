@@ -329,24 +329,8 @@ class StockOrchestrator:
         """
         try:
             # Build sources dict from owned_product
-            provider = 'lzt'
-            if owned_product.source_account and owned_product.source_account.provider:
-                provider = owned_product.source_account.provider
-
-            # Pipeline resolvers only understand LZT-format raw_data.
-            # Skip non-LZT sourced products until multi-source support is added.
-            if provider != 'lzt':
-                return {
-                    'ok': False,
-                    'stage': 'prepare_once',
-                    'error': (
-                        f"Source '{provider}' is not supported for stock posting"
-                        f" (login='{login}'). Only LZT-sourced accounts can be posted."
-                    ),
-                    'error_category': 'source_unsupported',
-                }
-
-            if not owned_product.raw_data:
+            raw = owned_product.raw_data
+            if not raw:
                 return {
                     'ok': False,
                     'stage': 'prepare_once',
@@ -354,7 +338,26 @@ class StockOrchestrator:
                     'error_category': 'data_missing',
                 }
 
-            sources: dict = {provider: owned_product.raw_data}
+            # Determine source key: manual entries use 'manual', otherwise provider
+            if isinstance(raw, dict) and raw.get('source') == 'manual':
+                source_key = 'manual'
+            elif owned_product.source_account and owned_product.source_account.provider:
+                source_key = owned_product.source_account.provider
+            else:
+                source_key = 'lzt'
+
+            if source_key not in ('lzt', 'manual'):
+                return {
+                    'ok': False,
+                    'stage': 'prepare_once',
+                    'error': (
+                        f"Source '{source_key}' is not supported for stock posting"
+                        f" (login='{login}')."
+                    ),
+                    'error_category': 'source_unsupported',
+                }
+
+            sources: dict = {source_key: raw}
             tracker_data = fetch_tracker_data(job.game.slug, owned_product.raw_data)
             if tracker_data is not None:
                 sources['tracker'] = tracker_data

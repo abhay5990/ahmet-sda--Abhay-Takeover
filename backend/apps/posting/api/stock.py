@@ -1,19 +1,20 @@
-"""Stock posting API endpoints — job CRUD, SSE stream, defaults management."""
+"""Stock posting API endpoints — job CRUD, polling status, defaults management."""
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import threading
-import time
-from datetime import datetime
+import uuid
+from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, JsonResponse, StreamingHttpResponse
+from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
 
 from apps.integrations.models import IntegrationAccount
-from apps.inventory.models import Game
+from apps.inventory.models import Game, OwnedProduct
 from apps.posting.models import (
     PostingDefault,
     PostingJob,
@@ -47,28 +48,33 @@ def create_job(request):
     """Create a stock posting job.
 
     POST body (JSON):
+        source_type: 'account' | 'manual'  (default: 'account')
         game_id: int
-        logins: list[str]  — one login per line
         stores: list[int]  — IntegrationAccount IDs
         defaults: dict     — {store_slug: {multiplier_low, ..., sub_platform, account_type}}
+
+    Account mode (source_type='account'):
+        logins: list[str]  — one login per line
         source_account_id: int|null — fallback account for resolving missing products
+
+    Manual mode (source_type='manual'):
+        platform: str            — e.g. 'PlayStation 5'
+        credentials: list[dict]  — [{login, password, email, ..., cash_amount, level, cars_count, cost}]
+        distribution_mode: 'cross_platform' | 'shared'
+        distribution: dict       — {store_slug: int} (only for shared mode)
     """
     try:
         body = json.loads(request.body)
     except (json.JSONDecodeError, ValueError):
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
+    source_type = body.get('source_type', 'account')
     game_id = body.get('game_id')
-    logins = body.get('logins', [])
     store_ids = body.get('stores', [])
     defaults_data = body.get('defaults', {})
-    source_account_id = body.get('source_account_id')
 
-    if not game_id or not logins or not store_ids:
-        return JsonResponse({'error': 'game_id, logins, and stores are required'}, status=400)
-
-    if not isinstance(logins, list):
-        return JsonResponse({'error': 'logins must be a list'}, status=400)
+    if not game_id or not store_ids:
+        return JsonResponse({'error': 'game_id and stores are required'}, status=400)
     if not isinstance(store_ids, list):
         return JsonResponse({'error': 'stores must be a list'}, status=400)
     if not isinstance(defaults_data, dict):
@@ -87,46 +93,13 @@ def create_job(request):
     if not stores:
         return JsonResponse({'error': 'No valid stores found'}, status=400)
 
-    # Resolve source account for fallback (None = no fallback, user chose explicitly)
-    source_account = None
-    if source_account_id:
-        source_account = IntegrationAccount.objects.filter(
-            id=source_account_id, is_active=True,
-        ).first()
-        if not source_account:
-            return JsonResponse({'error': 'Source account not found or inactive'}, status=404)
-
-    # Clean login list
-    clean_logins = []
-    for login in logins:
-        login = login.strip()
-        if login:
-            clean_logins.append(login)
-
-    if not clean_logins:
-        return JsonResponse({'error': 'No valid logins provided'}, status=400)
-
-    # Quick DB lookup — pre-resolve OwnedProducts where possible
-    from apps.inventory.models import OwnedProduct
-
-    owned_map: dict[str, OwnedProduct | None] = {}
-    if game.category_id:
-        existing = OwnedProduct.objects.filter(
-            category=game.category,
-            login__in=[l.lower() for l in clean_logins],
-        ).select_related('source_account')
-        owned_map = {op.login: op for op in existing}
-
     # Build store-slug-keyed settings for this job.
-    # Always write an entry per store (may be empty). Orchestrator falls back
-    # to STOCK_PRICING_BASELINE for missing pricing fields; non-pricing fields
-    # (sub_platform, account_type) are simply absent.
     job_settings = {}
     for store in stores:
         store_defaults = defaults_data.get(store.slug, defaults_data.get(store.provider, {}))
         job_settings[store.slug] = dict(store_defaults) if store_defaults else {}
 
-    # Upsert PostingDefaults (UI pre-fill only — orchestrator won't read these)
+    # Upsert PostingDefaults (UI pre-fill only)
     for store in stores:
         mp = store.provider
         store_defaults = defaults_data.get(store.slug, defaults_data.get(mp, {}))
@@ -147,7 +120,46 @@ def create_job(request):
                 },
             )
 
-    # Create PostingJob + items — ALL logins enter the job, no skipping
+    if source_type == 'manual':
+        return _create_manual_job(body, game, stores, job_settings)
+
+    return _create_account_job(body, game, stores, job_settings)
+
+
+def _create_account_job(body: dict, game: Game, stores: list, job_settings: dict) -> JsonResponse:
+    """Create job from source account mode (existing flow)."""
+    logins = body.get('logins', [])
+    source_account_id = body.get('source_account_id')
+
+    if not logins:
+        return JsonResponse({'error': 'logins are required'}, status=400)
+    if not isinstance(logins, list):
+        return JsonResponse({'error': 'logins must be a list'}, status=400)
+
+    # Resolve source account for fallback
+    source_account = None
+    if source_account_id:
+        source_account = IntegrationAccount.objects.filter(
+            id=source_account_id, is_active=True,
+        ).first()
+        if not source_account:
+            return JsonResponse({'error': 'Source account not found or inactive'}, status=404)
+
+    # Clean login list
+    clean_logins = [login.strip() for login in logins if login.strip()]
+    if not clean_logins:
+        return JsonResponse({'error': 'No valid logins provided'}, status=400)
+
+    # Pre-resolve OwnedProducts
+    owned_map: dict[str, OwnedProduct | None] = {}
+    if game.category_id:
+        existing = OwnedProduct.objects.filter(
+            category=game.category,
+            login__in=[l.lower() for l in clean_logins],
+        ).select_related('source_account')
+        owned_map = {op.login: op for op in existing}
+
+    # Create PostingJob + items
     total = len(clean_logins) * len(stores)
     job = PostingJob.objects.create(
         game=game,
@@ -170,7 +182,246 @@ def create_job(request):
             ))
     PostingJobItem.objects.bulk_create(items)
 
-    # Start orchestrator in background thread (with duplicate guard)
+    return _launch_job(job, total)
+
+
+def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict) -> JsonResponse:
+    """Create job from manual credentials.
+
+    Creates OwnedProducts first, then builds PostingJobItems with distribution logic.
+    """
+    platform = body.get('platform', '')
+    credentials = body.get('credentials', [])
+    distribution_mode = body.get('distribution_mode', 'cross_platform')
+    distribution = body.get('distribution', {})
+    purchased_price = body.get('purchased_price', 0)
+
+    if not platform:
+        return JsonResponse({'error': 'platform is required for manual mode'}, status=400)
+    if not credentials or not isinstance(credentials, list):
+        return JsonResponse({'error': 'credentials list is required'}, status=400)
+
+    if not game.category_id:
+        return JsonResponse({'error': 'Game has no category assigned'}, status=400)
+
+    try:
+        purchased_price = float(purchased_price or 0)
+    except (ValueError, TypeError):
+        return JsonResponse({'error': 'purchased_price must be a number'}, status=400)
+
+    if purchased_price <= 0:
+        return JsonResponse({'error': 'purchased_price is required'}, status=400)
+
+    # Validate credentials
+    for i, cred in enumerate(credentials):
+        if not cred.get('login') or not cred.get('password'):
+            return JsonResponse(
+                {'error': f'Credential #{i+1}: login and password are required'},
+                status=400,
+            )
+
+    # Validate shared distribution
+    if distribution_mode == 'shared':
+        total_distributed = sum(int(v) for v in distribution.values())
+        if total_distributed > len(credentials):
+            return JsonResponse(
+                {'error': f'Total distributed ({total_distributed}) exceeds credential count ({len(credentials)})'},
+                status=400,
+            )
+
+    # Batch-level fields from UI
+    is_gta = game.slug.startswith('grand-theft-auto')
+
+    # GTA-specific fields only accepted for GTA games
+    if is_gta:
+        batch_data = {
+            'platform': platform,
+            'purchased_price': purchased_price,
+            'level': _to_int(body.get('level'), 0),
+            'cash_amount': _to_int(body.get('cash_amount'), 0),
+            'cash_unit': body.get('cash_unit', 'Million'),
+            'cars_count': _to_int(body.get('cars_count'), 0),
+            'account_tags': body.get('account_tags') or [],
+            'has_dual_characters': bool(body.get('has_dual_characters', False)),
+            'title': body.get('title') or '',
+            'description': body.get('description') or '',
+        }
+    else:
+        batch_data = {
+            'platform': platform,
+            'purchased_price': purchased_price,
+            'title': body.get('title') or '',
+            'description': body.get('description') or '',
+        }
+
+    # Create OwnedProducts with LZT-compatible raw_data
+    owned_products = _create_manual_owned_products(credentials, batch_data, game)
+
+    # Build job items based on distribution mode
+    if distribution_mode == 'shared':
+        items_data = _build_shared_items(owned_products, stores, distribution)
+    else:
+        items_data = _build_cross_platform_items(owned_products, stores)
+
+    if not items_data:
+        return JsonResponse({'error': 'No items to post (check distribution)'}, status=400)
+
+    # Mark manual source in job settings
+    job_settings['_manual'] = {
+        'source_type': 'manual',
+        'platform': platform,
+        'distribution_mode': distribution_mode,
+        'purchased_price': purchased_price,
+        'batch_data': batch_data,
+    }
+
+    job = PostingJob.objects.create(
+        game=game,
+        source_account=None,
+        settings=job_settings,
+        total_count=len(items_data),
+    )
+
+    items = []
+    for login, owned, store in items_data:
+        items.append(PostingJobItem(
+            job=job,
+            login=login,
+            owned_product=owned,
+            store=store,
+            marketplace=store.provider,
+        ))
+    PostingJobItem.objects.bulk_create(items)
+
+    return _launch_job(job, len(items_data))
+
+
+def _create_manual_owned_products(
+    credentials: list[dict],
+    batch_data: dict,
+    game: Game,
+) -> list[OwnedProduct]:
+    """Create or update OwnedProducts for manual credentials.
+
+    Raw data is stored in LZT-compatible format so the existing pipeline
+    can process it without changes.  Batch-level fields (price, level, cash,
+    platform, title, description) come from ``batch_data``.
+    """
+    products = []
+    platform = batch_data['platform']
+    cost = batch_data['purchased_price']
+
+    for cred in credentials:
+        login = cred['login'].strip().lower()
+        password = cred['password'].strip()
+
+        # Build pipeline-compatible raw_data
+        raw_data = {
+            'source': 'manual',
+            'main_platform': platform,
+            'price': cost,
+            'loginData': {
+                'login': login,
+                'password': password,
+            },
+            'emailLoginData': {
+                'login': cred.get('email', '').strip(),
+                'password': cred.get('email_password', '').strip(),
+            },
+            'security_email': cred.get('security_email', '').strip(),
+            'security_email_password': cred.get('security_email_password', '').strip(),
+            'security_email_login_link': cred.get('security_email_login_link', '').strip(),
+            'birthday': cred.get('birthday', '').strip(),
+            'emailLoginUrl': cred.get('email_login_link', '').strip(),
+            'item_id': f'manual-{uuid.uuid4().hex[:12]}',
+            'title': batch_data.get('title', ''),
+            'description': batch_data.get('description', ''),
+        }
+
+        # GTA-specific fields
+        if 'cash_amount' in batch_data:
+            raw_data.update({
+                'cash_amount': batch_data['cash_amount'],
+                'cash_unit': batch_data['cash_unit'],
+                'level': batch_data['level'],
+                'cars_count': batch_data['cars_count'],
+                'tags': batch_data.get('account_tags') or ['modded'],
+                'has_dual_characters': batch_data.get('has_dual_characters', False),
+            })
+
+        # Upsert OwnedProduct (canonical key: category + login)
+        owned, created = OwnedProduct.objects.update_or_create(
+            category=game.category,
+            login=login,
+            defaults={
+                'password': password,
+                'password_hash': hashlib.sha256(password.encode()).hexdigest(),
+                'email': cred.get('email', '').strip(),
+                'email_password': cred.get('email_password', '').strip(),
+                'email_login_link': cred.get('email_login_link', '').strip(),
+                'security_email': cred.get('security_email', '').strip(),
+                'security_email_password': cred.get('security_email_password', '').strip(),
+                'game': game,
+                'status': 'draft',
+                'price': Decimal(str(cost)),
+                'currency': 'USD',
+                'source_account': None,
+                'raw_data': raw_data,
+            },
+        )
+        products.append(owned)
+
+    return products
+
+
+def _build_cross_platform_items(
+    owned_products: list[OwnedProduct],
+    stores: list,
+) -> list[tuple[str, OwnedProduct, IntegrationAccount]]:
+    """Cross-platform: same credentials go to ALL stores."""
+    items = []
+    for owned in owned_products:
+        for store in stores:
+            items.append((owned.login, owned, store))
+    return items
+
+
+def _build_shared_items(
+    owned_products: list[OwnedProduct],
+    stores: list,
+    distribution: dict,
+) -> list[tuple[str, OwnedProduct, IntegrationAccount]]:
+    """Shared: different credentials go to different stores based on distribution counts."""
+    items = []
+    store_map = {s.slug: s for s in stores}
+    idx = 0  # credential cursor
+
+    for store_slug, count in distribution.items():
+        store = store_map.get(store_slug)
+        if not store or not count:
+            continue
+        count = int(count)
+        for _ in range(count):
+            if idx >= len(owned_products):
+                break
+            owned = owned_products[idx]
+            items.append((owned.login, owned, store))
+            idx += 1
+
+    return items
+
+
+def _to_int(value, default: int) -> int:
+    try:
+        if value in (None, ''):
+            return default
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _launch_job(job: PostingJob, total: int) -> JsonResponse:
+    """Start orchestrator in background thread (with duplicate guard)."""
     with _jobs_lock:
         if job.id in _active_jobs:
             return JsonResponse({'error': 'Job already running'}, status=409)
@@ -223,74 +474,6 @@ def job_status(request, job_id):
             for item in items
         ],
     })
-
-
-@login_required
-@require_GET
-def job_stream(request: HttpRequest, job_id: int) -> StreamingHttpResponse:
-    """SSE endpoint — streams PostingJob progress in realtime."""
-    try:
-        PostingJob.objects.get(id=job_id)
-    except PostingJob.DoesNotExist:
-        return JsonResponse({'error': 'Job not found'}, status=404)
-
-    MAX_DURATION = 600          # 10 minute hard limit
-    HEARTBEAT_INTERVAL = 20     # prevent proxy timeout on idle connection
-    POLL_INTERVAL = 2           # reduce DB load (1→2s)
-
-    def event_generator():
-        last_updated: dict[int, datetime] = {}
-        start_time = time.monotonic()
-        last_heartbeat = start_time
-
-        while True:
-            now = time.monotonic()
-
-            # Hard timeout — prevent infinite loop
-            if now - start_time > MAX_DURATION:
-                yield f"data: {json.dumps({'type': 'timeout'})}\n\n"
-                return
-
-            # Heartbeat — prevent proxy from dropping idle connection
-            if now - last_heartbeat >= HEARTBEAT_INTERVAL:
-                yield ": heartbeat\n\n"
-                last_heartbeat = now
-
-            job = PostingJob.objects.get(id=job_id)
-
-            # Only fetch changed items (skip on first poll)
-            if last_updated:
-                min_ts = min(last_updated.values())
-                items = job.items.select_related(
-                    'owned_product', 'store', 'listing',
-                ).filter(updated_at__gte=min_ts)
-            else:
-                items = job.items.select_related(
-                    'owned_product', 'store', 'listing',
-                ).all()
-
-            for item in items:
-                if item.updated_at != last_updated.get(item.id):
-                    last_updated[item.id] = item.updated_at
-                    yield f"data: {json.dumps({'type': 'item_update', 'item_id': item.id, 'login': item.login, 'store': f'{item.marketplace} — {item.store.name}', 'status': item.status, 'offer_id': item.listing.store_listing_id if item.listing else None, 'offer_title': item.listing.title if item.listing else None, 'error': item.error_message, 'resolved': item.owned_product_id is not None})}\n\n"
-
-            if job.status in (
-                PostingJobStatus.COMPLETED,
-                PostingJobStatus.FAILED,
-                PostingJobStatus.CANCELLED,
-            ):
-                yield f"data: {json.dumps({'type': 'job_complete', 'status': job.status, 'success_count': job.success_count, 'fail_count': job.fail_count})}\n\n"
-                return
-
-            time.sleep(POLL_INTERVAL)
-
-    response = StreamingHttpResponse(
-        event_generator(),
-        content_type='text/event-stream',
-    )
-    response['Cache-Control'] = 'no-cache'
-    response['X-Accel-Buffering'] = 'no'
-    return response
 
 
 @login_required

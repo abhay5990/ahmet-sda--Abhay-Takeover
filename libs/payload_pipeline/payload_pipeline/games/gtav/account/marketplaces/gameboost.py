@@ -13,6 +13,12 @@ _STATIC_IMAGE_URL = (
     "g-rsel_2025-12-04_085834084.png?rlkey=b84z5cr67r05ykj05yb7eao3e&st=rjxu1pa6&dl=1"
 )
 
+# Canonical platform (UI) -> GameBoost platform value
+_PLATFORM_TO_GB: dict[str, str] = {
+    "PC - Legacy": "PC · Legacy",
+    "PC - Enhanced": "PC · Enhanced",
+}
+
 
 class GtavGameBoostBuilder(BaseGameBoostBuilder):
     """Build GameBoost payloads for the GTA V account slice."""
@@ -23,12 +29,14 @@ class GtavGameBoostBuilder(BaseGameBoostBuilder):
 
     def _build_account_data(self, account: GtavResolvedAccount) -> dict[str, Any]:
         cash_display = f"{account.cash_amount} {account.cash_unit}"
+        gb_platform = _PLATFORM_TO_GB.get(account.main_platform, account.main_platform)
         return {
-            "platform": account.main_platform,
+            "platform": gb_platform,
             "account_tags": account.tags or [],
             "account_level": account.level or 0,
             "cars_count": account.cars_count or 0,
             "cash_amount": cash_display,
+            "has_dual_characters": account.has_dual_characters,
         }
 
     def build_payload(
@@ -37,16 +45,7 @@ class GtavGameBoostBuilder(BaseGameBoostBuilder):
         listing: ListingDraft,
         ctx: BuildContext,
     ) -> dict[str, Any]:
-        # Override price source: prefer gameboost_price, then price, fallback 500
-        original_price = subject.price
-        subject.price = subject.gameboost_price or subject.price or 500
-
         payload = super().build_payload(subject, listing, ctx)
-
-        # Restore original price
-        subject.price = original_price
-
-        # Static image URL always
         payload["image_urls"] = [_STATIC_IMAGE_URL]
         return payload
 

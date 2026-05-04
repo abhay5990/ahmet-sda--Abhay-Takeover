@@ -188,19 +188,29 @@ class EldoradoNotificationStatusSync:
                 skipped += 1
                 continue
 
-            rows = Order.objects.filter(
-                store_order_id=details_id,
-                integration_account__provider=_PROVIDER,
-            ).update(status=new_status)
+            orders = list(
+                Order.objects.filter(
+                    store_order_id=details_id,
+                    integration_account__provider=_PROVIDER,
+                ).only('id', 'store_listing_id')
+            )
 
-            if rows == 0:
+            if not orders:
                 logger.warning(
                     'eldorado_notif_sync: no order found for detailsId=%s event=%s — skipping',
                     details_id, notif.event,
                 )
                 skipped += 1
-            else:
-                updated += rows
+                continue
+
+            Order.objects.filter(
+                id__in=[o.id for o in orders],
+            ).update(status=new_status)
+            updated += len(orders)
+
+            # Reactive pool check: if a sale event, notify offer pool
+            if notif.event in ('OrderDelivered', 'OrderReceivedByBuyerAfterDispute'):
+                self._notify_pool_sale(orders, account)
 
         # Advance watermark
         if most_recent_id:
@@ -214,3 +224,27 @@ class EldoradoNotificationStatusSync:
             'eldorado_notif_sync: %s done — updated=%d skipped=%d new=%d',
             account.name, updated, skipped, len(new_notifications),
         )
+
+    @staticmethod
+    def _notify_pool_sale(orders: list, account: Any) -> None:
+        """Notify offer pool checker when a sale is detected."""
+        from apps.listings.models import Listing
+
+        store_listing_ids = {o.store_listing_id for o in orders if o.store_listing_id}
+        if not store_listing_ids:
+            return
+
+        listing_ids = list(
+            Listing.objects.filter(
+                store_listing_id__in=store_listing_ids,
+                integration_account=account,
+            ).values_list('id', flat=True)
+        )
+
+        if listing_ids:
+            try:
+                from apps.posting.services.pool.checker import notify_sale
+                for lid in listing_ids:
+                    notify_sale(lid)
+            except Exception:
+                logger.exception('eldorado_notif_sync: pool notify_sale failed')

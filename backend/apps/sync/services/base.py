@@ -594,11 +594,15 @@ class BaseSyncService:
         if defaults.get('our_fee') is None:
             self._auto_calculate_fee(raw_payload, defaults)
 
-        _, created = Order.objects.update_or_create(
+        order, created = Order.objects.update_or_create(
             integration_account=raw_payload.integration_account,
             store_order_id=raw_payload.remote_id,
             defaults=defaults,
         )
+
+        # Reactive pool check: new order = sale detected
+        if created and order.store_listing_id:
+            self._notify_pool_on_sale(order)
 
         return 'created' if created else 'updated'
 
@@ -628,6 +632,23 @@ class BaseSyncService:
             defaults['our_fee'] = compute_fee_amount(
                 defaults['price'], rule, include_flat=False,
             )
+
+    # ── Pool integration ────────────────────────────────────────────
+
+    @staticmethod
+    def _notify_pool_on_sale(order: Any) -> None:
+        """If this order's listing has an offer pool, trigger replenish check."""
+        try:
+            from apps.listings.models import Listing
+            listing = Listing.objects.filter(
+                store_listing_id=order.store_listing_id,
+                integration_account=order.integration_account,
+            ).only('id').first()
+            if listing:
+                from apps.posting.services.pool.checker import notify_sale
+                notify_sale(listing.id)
+        except Exception:
+            logger.debug('pool notify_sale skipped (error or not configured)')
 
     # ── Utilities ────────────────────────────────────────────────────
 

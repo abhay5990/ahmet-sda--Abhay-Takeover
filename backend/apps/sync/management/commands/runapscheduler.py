@@ -53,6 +53,20 @@ def run_order_status_refresh_job():
 
 
 @apscheduler_util.close_old_connections
+def run_pool_sweep_job():
+    """APScheduler wrapper — checks all active offer pools and replenishes if needed."""
+    from apps.posting.services.pool.checker import sweep_all_pools
+    sweep_all_pools()
+
+
+@apscheduler_util.close_old_connections
+def run_pause_expiring_listings_job():
+    """APScheduler wrapper — pauses listings approaching marketplace expiry."""
+    from django.core.management import call_command
+    call_command('pause_expiring_listings', '--execute')
+
+
+@apscheduler_util.close_old_connections
 def delete_old_job_executions(max_age_days=MAX_EXECUTION_AGE_DAYS):
     """Cleanup old APScheduler execution records."""
     DjangoJobExecution.objects.delete_old_job_executions(max_age_days)
@@ -111,6 +125,26 @@ class Command(BaseCommand):
             max_instances=1,
             replace_existing=True,
             next_run_time=datetime.now(),
+        )
+
+        # Offer pool sweep — runs every 30 minutes
+        scheduler.add_job(
+            run_pool_sweep_job,
+            trigger=IntervalTrigger(minutes=30),
+            id='offer_pool_sweep',
+            name='Offer Pool Auto-Restock Sweep',
+            max_instances=1,
+            replace_existing=True,
+        )
+
+        # Pause expiring listings — runs daily
+        scheduler.add_job(
+            run_pause_expiring_listings_job,
+            trigger=IntervalTrigger(days=1),
+            id='pause_expiring_listings',
+            name='Pause Expiring Listings (Eldorado/PA)',
+            max_instances=1,
+            replace_existing=True,
         )
 
         # Cleanup old execution logs — runs daily

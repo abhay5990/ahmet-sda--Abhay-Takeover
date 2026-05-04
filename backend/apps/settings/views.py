@@ -16,7 +16,7 @@ class GroupListView(LoginRequiredMixin, ListView):
     context_object_name = 'groups'
 
     def get_queryset(self):
-        return AccountGroup.objects.prefetch_related('accounts').all()
+        return AccountGroup.objects.prefetch_related('accounts', 'proxies').all()
 
 
 class GroupCreateView(LoginRequiredMixin, View):

@@ -18,6 +18,7 @@
     mobileOpen: false,
     stockOpen: false,
     dropshipOpen: false,
+    restockOpen: false,
     inventoryOpen: false,
     ordersOpen: false,
     marketplacesOpen: false,
@@ -26,6 +27,7 @@
 }" x-init="
     stockOpen = window.location.pathname.startsWith('/posting/stock');
     dropshipOpen = window.location.pathname.startsWith('/posting/dropship');
+    restockOpen = window.location.pathname.startsWith('/posting/restock');
     inventoryOpen = window.location.pathname.startsWith('/inventory') || window.location.pathname.startsWith('/listings');
     ordersOpen = window.location.pathname.startsWith('/orders');
     marketplacesOpen = window.location.pathname.startsWith('/integrations');
@@ -203,6 +205,32 @@
                        class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
                               {% if request.resolver_match.url_name == 'dropship_activity' %}text-emerald-400{% endif %}">
                         Activity
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Auto Restock (expandable) — admin, user -->
+            {% if user_role == 'admin' or user_role == 'user' %}
+            <div>
+                <button @click="restockOpen = !restockOpen"
+                        class="flex items-center w-full px-4 py-2.5 text-sm hover:bg-gray-800 hover:text-white transition-colors text-left
+                               {% if request.resolver_match.app_name == 'posting' and 'restock' in request.path %}bg-gray-800/50 text-white{% endif %}">
+                    <span class="w-8 flex-shrink-0 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M2.985 19.644l3.181-3.183"/>
+                        </svg>
+                    </span>
+                    <span x-show="open || mobileOpen" x-cloak class="ml-2 truncate flex-1">Auto Restock</span>
+                    <svg x-show="open || mobileOpen" x-cloak class="w-4 h-4 transition-transform flex-shrink-0" :class="restockOpen && 'rotate-90'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+                <div x-show="(open || mobileOpen) && restockOpen" x-cloak x-collapse class="bg-gray-950/50">
+                    <a href="{% url 'posting:restock_pools' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.url_name == 'restock_pools' %}text-emerald-400{% endif %}">
+                        Pools
                     </a>
                 </div>
             </div>

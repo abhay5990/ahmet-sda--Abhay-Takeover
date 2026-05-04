@@ -75,9 +75,14 @@ class ValorantEldoradoBuilder(BaseEldoradoBuilder):
         return f"{region_id}-{platform_id}"
 
     def _resolve_rank(self, account: ValorantResolvedAccount) -> str:
-        candidate = account.current_rank if account.rank_type.lower() == "ranked" else account.last_rank
-        first_token = str(candidate or "").split(" ", 1)[0].strip().lower()
-        if not first_token or first_token in ("unranked", "no rank", "unrated"):
+        rank_type = account.rank_type.lower()
+
+        # Expired rank → site attribute'una güncel durumu yansıt
+        if rank_type != "ranked":
+            return "ranked-ready" if account.level >= 20 else "unranked"
+
+        first_token = str(account.current_rank or "").split(" ", 1)[0].strip().lower()
+        if not first_token or first_token in ("unranked", "no", "unrated"):
             return "ranked-ready" if account.level >= 20 else "unranked"
         return _RANK_IDS.get(first_token, "other")
 

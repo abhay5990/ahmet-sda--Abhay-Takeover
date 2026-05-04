@@ -1,4 +1,4 @@
-"""Parse prepared LZT payloads for the GTA V slice."""
+"""Parse manual-entry payloads for the GTA V slice."""
 
 from __future__ import annotations
 
@@ -9,8 +9,8 @@ from .....core.contracts import CredentialBundle
 
 
 @dataclass(slots=True)
-class GtavLztSource:
-    """Normalized GTA V fields from LZT."""
+class GtavManualSource:
+    """Normalized GTA V fields from manual input."""
 
     item_id: str = ""
     category_id: int = 1
@@ -23,6 +23,7 @@ class GtavLztSource:
     cash_unit: str = "Million"
     cars_count: int = 0
     tags: list[str] = field(default_factory=list)
+    has_dual_characters: bool = False
 
     security_email: str = ""
     security_email_password: str = ""
@@ -30,18 +31,14 @@ class GtavLztSource:
     birthday: str = ""
     email_backup_codes: str = ""
 
-    eldorado_price: float = 0.0
-    gameboost_price: float = 0.0
-    playerauctions_price: float = 0.0
-
     title: str = "GTA V Account"
     description: str = ""
 
 
-class GtavLztSourceAdapter:
-    """Extract GTA V data from a prepared LZT source envelope."""
+class GtavManualSourceAdapter:
+    """Extract GTA V data from a manual-entry source envelope."""
 
-    def parse(self, raw_data: dict[str, Any] | None) -> GtavLztSource | None:
+    def parse(self, raw_data: dict[str, Any] | None) -> GtavManualSource | None:
         if not isinstance(raw_data, dict) or not raw_data:
             return None
 
@@ -65,18 +62,7 @@ class GtavLztSourceAdapter:
         tags_raw = offer_details.get("tags") or payload.get("tags", [])
         tags = tags_raw if isinstance(tags_raw, list) else []
 
-        eldorado_price = self._to_float(
-            offer_details.get("eldorado_price") or payload.get("eldorado_price"), default=0.0,
-        )
-        gameboost_price = self._to_float(
-            offer_details.get("gameboost_price") or payload.get("gameboost_price"), default=0.0,
-        )
-        playerauctions_price = self._to_float(
-            offer_details.get("playerauctions_price") or payload.get("playerauctions_price"), default=0.0,
-        )
-
-        price_fallback = eldorado_price or gameboost_price or playerauctions_price
-        price = self._to_float(payload.get("price"), default=price_fallback)
+        price = self._to_float(payload.get("price"), default=0.0)
 
         title = (
             offer_details.get("title")
@@ -87,7 +73,7 @@ class GtavLztSourceAdapter:
             or payload.get("description", "")
         )
 
-        return GtavLztSource(
+        return GtavManualSource(
             item_id=str(payload.get("item_id") or "").strip(),
             category_id=self._to_int(payload.get("category_id"), default=1),
             price=price,
@@ -104,14 +90,14 @@ class GtavLztSourceAdapter:
             cash_unit=str(offer_details.get("cash_unit") or payload.get("cash_unit", "Million")).strip(),
             cars_count=self._to_int(offer_details.get("cars_count") or payload.get("cars_count"), default=0),
             tags=tags,
+            has_dual_characters=bool(
+                offer_details.get("has_dual_characters") or payload.get("has_dual_characters", False),
+            ),
             security_email=str(payload.get("security_email") or "").strip(),
             security_email_password=str(payload.get("security_email_password") or "").strip(),
             security_email_login_link=str(payload.get("security_email_login_link") or "").strip(),
             birthday=str(payload.get("birthday") or "").strip(),
             email_backup_codes=str(payload.get("email_backup_codes") or "").strip(),
-            eldorado_price=eldorado_price,
-            gameboost_price=gameboost_price,
-            playerauctions_price=playerauctions_price,
             title=str(title).strip(),
             description=str(description).strip(),
         )

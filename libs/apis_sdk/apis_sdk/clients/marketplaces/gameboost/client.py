@@ -130,6 +130,54 @@ class GameBoostClient:
         meta = self._extract_meta(response, body)
         return ApiResult.success(body, status_code=response.status_code, meta=meta)
 
+    def create_account_offer_with_credentials(
+        self,
+        payload: dict[str, Any],
+        *,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[dict[str, Any]]:
+        """Create an account offer with multi-credential support.
+
+        POST /account-offers/create
+        Accepts a payload with a ``credentials`` list instead of individual
+        login/password fields.  This is the newer GameBoost endpoint that
+        supports multiple credentials per offer from the start.
+
+        Returns the raw response body on success.
+        """
+        url = self._build_url(GameBoostEndpoints.ACCOUNT_OFFERS_CREATE)
+
+        try:
+            response = self._transport.request(
+                HttpMethod.POST,
+                url,
+                headers=auth_headers,
+                json_body=payload,
+                timeout=self._config.timeout,
+                proxy_url=proxy_url,
+            )
+        except TransportError as exc:
+            return ApiResult.from_error(
+                ErrorCategory.NETWORK, str(exc),
+                provider=self.PROVIDER, is_retryable=True,
+            )
+
+        if not response.is_success:
+            return self._handle_error(response.status_code, response)
+
+        try:
+            body = response.json()
+        except Exception as exc:
+            return ApiResult.from_error(
+                ErrorCategory.UNKNOWN,
+                f"Failed to parse create response: {exc}",
+                provider=self.PROVIDER,
+            )
+
+        meta = self._extract_meta(response, body)
+        return ApiResult.success(body, status_code=response.status_code, meta=meta)
+
     def list_account_offers(
         self,
         *,

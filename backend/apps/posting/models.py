@@ -438,3 +438,214 @@ class CleanerConfig(models.Model):
 
     def __str__(self):
         return f"Cleaner: {self.source_account.name} ({'ON' if self.enabled else 'OFF'})"
+
+
+# ── Auto Restock (Offer Pool) ────────────────────────────────────
+
+
+class OfferPoolStatus(models.TextChoices):
+    ACTIVE = 'active', 'Active'
+    PAUSED = 'paused', 'Paused'
+    DEPLETED = 'depleted', 'Depleted'
+
+
+class OfferPoolItemStatus(models.TextChoices):
+    PENDING = 'pending', 'Pending'
+    QUEUED = 'queued', 'Queued'
+    PUSHED = 'pushed', 'Pushed'
+    FAILED = 'failed', 'Failed'
+
+
+class OfferPoolActiveOfferStatus(models.TextChoices):
+    ACTIVE = 'active', 'Active'
+    SOLD = 'sold', 'Sold'
+    FAILED = 'failed', 'Failed'
+    DELISTED = 'delisted', 'Delisted'
+
+
+class OfferPool(models.Model):
+    """Auto-restock pool: monitors a listing and replenishes credentials when below threshold.
+
+    Supports two strategies:
+    - append: Add credentials to existing offer (Eldorado, Gameboost)
+    - clone:  Create duplicate offers with new credentials (PlayerAuctions)
+    """
+
+    class Strategy(models.TextChoices):
+        APPEND = 'append', 'Append Credentials'
+        CLONE = 'clone', 'Clone Offer'
+
+    listing = models.ForeignKey(
+        'listings.Listing',
+        on_delete=models.CASCADE,
+        related_name='offer_pools',
+        help_text='The offer to restock',
+    )
+    game = models.ForeignKey(
+        'inventory.Game',
+        on_delete=models.CASCADE,
+        related_name='offer_pools',
+    )
+    store = models.ForeignKey(
+        'integrations.IntegrationAccount',
+        on_delete=models.CASCADE,
+        related_name='offer_pools',
+        help_text='Marketplace account where the offer lives',
+    )
+    strategy = models.CharField(
+        max_length=10,
+        choices=Strategy.choices,
+        help_text='append (Eldorado/Gameboost) or clone (PlayerAuctions)',
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=OfferPoolStatus.choices,
+        default=OfferPoolStatus.ACTIVE,
+    )
+
+    # Thresholds
+    threshold = models.PositiveIntegerField(
+        default=10,
+        help_text='Trigger replenish when remote credential count drops below this',
+    )
+    target_count = models.PositiveIntegerField(
+        default=50,
+        help_text='Fill up to this many credentials per replenish cycle',
+    )
+    max_concurrent = models.PositiveIntegerField(
+        default=1,
+        help_text='PA clone strategy: max simultaneous offers from this pool',
+    )
+
+    # Monitoring state
+    current_remote_count = models.IntegerField(
+        null=True, blank=True,
+        help_text='Last known credential count on the remote offer',
+    )
+    last_checked_at = models.DateTimeField(
+        null=True, blank=True,
+        help_text='Last time remote count was checked',
+    )
+    last_replenished_at = models.DateTimeField(
+        null=True, blank=True,
+        help_text='Last time credentials were pushed',
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'offer_pools'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['listing'],
+                name='unique_pool_per_listing',
+            ),
+        ]
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Pool #{self.pk} — {self.listing.title or self.listing.store_listing_id} ({self.status})"
+
+    @property
+    def pending_count(self) -> int:
+        return self.items.filter(status=OfferPoolItemStatus.PENDING).count()
+
+    @property
+    def needs_replenish(self) -> bool:
+        if self.current_remote_count is None:
+            return True
+        return self.current_remote_count < self.threshold
+
+
+class OfferPoolItem(models.Model):
+    """An OwnedProduct queued in a pool, waiting to be pushed to the offer."""
+
+    pool = models.ForeignKey(
+        OfferPool,
+        on_delete=models.CASCADE,
+        related_name='items',
+    )
+    owned_product = models.ForeignKey(
+        'inventory.OwnedProduct',
+        on_delete=models.CASCADE,
+        related_name='pool_items',
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=OfferPoolItemStatus.choices,
+        default=OfferPoolItemStatus.PENDING,
+    )
+    pushed_at = models.DateTimeField(null=True, blank=True)
+    error_message = models.TextField(blank=True)
+    target_offer_id = models.CharField(
+        max_length=255, blank=True,
+        help_text='Remote offer ID this credential was pushed to (relevant for PA clones)',
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        help_text='Push priority (lower = pushed first)',
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'offer_pool_items'
+        ordering = ['order', 'created_at']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['pool', 'owned_product'],
+                name='unique_pool_owned_product',
+            ),
+        ]
+        indexes = [
+            models.Index(fields=['pool', 'status']),
+        ]
+
+    def __str__(self):
+        return f"PoolItem #{self.pk} — {self.owned_product.login} ({self.status})"
+
+
+class OfferPoolActiveOffer(models.Model):
+    """PA clone strategy: tracks individual cloned offers spawned from a pool."""
+
+    pool = models.ForeignKey(
+        OfferPool,
+        on_delete=models.CASCADE,
+        related_name='active_offers',
+    )
+    store_listing_id = models.CharField(
+        max_length=255,
+        help_text='Remote offer ID on the marketplace',
+    )
+    listing = models.ForeignKey(
+        'listings.Listing',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='pool_active_offers',
+    )
+    pool_item = models.ForeignKey(
+        OfferPoolItem,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='active_offers',
+        help_text='Which pool item (credential) was used for this offer',
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=OfferPoolActiveOfferStatus.choices,
+        default=OfferPoolActiveOfferStatus.ACTIVE,
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'offer_pool_active_offers'
+        indexes = [
+            models.Index(fields=['pool', 'status']),
+        ]
+
+    def __str__(self):
+        return f"ActiveOffer #{self.pk} — {self.store_listing_id} ({self.status})"

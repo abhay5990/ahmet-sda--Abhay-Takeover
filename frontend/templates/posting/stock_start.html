@@ -9,48 +9,319 @@
         <h1 class="text-2xl font-bold text-gray-900">Start Stock Posting</h1>
     </div>
 
-    <div class="max-w-3xl space-y-4">
+    <div class="max-w-5xl space-y-4">
 
-        <!-- Game Selection -->
-        <div class="bg-white rounded-lg shadow p-4">
+        <!-- Game Selection (searchable) -->
+        <div class="bg-white rounded-lg shadow p-4" x-data="{ gameSearch: '', gameOpen: false }" @click.outside="gameOpen = false">
             <label class="block text-sm font-medium text-gray-700 mb-2">Game</label>
-            <select x-model="selectedGame" @change="onGameChange()"
-                    class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
-                <option value="">Select a game...</option>
-                {% for game in games %}
-                <option value="{{ game.id }}" data-slug="{{ game.slug }}">{{ game.name }}</option>
-                {% endfor %}
-            </select>
+            <div class="relative">
+                <input type="text" x-model="gameSearch"
+                       @focus="gameOpen = true"
+                       @input="gameOpen = true"
+                       :placeholder="selectedGame ? GAME_NAMES[selectedGame] : 'Type to search...'"
+                       class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
+                <div x-show="gameOpen && gameSearch.length > 0" x-transition
+                     class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                    {% for game in games %}
+                    <button type="button"
+                            x-show="'{{ game.name }}'.toLowerCase().includes(gameSearch.toLowerCase())"
+                            @click="selectedGame = '{{ game.id }}'; gameSearch = ''; gameOpen = false; onGameChange()"
+                            class="w-full text-left px-3 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+                            :class="selectedGame === '{{ game.id }}' && 'bg-emerald-50 text-emerald-700 font-medium'">
+                        {{ game.name }}
+                    </button>
+                    {% endfor %}
+                    <div x-show="!GAME_LIST.some(g => g.name.toLowerCase().includes(gameSearch.toLowerCase()))"
+                         class="px-3 py-2 text-sm text-gray-400">No games found</div>
+                </div>
+                <div x-show="selectedGame && !gameOpen" class="absolute inset-y-0 right-0 flex items-center pr-2">
+                    <button type="button" @click="selectedGame = ''; gameSearch = ''; onGameChange()"
+                            class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <p x-show="selectedGame" class="mt-1 text-xs text-emerald-600" x-text="GAME_NAMES[selectedGame]"></p>
         </div>
 
-        <!-- Source Account (fallback) -->
-        {% if source_accounts %}
-        <div class="bg-white rounded-lg shadow p-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Source Account</label>
-            <select x-model="sourceAccountId"
-                    class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
-                <option value="">None (no fallback)</option>
-                {% for acc in source_accounts %}
-                <option value="{{ acc.id }}" {% if forloop.first %}selected{% endif %}>{{ acc.name }} ({{ acc.provider }})</option>
-                {% endfor %}
-            </select>
-            <p class="mt-1 text-xs text-gray-500">
-                If OwnedProduct is not found, it will be fetched via API from this account
-            </p>
-        </div>
-        {% endif %}
+        <!-- Everything below requires game selection -->
+        <template x-if="selectedGame">
+            <div class="space-y-4">
 
-        <!-- Login Textarea -->
+        <!-- Method Toggle -->
         <div class="bg-white rounded-lg shadow p-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-                Logins <span class="text-gray-400">(one per line)</span>
-            </label>
-            <textarea x-model="logins" rows="6" placeholder="Enter logins, one per line..."
-                      class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 font-mono text-sm"></textarea>
-            <p class="mt-1 text-xs text-gray-500">
-                <span x-text="loginCount"></span> login(s) entered
-            </p>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Method</label>
+            <div class="flex space-x-4">
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" value="account" x-model="sourceType"
+                           class="text-emerald-600 focus:ring-emerald-500">
+                    <span class="text-sm text-gray-700">Platform Import</span>
+                </label>
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" value="manual" x-model="sourceType"
+                           class="text-emerald-600 focus:ring-emerald-500">
+                    <span class="text-sm text-gray-700">Manual Entry</span>
+                </label>
+            </div>
         </div>
+
+        <!-- Platform Import mode -->
+        <template x-if="sourceType === 'account'">
+            <div class="space-y-4">
+                {% if source_accounts %}
+                <div class="bg-white rounded-lg shadow p-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Source Account</label>
+                    <select x-model="sourceAccountId"
+                            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
+                        <option value="">None (no fallback)</option>
+                        {% for acc in source_accounts %}
+                        <option value="{{ acc.id }}" {% if forloop.first %}selected{% endif %}>{{ acc.name }} ({{ acc.provider }})</option>
+                        {% endfor %}
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500">
+                        If OwnedProduct is not found, it will be fetched via API from this account
+                    </p>
+                </div>
+                {% endif %}
+
+                <div class="bg-white rounded-lg shadow p-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Logins <span class="text-gray-400">(one per line)</span>
+                    </label>
+                    <textarea x-model="logins" rows="6" placeholder="Enter logins, one per line..."
+                              class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 font-mono text-sm"></textarea>
+                    <p class="mt-1 text-xs text-gray-500">
+                        <span x-text="loginCount"></span> login(s) entered
+                    </p>
+                </div>
+            </div>
+        </template>
+
+        <!-- Manual Entry mode -->
+        <template x-if="sourceType === 'manual'">
+            <div class="space-y-4">
+
+                <!-- ===== LISTING INFO + GAME DATA (grouped) ===== -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <!-- Listing Info -->
+                    <div class="p-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Listing Info</label>
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Title</label>
+                                    <input type="text" x-model="manualTitle"
+                                           class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
+                                           placeholder="Auto-generated if empty">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Purchased Price *</label>
+                                    <div class="flex items-center space-x-1">
+                                        <span class="text-sm text-gray-400">$</span>
+                                        <input type="number" step="0.01" min="0" x-model.number="manualPurchasedPrice"
+                                               class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 w-40"
+                                               placeholder="0.00">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Description</label>
+                                <textarea x-model="manualDescription" rows="4"
+                                          class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
+                                          placeholder="Auto-generated if empty"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game Data (GTA-specific, connected via border) -->
+                    <div x-show="isGtaGame" class="border-t border-gray-200 p-4 bg-gray-50">
+                        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Game Data</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Platform *</label>
+                                <select x-model="manualPlatform"
+                                        class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                    <option value="">Select...</option>
+                                    <template x-for="p in platformOptions" :key="p">
+                                        <option :value="p" x-text="p"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Level</label>
+                                <input type="number" min="0" x-model.number="manualLevel"
+                                       class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
+                                       placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Cash Amount</label>
+                                <div class="flex space-x-1">
+                                    <input type="number" min="0" x-model.number="manualCashAmount"
+                                           class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
+                                           placeholder="0">
+                                    <select x-model="manualCashUnit"
+                                            class="text-sm border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                        <option value="Million">M</option>
+                                        <option value="Billion">B</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Cars Count</label>
+                                <input type="number" min="0" x-model.number="manualCarsCount"
+                                       class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
+                                       placeholder="0">
+                            </div>
+                        </div>
+                        <!-- Account Tags -->
+                        <div class="mt-3">
+                            <label class="block text-xs text-gray-500 mb-1.5">Account Tags</label>
+                            <div class="flex flex-wrap gap-2">
+                                <template x-for="tag in GTA_ACCOUNT_TAGS" :key="tag">
+                                    <button type="button" @click="toggleTag(tag)"
+                                            class="px-2.5 py-1 text-xs font-medium rounded-full border transition-colors"
+                                            :class="manualAccountTags.includes(tag)
+                                                ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
+                                                : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'"
+                                            x-text="tag"></button>
+                                </template>
+                            </div>
+                        </div>
+                        <!-- Dual Characters -->
+                        <div class="mt-3">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" x-model="manualHasDualCharacters"
+                                       class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                <span class="text-xs text-gray-600">Has Dual Characters</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== CREDENTIALS ===== -->
+                <div class="bg-white rounded-lg shadow p-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Credentials</label>
+                    <p class="text-xs text-gray-500 mb-2">
+                        Paste tab-separated data from Excel. Columns auto-detected:
+                        <code class="bg-gray-100 px-1 rounded">login  password</code> +
+                        optional <code class="bg-gray-100 px-1 rounded">email  email_pass  email_link  birthday</code>
+                    </p>
+                    <textarea x-model="pasteData" @paste="handlePaste($event)" rows="4"
+                              placeholder="Paste tab-separated data here (login&#9;password&#9;...)&#10;Columns are auto-detected by content"
+                              class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 font-mono text-xs"></textarea>
+                    <div class="flex items-center space-x-3 mt-2">
+                        <button @click="parsePaste()" type="button"
+                                class="px-3 py-1.5 bg-gray-600 text-white text-xs font-medium rounded hover:bg-gray-700">
+                            Parse
+                        </button>
+                        <button @click="addEmptyRow()" type="button"
+                                class="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded hover:bg-gray-200 border">
+                            + Add Row
+                        </button>
+                        <span class="text-xs text-gray-500" x-text="credentials.length + ' credential(s)'"></span>
+                    </div>
+                </div>
+
+                <!-- Credential Table -->
+                <div class="bg-white rounded-lg shadow overflow-x-auto" x-show="credentials.length > 0">
+                    <table class="min-w-full text-xs">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="px-2 py-2 text-left text-gray-500 font-medium">#</th>
+                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Login *</th>
+                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Password *</th>
+                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Email</th>
+                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Email Pass</th>
+                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Email Link</th>
+                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Sec. Email</th>
+                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Sec. Email Pass</th>
+                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Sec. Email Link</th>
+                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Birthday</th>
+                                <th class="px-2 py-2"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="(cred, idx) in credentials" :key="idx">
+                                <tr class="border-b hover:bg-gray-50" :class="{'bg-red-50': !cred.login || !cred.password}">
+                                    <td class="px-2 py-1 text-gray-400" x-text="idx + 1"></td>
+                                    <td class="px-1 py-1"><input type="text" x-model="cred.login" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
+                                    <td class="px-1 py-1"><input type="text" x-model="cred.password" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
+                                    <td class="px-1 py-1"><input type="text" x-model="cred.email" class="w-28 text-xs border-gray-300 rounded px-1 py-0.5"></td>
+                                    <td class="px-1 py-1"><input type="text" x-model="cred.email_password" class="w-20 text-xs border-gray-300 rounded px-1 py-0.5"></td>
+                                    <td class="px-1 py-1"><input type="text" x-model="cred.email_login_link" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
+                                    <td class="px-1 py-1"><input type="text" x-model="cred.security_email" class="w-28 text-xs border-gray-300 rounded px-1 py-0.5"></td>
+                                    <td class="px-1 py-1"><input type="text" x-model="cred.security_email_password" class="w-20 text-xs border-gray-300 rounded px-1 py-0.5"></td>
+                                    <td class="px-1 py-1"><input type="text" x-model="cred.security_email_login_link" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
+                                    <td class="px-1 py-1"><input type="text" x-model="cred.birthday" class="w-20 text-xs border-gray-300 rounded px-1 py-0.5"></td>
+                                    <td class="px-1 py-1">
+                                        <button @click="credentials.splice(idx, 1)" type="button"
+                                                class="text-red-400 hover:text-red-600">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ===== DISTRIBUTION (grouped) ===== -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <!-- Distribution Mode -->
+                    <div class="p-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Distribution</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" value="cross_platform" x-model="distributionMode"
+                                       class="text-emerald-600 focus:ring-emerald-500">
+                                <span class="text-sm text-gray-700">Cross-platform</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" value="shared" x-model="distributionMode"
+                                       class="text-emerald-600 focus:ring-emerald-500">
+                                <span class="text-sm text-gray-700">Shared</span>
+                            </label>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500" x-show="distributionMode === 'cross_platform'">
+                            Same credentials posted to all selected stores. When sold on one, removed from others.
+                        </p>
+                        <p class="mt-1 text-xs text-gray-500" x-show="distributionMode === 'shared'">
+                            Different credentials assigned to different stores. Specify count per store.
+                        </p>
+                    </div>
+
+                    <!-- Shared Distribution counts (connected via border) -->
+                    <div x-show="distributionMode === 'shared' && selectedStores.length > 0 && credentials.length > 0"
+                         class="border-t border-gray-200 p-4 bg-gray-50">
+                        <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                            Per-Store Allocation
+                            <span class="normal-case text-gray-400 ml-1">
+                                (Total: <span x-text="credentials.length"></span>, Assigned: <span x-text="totalDistributed"></span>)
+                            </span>
+                        </label>
+                        <div class="space-y-2">
+                            {% for store in stores %}
+                            <div class="flex items-center space-x-3" x-show="selectedStores.includes('{{ store.id }}')">
+                                <span class="text-sm text-gray-700 w-40">{{ store.name }}</span>
+                                <input type="number" min="0" :max="credentials.length"
+                                       x-model.number="distribution['{{ store.slug }}']"
+                                       class="w-20 text-sm border-gray-300 rounded-md">
+                                <span class="text-xs text-gray-400">credentials</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <p class="mt-2 text-xs text-red-500" x-show="totalDistributed > credentials.length">
+                            Total distributed exceeds credential count!
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </template>
 
         <!-- Store Selection -->
         <div class="bg-white rounded-lg shadow p-4">
@@ -162,16 +433,21 @@
         </div>
 
         <!-- Submit -->
-        <div class="flex items-center space-x-4">
-            <button @click="submitJob()" :disabled="!canSubmit || submitting"
-                    class="px-6 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg
-                           hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500
-                           disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                <span x-show="!submitting">Start Posting</span>
-                <span x-show="submitting">Submitting...</span>
-            </button>
-            <p x-show="submitError" class="text-sm text-red-600" x-text="submitError"></p>
+        <div class="space-y-3">
+            <div class="flex items-center space-x-4">
+                <button @click="submitJob()" :disabled="!canSubmit || submitting"
+                        class="px-6 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg
+                               hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500
+                               disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    <span x-show="!submitting">Start Posting</span>
+                    <span x-show="submitting">Submitting...</span>
+                </button>
+<p x-show="submitError" class="text-sm text-red-600" x-text="submitError"></p>
+            </div>
         </div>
+
+            </div>
+        </template><!-- /selectedGame -->
 
     </div>
 </div>
@@ -179,19 +455,109 @@
 
 {% block extra_js %}
 <script>
-// Game slug → supported sub-platforms (mirrors backend GAME_SUBPLATFORMS registry)
+// Game slug -> supported sub-platforms (mirrors backend GAME_SUBPLATFORMS registry)
 const GAME_SUBPLATFORMS = {{ game_subplatforms_json|safe }};
 
-// Game ID → slug lookup
+// Game ID -> slug lookup
 const GAME_SLUGS = {
     {% for game in games %}'{{ game.id }}': '{{ game.slug }}',{% endfor %}
 };
 
+// Game ID -> name lookup
+const GAME_NAMES = {
+    {% for game in games %}'{{ game.id }}': '{{ game.name }}',{% endfor %}
+};
+const GAME_LIST = [
+    {% for game in games %}{ id: '{{ game.id }}', name: '{{ game.name }}' },{% endfor %}
+];
+
+// GTA V platform options
+const GTA_PLATFORMS = [
+    'PC - Legacy', 'PlayStation 4', 'Xbox One',
+    'PlayStation 5', 'Xbox Series X/S', 'PC - Enhanced',
+];
+
+// GTA V account tags (GameBoost expected values)
+const GTA_ACCOUNT_TAGS = [
+    'High Level Account', 'Billionaire Account', 'Rare Account', 'Starter Account',
+];
+
+// Date pattern: digits with / or - separators (e.g. 3/10/1989, 1989-03-10, 10.03.1989)
+const DATE_RE = /^\d{1,4}[\/.\\-]\d{1,2}[\/.\\-]\d{1,4}$/;
+// URL/domain pattern (e.g. firstmail.ltd/webmail, https://outlook.com)
+const LINK_RE = /^(https?:\/\/)?[a-z0-9.-]+\.[a-z]{2,}/i;
+
+/**
+ * Auto-detect column mapping for a row of tab-separated cells.
+ * First two columns are always login, password.
+ * Remaining columns detected by content:
+ *   - contains @ -> email (1st) / security_email (2nd)
+ *   - matches DATE_RE -> birthday
+ *   - matches LINK_RE -> email_login_link (1st) / security_email_login_link (2nd)
+ *   - otherwise -> email_password (1st) / security_email_password (2nd)
+ */
+function detectColumns(cells) {
+    const cred = emptyCredential();
+    if (cells.length >= 1) cred.login = cells[0].trim();
+    if (cells.length >= 2) cred.password = cells[1].trim();
+
+    let emailSeen = false;
+    let emailPassSeen = false;
+    let emailLinkSeen = false;
+
+    for (let i = 2; i < cells.length; i++) {
+        const val = cells[i].trim();
+        if (!val) continue;
+
+        if (DATE_RE.test(val)) {
+            cred.birthday = val;
+        } else if (val.includes('@')) {
+            if (!emailSeen) { cred.email = val; emailSeen = true; }
+            else { cred.security_email = val; }
+        } else if (LINK_RE.test(val)) {
+            if (!emailLinkSeen) { cred.email_login_link = val; emailLinkSeen = true; }
+            else { cred.security_email_login_link = val; }
+        } else {
+            if (!emailPassSeen) { cred.email_password = val; emailPassSeen = true; }
+            else { cred.security_email_password = val; }
+        }
+    }
+    return cred;
+}
+
+function emptyCredential() {
+    return {
+        login: '', password: '', email: '', email_password: '', email_login_link: '',
+        security_email: '', security_email_password: '', security_email_login_link: '',
+        birthday: '',
+    };
+}
+
 function stockStart() {
     return {
         selectedGame: new URLSearchParams(window.location.search).get('game') || '',
+        sourceType: 'account',
+        // Account mode
         logins: (new URLSearchParams(window.location.search).get('logins') || '').replace(/,/g, '\n'),
         sourceAccountId: new URLSearchParams(window.location.search).get('source') || '{% if source_accounts %}{{ source_accounts.0.id }}{% endif %}',
+        // Manual mode — listing info
+        manualTitle: '',
+        manualDescription: '',
+        manualPurchasedPrice: 0,
+        // Manual mode — game data
+        manualPlatform: '',
+        manualLevel: 0,
+        manualCashAmount: 0,
+        manualCashUnit: 'Million',
+        manualCarsCount: 0,
+        manualAccountTags: [],
+        manualHasDualCharacters: false,
+        // Manual mode — credentials & distribution
+        distributionMode: 'cross_platform',
+        credentials: [],
+        pasteData: '',
+        distribution: {},
+        // Shared
         selectedStores: [],
         defaults: {},
         showSettings: {},
@@ -203,12 +569,41 @@ function stockStart() {
         },
 
         get canSubmit() {
-            return this.selectedGame && this.loginCount > 0 && this.selectedStores.length > 0;
+            if (!this.selectedGame || this.selectedStores.length === 0) return false;
+            if (this.sourceType === 'account') {
+                return this.loginCount > 0;
+            }
+            // Manual mode
+            if (this.isGtaGame && !this.manualPlatform) return false;
+            if (!this.manualPurchasedPrice || this.manualPurchasedPrice <= 0) return false;
+            if (this.credentials.length === 0) return false;
+            const valid = this.credentials.every(c => c.login && c.password);
+            if (!valid) return false;
+            if (this.distributionMode === 'shared' && this.totalDistributed > this.credentials.length) return false;
+            return true;
         },
 
         get gameSubplatforms() {
             const slug = GAME_SLUGS[this.selectedGame] || '';
             return GAME_SUBPLATFORMS[slug] || [];
+        },
+
+        get isGtaGame() {
+            const slug = (GAME_SLUGS[this.selectedGame] || '').toLowerCase();
+            return slug.startsWith('gta') || slug.includes('grand-theft-auto');
+        },
+
+        get platformOptions() {
+            if (this.isGtaGame) return GTA_PLATFORMS;
+            return this.gameSubplatforms.length > 0 ? this.gameSubplatforms : [];
+        },
+
+        get totalDistributed() {
+            let total = 0;
+            for (const slug of Object.keys(this.distribution)) {
+                total += (parseInt(this.distribution[slug]) || 0);
+            }
+            return total;
         },
 
         init() {
@@ -221,6 +616,7 @@ function stockStart() {
                 };
             }
             this.showSettings['{{ store.slug }}'] = false;
+            this.distribution['{{ store.slug }}'] = 0;
             {% endfor %}
 
             if (this.selectedGame) this.onGameChange();
@@ -228,11 +624,9 @@ function stockStart() {
 
         async onGameChange() {
             if (!this.selectedGame) return;
-            // Reset sub_platform selections when game changes (available platforms differ)
             for (const slug of Object.keys(this.defaults)) {
                 this.defaults[slug].sub_platform = '';
             }
-            // Load saved defaults per provider (UI convenience pre-fill)
             const providers = new Set();
             {% for store in stores %}
             providers.add('{{ store.provider }}');
@@ -242,7 +636,6 @@ function stockStart() {
                     const resp = await fetch(`/posting/api/defaults/${this.selectedGame}/${provider}/`);
                     if (resp.ok) {
                         const data = await resp.json();
-                        // Apply to all stores with this provider
                         {% for store in stores %}
                         if ('{{ store.provider }}' === provider && this.defaults['{{ store.slug }}']) {
                             this.defaults['{{ store.slug }}'] = { ...this.defaults['{{ store.slug }}'], ...data };
@@ -255,17 +648,51 @@ function stockStart() {
 
         onStoreToggle(slug) {},
 
+        toggleTag(tag) {
+            const idx = this.manualAccountTags.indexOf(tag);
+            if (idx === -1) this.manualAccountTags.push(tag);
+            else this.manualAccountTags.splice(idx, 1);
+        },
+
         toggleSettings(slug) {
             this.showSettings[slug] = !this.showSettings[slug];
         },
 
-        async submitJob() {
-            this.submitting = true;
-            this.submitError = '';
+        // --- Manual credential handling ---
 
-            const loginList = this.logins.split('\n').filter(l => l.trim()).map(l => l.trim());
+        handlePaste(event) {
+            // Let the paste happen naturally, user clicks Parse after
+        },
+
+        parsePaste() {
+            if (!this.pasteData.trim()) return;
+            const lines = this.pasteData.trim().split('\n');
+            if (lines.length === 0) return;
+
+            // Detect if first line is a header
+            const headerKeys = ['login', 'password', 'email', 'birthday'];
+            const firstCells = lines[0].split('\t');
+            const isHeader = firstCells.some(c =>
+                headerKeys.includes(c.trim().toLowerCase())
+            );
+            const dataLines = isHeader ? lines.slice(1) : lines;
+
+            for (const line of dataLines) {
+                if (!line.trim()) continue;
+                const cells = line.split('\t');
+                this.credentials.push(detectColumns(cells));
+            }
+            this.pasteData = '';
+        },
+
+        addEmptyRow() {
+            this.credentials.push(emptyCredential());
+        },
+
+        // --- Preview & Submit ---
+
+        _buildPayload() {
             const storeIds = this.selectedStores.map(Number);
-
             const defaultsPayload = {};
             {% for store in stores %}
             if (storeIds.includes({{ store.id }})) {
@@ -274,6 +701,54 @@ function stockStart() {
             }
             {% endfor %}
 
+            if (this.sourceType === 'account') {
+                const loginList = this.logins.split('\n').filter(l => l.trim()).map(l => l.trim());
+                return {
+                    source_type: 'account',
+                    game_id: Number(this.selectedGame),
+                    logins: loginList,
+                    stores: storeIds,
+                    defaults: defaultsPayload,
+                    source_account_id: this.sourceAccountId ? Number(this.sourceAccountId) : null,
+                };
+            }
+
+            // Manual mode
+            const distrib = {};
+            if (this.distributionMode === 'shared') {
+                {% for store in stores %}
+                if (storeIds.includes({{ store.id }})) {
+                    distrib['{{ store.slug }}'] = parseInt(this.distribution['{{ store.slug }}']) || 0;
+                }
+                {% endfor %}
+            }
+            return {
+                source_type: 'manual',
+                game_id: Number(this.selectedGame),
+                stores: storeIds,
+                defaults: defaultsPayload,
+                title: this.manualTitle || null,
+                description: this.manualDescription || null,
+                purchased_price: this.manualPurchasedPrice,
+                platform: this.manualPlatform,
+                level: this.manualLevel,
+                cash_amount: this.manualCashAmount,
+                cash_unit: this.manualCashUnit,
+                cars_count: this.manualCarsCount,
+                account_tags: this.manualAccountTags,
+                has_dual_characters: this.manualHasDualCharacters,
+                credentials: this.credentials,
+                distribution_mode: this.distributionMode,
+                distribution: distrib,
+            };
+        },
+
+        async submitJob() {
+            this.submitting = true;
+            this.submitError = '';
+
+            const body = this._buildPayload();
+
             try {
                 const resp = await fetch('/posting/api/jobs/', {
                     method: 'POST',
@@ -281,13 +756,7 @@ function stockStart() {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': '{{ csrf_token }}',
                     },
-                    body: JSON.stringify({
-                        game_id: Number(this.selectedGame),
-                        logins: loginList,
-                        stores: storeIds,
-                        defaults: defaultsPayload,
-                        source_account_id: this.sourceAccountId ? Number(this.sourceAccountId) : null,
-                    }),
+                    body: JSON.stringify(body),
                 });
 
                 const data = await resp.json();
@@ -298,7 +767,6 @@ function stockStart() {
                     return;
                 }
 
-                // Redirect to Active page
                 window.location.href = '/posting/stock/active/';
             } catch (e) {
                 this.submitError = 'Network error: ' + e.message;

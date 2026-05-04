@@ -84,12 +84,7 @@ class GtavPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
         listing: ListingDraft,
         ctx: BuildContext,
     ) -> dict[str, Any]:
-        payload = super().build_payload(account, listing, ctx)
-        # Custom price logic: prefer playerauctions_price over base price
-        raw = account.playerauctions_price or account.price or 399
-        price = self._apply_pricing(raw, ctx)
-        payload["price"] = round(max(price, 0.01), 2)
-        return payload
+        return super().build_payload(account, listing, ctx)
 
     def _format_delivery(self, account: GtavResolvedAccount) -> str:
         """Custom delivery with security_email and birthday fields."""

@@ -12,7 +12,7 @@ from apps.inventory.enums import DropshipProductStatus
 from apps.inventory.models import DropshipProduct, Game
 from apps.listings.models import Listing
 from apps.posting.models import (
-    DropshippingJobConfig, PostingJob, PostingLog,
+    DropshippingJobConfig, OfferPool, PostingJob, PostingLog,
 )
 from apps.posting.services.shared.subplatform import GAME_SUBPLATFORMS
 
@@ -220,4 +220,50 @@ def dropship_activity_page(request):
         'configs': configs,
         'selected_level': level or '',
         'selected_config': config_id or '',
+    })
+
+
+# ── Auto Restock (Offer Pools) ───────────────────────────────────
+
+@ensure_csrf_cookie
+@role_required('admin', 'user')
+def restock_pools_page(request):
+    """Offer pool list + creation form."""
+    pools = (
+        OfferPool.objects
+        .select_related('listing', 'game', 'store')
+        .order_by('-created_at')
+    )
+    games = Game.objects.filter(is_active=True).order_by('name')
+    stores = IntegrationAccount.objects.filter(
+        is_active=True, role__in=['sell', 'both'],
+    ).order_by('provider', 'name')
+    return render(request, 'posting/restock_pools.html', {
+        'pools': pools,
+        'games': games,
+        'stores': stores,
+    })
+
+
+@ensure_csrf_cookie
+@role_required('admin', 'user')
+def restock_pool_detail_page(request, pool_id):
+    """Pool detail — items, active offers, logs."""
+    pool = get_object_or_404(
+        OfferPool.objects.select_related('listing', 'game', 'store'),
+        id=pool_id,
+    )
+    items = pool.items.select_related('owned_product').order_by('order', 'created_at')
+    active_offers = pool.active_offers.select_related('listing', 'pool_item').order_by('-created_at')
+
+    logs = PostingLog.objects.filter(
+        task_name__in=['pool_replenish', 'pool_checker'],
+        detail__pool_id=pool.pk,
+    ).order_by('-created_at')[:50]
+
+    return render(request, 'posting/restock_pool_detail.html', {
+        'pool': pool,
+        'items': items,
+        'active_offers': active_offers,
+        'logs': logs,
     })

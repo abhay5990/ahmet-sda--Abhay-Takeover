@@ -18,15 +18,13 @@ class GtavResolvedAccount(ResolvedAccountBase):
     cars_count: int = 0
     tags: list[str] = field(default_factory=list)
 
+    has_dual_characters: bool = False
+
     security_email: str = ""
     security_email_password: str = ""
     security_email_login_link: str = ""
     birthday: str = ""
     email_backup_codes: str = ""
-
-    eldorado_price: float = 0.0
-    gameboost_price: float = 0.0
-    playerauctions_price: float = 0.0
 
     has_email_access: bool = False
     title: str = "GTA V Account"

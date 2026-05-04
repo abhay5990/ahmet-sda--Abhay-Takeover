@@ -157,9 +157,9 @@ function jobDetail() {
             success_count: {{ job.success_count }},
             fail_count: {{ job.fail_count }},
         },
-        eventSource: null,
         selectedItems: [],
-        _itemStatuses: {},
+        _pollTimer: null,
+        _POLL_INTERVAL: 10000,
 
         get processedCount() {
             return this.jobData.success_count + this.jobData.fail_count;
@@ -169,43 +169,58 @@ function jobDetail() {
             return Math.round((this.processedCount / (this.jobData.total_count || 1)) * 100);
         },
 
+        get _isActive() {
+            return this.jobData.status === 'running' || this.jobData.status === 'pending';
+        },
+
         init() {
-            if (this.jobData.status === 'running' || this.jobData.status === 'pending') {
-                this.startStream();
+            if (this._isActive) this._startPolling();
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    this._stopPolling();
+                } else if (this._isActive) {
+                    this._poll();
+                    this._startPolling();
+                }
+            });
+        },
+
+        _startPolling() {
+            this._stopPolling();
+            this._pollTimer = setInterval(() => this._poll(), this._POLL_INTERVAL);
+        },
+
+        _stopPolling() {
+            if (this._pollTimer) {
+                clearInterval(this._pollTimer);
+                this._pollTimer = null;
             }
         },
 
-        startStream() {
-            this.eventSource = new EventSource(`/posting/api/jobs/{{ job.id }}/stream/`);
+        async _poll() {
+            try {
+                const resp = await fetch(`/posting/api/jobs/{{ job.id }}/`);
+                if (!resp.ok) return;
+                const data = await resp.json();
 
-            this.eventSource.onmessage = (event) => {
-                const data = JSON.parse(event.data);
+                this.jobData.status = data.status;
+                this.jobData.success_count = data.success_count;
+                this.jobData.fail_count = data.fail_count;
 
-                if (data.type === 'item_update') {
-                    this.updateItemRow(data);
-                    const prev = this._itemStatuses[data.item_id];
-                    this._itemStatuses[data.item_id] = data.status;
-                    if (prev !== undefined && prev !== 'success' && prev !== 'failed') {
-                        if (data.status === 'success') this.jobData.success_count++;
-                        if (data.status === 'failed') this.jobData.fail_count++;
-                    }
-                } else if (data.type === 'job_complete') {
-                    this.jobData.status = data.status;
-                    this.jobData.success_count = data.success_count;
-                    this.jobData.fail_count = data.fail_count;
-                    this.eventSource.close();
-                    this.eventSource = null;
+                for (const item of data.items) {
+                    this.updateItemRow(item);
                 }
-            };
 
-            this.eventSource.onerror = () => {};
+                if (!this._isActive) this._stopPolling();
+            } catch (e) { /* network error, retry next cycle */ }
         },
 
         updateItemRow(data) {
-            const statusCell = document.getElementById(`item-status-${data.item_id}`);
-            const errorCell = document.getElementById(`item-error-${data.item_id}`);
-            const offerIdCell = document.getElementById(`item-offer-id-${data.item_id}`);
-            const offerTitleCell = document.getElementById(`item-offer-title-${data.item_id}`);
+            const statusCell = document.getElementById(`item-status-${data.id}`);
+            const errorCell = document.getElementById(`item-error-${data.id}`);
+            const offerIdCell = document.getElementById(`item-offer-id-${data.id}`);
+            const offerTitleCell = document.getElementById(`item-offer-title-${data.id}`);
             if (!statusCell) return;
 
             const badgeClass = {
@@ -243,10 +258,7 @@ function jobDetail() {
             });
             if (resp.ok) {
                 this.jobData.status = 'cancelled';
-                if (this.eventSource) {
-                    this.eventSource.close();
-                    this.eventSource = null;
-                }
+                this._stopPolling();
             }
         },
 

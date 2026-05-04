@@ -8,20 +8,20 @@ from payload_pipeline import PayloadPipeline, build_default_registry
 from payload_pipeline.core import context_keys as ctx
 from payload_pipeline.core.contracts import BuildContext, PipelineRequest
 from payload_pipeline.games.gtav.account import GtavResolver
-from payload_pipeline.games.gtav.account.sources.lzt import GtavLztSourceAdapter
+from payload_pipeline.games.gtav.account.sources.manual import GtavManualSourceAdapter
 from payload_pipeline.marketplaces.g2g import G2GConfig
 
 
 # -- source adapter tests -------------------------------------------------
 
-class TestGtavLztSourceAdapter:
+class TestGtavManualSourceAdapter:
     def test_parse_returns_none_for_empty_input(self):
-        adapter = GtavLztSourceAdapter()
+        adapter = GtavManualSourceAdapter()
         assert adapter.parse(None) is None
         assert adapter.parse({}) is None
 
     def test_parse_extracts_core_fields(self, load_fixture):
-        adapter = GtavLztSourceAdapter()
+        adapter = GtavManualSourceAdapter()
         source = adapter.parse(load_fixture("lzt_gtav.json"))
 
         assert source is not None
@@ -35,7 +35,7 @@ class TestGtavLztSourceAdapter:
         assert source.tags == ["Modded", "High Level", "Full Access"]
 
     def test_parse_extracts_credentials(self, load_fixture):
-        adapter = GtavLztSourceAdapter()
+        adapter = GtavManualSourceAdapter()
         source = adapter.parse(load_fixture("lzt_gtav.json"))
 
         assert source.credentials.login == "rockstar_user@example.com"
@@ -44,7 +44,7 @@ class TestGtavLztSourceAdapter:
         assert source.credentials.email_password == "EmailPass456"
 
     def test_parse_extracts_security_fields(self, load_fixture):
-        adapter = GtavLztSourceAdapter()
+        adapter = GtavManualSourceAdapter()
         source = adapter.parse(load_fixture("lzt_gtav.json"))
 
         assert source.security_email == "security@example.com"
@@ -52,16 +52,8 @@ class TestGtavLztSourceAdapter:
         assert source.birthday == "1995-06-15"
         assert source.email_backup_codes == "CODE1-ABCD\nCODE2-EFGH\nCODE3-IJKL"
 
-    def test_parse_extracts_per_marketplace_pricing(self, load_fixture):
-        adapter = GtavLztSourceAdapter()
-        source = adapter.parse(load_fixture("lzt_gtav.json"))
-
-        assert source.eldorado_price == 399.99
-        assert source.gameboost_price == 449.99
-        assert source.playerauctions_price == 379.99
-
     def test_parse_extracts_title_from_offer_details(self, load_fixture):
-        adapter = GtavLztSourceAdapter()
+        adapter = GtavManualSourceAdapter()
         source = adapter.parse(load_fixture("lzt_gtav.json"))
 
         assert "Level 350" in source.title
@@ -87,9 +79,6 @@ class TestGtavResolver:
         assert account.cars_count == 45
         assert account.tags == ["Modded", "High Level", "Full Access"]
         assert account.has_email_access is True
-        assert account.eldorado_price == 399.99
-        assert account.gameboost_price == 449.99
-        assert account.playerauctions_price == 379.99
         assert account.security_email == "security@example.com"
         assert account.birthday == "1995-06-15"
 
@@ -100,7 +89,7 @@ class TestGtavResolver:
             kind="stock",
             sources={},
         )
-        with pytest.raises(Exception, match="lzt"):
+        with pytest.raises(Exception, match="manual|lzt"):
             GtavResolver().resolve(request)
 
     def test_resolver_dropshipping_clears_credentials(self, load_fixture):
@@ -212,7 +201,7 @@ class TestGtavPipeline:
         assert result.payload["augmentedGame"]["gameId"] == "25"
         assert result.payload["augmentedGame"]["category"] == "Account"
         assert result.payload["augmentedGame"]["tradeEnvironmentId"] == "0"  # PC - Enhanced -> 0
-        assert result.payload["details"]["pricing"]["pricePerUnit"]["amount"] == 399.99
+        assert result.payload["details"]["pricing"]["pricePerUnit"]["amount"] == 450.0
         assert result.payload["accountSecretDetails"]  # has security info
 
     def test_gameboost_payload_shape(self, load_fixture):
@@ -232,7 +221,7 @@ class TestGtavPipeline:
         assert result.success
 
         assert result.payload["game"] == "grand-theft-auto-v"
-        assert result.payload["account_data"]["platform"] == "PC - Enhanced"
+        assert result.payload["account_data"]["platform"] == "PC \u00b7 Enhanced"
         assert result.payload["account_data"]["account_level"] == 350
         assert result.payload["account_data"]["cars_count"] == 45
         assert result.payload["account_data"]["cash_amount"] == "120 Million"

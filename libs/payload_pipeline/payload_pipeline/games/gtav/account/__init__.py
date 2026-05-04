@@ -3,7 +3,7 @@
 from .resolver import GtavResolver
 from .content import GtavComposer
 from .media import GtavMediaStrategy
-from .sources import GtavLztSourceAdapter
+from .sources import GtavManualSourceAdapter
 from .marketplaces import (
     GtavEldoradoBuilder,
     GtavG2GBuilder,
@@ -37,7 +37,7 @@ __all__ = [
     "GtavEldoradoBuilder",
     "GtavG2GBuilder",
     "GtavGameBoostBuilder",
-    "GtavLztSourceAdapter",
+    "GtavManualSourceAdapter",
     "GtavMediaStrategy",
     "GtavPlayerAuctionsBuilder",
     "GtavResolver",

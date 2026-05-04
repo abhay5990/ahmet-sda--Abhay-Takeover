@@ -503,6 +503,27 @@ class GameBoostFacade:
             proxy_group=proxy_group,
         )
 
+    def create_offer_with_credentials(
+        self,
+        payload: dict[str, Any],
+        *,
+        proxy_group: str | None = None,
+    ) -> ApiResult[dict[str, Any]]:
+        """Create an account offer with multi-credential support.
+
+        POST /account-offers/create — newer endpoint that accepts a
+        ``credentials`` list instead of individual login/password fields.
+        Not retried — POST is non-idempotent.
+        """
+        return self._exec.execute_once(
+            lambda proxy_url: self._client.create_account_offer_with_credentials(
+                payload,
+                auth_headers=self._exec.get_auth_headers(),
+                proxy_url=proxy_url,
+            ),
+            proxy_group=proxy_group,
+        )
+
     def list_offers(
         self,
         *,

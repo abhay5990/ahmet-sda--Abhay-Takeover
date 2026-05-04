@@ -2,6 +2,9 @@ from django.contrib import admin
 
 from .models import (
     CleanerConfig,
+    OfferPool,
+    OfferPoolActiveOffer,
+    OfferPoolItem,
     PostingJob,
     PostingJobItem,
     PostingDefault,
@@ -84,3 +87,39 @@ class CleanerConfigAdmin(admin.ModelAdmin):
 class SchedulerHeartbeatAdmin(admin.ModelAdmin):
     list_display = ['service_name', 'last_seen', 'pid', 'started_at']
     readonly_fields = ['service_name', 'last_seen', 'pid', 'started_at']
+
+
+# ── Offer Pool (Auto Restock) ────────────────────────────────────
+
+
+class OfferPoolItemInline(admin.TabularInline):
+    model = OfferPoolItem
+    extra = 0
+    fields = ['owned_product', 'status', 'order', 'pushed_at', 'target_offer_id', 'error_message']
+    readonly_fields = ['pushed_at']
+    raw_id_fields = ['owned_product']
+
+
+@admin.register(OfferPool)
+class OfferPoolAdmin(admin.ModelAdmin):
+    list_display = ['id', 'listing', 'game', 'store', 'strategy', 'status', 'threshold', 'target_count', 'current_remote_count', 'last_checked_at']
+    list_filter = ['status', 'strategy', 'game']
+    raw_id_fields = ['listing', 'store']
+    readonly_fields = ['current_remote_count', 'last_checked_at', 'last_replenished_at', 'created_at', 'updated_at']
+    inlines = [OfferPoolItemInline]
+
+
+@admin.register(OfferPoolItem)
+class OfferPoolItemAdmin(admin.ModelAdmin):
+    list_display = ['id', 'pool', 'owned_product', 'status', 'order', 'pushed_at', 'target_offer_id']
+    list_filter = ['status']
+    raw_id_fields = ['pool', 'owned_product']
+    readonly_fields = ['pushed_at', 'created_at', 'updated_at']
+
+
+@admin.register(OfferPoolActiveOffer)
+class OfferPoolActiveOfferAdmin(admin.ModelAdmin):
+    list_display = ['id', 'pool', 'store_listing_id', 'status', 'created_at']
+    list_filter = ['status']
+    raw_id_fields = ['pool', 'listing', 'pool_item']
+    readonly_fields = ['created_at', 'updated_at']

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from .models import GtavResolvedAccount
-from .sources import GtavLztSourceAdapter
+from .sources import GtavManualSourceAdapter
 from ....core.contracts import PipelineRequest
 from ....core.exceptions import SourceValidationError
 from ....shared.credentials import resolve_credentials
@@ -13,36 +13,35 @@ class GtavResolver:
     """Single-source resolver for GTA V."""
 
     def __init__(self) -> None:
-        self.lzt = GtavLztSourceAdapter()
+        self._adapter = GtavManualSourceAdapter()
 
     def resolve(self, request: PipelineRequest) -> GtavResolvedAccount:
-        lzt = self.lzt.parse(request.source("lzt"))
-        if lzt is None:
-            raise SourceValidationError("GTA V requires the 'lzt' source.")
+        raw = request.source("manual") or request.source("lzt")
+        parsed = self._adapter.parse(raw)
+        if parsed is None:
+            raise SourceValidationError("GTA V requires the 'manual' or 'lzt' source.")
 
-        credentials = resolve_credentials(lzt, kind=request.kind, game_name="GTA V")
+        credentials = resolve_credentials(parsed, kind=request.kind, game_name="GTA V")
 
         return GtavResolvedAccount(
-            item_id=lzt.item_id,
-            category_id=lzt.category_id,
-            price=lzt.price,
+            item_id=parsed.item_id,
+            category_id=parsed.category_id,
+            price=parsed.price,
             kind=request.kind,
             credentials=credentials,
-            main_platform=lzt.main_platform,
-            level=lzt.level,
-            cash_amount=lzt.cash_amount,
-            cash_unit=lzt.cash_unit,
-            cars_count=lzt.cars_count,
-            tags=lzt.tags,
-            security_email=lzt.security_email,
-            security_email_password=lzt.security_email_password,
-            security_email_login_link=lzt.security_email_login_link,
-            birthday=lzt.birthday,
-            email_backup_codes=lzt.email_backup_codes,
-            eldorado_price=lzt.eldorado_price,
-            gameboost_price=lzt.gameboost_price,
-            playerauctions_price=lzt.playerauctions_price,
-            has_email_access=not lzt.credentials.is_empty and bool(lzt.credentials.email_login),
-            title=lzt.title,
-            description=lzt.description,
+            main_platform=parsed.main_platform,
+            level=parsed.level,
+            cash_amount=parsed.cash_amount,
+            cash_unit=parsed.cash_unit,
+            cars_count=parsed.cars_count,
+            tags=parsed.tags,
+            has_dual_characters=parsed.has_dual_characters,
+            security_email=parsed.security_email,
+            security_email_password=parsed.security_email_password,
+            security_email_login_link=parsed.security_email_login_link,
+            birthday=parsed.birthday,
+            email_backup_codes=parsed.email_backup_codes,
+            has_email_access=not parsed.credentials.is_empty and bool(parsed.credentials.email_login),
+            title=parsed.title,
+            description=parsed.description,
         )
