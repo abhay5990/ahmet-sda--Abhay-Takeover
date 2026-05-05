@@ -78,8 +78,11 @@
                                    class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
                             {% endif %}
                         </td>
-                        <td class="px-4 py-3 text-sm text-gray-900 max-w-xs truncate" title="{{ listing.title }}">
-                            {{ listing.title|truncatechars:50|default:listing.store_listing_id }}
+                        <td class="px-4 py-3 text-sm max-w-xs truncate" title="{{ listing.title }}">
+                            <a href="{% url 'listings:detail' listing.id %}"
+                               class="text-emerald-700 hover:text-emerald-900 hover:underline">
+                                {{ listing.title|truncatechars:50|default:listing.store_listing_id }}
+                            </a>
                         </td>
                         <td class="px-4 py-3 text-sm font-mono text-gray-600 max-w-[160px] truncate">
                             {% if listing.is_instant %}

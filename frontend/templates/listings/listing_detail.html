@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block title %}{{ listing.title|default:listing.store_listing_id }} — Listing{% endblock %}
+
+{% block content %}
+<div x-data="listingDetail()" x-init="init()">
+
+    {% include "includes/_loading_overlay.html" %}
+
+    <!-- Breadcrumb + Header -->
+    <div class="mb-6">
+        <a href="{% url 'listings:list' %}" class="text-sm text-emerald-600 hover:text-emerald-800">&larr; Back to Listings</a>
+        <div class="flex items-start justify-between mt-2 gap-4">
+            <div class="min-w-0">
+                <h1 class="text-2xl font-bold text-gray-900 break-words">
+                    {{ listing.title|default:listing.store_listing_id }}
+                </h1>
+                <p class="text-sm text-gray-500 mt-1">
+                    {% if listing.integration_account %}
+                        <span class="px-2 py-0.5 rounded text-xs font-medium
+                            {% if listing.integration_account.provider == 'eldorado' %}bg-purple-100 text-purple-700
+                            {% elif listing.integration_account.provider == 'gameboost' %}bg-blue-100 text-blue-700
+                            {% elif listing.integration_account.provider == 'playerauctions' %}bg-orange-100 text-orange-700
+                            {% elif listing.integration_account.provider == 'lzt' %}bg-cyan-100 text-cyan-700
+                            {% elif listing.integration_account.provider == 'g2g' %}bg-pink-100 text-pink-700
+                            {% else %}bg-gray-100 text-gray-600{% endif %}">
+                            {{ listing.integration_account.provider }}
+                        </span>
+                        <span>{{ listing.integration_account.name }}</span>
+                        &middot;
+                    {% endif %}
+                    {% if listing.game %}{{ listing.game.name }} &middot;{% endif %}
+                    <span class="font-mono text-xs">{{ listing.store_listing_id }}</span>
+                </p>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <span class="inline-flex px-3 py-1 text-sm rounded-full font-medium
+                    {% if listing.status == 'listed' %}bg-emerald-100 text-emerald-700
+                    {% elif listing.status == 'paused' %}bg-yellow-100 text-yellow-700
+                    {% elif listing.status == 'closed' %}bg-gray-100 text-gray-600
+                    {% elif listing.status == 'deleted' %}bg-red-100 text-red-700
+                    {% else %}bg-gray-100 text-gray-600{% endif %}">
+                    {{ listing.get_status_display }}
+                </span>
+                {% if listing.status == 'listed' or listing.status == 'paused' %}
+                <button @click="deleteListing()"
+                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium">
+                    Delete
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="text-xs text-gray-500 uppercase">Price</div>
+            <div class="text-2xl font-bold text-gray-800">{{ listing.price }} {{ listing.currency }}</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="text-xs text-gray-500 uppercase">Type</div>
+            <div class="text-2xl font-bold {% if listing.is_instant %}text-emerald-600{% else %}text-blue-600{% endif %}">
+                {% if listing.is_instant %}Instant{% else %}Dropship{% endif %}
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="text-xs text-gray-500 uppercase">Platform</div>
+            <div class="text-2xl font-bold text-gray-800">{{ listing.sub_platform|default:"—" }}</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="text-xs text-gray-500 uppercase">Linked Accounts</div>
+            <div class="text-2xl font-bold text-gray-800">{{ owned_products|length }}</div>
+        </div>
+    </div>
+
+    <!-- Info Grid: Listing Info + Timestamps -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+
+        <!-- Listing Info -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Listing Info</h2>
+            <dl class="space-y-3 text-sm">
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Category</dt>
+                    <dd class="text-gray-900 text-right">{{ listing.get_product_category_display }}</dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Sub-platform</dt>
+                    <dd class="text-gray-900 text-right">{{ listing.sub_platform|default:"—" }}</dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Game</dt>
+                    <dd class="text-gray-900 text-right">{{ listing.game.name|default:"—" }}</dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Marketplace</dt>
+                    <dd class="text-gray-900 text-right">
+                        {% if listing.integration_account %}
+                            {{ listing.integration_account.name }}
+                            <span class="text-xs text-gray-400">({{ listing.integration_account.provider }})</span>
+                        {% else %}—{% endif %}
+                    </dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Store Listing ID</dt>
+                    <dd class="text-gray-900 text-right font-mono text-xs break-all">{{ listing.store_listing_id }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <!-- Timestamps -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Timeline</h2>
+            <dl class="space-y-3 text-sm">
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Listed at</dt>
+                    <dd class="text-gray-900 text-right">
+                        {% if listing.listed_at %}<span data-utc="{{ listing.listed_at|date:'c' }}">{{ listing.listed_at|date:"M-d-Y g:i A" }}</span>{% else %}—{% endif %}
+                    </dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Last synced</dt>
+                    <dd class="text-gray-900 text-right">
+                        {% if listing.last_synced_at %}<span data-utc="{{ listing.last_synced_at|date:'c' }}">{{ listing.last_synced_at|date:"M-d-Y g:i A" }}</span>{% else %}—{% endif %}
+                    </dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Removed at</dt>
+                    <dd class="text-gray-900 text-right">
+                        {% if listing.removed_at %}<span data-utc="{{ listing.removed_at|date:'c' }}">{{ listing.removed_at|date:"M-d-Y g:i A" }}</span>{% else %}—{% endif %}
+                    </dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Created (local)</dt>
+                    <dd class="text-gray-900 text-right">
+                        <span data-utc="{{ listing.created_at|date:'c' }}">{{ listing.created_at|date:"M-d-Y g:i A" }}</span>
+                    </dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Updated (local)</dt>
+                    <dd class="text-gray-900 text-right">
+                        <span data-utc="{{ listing.updated_at|date:'c' }}">{{ listing.updated_at|date:"M-d-Y g:i A" }}</span>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    <!-- Dropship source (only for dropship listings) -->
+    {% if not listing.is_instant and listing.dropship_product %}
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Dropship Source</h2>
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+            <div class="flex justify-between gap-3">
+                <dt class="text-gray-500">Source product ID</dt>
+                <dd class="text-gray-900 font-mono">{{ listing.dropship_product.source_product_id }}</dd>
+            </div>
+            <div class="flex justify-between gap-3">
+                <dt class="text-gray-500">Source account</dt>
+                <dd class="text-gray-900 text-right">
+                    {% if listing.dropship_product.source_account %}
+                        {{ listing.dropship_product.source_account.name }}
+                        <span class="text-xs text-gray-400">({{ listing.dropship_product.source_account.provider }})</span>
+                    {% else %}—{% endif %}
+                </dd>
+            </div>
+            <div class="flex justify-between gap-3">
+                <dt class="text-gray-500">Source price</dt>
+                <dd class="text-gray-900 text-right">
+                    {{ listing.dropship_product.price }} {{ listing.dropship_product.currency }}
+                </dd>
+            </div>
+            <div class="flex justify-between gap-3">
+                <dt class="text-gray-500">Source status</dt>
+                <dd class="text-gray-900 text-right">{{ listing.dropship_product.get_status_display }}</dd>
+            </div>
+            {% if listing.dropship_product.source_url %}
+            <div class="md:col-span-2 flex justify-between gap-3">
+                <dt class="text-gray-500">Source URL</dt>
+                <dd class="text-right truncate">
+                    <a href="{{ listing.dropship_product.source_url }}" target="_blank" rel="noopener"
+                       class="text-emerald-600 hover:text-emerald-800 text-xs break-all">
+                        {{ listing.dropship_product.source_url|truncatechars:80 }}
+                    </a>
+                </dd>
+            </div>
+            {% endif %}
+        </dl>
+    </div>
+    {% endif %}
+
+    <!-- Linked Owned Products (instant listings) -->
+    {% if listing.is_instant %}
+    <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+        <div class="px-6 py-3 bg-gray-50 border-b flex items-center justify-between">
+            <h2 class="font-semibold text-gray-700">Linked Accounts ({{ owned_products|length }})</h2>
+        </div>
+        {% if owned_products %}
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Login</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Game</th>
+                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Purchased</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for op in owned_products %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-2 text-sm font-mono text-gray-800">{{ op.login }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-500">{{ op.email|default:"—" }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-500">{{ op.game.name|default:"—" }}</td>
+                    <td class="px-4 py-2 text-center">
+                        <span class="inline-flex px-2 py-0.5 text-xs rounded-full
+                            {% if op.status == 'listed' %}bg-emerald-100 text-emerald-700
+                            {% elif op.status == 'draft' %}bg-gray-100 text-gray-600
+                            {% elif op.status == 'sold' %}bg-blue-100 text-blue-700
+                            {% else %}bg-gray-100 text-gray-600{% endif %}">
+                            {{ op.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-2 text-xs text-gray-400 whitespace-nowrap">
+                        {% if op.purchased_at %}{{ op.purchased_at|date:"M-d-Y" }}{% else %}—{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="px-6 py-8 text-center text-gray-400 text-sm">No accounts linked to this listing.</div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Offer Pool -->
+    {% if offer_pool %}
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-800">Auto-Restock Pool</h2>
+            <a href="{% url 'posting:restock_pool_detail' offer_pool.id %}"
+               class="text-sm text-indigo-600 hover:text-indigo-800">View pool details &rarr;</a>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div>
+                <div class="text-xs text-gray-500 uppercase">Status</div>
+                <div class="mt-1">
+                    <span class="inline-flex px-2 py-0.5 text-xs rounded-full font-medium
+                        {% if offer_pool.status == 'active' %}bg-emerald-100 text-emerald-700
+                        {% elif offer_pool.status == 'paused' %}bg-yellow-100 text-yellow-700
+                        {% else %}bg-red-100 text-red-700{% endif %}">
+                        {{ offer_pool.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            <div>
+                <div class="text-xs text-gray-500 uppercase">Strategy</div>
+                <div class="text-lg font-semibold text-gray-800">{{ offer_pool.get_strategy_display }}</div>
+            </div>
+            <div>
+                <div class="text-xs text-gray-500 uppercase">Remote count</div>
+                <div class="text-lg font-semibold {% if offer_pool.current_remote_count is not None and offer_pool.current_remote_count < offer_pool.threshold %}text-red-600{% else %}text-gray-800{% endif %}">
+                    {{ offer_pool.current_remote_count|default:"—" }}
+                </div>
+            </div>
+            <div>
+                <div class="text-xs text-gray-500 uppercase">Threshold / Target</div>
+                <div class="text-lg font-semibold text-gray-800">{{ offer_pool.threshold }} / {{ offer_pool.target_count }}</div>
+            </div>
+            <div>
+                <div class="text-xs text-gray-500 uppercase">Pending</div>
+                <div class="text-lg font-semibold text-blue-600">{{ offer_pool.pending_count }}</div>
+            </div>
+        </div>
+        {% if offer_pool.last_replenished_at or offer_pool.last_checked_at %}
+        <div class="mt-4 pt-4 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-500">
+            <div>
+                Last checked:
+                {% if offer_pool.last_checked_at %}<span data-utc="{{ offer_pool.last_checked_at|date:'c' }}">{{ offer_pool.last_checked_at|date:"M-d-Y g:i A" }}</span>{% else %}never{% endif %}
+            </div>
+            <div>
+                Last replenished:
+                {% if offer_pool.last_replenished_at %}<span data-utc="{{ offer_pool.last_replenished_at|date:'c' }}">{{ offer_pool.last_replenished_at|date:"M-d-Y g:i A" }}</span>{% else %}never{% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+function listingDetail() {
+    return {
+        loading: false,
+        loadingMsg: '',
+
+        init() {},
+
+        csrfToken() {
+            return document.cookie.split('; ').find(r => r.startsWith('csrftoken='))?.split('=')[1] || '';
+        },
+
+        async deleteListing() {
+            if (!confirm('Delete this listing and remove its marketplace offer?')) return;
+            this.loading = true;
+            this.loadingMsg = 'Removing offer from marketplace…';
+            try {
+                const res = await fetch(`/listings/api/{{ listing.id }}/delete/`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRFToken': this.csrfToken() },
+                });
+                if (res.ok) {
+                    window.location.href = "{% url 'listings:list' %}";
+                } else {
+                    this.loading = false;
+                    const data = await res.json().catch(() => ({}));
+                    alert('Failed: ' + (data.error || 'Unknown error'));
+                }
+            } catch (e) { this.loading = false; alert('Request failed: ' + e.message); }
+        },
+    };
+}
+</script>
+{% endblock %}

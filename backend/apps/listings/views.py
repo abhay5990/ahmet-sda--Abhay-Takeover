@@ -4,7 +4,7 @@ import logging
 from django.core.paginator import Paginator
 from django.db.models import Count, Prefetch, Q
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
 
 from apps.accounts.decorators import role_required
@@ -121,6 +121,37 @@ def listing_list(request):
         'selected_is_instant': is_instant or '',
         'selected_missing_on': missing_on or '',
         'q': q,
+    })
+
+
+@role_required('admin', 'user')
+def listing_detail(request, listing_id):
+    """Detail page for a single listing."""
+    listing = get_object_or_404(
+        Listing.objects.select_related(
+            'game', 'integration_account', 'dropship_product',
+            'dropship_product__source_account',
+        ),
+        id=listing_id,
+    )
+
+    owned_products = list(
+        OwnedProduct.objects.filter(
+            listing_owned_products__listing_id=listing.id,
+        ).select_related('game', 'category').order_by('login')
+    )
+
+    offer_pool = (
+        listing.offer_pools
+        .select_related('store', 'game')
+        .prefetch_related('items')
+        .first()
+    )
+
+    return render(request, 'listings/listing_detail.html', {
+        'listing': listing,
+        'owned_products': owned_products,
+        'offer_pool': offer_pool,
     })
 
 
