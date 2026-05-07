@@ -5,6 +5,7 @@ from __future__ import annotations
 from .description_generator import RobloxDescriptionGenerator
 from .title_generator import RobloxTitleGenerator
 from ..models import RobloxResolvedAccount
+from .....core.content_hooks import prefix_ref_key
 from .....core.contracts import (
     ListingContent,
     ListingDraft,
@@ -32,8 +33,11 @@ class RobloxComposer:
         title = self.title_generator.generate(account, marketplace="default")
         gameboost_title = self.title_generator.generate(account, marketplace="gameboost")
         player_title = self.title_generator.generate(account, marketplace="playerauctions")
-        description = self.description_generator.generate(
-            account, media=media, marketplace="default", is_dropshipping=is_dropshipping,
+        description = prefix_ref_key(
+            self.description_generator.generate(
+                account, media=media, marketplace="default", is_dropshipping=is_dropshipping,
+            ),
+            request,
         )
 
         return ListingDraft(

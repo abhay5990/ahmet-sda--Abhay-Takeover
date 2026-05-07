@@ -16,10 +16,9 @@ class BrawlStarsTitleGenerator:
         *,
         site: str = "default",
     ) -> str:
-        include_s4g = site.lower() != "g2g"
         max_length = 120 if site.lower() == "g2g" else self._get_max_length(site)
         parts = self._build_parts(account)
-        return self._assemble_title(parts, max_length=max_length, include_s4g=include_s4g)
+        return self._assemble_title(parts, max_length=max_length)
 
     def _build_parts(self, account: BSResolvedAccount) -> list[str]:
         parts: list[str] = []
@@ -70,22 +69,18 @@ class BrawlStarsTitleGenerator:
         return limits.get(site.lower(), 140)
 
     def _assemble_title(
-        self, parts: list[str], max_length: int, include_s4g: bool
+        self, parts: list[str], max_length: int
     ) -> str:
         final_parts: list[str] = []
         current_length = 0
         separator = " | "
         separator_length = len(separator)
-        reserved_length = (len("S4G") + separator_length) if include_s4g else 0
 
         for part in parts:
             part_length = len(part) + (separator_length if final_parts else 0)
-            if current_length + part_length > max_length - reserved_length:
+            if current_length + part_length > max_length:
                 break
             final_parts.append(part)
             current_length += part_length
-
-        if include_s4g:
-            final_parts.append("S4G")
 
         return separator.join(final_parts)

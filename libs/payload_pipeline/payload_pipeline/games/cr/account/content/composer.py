@@ -5,6 +5,7 @@ from __future__ import annotations
 from .description_generator import CrDescriptionGenerator
 from .title_generator import CrTitleGenerator
 from ..models import CrResolvedAccount
+from .....core.content_hooks import prefix_ref_key
 from .....core.contracts import (
     ListingContent,
     ListingDraft,
@@ -31,8 +32,11 @@ class CrComposer:
         is_dropshipping = request.kind == ListingKind.DROPSHIPPING
         title = self.title_generator.generate(account, marketplace="default")
         g2g_title = self.title_generator.generate(account, marketplace="g2g")
-        description = self.description_generator.generate(
-            account, media=media, marketplace="default", is_dropshipping=is_dropshipping,
+        description = prefix_ref_key(
+            self.description_generator.generate(
+                account, media=media, marketplace="default", is_dropshipping=is_dropshipping,
+            ),
+            request,
         )
 
         return ListingDraft(

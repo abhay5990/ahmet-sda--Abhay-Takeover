@@ -15,6 +15,9 @@ from apps.posting.models import (
     DropshippingJobConfig, OfferPool, PostingJob, PostingLog,
 )
 from apps.posting.services.shared.subplatform import GAME_SUBPLATFORMS
+from payload_pipeline.core.enums import GameSlug
+
+SUPPORTED_GAME_SLUGS = {gs.value for gs in GameSlug}
 
 
 # ── Stock Posting ──────────────────────────────────────────────────
@@ -23,7 +26,7 @@ from apps.posting.services.shared.subplatform import GAME_SUBPLATFORMS
 @role_required('admin', 'user')
 def stock_start_page(request):
     """Job creation form."""
-    games = Game.objects.filter(is_active=True).order_by('name')
+    games = Game.objects.filter(is_active=True, slug__in=SUPPORTED_GAME_SLUGS).order_by('name')
     stores = IntegrationAccount.objects.filter(
         is_active=True, role__in=['sell', 'both'],
     ).order_by('provider', 'name')
@@ -93,7 +96,7 @@ def stock_job_detail(request, job_id):
 @role_required('admin', 'user')
 def dropship_configs_page(request):
     """Config management + Run Now."""
-    games = Game.objects.filter(is_active=True).order_by('name')
+    games = Game.objects.filter(is_active=True, slug__in=SUPPORTED_GAME_SLUGS).order_by('name')
     source_accounts = IntegrationAccount.objects.filter(
         is_active=True, provider='lzt',
     ).order_by('name')

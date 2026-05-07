@@ -25,7 +25,7 @@
     settingsOpen: false,
     toggle() { this.open = !this.open; localStorage.setItem('sidebar', this.open ? 'open' : 'closed'); }
 }" x-init="
-    stockOpen = window.location.pathname.startsWith('/posting/stock');
+    stockOpen = window.location.pathname.startsWith('/posting/stock') || window.location.pathname.startsWith('/posting/templates');
     dropshipOpen = window.location.pathname.startsWith('/posting/dropship');
     restockOpen = window.location.pathname.startsWith('/posting/restock');
     inventoryOpen = window.location.pathname.startsWith('/inventory') || window.location.pathname.startsWith('/listings');

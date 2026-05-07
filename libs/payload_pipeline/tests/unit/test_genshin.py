@@ -118,7 +118,7 @@ def test_composer_generates_title_and_description(load_fixture) -> None:
 
     assert "AR50" in listing.default.title
     assert "7 Legendary" in listing.default.title
-    assert "S4G" in listing.default.title
+    assert "S4G" not in listing.default.title
     assert "Adventure Experience: 50" in listing.default.description
     assert "Legendary Characters: 7" in listing.default.description
     assert "Honkai Star Rail" in listing.default.description

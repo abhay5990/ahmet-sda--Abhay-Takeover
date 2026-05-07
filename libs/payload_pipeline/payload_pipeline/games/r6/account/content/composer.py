@@ -6,6 +6,7 @@ from .description_generator import R6ResolvedDescriptionGenerator
 from .title_generator import R6ResolvedTitleGenerator
 
 from ..models import R6ResolvedAccount
+from .....core.content_hooks import prefix_ref_key
 from .....core.contracts import (
     ListingContent,
     ListingDraft,
@@ -31,8 +32,12 @@ class R6Composer:
         title = self.title_generator.generate(account, site="default")
         g2g_title = self.title_generator.generate(account, site="g2g")
         eldorado_title = self.title_generator.generate(account, site="eldorado")
-        description = self.description_generator.generate(account, media=media, site="default")
-        player_description = self.description_generator.generate(account, media=media, site="player")
+        description = prefix_ref_key(
+            self.description_generator.generate(account, media=media, site="default"), request,
+        )
+        player_description = prefix_ref_key(
+            self.description_generator.generate(account, media=media, site="player"), request,
+        )
 
         return ListingDraft(
             default=ListingContent(

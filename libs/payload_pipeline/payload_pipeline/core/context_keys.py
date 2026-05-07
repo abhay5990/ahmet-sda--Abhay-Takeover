@@ -87,3 +87,7 @@ G2G_SERVICE_ID: ContextKey[str] = ContextKey("g2g_service_id")
 # ── Source-level overrides ───────────────────────────────────────────
 
 TRACKER_URL: ContextKey[str] = ContextKey("tracker_url")
+
+# ── Traceability ────────────────────────────────────────────────────
+
+REF_KEY: ContextKey[str] = ContextKey("ref_key")

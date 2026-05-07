@@ -107,7 +107,6 @@ class ValorantTitleGenerator:
 
     def generate(self, account: ValorantResolvedAccount, *, marketplace: str = "default") -> str:
         max_length = 120 if marketplace.lower() == "g2g" else 150
-        include_suffix = marketplace.lower() != "g2g"
 
         parts: list[str | list[str]] = [
             account.region.upper() if account.region else "",
@@ -123,7 +122,7 @@ class ValorantTitleGenerator:
         if skin_list:
             parts.append(skin_list)
 
-        return self._assemble(parts, max_length=max_length, include_suffix=include_suffix)
+        return self._assemble(parts, max_length=max_length)
 
     # ------------------------------------------------------------------
     # Buddies
@@ -162,11 +161,8 @@ class ValorantTitleGenerator:
         parts: list[str | list[str]],
         *,
         max_length: int,
-        include_suffix: bool,
     ) -> str:
         separator = " | "
-        suffix = "S4G" if include_suffix else ""
-        reserved = len(suffix) + (len(separator) if suffix else 0)
 
         built: list[str] = []
         current_length = 0
@@ -177,7 +173,7 @@ class ValorantTitleGenerator:
                     if not skin:
                         continue
                     item_len = len(skin) + (len(separator) if built else 0)
-                    if current_length + item_len > max_length - reserved:
+                    if current_length + item_len > max_length:
                         break
                     built.append(skin)
                     current_length += item_len
@@ -185,11 +181,9 @@ class ValorantTitleGenerator:
                 if not part or not part.strip():
                     continue
                 item_len = len(part) + (len(separator) if built else 0)
-                if current_length + item_len > max_length - reserved:
+                if current_length + item_len > max_length:
                     break
                 built.append(part)
                 current_length += item_len
 
-        if suffix:
-            built.append(suffix)
         return separator.join(built)

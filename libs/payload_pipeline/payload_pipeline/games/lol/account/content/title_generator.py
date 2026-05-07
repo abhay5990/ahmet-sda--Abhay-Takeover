@@ -18,15 +18,14 @@ class LolTitleGenerator:
         is_dropshipping: bool = False,
     ) -> str:
         if marketplace.lower() == "g2g":
-            return self._build(account, max_length=120, include_suffix=False, is_dropshipping=is_dropshipping)
-        return self._build(account, max_length=138, include_suffix=True, is_dropshipping=is_dropshipping)
+            return self._build(account, max_length=120, is_dropshipping=is_dropshipping)
+        return self._build(account, max_length=138, is_dropshipping=is_dropshipping)
 
     def _build(
         self,
         account: LolResolvedAccount,
         *,
         max_length: int,
-        include_suffix: bool,
         is_dropshipping: bool,
     ) -> str:
         region = _format_region(account.region)
@@ -50,7 +49,7 @@ class LolTitleGenerator:
         if not is_dropshipping:
             parts.append("Instant Delivery")
 
-        return _assemble(parts, max_length=max_length, include_suffix=include_suffix)
+        return _assemble(parts, max_length=max_length)
 
 
 # ------------------------------------------------------------------
@@ -71,10 +70,8 @@ def _format_champion_count(count: int) -> str:
     return f"{count} Champions"
 
 
-def _assemble(parts: list[str], *, max_length: int, include_suffix: bool) -> str:
+def _assemble(parts: list[str], *, max_length: int) -> str:
     separator = " | "
-    suffix = "S4G" if include_suffix else ""
-    reserved = (len(suffix) + len(separator)) if suffix else 0
 
     built: list[str] = []
     current_length = 0
@@ -82,11 +79,9 @@ def _assemble(parts: list[str], *, max_length: int, include_suffix: bool) -> str
         if not part:
             continue
         item_len = len(part) + (len(separator) if built else 0)
-        if current_length + item_len > max_length - reserved:
+        if current_length + item_len > max_length:
             break
         built.append(part)
         current_length += item_len
 
-    if suffix:
-        built.append(suffix)
     return separator.join(built)

@@ -28,15 +28,14 @@ class GenshinTitleGenerator:
         marketplace: str = "default",
     ) -> str:
         if marketplace.lower() == "g2g":
-            return self._build(account, max_length=120, include_suffix=False)
-        return self._build(account, max_length=155, include_suffix=True)
+            return self._build(account, max_length=120)
+        return self._build(account, max_length=155)
 
     def _build(
         self,
         account: GenshinResolvedAccount,
         *,
         max_length: int,
-        include_suffix: bool,
     ) -> str:
         region = _REGION_MAP.get(account.region, "UNK")
         parts: list[str] = [f"[{region}]"]
@@ -54,10 +53,7 @@ class GenshinTitleGenerator:
 
         base_title = " | ".join(parts)
 
-        suffix = " | S4G" if include_suffix else ""
-        reserved = len(suffix)
+        if len(base_title) > max_length:
+            base_title = base_title[:max_length]
 
-        if len(base_title) + reserved > max_length:
-            base_title = base_title[:max_length - reserved]
-
-        return (base_title + suffix).strip()
+        return base_title.strip()

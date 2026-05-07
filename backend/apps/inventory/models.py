@@ -119,6 +119,10 @@ class OwnedProduct(models.Model):
         null=True, blank=True,
         help_text='Item ID on the source platform (e.g. LZT item_id)',
     )
+    ref_key = models.CharField(
+        max_length=8, blank=True, default='',
+        help_text='Unique reference key (#ABC1234) for traceability',
+    )
 
     # Purchase info
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -161,6 +165,7 @@ class OwnedProduct(models.Model):
             models.Index(fields=['-created_at']),
             models.Index(fields=['-purchased_at']),
             models.Index(fields=['source_product_id']),
+            models.Index(fields=['ref_key']),
         ]
 
     def __str__(self):

@@ -5,6 +5,7 @@ from __future__ import annotations
 from .description_generator import FortniteDescriptionGenerator
 from .title_generator import FortniteTitleGenerator
 from ..models import FortniteResolvedAccount
+from .....core.content_hooks import prefix_ref_key
 from .....core.contracts import (
     ListingContent,
     ListingDraft,
@@ -29,8 +30,9 @@ class FortniteComposer:
     ) -> ListingDraft:
         title = self.title_generator.generate(account, marketplace="default")
         g2g_title = self.title_generator.generate(account, marketplace="g2g")
-        description = self.description_generator.generate(
-            account, media=media, marketplace="default",
+        description = prefix_ref_key(
+            self.description_generator.generate(account, media=media, marketplace="default"),
+            request,
         )
 
         return ListingDraft(

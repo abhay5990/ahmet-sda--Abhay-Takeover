@@ -6,6 +6,7 @@ from .description_generator import BrawlStarsDescriptionGenerator
 from .title_generator import BrawlStarsTitleGenerator
 
 from ..models import BSResolvedAccount
+from .....core.content_hooks import prefix_ref_key
 from .....core.contracts import (
     ListingContent,
     ListingDraft,
@@ -35,10 +36,14 @@ class BrawlStarsComposer:
         title = self.title_generator.generate(account, site="default")
         g2g_title = self.title_generator.generate(account, site="g2g")
 
-        description = self.description_generator.generate(account, media=media, site="default")
-        g2g_description = self.description_generator.generate(account, media=media, site="g2g")
-        eldorado_description = self.description_generator.generate(
-            account, media=media, site="eldorado",
+        description = prefix_ref_key(
+            self.description_generator.generate(account, media=media, site="default"), request,
+        )
+        g2g_description = prefix_ref_key(
+            self.description_generator.generate(account, media=media, site="g2g"), request,
+        )
+        eldorado_description = prefix_ref_key(
+            self.description_generator.generate(account, media=media, site="eldorado"), request,
         )
 
         return ListingDraft(

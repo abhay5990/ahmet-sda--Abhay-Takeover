@@ -3,7 +3,7 @@ import logging
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from apps.inventory.enums import OwnedProductStatus
+from apps.inventory.enums import DropshipProductStatus, OwnedProductStatus
 from apps.listings.enums import ListingStatus
 from apps.listings.models import Listing, ListingOwnedProduct
 from .enums import OrderStatus
@@ -35,32 +35,45 @@ def order_status_changed(sender, instance, created, **kwargs):
 
 
 def _handle_order_sold(order, created):
-    """Mark OwnedProduct as sold or multiple_sold, unlink same-account listings."""
+    """Mark OwnedProduct/DropshipProduct as sold, close listing."""
     owned = order.owned_product
-    if not owned:
-        return
 
-    active_order_count = Order.objects.filter(
-        owned_product=owned,
-    ).exclude(
-        status__in=CANCEL_STATUSES,
-    ).count()
+    # --- Owned product path (instant delivery) ---
+    if owned:
+        active_order_count = Order.objects.filter(
+            owned_product=owned,
+        ).exclude(
+            status__in=CANCEL_STATUSES,
+        ).count()
 
-    if active_order_count > 1 and owned.status != OwnedProductStatus.MULTIPLE_SOLD:
-        owned.status = OwnedProductStatus.MULTIPLE_SOLD
-        owned.save(update_fields=['status', 'updated_at'])
-        logger.warning(
-            "OwnedProduct #%d -> multiple_sold (%d active orders)",
-            owned.pk, active_order_count,
-        )
-    elif active_order_count == 1 and owned.status == OwnedProductStatus.LISTED:
-        owned.status = OwnedProductStatus.SOLD
-        owned.save(update_fields=['status', 'updated_at'])
+        if active_order_count > 1 and owned.status != OwnedProductStatus.MULTIPLE_SOLD:
+            owned.status = OwnedProductStatus.MULTIPLE_SOLD
+            owned.save(update_fields=['status', 'updated_at'])
+            logger.warning(
+                "OwnedProduct #%d -> multiple_sold (%d active orders)",
+                owned.pk, active_order_count,
+            )
+        elif active_order_count == 1 and owned.status == OwnedProductStatus.LISTED:
+            owned.status = OwnedProductStatus.SOLD
+            owned.save(update_fields=['status', 'updated_at'])
+            logger.info(
+                "OwnedProduct #%d -> sold (Order #%d)", owned.pk, order.pk,
+            )
+
+    # --- Dropship product path ---
+    dp = order.dropship_product
+    if dp and dp.status != DropshipProductStatus.SOLD:
+        dp.status = DropshipProductStatus.SOLD
+        dp.save(update_fields=['status', 'updated_at'])
         logger.info(
-            "OwnedProduct #%d -> sold (Order #%d)", owned.pk, order.pk,
+            "DropshipProduct #%d -> sold (Order #%d)", dp.pk, order.pk,
         )
 
-    # Close the listing that was sold through (if FK is set)
+        # Mark any OwnedProduct purchased from this DP as sold
+        # (product_origin FK links OP to the DP it was sourced from)
+        _mark_origin_owned_products_sold(dp, order)
+
+    # --- Close the listing that was sold through ---
     if order.listing and order.listing.status == ListingStatus.LISTED:
         order.listing.status = ListingStatus.CLOSED
         order.listing.save(update_fields=['status', 'updated_at'])
@@ -70,7 +83,7 @@ def _handle_order_sold(order, created):
 
     # Unlink sold OwnedProduct from same-account listings (DB-only, no API call).
     # Marketplace already handles removal on its side when an order completes.
-    if created:
+    if owned and created:
         _unlink_same_account_listings(order, owned)
 
 
@@ -128,6 +141,37 @@ def _handle_order_cancelled(order):
                 "OwnedProduct #%d -> draft (order cancelled, no active listings)",
                 owned.pk,
             )
+
+
+# ---------------------------------------------------------------------------
+# DropshipProduct → OwnedProduct cascade
+# ---------------------------------------------------------------------------
+
+def _mark_origin_owned_products_sold(dp, order):
+    """Mark OwnedProducts sourced from this DropshipProduct as sold.
+
+    When a DropshipProduct is sold, any OwnedProduct created from it
+    (product_origin FK) should also reflect that it is no longer available.
+    """
+    from apps.inventory.models import OwnedProduct
+
+    to_update = list(
+        OwnedProduct.objects.filter(
+            product_origin=dp,
+            status=OwnedProductStatus.LISTED,
+        )
+    )
+    if not to_update:
+        return
+
+    for op in to_update:
+        op.status = OwnedProductStatus.SOLD
+
+    OwnedProduct.objects.bulk_update(to_update, ['status', 'updated_at'])
+    logger.info(
+        "OwnedProduct(s) %s -> sold via DropshipProduct #%d (Order #%d)",
+        [op.pk for op in to_update], dp.pk, order.pk,
+    )
 
 
 # ---------------------------------------------------------------------------
