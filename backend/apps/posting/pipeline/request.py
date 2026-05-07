@@ -13,6 +13,8 @@ def build_request(
     kind: ListingKind,
     disable_media: bool = True,
     lzt_image_fetcher=None,
+    template_overrides: dict | None = None,
+    use_template_content: bool = False,
 ) -> PipelineRequest:
     """Build a lib PipelineRequest from Django-layer inputs.
 
@@ -22,10 +24,16 @@ def build_request(
         kind:              STOCK or DROPSHIPPING.
         disable_media:     Skip media download/upload (True = no IO, faster).
         lzt_image_fetcher: Optional LZT image fetcher for media steps.
+        template_overrides: Optional DB/runtime content template overrides.
+        use_template_content: Enable template-backed content generation.
     """
     ctx: dict = {ctx_keys.DISABLE_MEDIA: disable_media}
     if lzt_image_fetcher is not None:
         ctx[ctx_keys.LZT_IMAGE_FETCHER] = lzt_image_fetcher
+    if use_template_content or template_overrides:
+        ctx[ctx_keys.USE_TEMPLATE_CONTENT] = True
+    if template_overrides:
+        ctx[ctx_keys.CONTENT_TEMPLATE_OVERRIDES] = template_overrides
 
     return PipelineRequest(
         game=game_slug,

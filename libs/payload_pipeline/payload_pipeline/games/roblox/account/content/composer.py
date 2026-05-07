@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from .description_generator import RobloxDescriptionGenerator
+from .template_content import RobloxTemplateContentGenerator
 from .title_generator import RobloxTitleGenerator
 from ..models import RobloxResolvedAccount
+from .....core import context_keys as ctx
 from .....core.contracts import (
     ListingContent,
     ListingDraft,
@@ -21,6 +23,7 @@ class RobloxComposer:
     def __init__(self) -> None:
         self.title_generator = RobloxTitleGenerator()
         self.description_generator = RobloxDescriptionGenerator()
+        self.template_content_generator = RobloxTemplateContentGenerator()
 
     def compose(
         self,
@@ -28,6 +31,9 @@ class RobloxComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        if ctx.USE_TEMPLATE_CONTENT.get(request, False):
+            return self.template_content_generator.compose(account, request, media)
+
         is_dropshipping = request.kind == ListingKind.DROPSHIPPING
         title = self.title_generator.generate(account, marketplace="default")
         gameboost_title = self.title_generator.generate(account, marketplace="gameboost")

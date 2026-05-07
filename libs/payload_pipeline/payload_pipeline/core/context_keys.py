@@ -87,3 +87,11 @@ G2G_SERVICE_ID: ContextKey[str] = ContextKey("g2g_service_id")
 # ── Source-level overrides ───────────────────────────────────────────
 
 TRACKER_URL: ContextKey[str] = ContextKey("tracker_url")
+
+# -- Template-backed content rendering ---------------------------------------
+
+USE_TEMPLATE_CONTENT: ContextKey[bool] = ContextKey("use_template_content")
+CONTENT_TEMPLATE_MANAGER: ContextKey[Any] = ContextKey("content_template_manager")
+CONTENT_TEMPLATE_OVERRIDES: ContextKey[dict[str, Any]] = ContextKey(
+    "content_template_overrides"
+)

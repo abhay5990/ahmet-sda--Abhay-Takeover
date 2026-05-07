@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -171,6 +172,115 @@ class PostingDefault(models.Model):
 
     def __str__(self):
         return f"{self.game} — {self.marketplace}"
+
+
+class ContentTemplateOverride(models.Model):
+    """DB-backed partial content template override for listing content."""
+
+    CATEGORY_CHOICES = [
+        ('account', 'Account'),
+        ('item', 'Item'),
+    ]
+    KIND_CHOICES = [
+        ('stock', 'Stock'),
+        ('dropshipping', 'Dropshipping'),
+    ]
+    MARKETPLACE_CHOICES = [
+        ('default', 'Default'),
+        ('eldorado', 'Eldorado'),
+        ('gameboost', 'GameBoost'),
+        ('g2g', 'G2G'),
+        ('playerauctions', 'PlayerAuctions'),
+    ]
+
+    game = models.ForeignKey(
+        'inventory.Game',
+        on_delete=models.CASCADE,
+        related_name='content_template_overrides',
+    )
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default='account',
+    )
+    kind = models.CharField(
+        max_length=20,
+        choices=KIND_CHOICES,
+        default='stock',
+    )
+    marketplace = models.CharField(
+        max_length=30,
+        choices=MARKETPLACE_CHOICES,
+        help_text='Use "default" for the base listing content.',
+    )
+    enabled = models.BooleanField(default=True)
+    title_template = models.JSONField(
+        null=True,
+        blank=True,
+        help_text='Structured title spec. Leave empty to keep the bundled/default title.',
+    )
+    description_template = models.JSONField(
+        null=True,
+        blank=True,
+        help_text='Structured description spec. Leave empty to keep the bundled/default description.',
+    )
+    notes = models.TextField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'content_template_overrides'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['game', 'category', 'kind', 'marketplace'],
+                name='unique_content_template_override',
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=['game', 'category', 'kind', 'enabled'],
+                name='content_template_lookup_idx',
+            ),
+        ]
+        ordering = ['game__name', 'kind', 'marketplace']
+
+    def __str__(self):
+        state = 'enabled' if self.enabled else 'disabled'
+        return f"{self.game} - {self.kind}/{self.marketplace} ({state})"
+
+    def clean(self):
+        super().clean()
+        if self.title_template is None and self.description_template is None:
+            if self.enabled:
+                raise ValidationError(
+                    'Define title_template, description_template, or disable/delete this override.'
+                )
+            return
+        self._validate_template_specs()
+
+    def _validate_template_specs(self) -> None:
+        from payload_pipeline.content_templates import (
+            TemplateValidationError,
+            merge_template_maps,
+        )
+
+        base = {
+            'default': {
+                'title': {'parts': [{'text': 'Base'}]},
+                'description': {'blocks': [{'type': 'line', 'text': 'Base'}]},
+            }
+        }
+        override: dict = {self.marketplace: {}}
+        if self.title_template is not None:
+            override[self.marketplace]['title'] = self.title_template
+        if self.description_template is not None:
+            override[self.marketplace]['description'] = self.description_template
+
+        try:
+            merge_template_maps(base, override)
+        except TemplateValidationError as exc:
+            raise ValidationError(str(exc)) from exc
 
 
 class SubplatformLimit(models.Model):

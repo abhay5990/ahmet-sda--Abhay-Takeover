@@ -1,0 +1,164 @@
+{
+  "default": {
+    "title": {
+      "separator": " \u25c6 ",
+      "max_length": 255,
+      "parts": [
+        { "template": "{letter_tag}\u25c6 Registered: {register_year}" },
+        { "template": "Total Spent: {incoming_robux_total} R$" },
+        { "template": "Inventory: {inventory_price_int} R$" },
+        { "template": "{offsale_count} Offsale Items" },
+        { "template": "Gamepass: {game_pass_total_robux} R$" },
+        { "text": "FULL ACCESS" }
+      ]
+    },
+    "description": {
+      "char_limit": 2000,
+      "blocks": [
+        { "type": "line", "template": "\ud83d\udd39 Username: {username}" },
+        { "type": "blank", "when": { "truthy": "is_stock" } },
+        {
+          "type": "line",
+          "text": "\ud83d\udd38\u2728 INSTANT DELIVERY",
+          "when": { "truthy": "is_stock" }
+        },
+        { "type": "line", "template": "\ud83d\udd39 Profile: {profile_url}" },
+        { "type": "blank" },
+        { "type": "line", "text": "\ud83d\udd38 Account Details:" },
+        { "type": "line", "template": "\ud83d\udd39 Registered: {register_date}" },
+        { "type": "line", "template": "\ud83d\udd39 Robux: {robux}" },
+        { "type": "line", "template": "\ud83d\udd39 Total Robux Spent: {incoming_robux_total} R$" },
+        { "type": "line", "template": "\ud83d\udd39 Inventory Value (Classic): {inventory_price_int} R$" },
+        { "type": "line", "template": "\ud83d\udd39 UGC Limited Value: {ugc_limited_price_int} R$" },
+        { "type": "line", "template": "\ud83d\udd39 Gamepass Total: {game_pass_total_robux} R$" },
+        { "type": "line", "template": "\ud83d\udd39 Offsale Items: {offsale_count}" },
+        { "type": "line", "template": "\ud83d\udd39 Age Verified: {age_verified_label}" }
+      ]
+    }
+  },
+  "gameboost": {
+    "title": {
+      "separator": " | ",
+      "max_length": 255,
+      "parts": [
+        { "template": "{letter_tag}Registered {register_year}" },
+        { "template": "Spent: {incoming_robux_total} R$" },
+        { "template": "Inventory: {inventory_price_int} R$" },
+        { "text": "Full Access" }
+      ]
+    }
+  },
+  "playerauctions": {
+    "title": {
+      "separator": " | ",
+      "max_length": 100,
+      "parts": [
+        {
+          "template": "Roblox Account - {letter_label}",
+          "when": { "truthy": "letter_label" }
+        },
+        {
+          "template": "Roblox Account - {incoming_robux_total} R$ Spent",
+          "when": {
+            "and": [
+              { "falsy": "letter_label" },
+              { "gt": ["incoming_robux_total", 0] }
+            ]
+          }
+        },
+        {
+          "template": "{incoming_robux_total} R$ Spent",
+          "when": {
+            "and": [
+              { "truthy": "letter_label" },
+              { "gt": ["incoming_robux_total", 0] }
+            ]
+          }
+        },
+        {
+          "template": "Roblox Account - {inventory_price_int} R$ Inv",
+          "when": {
+            "and": [
+              { "falsy": "letter_label" },
+              { "lte": ["incoming_robux_total", 0] },
+              { "gt": ["inventory_price_int", 0] }
+            ]
+          }
+        },
+        {
+          "template": "{inventory_price_int} R$ Inv",
+          "when": {
+            "and": [
+              { "gt": ["inventory_price_int", 0] },
+              {
+                "or": [
+                  { "truthy": "letter_label" },
+                  { "gt": ["incoming_robux_total", 0] }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "template": "Roblox Account - {offsale_count} Offsale",
+          "when": {
+            "and": [
+              { "falsy": "letter_label" },
+              { "lte": ["incoming_robux_total", 0] },
+              { "lte": ["inventory_price_int", 0] },
+              { "gt": ["offsale_count", 0] }
+            ]
+          }
+        },
+        {
+          "template": "{offsale_count} Offsale",
+          "when": {
+            "and": [
+              { "gt": ["offsale_count", 0] },
+              {
+                "or": [
+                  { "truthy": "letter_label" },
+                  { "gt": ["incoming_robux_total", 0] },
+                  { "gt": ["inventory_price_int", 0] }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "text": "Roblox Account - Full Access Account",
+          "when": {
+            "and": [
+              { "falsy": "letter_label" },
+              { "lte": ["incoming_robux_total", 0] },
+              { "lte": ["inventory_price_int", 0] },
+              { "lte": ["offsale_count", 0] }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "g2g": {
+    "title": {
+      "separator": " | ",
+      "max_length": 120,
+      "parts": [
+        { "text": "Roblox Account" },
+        {
+          "field": "letter_label",
+          "when": { "truthy": "letter_label" }
+        },
+        {
+          "template": "{incoming_robux_total} R$ Spent",
+          "when": { "gt": ["incoming_robux_total", 0] }
+        },
+        {
+          "template": "{inventory_price_int} R$ Inventory",
+          "when": { "gt": ["inventory_price_int", 0] }
+        },
+        { "text": "Full Access" }
+      ]
+    }
+  }
+}

@@ -4,6 +4,7 @@ from . import views
 from .api import stock as stock_api
 from .api import dropship as dropship_api
 from .api import pool as pool_api
+from .api import content_templates as content_template_api
 
 app_name = 'posting'
 
@@ -13,6 +14,7 @@ urlpatterns = [
     path('stock/active/', views.stock_active_page, name='stock_active'),
     path('stock/history/', views.stock_history_page, name='stock_history'),
     path('stock/jobs/<int:job_id>/', views.stock_job_detail, name='stock_job_detail'),
+    path('templates/', views.content_templates_page, name='content_templates'),
 
     # Dropship UI
     path('dropship/configs/', views.dropship_configs_page, name='dropship_configs'),
@@ -35,6 +37,13 @@ urlpatterns = [
     # API — defaults + stores
     path('api/defaults/<int:game_id>/<str:marketplace>/', stock_api.posting_defaults, name='api_posting_defaults'),
     path('api/stores/', stock_api.available_stores, name='api_available_stores'),
+
+    # API — content templates
+    path('api/content-templates/', content_template_api.list_content_templates, name='api_content_templates'),
+    path('api/content-templates/metadata/', content_template_api.content_template_metadata, name='api_content_template_metadata'),
+    path('api/content-templates/save/', content_template_api.content_template_detail, name='api_save_content_template'),
+    path('api/content-templates/<int:template_id>/', content_template_api.content_template_detail, name='api_delete_content_template'),
+    path('api/content-templates/preview/', content_template_api.preview_content_template, name='api_preview_content_template'),
 
     # API — dropship poster control
     path('api/dropship/configs/<int:config_id>/poster/stop/', dropship_api.poster_stop, name='api_poster_stop'),

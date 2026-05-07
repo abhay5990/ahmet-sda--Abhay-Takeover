@@ -13,6 +13,7 @@ from apps.inventory.models import DropshipProduct, Game
 from apps.listings.models import Listing
 from apps.posting.models import (
     DropshippingJobConfig, OfferPool, PostingJob, PostingLog,
+    ContentTemplateOverride,
 )
 from apps.posting.services.shared.subplatform import GAME_SUBPLATFORMS
 
@@ -85,6 +86,25 @@ def stock_job_detail(request, job_id):
     return render(request, 'posting/stock_job_detail.html', {
         'job': job,
         'items': items,
+    })
+
+
+@ensure_csrf_cookie
+@role_required('admin', 'user')
+def content_templates_page(request):
+    """Manage DB-backed title/description template overrides."""
+    games = Game.objects.filter(is_active=True).order_by('name')
+    game_options = [
+        {'id': game.id, 'name': game.name, 'slug': game.slug}
+        for game in games
+    ]
+    return render(request, 'posting/content_templates.html', {
+        'games': games,
+        'marketplaces': ContentTemplateOverride.MARKETPLACE_CHOICES,
+        'kinds': ContentTemplateOverride.KIND_CHOICES,
+        'game_options_json': json.dumps(game_options),
+        'marketplace_options_json': json.dumps(list(ContentTemplateOverride.MARKETPLACE_CHOICES)),
+        'kind_options_json': json.dumps(list(ContentTemplateOverride.KIND_CHOICES)),
     })
 
 
@@ -256,6 +276,17 @@ def restock_pool_detail_page(request, pool_id):
     items = pool.items.select_related('owned_product').order_by('order', 'created_at')
     active_offers = pool.active_offers.select_related('listing', 'pool_item').order_by('-created_at')
 
+    # Linked accounts: OwnedProducts attached to the listing via ListingOwnedProduct
+    from apps.listings.models import ListingOwnedProduct
+    owned_products = [
+        lop.owned_product
+        for lop in (
+            ListingOwnedProduct.objects
+            .filter(listing=pool.listing)
+            .select_related('owned_product', 'owned_product__game')
+        )
+    ]
+
     logs = PostingLog.objects.filter(
         task_name__in=['pool_replenish', 'pool_checker'],
         detail__pool_id=pool.pk,
@@ -265,5 +296,6 @@ def restock_pool_detail_page(request, pool_id):
         'pool': pool,
         'items': items,
         'active_offers': active_offers,
+        'owned_products': owned_products,
         'logs': logs,
     })
