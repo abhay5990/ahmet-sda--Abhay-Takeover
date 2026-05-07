@@ -29,8 +29,8 @@ class Command(BaseCommand):
         qs = OwnedProduct.objects.filter(
             email__iendswith='rambler.ru',
             orders__integration_account__provider='gameboost',
-            orders__sold_at__year=2025,
-            orders__sold_at__month=9,
+            orders__sold_at__year=2026,
+            orders__sold_at__month=2,
         ).distinct()
 
         total = qs.count()

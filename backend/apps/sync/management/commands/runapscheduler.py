@@ -137,10 +137,10 @@ class Command(BaseCommand):
             replace_existing=True,
         )
 
-        # Pause expiring listings — runs daily
+        # Pause expiring listings — runs every 3 hours
         scheduler.add_job(
             run_pause_expiring_listings_job,
-            trigger=IntervalTrigger(days=1),
+            trigger=IntervalTrigger(hours=3),
             id='pause_expiring_listings',
             name='Pause Expiring Listings (Eldorado/PA)',
             max_instances=1,
