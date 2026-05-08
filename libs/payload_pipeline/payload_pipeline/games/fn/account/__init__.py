@@ -4,7 +4,7 @@ from .resolver import FortniteResolver
 from .content import FortniteComposer
 from .media import FortniteMediaStrategy
 from .sources import FortniteLztSourceAdapter
-from .marketplaces import FortniteEldoradoBuilder, FortniteGameBoostBuilder, FortniteG2GBuilder
+from .marketplaces import FortniteEldoradoBuilder, FortniteGameBoostBuilder, FortniteG2GBuilder, FortnitePlayerAuctionsBuilder
 from ....core.enums import ListingCategory
 from ....core.registry import GameDefinition
 
@@ -21,6 +21,7 @@ def register(registry) -> None:
                 "eldorado": FortniteEldoradoBuilder(),
                 "gameboost": FortniteGameBoostBuilder(),
                 "g2g": FortniteG2GBuilder(),
+                "playerauctions": FortnitePlayerAuctionsBuilder(),
             },
         )
     )
@@ -31,6 +32,7 @@ __all__ = [
     "FortniteEldoradoBuilder",
     "FortniteGameBoostBuilder",
     "FortniteG2GBuilder",
+    "FortnitePlayerAuctionsBuilder",
     "FortniteLztSourceAdapter",
     "FortniteMediaStrategy",
     "FortniteResolver",

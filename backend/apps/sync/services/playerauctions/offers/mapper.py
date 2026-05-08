@@ -98,6 +98,38 @@ def extract_game_external_id(item: dict) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Sub-platform extraction
+# ---------------------------------------------------------------------------
+
+# Reverse of payload_pipeline GTA V _SERVER_ID_MAP.
+# Only GTA V uses platform-based server IDs; other games use region-based.
+_SERVER_ID_TO_PLATFORM: dict[str, str] = {
+    '9874': 'PlayStation 5',
+    '9889': 'Xbox Series X/S',
+    '5921': 'PlayStation 4',
+    '5922': 'Xbox One',
+    '14270': 'PC - Enhanced',
+    '14271': 'PC - Enhanced',
+    '14272': 'PC - Enhanced',
+    '5920': 'PC - Legacy',
+    '5919': 'PC - Legacy',
+    '7706': 'PC - Legacy',
+}
+
+
+def extract_sub_platform(item: dict) -> str:
+    """Extract sub-platform from details.serverId.
+
+    PA offers store platform/server as a numeric ID in ``details.serverId``.
+    For GTA V, this maps to platform names (PlayStation 5, Xbox One, etc.).
+    Returns empty string when no mapping is found.
+    """
+    details = item.get('details') or {}
+    server_id = str(details.get('serverId') or '')
+    return _SERVER_ID_TO_PLATFORM.get(server_id, '')
+
+
+# ---------------------------------------------------------------------------
 # Delivery type
 # ---------------------------------------------------------------------------
 

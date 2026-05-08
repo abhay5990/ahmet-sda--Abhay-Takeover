@@ -37,6 +37,10 @@
          class="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-3 mb-4 flex flex-wrap items-center gap-3">
         <span class="text-sm font-medium text-emerald-800"
               x-text="selected.length + ' listing(s) selected'"></span>
+        <button @click="bulkRelist()"
+                class="px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-medium transition-colors">
+            Relist Selected
+        </button>
         <button @click="bulkDelete()"
                 class="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 font-medium transition-colors">
             Delete Selected
@@ -71,7 +75,7 @@
                     {% for listing in page_obj %}
                     <tr class="hover:bg-gray-50" :class="isSelected({{ listing.id }}) ? 'bg-emerald-50' : ''">
                         <td class="px-3 py-3">
-                            {% if listing.status == 'listed' or listing.status == 'paused' %}
+                            {% if listing.status == 'listed' or listing.status == 'paused' or listing.status == 'deleted' %}
                             <input type="checkbox"
                                    :checked="isSelected({{ listing.id }})"
                                    @change="toggleOne({{ listing.id }})"
@@ -136,9 +140,30 @@
                                      x-transition:leave-start="opacity-100 scale-100"
                                      x-transition:leave-end="opacity-0 scale-95"
                                      class="absolute right-0 z-30 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                                    <button @click="relistSingle({{ listing.id }}); open = false"
+                                            class="w-full text-left px-3 py-1.5 text-sm text-indigo-600 hover:bg-indigo-50 transition-colors">
+                                        Relist (fresh expiry)
+                                    </button>
                                     <button @click="deleteSingle({{ listing.id }}); open = false"
                                             class="w-full text-left px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
                                         Delete (remote + local)
+                                    </button>
+                                </div>
+                            </div>
+                            {% elif listing.status == 'deleted' %}
+                            <div class="relative" x-data="{ open: false }">
+                                {% include "includes/_action_dropdown.html" %}
+                                <div x-show="open" x-cloak
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     class="absolute right-0 z-30 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                                    <button @click="relistSingle({{ listing.id }}); open = false"
+                                            class="w-full text-left px-3 py-1.5 text-sm text-emerald-600 hover:bg-emerald-50 transition-colors">
+                                        Repost (re-create)
                                     </button>
                                 </div>
                             </div>
@@ -158,6 +183,19 @@
     </div>
 
     {% include "includes/_pagination.html" %}
+
+    <!-- Toast notification -->
+    <div x-show="toast.show" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-2"
+         class="fixed bottom-6 right-6 z-50 max-w-sm px-5 py-3 rounded-lg shadow-lg text-sm font-medium"
+         :class="toast.ok ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'"
+         x-text="toast.msg">
+    </div>
 </div>
 
 <script>
@@ -166,14 +204,20 @@ function listingsBrowser() {
         selected: [],
         loading: false,
         loadingMsg: '',
+        toast: { show: false, ok: true, msg: '' },
 
         init() {},
 
-        deletableIds() {
-            return [{% for listing in page_obj %}{% if listing.status == 'listed' or listing.status == 'paused' %}{{ listing.id }},{% endif %}{% endfor %}];
+        showToast(ok, msg, duration = 4000) {
+            this.toast = { show: true, ok, msg };
+            setTimeout(() => { this.toast.show = false; }, duration);
         },
 
-        toggleAll(e) { this.selected = e.target.checked ? this.deletableIds() : []; },
+        selectableIds() {
+            return [{% for listing in page_obj %}{% if listing.status == 'listed' or listing.status == 'paused' or listing.status == 'deleted' %}{{ listing.id }},{% endif %}{% endfor %}];
+        },
+
+        toggleAll(e) { this.selected = e.target.checked ? this.selectableIds() : []; },
         isSelected(id) { return this.selected.includes(id); },
         toggleOne(id) {
             const idx = this.selected.indexOf(id);
@@ -182,6 +226,26 @@ function listingsBrowser() {
 
         csrfToken() {
             return document.cookie.split('; ').find(r => r.startsWith('csrftoken='))?.split('=')[1] || '';
+        },
+
+        async relistSingle(id) {
+            if (!confirm('Relist this offer? It will be deleted and re-created with a fresh expiry.')) return;
+            this.loading = true;
+            this.loadingMsg = 'Relisting offer (delete + re-create)\u2026';
+            try {
+                const res = await fetch(`/listings/api/${id}/relist/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': this.csrfToken() },
+                });
+                const data = await res.json().catch(() => ({}));
+                this.loading = false;
+                if (res.ok) {
+                    this.showToast(true, 'Relist successful');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    this.showToast(false, 'Relist failed: ' + (data.error || 'Unknown error'), 6000);
+                }
+            } catch (e) { this.loading = false; this.showToast(false, 'Request failed: ' + e.message, 6000); }
         },
 
         async deleteSingle(id) {
@@ -200,6 +264,31 @@ function listingsBrowser() {
                     alert('Failed: ' + (data.error || 'Unknown error'));
                 }
             } catch (e) { this.loading = false; alert('Request failed: ' + e.message); }
+        },
+
+        async bulkRelist() {
+            if (!this.selected.length) return;
+            if (!confirm(`Relist ${this.selected.length} listing(s)? They will be deleted and re-created with fresh expiry.`)) return;
+            this.loading = true;
+            this.loadingMsg = `Relisting ${this.selected.length} offer(s)\u2026`;
+            try {
+                const res = await fetch('/listings/api/bulk-relist/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.csrfToken() },
+                    body: JSON.stringify({ ids: this.selected }),
+                });
+                const data = await res.json().catch(() => ({}));
+                this.loading = false;
+                if (res.status === 207) {
+                    this.showToast(false, `Relist: ${data.succeeded?.length ?? 0} succeeded, ${data.failed?.length ?? 0} failed`, 6000);
+                    setTimeout(() => location.reload(), 2000);
+                } else if (res.ok) {
+                    this.showToast(true, `${data.succeeded?.length ?? 0} listing(s) relisted successfully`);
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    this.showToast(false, 'Error: ' + (data.error || 'Unknown error'), 6000);
+                }
+            } catch (e) { this.loading = false; this.showToast(false, 'Request failed: ' + e.message, 6000); }
         },
 
         async bulkDelete() {

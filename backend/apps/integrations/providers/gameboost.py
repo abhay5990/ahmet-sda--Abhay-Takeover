@@ -37,7 +37,14 @@ class GameboostProvider(AbstractProvider):
         return client.list_offers(**kwargs)
 
     def create_listing(self, client: Any, product_data: dict) -> Any:
-        return client.create_offer(**product_data)
+        payload = product_data.get('payload', product_data)
+        proxy_group = product_data.get('proxy_group')
+
+        if 'credentials' in payload:
+            return client.create_offer_with_credentials(
+                payload=payload, proxy_group=proxy_group,
+            )
+        return client.create_offer(payload=payload, proxy_group=proxy_group)
 
     def update_listing(self, client: Any, external_id: str, product_data: dict) -> Any:
         return client.update_offer(offer_id=external_id, **product_data)

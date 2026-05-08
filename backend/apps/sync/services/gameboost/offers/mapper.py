@@ -73,6 +73,19 @@ def extract_game_external_id(item: dict) -> str:
     return str(game.get('id') or '')
 
 
+def extract_sub_platform(item: dict) -> str:
+    """Extract sub-platform from parameters.platform.
+
+    Gameboost offers include platform info in ``parameters``::
+
+        "parameters": {"platform": "PlayStation 5", ...}
+
+    Returns the value as-is (e.g. "PC", "PlayStation", "Xbox Series X/S").
+    """
+    params = item.get('parameters') or {}
+    return (params.get('platform') or '').strip()
+
+
 # ---------------------------------------------------------------------------
 # Credentials helpers
 # ---------------------------------------------------------------------------

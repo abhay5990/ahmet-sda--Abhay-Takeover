@@ -131,24 +131,9 @@ def create_pool(request):
         pool.status = OfferPoolStatus.ACTIVE
         pool.save(update_fields=['status', 'updated_at'])
 
-    # Auto-replenish: if pool is active and below threshold, push immediately
-    pushed = 0
-    if added > 0 and pool.status == OfferPoolStatus.ACTIVE:
-        try:
-            from apps.posting.services.pool.checker import _check_and_replenish
-            pool = (
-                OfferPool.objects
-                .select_related('listing', 'store', 'store__credential', 'game')
-                .get(id=pool.id)
-            )
-            pushed = _check_and_replenish(pool)
-        except Exception as exc:
-            logger.warning('create_pool: auto-replenish failed for pool %d: %s', pool.pk, exc)
-
     pool.refresh_from_db()
     return JsonResponse({
         'pool': _pool_to_dict(pool),
-        'pushed': pushed,
     }, status=201)
 
 
@@ -289,21 +274,8 @@ def add_pool_items(request, pool_id):
         pool.status = OfferPoolStatus.ACTIVE
         pool.save(update_fields=['status', 'updated_at'])
 
-    # Auto-replenish: if pool is active and we added items, push immediately if below threshold
-    pushed = 0
-    if added > 0 and pool.status == OfferPoolStatus.ACTIVE:
-        try:
-            from apps.posting.services.pool.checker import _check_and_replenish
-            pool = (
-                OfferPool.objects
-                .select_related('listing', 'store', 'store__credential', 'game')
-                .get(id=pool.id)
-            )
-            pushed = _check_and_replenish(pool)
-        except Exception as exc:
-            logger.warning('add_pool_items: auto-replenish failed for pool %d: %s', pool.pk, exc)
-
-    return JsonResponse({'added': added, 'pushed': pushed, 'total_pending': pool.pending_count})
+    pool.refresh_from_db()
+    return JsonResponse({'added': added, 'total_pending': pool.pending_count})
 
 
 @login_required
@@ -453,6 +425,7 @@ def available_listings(request):
             'store': lst.integration_account.name if lst.integration_account else '',
             'marketplace': lst.integration_account.provider if lst.integration_account else '',
             'game': lst.game.name if lst.game else '',
+            'game_id': lst.game_id,
             'price': str(lst.price),
             'sub_platform': lst.sub_platform,
             'created_at': lst.created_at.isoformat(),
@@ -522,6 +495,17 @@ def _active_offer_to_dict(ao: OfferPoolActiveOffer) -> dict:
 # ── Internal helpers ─────────────────────────────────────────────
 
 
+# Platform-specific credential key mappings (same as stock.py)
+_PLATFORM_CREDENTIAL_MAP: dict[str, tuple[str, str, tuple[str, ...]]] = {
+    'PlayStation 4':   ('psn_id',   'psn_pass',   ('psn_id', 'psn_pass', 'dob')),
+    'PlayStation 5':   ('psn_id',   'psn_pass',   ('psn_id', 'psn_pass', 'dob')),
+    'Xbox One':        ('xbox_id',  'xbox_pass',  ('xbox_id', 'xbox_pass')),
+    'Xbox Series X/S': ('xbox_id',  'xbox_pass',  ('xbox_id', 'xbox_pass')),
+    'PC - Legacy':     ('steam_id', 'steam_pass', ('steam_id', 'steam_pass', 'rock_id', 'rock_pass')),
+    'PC - Enhanced':   ('steam_id', 'steam_pass', ('steam_id', 'steam_pass', 'rock_id', 'rock_pass')),
+}
+
+
 def _add_credentials_to_pool(
     pool: OfferPool,
     credentials: list[dict],
@@ -531,6 +515,9 @@ def _add_credentials_to_pool(
     """Create OwnedProducts from raw credentials and add as OfferPoolItems."""
     added = 0
     max_order = pool.items.count()
+
+    # Resolve platform from listing's sub_platform (stored as full name)
+    platform = (listing.sub_platform or '') if listing else ''
 
     # Get reference price from listing's existing owned products
     ref_price = None
@@ -545,15 +532,31 @@ def _add_credentials_to_pool(
         if ref_lop:
             ref_price = ref_lop.owned_product.price
 
+    mapping = _PLATFORM_CREDENTIAL_MAP.get(platform)
+
     for i, cred in enumerate(credentials):
-        login = cred.get('login', '').strip().lower()
-        password = cred.get('password', '').strip()
+        # Extract login/password using platform mapping
+        if mapping:
+            login_key, pass_key, extra_keys = mapping
+            login = cred.get(login_key, '').strip().lower()
+            password = cred.get(pass_key, '').strip()
+            credential_extras = {}
+            for k in extra_keys:
+                val = cred.get(k, '').strip()
+                if val:
+                    credential_extras[k] = val
+        else:
+            login = cred.get('login', '').strip().lower()
+            password = cred.get('password', '').strip()
+            credential_extras = {}
+
         if not login or not password:
             continue
 
         # Build raw_data (LZT-compatible format)
         raw_data = {
             'source': 'manual',
+            'main_platform': platform,
             'loginData': {'login': login, 'password': password},
             'emailLoginData': {
                 'login': cred.get('email', '').strip(),
@@ -562,10 +565,14 @@ def _add_credentials_to_pool(
             'security_email': cred.get('security_email', '').strip(),
             'security_email_password': cred.get('security_email_password', '').strip(),
             'security_email_login_link': cred.get('security_email_login_link', '').strip(),
-            'birthday': cred.get('birthday', '').strip(),
+            'birthday': cred.get('birthday', cred.get('dob', '')).strip(),
             'emailLoginUrl': cred.get('email_login_link', '').strip(),
             'item_id': f'manual-{uuid.uuid4().hex[:12]}',
         }
+
+        # Store platform-specific extras in raw_data
+        if credential_extras:
+            raw_data.update(credential_extras)
 
         owned, _ = OwnedProduct.objects.update_or_create(
             category=game.category,

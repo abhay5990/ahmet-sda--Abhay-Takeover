@@ -299,6 +299,7 @@ class GameboostOfferSyncService(BaseSyncService):
             'price': price_value,
             'currency': currency,
             'game': game,
+            'sub_platform': mapper.extract_sub_platform(payload),
             'listed_at': mapper.parse_unix_timestamp(
                 payload.get('listed_at'),
             ),

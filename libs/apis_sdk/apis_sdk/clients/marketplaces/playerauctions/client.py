@@ -64,6 +64,7 @@ _PERMANENT_PATTERNS: frozenset[str] = frozenset({
     "not real xlsx file",
     "please check!",
     "please input",
+    "do not use web addresses",
 })
 
 

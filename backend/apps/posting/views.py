@@ -259,6 +259,15 @@ def restock_pool_detail_page(request, pool_id):
     items = pool.items.select_related('owned_product').order_by('order', 'created_at')
     active_offers = pool.active_offers.select_related('listing', 'pool_item').order_by('-created_at')
 
+    # Linked OwnedProducts via ListingOwnedProduct M2M
+    from apps.listings.models import ListingOwnedProduct
+    linked_accounts = (
+        ListingOwnedProduct.objects
+        .filter(listing=pool.listing)
+        .select_related('owned_product')
+        .order_by('created_at')
+    )
+
     logs = PostingLog.objects.filter(
         task_name__in=['pool_replenish', 'pool_checker'],
         detail__pool_id=pool.pk,
@@ -268,5 +277,6 @@ def restock_pool_detail_page(request, pool_id):
         'pool': pool,
         'items': items,
         'active_offers': active_offers,
+        'linked_accounts': linked_accounts,
         'logs': logs,
     })

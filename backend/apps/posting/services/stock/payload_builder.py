@@ -71,7 +71,8 @@ def build_item_payload(
                 store=item.store, game=job.game,
             ))
             if not limits:
-                sub_platform = ''
+                # No capacity limits — use resolved account's platform if available
+                sub_platform = getattr(prepared.subject, 'main_platform', '') or ''
             else:
                 counts = get_active_offer_counts(item.store, job.game)
                 sub_platform = select_best_subplatform(limits, counts, mode='stock')

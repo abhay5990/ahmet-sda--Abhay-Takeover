@@ -16,6 +16,7 @@ Two payload formats:
 from __future__ import annotations
 
 import random
+import re
 import string
 from abc import abstractmethod
 from typing import Any
@@ -23,6 +24,11 @@ from typing import Any
 from ..core.contracts import BuildContext, CredentialBundle, ListingDraft
 from ..core.enums import ListingKind
 from .base import BasePayloadBuilder, _DROPSHIPPING_DELIVERY
+
+
+def _strip_url_schemes(text: str) -> str:
+    """Remove ``https://`` and ``http://`` prefixes from all URLs in text."""
+    return re.sub(r"https?://", "", text)
 
 
 def _fake_owner_info(creds: CredentialBundle) -> dict[str, str]:
@@ -158,8 +164,8 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
             "price": round(max(price, 0.01), 2),
             "freeInsurance": 7,
             "offerDuration": 30,
-            "title": content.title,
-            "offerDesc": content.description.replace("\n", "<br>"),
+            "title": _strip_url_schemes(content.title),
+            "offerDesc": _strip_url_schemes(content.description).replace("\n", "<br>"),
             "screenShot": "",
             "agreeCheck": True,
             "isAuto": is_stock,
@@ -195,8 +201,8 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
         payload: dict[str, Any] = {
             "game_name": self.game_name,
             "game_id": self.game_id,
-            "title": content.title,
-            "description": content.description,
+            "title": _strip_url_schemes(content.title),
+            "description": _strip_url_schemes(content.description),
             "price": round(max(price, 0.01), 2),
             "server": self._get_server(subject),
             "cover_image_url": self.cover_image_url,

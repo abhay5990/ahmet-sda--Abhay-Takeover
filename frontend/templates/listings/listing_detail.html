@@ -43,6 +43,10 @@
                     {{ listing.get_status_display }}
                 </span>
                 {% if listing.status == 'listed' or listing.status == 'paused' %}
+                <button @click="relistListing()"
+                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
+                    Relist
+                </button>
                 <button @click="deleteListing()"
                         class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium">
                     Delete
@@ -289,6 +293,18 @@
     </div>
     {% endif %}
 
+    <!-- Toast notification -->
+    <div x-show="toast.show" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-2"
+         class="fixed bottom-6 right-6 z-50 max-w-sm px-5 py-3 rounded-lg shadow-lg text-sm font-medium"
+         :class="toast.ok ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'"
+         x-text="toast.msg">
+    </div>
 </div>
 
 <script>
@@ -296,30 +312,58 @@ function listingDetail() {
     return {
         loading: false,
         loadingMsg: '',
+        toast: { show: false, ok: true, msg: '' },
 
         init() {},
+
+        showToast(ok, msg, duration = 4000) {
+            this.toast = { show: true, ok, msg };
+            setTimeout(() => { this.toast.show = false; }, duration);
+        },
 
         csrfToken() {
             return document.cookie.split('; ').find(r => r.startsWith('csrftoken='))?.split('=')[1] || '';
         },
 
+        async relistListing() {
+            if (!confirm('Relist this offer? It will be deleted from the marketplace and re-created with a fresh expiry.')) return;
+            this.loading = true;
+            this.loadingMsg = 'Relisting offer (delete + re-create)\u2026';
+            try {
+                const res = await fetch(`/listings/api/{{ listing.id }}/relist/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': this.csrfToken() },
+                });
+                const data = await res.json().catch(() => ({}));
+                this.loading = false;
+                if (res.ok && data.new_listing_id) {
+                    this.showToast(true, 'Relist successful! Redirecting\u2026');
+                    setTimeout(() => { window.location.href = `/listings/${data.new_listing_id}/`; }, 1000);
+                } else {
+                    this.showToast(false, 'Relist failed: ' + (data.error || 'Unknown error'), 6000);
+                }
+            } catch (e) { this.loading = false; this.showToast(false, 'Request failed: ' + e.message, 6000); }
+        },
+
         async deleteListing() {
             if (!confirm('Delete this listing and remove its marketplace offer?')) return;
             this.loading = true;
-            this.loadingMsg = 'Removing offer from marketplace…';
+            this.loadingMsg = 'Removing offer from marketplace\u2026';
             try {
                 const res = await fetch(`/listings/api/{{ listing.id }}/delete/`, {
                     method: 'DELETE',
                     headers: { 'X-CSRFToken': this.csrfToken() },
                 });
                 if (res.ok) {
-                    window.location.href = "{% url 'listings:list' %}";
+                    this.loading = false;
+                    this.showToast(true, 'Listing deleted successfully');
+                    setTimeout(() => { window.location.href = "{% url 'listings:list' %}"; }, 1000);
                 } else {
                     this.loading = false;
                     const data = await res.json().catch(() => ({}));
-                    alert('Failed: ' + (data.error || 'Unknown error'));
+                    this.showToast(false, 'Failed: ' + (data.error || 'Unknown error'), 6000);
                 }
-            } catch (e) { this.loading = false; alert('Request failed: ' + e.message); }
+            } catch (e) { this.loading = false; this.showToast(false, 'Request failed: ' + e.message, 6000); }
         },
     };
 }

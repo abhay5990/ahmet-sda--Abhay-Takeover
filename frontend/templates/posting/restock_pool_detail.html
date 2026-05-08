@@ -18,9 +18,15 @@
             </div>
             <div class="flex items-center gap-2">
                 <button @click="triggerReplenish()"
-                        :disabled="'{{ pool.status }}' !== 'active'"
-                        class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium disabled:opacity-50">
-                    Replenish Now
+                        :disabled="replenishing || '{{ pool.status }}' !== 'active'"
+                        class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium disabled:opacity-50 flex items-center gap-2">
+                    <template x-if="replenishing">
+                        <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                    </template>
+                    <span x-text="replenishing ? 'Replenishing...' : 'Replenish Now'"></span>
                 </button>
                 <span class="inline-flex px-3 py-1 text-sm rounded-full font-medium
                     {% if pool.status == 'active' %}bg-emerald-100 text-emerald-700
@@ -68,7 +74,9 @@
         <div class="flex gap-2 mb-3">
             <textarea x-model="pasteText" rows="2"
                       @paste.debounce.100ms="$nextTick(() => parsePaste())"
-                      placeholder="Paste credentials (tab-separated: login &#9; password &#9; email &#9; ...)"
+                      :placeholder="CREDENTIAL_SPEC
+                          ? 'Paste tab-separated: ' + CREDENTIAL_COLUMNS.map(c => c.label).join(' \t ')
+                          : 'Paste credentials (tab-separated: login \t password \t email \t ...)'"
                       class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:ring-indigo-500 focus:border-indigo-500"></textarea>
             <div class="flex flex-col gap-1.5">
                 <button @click="parsePaste()" type="button"
@@ -82,36 +90,30 @@
             </div>
         </div>
 
-        <!-- Parsed Table -->
+        <!-- Parsed Table (dynamic columns) -->
         <div x-show="parsedCredentials.length > 0" x-transition>
             <div class="overflow-x-auto border rounded-lg mb-3">
                 <table class="min-w-full text-xs">
                     <thead class="bg-gray-50 border-b">
                         <tr>
                             <th class="px-2 py-2 text-left text-gray-500 font-medium w-8">#</th>
-                            <th class="px-2 py-2 text-left text-gray-500 font-medium">Login</th>
-                            <th class="px-2 py-2 text-left text-gray-500 font-medium">Password</th>
-                            <th class="px-2 py-2 text-left text-gray-500 font-medium">Email</th>
-                            <th class="px-2 py-2 text-left text-gray-500 font-medium">Email Pass</th>
-                            <th class="px-2 py-2 text-left text-gray-500 font-medium">Email Link</th>
-                            <th class="px-2 py-2 text-left text-gray-500 font-medium">Sec. Email</th>
-                            <th class="px-2 py-2 text-left text-gray-500 font-medium">Sec. Pass</th>
-                            <th class="px-2 py-2 text-left text-gray-500 font-medium">Birthday</th>
+                            <template x-for="col in credentialColumns" :key="col.key">
+                                <th class="px-2 py-2 text-left text-gray-500 font-medium" x-text="col.label"></th>
+                            </template>
                             <th class="px-2 py-2 w-8"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <template x-for="(cred, idx) in parsedCredentials" :key="idx">
-                            <tr class="border-b hover:bg-gray-50" :class="{'bg-red-50': !cred.login || !cred.password}">
+                            <tr class="border-b hover:bg-gray-50" :class="{'bg-red-50': !cred[credentialColumns[0].key] || !cred[credentialColumns[1].key]}">
                                 <td class="px-2 py-1 text-gray-400" x-text="idx + 1"></td>
-                                <td class="px-1 py-1"><input type="text" x-model="cred.login" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                <td class="px-1 py-1"><input type="text" x-model="cred.password" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                <td class="px-1 py-1"><input type="text" x-model="cred.email" class="w-28 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                <td class="px-1 py-1"><input type="text" x-model="cred.email_password" class="w-20 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                <td class="px-1 py-1"><input type="text" x-model="cred.email_login_link" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                <td class="px-1 py-1"><input type="text" x-model="cred.security_email" class="w-28 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                <td class="px-1 py-1"><input type="text" x-model="cred.security_email_password" class="w-20 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                <td class="px-1 py-1"><input type="text" x-model="cred.birthday" class="w-20 text-xs border-gray-300 rounded px-1 py-0.5"></td>
+                                <template x-for="(col, colIdx) in credentialColumns" :key="col.key">
+                                    <td class="px-1 py-1">
+                                        <input type="text" x-model="cred[col.key]"
+                                               @paste.prevent="handleCellPaste($event, idx, colIdx)"
+                                               class="w-24 text-xs border-gray-300 rounded px-1 py-0.5">
+                                    </td>
+                                </template>
                                 <td class="px-1 py-1">
                                     <button @click="parsedCredentials.splice(idx, 1)" type="button"
                                             class="text-red-400 hover:text-red-600">
@@ -127,52 +129,54 @@
             </div>
             <button @click="addByPaste()"
                     class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
-                Add <span x-text="parsedCredentials.filter(c => c.login && c.password).length"></span> to Pool
+                Add <span x-text="parsedCredentials.filter(c => c[credentialColumns[0].key] && c[credentialColumns[1].key]).length"></span> to Pool
             </button>
         </div>
     </div>
 
     <!-- Linked Accounts (from Listing) -->
     <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
-        <div class="px-6 py-3 bg-gray-50 border-b flex items-center justify-between">
-            <h2 class="font-semibold text-gray-700">Linked Accounts ({{ owned_products|length }})</h2>
+        <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
+            <h2 class="font-semibold text-gray-700">Linked Accounts ({{ linked_accounts|length }})</h2>
         </div>
-        {% if owned_products %}
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">#</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Login</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Game</th>
                     <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Purchased</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Listed At</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Error</th>
+                    <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-                {% for op in owned_products %}
+                {% for lop in linked_accounts %}
                 <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-2 text-sm font-mono text-gray-800">{{ op.login }}</td>
-                    <td class="px-4 py-2 text-sm text-gray-500">{{ op.email|default:"—" }}</td>
-                    <td class="px-4 py-2 text-sm text-gray-500">{{ op.game.name|default:"—" }}</td>
+                    <td class="px-4 py-2 text-xs text-gray-400">{{ forloop.counter }}</td>
+                    <td class="px-4 py-2 text-sm font-mono">{{ lop.owned_product.login }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-500">{{ lop.owned_product.email|default:"—" }}</td>
                     <td class="px-4 py-2 text-center">
                         <span class="inline-flex px-2 py-0.5 text-xs rounded-full
-                            {% if op.status == 'listed' %}bg-emerald-100 text-emerald-700
-                            {% elif op.status == 'draft' %}bg-gray-100 text-gray-600
-                            {% elif op.status == 'sold' %}bg-blue-100 text-blue-700
+                            {% if lop.owned_product.status == 'listed' %}bg-emerald-100 text-emerald-700
+                            {% elif lop.owned_product.status == 'draft' %}bg-gray-100 text-gray-600
+                            {% elif lop.owned_product.status == 'sold' %}bg-blue-100 text-blue-700
                             {% else %}bg-gray-100 text-gray-600{% endif %}">
-                            {{ op.get_status_display }}
+                            {{ lop.owned_product.get_status_display }}
                         </span>
                     </td>
-                    <td class="px-4 py-2 text-xs text-gray-400 whitespace-nowrap">
-                        {% if op.purchased_at %}{{ op.purchased_at|date:"M-d-Y" }}{% else %}—{% endif %}
-                    </td>
+                    <td class="px-4 py-2 text-xs text-gray-400">{{ lop.created_at|date:"Y-m-d H:i" }}</td>
+                    <td class="px-4 py-2 text-xs text-red-500 max-w-xs truncate"></td>
+                    <td class="px-4 py-2 text-right"></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-4 py-8 text-center text-gray-400">No accounts linked to this listing.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        {% else %}
-        <div class="px-6 py-8 text-center text-gray-400 text-sm">No accounts linked to this listing.</div>
-        {% endif %}
     </div>
 
     <!-- Pool Accounts Table -->
@@ -293,11 +297,65 @@
 </div>
 
 <script>
-// Shared auto-detect helpers (same as stock_start)
+// ── Platform-aware credential column specs ──
+const _EMAIL_CHAIN = [
+    { key: 'email', label: 'Email' },
+    { key: 'email_password', label: 'Email Pass' },
+    { key: 'email_login_link', label: 'Email Link' },
+];
+const _SEC_EMAIL_CHAIN = [
+    { key: 'security_email', label: 'Sec. Email' },
+    { key: 'security_email_password', label: 'Sec. Email Pass' },
+    { key: 'security_email_login_link', label: 'Sec. Email Link' },
+];
+
+const _PSN_SPEC = [
+    { key: 'psn_id', label: 'PSN ID' }, { key: 'psn_pass', label: 'PSN Pass' },
+    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+    { key: 'dob', label: 'DoB' },
+];
+const _XBOX_SPEC = [
+    { key: 'xbox_id', label: 'Xbox ID' }, { key: 'xbox_pass', label: 'Xbox Pass' },
+    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+];
+const _PC_SPEC = [
+    { key: 'steam_id', label: 'Steam ID' }, { key: 'steam_pass', label: 'Steam Pass' },
+    { key: 'rock_id', label: 'Rock ID' }, { key: 'rock_pass', label: 'Rock Pass' },
+    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+];
+
+const _GTA_SPEC_BY_SUBPLATFORM = {
+    'PlayStation 4': _PSN_SPEC,
+    'PlayStation 5': _PSN_SPEC,
+    'Xbox One': _XBOX_SPEC,
+    'Xbox Series X/S': _XBOX_SPEC,
+    'PC - Legacy': _PC_SPEC,
+    'PC - Enhanced': _PC_SPEC,
+};
+
+const _DEFAULT_CREDENTIAL_SPEC = [
+    { key: 'login', label: 'Login *' }, { key: 'password', label: 'Password *' },
+    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+    { key: 'birthday', label: 'Birthday' },
+];
+
+// Resolve credential spec for this pool
+const _POOL_GAME_SLUG = '{{ pool.game.slug|default:"" }}';
+const _POOL_SUB_PLATFORM = '{{ pool.listing.sub_platform|default:"" }}';
+const _IS_GTA = _POOL_GAME_SLUG.startsWith('grand-theft-auto');
+const CREDENTIAL_SPEC = (_IS_GTA && _GTA_SPEC_BY_SUBPLATFORM[_POOL_SUB_PLATFORM]) || null;
+const CREDENTIAL_COLUMNS = CREDENTIAL_SPEC || _DEFAULT_CREDENTIAL_SPEC;
+
+// Shared helpers
 const _DATE_RE = /^\d{1,4}[\/.\\-]\d{1,2}[\/.\\-]\d{1,4}$/;
 const _LINK_RE = /^(https?:\/\/)?[a-z0-9.-]+\.[a-z]{2,}/i;
 
 function _emptyCredential() {
+    if (CREDENTIAL_SPEC) {
+        const cred = {};
+        for (const col of CREDENTIAL_SPEC) cred[col.key] = '';
+        return cred;
+    }
     return {
         login: '', password: '', email: '', email_password: '', email_login_link: '',
         security_email: '', security_email_password: '', birthday: '',
@@ -305,6 +363,26 @@ function _emptyCredential() {
 }
 
 function _detectColumns(cells) {
+    // Platform-specific: positional parsing + date fix
+    if (CREDENTIAL_SPEC) {
+        const cred = _emptyCredential();
+        for (let i = 0; i < Math.min(cells.length, CREDENTIAL_SPEC.length); i++) {
+            cred[CREDENTIAL_SPEC[i].key] = cells[i].trim();
+        }
+        const dobCol = CREDENTIAL_SPEC.find(c => c.key === 'dob');
+        if (dobCol && !cred.dob) {
+            for (const col of CREDENTIAL_SPEC) {
+                if (col.key === 'dob') continue;
+                if (cred[col.key] && _DATE_RE.test(cred[col.key])) {
+                    cred.dob = cred[col.key];
+                    cred[col.key] = '';
+                    break;
+                }
+            }
+        }
+        return cred;
+    }
+    // Default: auto-detect
     const cred = _emptyCredential();
     if (cells.length >= 1) cred.login = cells[0].trim();
     if (cells.length >= 2) cred.password = cells[1].trim();
@@ -335,6 +413,8 @@ function poolDetail() {
     return {
         pasteText: '',
         parsedCredentials: [],
+        credentialColumns: CREDENTIAL_COLUMNS,
+        replenishing: false,
 
         async init() {},
 
@@ -349,7 +429,9 @@ function poolDetail() {
             const lines = text.trim().split('\n');
             if (lines.length === 0) return;
 
-            const headerKeys = ['login', 'password', 'email', 'birthday'];
+            const headerKeys = CREDENTIAL_SPEC
+                ? CREDENTIAL_SPEC.map(c => c.label.toLowerCase())
+                : ['login', 'password', 'email', 'birthday'];
             const firstCells = lines[0].split('\t');
             const isHeader = firstCells.some(c => headerKeys.includes(c.trim().toLowerCase()));
             const dataLines = isHeader ? lines.slice(1) : lines;
@@ -366,8 +448,53 @@ function poolDetail() {
             this.parsedCredentials.push(_emptyCredential());
         },
 
+        handleCellPaste(event, rowIdx, colIdx) {
+            const text = (event.clipboardData || window.clipboardData).getData('text');
+            if (!text) return;
+
+            const cols = this.credentialColumns;
+            const lines = text.split('\n').filter(l => l.trim());
+
+            if (lines.length === 1 && !lines[0].includes('\t')) {
+                this.parsedCredentials[rowIdx][cols[colIdx].key] = lines[0].trim();
+                return;
+            }
+
+            for (let r = 0; r < lines.length; r++) {
+                const cells = lines[r].split('\t');
+                const targetRow = rowIdx + r;
+
+                while (targetRow >= this.parsedCredentials.length) {
+                    this.parsedCredentials.push(_emptyCredential());
+                }
+
+                for (let c = 0; c < cells.length; c++) {
+                    const targetCol = colIdx + c;
+                    if (targetCol < cols.length) {
+                        this.parsedCredentials[targetRow][cols[targetCol].key] = cells[c].trim();
+                    }
+                }
+
+                if (CREDENTIAL_SPEC) {
+                    const cred = this.parsedCredentials[targetRow];
+                    const dobCol = CREDENTIAL_SPEC.find(s => s.key === 'dob');
+                    if (dobCol && !cred.dob) {
+                        for (const col of CREDENTIAL_SPEC) {
+                            if (col.key === 'dob') continue;
+                            if (cred[col.key] && _DATE_RE.test(cred[col.key])) {
+                                cred.dob = cred[col.key];
+                                cred[col.key] = '';
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
         async addByPaste() {
-            const creds = this.parsedCredentials.filter(c => c.login && c.password);
+            const k0 = CREDENTIAL_COLUMNS[0].key, k1 = CREDENTIAL_COLUMNS[1].key;
+            const creds = this.parsedCredentials.filter(c => c[k0] && c[k1]);
             if (!creds.length) return alert('No valid credentials found');
 
             const resp = await fetch(`/posting/api/pools/${poolId}/items/`, {
@@ -377,7 +504,7 @@ function poolDetail() {
             });
             const data = await resp.json();
             if (resp.ok) {
-                alert(`Added ${data.added} items (${data.total_pending} pending)`);
+                alert(`Added ${data.added} items — ${data.total_pending} pending. Use "Replenish Now" to push.`);
                 location.reload();
             } else {
                 alert(data.error || 'Failed');
@@ -385,16 +512,21 @@ function poolDetail() {
         },
 
         async triggerReplenish() {
-            const resp = await fetch(`/posting/api/pools/${poolId}/replenish/`, {
-                method: 'POST',
-                headers: { 'X-CSRFToken': this.getCSRF() },
-            });
-            const data = await resp.json();
-            if (resp.ok) {
-                alert(`Pushed ${data.pushed} credentials`);
-                location.reload();
-            } else {
-                alert(data.error || 'Replenish failed');
+            this.replenishing = true;
+            try {
+                const resp = await fetch(`/posting/api/pools/${poolId}/replenish/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': this.getCSRF() },
+                });
+                const data = await resp.json();
+                if (resp.ok) {
+                    alert(`Pushed ${data.pushed} credentials`);
+                    location.reload();
+                } else {
+                    alert(data.error || 'Replenish failed');
+                }
+            } finally {
+                this.replenishing = false;
             }
         },
     };
