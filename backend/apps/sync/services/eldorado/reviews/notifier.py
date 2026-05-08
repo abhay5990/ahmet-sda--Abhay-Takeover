@@ -65,6 +65,8 @@ class TelegramNotifier:
         comment = feedback.reviewMessage.strip() or "—"
         buyer = review_item.buyer.maskedUsername or "unknown"
 
+        order_link = f"https://www.eldorado.gg/order/{r.id}"
+
         text = (
             "⚠️ New Negative Review — Eldorado\n"
             f"Account : {account_slug}\n"
@@ -72,7 +74,8 @@ class TelegramNotifier:
             f"Category: {r.gameCategoryTitle}\n"
             f"Tags    : {tags}\n"
             f"Comment : {comment}\n"
-            f"Date    : {r.date}"
+            f"Date    : {r.date}\n"
+            f"Order   : {order_link}"
         )
 
         result = client.send_message(chat_id=chat_id, text=text)
