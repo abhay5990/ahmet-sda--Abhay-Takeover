@@ -61,6 +61,8 @@ def build_item_payload(
             }
         rule = build_pricing_rule(pricing)
         final_price = Decimal(str(calculate_price(raw_price, rule)))
+        if pricing.exchange_rate is not None:
+            final_price = (final_price * Decimal(str(pricing.exchange_rate))).quantize(Decimal('0.01'))
 
         # --- Subplatform selection ---
         fixed_sp = (store_settings.get('sub_platform') or '').strip()

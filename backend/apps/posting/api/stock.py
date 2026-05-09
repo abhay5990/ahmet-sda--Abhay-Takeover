@@ -114,6 +114,7 @@ def create_job(request):
                         'multiplier_high': store_defaults.get('multiplier_high'),
                         'min_price': store_defaults.get('min_price'),
                         'forced_ending': store_defaults.get('forced_ending'),
+                        'exchange_rate': store_defaults.get('exchange_rate'),
                         'sub_platform': store_defaults.get('sub_platform'),
                         'account_type': store_defaults.get('account_type'),
                     }.items() if v is not None
@@ -536,6 +537,7 @@ def posting_defaults(request, game_id, marketplace):
                 'multiplier_high': str(d.multiplier_high),
                 'min_price': str(d.min_price),
                 'forced_ending': str(d.forced_ending) if d.forced_ending is not None else None,
+                'exchange_rate': str(d.exchange_rate) if d.exchange_rate is not None else None,
                 'sub_platform': d.sub_platform,
                 'account_type': d.account_type,
             })
@@ -546,6 +548,7 @@ def posting_defaults(request, game_id, marketplace):
                 'multiplier_high': '1.50',
                 'min_price': '0.00',
                 'forced_ending': '0.99',
+                'exchange_rate': '0.87' if marketplace == 'gameboost' else None,
                 'sub_platform': '',
                 'account_type': '',
             })
@@ -558,7 +561,8 @@ def posting_defaults(request, game_id, marketplace):
 
         update_fields = {}
         for field in ('multiplier_low', 'multiplier_mid', 'multiplier_high',
-                      'min_price', 'forced_ending', 'sub_platform', 'account_type'):
+                      'min_price', 'forced_ending', 'exchange_rate',
+                      'sub_platform', 'account_type'):
             if field in body:
                 update_fields[field] = body[field]
 

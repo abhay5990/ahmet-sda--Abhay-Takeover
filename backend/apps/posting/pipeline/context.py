@@ -42,11 +42,13 @@ def build_context(
         min_price=float(pricing_defaults.min_price),
         forced_ending=float(forced) if forced is not None else None,
     )
+    exchange_rate = getattr(pricing_defaults, 'exchange_rate', None)
     return BuildContext(
         kind=kind,
         marketplace=marketplace,
         pricing_rules={marketplace: rule},
         marketplace_config=_marketplace_config(marketplace, store, sub_platform),
+        exchange_rate=float(exchange_rate) if exchange_rate is not None else None,
     )
 
 

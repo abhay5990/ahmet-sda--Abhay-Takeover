@@ -151,6 +151,10 @@ class PostingDefault(models.Model):
         max_digits=3, decimal_places=2, null=True, blank=True, default=0.99,
         help_text='Force cents ending (e.g. 0.99). Null = disabled.',
     )
+    exchange_rate = models.DecimalField(
+        max_digits=6, decimal_places=4, null=True, blank=True, default=0.87,
+        help_text='USD→EUR conversion rate for Gameboost. Null = no conversion.',
+    )
 
     # Site-specific
     sub_platform = models.CharField(
@@ -346,6 +350,10 @@ class DropshipTargetURL(models.Model):
     forced_ending = models.DecimalField(
         max_digits=3, decimal_places=2, null=True, blank=True, default=0.99,
         help_text='Force cents ending (e.g. 0.99). Null = disabled.',
+    )
+    exchange_rate = models.DecimalField(
+        max_digits=6, decimal_places=4, null=True, blank=True, default=0.87,
+        help_text='USD→EUR conversion rate for Gameboost. Null = no conversion.',
     )
 
     # Stats

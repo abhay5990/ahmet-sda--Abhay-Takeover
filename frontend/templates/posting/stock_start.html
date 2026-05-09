@@ -419,6 +419,14 @@
                                        x-model="defaults['{{ store.slug }}'].forced_ending"
                                        class="w-full text-sm border-gray-300 rounded-md">
                             </div>
+                            {% if store.provider == 'gameboost' %}
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">USD→EUR Rate</label>
+                                <input type="number" step="0.0001" placeholder="0.87"
+                                       x-model="defaults['{{ store.slug }}'].exchange_rate"
+                                       class="w-full text-sm border-gray-300 rounded-md">
+                            </div>
+                            {% endif %}
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1">Sub-Platform</label>
                                 <select x-model="defaults['{{ store.slug }}'].sub_platform"
@@ -722,7 +730,9 @@ function stockStart() {
             if (!this.defaults['{{ store.slug }}']) {
                 this.defaults['{{ store.slug }}'] = {
                     multiplier_low: '2.00', multiplier_mid: '1.80', multiplier_high: '1.50',
-                    min_price: '0.00', forced_ending: '0.99', sub_platform: '', account_type: '',
+                    min_price: '0.00', forced_ending: '0.99',
+                    {% if store.provider == 'gameboost' %}exchange_rate: '0.87',{% endif %}
+                    sub_platform: '', account_type: '',
                     {% if store.provider == 'playerauctions' %}pa_mode: 'bulk',{% endif %}
                 };
             }

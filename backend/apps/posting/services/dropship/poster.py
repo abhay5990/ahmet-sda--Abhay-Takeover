@@ -337,6 +337,8 @@ def _attempt_post(
         return False
 
     final_price = Decimal(str(calculate_price(raw_price_float, pricing)))
+    if target_url.exchange_rate is not None:
+        final_price = (final_price * Decimal(str(target_url.exchange_rate))).quantize(Decimal('0.01'))
     raw_price = Decimal(str(raw_price_float))
 
     # Early slot check — skip before expensive prepare() if all slots are full
