@@ -3,7 +3,7 @@
 from .resolver import FortniteResolver
 from .content import FortniteComposer
 from .media import FortniteMediaStrategy
-from .sources import FortniteLztSourceAdapter
+from .sources import FortniteLztSourceAdapter, FortniteManualSourceAdapter
 from .marketplaces import FortniteEldoradoBuilder, FortniteGameBoostBuilder, FortniteG2GBuilder, FortnitePlayerAuctionsBuilder
 from ....core.enums import ListingCategory
 from ....core.registry import GameDefinition
@@ -34,6 +34,7 @@ __all__ = [
     "FortniteG2GBuilder",
     "FortnitePlayerAuctionsBuilder",
     "FortniteLztSourceAdapter",
+    "FortniteManualSourceAdapter",
     "FortniteMediaStrategy",
     "FortniteResolver",
     "register",

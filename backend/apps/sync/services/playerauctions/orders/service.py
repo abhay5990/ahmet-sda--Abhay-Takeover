@@ -43,7 +43,6 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
         'Buyer Cancelled',
         'Order Unavailable',
         'Payment Failed',
-        'Pending Buyer Inspection',
     })
 
     def __init__(

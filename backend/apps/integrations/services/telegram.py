@@ -13,7 +13,7 @@ class TelegramBotService(AbstractServiceDefinition):
         chat_id   : Target group/channel chat ID (e.g. "-1001234567890")
     """
 
-    service_type = 'notification'
+    service_type = 'telegram'
     display_name = 'Telegram Bot'
 
     @classmethod

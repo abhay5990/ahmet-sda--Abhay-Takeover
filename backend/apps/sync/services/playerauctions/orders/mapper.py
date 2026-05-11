@@ -21,6 +21,7 @@ PA_STATUS_MAP = {
     'order processing': OrderStatus.PENDING,
     'delivery in progress': OrderStatus.PENDING,
     'verifying payment': OrderStatus.PENDING,
+    'pending buyer inspection': OrderStatus.PENDING,
     # Completed
     'delivery fully completed': OrderStatus.COMPLETED,
     'completed': OrderStatus.COMPLETED,

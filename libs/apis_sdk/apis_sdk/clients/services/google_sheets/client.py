@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 _SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive.readonly",
+    "https://www.googleapis.com/auth/drive",
 ]
 
 
@@ -143,6 +143,20 @@ class GoogleSheetsClient:
         if rows:
             ws.update(rows, value_input_option="USER_ENTERED")
         return len(rows)
+
+    # -- create / open by title ------------------------------------------------
+
+    def open_spreadsheet(self, title: str) -> str | None:
+        """Open an existing spreadsheet shared with this service account.
+
+        Returns:
+            The spreadsheet ID, or None if not found.
+        """
+        try:
+            spreadsheet = self._gc.open(title)
+            return spreadsheet.id
+        except gspread.exceptions.SpreadsheetNotFound:
+            return None
 
     # -- utility --------------------------------------------------------------
 

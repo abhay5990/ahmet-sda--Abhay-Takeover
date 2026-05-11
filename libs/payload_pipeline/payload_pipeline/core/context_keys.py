@@ -84,6 +84,10 @@ CURRENT_SUBPLATFORM: ContextKey[str] = ContextKey("current_subplatform")
 G2G_SELLER_ID: ContextKey[str] = ContextKey("g2g_seller_id")
 G2G_SERVICE_ID: ContextKey[str] = ContextKey("g2g_service_id")
 
+# ── Imgur ─────────────────────────────────────────────────────────────
+
+IMGUR_CLIENT_ID: ContextKey[str] = ContextKey("imgur_client_id")
+
 # ── Source-level overrides ───────────────────────────────────────────
 
 TRACKER_URL: ContextKey[str] = ContextKey("tracker_url")

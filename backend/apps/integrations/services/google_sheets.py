@@ -28,7 +28,11 @@ class GoogleSheetsService(AbstractServiceDefinition):
                 label='Service Account JSON',
                 field_type='file_json',
                 required=True,
-                help_text='Upload or paste the Google service account key JSON file.',
+                help_text=(
+                    'Upload or paste the Google service account key JSON file. '
+                    'Required APIs: enable both "Google Sheets API" and "Google Drive API" '
+                    'in Google Cloud Console for the service account project.'
+                ),
             ),
             ServiceField(
                 name='service_account_email',

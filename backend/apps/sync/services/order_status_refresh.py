@@ -9,8 +9,8 @@ Each fetched order is re-ingested via the existing ``_ingest_raw`` +
 ``parse_and_apply`` path — if the payload hash changed, the order
 row is updated with the new status.
 
-Runs hourly via APScheduler.  Only Eldorado and Gameboost have
-status transitions that need refreshing (PA orders arrive final).
+Runs hourly via APScheduler.  Eldorado, Gameboost, and PlayerAuctions
+have status transitions that need refreshing.
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 _NON_FINAL_STATUSES = (OrderStatus.PENDING, OrderStatus.DELIVERED)
 
 # Providers that need status refresh
-_REFRESH_PROVIDERS = ('eldorado', 'gameboost')
+_REFRESH_PROVIDERS = ('eldorado', 'gameboost', 'playerauctions')
 
 # Safety margin — go 1 day further back than the oldest non-final order
 _LOOKBACK_MARGIN = timedelta(days=1)

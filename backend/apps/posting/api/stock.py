@@ -124,6 +124,10 @@ def create_job(request):
     if source_type == 'manual':
         return _create_manual_job(body, game, stores, job_settings)
 
+    if source_type == 'sheet':
+        from apps.posting.api.manual import _create_sheet_job
+        return _create_sheet_job(body, game, stores, job_settings)
+
     return _create_account_job(body, game, stores, job_settings)
 
 

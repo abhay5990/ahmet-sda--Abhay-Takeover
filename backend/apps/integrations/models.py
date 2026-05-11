@@ -118,12 +118,13 @@ class IntegrationCredential(models.Model):
 
 
 class ServiceType(models.TextChoices):
-    PROXY         = 'proxy',         'Proxy Provider'
-    IMAGE         = 'image',         'Image Hosting'
-    STORAGE       = 'storage',       'Cloud Storage'
-    GAME          = 'game-service',  'Game Service'
-    NOTIFICATION  = 'notification',  'Notification Service'
-    EMAIL         = 'email',         'Email Service'
+    PROXYLINE     = 'proxyline',     'Proxyline'
+    IMGUR         = 'imgur',         'Imgur'
+    IMAGESHACK    = 'imageshack',    'ImageShack'
+    DROPBOX       = 'dropbox',       'Dropbox'
+    ROBUXCRATE    = 'robuxcrate',    'RobuxCrate'
+    TELEGRAM      = 'telegram',      'Telegram'
+    FIRSTMAIL     = 'firstmail',     'FirstMail'
     GOOGLE_SHEETS = 'google-sheets', 'Google Sheets'
     OTHER         = 'other',         'Other'
 

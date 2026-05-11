@@ -8,7 +8,7 @@ from .registry import register_service
 class DropboxService(AbstractServiceDefinition):
     """Dropbox cloud storage service — used for media image hosting."""
 
-    service_type = 'storage'
+    service_type = 'dropbox'
     display_name = 'Dropbox'
 
     @classmethod

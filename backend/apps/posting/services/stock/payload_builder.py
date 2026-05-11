@@ -22,8 +22,11 @@ from apps.posting.services.shared.pricing import (
     build_pricing_rule,
 )
 from apps.posting.services.shared.subplatform import (
+    STOCK_PLATFORM_PRIORITY,
     get_active_offer_counts,
+    get_allowed_platforms,
     select_best_subplatform,
+    select_best_subplatform_tiered,
 )
 from payload_pipeline.core.contracts import ListingKind
 
@@ -66,18 +69,52 @@ def build_item_payload(
 
         # --- Subplatform selection ---
         fixed_sp = (store_settings.get('sub_platform') or '').strip()
+        allowed = get_allowed_platforms(job.game.slug, prepared.subject)
+        limits = list(SubplatformLimit.objects.filter(
+            store=item.store, game=job.game,
+        ))
+
+        # Helper: pick best sub-platform using priority tiers when available
+        tiers = STOCK_PLATFORM_PRIORITY.get(job.game.slug)
+
+        def _pick_best(lims, cnts):
+            if tiers:
+                return select_best_subplatform_tiered(
+                    lims, cnts, mode='stock',
+                    allowed_platforms=allowed, tiers=tiers,
+                )
+            return select_best_subplatform(
+                lims, cnts, mode='stock', allowed_platforms=allowed,
+            )
+
         if fixed_sp and fixed_sp.lower() != 'auto':
-            sub_platform = fixed_sp
+            if limits:
+                counts = get_active_offer_counts(item.store, job.game)
+                fixed_limit = next(
+                    (l for l in limits if l.sub_platform == fixed_sp), None,
+                )
+                if fixed_limit:
+                    current = counts.get(fixed_sp, 0)
+                    if fixed_limit.max_offers - current <= 0:
+                        sub_platform = _pick_best(limits, counts)
+                        if sub_platform is None:
+                            return {
+                                'ok': False, 'stage': stage,
+                                'error': f'{fixed_sp} is full and no other sub-platform has slots',
+                                'error_category': 'capacity',
+                            }
+                    else:
+                        sub_platform = fixed_sp
+                else:
+                    sub_platform = fixed_sp
+            else:
+                sub_platform = fixed_sp
         else:
-            limits = list(SubplatformLimit.objects.filter(
-                store=item.store, game=job.game,
-            ))
             if not limits:
-                # No capacity limits — use resolved account's platform if available
                 sub_platform = getattr(prepared.subject, 'main_platform', '') or ''
             else:
                 counts = get_active_offer_counts(item.store, job.game)
-                sub_platform = select_best_subplatform(limits, counts, mode='stock')
+                sub_platform = _pick_best(limits, counts)
                 if sub_platform is None:
                     return {
                         'ok': False, 'stage': stage,

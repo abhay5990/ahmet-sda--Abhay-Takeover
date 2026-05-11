@@ -13,6 +13,7 @@ def build_request(
     kind: ListingKind,
     disable_media: bool = True,
     lzt_image_fetcher=None,
+    imgur_client_id: str = "",
 ) -> PipelineRequest:
     """Build a lib PipelineRequest from Django-layer inputs.
 
@@ -22,10 +23,13 @@ def build_request(
         kind:              STOCK or DROPSHIPPING.
         disable_media:     Skip media download/upload (True = no IO, faster).
         lzt_image_fetcher: Optional LZT image fetcher for media steps.
+        imgur_client_id:   Imgur Client-ID for downloading album images.
     """
     ctx: dict = {ctx_keys.DISABLE_MEDIA: disable_media}
     if lzt_image_fetcher is not None:
         ctx[ctx_keys.LZT_IMAGE_FETCHER] = lzt_image_fetcher
+    if imgur_client_id:
+        ctx[ctx_keys.IMGUR_CLIENT_ID] = imgur_client_id
 
     return PipelineRequest(
         game=game_slug,

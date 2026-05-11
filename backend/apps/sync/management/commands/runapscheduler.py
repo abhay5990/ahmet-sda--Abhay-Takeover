@@ -179,7 +179,7 @@ class Command(BaseCommand):
 
             credential = (
                 ServiceCredential.objects
-                .filter(service_type='notification', is_active=True)
+                .filter(service_type='telegram', is_active=True)
                 .first()
             )
             if not credential:
@@ -188,7 +188,7 @@ class Command(BaseCommand):
                 ))
                 return
 
-            service = get_service('notification')
+            service = get_service('telegram')
             client = service.build_client(credential)
             ok, msg = service.test_connection(client)
             if ok:

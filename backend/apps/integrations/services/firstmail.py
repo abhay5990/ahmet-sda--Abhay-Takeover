@@ -11,7 +11,7 @@ class FirstMailService(AbstractServiceDefinition):
         base_url — optional override (default: https://firstmail.ltd/api/v1)
     """
 
-    service_type = 'email'
+    service_type = 'firstmail'
     display_name = 'FirstMail'
 
     @classmethod

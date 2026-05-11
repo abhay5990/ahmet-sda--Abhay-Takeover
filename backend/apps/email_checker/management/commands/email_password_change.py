@@ -11,7 +11,7 @@ Usage::
         [--dry-run] \\
         [--output-dir output/password_changer]
 
-ServiceCredential records with service_type='email' and matching provider
+ServiceCredential records with service_type='firstmail' and matching provider
 are loaded automatically. Multiple credentials are used in round-robin
 (pool) mode — if one hits rate limit, next credential is used.
 """
@@ -88,7 +88,7 @@ class Command(BaseCommand):
         facades = self._build_facade_pool()
         if not facades:
             raise CommandError(
-                "No active ServiceCredential with service_type='email' found. "
+                "No active ServiceCredential with service_type='firstmail' found. "
                 "Create one in Django Admin → Service Credentials."
             )
         self.stdout.write(f"Loaded {len(facades)} FirstMail credential(s) for pool")
@@ -154,7 +154,7 @@ class Command(BaseCommand):
     def _build_facade_pool(self) -> list[FirstMailFacade]:
         """Load all active email ServiceCredentials and build FirstMailFacade instances."""
         creds = ServiceCredential.objects.filter(
-            service_type="email",
+            service_type="firstmail",
             is_active=True,
         ).order_by("id")
 

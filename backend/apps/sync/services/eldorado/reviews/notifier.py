@@ -2,7 +2,7 @@
 Telegram notifier for Eldorado review alerts.
 
 Reads bot token and chat ID from the active ServiceCredential with
-service_type='notification'. Falls back gracefully if not configured.
+service_type='telegram'. Falls back gracefully if not configured.
 """
 
 import logging
@@ -23,13 +23,13 @@ def _get_telegram_client():
 
         credential = (
             ServiceCredential.objects
-            .filter(service_type='notification', is_active=True)
+            .filter(service_type='telegram', is_active=True)
             .first()
         )
         if not credential:
             return None, None
 
-        service = get_service('notification')
+        service = get_service('telegram')
         if service is None:
             return None, None
 
