@@ -1,39 +1,38 @@
-"""Template-backed content rendering helpers for payload_pipeline.
+"""Simple template rendering for listing content.
 
-This package is intentionally independent from game slices.  Game-specific
-adapters should prepare a flat context dict; these renderers only know how to
-turn that context into title parts and description blocks.
+This package provides a plain-text template engine with ``{field_name}``
+placeholders.  Game-specific adapters prepare a flat context dict from
+their resolved models; the renderer substitutes placeholders.
+
+Template storage and selection lives in the Django layer (ContentTemplate
+model), not here.  This package only handles rendering and field metadata.
 """
 
 from .renderer import (
-    TemplateDescriptionGenerator,
+    SimpleTemplateRenderer,
     TemplateRenderError,
-    TemplateTitleGenerator,
+    validate_template_body,
 )
-from .manager import TemplateManager
-from .providers import (
-    DictTemplateProvider,
-    DictTemplateOverrideProvider,
-    JsonFileTemplateProvider,
-    JsonFileTemplateOverrideProvider,
-    TemplateOverrideProvider,
-    TemplateProvider,
-    merge_template_maps,
+from .validation import TemplateValidationError, validate_template
+from .field_registry import get_field_registry, get_resolved_model_name, get_sample_context
+from .compose import (
+    TemplateComposeResult,
+    apply_template_overrides,
+    compose_listing_draft,
+    compose_with_templates,
 )
-from .validation import TemplateValidationError, validate_template_map
 
 __all__ = [
-    "DictTemplateProvider",
-    "DictTemplateOverrideProvider",
-    "JsonFileTemplateProvider",
-    "JsonFileTemplateOverrideProvider",
-    "TemplateDescriptionGenerator",
-    "TemplateManager",
-    "TemplateOverrideProvider",
-    "TemplateProvider",
+    "SimpleTemplateRenderer",
+    "TemplateComposeResult",
     "TemplateRenderError",
-    "TemplateTitleGenerator",
     "TemplateValidationError",
-    "merge_template_maps",
-    "validate_template_map",
+    "apply_template_overrides",
+    "compose_listing_draft",
+    "compose_with_templates",
+    "get_field_registry",
+    "get_resolved_model_name",
+    "get_sample_context",
+    "validate_template",
+    "validate_template_body",
 ]

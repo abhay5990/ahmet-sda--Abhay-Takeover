@@ -1,290 +1,158 @@
-"""Small structured template renderer for listing content.
+"""Simple template renderer for listing content.
 
-The renderer owns generic mechanics only:
-* title parts, separators, suffixes, and max-length fitting
-* description blocks, sections, conditions, and character limits
+Renders plain-text templates with ``{field_name}`` placeholders against a
+flat context dict built from the resolved account model.
 
-Game-specific decisions stay outside this module.  A game adapter should
-prepare fields such as ``valuable_skins`` or ``register_year`` before calling
-these generators.
+The renderer is intentionally simple — no nested logic, no JSON specs.
+Future modifier support (``{field | limit:10}``) will be added via the
+``_resolve_placeholder`` extension point.
+
+Security note: uses regex-based placeholder extraction instead of
+``str.format_map`` to prevent Python attribute traversal attacks
+(e.g. ``{field.__class__}``).
 """
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 from typing import Any
 
 
 Context = Mapping[str, Any]
-Spec = Mapping[str, Any]
+
+# Matches {field_name} — alphanumeric + underscores only (no dots, no dunders).
+_PLACEHOLDER_RE = re.compile(r"\{([a-zA-Z_][a-zA-Z0-9_]*)\}")
+
+# Matches any {…} block (for detecting invalid placeholder syntax after brace balance check).
+_ANY_BRACE_RE = re.compile(r"\{[^{}]*\}")
 
 
 class TemplateRenderError(ValueError):
-    """Raised when a structured content template cannot be rendered."""
+    """Raised when a template cannot be rendered."""
 
 
-class _FormatContext(dict[str, Any]):
-    def __init__(self, context: Context, *, strict: bool) -> None:
-        super().__init__(context)
-        self.strict = strict
+class SimpleTemplateRenderer:
+    """Render a plain-text template string with ``{field}`` placeholders.
 
-    def __missing__(self, key: str) -> str:
-        if self.strict:
-            raise TemplateRenderError(f"Missing template field: {key}")
-        return ""
+    Usage::
 
+        renderer = SimpleTemplateRenderer()
+        title = renderer.render(
+            "Level {level} | {rank} | {game_name} Account",
+            {"level": 45, "rank": "Diamond", "game_name": "Valorant"},
+        )
+        # => "Level 45 | Diamond | Valorant Account"
 
-class TemplateTitleGenerator:
-    """Render a title from a structured ``parts`` spec."""
-
-    def __init__(self, *, strict: bool = False) -> None:
-        self.strict = strict
-
-    def generate(self, spec: Spec, context: Context) -> str:
-        separator = str(spec.get("separator", " | "))
-        max_length = _to_int(spec.get("max_length"), default=0)
-        suffix = _string_or_empty(spec.get("suffix"))
-        parts = spec.get("parts", [])
-        if not isinstance(parts, list):
-            raise TemplateRenderError("title.parts must be a list")
-
-        built: list[str] = []
-        current_length = 0
-        reserved = len(suffix) + (len(separator) if suffix else 0)
-
-        for raw_part in parts:
-            if not isinstance(raw_part, Mapping):
-                raise TemplateRenderError("title part must be an object")
-            if not _condition_matches(raw_part.get("when"), context):
-                continue
-
-            rendered_parts = self._render_part(raw_part, context)
-            for part in rendered_parts:
-                item_len = len(part) + (len(separator) if built else 0)
-                limit = max_length - reserved if max_length else 0
-                if limit and current_length + item_len > limit:
-                    if not built and raw_part.get("truncate"):
-                        built.append(_truncate(part, limit))
-                    break
-                built.append(part)
-                current_length += item_len
-
-        if suffix:
-            built.append(suffix)
-
-        title = separator.join(p for p in built if p)
-        if max_length and len(title) > max_length:
-            title = _truncate(title, max_length)
-        return title
-
-    def _render_part(self, part: Spec, context: Context) -> list[str]:
-        if "list" in part:
-            values = _as_list(_get_value(context, str(part["list"])))
-            limit = _to_int(part.get("limit"), default=0)
-            if limit > 0:
-                values = values[:limit]
-            item_template = part.get("item_template")
-            rendered = [
-                _render_template(str(item_template), {**context, "item": item}, strict=self.strict)
-                if item_template
-                else _string_or_empty(item)
-                for item in values
-            ]
-            return [value for value in rendered if value.strip()]
-
-        if "field" in part:
-            value = _get_value(context, str(part["field"]))
-            rendered = _string_or_empty(value)
-        elif "template" in part:
-            rendered = _render_template(str(part["template"]), context, strict=self.strict)
-        elif "text" in part:
-            rendered = _string_or_empty(part.get("text"))
-        else:
-            raise TemplateRenderError("title part must define field, template, text, or list")
-
-        prefix = _string_or_empty(part.get("prefix"))
-        suffix = _string_or_empty(part.get("suffix"))
-        rendered = f"{prefix}{rendered}{suffix}".strip()
-        return [rendered] if rendered else []
-
-
-class TemplateDescriptionGenerator:
-    """Render a description from a structured ``blocks`` spec."""
+    Missing fields resolve to ``""`` by default (strict mode raises).
+    List values are comma-joined automatically.
+    """
 
     def __init__(self, *, strict: bool = False) -> None:
         self.strict = strict
 
-    def generate(self, spec: Spec, context: Context) -> str:
-        newline = str(spec.get("newline", "\n"))
-        char_limit = _to_int(spec.get("char_limit"), default=0)
-        blocks = spec.get("blocks", [])
-        if not isinstance(blocks, list):
-            raise TemplateRenderError("description.blocks must be a list")
+    def render(self, template: str, context: Context) -> str:
+        """Render *template* by substituting placeholders from *context*."""
+        if not template:
+            return ""
 
-        lines: list[str] = []
-        for raw_block in blocks:
-            if not isinstance(raw_block, Mapping):
-                raise TemplateRenderError("description block must be an object")
-            if not _condition_matches(raw_block.get("when"), context):
-                continue
-            lines.extend(self._render_block(raw_block, context))
+        def _replace(match: re.Match[str]) -> str:
+            field_name = match.group(1)
+            return self._resolve_placeholder(field_name, context)
 
-        description = newline.join(lines).rstrip()
-        if char_limit and len(description) > char_limit:
-            description = _truncate(description, char_limit)
-        return description
+        return _PLACEHOLDER_RE.sub(_replace, template)
 
-    def _render_block(self, block: Spec, context: Context) -> list[str]:
-        block_type = str(block.get("type", "line"))
-        if block_type == "blank":
-            return [""]
-        if block_type == "line":
-            return [self._render_line(block, context)]
-        if block_type == "lines":
-            result: list[str] = []
-            raw_lines = block.get("items", [])
-            if not isinstance(raw_lines, list):
-                raise TemplateRenderError("lines.items must be a list")
-            for raw_line in raw_lines:
-                if isinstance(raw_line, Mapping):
-                    if _condition_matches(raw_line.get("when"), context):
-                        result.append(self._render_line(raw_line, context))
-                else:
-                    result.append(_render_template(str(raw_line), context, strict=self.strict))
-            return result
-        if block_type == "section":
-            return self._render_section(block, context)
-        raise TemplateRenderError(f"Unknown description block type: {block_type}")
-
-    def _render_line(self, line: Spec, context: Context) -> str:
-        if "field" in line:
-            rendered = _string_or_empty(_get_value(context, str(line["field"])))
-        elif "template" in line:
-            rendered = _render_template(str(line["template"]), context, strict=self.strict)
-        else:
-            rendered = _string_or_empty(line.get("text"))
-
-        prefix = _string_or_empty(line.get("prefix"))
-        suffix = _string_or_empty(line.get("suffix"))
-        return f"{prefix}{rendered}{suffix}"
-
-    def _render_section(self, block: Spec, context: Context) -> list[str]:
-        values = _as_list(_get_value(context, str(block.get("items", ""))))
-        limit = _to_int(block.get("limit"), default=0)
-        if limit > 0:
-            values = values[:limit]
-        values = [_string_or_empty(value) for value in values if _string_or_empty(value).strip()]
-        if not values:
-            return []
-
-        joiner = str(block.get("join", ", "))
+    def extract_fields(self, template: str) -> list[str]:
+        """Return the list of unique field names referenced in *template*."""
+        seen: set[str] = set()
         result: list[str] = []
-        title = _string_or_empty(block.get("title"))
-        if title:
-            result.append(_render_template(title, context, strict=self.strict))
-        result.append(joiner.join(values))
-        if block.get("trailing_blank", False):
-            result.append("")
+        for match in _PLACEHOLDER_RE.finditer(template):
+            name = match.group(1)
+            if name not in seen:
+                seen.add(name)
+                result.append(name)
         return result
 
+    def _resolve_placeholder(self, field_name: str, context: Context) -> str:
+        """Resolve a single placeholder to its string value.
 
-def _render_template(template: str, context: Context, *, strict: bool) -> str:
-    try:
-        return template.format_map(_FormatContext(context, strict=strict))
-    except TemplateRenderError:
-        raise
-    except Exception as exc:
-        raise TemplateRenderError(f"Failed to render template {template!r}: {exc}") from exc
+        Extension point for future modifier support.
+        """
+        if field_name not in context:
+            if self.strict:
+                raise TemplateRenderError(f"Missing template field: {field_name}")
+            return ""
 
-
-def _condition_matches(condition: Any, context: Context) -> bool:
-    if condition is None:
-        return True
-    if not isinstance(condition, Mapping):
-        raise TemplateRenderError("condition must be an object")
-
-    if "truthy" in condition:
-        return bool(_get_value(context, str(condition["truthy"])))
-    if "falsy" in condition:
-        return not bool(_get_value(context, str(condition["falsy"])))
-    if "and" in condition:
-        return all(_condition_matches(item, context) for item in _as_list(condition["and"]))
-    if "or" in condition:
-        return any(_condition_matches(item, context) for item in _as_list(condition["or"]))
-    if "not" in condition:
-        return not _condition_matches(condition["not"], context)
-
-    for op in ("gt", "gte", "lt", "lte", "eq", "neq", "contains"):
-        if op in condition:
-            operands = _as_list(condition[op])
-            if len(operands) != 2:
-                raise TemplateRenderError(f"condition {op} expects two operands")
-            actual = _get_value(context, str(operands[0]))
-            expected = operands[1]
-            return _compare(op, actual, expected)
-
-    raise TemplateRenderError(f"Unknown condition: {condition}")
+        value = context[field_name]
+        return _format_value(value)
 
 
-def _compare(op: str, actual: Any, expected: Any) -> bool:
-    try:
-        if op == "gt":
-            return actual > expected
-        if op == "gte":
-            return actual >= expected
-        if op == "lt":
-            return actual < expected
-        if op == "lte":
-            return actual <= expected
-        if op == "eq":
-            return actual == expected
-        if op == "neq":
-            return actual != expected
-        if op == "contains":
-            return expected in actual if actual is not None else False
-    except (TypeError, ValueError):
-        return False
-    raise TemplateRenderError(f"Unknown comparison operator: {op}")
-
-
-def _get_value(context: Context, path: str) -> Any:
-    if not path:
-        return ""
-    current: Any = context
-    for part in path.split("."):
-        if isinstance(current, Mapping):
-            current = current.get(part, "")
-        else:
-            current = getattr(current, part, "")
-    return current
-
-
-def _as_list(value: Any) -> list[Any]:
+def _format_value(value: Any) -> str:
+    """Convert a context value to its display string."""
     if value is None:
-        return []
+        return ""
+    if isinstance(value, bool):
+        return "Yes" if value else "No"
     if isinstance(value, list):
-        return value
-    if isinstance(value, tuple):
-        return list(value)
-    return [value]
-
-
-def _string_or_empty(value: Any) -> str:
-    if value is None:
-        return ""
+        items = [_format_value(item) for item in value if item is not None]
+        return ", ".join(items)
     return str(value)
 
 
-def _to_int(value: Any, *, default: int) -> int:
-    try:
-        return int(value)
-    except (TypeError, ValueError):
-        return default
+def validate_template_body(
+    body: str,
+    available_fields: set[str] | None = None,
+) -> list[str]:
+    """Validate a template body string and return a list of warnings.
+
+    Returns an empty list if the template is valid.
+    Warnings are non-fatal (e.g. unknown field names).
+    Raises ``TemplateRenderError`` for structural problems.
+    """
+    if not body or not body.strip():
+        raise TemplateRenderError("Template body cannot be empty")
+
+    warnings: list[str] = []
+    renderer = SimpleTemplateRenderer()
+    fields = renderer.extract_fields(body)
+
+    if available_fields is not None:
+        for field_name in fields:
+            if field_name not in available_fields:
+                warnings.append(f"Unknown field: {field_name}")
+
+    # Check for malformed placeholders (unclosed braces, nested braces)
+    _check_brace_balance(body)
+
+    # Check for {…} blocks that look like placeholders but aren't valid identifiers.
+    # e.g. {bad-field}, {123abc}, { space } — these pass brace balance but silently
+    # render as literal text, which is almost certainly a user typo.
+    for match in _ANY_BRACE_RE.finditer(body):
+        block = match.group()
+        if not _PLACEHOLDER_RE.fullmatch(block):
+            raise TemplateRenderError(
+                f"Invalid placeholder syntax: {block!r} — "
+                "use {field_name} with letters, digits, and underscores only"
+            )
+
+    return warnings
 
 
-def _truncate(text: str, limit: int) -> str:
-    if limit <= 0 or len(text) <= limit:
-        return text
-    if limit <= 3:
-        return text[:limit]
-    return text[: limit - 3].rstrip() + "..."
+def _check_brace_balance(body: str) -> None:
+    """Raise if the template has unbalanced or nested braces."""
+    depth = 0
+    for i, ch in enumerate(body):
+        if ch == "{":
+            depth += 1
+            if depth > 1:
+                raise TemplateRenderError(
+                    f"Nested braces are not supported (position {i})"
+                )
+        elif ch == "}":
+            if depth == 0:
+                raise TemplateRenderError(
+                    f"Unexpected closing brace (position {i})"
+                )
+            depth -= 1
+    if depth > 0:
+        raise TemplateRenderError("Unclosed brace in template")

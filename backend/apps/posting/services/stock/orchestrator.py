@@ -25,6 +25,7 @@ from django.db import DatabaseError, OperationalError
 
 from apps.integrations.providers import registry
 from apps.posting.models import (
+    PostingDefault,
     PostingJob,
     PostingJobItem,
     PostingJobItemStatus,
@@ -36,6 +37,7 @@ from payload_pipeline.core.contracts import ListingKind
 
 from apps.posting.resolvers.stock import StockResolver, DataMissing
 from apps.posting.pipeline import adapter
+from apps.posting.pipeline.templates import load_templates_for_posting
 from apps.posting.services.shared.tracker_fetcher import fetch_tracker_data
 from apps.posting.services.stock.consumer import StockConsumer
 from apps.posting.services.stock.pa_bulk_uploader import PABulkUploader
@@ -68,6 +70,8 @@ class StockOrchestrator:
         self._rate_limit_event = Event()
         self._pa_uploader = PABulkUploader()
         self._proxy_pool = None  # Built once at execute() start
+        self._title_templates: dict[str, str] | None = None
+        self._description_templates: dict[str, str] | None = None
 
     # ------------------------------------------------------------------
     # Setup
@@ -110,6 +114,24 @@ class StockOrchestrator:
         except (ImportError, AttributeError, KeyError) as exc:
             logger.warning("Could not build image fetcher: %s", exc)
 
+    def _load_templates(self, game_id: int) -> None:
+        """Load content templates from PostingDefault FK selections."""
+        defaults = {
+            d.marketplace: d
+            for d in PostingDefault.objects.filter(
+                game_id=game_id,
+            ).select_related('title_template', 'description_template')
+        }
+        self._title_templates, self._description_templates = (
+            load_templates_for_posting(game_id=game_id, posting_defaults=defaults)
+        )
+        if self._title_templates or self._description_templates:
+            logger.info(
+                "Content templates loaded: title=%s, description=%s",
+                list(self._title_templates) if self._title_templates else None,
+                list(self._description_templates) if self._description_templates else None,
+            )
+
     def _build_consumer(self) -> StockConsumer:
         """Build the StockConsumer with shared collaborators."""
         return StockConsumer(
@@ -147,6 +169,9 @@ class StockOrchestrator:
         self._proxy_pool = build_proxy_pool()
         if self._proxy_pool:
             logger.info("Proxy pool ready: %d proxies", self._proxy_pool.size)
+
+        # Load content templates from PostingDefault FK selections
+        self._load_templates(job.game_id)
 
         job.status = PostingJobStatus.RUNNING
         job.save(update_fields=['status'])
@@ -368,6 +393,8 @@ class StockOrchestrator:
                 kind=ListingKind.STOCK,
                 disable_media=False,
                 lzt_image_fetcher=self._image_fetcher,
+                title_templates=self._title_templates,
+                description_templates=self._description_templates,
             )
             if not prepare_result.success:
                 return {

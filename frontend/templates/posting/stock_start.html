@@ -383,6 +383,31 @@
                             </p>
                         </div>
                         {% endif %}
+                        <!-- Content Templates -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3"
+                             x-show="templatesByMarketplace['{{ store.provider }}']?.title?.length || templatesByMarketplace['{{ store.provider }}']?.description?.length">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Title Template</label>
+                                <select x-model="defaults['{{ store.slug }}'].title_template_id"
+                                        class="w-full text-sm border-gray-300 rounded-md">
+                                    <option :value="null">Legacy (auto-generated)</option>
+                                    <template x-for="t in (templatesByMarketplace['{{ store.provider }}']?.title || [])" :key="t.id">
+                                        <option :value="t.id" x-text="t.name"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Description Template</label>
+                                <select x-model="defaults['{{ store.slug }}'].description_template_id"
+                                        class="w-full text-sm border-gray-300 rounded-md">
+                                    <option :value="null">Legacy (auto-generated)</option>
+                                    <template x-for="t in (templatesByMarketplace['{{ store.provider }}']?.description || [])" :key="t.id">
+                                        <option :value="t.id" x-text="t.name"></option>
+                                    </template>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Pricing -->
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1">Low (&le;$10)</label>
@@ -561,6 +586,7 @@ function stockStart() {
         selectedStores: [],
         defaults: {},
         showSettings: {},
+        templatesByMarketplace: {},  // { marketplace: { title: [...], description: [...] } }
         submitting: false,
         submitError: '',
 
@@ -612,6 +638,7 @@ function stockStart() {
                 this.defaults['{{ store.slug }}'] = {
                     multiplier_low: '2.00', multiplier_mid: '1.80', multiplier_high: '1.50',
                     min_price: '0.00', forced_ending: '0.99', sub_platform: '', account_type: '',
+                    title_template_id: null, description_template_id: null,
                     {% if store.provider == 'playerauctions' %}pa_mode: 'bulk',{% endif %}
                 };
             }
@@ -626,12 +653,18 @@ function stockStart() {
             if (!this.selectedGame) return;
             for (const slug of Object.keys(this.defaults)) {
                 this.defaults[slug].sub_platform = '';
+                this.defaults[slug].title_template_id = null;
+                this.defaults[slug].description_template_id = null;
             }
+            this.templatesByMarketplace = {};
+
+            // Fetch defaults + templates in parallel
             const providers = new Set();
             {% for store in stores %}
             providers.add('{{ store.provider }}');
             {% endfor %}
-            for (const provider of providers) {
+
+            const defaultsPromises = Array.from(providers).map(async (provider) => {
                 try {
                     const resp = await fetch(`/posting/api/defaults/${this.selectedGame}/${provider}/`);
                     if (resp.ok) {
@@ -643,7 +676,24 @@ function stockStart() {
                         {% endfor %}
                     }
                 } catch (e) {}
-            }
+            });
+
+            const templatesPromise = (async () => {
+                try {
+                    const resp = await fetch(`/posting/api/content-templates/?game_id=${this.selectedGame}`);
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        const byMp = {};
+                        for (const t of data.templates || []) {
+                            if (!byMp[t.marketplace]) byMp[t.marketplace] = { title: [], description: [] };
+                            byMp[t.marketplace][t.template_type].push(t);
+                        }
+                        this.templatesByMarketplace = byMp;
+                    }
+                } catch (e) {}
+            })();
+
+            await Promise.all([...defaultsPromises, templatesPromise]);
         },
 
         onStoreToggle(slug) {},

@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
-from ....core.contracts import ResolvedAccountBase
+from ....core.contracts import FieldMeta, ResolvedAccountBase
 
 
 @dataclass(slots=True)
@@ -24,3 +24,19 @@ class CS2ResolvedAccount(ResolvedAccountBase):
     @property
     def medal_count(self) -> int:
         return len(self.medals)
+
+    FIELD_META: ClassVar[dict[str, FieldMeta]] = {
+        **ResolvedAccountBase.FIELD_META,
+        "rank": FieldMeta("Competitive rank name.", "Gold Nova Master"),
+        "rank_id": FieldMeta("Numeric rank ID.", 12),
+        "premier_elo": FieldMeta("Premier mode ELO rating.", 14500),
+        "medals": FieldMeta("Service medal names.", ["2023 Service Medal", "Global Offensive Medal"]),
+        "is_prime": FieldMeta("Prime status.", True),
+        "has_email_access": FieldMeta("Email access status.", True),
+        "hours_played": FieldMeta("Total hours played.", 1200),
+    }
+
+    COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {
+        **ResolvedAccountBase.COMPUTED_FIELDS,
+        "medal_count": FieldMeta("Number of service medals.", 2, "computed"),
+    }

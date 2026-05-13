@@ -88,10 +88,10 @@ G2G_SERVICE_ID: ContextKey[str] = ContextKey("g2g_service_id")
 
 TRACKER_URL: ContextKey[str] = ContextKey("tracker_url")
 
-# -- Template-backed content rendering ---------------------------------------
+# -- Content template rendering -----------------------------------------------
+# When set, composer uses SimpleTemplateRenderer instead of legacy generators.
+# Each is a plain template body string with {field_name} placeholders.
+# These are keyed by marketplace: {"eldorado": "...", "g2g": "...", ...}
 
-USE_TEMPLATE_CONTENT: ContextKey[bool] = ContextKey("use_template_content")
-CONTENT_TEMPLATE_MANAGER: ContextKey[Any] = ContextKey("content_template_manager")
-CONTENT_TEMPLATE_OVERRIDES: ContextKey[dict[str, Any]] = ContextKey(
-    "content_template_overrides"
-)
+TITLE_TEMPLATES: ContextKey[dict[str, str]] = ContextKey("title_templates")
+DESCRIPTION_TEMPLATES: ContextKey[dict[str, str]] = ContextKey("description_templates")

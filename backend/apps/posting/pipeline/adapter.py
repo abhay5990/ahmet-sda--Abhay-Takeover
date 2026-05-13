@@ -15,7 +15,6 @@ from payload_pipeline.shared.media import NullMediaPublisher
 
 from .context import build_context
 from .request import build_request
-from .templates import load_content_template_overrides
 
 logger = logging.getLogger(__name__)
 
@@ -98,6 +97,8 @@ def prepare(
     kind: ListingKind,
     disable_media: bool = True,
     lzt_image_fetcher=None,
+    title_templates: dict[str, str] | None = None,
+    description_templates: dict[str, str] | None = None,
 ) -> PrepareResult:
     """Run the shared preparation phase (resolve → validate → compose).
 
@@ -114,18 +115,14 @@ def prepare(
     Returns:
         PrepareResult — always check ``.success`` before using ``.prepared``.
     """
-    template_overrides = load_content_template_overrides(
-        game_slug=game_slug,
-        kind=kind,
-    )
     request = build_request(
         game_slug=game_slug,
         sources=sources,
         kind=kind,
         disable_media=disable_media,
         lzt_image_fetcher=lzt_image_fetcher,
-        template_overrides=template_overrides,
-        use_template_content=bool(template_overrides),
+        title_templates=title_templates,
+        description_templates=description_templates,
     )
     return _get_pipeline().prepare_once(request)
 

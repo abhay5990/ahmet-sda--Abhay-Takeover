@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .models import (
     CleanerConfig,
-    ContentTemplateOverride,
+    ContentTemplate,
     OfferPool,
     OfferPoolActiveOffer,
     OfferPoolItem,
@@ -39,23 +39,12 @@ class PostingDefaultAdmin(admin.ModelAdmin):
     list_filter = ['marketplace']
 
 
-@admin.register(ContentTemplateOverride)
-class ContentTemplateOverrideAdmin(admin.ModelAdmin):
-    list_display = ['game', 'kind', 'category', 'marketplace', 'enabled', 'updated_at']
-    list_filter = ['enabled', 'game', 'kind', 'marketplace']
-    search_fields = ['game__name', 'game__slug', 'marketplace']
+@admin.register(ContentTemplate)
+class ContentTemplateAdmin(admin.ModelAdmin):
+    list_display = ['name', 'game', 'marketplace', 'template_type', 'updated_at']
+    list_filter = ['game', 'marketplace', 'template_type']
+    search_fields = ['name', 'game__name', 'game__slug']
     readonly_fields = ['created_at', 'updated_at']
-    fieldsets = [
-        (None, {
-            'fields': ['game', 'category', 'kind', 'marketplace', 'enabled'],
-        }),
-        ('Templates', {
-            'fields': ['title_template', 'description_template'],
-        }),
-        ('Notes', {
-            'fields': ['notes', 'created_at', 'updated_at'],
-        }),
-    ]
 
 
 @admin.register(SubplatformLimit)

@@ -3,6 +3,7 @@
 from .contracts import (
     BuildContext,
     CredentialBundle,
+    FieldMeta,
     ImageFetcher,
     ListingContent,
     ListingDraft,
@@ -24,6 +25,7 @@ from .validation import validate_resolved
 __all__ = [
     "BuildContext",
     "CredentialBundle",
+    "FieldMeta",
     "GameDefinition",
     "GameSlug",
     "PayloadPipelineError",

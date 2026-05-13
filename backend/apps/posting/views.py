@@ -12,8 +12,8 @@ from apps.inventory.enums import DropshipProductStatus
 from apps.inventory.models import DropshipProduct, Game
 from apps.listings.models import Listing
 from apps.posting.models import (
+    ContentTemplate,
     DropshippingJobConfig, OfferPool, PostingJob, PostingLog,
-    ContentTemplateOverride,
 )
 from apps.posting.services.shared.subplatform import GAME_SUBPLATFORMS
 
@@ -92,7 +92,7 @@ def stock_job_detail(request, job_id):
 @ensure_csrf_cookie
 @role_required('admin', 'user')
 def content_templates_page(request):
-    """Manage DB-backed title/description template overrides."""
+    """Manage content templates with {field_name} placeholders."""
     games = Game.objects.filter(is_active=True).order_by('name')
     game_options = [
         {'id': game.id, 'name': game.name, 'slug': game.slug}
@@ -100,11 +100,9 @@ def content_templates_page(request):
     ]
     return render(request, 'posting/content_templates.html', {
         'games': games,
-        'marketplaces': ContentTemplateOverride.MARKETPLACE_CHOICES,
-        'kinds': ContentTemplateOverride.KIND_CHOICES,
         'game_options_json': json.dumps(game_options),
-        'marketplace_options_json': json.dumps(list(ContentTemplateOverride.MARKETPLACE_CHOICES)),
-        'kind_options_json': json.dumps(list(ContentTemplateOverride.KIND_CHOICES)),
+        'marketplace_options_json': json.dumps(ContentTemplate.MARKETPLACE_CHOICES),
+        'template_type_options_json': json.dumps(ContentTemplate.TEMPLATE_TYPE_CHOICES),
     })
 
 

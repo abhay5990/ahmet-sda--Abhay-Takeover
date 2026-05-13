@@ -1,63 +1,41 @@
-"""Django-backed content template overrides for payload_pipeline."""
+"""Load content templates from the Django ContentTemplate model."""
 
 from __future__ import annotations
 
 import logging
-from collections.abc import Mapping
-from typing import Any
-
-from payload_pipeline.core.contracts import ListingKind
 
 logger = logging.getLogger(__name__)
 
 
-def load_content_template_overrides(
+def load_templates_for_posting(
     *,
-    game_slug: str,
-    kind: ListingKind | str,
-    category: str = 'account',
-) -> dict[str, dict[str, Any]]:
-    """Return enabled DB template overrides in payload_pipeline map shape."""
-    try:
-        from apps.posting.models import ContentTemplateOverride
+    game_id: int,
+    posting_defaults: dict,
+) -> tuple[dict[str, str] | None, dict[str, str] | None]:
+    """Load title and description template bodies for a posting job.
 
-        kind_value = kind.value if hasattr(kind, 'value') else str(kind)
-        rows = ContentTemplateOverride.objects.filter(
-            enabled=True,
-            game__slug=game_slug,
-            category=category,
-            kind=kind_value,
-        ).only(
-            'marketplace',
-            'title_template',
-            'description_template',
-        )
-        return _rows_to_template_map(rows)
-    except Exception as exc:
-        logger.warning(
-            "Could not load content template overrides for %s/%s: %s",
-            game_slug,
-            kind,
-            exc,
-        )
-        return {}
+    Reads from PostingDefault FK selections per marketplace.
 
+    Args:
+        game_id: The game's PK.
+        posting_defaults: Marketplace→PostingDefault mapping. Each
+            PostingDefault may have title_template and/or
+            description_template FKs set.
 
-def _rows_to_template_map(rows) -> dict[str, dict[str, Any]]:
-    overrides: dict[str, dict[str, Any]] = {}
-    for row in rows:
-        entry = overrides.setdefault(row.marketplace, {})
-        if _has_template(row.title_template):
-            entry['title'] = row.title_template
-        if _has_template(row.description_template):
-            entry['description'] = row.description_template
+    Returns:
+        (title_templates, description_templates) — each is a
+        marketplace→body dict, or None if no templates selected.
+    """
+    title_templates: dict[str, str] = {}
+    description_templates: dict[str, str] = {}
 
-    return {
-        marketplace: entry
-        for marketplace, entry in overrides.items()
-        if entry
-    }
+    for marketplace, defaults in posting_defaults.items():
+        if hasattr(defaults, 'title_template') and defaults.title_template_id:
+            title_templates[marketplace] = defaults.title_template.body
+        if hasattr(defaults, 'description_template') and defaults.description_template_id:
+            description_templates[marketplace] = defaults.description_template.body
 
-
-def _has_template(value: Any) -> bool:
-    return isinstance(value, Mapping) and bool(value)
+    return (
+        title_templates or None,
+        description_templates or None,
+    )

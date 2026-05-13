@@ -41,8 +41,8 @@ urlpatterns = [
     # API — content templates
     path('api/content-templates/', content_template_api.list_content_templates, name='api_content_templates'),
     path('api/content-templates/metadata/', content_template_api.content_template_metadata, name='api_content_template_metadata'),
-    path('api/content-templates/save/', content_template_api.content_template_detail, name='api_save_content_template'),
-    path('api/content-templates/<int:template_id>/', content_template_api.content_template_detail, name='api_delete_content_template'),
+    path('api/content-templates/create/', content_template_api.create_content_template, name='api_create_content_template'),
+    path('api/content-templates/<int:template_id>/', content_template_api.content_template_detail, name='api_content_template_detail'),
     path('api/content-templates/preview/', content_template_api.preview_content_template, name='api_preview_content_template'),
 
     # API — dropship poster control

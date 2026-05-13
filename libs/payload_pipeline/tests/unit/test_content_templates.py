@@ -1,20 +1,16 @@
-"""Tests for structured content template rendering."""
+"""Tests for the {field_name} placeholder-based content template system."""
 
 from __future__ import annotations
-
-from pathlib import Path
 
 import pytest
 
 from payload_pipeline.content_templates import (
-    DictTemplateProvider,
-    DictTemplateOverrideProvider,
-    JsonFileTemplateProvider,
-    TemplateManager,
-    TemplateDescriptionGenerator,
-    TemplateTitleGenerator,
+    SimpleTemplateRenderer,
+    TemplateRenderError,
     TemplateValidationError,
-    validate_template_map,
+    compose_listing_draft,
+    compose_with_templates,
+    validate_template,
 )
 from payload_pipeline.core import context_keys as ctx
 from payload_pipeline.core.contracts import MediaBundle, PipelineRequest
@@ -23,207 +19,219 @@ from payload_pipeline.games.roblox.account.content import RobloxComposer
 from payload_pipeline.games.roblox.account.models import RobloxResolvedAccount
 
 
-def test_title_template_renders_parts_conditions_lists_and_suffix() -> None:
-    spec = {
-        "separator": " | ",
-        "max_length": 80,
-        "suffix": "S4G",
-        "parts": [
-            {"field": "region"},
-            {"template": "{skin_count} Skins", "when": {"gt": ["skin_count", 0]}},
-            {"field": "rank", "when": {"neq": ["rank", "Unranked"]}},
-            {"list": "priority_items", "limit": 2},
-        ],
-    }
-    context = {
-        "region": "EU",
-        "skin_count": 81,
-        "rank": "Gold",
-        "priority_items": ["Prime Vandal", "Reaver Knife", "Ion Sheriff"],
-    }
+# ---------------------------------------------------------------------------
+# SimpleTemplateRenderer
+# ---------------------------------------------------------------------------
 
-    title = TemplateTitleGenerator().generate(spec, context)
-
-    assert title == "EU | 81 Skins | Gold | Prime Vandal | Reaver Knife | S4G"
+def test_renderer_substitutes_placeholders() -> None:
+    r = SimpleTemplateRenderer()
+    assert r.render("{name} has {count} skins", {"name": "Alice", "count": 42}) == "Alice has 42 skins"
 
 
-def test_description_template_renders_blocks_sections_and_limits() -> None:
-    spec = {
-        "char_limit": 120,
-        "blocks": [
-            {"type": "line", "text": "Account Details:"},
-            {"type": "line", "template": "Level: {level}"},
-            {"type": "line", "template": "Hidden", "when": {"truthy": "missing_flag"}},
-            {"type": "blank"},
-            {
-                "type": "section",
-                "title": "Some Items:",
-                "items": "items",
-                "limit": 3,
-                "join": ", ",
-            },
-        ],
-    }
-    context = {"level": 44, "items": ["A", "B", "C", "D"]}
-
-    description = TemplateDescriptionGenerator().generate(spec, context)
-
-    assert description == "Account Details:\nLevel: 44\n\nSome Items:\nA, B, C"
+def test_renderer_none_becomes_empty_string() -> None:
+    r = SimpleTemplateRenderer()
+    assert r.render("Value: {v}", {"v": None}) == "Value: "
 
 
-def test_template_validation_rejects_unknown_part_keys() -> None:
-    spec = {
-        "default": {
-            "title": {
-                "parts": [
-                    {"template": "{level}", "typo": True},
-                ],
-            },
-            "description": {
-                "blocks": [
-                    {"type": "line", "text": "Details"},
-                ],
-            },
-        }
-    }
-
-    with pytest.raises(TemplateValidationError, match="unknown keys"):
-        validate_template_map(spec)
+def test_renderer_bool_becomes_yes_no() -> None:
+    r = SimpleTemplateRenderer()
+    assert r.render("{a} / {b}", {"a": True, "b": False}) == "Yes / No"
 
 
-def test_dict_template_provider_loads_validated_copy() -> None:
-    source = {
-        "default": {
-            "title": {"parts": [{"text": "Original"}]},
-            "description": {"blocks": [{"type": "line", "text": "Body"}]},
-        }
-    }
-
-    loaded = DictTemplateProvider(source).load()
-    loaded["default"]["title"]["parts"][0]["text"] = "Changed"
-
-    assert source["default"]["title"]["parts"][0]["text"] == "Original"
+def test_renderer_list_joins_with_comma() -> None:
+    r = SimpleTemplateRenderer()
+    assert r.render("Items: {items}", {"items": ["Sword", "Shield", "Ring"]}) == "Items: Sword, Shield, Ring"
 
 
-def test_json_file_template_provider_loads_roblox_resource() -> None:
-    template_path = (
-        Path(__file__).resolve().parents[2]
-        / "payload_pipeline"
-        / "games"
-        / "roblox"
-        / "account"
-        / "resources"
-        / "content_templates.json"
+def test_renderer_missing_field_becomes_empty_string() -> None:
+    r = SimpleTemplateRenderer()
+    assert r.render("Hello {missing}", {}) == "Hello "
+
+
+def test_renderer_strict_mode_raises_on_missing_field() -> None:
+    r = SimpleTemplateRenderer(strict=True)
+    with pytest.raises(TemplateRenderError):
+        r.render("Hello {missing}", {})
+
+
+# ---------------------------------------------------------------------------
+# validate_template
+# ---------------------------------------------------------------------------
+
+def test_validate_template_passes_valid_body() -> None:
+    warnings = validate_template("Good title {name}", template_type="title")
+    assert isinstance(warnings, list)
+
+
+def test_validate_template_raises_on_multiline_title() -> None:
+    with pytest.raises(TemplateValidationError, match="single"):
+        validate_template("Line 1\nLine 2", template_type="title")
+
+
+def test_validate_template_raises_on_max_length() -> None:
+    with pytest.raises(TemplateValidationError, match="length"):
+        validate_template("x" * 10, template_type="title", max_length=5)
+
+
+def test_validate_template_warns_unknown_field() -> None:
+    warnings = validate_template(
+        "{totally_unknown_field}",
+        template_type="title",
+        available_fields={"price", "name"},
     )
-
-    loaded = JsonFileTemplateProvider(template_path).load()
-
-    assert "default" in loaded
-    assert "g2g" in loaded
-    assert loaded["default"]["title"]["parts"]
+    assert any("totally_unknown_field" in w for w in warnings)
 
 
-def test_template_manager_merges_default_db_and_runtime_overrides() -> None:
-    defaults = DictTemplateProvider(
-        {
-            "default": {
-                "title": {"parts": [{"text": "Default"}]},
-                "description": {"blocks": [{"type": "line", "text": "Body"}]},
-            },
-            "g2g": {
-                "title": {"parts": [{"text": "DB base"}]},
-            },
-        }
+def test_validate_template_raises_on_hyphen_placeholder() -> None:
+    # {bad-field} passes brace balance but isn't a valid identifier — must error.
+    with pytest.raises(TemplateValidationError, match="Invalid placeholder"):
+        validate_template("{bad-field}", template_type="title")
+
+
+def test_validate_template_raises_on_space_placeholder() -> None:
+    with pytest.raises(TemplateValidationError, match="Invalid placeholder"):
+        validate_template("{ space }", template_type="title")
+
+
+def test_validate_template_raises_on_numeric_placeholder() -> None:
+    with pytest.raises(TemplateValidationError, match="Invalid placeholder"):
+        validate_template("{123abc}", template_type="title")
+
+
+# ---------------------------------------------------------------------------
+# compose_with_templates
+# ---------------------------------------------------------------------------
+
+def test_compose_with_templates_renders_per_marketplace() -> None:
+    result = compose_with_templates(
+        {"name": "Alice", "level": 99},
+        title_templates={
+            "eldorado": "Eldorado: {name} Lv{level}",
+            "g2g": "G2G: {name}",
+        },
     )
-    db_overrides = DictTemplateOverrideProvider(
-        {
-            "g2g": {
-                "title": {"parts": [{"text": "DB override"}]},
-            }
-        }
+    assert result.marketplace_titles["eldorado"] == "Eldorado: Alice Lv99"
+    assert result.marketplace_titles["g2g"] == "G2G: Alice"
+
+
+def test_compose_with_templates_picks_default_from_eldorado() -> None:
+    result = compose_with_templates(
+        {"x": "val"},
+        title_templates={"eldorado": "Default title", "g2g": "G2G title"},
     )
-    manager = TemplateManager(defaults, override_provider=db_overrides)
+    assert result.default_title == "Default title"
 
-    loaded = manager.load(
-        overrides={
-            "gameboost": {
-                "title": {"parts": [{"text": "Runtime override"}]},
-            }
-        }
+
+def test_compose_with_templates_falls_back_to_first_when_no_eldorado() -> None:
+    result = compose_with_templates(
+        {},
+        title_templates={"g2g": "Only G2G"},
     )
-
-    assert loaded["default"]["description"]["blocks"][0]["text"] == "Body"
-    assert loaded["g2g"]["title"]["parts"][0]["text"] == "DB override"
-    assert loaded["gameboost"]["title"]["parts"][0]["text"] == "Runtime override"
+    assert result.default_title == "Only G2G"
 
 
-def test_roblox_composer_can_use_template_content_without_changing_default_path() -> None:
-    account = RobloxResolvedAccount(
+def test_compose_with_templates_none_inputs_return_empty_result() -> None:
+    result = compose_with_templates({}, title_templates=None, description_templates=None)
+    assert result.default_title is None
+    assert result.default_description is None
+    assert result.marketplace_titles == {}
+
+
+# ---------------------------------------------------------------------------
+# compose_listing_draft
+# ---------------------------------------------------------------------------
+
+def test_compose_listing_draft_builds_draft_with_overrides() -> None:
+    draft = compose_listing_draft(
+        {"name": "Test"},
+        title_templates={"eldorado": "El: {name}", "g2g": "G2G: {name}"},
+        description_templates={"eldorado": "Desc for {name}"},
+        media=MediaBundle(),
+        tags=["test"],
+    )
+    assert draft.default.title == "El: Test"
+    assert draft.default.description == "Desc for Test"
+    assert draft.content_for("g2g").title == "G2G: Test"
+    assert draft.content_for("g2g").description == "Desc for Test"  # falls back to default
+    assert draft.default.tags == ["test"]
+
+
+def test_compose_listing_draft_empty_templates_gives_empty_strings() -> None:
+    draft = compose_listing_draft(
+        {},
+        title_templates=None,
+        description_templates=None,
+        media=MediaBundle(),
+        tags=["game"],
+    )
+    assert draft.default.title == ""
+    assert draft.default.description == ""
+    assert draft.marketplace_overrides == {}
+
+
+# ---------------------------------------------------------------------------
+# RobloxComposer with TITLE_TEMPLATES / DESCRIPTION_TEMPLATES
+# ---------------------------------------------------------------------------
+
+def _make_roblox_account() -> RobloxResolvedAccount:
+    return RobloxResolvedAccount(
         item_id="rbx-1",
         price=10.0,
         roblox_id=12345,
-        robux=5000,
-        incoming_robux_total=1200,
-        inventory_price=8500.50,
-        ugc_limited_price=3200.0,
-        offsale_count=42,
-        register_date=946684800,
         username="abcd",
-        game_pass_total_robux=777,
-        age_verified=True,
-    )
-    request = PipelineRequest(
-        game="roblox",
-        kind=ListingKind.STOCK,
-        context={ctx.USE_TEMPLATE_CONTENT: True},
+        inventory_price=8500.0,
+        register_date=946684800,  # 2000-01-01
     )
 
-    draft = RobloxComposer().compose(account, request, MediaBundle())
 
-    assert "\u25c6 Registered: 2000" in draft.default.title
-    assert "Inventory: 8500 R$" in draft.default.title
-    assert "\U0001f539 Username: abcd" in draft.default.description
-    assert "INSTANT DELIVERY" in draft.default.description
-    assert draft.content_for("gameboost").title.startswith("4 Letter, Registered 2000")
-    assert draft.content_for("playerauctions").title.startswith("Roblox Account - 4 Letter")
-    assert "8500 R$ Inv" in draft.content_for("playerauctions").title
-    assert len(draft.content_for("playerauctions").title) <= 100
-    assert draft.content_for("g2g").title.startswith("Roblox Account | 4 Letter")
-    assert len(draft.content_for("g2g").title) <= 120
-
-
-def test_roblox_template_content_accepts_context_overrides() -> None:
-    account = RobloxResolvedAccount(
-        item_id="rbx-1",
-        price=10.0,
-        roblox_id=12345,
-        username="abc",
-        incoming_robux_total=1200,
-        inventory_price=8500.50,
-        register_date=946684800,
-        friends=12,
-    )
+def test_roblox_composer_uses_title_template_when_set() -> None:
     request = PipelineRequest(
         game="roblox",
         kind=ListingKind.STOCK,
         context={
-            ctx.USE_TEMPLATE_CONTENT: True,
-            ctx.CONTENT_TEMPLATE_OVERRIDES: {
-                "g2g": {
-                    "title": {
-                        "separator": " / ",
-                        "max_length": 120,
-                        "parts": [
-                            {"text": "Custom Roblox"},
-                            {"field": "letter_label"},
-                            {"template": "{friends} Friends"},
-                        ],
-                    }
-                }
+            ctx.TITLE_TEMPLATES: {"eldorado": "Roblox {username} inv:{inventory_price_int}R$"},
+        },
+    )
+    draft = RobloxComposer().compose(_make_roblox_account(), request, MediaBundle())
+    # Template applies as a marketplace override; draft.default stays legacy
+    assert draft.content_for("eldorado").title == "Roblox abcd inv:8500R$"
+
+
+def test_roblox_composer_uses_desc_template_when_set() -> None:
+    request = PipelineRequest(
+        game="roblox",
+        kind=ListingKind.STOCK,
+        context={
+            ctx.DESCRIPTION_TEMPLATES: {"eldorado": "User: {username}"},
+        },
+    )
+    draft = RobloxComposer().compose(_make_roblox_account(), request, MediaBundle())
+    # Template applies as a marketplace override; draft.default stays legacy
+    assert draft.content_for("eldorado").description == "User: abcd"
+
+
+def test_roblox_composer_marketplace_override_from_template() -> None:
+    request = PipelineRequest(
+        game="roblox",
+        kind=ListingKind.STOCK,
+        context={
+            ctx.TITLE_TEMPLATES: {
+                "eldorado": "El: {username}",
+                "g2g": "G2G: {username}",
             },
         },
     )
+    draft = RobloxComposer().compose(_make_roblox_account(), request, MediaBundle())
+    assert draft.content_for("g2g").title == "G2G: abcd"
+    assert draft.content_for("eldorado").title == "El: abcd"
 
-    draft = RobloxComposer().compose(account, request, MediaBundle())
 
-    assert draft.content_for("g2g").title == "Custom Roblox / 3 Letter / 12 Friends"
+def test_roblox_composer_falls_back_to_legacy_when_no_templates() -> None:
+    request = PipelineRequest(
+        game="roblox",
+        kind=ListingKind.STOCK,
+        context={},
+    )
+    draft = RobloxComposer().compose(_make_roblox_account(), request, MediaBundle())
+    # Legacy path produces non-empty title
+    assert len(draft.default.title) > 0

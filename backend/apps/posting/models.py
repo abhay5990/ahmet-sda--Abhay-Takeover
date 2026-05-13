@@ -153,6 +153,24 @@ class PostingDefault(models.Model):
         help_text='Force cents ending (e.g. 0.99). Null = disabled.',
     )
 
+    # Content templates (optional — null means use legacy generators)
+    title_template = models.ForeignKey(
+        'posting.ContentTemplate',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='posting_defaults_as_title',
+        limit_choices_to={'template_type': 'title'},
+        help_text='Selected title template. Null = use legacy title generator.',
+    )
+    description_template = models.ForeignKey(
+        'posting.ContentTemplate',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='posting_defaults_as_description',
+        limit_choices_to={'template_type': 'description'},
+        help_text='Selected description template. Null = use legacy description generator.',
+    )
+
     # Site-specific
     sub_platform = models.CharField(
         max_length=20, blank=True,
@@ -173,20 +191,55 @@ class PostingDefault(models.Model):
     def __str__(self):
         return f"{self.game} — {self.marketplace}"
 
+    def clean(self):
+        super().clean()
+        errors: dict[str, str] = {}
+        if self.title_template_id:
+            self._validate_template_fk(
+                self.title_template, 'title', 'title_template', errors,
+            )
+        if self.description_template_id:
+            self._validate_template_fk(
+                self.description_template, 'description', 'description_template', errors,
+            )
+        if errors:
+            raise ValidationError(errors)
 
-class ContentTemplateOverride(models.Model):
-    """DB-backed partial content template override for listing content."""
+    def _validate_template_fk(self, template, expected_type, field_name, errors):
+        """Ensure the FK points to a template matching this default's game, marketplace, and type."""
+        if template.game_id != self.game_id:
+            errors[field_name] = (
+                f'Template "{template.name}" belongs to a different game.'
+            )
+        elif template.marketplace != self.marketplace:
+            errors[field_name] = (
+                f'Template "{template.name}" is for {template.marketplace}, '
+                f'not {self.marketplace}.'
+            )
+        elif template.template_type != expected_type:
+            errors[field_name] = (
+                f'Template "{template.name}" is a {template.template_type} template, '
+                f'expected {expected_type}.'
+            )
 
-    CATEGORY_CHOICES = [
-        ('account', 'Account'),
-        ('item', 'Item'),
-    ]
-    KIND_CHOICES = [
-        ('stock', 'Stock'),
-        ('dropshipping', 'Dropshipping'),
+
+class ContentTemplate(models.Model):
+    """User-created content template with {field_name} placeholders.
+
+    Users write plain text with placeholders like ``{rank}``, ``{level}``,
+    ``{valuable_skins}`` etc.  At posting time, placeholders are resolved
+    from the game's resolved account model.
+
+    Templates are scoped to game + marketplace + type (title/description).
+    A user can create multiple templates per combination and select which
+    one to use at posting time.
+    """
+
+    TEMPLATE_TYPE_CHOICES = [
+        ('title', 'Title'),
+        ('description', 'Description'),
     ]
     MARKETPLACE_CHOICES = [
-        ('default', 'Default'),
         ('eldorado', 'Eldorado'),
         ('gameboost', 'GameBoost'),
         ('g2g', 'G2G'),
@@ -196,91 +249,59 @@ class ContentTemplateOverride(models.Model):
     game = models.ForeignKey(
         'inventory.Game',
         on_delete=models.CASCADE,
-        related_name='content_template_overrides',
-    )
-    category = models.CharField(
-        max_length=20,
-        choices=CATEGORY_CHOICES,
-        default='account',
-    )
-    kind = models.CharField(
-        max_length=20,
-        choices=KIND_CHOICES,
-        default='stock',
+        related_name='content_templates',
     )
     marketplace = models.CharField(
         max_length=30,
         choices=MARKETPLACE_CHOICES,
-        help_text='Use "default" for the base listing content.',
     )
-    enabled = models.BooleanField(default=True)
-    title_template = models.JSONField(
-        null=True,
-        blank=True,
-        help_text='Structured title spec. Leave empty to keep the bundled/default title.',
+    template_type = models.CharField(
+        max_length=20,
+        choices=TEMPLATE_TYPE_CHOICES,
     )
-    description_template = models.JSONField(
-        null=True,
-        blank=True,
-        help_text='Structured description spec. Leave empty to keep the bundled/default description.',
+    name = models.CharField(
+        max_length=100,
+        help_text='User-friendly template name, e.g. "Detailed Valorant Title"',
     )
-    notes = models.TextField(blank=True)
+    body = models.TextField(
+        help_text='Template text with {field_name} placeholders',
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'content_template_overrides'
+        db_table = 'content_templates'
         constraints = [
             models.UniqueConstraint(
-                fields=['game', 'category', 'kind', 'marketplace'],
-                name='unique_content_template_override',
+                fields=['game', 'marketplace', 'name', 'template_type'],
+                name='unique_content_template',
             ),
         ]
         indexes = [
             models.Index(
-                fields=['game', 'category', 'kind', 'enabled'],
+                fields=['game', 'marketplace', 'template_type'],
                 name='content_template_lookup_idx',
             ),
         ]
-        ordering = ['game__name', 'kind', 'marketplace']
+        ordering = ['game__name', 'marketplace', 'template_type', 'name']
 
     def __str__(self):
-        state = 'enabled' if self.enabled else 'disabled'
-        return f"{self.game} - {self.kind}/{self.marketplace} ({state})"
+        return f"{self.name} ({self.game} / {self.marketplace} / {self.template_type})"
 
     def clean(self):
         super().clean()
-        if self.title_template is None and self.description_template is None:
-            if self.enabled:
-                raise ValidationError(
-                    'Define title_template, description_template, or disable/delete this override.'
-                )
-            return
-        self._validate_template_specs()
-
-    def _validate_template_specs(self) -> None:
         from payload_pipeline.content_templates import (
             TemplateValidationError,
-            merge_template_maps,
+            validate_template,
         )
-
-        base = {
-            'default': {
-                'title': {'parts': [{'text': 'Base'}]},
-                'description': {'blocks': [{'type': 'line', 'text': 'Base'}]},
-            }
-        }
-        override: dict = {self.marketplace: {}}
-        if self.title_template is not None:
-            override[self.marketplace]['title'] = self.title_template
-        if self.description_template is not None:
-            override[self.marketplace]['description'] = self.description_template
-
         try:
-            merge_template_maps(base, override)
+            validate_template(
+                self.body,
+                template_type=self.template_type,
+            )
         except TemplateValidationError as exc:
-            raise ValidationError(str(exc)) from exc
+            raise ValidationError({'body': str(exc)}) from exc
 
 
 class SubplatformLimit(models.Model):
