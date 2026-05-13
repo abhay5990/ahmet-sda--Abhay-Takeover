@@ -494,27 +494,9 @@ def _clone_pa_offer(
     """Create a single PA clone offer with new credentials."""
     payload = dict(original_payload)
 
-    # Replace credentials in PA delivery format
+    # Replace credentials with platform-aware format
     product = item.owned_product
-    delivery_lines = [
-        f"Rockstar Login -> {product.login}",
-        f"Rockstar Password -> {product.password}",
-    ]
-    if product.email:
-        delivery_lines.append(f"E-mail -> {product.email}")
-        if product.email_password:
-            delivery_lines.append(f"E-mail Password -> {product.email_password}")
-    if product.security_email:
-        delivery_lines.append(f"Security Email -> {product.security_email}")
-        if product.security_email_password:
-            delivery_lines.append(f"Security Email Password -> {product.security_email_password}")
-
-    raw = product.raw_data or {}
-    birthday = raw.get('birthday', '')
-    if birthday:
-        delivery_lines.append(f"Birthday -> {birthday}")
-
-    payload['delivery'] = "\n".join(delivery_lines)
+    payload['delivery'] = format_credential_for_marketplace(product, 'playerauctions')
 
     result = client.create_offer(payload, proxy_group=proxy_group)
     if not result.ok:

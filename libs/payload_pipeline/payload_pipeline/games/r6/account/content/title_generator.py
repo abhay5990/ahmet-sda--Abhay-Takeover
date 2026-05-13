@@ -28,7 +28,6 @@ class R6ResolvedTitleGenerator:
         *,
         site: str = "default",
     ) -> str:
-        include_s4g = site.lower() != "g2g"
         max_length = _SITE_MAX_LENGTHS.get(site.lower(), _DEFAULT_MAX_LENGTH)
 
         if account.inventory.has_data:
@@ -36,7 +35,7 @@ class R6ResolvedTitleGenerator:
         else:
             parts = self._build_basic(account)
 
-        return self._assemble(parts, max_length=max_length, include_s4g=include_s4g)
+        return self._assemble(parts, max_length=max_length)
 
     # ------------------------------------------------------------------
     # Build paths
@@ -162,23 +161,19 @@ class R6ResolvedTitleGenerator:
             return f"{count}x{peak}"
         return peak
 
-    def _assemble(self, parts: list[str], max_length: int, include_s4g: bool) -> str:
+    def _assemble(self, parts: list[str], max_length: int) -> str:
         final: list[str] = []
         current_length = 0
         sep = " | "
         sep_len = len(sep)
-        reserved = (len("S4G") + sep_len) if include_s4g else 0
 
         for part in parts:
             if not part:
                 continue
             part_len = len(part) + (sep_len if final else 0)
-            if current_length + part_len > max_length - reserved:
+            if current_length + part_len > max_length:
                 break
             final.append(part)
             current_length += part_len
-
-        if include_s4g:
-            final.append("S4G")
 
         return sep.join(final)

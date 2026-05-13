@@ -20,7 +20,7 @@
                        @input="gameOpen = true"
                        :placeholder="selectedGame ? GAME_NAMES[selectedGame] : 'Type to search...'"
                        class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
-                <div x-show="gameOpen && gameSearch.length > 0" x-transition
+                <div x-show="gameOpen" x-transition
                      class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
                     {% for game in games %}
                     <button type="button"
@@ -63,6 +63,11 @@
                     <input type="radio" value="manual" x-model="sourceType"
                            class="text-emerald-600 focus:ring-emerald-500">
                     <span class="text-sm text-gray-700">Manual Entry</span>
+                </label>
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" value="sheet" x-model="sourceType"
+                           class="text-emerald-600 focus:ring-emerald-500">
+                    <span class="text-sm text-gray-700">Google Sheet</span>
                 </label>
             </div>
         </div>
@@ -142,6 +147,7 @@
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1">Platform *</label>
                                 <select x-model="manualPlatform"
+                                        @change="credentials = []"
                                         class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
                                     <option value="">Select...</option>
                                     <template x-for="p in platformOptions" :key="p">
@@ -203,13 +209,25 @@
                 <!-- ===== CREDENTIALS ===== -->
                 <div class="bg-white rounded-lg shadow p-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Credentials</label>
-                    <p class="text-xs text-gray-500 mb-2">
-                        Paste tab-separated data from Excel. Columns auto-detected:
-                        <code class="bg-gray-100 px-1 rounded">login  password</code> +
-                        optional <code class="bg-gray-100 px-1 rounded">email  email_pass  email_link  birthday</code>
-                    </p>
+                    <template x-if="credentialSpec">
+                        <p class="text-xs text-gray-500 mb-2">
+                            Paste tab-separated data. Columns (in order):
+                            <template x-for="(col, i) in credentialSpec" :key="col.key">
+                                <code class="bg-gray-100 px-1 rounded" x-text="col.label"></code>
+                            </template>
+                        </p>
+                    </template>
+                    <template x-if="!credentialSpec">
+                        <p class="text-xs text-gray-500 mb-2">
+                            Paste tab-separated data from Excel. Columns auto-detected:
+                            <code class="bg-gray-100 px-1 rounded">login  password</code> +
+                            optional <code class="bg-gray-100 px-1 rounded">email  email_pass  email_link  birthday</code>
+                        </p>
+                    </template>
                     <textarea x-model="pasteData" @paste="handlePaste($event)" rows="4"
-                              placeholder="Paste tab-separated data here (login&#9;password&#9;...)&#10;Columns are auto-detected by content"
+                              :placeholder="credentialSpec
+                                  ? 'Paste tab-separated: ' + credentialSpec.map(c => c.label).join(' \\t ')
+                                  : 'Paste tab-separated data here (login\\tpassword\\t...)\\nColumns are auto-detected by content'"
                               class="w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 font-mono text-xs"></textarea>
                     <div class="flex items-center space-x-3 mt-2">
                         <button @click="parsePaste()" type="button"
@@ -224,37 +242,29 @@
                     </div>
                 </div>
 
-                <!-- Credential Table -->
+                <!-- Credential Table (dynamic columns) -->
                 <div class="bg-white rounded-lg shadow overflow-x-auto" x-show="credentials.length > 0">
                     <table class="min-w-full text-xs">
                         <thead class="bg-gray-50 border-b">
                             <tr>
                                 <th class="px-2 py-2 text-left text-gray-500 font-medium">#</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Login *</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Password *</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Email</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Email Pass</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Email Link</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Sec. Email</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Sec. Email Pass</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Sec. Email Link</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Birthday</th>
+                                <template x-for="col in credentialColumns" :key="col.key">
+                                    <th class="px-2 py-2 text-left text-gray-500 font-medium" x-text="col.label"></th>
+                                </template>
                                 <th class="px-2 py-2"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <template x-for="(cred, idx) in credentials" :key="idx">
-                                <tr class="border-b hover:bg-gray-50" :class="{'bg-red-50': !cred.login || !cred.password}">
+                                <tr class="border-b hover:bg-gray-50" :class="{'bg-red-50': !cred[credentialColumns[0].key] || !cred[credentialColumns[1].key]}">
                                     <td class="px-2 py-1 text-gray-400" x-text="idx + 1"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.login" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.password" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.email" class="w-28 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.email_password" class="w-20 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.email_login_link" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.security_email" class="w-28 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.security_email_password" class="w-20 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.security_email_login_link" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.birthday" class="w-20 text-xs border-gray-300 rounded px-1 py-0.5"></td>
+                                    <template x-for="(col, colIdx) in credentialColumns" :key="col.key">
+                                        <td class="px-1 py-1">
+                                            <input type="text" x-model="cred[col.key]"
+                                                   @paste.prevent="handleCellPaste($event, idx, colIdx)"
+                                                   class="w-24 text-xs border-gray-300 rounded px-1 py-0.5">
+                                        </td>
+                                    </template>
                                     <td class="px-1 py-1">
                                         <button @click="credentials.splice(idx, 1)" type="button"
                                                 class="text-red-400 hover:text-red-600">
@@ -320,6 +330,114 @@
                     </div>
                 </div>
 
+            </div>
+        </template>
+
+        <!-- Google Sheet mode (Fortnite) -->
+        <template x-if="sourceType === 'sheet'">
+            <div class="space-y-4">
+                <div class="bg-white rounded-lg shadow p-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Google Sheet — Fortnite Manual</label>
+                    <p class="text-xs text-gray-500 mb-4">
+                        Enter your Google Sheet ID or URL, choose a worksheet name, then prepare the sheet and fill in account data.
+                    </p>
+
+                    <!-- Spreadsheet ID / Link -->
+                    <div class="mb-3">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Spreadsheet ID or Link</label>
+                        <input type="text" x-model="sheetSpreadsheetInput"
+                               placeholder="https://docs.google.com/spreadsheets/d/... or just the ID"
+                               class="w-full border-gray-300 rounded-md shadow-sm text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+
+                    <!-- Sheet (worksheet) name -->
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Worksheet Name</label>
+                        <input type="text" x-model="sheetWorksheetName"
+                               placeholder="FORTNITE MANUAL"
+                               class="w-full border-gray-300 rounded-md shadow-sm text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                        <button @click="prepareFortniteSheet()" type="button"
+                                :disabled="sheetLoading || !sheetSpreadsheetInput.trim()"
+                                class="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-md hover:bg-emerald-700 disabled:opacity-50 transition-colors">
+                            <span x-show="!sheetLoading">Prepare Sheet</span>
+                            <span x-show="sheetLoading">Preparing...</span>
+                        </button>
+                        <button @click="fetchSheetAccounts()" type="button"
+                                :disabled="sheetFetching || (!sheetSpreadsheetId && !sheetSpreadsheetInput.trim())"
+                                class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors">
+                            <span x-show="!sheetFetching">Fetch Accounts</span>
+                            <span x-show="sheetFetching">Fetching...</span>
+                        </button>
+                    </div>
+
+                    <!-- Sheet URL display -->
+                    <template x-if="sheetUrl">
+                        <p class="mt-3 text-xs text-gray-500">
+                            Sheet: <a :href="sheetUrl" target="_blank" class="text-emerald-600 underline" x-text="sheetUrl"></a>
+                        </p>
+                    </template>
+                    <!-- Success message -->
+                    <template x-if="sheetSuccess">
+                        <p class="mt-3 text-xs text-emerald-600" x-text="sheetSuccess"></p>
+                    </template>
+                    <!-- Errors -->
+                    <template x-if="sheetError">
+                        <p class="mt-3 text-xs text-red-600" x-text="sheetError"></p>
+                    </template>
+                </div>
+
+                <!-- Fetched accounts preview -->
+                <template x-if="sheetAccounts.length > 0">
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="p-4 border-b bg-gray-50 flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-700">
+                                Fetched Accounts: <span class="text-emerald-600" x-text="sheetAccounts.length"></span>
+                            </span>
+                            <button @click="sheetAccounts = []" type="button"
+                                    class="text-xs text-gray-500 hover:text-red-600">Clear</button>
+                        </div>
+                        <div class="max-h-64 overflow-y-auto">
+                            <table class="min-w-full text-xs">
+                                <thead class="bg-gray-50 border-b sticky top-0">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left text-gray-500 font-medium">#</th>
+                                        <th class="px-3 py-2 text-left text-gray-500 font-medium">Mail</th>
+                                        <th class="px-3 py-2 text-left text-gray-500 font-medium">Platform</th>
+                                        <th class="px-3 py-2 text-left text-gray-500 font-medium">Title</th>
+                                        <th class="px-3 py-2 text-left text-gray-500 font-medium">Price</th>
+                                        <th class="px-3 py-2 text-left text-gray-500 font-medium">Items</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <template x-for="(acc, idx) in sheetAccounts" :key="idx">
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-3 py-1.5 text-gray-400" x-text="idx + 1"></td>
+                                            <td class="px-3 py-1.5 font-mono" x-text="acc.mail"></td>
+                                            <td class="px-3 py-1.5" x-text="acc.platforms.join('/')"></td>
+                                            <td class="px-3 py-1.5 max-w-xs truncate" x-text="acc.title"></td>
+                                            <td class="px-3 py-1.5 text-emerald-700" x-text="'$' + acc.sales_price"></td>
+                                            <td class="px-3 py-1.5 text-gray-500" x-text="acc.parsed_items.outfits + ' outfits'"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Sheet fetch errors -->
+                        <template x-if="sheetFetchErrors.length > 0">
+                            <div class="p-3 border-t bg-red-50">
+                                <p class="text-xs font-medium text-red-700 mb-1">Errors:</p>
+                                <ul class="text-xs text-red-600 space-y-0.5">
+                                    <template x-for="err in sheetFetchErrors" :key="err">
+                                        <li x-text="err"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
+                    </div>
+                </template>
             </div>
         </template>
 
@@ -413,18 +531,24 @@
                                 <label class="block text-xs text-gray-500 mb-1">Low (&le;$10)</label>
                                 <input type="number" step="0.01"
                                        x-model="defaults['{{ store.slug }}'].multiplier_low"
+                                       :disabled="sourceType === 'sheet'"
+                                       :class="sourceType === 'sheet' ? 'bg-gray-100 cursor-not-allowed' : ''"
                                        class="w-full text-sm border-gray-300 rounded-md">
                             </div>
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1">Mid ($10-$100)</label>
                                 <input type="number" step="0.01"
                                        x-model="defaults['{{ store.slug }}'].multiplier_mid"
+                                       :disabled="sourceType === 'sheet'"
+                                       :class="sourceType === 'sheet' ? 'bg-gray-100 cursor-not-allowed' : ''"
                                        class="w-full text-sm border-gray-300 rounded-md">
                             </div>
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1">High (&gt;$100)</label>
                                 <input type="number" step="0.01"
                                        x-model="defaults['{{ store.slug }}'].multiplier_high"
+                                       :disabled="sourceType === 'sheet'"
+                                       :class="sourceType === 'sheet' ? 'bg-gray-100 cursor-not-allowed' : ''"
                                        class="w-full text-sm border-gray-300 rounded-md">
                             </div>
                             <div>
@@ -439,6 +563,14 @@
                                        x-model="defaults['{{ store.slug }}'].forced_ending"
                                        class="w-full text-sm border-gray-300 rounded-md">
                             </div>
+                            {% if store.provider == 'gameboost' %}
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">USD→EUR Rate</label>
+                                <input type="number" step="0.0001" placeholder="0.87"
+                                       x-model="defaults['{{ store.slug }}'].exchange_rate"
+                                       class="w-full text-sm border-gray-300 rounded-md">
+                            </div>
+                            {% endif %}
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1">Sub-Platform</label>
                                 <select x-model="defaults['{{ store.slug }}'].sub_platform"
@@ -507,13 +639,101 @@ const GTA_ACCOUNT_TAGS = [
     'High Level Account', 'Billionaire Account', 'Rare Account', 'Starter Account',
 ];
 
+// ── Platform-aware credential column specs ──
+// Each entry: { key: field name in credential object, label: display header }
+const _EMAIL_CHAIN = [
+    { key: 'email', label: 'Email' },
+    { key: 'email_password', label: 'Email Pass' },
+    { key: 'email_login_link', label: 'Email Link' },
+];
+const _SEC_EMAIL_CHAIN = [
+    { key: 'security_email', label: 'Sec. Email' },
+    { key: 'security_email_password', label: 'Sec. Email Pass' },
+    { key: 'security_email_login_link', label: 'Sec. Email Link' },
+];
+
+const GTA_CREDENTIAL_SPECS = {
+    'PlayStation 4': [
+        { key: 'psn_id', label: 'PSN ID' }, { key: 'psn_pass', label: 'PSN Pass' },
+        ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+        { key: 'dob', label: 'DoB' },
+    ],
+    'PlayStation 5': [
+        { key: 'psn_id', label: 'PSN ID' }, { key: 'psn_pass', label: 'PSN Pass' },
+        ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+        { key: 'dob', label: 'DoB' },
+    ],
+    'Xbox One': [
+        { key: 'xbox_id', label: 'Xbox ID' }, { key: 'xbox_pass', label: 'Xbox Pass' },
+        ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+    ],
+    'Xbox Series X/S': [
+        { key: 'xbox_id', label: 'Xbox ID' }, { key: 'xbox_pass', label: 'Xbox Pass' },
+        ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+    ],
+    'PC - Legacy': [
+        { key: 'steam_id', label: 'Steam ID' }, { key: 'steam_pass', label: 'Steam Pass' },
+        { key: 'rock_id', label: 'Rock ID' }, { key: 'rock_pass', label: 'Rock Pass' },
+        ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+    ],
+    'PC - Enhanced': [
+        { key: 'steam_id', label: 'Steam ID' }, { key: 'steam_pass', label: 'Steam Pass' },
+        { key: 'rock_id', label: 'Rock ID' }, { key: 'rock_pass', label: 'Rock Pass' },
+        ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+    ],
+};
+
+// Default (non-GTA) column spec
+const DEFAULT_CREDENTIAL_SPEC = [
+    { key: 'login', label: 'Login *' }, { key: 'password', label: 'Password *' },
+    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+    { key: 'birthday', label: 'Birthday' },
+];
+
 // Date pattern: digits with / or - separators (e.g. 3/10/1989, 1989-03-10, 10.03.1989)
 const DATE_RE = /^\d{1,4}[\/.\\-]\d{1,2}[\/.\\-]\d{1,4}$/;
 // URL/domain pattern (e.g. firstmail.ltd/webmail, https://outlook.com)
 const LINK_RE = /^(https?:\/\/)?[a-z0-9.-]+\.[a-z]{2,}/i;
 
 /**
- * Auto-detect column mapping for a row of tab-separated cells.
+ * Get the credential column spec for the current context.
+ * For GTA games with a platform selected, returns platform-specific columns.
+ * Otherwise returns the default auto-detect columns.
+ */
+function getCredentialSpec(platform) {
+    return GTA_CREDENTIAL_SPECS[platform] || null;
+}
+
+/**
+ * Parse tab-separated cells using a platform-specific column spec.
+ * Columns are positional (1:1 mapping with spec), then a validation
+ * pass fixes obvious misplacements (e.g. date in a non-date field).
+ */
+function parseBySpec(cells, spec) {
+    const cred = {};
+    for (const col of spec) cred[col.key] = '';
+    for (let i = 0; i < Math.min(cells.length, spec.length); i++) {
+        cred[spec[i].key] = cells[i].trim();
+    }
+
+    // Post-parse fix: if a date-like value ended up in a non-date field,
+    // move it to the 'dob' column (if spec has one and it's empty).
+    const dobCol = spec.find(c => c.key === 'dob');
+    if (dobCol && !cred.dob) {
+        for (const col of spec) {
+            if (col.key === 'dob') continue;
+            if (cred[col.key] && DATE_RE.test(cred[col.key])) {
+                cred.dob = cred[col.key];
+                cred[col.key] = '';
+                break;
+            }
+        }
+    }
+    return cred;
+}
+
+/**
+ * Auto-detect column mapping for a row of tab-separated cells (default/non-GTA).
  * First two columns are always login, password.
  * Remaining columns detected by content:
  *   - contains @ -> email (1st) / security_email (2nd)
@@ -558,6 +778,12 @@ function emptyCredential() {
     };
 }
 
+function emptyCredentialForSpec(spec) {
+    const cred = {};
+    for (const col of spec) cred[col.key] = '';
+    return cred;
+}
+
 function stockStart() {
     return {
         selectedGame: new URLSearchParams(window.location.search).get('game') || '',
@@ -582,6 +808,17 @@ function stockStart() {
         credentials: [],
         pasteData: '',
         distribution: {},
+        // Sheet mode (Fortnite)
+        sheetSpreadsheetInput: '',
+        sheetSpreadsheetId: '',
+        sheetWorksheetName: 'FORTNITE MANUAL',
+        sheetLoading: false,
+        sheetFetching: false,
+        sheetUrl: '',
+        sheetError: '',
+        sheetSuccess: '',
+        sheetAccounts: [],
+        sheetFetchErrors: [],
         // Shared
         selectedStores: [],
         defaults: {},
@@ -594,16 +831,31 @@ function stockStart() {
             return this.logins.split('\n').filter(l => l.trim()).length;
         },
 
+        get credentialSpec() {
+            if (this.isGtaGame && this.manualPlatform) {
+                return getCredentialSpec(this.manualPlatform);
+            }
+            return null;
+        },
+
+        get credentialColumns() {
+            return this.credentialSpec || DEFAULT_CREDENTIAL_SPEC;
+        },
+
         get canSubmit() {
             if (!this.selectedGame || this.selectedStores.length === 0) return false;
             if (this.sourceType === 'account') {
                 return this.loginCount > 0;
             }
+            if (this.sourceType === 'sheet') {
+                return this.sheetAccounts.length > 0;
+            }
             // Manual mode
             if (this.isGtaGame && !this.manualPlatform) return false;
             if (!this.manualPurchasedPrice || this.manualPurchasedPrice <= 0) return false;
             if (this.credentials.length === 0) return false;
-            const valid = this.credentials.every(c => c.login && c.password);
+            const cols = this.credentialColumns;
+            const valid = this.credentials.every(c => c[cols[0].key] && c[cols[1].key]);
             if (!valid) return false;
             if (this.distributionMode === 'shared' && this.totalDistributed > this.credentials.length) return false;
             return true;
@@ -637,7 +889,9 @@ function stockStart() {
             if (!this.defaults['{{ store.slug }}']) {
                 this.defaults['{{ store.slug }}'] = {
                     multiplier_low: '2.00', multiplier_mid: '1.80', multiplier_high: '1.50',
-                    min_price: '0.00', forced_ending: '0.99', sub_platform: '', account_type: '',
+                    min_price: '0.00', forced_ending: '0.99',
+                    {% if store.provider == 'gameboost' %}exchange_rate: '0.87',{% endif %}
+                    sub_platform: '', account_type: '',
                     title_template_id: null, description_template_id: null,
                     {% if store.provider == 'playerauctions' %}pa_mode: 'bulk',{% endif %}
                 };
@@ -647,6 +901,17 @@ function stockStart() {
             {% endfor %}
 
             if (this.selectedGame) this.onGameChange();
+
+            // Sheet mode: force multipliers to 1.0 (sales_price is final)
+            this.$watch('sourceType', (val) => {
+                if (val === 'sheet') {
+                    for (const slug of Object.keys(this.defaults)) {
+                        this.defaults[slug].multiplier_low = '1.00';
+                        this.defaults[slug].multiplier_mid = '1.00';
+                        this.defaults[slug].multiplier_high = '1.00';
+                    }
+                }
+            });
         },
 
         async onGameChange() {
@@ -719,8 +984,12 @@ function stockStart() {
             const lines = this.pasteData.trim().split('\n');
             if (lines.length === 0) return;
 
+            const spec = this.credentialSpec;
+
             // Detect if first line is a header
-            const headerKeys = ['login', 'password', 'email', 'birthday'];
+            const headerKeys = spec
+                ? spec.map(c => c.label.toLowerCase())
+                : ['login', 'password', 'email', 'birthday'];
             const firstCells = lines[0].split('\t');
             const isHeader = firstCells.some(c =>
                 headerKeys.includes(c.trim().toLowerCase())
@@ -730,13 +999,70 @@ function stockStart() {
             for (const line of dataLines) {
                 if (!line.trim()) continue;
                 const cells = line.split('\t');
-                this.credentials.push(detectColumns(cells));
+                this.credentials.push(
+                    spec ? parseBySpec(cells, spec) : detectColumns(cells)
+                );
             }
             this.pasteData = '';
         },
 
         addEmptyRow() {
-            this.credentials.push(emptyCredential());
+            const spec = this.credentialSpec;
+            this.credentials.push(
+                spec ? emptyCredentialForSpec(spec) : emptyCredential()
+            );
+        },
+
+        handleCellPaste(event, rowIdx, colIdx) {
+            const text = (event.clipboardData || window.clipboardData).getData('text');
+            if (!text) return;
+
+            const cols = this.credentialColumns;
+            const spec = this.credentialSpec;
+            const lines = text.split('\n').filter(l => l.trim());
+
+            // Single value (no tabs, no newlines) → just fill the current cell
+            if (lines.length === 1 && !lines[0].includes('\t')) {
+                this.credentials[rowIdx][cols[colIdx].key] = lines[0].trim();
+                return;
+            }
+
+            // Multi-cell paste (Excel/Sheets style)
+            for (let r = 0; r < lines.length; r++) {
+                const cells = lines[r].split('\t');
+                const targetRow = rowIdx + r;
+
+                // Add new rows if needed
+                while (targetRow >= this.credentials.length) {
+                    this.credentials.push(
+                        spec ? emptyCredentialForSpec(spec) : emptyCredential()
+                    );
+                }
+
+                // Fill from colIdx onward
+                for (let c = 0; c < cells.length; c++) {
+                    const targetCol = colIdx + c;
+                    if (targetCol < cols.length) {
+                        this.credentials[targetRow][cols[targetCol].key] = cells[c].trim();
+                    }
+                }
+
+                // Date fix for this row
+                if (spec) {
+                    const cred = this.credentials[targetRow];
+                    const dobCol = spec.find(s => s.key === 'dob');
+                    if (dobCol && !cred.dob) {
+                        for (const col of spec) {
+                            if (col.key === 'dob') continue;
+                            if (cred[col.key] && DATE_RE.test(cred[col.key])) {
+                                cred.dob = cred[col.key];
+                                cred[col.key] = '';
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         },
 
         // --- Preview & Submit ---
@@ -760,6 +1086,16 @@ function stockStart() {
                     stores: storeIds,
                     defaults: defaultsPayload,
                     source_account_id: this.sourceAccountId ? Number(this.sourceAccountId) : null,
+                };
+            }
+
+            if (this.sourceType === 'sheet') {
+                return {
+                    source_type: 'sheet',
+                    game_id: Number(this.selectedGame),
+                    stores: storeIds,
+                    defaults: defaultsPayload,
+                    accounts: this.sheetAccounts,
                 };
             }
 
@@ -791,6 +1127,85 @@ function stockStart() {
                 distribution_mode: this.distributionMode,
                 distribution: distrib,
             };
+        },
+
+        // --- Google Sheet (Fortnite) methods ---
+        _parseSpreadsheetId(input) {
+            input = input.trim();
+            // Extract ID from URL: https://docs.google.com/spreadsheets/d/{ID}/...
+            const match = input.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+            if (match) return match[1];
+            // Already an ID (no slashes)
+            if (!input.includes('/')) return input;
+            return '';
+        },
+
+        async prepareFortniteSheet() {
+            const ssId = this._parseSpreadsheetId(this.sheetSpreadsheetInput);
+            if (!ssId) {
+                this.sheetError = 'Invalid spreadsheet ID or URL.';
+                return;
+            }
+            this.sheetLoading = true;
+            this.sheetError = '';
+            this.sheetSuccess = '';
+            try {
+                const resp = await fetch('/posting/api/manual/fortnite/sheet/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify({
+                        spreadsheet_id: ssId,
+                        sheet_name: this.sheetWorksheetName.trim() || 'FORTNITE MANUAL',
+                    }),
+                });
+                const data = await resp.json();
+                if (!resp.ok) {
+                    this.sheetError = data.error || 'Failed to prepare sheet';
+                } else {
+                    this.sheetSpreadsheetId = ssId;
+                    this.sheetUrl = data.url;
+                    this.sheetSuccess = data.message || 'Sheet ready! Fill in your accounts and click Fetch.';
+                    if (data.url) window.open(data.url, '_blank');
+                }
+            } catch (e) {
+                this.sheetError = 'Network error: ' + e.message;
+            } finally {
+                this.sheetLoading = false;
+            }
+        },
+
+        async fetchSheetAccounts() {
+            // Allow direct fetch without prepare — parse ID from input if needed
+            const ssId = this.sheetSpreadsheetId || this._parseSpreadsheetId(this.sheetSpreadsheetInput);
+            if (!ssId) {
+                this.sheetError = 'Enter a spreadsheet ID or URL first.';
+                return;
+            }
+            this.sheetSpreadsheetId = ssId;
+            this.sheetFetching = true;
+            this.sheetError = '';
+            this.sheetSuccess = '';
+            this.sheetFetchErrors = [];
+            try {
+                const wsName = this.sheetWorksheetName.trim() || 'FORTNITE MANUAL';
+                const resp = await fetch(`/posting/api/manual/fortnite/accounts/?spreadsheet_id=${encodeURIComponent(ssId)}&sheet_name=${encodeURIComponent(wsName)}`, {
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                });
+                const data = await resp.json();
+                if (!resp.ok) {
+                    this.sheetError = data.error || 'Failed to fetch accounts';
+                } else {
+                    this.sheetAccounts = data.accounts || [];
+                    this.sheetFetchErrors = data.errors || [];
+                }
+            } catch (e) {
+                this.sheetError = 'Network error: ' + e.message;
+            } finally {
+                this.sheetFetching = false;
+            }
         },
 
         async submitJob() {

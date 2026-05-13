@@ -32,11 +32,15 @@ def extract_title_from_payload(payload: dict, marketplace: str) -> str:
 def extract_currency_from_payload(payload: dict, marketplace: str) -> str:
     """Extract the currency from the payload sent to the marketplace.
 
-    Only Eldorado carries an explicit currency; others default to USD.
+    Eldorado carries an explicit currency field.
+    Gameboost accepts EUR (price is converted via exchange_rate before posting).
+    Others default to USD.
     """
     if marketplace == 'eldorado':
         pricing = payload.get('details', {}).get('pricing', {})
         return pricing.get('pricePerUnit', {}).get('currency', 'USD')
+    if marketplace == 'gameboost':
+        return 'EUR'
     return 'USD'
 
 
@@ -54,11 +58,11 @@ def _response_to_dict(data: Any) -> dict:
 
 
 def extract_price_from_response(response_data: Any, marketplace: str) -> Decimal | None:
-    """Extract the confirmed USD price from a marketplace API response.
+    """Extract the confirmed price from a marketplace API response.
 
     Returns None if the response doesn't carry a usable price.
 
-    Gameboost:  data.price_usd.value  (converted to seller's USD)
+    Gameboost:  data.price.value (EUR — the posted currency)
     Eldorado:   pricePerUnitInUSD.amount  (flat response) or pricePerUnit.amount
     PA:         response only has offer_id — no price returned.
     """
@@ -70,6 +74,11 @@ def extract_price_from_response(response_data: Any, marketplace: str) -> Decimal
         if marketplace == 'gameboost':
             inner = data.get('data', {})
             if isinstance(inner, dict):
+                # Prefer EUR price (the currency we post in)
+                price_eur = inner.get('price', {})
+                if isinstance(price_eur, dict) and price_eur.get('value') is not None:
+                    return Decimal(str(price_eur['value']))
+                # Fallback to price_usd if EUR not available
                 price_usd = inner.get('price_usd', {})
                 if isinstance(price_usd, dict) and price_usd.get('value') is not None:
                     return Decimal(str(price_usd['value']))

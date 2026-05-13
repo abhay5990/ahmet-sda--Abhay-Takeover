@@ -199,13 +199,25 @@
                 <!-- Credentials (optional) -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Initial Credentials (optional)</label>
-                    <p class="text-xs text-gray-500 mb-2">
-                        Paste tab-separated data. Columns auto-detected:
-                        <code class="bg-gray-100 px-1 rounded">login  password</code> +
-                        optional <code class="bg-gray-100 px-1 rounded">email  email_pass  email_link  birthday</code>
-                    </p>
+                    <template x-if="credentialSpec">
+                        <p class="text-xs text-gray-500 mb-2">
+                            Paste tab-separated data. Columns (in order):
+                            <template x-for="col in credentialColumns" :key="col.key">
+                                <code class="bg-gray-100 px-1 rounded" x-text="col.label"></code>
+                            </template>
+                        </p>
+                    </template>
+                    <template x-if="!credentialSpec">
+                        <p class="text-xs text-gray-500 mb-2">
+                            Paste tab-separated data. Columns auto-detected:
+                            <code class="bg-gray-100 px-1 rounded">login  password</code> +
+                            optional <code class="bg-gray-100 px-1 rounded">email  email_pass  email_link  birthday</code>
+                        </p>
+                    </template>
                     <textarea x-model="createForm.pasteData" rows="3"
-                              placeholder="Paste tab-separated data here (login&#9;password&#9;...)&#10;Columns are auto-detected by content"
+                              :placeholder="credentialSpec
+                                  ? 'Paste tab-separated: ' + credentialColumns.map(c => c.label).join(' \\t ')
+                                  : 'Paste tab-separated data here (login\\tpassword\\t...)\\nColumns are auto-detected by content'"
                               class="w-full border rounded-lg px-3 py-2 text-sm font-mono"></textarea>
                     <div class="flex items-center gap-3 mt-2">
                         <button @click="parsePaste()" type="button"
@@ -220,35 +232,29 @@
                     </div>
                 </div>
 
-                <!-- Credential Table -->
+                <!-- Credential Table (dynamic columns) -->
                 <div class="mb-4 overflow-x-auto" x-show="credentials.length > 0">
                     <table class="min-w-full text-xs">
                         <thead class="bg-gray-50 border-b">
                             <tr>
                                 <th class="px-2 py-2 text-left text-gray-500 font-medium">#</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Login *</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Password *</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Email</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Email Pass</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Email Link</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Sec. Email</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Sec. Pass</th>
-                                <th class="px-2 py-2 text-left text-gray-500 font-medium">Birthday</th>
+                                <template x-for="col in credentialColumns" :key="col.key">
+                                    <th class="px-2 py-2 text-left text-gray-500 font-medium" x-text="col.label"></th>
+                                </template>
                                 <th class="px-2 py-2"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <template x-for="(cred, idx) in credentials" :key="idx">
-                                <tr class="border-b hover:bg-gray-50" :class="{'bg-red-50': !cred.login || !cred.password}">
+                                <tr class="border-b hover:bg-gray-50" :class="{'bg-red-50': !cred[credentialColumns[0].key] || !cred[credentialColumns[1].key]}">
                                     <td class="px-2 py-1 text-gray-400" x-text="idx + 1"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.login" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.password" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.email" class="w-28 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.email_password" class="w-20 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.email_login_link" class="w-24 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.security_email" class="w-28 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.security_email_password" class="w-20 text-xs border-gray-300 rounded px-1 py-0.5"></td>
-                                    <td class="px-1 py-1"><input type="text" x-model="cred.birthday" class="w-20 text-xs border-gray-300 rounded px-1 py-0.5"></td>
+                                    <template x-for="(col, colIdx) in credentialColumns" :key="col.key">
+                                        <td class="px-1 py-1">
+                                            <input type="text" x-model="cred[col.key]"
+                                                   @paste.prevent="handleCellPaste($event, idx, colIdx)"
+                                                   class="w-24 text-xs border-gray-300 rounded px-1 py-0.5">
+                                        </td>
+                                    </template>
                                     <td class="px-1 py-1">
                                         <button @click="credentials.splice(idx, 1)" type="button"
                                                 class="text-red-400 hover:text-red-600">
@@ -282,25 +288,102 @@
 </div>
 
 <script>
-// Date pattern: digits with / or - separators (e.g. 3/10/1989, 1989-03-10)
+// ── Platform-aware credential column specs ──
+const _EMAIL_CHAIN = [
+    { key: 'email', label: 'Email' },
+    { key: 'email_password', label: 'Email Pass' },
+    { key: 'email_login_link', label: 'Email Link' },
+];
+const _SEC_EMAIL_CHAIN = [
+    { key: 'security_email', label: 'Sec. Email' },
+    { key: 'security_email_password', label: 'Sec. Email Pass' },
+    { key: 'security_email_login_link', label: 'Sec. Email Link' },
+];
+
+const _PSN_SPEC = [
+    { key: 'psn_id', label: 'PSN ID' }, { key: 'psn_pass', label: 'PSN Pass' },
+    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+    { key: 'dob', label: 'DoB' },
+];
+const _XBOX_SPEC = [
+    { key: 'xbox_id', label: 'Xbox ID' }, { key: 'xbox_pass', label: 'Xbox Pass' },
+    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+];
+const _PC_SPEC = [
+    { key: 'steam_id', label: 'Steam ID' }, { key: 'steam_pass', label: 'Steam Pass' },
+    { key: 'rock_id', label: 'Rock ID' }, { key: 'rock_pass', label: 'Rock Pass' },
+    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+];
+
+const _GTA_SPEC_BY_SUBPLATFORM = {
+    'PlayStation 4': _PSN_SPEC,
+    'PlayStation 5': _PSN_SPEC,
+    'Xbox One': _XBOX_SPEC,
+    'Xbox Series X/S': _XBOX_SPEC,
+    'PC - Legacy': _PC_SPEC,
+    'PC - Enhanced': _PC_SPEC,
+};
+
+const _DEFAULT_CREDENTIAL_SPEC = [
+    { key: 'login', label: 'Login *' }, { key: 'password', label: 'Password *' },
+    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
+    { key: 'birthday', label: 'Birthday' },
+];
+
+// Game slug lookup (from Django context)
+const _GAME_SLUGS = {
+    {% for game in games %}'{{ game.id }}': '{{ game.slug }}',{% endfor %}
+};
+
+function _getCredentialSpec(gameSlug, subPlatform) {
+    const isGta = (gameSlug || '').startsWith('grand-theft-auto');
+    if (isGta && subPlatform) {
+        return _GTA_SPEC_BY_SUBPLATFORM[subPlatform] || null;
+    }
+    return null;
+}
+
+// Date/URL patterns
 const DATE_RE = /^\d{1,4}[\/.\\-]\d{1,2}[\/.\\-]\d{1,4}$/;
-// URL/domain pattern
 const LINK_RE = /^(https?:\/\/)?[a-z0-9.-]+\.[a-z]{2,}/i;
 
-function _emptyCredential() {
+function _emptyCredentialForSpec(spec) {
+    if (spec) {
+        const cred = {};
+        for (const col of spec) cred[col.key] = '';
+        return cred;
+    }
     return {
         login: '', password: '', email: '', email_password: '', email_login_link: '',
         security_email: '', security_email_password: '', birthday: '',
     };
 }
 
-/**
- * Auto-detect column mapping for tab-separated cells.
- * First two columns = login, password.
- * Remaining: @ → email, DATE_RE → birthday, LINK_RE → email_login_link, else → email_password.
- */
-function _detectColumns(cells) {
-    const cred = _emptyCredential();
+function _parseBySpec(cells, spec) {
+    const cred = _emptyCredentialForSpec(spec);
+    for (let i = 0; i < Math.min(cells.length, spec.length); i++) {
+        cred[spec[i].key] = cells[i].trim();
+    }
+    const dobCol = spec.find(c => c.key === 'dob');
+    if (dobCol && !cred.dob) {
+        for (const col of spec) {
+            if (col.key === 'dob') continue;
+            if (cred[col.key] && DATE_RE.test(cred[col.key])) {
+                cred.dob = cred[col.key];
+                cred[col.key] = '';
+                break;
+            }
+        }
+    }
+    return cred;
+}
+
+function _detectColumns(cells, spec) {
+    // Platform-specific: positional parsing
+    if (spec) return _parseBySpec(cells, spec);
+
+    // Default: auto-detect
+    const cred = _emptyCredentialForSpec(null);
     if (cells.length >= 1) cred.login = cells[0].trim();
     if (cells.length >= 2) cred.password = cells[1].trim();
 
@@ -330,10 +413,14 @@ function restockManager() {
         creating: false,
         listingResults: [],
         credentials: [],
+        credentialSpec: null,
+        credentialColumns: _DEFAULT_CREDENTIAL_SPEC,
         createForm: {
             listing_id: null,
             selectedTitle: '',
             selectedMeta: '',
+            selectedGameSlug: '',
+            selectedSubPlatform: '',
             gameFilter: '',
             storeFilter: '',
             listingSearch: '',
@@ -374,13 +461,24 @@ function restockManager() {
             this.createForm.listing_id = lst.id;
             this.createForm.selectedTitle = lst.title;
             this.createForm.selectedMeta = `${lst.store} · ${lst.marketplace} · $${lst.price}`;
+            this.createForm.selectedGameSlug = _GAME_SLUGS[lst.game_id] || '';
+            this.createForm.selectedSubPlatform = lst.sub_platform || '';
             this.listingResults = [];
+            // Update credential spec based on selected listing
+            this.credentialSpec = _getCredentialSpec(this.createForm.selectedGameSlug, this.createForm.selectedSubPlatform);
+            this.credentialColumns = this.credentialSpec || _DEFAULT_CREDENTIAL_SPEC;
+            this.credentials = [];  // Reset credentials when listing changes
         },
 
         clearListing() {
             this.createForm.listing_id = null;
             this.createForm.selectedTitle = '';
             this.createForm.selectedMeta = '';
+            this.createForm.selectedGameSlug = '';
+            this.createForm.selectedSubPlatform = '';
+            this.credentialSpec = null;
+            this.credentialColumns = _DEFAULT_CREDENTIAL_SPEC;
+            this.credentials = [];
         },
 
         parsePaste() {
@@ -389,8 +487,10 @@ function restockManager() {
             const lines = text.trim().split('\n');
             if (lines.length === 0) return;
 
-            // Detect header row
-            const headerKeys = ['login', 'password', 'email', 'birthday'];
+            const spec = this.credentialSpec;
+            const headerKeys = spec
+                ? spec.map(c => c.label.toLowerCase())
+                : ['login', 'password', 'email', 'birthday'];
             const firstCells = lines[0].split('\t');
             const isHeader = firstCells.some(c => headerKeys.includes(c.trim().toLowerCase()));
             const dataLines = isHeader ? lines.slice(1) : lines;
@@ -398,13 +498,58 @@ function restockManager() {
             for (const line of dataLines) {
                 if (!line.trim()) continue;
                 const cells = line.split('\t');
-                this.credentials.push(_detectColumns(cells));
+                this.credentials.push(_detectColumns(cells, spec));
             }
             this.createForm.pasteData = '';
         },
 
         addEmptyRow() {
-            this.credentials.push(_emptyCredential());
+            this.credentials.push(_emptyCredentialForSpec(this.credentialSpec));
+        },
+
+        handleCellPaste(event, rowIdx, colIdx) {
+            const text = (event.clipboardData || window.clipboardData).getData('text');
+            if (!text) return;
+
+            const cols = this.credentialColumns;
+            const spec = this.credentialSpec;
+            const lines = text.split('\n').filter(l => l.trim());
+
+            if (lines.length === 1 && !lines[0].includes('\t')) {
+                this.credentials[rowIdx][cols[colIdx].key] = lines[0].trim();
+                return;
+            }
+
+            for (let r = 0; r < lines.length; r++) {
+                const cells = lines[r].split('\t');
+                const targetRow = rowIdx + r;
+
+                while (targetRow >= this.credentials.length) {
+                    this.credentials.push(_emptyCredentialForSpec(spec));
+                }
+
+                for (let c = 0; c < cells.length; c++) {
+                    const targetCol = colIdx + c;
+                    if (targetCol < cols.length) {
+                        this.credentials[targetRow][cols[targetCol].key] = cells[c].trim();
+                    }
+                }
+
+                if (spec) {
+                    const cred = this.credentials[targetRow];
+                    const dobCol = spec.find(s => s.key === 'dob');
+                    if (dobCol && !cred.dob) {
+                        for (const col of spec) {
+                            if (col.key === 'dob') continue;
+                            if (cred[col.key] && DATE_RE.test(cred[col.key])) {
+                                cred.dob = cred[col.key];
+                                cred[col.key] = '';
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         },
 
         async submitCreate() {
@@ -443,11 +588,15 @@ function restockManager() {
 
         resetCreateForm() {
             this.createForm = {
-                listing_id: null, selectedTitle: '', selectedMeta: '', gameFilter: '', storeFilter: '',
+                listing_id: null, selectedTitle: '', selectedMeta: '',
+                selectedGameSlug: '', selectedSubPlatform: '',
+                gameFilter: '', storeFilter: '',
                 listingSearch: '', threshold: 10, target_count: 50, max_concurrent: 1,
                 pasteData: '',
             };
             this.credentials = [];
+            this.credentialSpec = null;
+            this.credentialColumns = _DEFAULT_CREDENTIAL_SPEC;
             this.listingResults = [];
         },
 

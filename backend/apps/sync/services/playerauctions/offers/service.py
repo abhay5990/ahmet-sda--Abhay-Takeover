@@ -281,6 +281,7 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
             'price': price_value,
             'currency': currency,
             'game': game,
+            'sub_platform': mapper.extract_sub_platform(payload),
             'listed_at': _expire_to_listed(
                 mapper.parse_pa_datetime(
                     payload.get('expired_time_string')

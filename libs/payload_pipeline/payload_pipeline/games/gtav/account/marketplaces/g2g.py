@@ -13,6 +13,10 @@ from __future__ import annotations
 
 from typing import Any
 
+from ..credentials import format_platform_credentials
+from ..models import GtavResolvedAccount
+from .....core.contracts import BuildContext, CredentialBundle, ListingDraft
+from .....marketplaces.base import _DISCLAIMER
 from .....marketplaces.g2g import BaseG2GBuilder
 
 
@@ -39,3 +43,34 @@ class GtavG2GBuilder(BaseG2GBuilder):
                 "dataset_id": _PLATFORM_DATASET_ID,
             }
         ]
+
+    def build_payload(
+        self,
+        subject: GtavResolvedAccount,
+        listing: ListingDraft,
+        ctx: BuildContext,
+    ) -> dict[str, Any]:
+        payload = super().build_payload(subject, listing, ctx)
+        # Override softpin with platform-aware credential data
+        if self._include_softpin:
+            payload["softpin_data"] = self._build_gtav_softpin(subject)
+        return payload
+
+    @staticmethod
+    def _build_gtav_softpin(account: GtavResolvedAccount) -> str:
+        """Platform-aware softpin: credential text as the CSV note field."""
+        creds = account.credentials
+        username = creds.login or ""
+        password = creds.password if creds.password != "1" else "noneedpsswd"
+        email = creds.email_login or "unknown@gmail.com"
+        email_password = creds.email_password or "unknown"
+
+        # Build platform-aware note with all credential fields
+        note = format_platform_credentials(
+            account.main_platform,
+            creds,
+            account.credential_extras,
+            disclaimer=_DISCLAIMER,
+        )
+
+        return f'{username},{password},,,,,,,,{email},{email_password},"{note}"\r\n'

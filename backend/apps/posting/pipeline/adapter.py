@@ -33,21 +33,21 @@ def _build_media_publisher():
         from payload_pipeline.shared.media import HostedMediaPublisher
 
         dropbox_cred = ServiceCredential.objects.filter(
-            service_type='storage', is_active=True,
+            service_type='dropbox', is_active=True,
         ).first()
         if not dropbox_cred:
-            logger.info("No active storage credential — media upload disabled")
+            logger.info("No active Dropbox credential — media upload disabled")
             return NullMediaPublisher()
 
         imageshack_cred = ServiceCredential.objects.filter(
-            service_type='image', is_active=True,
+            service_type='imageshack', is_active=True,
         ).first()
         if not imageshack_cred:
-            logger.info("No active image credential — media upload disabled")
+            logger.info("No active ImageShack credential — media upload disabled")
             return NullMediaPublisher()
 
-        dropbox_svc = get_service('storage')
-        imageshack_svc = get_service('image')
+        dropbox_svc = get_service('dropbox')
+        imageshack_svc = get_service('imageshack')
 
         if not dropbox_svc or not imageshack_svc:
             logger.warning("Service definitions not found — media upload disabled")
@@ -97,6 +97,7 @@ def prepare(
     kind: ListingKind,
     disable_media: bool = True,
     lzt_image_fetcher=None,
+    imgur_client_id: str = "",
     title_templates: dict[str, str] | None = None,
     description_templates: dict[str, str] | None = None,
 ) -> PrepareResult:
@@ -111,6 +112,7 @@ def prepare(
         kind:              STOCK or DROPSHIPPING.
         disable_media:     Skip image download/upload (default True).
         lzt_image_fetcher: Optional LZT image fetcher for media steps.
+        imgur_client_id:   Imgur Client-ID for downloading album images.
 
     Returns:
         PrepareResult — always check ``.success`` before using ``.prepared``.
@@ -121,6 +123,7 @@ def prepare(
         kind=kind,
         disable_media=disable_media,
         lzt_image_fetcher=lzt_image_fetcher,
+        imgur_client_id=imgur_client_id,
         title_templates=title_templates,
         description_templates=description_templates,
     )

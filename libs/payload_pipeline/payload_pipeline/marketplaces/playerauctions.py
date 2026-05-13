@@ -16,13 +16,109 @@ Two payload formats:
 from __future__ import annotations
 
 import random
+import re
 import string
+import unicodedata
 from abc import abstractmethod
 from typing import Any
 
 from ..core.contracts import BuildContext, CredentialBundle, ListingDraft
 from ..core.enums import ListingKind
 from .base import BasePayloadBuilder, _DROPSHIPPING_DELIVERY
+
+
+# ---------------------------------------------------------------------------
+# Text sanitizer — PA only accepts Latin characters
+# ---------------------------------------------------------------------------
+
+# Cyrillic → Latin transliteration map (visually similar characters)
+_CYRILLIC_MAP: dict[str, str] = {
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
+    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+    'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+    'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch',
+    'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+    'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'E',
+    'Ж': 'Zh', 'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M',
+    'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U',
+    'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts', 'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Shch',
+    'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu', 'Я': 'Ya',
+}
+
+# Emoji regex — covers most emoji ranges
+_EMOJI_RE = re.compile(
+    "["
+    "\U0001F600-\U0001F64F"  # emoticons
+    "\U0001F300-\U0001F5FF"  # symbols & pictographs
+    "\U0001F680-\U0001F6FF"  # transport & map
+    "\U0001F1E0-\U0001F1FF"  # flags
+    "\U0001FA00-\U0001FAFF"  # symbols extended
+    "\U0001F900-\U0001F9FF"  # supplemental symbols
+    "\U00002702-\U000027B0"  # dingbats
+    "\U0000FE00-\U0000FE0F"  # variation selectors
+    "\U0000200D"             # ZWJ
+    "\U000025A0-\U000025FF"  # geometric shapes
+    "\U00002600-\U000026FF"  # misc symbols
+    "\U0000231A-\U0000231B"  # watch/hourglass
+    "\U00002934-\U00002935"  # arrows
+    "\U000023E9-\U000023F3"  # media controls
+    "\U000023F8-\U000023FA"  # media controls
+    "]+",
+    flags=re.UNICODE,
+)
+
+_EMOJI_REPLACEMENT = "*"
+
+
+def _sanitize_text(text: str) -> str:
+    """Sanitize text for PlayerAuctions: Latin-only, no emoji.
+
+    Steps:
+        1. Replace emojis with a safe placeholder (*).
+        2. Transliterate Cyrillic characters to Latin equivalents.
+        3. Decompose accented characters via NFKD and keep ASCII base letters.
+        4. Remove any remaining non-Latin characters.
+    """
+    if not text:
+        return text
+
+    # 1. Replace emojis
+    text = _EMOJI_RE.sub(_EMOJI_REPLACEMENT, text)
+
+    # 2. Transliterate Cyrillic
+    result = []
+    for ch in text:
+        if ch in _CYRILLIC_MAP:
+            result.append(_CYRILLIC_MAP[ch])
+        else:
+            result.append(ch)
+    text = "".join(result)
+
+    # 3. NFKD decomposition — accented → base letter + combining mark
+    text = unicodedata.normalize("NFKD", text)
+
+    # 4. Keep only ASCII printable + common whitespace + safe Latin-1 subset
+    cleaned = []
+    for ch in text:
+        if ord(ch) <= 127:
+            # ASCII — keep everything (letters, digits, punctuation, whitespace)
+            if ch.isprintable() or ch in ('\n', '\r', '\t'):
+                cleaned.append(ch)
+        elif unicodedata.category(ch).startswith('M'):
+            # Combining marks (from NFKD) — skip them (base letter already kept)
+            continue
+        # Non-ASCII that survived — drop silently
+    text = "".join(cleaned)
+
+    # Collapse multiple * in a row (from consecutive emojis)
+    text = re.sub(r"\*{2,}", "*", text)
+
+    return text
+
+
+def _strip_url_schemes(text: str) -> str:
+    """Remove ``https://`` and ``http://`` prefixes from all URLs in text."""
+    return re.sub(r"https?://", "", text)
 
 
 def _fake_owner_info(creds: CredentialBundle) -> dict[str, str]:
@@ -122,7 +218,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
         server_ids = self._get_server_id(subject)
         server_id = int(server_ids[0]) if server_ids else 0
 
-        delivery_instructions = (
+        delivery_instructions = _sanitize_text(
             self._format_delivery(subject) if is_stock
             else _DROPSHIPPING_DELIVERY
         )
@@ -158,8 +254,8 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
             "price": round(max(price, 0.01), 2),
             "freeInsurance": 7,
             "offerDuration": 30,
-            "title": content.title,
-            "offerDesc": content.description.replace("\n", "<br>"),
+            "title": _sanitize_text(_strip_url_schemes(content.title)),
+            "offerDesc": _sanitize_text(_strip_url_schemes(content.description)).replace("\n", "<br>"),
             "screenShot": "",
             "agreeCheck": True,
             "isAuto": is_stock,
@@ -195,14 +291,14 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
         payload: dict[str, Any] = {
             "game_name": self.game_name,
             "game_id": self.game_id,
-            "title": content.title,
-            "description": content.description,
+            "title": _sanitize_text(_strip_url_schemes(content.title)),
+            "description": _sanitize_text(_strip_url_schemes(content.description)),
             "price": round(max(price, 0.01), 2),
             "server": self._get_server(subject),
             "cover_image_url": self.cover_image_url,
             "image_urls": list(listing.media.external_urls) if listing.media.external_urls else [],
             "delivery_method": "instant" if is_stock else "manual",
-            "delivery_instructions": (
+            "delivery_instructions": _sanitize_text(
                 self._format_delivery(subject) if is_stock
                 else _DROPSHIPPING_DELIVERY
             ),

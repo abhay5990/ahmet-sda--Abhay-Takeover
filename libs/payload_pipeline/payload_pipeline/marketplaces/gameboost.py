@@ -70,6 +70,8 @@ class BaseGameBoostBuilder(BasePayloadBuilder[Any]):
     ) -> dict[str, Any]:
         content = listing.content_for(self.marketplace)
         price = self._apply_pricing(subject.price, ctx)
+        if ctx.exchange_rate is not None:
+            price = round(price * ctx.exchange_rate, 2)
         is_stock = ctx.kind == ListingKind.STOCK
         creds = subject.credentials
 

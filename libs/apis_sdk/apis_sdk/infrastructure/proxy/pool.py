@@ -92,6 +92,11 @@ class ProxyPool:
                 return None
             return self._strategy.select(candidates)
 
+    def is_healthy(self, proxy: ProxyRecord) -> bool:
+        """Check if a proxy is currently healthy and available for use."""
+        with self._lock:
+            return self._health.is_available_unlocked(proxy)
+
     def report_success(self, proxy: ProxyRecord) -> None:
         """Mark a proxy as healthy after successful use."""
         self._health.record_success(proxy)

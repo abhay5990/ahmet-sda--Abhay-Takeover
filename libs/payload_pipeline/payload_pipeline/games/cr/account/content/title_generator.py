@@ -15,16 +15,15 @@ class CrTitleGenerator:
         marketplace: str = "default",
     ) -> str:
         if marketplace.lower() == "g2g":
-            return self._build(account, max_length=120, include_suffix=False)
+            return self._build(account, max_length=120)
         max_length = 150 if marketplace.lower() == "eldorado" else 140
-        return self._build(account, max_length=max_length, include_suffix=True)
+        return self._build(account, max_length=max_length)
 
     def _build(
         self,
         account: CrResolvedAccount,
         *,
         max_length: int,
-        include_suffix: bool,
     ) -> str:
         parts: list[str] = []
 
@@ -57,17 +56,15 @@ class CrTitleGenerator:
 
         parts.append("Full Access")
 
-        return _assemble(parts, max_length=max_length, include_suffix=include_suffix)
+        return _assemble(parts, max_length=max_length)
 
 
 # ------------------------------------------------------------------
 # Helpers
 # ------------------------------------------------------------------
 
-def _assemble(parts: list[str], *, max_length: int, include_suffix: bool) -> str:
+def _assemble(parts: list[str], *, max_length: int) -> str:
     separator = " | "
-    suffix = "S4G" if include_suffix else ""
-    reserved = (len(suffix) + len(separator)) if suffix else 0
 
     built: list[str] = []
     current_length = 0
@@ -75,11 +72,9 @@ def _assemble(parts: list[str], *, max_length: int, include_suffix: bool) -> str
         if not part:
             continue
         item_len = len(part) + (len(separator) if built else 0)
-        if current_length + item_len > max_length - reserved:
+        if current_length + item_len > max_length:
             break
         built.append(part)
         current_length += item_len
 
-    if suffix:
-        built.append(suffix)
     return separator.join(built)

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from ....core.contracts import FieldMeta, ResolvedAccountBase
 
@@ -30,6 +30,10 @@ class GtavResolvedAccount(ResolvedAccountBase):
     has_email_access: bool = False
     title: str = "GTA V Account"
     description: str = ""
+
+    credential_extras: dict[str, Any] = field(default_factory=dict)
+    """Platform-specific credential fields (steam_id, rock_id, dob, etc.)
+    consumed by :func:`~.credentials.format_platform_credentials`."""
 
     FIELD_META: ClassVar[dict[str, FieldMeta]] = {
         **ResolvedAccountBase.FIELD_META,

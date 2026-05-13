@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from ..credentials import format_platform_credentials
 from ..models import GtavResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....marketplaces.eldorado import BaseEldoradoBuilder, EldoradoConfig
@@ -36,9 +37,15 @@ class GtavEldoradoBuilder(BaseEldoradoBuilder):
             trade_environment_id=trade_env,
         )
 
-        if account.security_email or account.birthday or account.email_backup_codes:
-            delivery_lines = self._build_delivery_lines(account)
-            payload["accountSecretDetails"] = [delivery_lines]
+        delivery = format_platform_credentials(
+            account.main_platform,
+            account.credentials,
+            account.credential_extras,
+        )
+        if delivery:
+            if account.email_backup_codes:
+                delivery += f"\nBackup Codes:\n{account.email_backup_codes}"
+            payload["accountSecretDetails"] = [delivery]
 
         return payload
 
@@ -52,29 +59,3 @@ class GtavEldoradoBuilder(BaseEldoradoBuilder):
         if manual and manual != "Auto":
             return _PLATFORM_TO_TRADE_ENV.get(manual, "0")
         return _PLATFORM_TO_TRADE_ENV.get(account.main_platform, "0")
-
-    @staticmethod
-    def _build_delivery_lines(account: GtavResolvedAccount) -> str:
-        c = account.credentials
-        lines = []
-        if c.login:
-            lines.append(f"Login: {c.login}")
-        if c.password:
-            lines.append(f"Password: {c.password}")
-        if c.email_login:
-            lines.append(f"Email: {c.email_login}")
-        if c.email_password:
-            lines.append(f"Email Password: {c.email_password}")
-        if c.email_login_link:
-            lines.append(f"Email Login Link: {c.email_login_link}")
-        if account.security_email:
-            lines.append(f"Security Email: {account.security_email}")
-        if account.security_email_password:
-            lines.append(f"Security Email Password: {account.security_email_password}")
-        if account.security_email_login_link:
-            lines.append(f"Security Email Login Link: {account.security_email_login_link}")
-        if account.birthday:
-            lines.append(f"Birthday: {account.birthday}")
-        if account.email_backup_codes:
-            lines.append(f"Backup Codes:\n{account.email_backup_codes}")
-        return "\n".join(lines)

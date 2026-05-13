@@ -585,6 +585,9 @@ class BaseSyncService:
         If our_fee is None, it is auto-calculated from FeeRule
         (percent only, flat fee excluded).
 
+        Automatically links the Order to a Listing (and its DropshipProduct)
+        by looking up store_listing_id + integration_account.
+
         OwnedProduct status is updated automatically via post_save signal
         (see apps.inventory.signals).
         """
@@ -593,6 +596,10 @@ class BaseSyncService:
         # Auto-calculate fee if not provided by the marketplace API
         if defaults.get('our_fee') is None:
             self._auto_calculate_fee(raw_payload, defaults)
+
+        # Link Order to Listing (and DropshipProduct) if not already set
+        if 'listing' not in defaults:
+            self._link_listing(raw_payload, defaults)
 
         order, created = Order.objects.update_or_create(
             integration_account=raw_payload.integration_account,
@@ -605,6 +612,36 @@ class BaseSyncService:
             self._notify_pool_on_sale(order)
 
         return 'created' if created else 'updated'
+
+    @staticmethod
+    def _link_listing(raw_payload: RawPayload, defaults: dict) -> None:
+        """Resolve Listing (and its DropshipProduct) from store_listing_id.
+
+        Uses the unique (integration_account, store_listing_id) pair to
+        find the corresponding Listing. If the listing has a linked
+        DropshipProduct, that is also set on the Order defaults.
+        """
+        store_listing_id = defaults.get('store_listing_id')
+        if not store_listing_id or not raw_payload.integration_account:
+            return
+
+        from apps.listings.models import Listing
+
+        listing = (
+            Listing.objects
+            .filter(
+                integration_account=raw_payload.integration_account,
+                store_listing_id=store_listing_id,
+            )
+            .select_related('dropship_product')
+            .first()
+        )
+        if not listing:
+            return
+
+        defaults['listing'] = listing
+        if listing.dropship_product_id:
+            defaults['dropship_product'] = listing.dropship_product
 
     @staticmethod
     def _auto_calculate_fee(raw_payload: RawPayload, defaults: dict) -> None:

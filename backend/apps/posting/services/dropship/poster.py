@@ -337,6 +337,8 @@ def _attempt_post(
         return False
 
     final_price = Decimal(str(calculate_price(raw_price_float, pricing)))
+    if target_url.exchange_rate is not None:
+        final_price = (final_price * Decimal(str(target_url.exchange_rate))).quantize(Decimal('0.01'))
     raw_price = Decimal(str(raw_price_float))
 
     # Early slot check — skip before expensive prepare() if all slots are full
@@ -369,7 +371,8 @@ def _attempt_post(
 
     # Final sub-platform selection — filter by account compatibility
     allowed = get_allowed_platforms(game.slug, prepare_result.prepared.subject)
-    sub_platform = subplatform_cache.resolve(fallback='', allowed_platforms=allowed)
+    account_platform = getattr(prepare_result.prepared.subject, 'main_platform', '') or ''
+    sub_platform = subplatform_cache.resolve(fallback=account_platform, allowed_platforms=allowed)
     if sub_platform is None:
         logger.info(
             "No compatible sub-platform slot for %s/%s, skipping item %s",

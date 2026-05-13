@@ -8,7 +8,7 @@ from .registry import register_service
 class ImageShackService(AbstractServiceDefinition):
     """ImageShack image hosting service — used for album-based image hosting."""
 
-    service_type = 'image'
+    service_type = 'imageshack'
     display_name = 'ImageShack'
 
     @classmethod

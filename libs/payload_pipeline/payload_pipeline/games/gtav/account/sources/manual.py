@@ -34,6 +34,19 @@ class GtavManualSource:
     title: str = "GTA V Account"
     description: str = ""
 
+    credential_extras: dict[str, Any] = field(default_factory=dict)
+    """Platform-specific credential keys (steam_id, rock_id, psn_id, etc.)."""
+
+
+# Keys extracted from raw input into credential_extras
+_CREDENTIAL_EXTRA_KEYS = (
+    "steam_id", "steam_pass",
+    "rock_id", "rock_pass",
+    "psn_id", "psn_pass",
+    "xbox_id", "xbox_pass",
+    "dob",
+)
+
 
 class GtavManualSourceAdapter:
     """Extract GTA V data from a manual-entry source envelope."""
@@ -100,6 +113,7 @@ class GtavManualSourceAdapter:
             email_backup_codes=str(payload.get("email_backup_codes") or "").strip(),
             title=str(title).strip(),
             description=str(description).strip(),
+            credential_extras=self._extract_credential_extras(payload),
         )
 
     def _to_int(self, value: Any, default: int) -> int:
@@ -109,6 +123,15 @@ class GtavManualSourceAdapter:
             return int(value)
         except (TypeError, ValueError):
             return default
+
+    @staticmethod
+    def _extract_credential_extras(payload: dict[str, Any]) -> dict[str, Any]:
+        extras: dict[str, Any] = {}
+        for key in _CREDENTIAL_EXTRA_KEYS:
+            val = str(payload.get(key) or "").strip()
+            if val:
+                extras[key] = val
+        return extras
 
     def _to_float(self, value: Any, default: float) -> float:
         try:

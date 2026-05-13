@@ -11,7 +11,7 @@ class ProxylineService(AbstractServiceDefinition):
         base_url — optional override (default: https://panel.proxyline.net/api)
     """
 
-    service_type = 'proxy'
+    service_type = 'proxyline'
     display_name = 'Proxyline'
 
     @classmethod

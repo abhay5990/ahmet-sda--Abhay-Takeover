@@ -42,7 +42,7 @@ from apps.sync.services.eldorado.reviews.notifier import TelegramNotifier
 logger = logging.getLogger(__name__)
 
 _PROVIDER = "eldorado"
-_PAGE_SIZE = 20
+_PAGE_SIZE = 7
 _CURSOR_TOP = "9999-99-99 99:99:99.999999999999999-9999-9999-9999-999999999999"
 
 
@@ -169,7 +169,10 @@ class EldoradoReviewMonitor:
                     "to avoid duplicate notifications",
                     last_seen_id, account.slug,
                 )
-                new_reviews = []
+                # Do NOT advance watermark — we can't be sure what was missed.
+                checkpoint.last_run_at = timezone.now()
+                checkpoint.save(update_fields=["last_run_at", "updated_at"])
+                return
 
         if not new_reviews:
             logger.debug("No new negative reviews for %s", account.slug)

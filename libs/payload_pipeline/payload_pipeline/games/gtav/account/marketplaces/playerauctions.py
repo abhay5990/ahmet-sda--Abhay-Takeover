@@ -14,9 +14,9 @@ for PC variants; Steam is used as the default mapping.
 
 from __future__ import annotations
 
-import re
 from typing import Any
 
+from ..credentials import format_platform_credentials
 from ..models import GtavResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....marketplaces.base import _DISCLAIMER
@@ -87,24 +87,11 @@ class GtavPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
         return super().build_payload(account, listing, ctx)
 
     def _format_delivery(self, account: GtavResolvedAccount) -> str:
-        """Custom delivery with security_email and birthday fields."""
-        c = account.credentials
-        lines = [
-            f"Rockstar Login -> {c.login}",
-            f"Rockstar Password -> {c.password}",
-        ]
-        if c.email_login and c.email_login != "Not Found":
-            lines.append(f"E-mail -> {c.email_login}")
-            if c.email_password and c.email_password != "Not Found":
-                lines.append(f"E-mail Password -> {c.email_password}")
-            if c.email_login_link:
-                link = re.sub(r"^https?://", "", c.email_login_link)
-                lines.append(f"E-mail Login Link ->\n\t{link}")
-        if account.security_email:
-            lines.append(f"Security Email -> {account.security_email}")
-            if account.security_email_password:
-                lines.append(f"Security Email Password -> {account.security_email_password}")
-        if account.birthday:
-            lines.append(f"Birthday -> {account.birthday}")
-        lines.append(_DISCLAIMER)
-        return "\n".join(lines)
+        """Platform-aware delivery with disclaimer appended."""
+        return format_platform_credentials(
+            account.main_platform,
+            account.credentials,
+            account.credential_extras,
+            strip_url_scheme=True,
+            disclaimer=_DISCLAIMER,
+        )

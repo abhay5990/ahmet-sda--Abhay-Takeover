@@ -16,6 +16,9 @@ from apps.posting.models import (
     DropshippingJobConfig, OfferPool, PostingJob, PostingLog,
 )
 from apps.posting.services.shared.subplatform import GAME_SUBPLATFORMS
+from payload_pipeline.core.enums import GameSlug
+
+SUPPORTED_GAME_SLUGS = {gs.value for gs in GameSlug}
 
 
 # ── Stock Posting ──────────────────────────────────────────────────
@@ -24,7 +27,7 @@ from apps.posting.services.shared.subplatform import GAME_SUBPLATFORMS
 @role_required('admin', 'user')
 def stock_start_page(request):
     """Job creation form."""
-    games = Game.objects.filter(is_active=True).order_by('name')
+    games = Game.objects.filter(is_active=True, slug__in=SUPPORTED_GAME_SLUGS).order_by('name')
     stores = IntegrationAccount.objects.filter(
         is_active=True, role__in=['sell', 'both'],
     ).order_by('provider', 'name')
@@ -111,7 +114,7 @@ def content_templates_page(request):
 @role_required('admin', 'user')
 def dropship_configs_page(request):
     """Config management + Run Now."""
-    games = Game.objects.filter(is_active=True).order_by('name')
+    games = Game.objects.filter(is_active=True, slug__in=SUPPORTED_GAME_SLUGS).order_by('name')
     source_accounts = IntegrationAccount.objects.filter(
         is_active=True, provider='lzt',
     ).order_by('name')
@@ -274,16 +277,14 @@ def restock_pool_detail_page(request, pool_id):
     items = pool.items.select_related('owned_product').order_by('order', 'created_at')
     active_offers = pool.active_offers.select_related('listing', 'pool_item').order_by('-created_at')
 
-    # Linked accounts: OwnedProducts attached to the listing via ListingOwnedProduct
+    # Linked OwnedProducts via ListingOwnedProduct M2M
     from apps.listings.models import ListingOwnedProduct
-    owned_products = [
-        lop.owned_product
-        for lop in (
-            ListingOwnedProduct.objects
-            .filter(listing=pool.listing)
-            .select_related('owned_product', 'owned_product__game')
-        )
-    ]
+    linked_accounts = (
+        ListingOwnedProduct.objects
+        .filter(listing=pool.listing)
+        .select_related('owned_product')
+        .order_by('created_at')
+    )
 
     logs = PostingLog.objects.filter(
         task_name__in=['pool_replenish', 'pool_checker'],
@@ -294,6 +295,6 @@ def restock_pool_detail_page(request, pool_id):
         'pool': pool,
         'items': items,
         'active_offers': active_offers,
-        'owned_products': owned_products,
+        'linked_accounts': linked_accounts,
         'logs': logs,
     })

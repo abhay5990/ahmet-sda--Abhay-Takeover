@@ -2,7 +2,7 @@
 Telegram notifier for Eldorado review alerts.
 
 Reads bot token and chat ID from the active ServiceCredential with
-service_type='notification'. Falls back gracefully if not configured.
+service_type='telegram'. Falls back gracefully if not configured.
 """
 
 import logging
@@ -23,13 +23,13 @@ def _get_telegram_client():
 
         credential = (
             ServiceCredential.objects
-            .filter(service_type='notification', is_active=True)
+            .filter(service_type='telegram', is_active=True)
             .first()
         )
         if not credential:
             return None, None
 
-        service = get_service('notification')
+        service = get_service('telegram')
         if service is None:
             return None, None
 
@@ -65,6 +65,8 @@ class TelegramNotifier:
         comment = feedback.reviewMessage.strip() or "—"
         buyer = review_item.buyer.maskedUsername or "unknown"
 
+        order_link = f"https://www.eldorado.gg/order/{r.id}"
+
         text = (
             "⚠️ New Negative Review — Eldorado\n"
             f"Account : {account_slug}\n"
@@ -72,7 +74,8 @@ class TelegramNotifier:
             f"Category: {r.gameCategoryTitle}\n"
             f"Tags    : {tags}\n"
             f"Comment : {comment}\n"
-            f"Date    : {r.date}"
+            f"Date    : {r.date}\n"
+            f"Order   : {order_link}"
         )
 
         result = client.send_message(chat_id=chat_id, text=text)

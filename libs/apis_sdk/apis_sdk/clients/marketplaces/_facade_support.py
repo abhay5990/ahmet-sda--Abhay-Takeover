@@ -270,6 +270,9 @@ class FacadeExecutor:
         self._provider_name = provider_name
         self._pre_execute = pre_execute
         self._exception_hook = exception_hook
+        # Sticky proxy: once a proxy is acquired for a group, reuse it until
+        # failure.  Keyed by group name (None key = no-group).
+        self._sticky_proxy: dict[str | None, ProxyRecord] = {}
 
     # -- auth helpers -------------------------------------------------------
 
@@ -285,23 +288,44 @@ class FacadeExecutor:
         group: str | None = None,
         _retry_ctx: RuntimeRetryStrategy | None = None,
     ) -> str | None:
-        """Acquire a proxy URL from the pool, if available."""
+        """Acquire a proxy URL from the pool, if available.
+
+        Uses sticky proxy logic: once a proxy is selected for a group it is
+        reused for all subsequent requests until a failure triggers rotation.
+        During retry flows the retry context's ``exclude_proxy`` forces a
+        new acquisition (the failed proxy is skipped).
+        """
         if self._proxy_pool is None:
             return None
+
         exclude = _retry_ctx.exclude_proxy if _retry_ctx is not None else None
+
+        # Try to reuse the sticky proxy for this group
+        sticky = self._sticky_proxy.get(group)
+        if sticky is not None and sticky is not exclude:
+            if self._proxy_pool.is_healthy(sticky):
+                if _retry_ctx is not None:
+                    _retry_ctx.track_proxy(sticky)
+                return sticky.to_url()
+            # Sticky proxy is no longer healthy — discard it
+            del self._sticky_proxy[group]
+
+        # Acquire a new proxy from the pool
         proxy = self._proxy_pool.acquire(group=group, exclude=exclude)
         if _retry_ctx is not None:
             _retry_ctx.track_proxy(proxy)
         if proxy is None:
             self._logger.info("No proxy available from pool", group=group or "default")
             return None
-        url = proxy.to_url()
+
+        # Pin as the sticky proxy for this group
+        self._sticky_proxy[group] = proxy
         self._logger.info(
-            "Proxy acquired",
+            "Proxy acquired (sticky)",
             proxy=f"{proxy.host}:{proxy.port}",
             group=group or "default",
         )
-        return url
+        return proxy.to_url()
 
     def _report_proxy_success(
         self,

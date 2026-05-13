@@ -45,6 +45,17 @@ class FortniteResolvedAccount(ResolvedAccountBase):
     cosmetic_items: dict[str, list[CosmeticItem]] = field(default_factory=dict)
     preview_urls: dict[str, str] = field(default_factory=dict)
 
+    # Manual source fields (populated only from Google Sheet entries)
+    manual_title: str = ""
+    manual_description: str = ""
+    manual_images: str = ""
+    platforms: list[str] = field(default_factory=list)
+    backpack_count: int = 0
+    wrap_count: int = 0
+    banner_count: int = 0
+    spray_count: int = 0
+    exclusive_count: int = 0
+
     FIELD_META: ClassVar[dict[str, FieldMeta]] = {
         **ResolvedAccountBase.FIELD_META,
         "level": FieldMeta("Account level.", 250),

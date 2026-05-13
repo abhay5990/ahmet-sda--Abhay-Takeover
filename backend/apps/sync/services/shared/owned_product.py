@@ -31,11 +31,12 @@ from decimal import Decimal
 from typing import TYPE_CHECKING
 
 from apps.inventory.models import OwnedProduct
+from apps.inventory.ref_key import generate_ref_key
 from apps.sync.services.shared.credentials import ParsedCredentials
 
 if TYPE_CHECKING:
     from apps.integrations.models import IntegrationAccount
-    from apps.inventory.models import Category, Game
+    from apps.inventory.models import Category, DropshipProduct, Game
 
 logger = logging.getLogger(__name__)
 
@@ -110,6 +111,8 @@ def get_or_create_owned_product(
     currency: str = 'USD',
     purchased_at: datetime | None = None,
     raw_data: dict | None = None,
+    product_origin: 'DropshipProduct | None' = None,
+    source_product_id: int | None = None,
 ) -> OwnedProduct | None:
     """Match existing or create new OwnedProduct from parsed credentials.
 
@@ -176,6 +179,14 @@ def get_or_create_owned_product(
             existing.raw_data = raw_data
             updated_fields.append('raw_data')
 
+        if source_product_id and not existing.source_product_id:
+            existing.source_product_id = source_product_id
+            updated_fields.append('source_product_id')
+
+        if not existing.ref_key:
+            existing.ref_key = generate_ref_key(source_product_id or existing.source_product_id)
+            updated_fields.append('ref_key')
+
         if updated_fields:
             existing.save(update_fields=updated_fields + ['updated_at'])
             logger.info(
@@ -186,6 +197,8 @@ def get_or_create_owned_product(
         return existing
 
     # No existing record — create new
+    ref_key = generate_ref_key(source_product_id)
+
     obj = OwnedProduct.objects.create(
         category=category,
         login=login,
@@ -199,10 +212,13 @@ def get_or_create_owned_product(
         game=game,
         status=status,
         source_account=source_account,
+        source_product_id=source_product_id,
         price=price,
         currency=currency,
         purchased_at=purchased_at,
         raw_data=raw_data or {},
+        product_origin=product_origin,
+        ref_key=ref_key,
     )
 
     # Update cache

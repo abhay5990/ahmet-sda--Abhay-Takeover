@@ -88,7 +88,7 @@ def test_lol_composer_produces_listing_draft(load_fixture) -> None:
 
     assert "EUN" in listing.default.title
     assert "Handmade" in listing.default.title
-    assert "S4G" in listing.default.title
+    assert "S4G" not in listing.default.title
     assert "Level: 15" in listing.default.description
     assert "Has Warranty" in listing.default.description
     # G2G override should have a shorter title

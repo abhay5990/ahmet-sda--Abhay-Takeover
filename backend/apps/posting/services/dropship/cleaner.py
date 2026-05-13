@@ -388,7 +388,7 @@ def _delete_marketplace_offer(listing: Listing, *, proxy_pool=None) -> bool:
         # Keep listing LISTED — next cleaner cycle will retry
         return False
 
-    listing.status = ListingStatus.CLOSED
+    listing.status = ListingStatus.DELETED
     listing.removed_at = timezone.now()
     listing.save(update_fields=['status', 'removed_at'])
     return True

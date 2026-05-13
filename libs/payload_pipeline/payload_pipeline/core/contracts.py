@@ -47,6 +47,7 @@ class BuildContext:
     marketplace: str = ""
     pricing_rules: dict[str, Any] | None = None
     marketplace_config: Any = None
+    exchange_rate: float | None = None
 
     def get_config(self, config_type: type[TConfig], default: TConfig | None = None) -> TConfig:
         """Return ``marketplace_config`` if it matches *config_type*, else *default*.

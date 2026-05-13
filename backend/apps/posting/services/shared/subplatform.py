@@ -19,6 +19,24 @@ GAME_SUBPLATFORMS: dict[str, list[str]] = {
     'rainbow-six-siege': ['PC', 'PlayStation', 'Xbox'],
 }
 
+# Stock priority tiers — console slots are scarce (fewer accounts link),
+# so fill them first.  Tier 0 checked first, then 1, then 2.
+STOCK_PLATFORM_PRIORITY: dict[str, list[set[str]]] = {
+    'fortnite': [
+        {'PlayStation', 'Xbox'},        # Tier 0: console (scarce)
+        {'PC'},                         # Tier 1: PC
+        {'iOS', 'Android', 'Switch'},   # Tier 2: mobile/switch (easy to link)
+    ],
+    'valorant': [
+        {'PlayStation', 'Xbox'},
+        {'PC'},
+    ],
+    'rainbow-six-siege': [
+        {'PlayStation', 'Xbox'},
+        {'PC'},
+    ],
+}
+
 
 def get_subplatforms(game_slug: str) -> list[str]:
     """Return the list of sub-platforms for a game, or empty list if none."""
@@ -116,6 +134,31 @@ def select_best_subplatform(
             best_available = available
 
     return best
+
+
+def select_best_subplatform_tiered(
+    limits,
+    counts: dict[str, int],
+    *,
+    mode: str = 'stock',
+    allowed_platforms: set[str] | None = None,
+    tiers: list[set[str]],
+) -> str | None:
+    """Try each priority tier in order; return first sub-platform with capacity.
+
+    Within a tier, picks the sub-platform with the most available slots
+    (same logic as ``select_best_subplatform``).
+    """
+    for tier in tiers:
+        tier_filter = tier & allowed_platforms if allowed_platforms else tier
+        if not tier_filter:
+            continue
+        result = select_best_subplatform(
+            limits, counts, mode=mode, allowed_platforms=tier_filter,
+        )
+        if result:
+            return result
+    return None
 
 
 # ---------------------------------------------------------------------------

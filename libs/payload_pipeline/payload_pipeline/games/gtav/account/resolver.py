@@ -23,6 +23,12 @@ class GtavResolver:
 
         credentials = resolve_credentials(parsed, kind=request.kind, game_name="GTA V")
 
+        # Build credential_extras — platform-specific keys consumed by
+        # format_platform_credentials() in builders and pool formatter.
+        credential_extras = dict(parsed.credential_extras)
+        credential_extras.setdefault("security_email_login_link", parsed.security_email_login_link)
+        credential_extras.setdefault("dob", parsed.birthday)
+
         return GtavResolvedAccount(
             item_id=parsed.item_id,
             category_id=parsed.category_id,
@@ -44,4 +50,5 @@ class GtavResolver:
             has_email_access=not parsed.credentials.is_empty and bool(parsed.credentials.email_login),
             title=parsed.title,
             description=parsed.description,
+            credential_extras=credential_extras,
         )

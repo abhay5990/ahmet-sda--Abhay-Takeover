@@ -5,6 +5,7 @@ from .api import stock as stock_api
 from .api import dropship as dropship_api
 from .api import pool as pool_api
 from .api import content_templates as content_template_api
+from .api import manual as manual_api
 
 app_name = 'posting'
 
@@ -80,6 +81,10 @@ urlpatterns = [
     # API — dropship item actions
     path('api/dropship/items/<int:item_id>/', dropship_api.dropship_item_action, name='api_dropship_item_action'),
     path('api/dropship/items/bulk/', dropship_api.dropship_item_bulk_action, name='api_dropship_item_bulk_action'),
+
+    # API — manual posting (Fortnite Google Sheets)
+    path('api/manual/fortnite/sheet/', manual_api.open_sheet, name='api_manual_fortnite_sheet'),
+    path('api/manual/fortnite/accounts/', manual_api.fetch_accounts, name='api_manual_fortnite_accounts'),
 
     # API — offer pools (auto restock)
     path('api/pools/', pool_api.list_pools, name='api_list_pools'),

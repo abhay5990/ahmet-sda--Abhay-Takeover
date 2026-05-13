@@ -12,7 +12,7 @@ class RobuxCrateService(AbstractServiceDefinition):
         api_key  — RobuxCrate API key
     """
 
-    service_type = 'game-service'
+    service_type = 'robuxcrate'
     display_name = 'RobuxCrate'
 
     @classmethod

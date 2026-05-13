@@ -23,6 +23,7 @@ class PricingDefaults:
     multiplier_high: float
     min_price: float
     forced_ending: float | None = None
+    exchange_rate: float | None = None
 
     @classmethod
     def from_model(cls, obj) -> 'PricingDefaults':
@@ -30,6 +31,7 @@ class PricingDefaults:
 
         Used for DropshipTargetURL.
         """
+        raw_rate = getattr(obj, 'exchange_rate', None)
         return cls(
             multiplier_low=float(obj.multiplier_low),
             multiplier_mid=float(obj.multiplier_mid),
@@ -38,6 +40,10 @@ class PricingDefaults:
             forced_ending=(
                 float(obj.forced_ending)
                 if obj.forced_ending is not None else None
+            ),
+            exchange_rate=(
+                float(raw_rate)
+                if raw_rate is not None else None
             ),
         )
 
@@ -49,7 +55,7 @@ class PricingDefaults:
         """
         allowed = {
             'multiplier_low', 'multiplier_mid', 'multiplier_high',
-            'min_price', 'forced_ending',
+            'min_price', 'forced_ending', 'exchange_rate',
         }
         patch = {
             k: (float(v) if v is not None else None)
@@ -67,6 +73,7 @@ STOCK_PRICING_BASELINE = PricingDefaults(
     multiplier_high=1.5,
     min_price=0.0,
     forced_ending=0.99,
+    exchange_rate=None,
 )
 
 

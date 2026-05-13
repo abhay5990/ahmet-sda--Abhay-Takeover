@@ -112,6 +112,7 @@ def create_job(request):
                     'multiplier_high': store_defaults.get('multiplier_high'),
                     'min_price': store_defaults.get('min_price'),
                     'forced_ending': store_defaults.get('forced_ending'),
+                    'exchange_rate': store_defaults.get('exchange_rate'),
                     'sub_platform': store_defaults.get('sub_platform'),
                     'account_type': store_defaults.get('account_type'),
                 }.items() if v is not None
@@ -152,6 +153,10 @@ def create_job(request):
 
     if source_type == 'manual':
         return _create_manual_job(body, game, stores, job_settings)
+
+    if source_type == 'sheet':
+        from apps.posting.api.manual import _create_sheet_job
+        return _create_sheet_job(body, game, stores, job_settings)
 
     return _create_account_job(body, game, stores, job_settings)
 
@@ -242,11 +247,14 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict)
     if purchased_price <= 0:
         return JsonResponse({'error': 'purchased_price is required'}, status=400)
 
-    # Validate credentials
+    # Validate credentials (platform-specific primary keys)
+    mapping = _PLATFORM_CREDENTIAL_MAP.get(platform)
+    login_key = mapping[0] if mapping else 'login'
+    pass_key = mapping[1] if mapping else 'password'
     for i, cred in enumerate(credentials):
-        if not cred.get('login') or not cred.get('password'):
+        if not cred.get(login_key) or not cred.get(pass_key):
             return JsonResponse(
-                {'error': f'Credential #{i+1}: login and password are required'},
+                {'error': f'Credential #{i+1}: {login_key} and {pass_key} are required'},
                 status=400,
             )
 
@@ -326,6 +334,43 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict)
     return _launch_job(job, len(items_data))
 
 
+# Platform-specific credential key mappings:
+# (primary_login_key, primary_password_key, extra_keys_to_store_in_raw_data)
+_PLATFORM_CREDENTIAL_MAP: dict[str, tuple[str, str, tuple[str, ...]]] = {
+    'PlayStation 4':   ('psn_id',   'psn_pass',   ('psn_id', 'psn_pass', 'dob')),
+    'PlayStation 5':   ('psn_id',   'psn_pass',   ('psn_id', 'psn_pass', 'dob')),
+    'Xbox One':        ('xbox_id',  'xbox_pass',  ('xbox_id', 'xbox_pass')),
+    'Xbox Series X/S': ('xbox_id',  'xbox_pass',  ('xbox_id', 'xbox_pass')),
+    'PC - Legacy':     ('steam_id', 'steam_pass', ('steam_id', 'steam_pass', 'rock_id', 'rock_pass')),
+    'PC - Enhanced':   ('steam_id', 'steam_pass', ('steam_id', 'steam_pass', 'rock_id', 'rock_pass')),
+}
+
+
+def _extract_platform_credentials(cred: dict, platform: str) -> tuple[str, str, dict]:
+    """Extract login, password, and credential_extras from a credential dict.
+
+    For platform-specific GTA credentials, the primary login/password are mapped
+    from platform keys (e.g. psn_id → login). All platform keys are also stored
+    as extras in raw_data for the credential formatting pipeline.
+
+    Returns (login, password, extras_dict).
+    """
+    mapping = _PLATFORM_CREDENTIAL_MAP.get(platform)
+    if mapping:
+        login_key, pass_key, extra_keys = mapping
+        login = cred.get(login_key, '').strip().lower()
+        password = cred.get(pass_key, '').strip()
+        extras = {}
+        for k in extra_keys:
+            val = cred.get(k, '').strip()
+            if val:
+                extras[k] = val
+        return login, password, extras
+
+    # Default: generic login/password
+    return cred.get('login', '').strip().lower(), cred.get('password', '').strip(), {}
+
+
 def _create_manual_owned_products(
     credentials: list[dict],
     batch_data: dict,
@@ -342,8 +387,7 @@ def _create_manual_owned_products(
     cost = batch_data['purchased_price']
 
     for cred in credentials:
-        login = cred['login'].strip().lower()
-        password = cred['password'].strip()
+        login, password, credential_extras = _extract_platform_credentials(cred, platform)
 
         # Build pipeline-compatible raw_data
         raw_data = {
@@ -361,12 +405,16 @@ def _create_manual_owned_products(
             'security_email': cred.get('security_email', '').strip(),
             'security_email_password': cred.get('security_email_password', '').strip(),
             'security_email_login_link': cred.get('security_email_login_link', '').strip(),
-            'birthday': cred.get('birthday', '').strip(),
+            'birthday': cred.get('birthday', cred.get('dob', '')).strip(),
             'emailLoginUrl': cred.get('email_login_link', '').strip(),
             'item_id': f'manual-{uuid.uuid4().hex[:12]}',
             'title': batch_data.get('title', ''),
             'description': batch_data.get('description', ''),
         }
+
+        # Store platform-specific extras in raw_data
+        if credential_extras:
+            raw_data.update(credential_extras)
 
         # GTA-specific fields
         if 'cash_amount' in batch_data:
@@ -523,6 +571,7 @@ def posting_defaults(request, game_id, marketplace):
                 'multiplier_high': str(d.multiplier_high),
                 'min_price': str(d.min_price),
                 'forced_ending': str(d.forced_ending) if d.forced_ending is not None else None,
+                'exchange_rate': str(d.exchange_rate) if d.exchange_rate is not None else None,
                 'sub_platform': d.sub_platform,
                 'account_type': d.account_type,
                 'title_template_id': d.title_template_id,
@@ -535,6 +584,7 @@ def posting_defaults(request, game_id, marketplace):
                 'multiplier_high': '1.50',
                 'min_price': '0.00',
                 'forced_ending': '0.99',
+                'exchange_rate': '0.87' if marketplace == 'gameboost' else None,
                 'sub_platform': '',
                 'account_type': '',
                 'title_template_id': None,
@@ -549,7 +599,8 @@ def posting_defaults(request, game_id, marketplace):
 
         update_fields = {}
         for field in ('multiplier_low', 'multiplier_mid', 'multiplier_high',
-                      'min_price', 'forced_ending', 'sub_platform', 'account_type'):
+                      'min_price', 'forced_ending', 'exchange_rate',
+                      'sub_platform', 'account_type'):
             if field in body:
                 update_fields[field] = body[field]
 

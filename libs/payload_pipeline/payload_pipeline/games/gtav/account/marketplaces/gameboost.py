@@ -4,8 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from ..credentials import format_platform_credentials
 from ..models import GtavResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
+from .....core.enums import ListingKind
+from .....marketplaces.base import _DISCLAIMER, _DROPSHIPPING_DELIVERY
 from .....marketplaces.gameboost import BaseGameBoostBuilder
 
 _STATIC_IMAGE_URL = (
@@ -47,5 +50,17 @@ class GtavGameBoostBuilder(BaseGameBoostBuilder):
     ) -> dict[str, Any]:
         payload = super().build_payload(subject, listing, ctx)
         payload["image_urls"] = [_STATIC_IMAGE_URL]
+
+        # Override delivery_instructions with platform-aware credential text
+        if ctx.kind == ListingKind.STOCK:
+            payload["delivery_instructions"] = format_platform_credentials(
+                subject.main_platform,
+                subject.credentials,
+                subject.credential_extras,
+                disclaimer=_DISCLAIMER,
+            )
+        else:
+            payload["delivery_instructions"] = _DROPSHIPPING_DELIVERY
+
         return payload
 

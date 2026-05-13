@@ -35,7 +35,7 @@ class PostingJobItemAdmin(admin.ModelAdmin):
 
 @admin.register(PostingDefault)
 class PostingDefaultAdmin(admin.ModelAdmin):
-    list_display = ['game', 'marketplace', 'multiplier_low', 'multiplier_mid', 'multiplier_high', 'min_price', 'forced_ending', 'sub_platform']
+    list_display = ['game', 'marketplace', 'multiplier_low', 'multiplier_mid', 'multiplier_high', 'min_price', 'forced_ending', 'exchange_rate', 'sub_platform']
     list_filter = ['marketplace']
 
 
@@ -64,7 +64,7 @@ class PostingLogAdmin(admin.ModelAdmin):
 class DropshipTargetURLInline(admin.TabularInline):
     model = DropshipTargetURL
     extra = 0
-    fields = ['url', 'enabled', 'multiplier_low', 'multiplier_mid', 'multiplier_high', 'min_price', 'forced_ending', 'items_found', 'items_posted']
+    fields = ['url', 'enabled', 'multiplier_low', 'multiplier_mid', 'multiplier_high', 'min_price', 'forced_ending', 'exchange_rate', 'items_found', 'items_posted']
     readonly_fields = ['items_found', 'items_posted']
 
 

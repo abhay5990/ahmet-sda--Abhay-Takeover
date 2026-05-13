@@ -11,6 +11,7 @@ from apps.accounts.decorators import role_required
 from apps.integrations.models import IntegrationAccount
 from apps.inventory.models import Game, OwnedProduct
 from apps.posting.services.dropship.delist import _delete_one_listing
+from apps.posting.services.relist import relist_listing
 from .enums import ListingStatus
 from .models import Listing, ListingOwnedProduct
 
@@ -220,6 +221,85 @@ def listing_bulk_delete(request):
             failed.append(listing.id)
             store_name = listing.integration_account.name if listing.integration_account else 'unknown'
             errors[str(listing.id)] = f'Failed to remove offer on {store_name}'
+
+    status_code = 200 if not failed else 207
+    return JsonResponse({
+        'ok': len(failed) == 0,
+        'succeeded': succeeded,
+        'failed': failed,
+        'errors': errors,
+    }, status=status_code)
+
+
+BULK_RELIST_LIMIT = 50
+_RELISTABLE_STATUSES = {ListingStatus.LISTED, ListingStatus.PAUSED, ListingStatus.DELETED}
+
+
+@role_required('admin', 'user')
+@require_POST
+def listing_relist(request, listing_id):
+    """Delete a listing from the marketplace and re-create it (fresh expiry)."""
+    try:
+        listing = Listing.objects.select_related(
+            'integration_account', 'integration_account__credential',
+        ).get(id=listing_id)
+    except Listing.DoesNotExist:
+        return JsonResponse({'error': 'Listing not found'}, status=404)
+
+    if listing.status not in _RELISTABLE_STATUSES:
+        return JsonResponse(
+            {'error': f'Cannot relist a listing with status "{listing.status}"'},
+            status=422,
+        )
+
+    result = relist_listing(listing)
+    if result.ok:
+        return JsonResponse({
+            'ok': True,
+            'new_listing_id': result.new_listing.id,
+        })
+    return JsonResponse({'error': result.error}, status=422)
+
+
+@role_required('admin', 'user')
+@require_POST
+def listing_bulk_relist(request):
+    """Bulk relist up to BULK_RELIST_LIMIT listings."""
+    try:
+        body = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    ids = body.get('ids', [])
+    if not ids or not isinstance(ids, list):
+        return JsonResponse({'error': 'ids must be a non-empty list'}, status=400)
+
+    if len(ids) > BULK_RELIST_LIMIT:
+        return JsonResponse(
+            {'error': f'Maximum {BULK_RELIST_LIMIT} listings per bulk relist'},
+            status=400,
+        )
+
+    listings = list(
+        Listing.objects.select_related(
+            'integration_account', 'integration_account__credential',
+        ).filter(id__in=ids, status__in=_RELISTABLE_STATUSES)
+    )
+
+    if not listings:
+        return JsonResponse({'error': 'No relistable listings found'}, status=404)
+
+    succeeded: list[int] = []
+    failed: list[int] = []
+    errors: dict[str, str] = {}
+
+    for listing in listings:
+        result = relist_listing(listing)
+        if result.ok:
+            succeeded.append(result.new_listing.id)
+        else:
+            failed.append(listing.id)
+            errors[str(listing.id)] = result.error
 
     status_code = 200 if not failed else 207
     return JsonResponse({

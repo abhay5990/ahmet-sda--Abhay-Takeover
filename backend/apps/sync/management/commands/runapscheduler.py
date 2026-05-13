@@ -137,10 +137,10 @@ class Command(BaseCommand):
             replace_existing=True,
         )
 
-        # Pause expiring listings — runs daily
+        # Pause expiring listings — runs every 3 hours
         scheduler.add_job(
             run_pause_expiring_listings_job,
-            trigger=IntervalTrigger(days=1),
+            trigger=IntervalTrigger(hours=3),
             id='pause_expiring_listings',
             name='Pause Expiring Listings (Eldorado/PA)',
             max_instances=1,
@@ -179,7 +179,7 @@ class Command(BaseCommand):
 
             credential = (
                 ServiceCredential.objects
-                .filter(service_type='notification', is_active=True)
+                .filter(service_type='telegram', is_active=True)
                 .first()
             )
             if not credential:
@@ -188,7 +188,7 @@ class Command(BaseCommand):
                 ))
                 return
 
-            service = get_service('notification')
+            service = get_service('telegram')
             client = service.build_client(credential)
             ok, msg = service.test_connection(client)
             if ok:

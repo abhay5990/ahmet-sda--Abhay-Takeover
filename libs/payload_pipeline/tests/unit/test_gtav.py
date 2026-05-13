@@ -6,8 +6,12 @@ import pytest
 
 from payload_pipeline import PayloadPipeline, build_default_registry
 from payload_pipeline.core import context_keys as ctx
-from payload_pipeline.core.contracts import BuildContext, PipelineRequest
+from payload_pipeline.core.contracts import BuildContext, CredentialBundle, PipelineRequest
 from payload_pipeline.games.gtav.account import GtavResolver
+from payload_pipeline.games.gtav.account.credentials import (
+    format_platform_credentials,
+    resolve_platform_credentials,
+)
 from payload_pipeline.games.gtav.account.sources.manual import GtavManualSourceAdapter
 from payload_pipeline.marketplaces.g2g import G2GConfig
 
@@ -60,6 +64,141 @@ class TestGtavManualSourceAdapter:
         assert "120M Cash" in source.title
 
 
+    def test_parse_extracts_credential_extras(self):
+        adapter = GtavManualSourceAdapter()
+        raw = {
+            "loginData": {"login": "steam_user", "password": "steam_pass"},
+            "price": 10.0,
+            "offer_details": {"main_platform": "PC - Legacy"},
+            "steam_id": "steam_user",
+            "steam_pass": "steam_pass",
+            "rock_id": "rockstar_user",
+            "rock_pass": "rockstar_pass",
+        }
+        source = adapter.parse(raw)
+        assert source is not None
+        assert source.credential_extras["steam_id"] == "steam_user"
+        assert source.credential_extras["rock_id"] == "rockstar_user"
+        assert source.credential_extras["rock_pass"] == "rockstar_pass"
+
+
+# -- credential formatting tests ------------------------------------------
+
+class TestGtavCredentials:
+    """Platform-aware credential formatting."""
+
+    def test_psn_format_labels(self):
+        creds = CredentialBundle(
+            login="psn_user", password="psn_pass",
+            email_login="email@test.com", email_password="epass",
+        )
+        raw = {"dob": "1990-01-15"}
+        pairs = resolve_platform_credentials("PlayStation 5", creds, raw)
+        labels = [label for label, _ in pairs]
+
+        assert labels[0] == "PSN ID"
+        assert labels[1] == "PSN Password"
+        assert "Email" in labels
+        assert "Date of Birth" in labels
+
+    def test_xbox_format_no_dob(self):
+        creds = CredentialBundle(login="xbox_user", password="xbox_pass")
+        pairs = resolve_platform_credentials("Xbox One", creds)
+        labels = [label for label, _ in pairs]
+
+        assert labels[0] == "Xbox ID"
+        assert labels[1] == "Xbox Password"
+        assert "Date of Birth" not in labels
+
+    def test_pc_format_dual_credentials(self):
+        creds = CredentialBundle(
+            login="steam_user", password="steam_pass",
+            email_login="email@test.com", email_password="epass",
+        )
+        raw = {"rock_id": "rockstar_user", "rock_pass": "rockstar_pass"}
+        pairs = resolve_platform_credentials("PC - Legacy", creds, raw)
+        labels = [label for label, _ in pairs]
+        values = {label: val for label, val in pairs}
+
+        assert labels[0] == "Steam ID"
+        assert labels[1] == "Steam Password"
+        assert "Rockstar ID" in labels
+        assert "Rockstar Password" in labels
+        assert values["Steam ID"] == "steam_user"
+        assert values["Rockstar ID"] == "rockstar_user"
+
+    def test_pc_raw_data_overrides_credential_bundle(self):
+        """When raw_data has steam_id, it takes priority over CredentialBundle.login."""
+        creds = CredentialBundle(login="fallback_login", password="fallback_pass")
+        raw = {"steam_id": "real_steam", "steam_pass": "real_pass"}
+        pairs = resolve_platform_credentials("PC - Enhanced", creds, raw)
+        values = {label: val for label, val in pairs}
+
+        assert values["Steam ID"] == "real_steam"
+        assert values["Steam Password"] == "real_pass"
+
+    def test_unknown_platform_uses_default(self):
+        creds = CredentialBundle(login="user", password="pass")
+        pairs = resolve_platform_credentials("Unknown Platform", creds)
+        labels = [label for label, _ in pairs]
+
+        assert labels[0] == "Login"
+        assert labels[1] == "Password"
+
+    def test_format_platform_credentials_output(self):
+        creds = CredentialBundle(login="psn_user", password="psn_pass")
+        result = format_platform_credentials("PlayStation 4", creds)
+
+        assert "PSN ID: psn_user" in result
+        assert "PSN Password: psn_pass" in result
+
+    def test_format_with_custom_separator(self):
+        creds = CredentialBundle(login="user", password="pass")
+        result = format_platform_credentials(
+            "Xbox Series X/S", creds, separator="<br><br>",
+        )
+        assert "<br><br>" in result
+        assert "\n" not in result
+
+    def test_format_with_disclaimer(self):
+        creds = CredentialBundle(login="user", password="pass")
+        result = format_platform_credentials(
+            "PlayStation 5", creds, disclaimer="Do not dispute!",
+        )
+        assert result.endswith("Do not dispute!")
+
+    def test_format_strip_url_scheme(self):
+        creds = CredentialBundle(
+            login="user", password="pass",
+            email_login_link="https://mail.example.com/login",
+        )
+        result = format_platform_credentials(
+            "PlayStation 5", creds, strip_url_scheme=True,
+        )
+        assert "https://" not in result
+        assert "mail.example.com/login" in result
+
+    def test_empty_values_omitted(self):
+        creds = CredentialBundle(login="user", password="pass")
+        pairs = resolve_platform_credentials("PlayStation 5", creds)
+        labels = [label for label, _ in pairs]
+
+        assert "Email" not in labels
+        assert "Security Email" not in labels
+
+    def test_security_email_from_credential_bundle(self):
+        creds = CredentialBundle(
+            login="user", password="pass",
+            security_email="sec@test.com",
+            security_email_password="secpass",
+        )
+        pairs = resolve_platform_credentials("Xbox One", creds)
+        values = {label: val for label, val in pairs}
+
+        assert values["Security Email"] == "sec@test.com"
+        assert values["Security Email Password"] == "secpass"
+
+
 # -- resolver tests --------------------------------------------------------
 
 class TestGtavResolver:
@@ -81,6 +220,19 @@ class TestGtavResolver:
         assert account.has_email_access is True
         assert account.security_email == "security@example.com"
         assert account.birthday == "1995-06-15"
+
+    def test_resolver_populates_credential_extras(self, load_fixture):
+        request = PipelineRequest(
+            game="grand-theft-auto-5",
+            category="account",
+            kind="stock",
+            sources={"lzt": load_fixture("lzt_gtav.json")},
+        )
+        account = GtavResolver().resolve(request)
+
+        assert "dob" in account.credential_extras
+        assert account.credential_extras["dob"] == "1995-06-15"
+        assert "security_email_login_link" in account.credential_extras
 
     def test_resolver_rejects_missing_source(self):
         request = PipelineRequest(
@@ -202,7 +354,10 @@ class TestGtavPipeline:
         assert result.payload["augmentedGame"]["category"] == "Account"
         assert result.payload["augmentedGame"]["tradeEnvironmentId"] == "0"  # PC - Enhanced -> 0
         assert result.payload["details"]["pricing"]["pricePerUnit"]["amount"] == 450.0
-        assert result.payload["accountSecretDetails"]  # has security info
+        # Platform-aware delivery: PC - Enhanced → Steam labels
+        secret = result.payload["accountSecretDetails"][0]
+        assert "Steam ID:" in secret or "Login:" in secret  # depending on raw_data
+        assert "Backup Codes:" in secret
 
     def test_gameboost_payload_shape(self, load_fixture):
         sources = {"lzt": load_fixture("lzt_gtav.json")}
