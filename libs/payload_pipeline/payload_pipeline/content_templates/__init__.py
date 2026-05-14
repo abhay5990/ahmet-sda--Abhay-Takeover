@@ -13,6 +13,8 @@ from .renderer import (
     TemplateRenderError,
     validate_template_body,
 )
+from .parser import TemplateParseError
+from .modifiers import ModifierError
 from .validation import TemplateValidationError, validate_template
 from .field_registry import get_field_registry, get_resolved_model_name, get_sample_context
 from .compose import (
@@ -23,8 +25,10 @@ from .compose import (
 )
 
 __all__ = [
+    "ModifierError",
     "SimpleTemplateRenderer",
     "TemplateComposeResult",
+    "TemplateParseError",
     "TemplateRenderError",
     "TemplateValidationError",
     "apply_template_overrides",

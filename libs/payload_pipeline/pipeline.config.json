@@ -1,6 +1,6 @@
 {
   "features": {
-    "ref_key_in_description": false,
+    "ref_key_in_description": true,
     "content_templates": false
   }
 }

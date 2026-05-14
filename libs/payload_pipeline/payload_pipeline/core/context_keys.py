@@ -103,3 +103,7 @@ REF_KEY: ContextKey[str] = ContextKey("ref_key")
 
 TITLE_TEMPLATES: ContextKey[dict[str, str]] = ContextKey("title_templates")
 DESCRIPTION_TEMPLATES: ContextKey[dict[str, str]] = ContextKey("description_templates")
+
+# Dynamic cosmetic lists (from DB CosmeticList model).
+# List of dicts: [{"slug": "og_skins", "items": [...], "match_field": "cosmetic_titles"}, ...]
+COSMETIC_LISTS: ContextKey[list[dict[str, Any]]] = ContextKey("cosmetic_lists")

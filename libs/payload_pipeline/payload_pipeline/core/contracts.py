@@ -134,6 +134,7 @@ class ResolvedAccountBase:
     category_id: int = 0
     price: float = 0.0
     kind: Literal["stock", "dropshipping"] = "stock"
+    ref_key: str = ""
     credentials: CredentialBundle = field(default_factory=CredentialBundle)
 
     FIELD_META: ClassVar[dict[str, FieldMeta]] = {
@@ -141,6 +142,7 @@ class ResolvedAccountBase:
         "category_id": FieldMeta("Listing category ID.", 1),
         "price": FieldMeta("Listing price.", 10.0),
         "kind": FieldMeta("Listing kind: stock or dropshipping.", "stock"),
+        "ref_key": FieldMeta("Traceability reference key.", "#ABC1234"),
     }
 
     COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {

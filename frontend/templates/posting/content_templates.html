@@ -9,23 +9,28 @@
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Content Templates</h1>
-            <p class="mt-1 text-sm text-gray-500">Create title and description templates with <code class="bg-gray-100 px-1 rounded">{field_name}</code> placeholders.</p>
+            <p class="mt-1 text-sm text-gray-500">Manage title and description templates for your listings.</p>
         </div>
-        <button type="button" @click="openCreate()"
-                :disabled="!selectedGame"
-                class="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50">
-            + New Template
-        </button>
+        <div class="flex gap-2">
+            <a href="/posting/templates/cosmetic-lists/"
+               class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 inline-block">
+                Cosmetic Lists
+            </a>
+            <a :href="selectedGame ? '/posting/templates/editor/?game_id=' + selectedGame : '/posting/templates/editor/'"
+               class="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 inline-block">
+                + New Template
+            </a>
+        </div>
     </div>
 
     <!-- Filters -->
     <div class="bg-white rounded-lg shadow p-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
                 <label class="block text-xs font-medium text-gray-500 mb-1">Game</label>
                 <select x-model="selectedGame" @change="onGameChange()"
                         class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
-                    <option value="">Select game...</option>
+                    <option value="">All Games</option>
                     <template x-for="game in games" :key="game.id">
                         <option :value="String(game.id)" x-text="game.name"></option>
                     </template>
@@ -35,7 +40,7 @@
                 <label class="block text-xs font-medium text-gray-500 mb-1">Marketplace</label>
                 <select x-model="filterMarketplace" @change="loadTemplates()"
                         class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
-                    <option value="">All</option>
+                    <option value="">All Marketplaces</option>
                     <template x-for="mp in marketplaces" :key="mp[0]">
                         <option :value="mp[0]" x-text="mp[1]"></option>
                     </template>
@@ -45,17 +50,19 @@
                 <label class="block text-xs font-medium text-gray-500 mb-1">Type</label>
                 <select x-model="filterType" @change="loadTemplates()"
                         class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
-                    <option value="">All</option>
+                    <option value="">All Types</option>
                     <template x-for="tt in templateTypes" :key="tt[0]">
                         <option :value="tt[0]" x-text="tt[1]"></option>
                     </template>
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                <label class="block text-xs font-medium text-gray-500 mb-1">&nbsp;</label>
                 <div class="flex h-[38px] items-center rounded-md border border-gray-200 bg-gray-50 px-3 text-sm">
-                    <span x-show="loading" class="text-gray-500">Loading...</span>
-                    <span x-show="!loading" class="text-gray-600" x-text="templates.length + ' template(s)'"></span>
+                    <span x-show="loading" class="text-gray-400">Loading...</span>
+                    <span x-show="!loading" class="text-gray-600">
+                        <span class="font-medium" x-text="templates.length"></span> template(s)
+                    </span>
                 </div>
             </div>
         </div>
@@ -69,191 +76,127 @@
         <div class="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700" x-text="statusMessage"></div>
     </template>
 
-    <!-- Template List + Field Palette -->
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
-        <!-- Templates -->
-        <div class="xl:col-span-2 space-y-3">
-            <template x-if="!loading && templates.length === 0 && selectedGame">
-                <div class="bg-white rounded-lg shadow p-8 text-center text-gray-500">
-                    No templates yet. Click "+ New Template" to create one.
-                </div>
-            </template>
+    <!-- Empty: no templates found -->
+    <template x-if="!loading && templates.length === 0">
+        <div class="bg-white rounded-lg shadow p-12 text-center">
+            <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <p class="text-gray-500 mb-3">No templates found</p>
+            <a href="/posting/templates/editor/"
+               class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Create your first template
+            </a>
+        </div>
+    </template>
 
-            <template x-for="tpl in templates" :key="tpl.id">
-                <div class="bg-white rounded-lg shadow p-4">
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <h3 class="text-sm font-semibold text-gray-900" x-text="tpl.name"></h3>
-                                <span class="rounded-full px-2 py-0.5 text-[11px] font-medium"
-                                      :class="tpl.template_type === 'title' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'"
-                                      x-text="tpl.template_type"></span>
-                                <span class="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] text-gray-600"
-                                      x-text="tpl.marketplace"></span>
+    <!-- Template Cards (mobile) -->
+    <template x-if="!loading && templates.length > 0">
+        <div>
+            <!-- Mobile card layout -->
+            <div class="space-y-3 lg:hidden">
+                <template x-for="tpl in templates" :key="tpl.id">
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <div class="min-w-0">
+                                <h3 class="text-sm font-medium text-gray-900 truncate" x-text="tpl.name"></h3>
+                                <p class="text-xs text-gray-500 mt-0.5" x-text="tpl.game_name"></p>
                             </div>
-                            <pre class="mt-2 text-xs text-gray-600 bg-gray-50 rounded-md p-2 whitespace-pre-wrap break-words max-h-32 overflow-y-auto" x-text="tpl.body"></pre>
+                            <div class="flex items-center gap-1 shrink-0">
+                                <a :href="'/posting/templates/editor/' + tpl.id + '/'"
+                                   class="p-1.5 rounded-md text-gray-400 hover:text-blue-600 hover:bg-blue-50" title="Edit">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                </a>
+                                <button @click="deleteTemplate(tpl)"
+                                        class="p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50" title="Delete">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-1 shrink-0">
-                            <button @click="openPreview(tpl)"
-                                    class="p-1.5 rounded-md text-gray-400 hover:text-emerald-600 hover:bg-emerald-50"
-                                    title="Preview">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                            </button>
-                            <button @click="openEdit(tpl)"
-                                    class="p-1.5 rounded-md text-gray-400 hover:text-blue-600 hover:bg-blue-50"
-                                    title="Edit">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                            </button>
-                            <button @click="deleteTemplate(tpl)"
-                                    class="p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50"
-                                    title="Delete">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                            </button>
+                        <div class="flex flex-wrap items-center gap-1.5 mb-2">
+                            <span class="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium"
+                                  :class="tpl.template_type === 'title' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'"
+                                  x-text="tpl.template_type"></span>
+                            <span class="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-gray-100 text-gray-600"
+                                  x-text="getMarketplaceName(tpl.marketplace)"></span>
+                            <span class="text-[11px] text-gray-400 ml-auto" x-text="formatDate(tpl.updated_at)"></span>
                         </div>
+                        <pre class="text-xs text-gray-500 font-mono whitespace-pre-wrap break-words max-h-20 overflow-y-auto leading-relaxed bg-gray-50 rounded p-2" x-text="tpl.body"></pre>
                     </div>
-                    <div class="mt-2 text-[11px] text-gray-400">
-                        Updated <span x-text="formatDate(tpl.updated_at)"></span>
-                    </div>
-                </div>
-            </template>
-        </div>
-
-        <!-- Field Palette -->
-        <div class="bg-white rounded-lg shadow p-4">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-sm font-semibold text-gray-900">Available Fields</h2>
-                <span class="text-[11px] text-gray-400" x-text="modelName || 'Select a game'"></span>
-            </div>
-            <p class="text-xs text-gray-400 mb-2">Click to copy <code class="bg-gray-100 px-0.5 rounded">{field}</code> placeholder</p>
-            <div class="space-y-1.5 max-h-[500px] overflow-y-auto pr-1">
-                <template x-for="field in metadataFields" :key="field.name">
-                    <button type="button" @click="copyField(field)"
-                            class="w-full text-left rounded-md border border-gray-200 bg-gray-50 px-3 py-2 hover:border-emerald-300 hover:bg-emerald-50 transition-colors">
-                        <div class="flex items-center justify-between gap-2">
-                            <code class="text-xs font-semibold text-emerald-700" x-text="'{' + field.name + '}'"></code>
-                            <span class="rounded-full px-2 py-0.5 text-[11px] shrink-0"
-                                  :class="field.source === 'resolved' ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600'"
-                                  x-text="field.source"></span>
-                        </div>
-                        <p class="mt-1 text-xs text-gray-500 truncate" x-text="field.description || field.name"></p>
-                        <p class="mt-0.5 text-[11px] text-gray-400 truncate" x-text="'e.g. ' + (field.sample ?? '-')"></p>
-                    </button>
-                </template>
-                <template x-if="!metadataFields.length && selectedGame">
-                    <p class="text-xs text-gray-400 py-4 text-center">Loading fields...</p>
-                </template>
-                <template x-if="!selectedGame">
-                    <p class="text-xs text-gray-400 py-4 text-center">Select a game to see fields</p>
                 </template>
             </div>
-        </div>
-    </div>
 
-    <!-- Create/Edit Modal -->
-    <div x-show="showModal" x-cloak
-         class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-         @keydown.escape.window="showModal = false">
-        <div class="bg-white rounded-xl shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto"
-             @click.outside="showModal = false">
-            <div class="p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4"
-                    x-text="editingId ? 'Edit Template' : 'New Template'"></h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1">Name</label>
-                        <input type="text" x-model="form.name"
-                               class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500"
-                               placeholder="e.g. Detailed R6 Title">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1">Marketplace</label>
-                        <select x-model="form.marketplace" :disabled="!!editingId"
-                                class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500 disabled:opacity-50">
-                            <template x-for="mp in marketplaces" :key="mp[0]">
-                                <option :value="mp[0]" x-text="mp[1]"></option>
-                            </template>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1">Type</label>
-                        <select x-model="form.template_type" :disabled="!!editingId"
-                                class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500 disabled:opacity-50">
-                            <template x-for="tt in templateTypes" :key="tt[0]">
-                                <option :value="tt[0]" x-text="tt[1]"></option>
-                            </template>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <div class="flex items-center justify-between mb-1">
-                        <label class="block text-xs font-medium text-gray-500">Template Body</label>
-                        <span class="text-[11px] text-gray-400">
-                            Use <code class="bg-gray-100 px-0.5 rounded">{field_name}</code> for placeholders
-                        </span>
-                    </div>
-                    <textarea x-ref="bodyInput" x-model="form.body"
-                              :rows="form.template_type === 'title' ? 3 : 12"
-                              spellcheck="false"
-                              class="w-full rounded-md border-gray-300 font-mono text-sm leading-6 focus:ring-emerald-500 focus:border-emerald-500"
-                              :placeholder="form.template_type === 'title'
-                                  ? 'R6 Account | Level {level} | {current_rank} | {black_ice_count} Black Ice'
-                                  : 'Account Details:\nLevel: {level}\nRank: {current_rank}\nPeak Rank: {peak_rank}\nBlack Ice: {black_ice_count}\nOperators: {operator_count}'"></textarea>
-                </div>
-
-                <!-- Quick insert field buttons -->
-                <div x-show="metadataFields.length" class="mb-4">
-                    <p class="text-xs text-gray-500 mb-1.5">Click to insert at cursor:</p>
-                    <div class="flex flex-wrap gap-1 max-h-24 overflow-y-auto">
-                        <template x-for="field in metadataFields" :key="field.name">
-                            <button type="button" @click="insertField(field.name)"
-                                    class="px-2 py-0.5 rounded border border-gray-200 text-[11px] font-mono text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300">
-                                <span x-text="field.name"></span>
-                            </button>
+            <!-- Desktop table layout -->
+            <div class="bg-white rounded-lg shadow overflow-hidden hidden lg:block">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Game</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marketplace</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Body</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Updated</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <template x-for="tpl in templates" :key="tpl.id">
+                            <tr class="hover:bg-gray-50/50 transition-colors">
+                                <td class="px-4 py-3">
+                                    <span class="text-sm font-medium text-gray-900" x-text="tpl.name"></span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-sm text-gray-600" x-text="tpl.game_name"></span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium"
+                                          :class="tpl.template_type === 'title' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'"
+                                          x-text="tpl.template_type"></span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-sm text-gray-600" x-text="getMarketplaceName(tpl.marketplace)"></span>
+                                </td>
+                                <td class="px-4 py-3 max-w-md">
+                                    <pre class="text-xs text-gray-500 font-mono whitespace-pre-wrap break-words max-h-16 overflow-y-auto leading-relaxed" x-text="tpl.body"></pre>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="text-xs text-gray-400 whitespace-nowrap" x-text="formatDate(tpl.updated_at)"></span>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <div class="flex items-center justify-end gap-1">
+                                        <a :href="'/posting/templates/editor/' + tpl.id + '/'"
+                                           class="p-1.5 rounded-md text-gray-400 hover:text-blue-600 hover:bg-blue-50"
+                                           title="Edit">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        </a>
+                                        <button @click="deleteTemplate(tpl)"
+                                                class="p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50"
+                                                title="Delete">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                         </template>
-                    </div>
-                </div>
-
-                <!-- Preview area -->
-                <div x-show="previewResult" class="mb-4">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Preview (sample data)</label>
-                    <pre class="rounded-md bg-gray-50 border border-gray-200 p-3 text-sm text-gray-800 whitespace-pre-wrap break-words max-h-40 overflow-y-auto"
-                         x-text="previewResult"></pre>
-                    <template x-if="previewWarnings.length">
-                        <div class="mt-1 text-xs text-amber-600">
-                            <template x-for="w in previewWarnings" :key="w">
-                                <p x-text="'Warning: ' + w"></p>
-                            </template>
-                        </div>
-                    </template>
-                </div>
-
-                <!-- Modal error -->
-                <template x-if="modalError">
-                    <div class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700 mb-4" x-text="modalError"></div>
-                </template>
-
-                <div class="flex items-center justify-between">
-                    <button type="button" @click="previewTemplate()"
-                            class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                        Preview
-                    </button>
-                    <div class="flex items-center gap-2">
-                        <button type="button" @click="showModal = false"
-                                class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            Cancel
-                        </button>
-                        <button type="button" @click="saveTemplate()" :disabled="saving"
-                                class="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50">
-                            <span x-show="!saving" x-text="editingId ? 'Update' : 'Create'"></span>
-                            <span x-show="saving">Saving...</span>
-                        </button>
-                    </div>
-                </div>
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
+    </template>
+
+    <!-- Loading -->
+    <template x-if="loading">
+        <div class="bg-white rounded-lg shadow p-5">
+            <div class="animate-pulse space-y-3">
+                <div class="h-4 bg-gray-200 rounded w-48"></div>
+                <div class="h-3 bg-gray-100 rounded w-full"></div>
+                <div class="h-3 bg-gray-100 rounded w-full"></div>
+                <div class="h-3 bg-gray-100 rounded w-2/3"></div>
+            </div>
+        </div>
+    </template>
 </div>
 {% endblock %}
 
@@ -268,39 +211,31 @@ function contentTemplates() {
         games: TEMPLATE_GAMES,
         marketplaces: TEMPLATE_MARKETPLACES,
         templateTypes: TEMPLATE_TYPES,
-        selectedGame: TEMPLATE_GAMES[0] ? String(TEMPLATE_GAMES[0].id) : '',
+        selectedGame: '',
         filterMarketplace: '',
         filterType: '',
         templates: [],
-        metadataFields: [],
-        modelName: '',
         loading: false,
-        saving: false,
         errorMessage: '',
         statusMessage: '',
 
-        // Modal state
-        showModal: false,
-        editingId: null,
-        form: { name: '', marketplace: 'eldorado', template_type: 'title', body: '' },
-        previewResult: '',
-        previewWarnings: [],
-        modalError: '',
-
         async init() {
-            if (this.selectedGame) await this.onGameChange();
+            await this.loadTemplates();
         },
 
         async onGameChange() {
-            await Promise.all([this.loadTemplates(), this.loadMetadata()]);
+            this.filterMarketplace = '';
+            this.filterType = '';
+            await this.loadTemplates();
         },
 
         async loadTemplates() {
-            if (!this.selectedGame) return;
             this.loading = true;
             this.errorMessage = '';
+            this.statusMessage = '';
             try {
-                const params = new URLSearchParams({ game_id: this.selectedGame });
+                const params = new URLSearchParams();
+                if (this.selectedGame) params.set('game_id', this.selectedGame);
                 if (this.filterMarketplace) params.set('marketplace', this.filterMarketplace);
                 if (this.filterType) params.set('template_type', this.filterType);
                 const res = await fetch('/posting/api/content-templates/?' + params);
@@ -313,92 +248,9 @@ function contentTemplates() {
             this.loading = false;
         },
 
-        async loadMetadata() {
-            if (!this.selectedGame) return;
-            try {
-                const params = new URLSearchParams({ game_id: this.selectedGame });
-                const res = await fetch('/posting/api/content-templates/metadata/?' + params);
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Could not load metadata');
-                this.metadataFields = data.fields || [];
-                this.modelName = data.model || '';
-            } catch (e) {
-                this.errorMessage = e.message;
-            }
-        },
-
-        openCreate() {
-            this.editingId = null;
-            this.form = { name: '', marketplace: 'eldorado', template_type: 'title', body: '' };
-            this.previewResult = '';
-            this.previewWarnings = [];
-            this.modalError = '';
-            this.showModal = true;
-        },
-
-        openEdit(tpl) {
-            this.editingId = tpl.id;
-            this.form = {
-                name: tpl.name,
-                marketplace: tpl.marketplace,
-                template_type: tpl.template_type,
-                body: tpl.body,
-            };
-            this.previewResult = '';
-            this.previewWarnings = [];
-            this.modalError = '';
-            this.showModal = true;
-        },
-
-        openPreview(tpl) {
-            this.editingId = tpl.id;
-            this.form = {
-                name: tpl.name,
-                marketplace: tpl.marketplace,
-                template_type: tpl.template_type,
-                body: tpl.body,
-            };
-            this.previewResult = '';
-            this.previewWarnings = [];
-            this.modalError = '';
-            this.showModal = true;
-            this.$nextTick(() => this.previewTemplate());
-        },
-
-        async saveTemplate() {
-            this.saving = true;
-            this.modalError = '';
-            try {
-                if (this.editingId) {
-                    const res = await fetch(`/posting/api/content-templates/${this.editingId}/`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf() },
-                        body: JSON.stringify({ name: this.form.name, body: this.form.body }),
-                    });
-                    const data = await res.json();
-                    if (!res.ok) throw new Error(data.error || 'Update failed');
-                } else {
-                    const res = await fetch('/posting/api/content-templates/create/', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf() },
-                        body: JSON.stringify({
-                            game_id: Number(this.selectedGame),
-                            marketplace: this.form.marketplace,
-                            template_type: this.form.template_type,
-                            name: this.form.name,
-                            body: this.form.body,
-                        }),
-                    });
-                    const data = await res.json();
-                    if (!res.ok) throw new Error(data.error || 'Create failed');
-                }
-                this.showModal = false;
-                this.statusMessage = this.editingId ? 'Template updated' : 'Template created';
-                await this.loadTemplates();
-            } catch (e) {
-                this.modalError = e.message;
-            }
-            this.saving = false;
+        getMarketplaceName(slug) {
+            const mp = this.marketplaces.find(m => m[0] === slug);
+            return mp ? mp[1] : slug;
         },
 
         async deleteTemplate(tpl) {
@@ -415,53 +267,6 @@ function contentTemplates() {
                 await this.loadTemplates();
             } catch (e) {
                 this.errorMessage = e.message;
-            }
-        },
-
-        async previewTemplate() {
-            this.modalError = '';
-            this.previewResult = '';
-            this.previewWarnings = [];
-            try {
-                const res = await fetch('/posting/api/content-templates/preview/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf() },
-                    body: JSON.stringify({
-                        game_id: Number(this.selectedGame),
-                        body: this.form.body,
-                        template_type: this.form.template_type,
-                    }),
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Preview failed');
-                this.previewResult = data.rendered || '';
-                this.previewWarnings = data.warnings || [];
-            } catch (e) {
-                this.modalError = e.message;
-            }
-        },
-
-        insertField(fieldName) {
-            const textarea = this.$refs.bodyInput;
-            if (!textarea) return;
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const placeholder = '{' + fieldName + '}';
-            this.form.body = this.form.body.substring(0, start) + placeholder + this.form.body.substring(end);
-            this.$nextTick(() => {
-                const pos = start + placeholder.length;
-                textarea.focus();
-                textarea.setSelectionRange(pos, pos);
-            });
-        },
-
-        async copyField(field) {
-            const text = '{' + field.name + '}';
-            try {
-                await navigator.clipboard.writeText(text);
-                this.statusMessage = 'Copied ' + text;
-            } catch {
-                this.statusMessage = text;
             }
         },
 

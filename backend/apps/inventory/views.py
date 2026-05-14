@@ -4,7 +4,7 @@ import logging
 from django.core.paginator import Paginator
 from django.db.models import Count, Exists, OuterRef, Q
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
 
 from apps.accounts.decorators import role_required
@@ -114,6 +114,30 @@ def index(request):
         'selected_missing_on': fs['missing_on'],
         'search_query': fs['search'],
         'has_sheets_credential': _is_admin(request) and _has_sheets_credential(),
+    })
+
+
+@role_required('admin', 'user', 'viewer')
+def product_detail(request, product_id):
+    """OwnedProduct detail page with related orders and listings."""
+    product = get_object_or_404(
+        OwnedProduct.objects.select_related('game', 'category', 'source_account', 'product_origin'),
+        pk=product_id,
+    )
+
+    orders = product.orders.select_related(
+        'integration_account', 'listing',
+    ).order_by('-created_at')
+
+    listings = Listing.objects.filter(
+        listing_owned_products__owned_product=product,
+    ).select_related('integration_account', 'game').order_by('-created_at')
+
+    return render(request, 'inventory/product_detail.html', {
+        'product': product,
+        'orders': orders,
+        'listings': listings,
+        'statuses': OwnedProductStatus.choices,
     })
 
 

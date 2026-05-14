@@ -125,9 +125,13 @@ class FortniteComposer:
         title_templates = ctx.TITLE_TEMPLATES.get(request)
         desc_templates = ctx.DESCRIPTION_TEMPLATES.get(request)
         if title_templates or desc_templates:
+            cosmetic_lists = ctx.COSMETIC_LISTS.get(request)
             apply_template_overrides(
                 draft,
-                build_fortnite_context(account, request, media),
+                build_fortnite_context(
+                    account, request, media,
+                    cosmetic_lists=cosmetic_lists,
+                ),
                 title_templates=title_templates,
                 description_templates=desc_templates,
             )

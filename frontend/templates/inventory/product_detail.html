@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.login }} — Owned Product{% endblock %}
+
+{% block content %}
+<div x-data="productDetail()" x-init="init()">
+
+    {% include "includes/_loading_overlay.html" %}
+
+    <!-- Breadcrumb + Header -->
+    <div class="mb-6">
+        <a href="{% url 'inventory:index' %}" class="text-sm text-emerald-600 hover:text-emerald-800">&larr; Back to Owned Products</a>
+        <div class="flex items-start justify-between mt-2 gap-4">
+            <div class="min-w-0">
+                <h1 class="text-2xl font-bold text-gray-900 break-words font-mono">
+                    {{ product.login }}
+                </h1>
+                <p class="text-sm text-gray-500 mt-1">
+                    {{ product.category.title }}
+                    {% if product.game %}&middot; {{ product.game.name }}{% endif %}
+                    {% if product.ref_key %}&middot; <span class="font-mono text-xs">#{{ product.ref_key }}</span>{% endif %}
+                </p>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <span class="inline-flex px-3 py-1 text-sm rounded-full font-medium
+                    {% if product.status == 'draft' %}bg-gray-100 text-gray-600
+                    {% elif product.status == 'listed' %}bg-blue-100 text-blue-700
+                    {% elif product.status == 'sold' or product.status == 'multiple_sold' %}bg-emerald-100 text-emerald-700
+                    {% elif product.status == 'replaced' or product.status == 'recovered' %}bg-yellow-100 text-yellow-700
+                    {% elif product.status == 'lost' %}bg-orange-100 text-orange-700
+                    {% elif product.status == 'banned' %}bg-red-100 text-red-700
+                    {% else %}bg-gray-100 text-gray-600{% endif %}">
+                    {{ product.get_status_display }}
+                </span>
+                <!-- Status dropdown -->
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" @click.outside="open = false"
+                            class="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium">
+                        Change Status
+                    </button>
+                    <div x-show="open" x-cloak
+                         x-transition
+                         class="absolute right-0 z-30 mt-1 w-44 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                        {% for value, label in statuses %}
+                        <button @click="updateStatus('{{ value }}'); open = false"
+                                class="w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50 transition-colors
+                                       {% if product.status == value %}text-emerald-600 font-medium{% else %}text-gray-700{% endif %}">
+                            {{ label }}
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="text-xs text-gray-500 uppercase">Purchase Price</div>
+            <div class="text-2xl font-bold text-gray-800">
+                {% if product.price %}{{ product.price }} {{ product.currency }}{% else %}—{% endif %}
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="text-xs text-gray-500 uppercase">Orders</div>
+            <div class="text-2xl font-bold {% if orders %}text-emerald-600{% else %}text-gray-400{% endif %}">
+                {{ orders|length }}
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="text-xs text-gray-500 uppercase">Listings</div>
+            <div class="text-2xl font-bold {% if listings %}text-blue-600{% else %}text-gray-400{% endif %}">
+                {{ listings|length }}
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="text-xs text-gray-500 uppercase">Source</div>
+            <div class="text-lg font-bold text-gray-800 truncate">
+                {{ product.source_account.name|default:"—" }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+
+        <!-- Product Info -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Product Info</h2>
+            <dl class="space-y-3 text-sm">
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Login</dt>
+                    <dd class="text-gray-900 text-right font-mono">{{ product.login }}</dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Email</dt>
+                    <dd class="text-gray-900 text-right">{{ product.email|default:"—" }}</dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Category</dt>
+                    <dd class="text-gray-900 text-right">{{ product.category.title }}</dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Game</dt>
+                    <dd class="text-gray-900 text-right">{{ product.game.name|default:"—" }}</dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Source Account</dt>
+                    <dd class="text-gray-900 text-right">
+                        {% if product.source_account %}
+                            {{ product.source_account.name }}
+                            <span class="text-xs text-gray-400">({{ product.source_account.provider }})</span>
+                        {% else %}—{% endif %}
+                    </dd>
+                </div>
+                {% if product.source_product_id %}
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Source Product ID</dt>
+                    <dd class="text-gray-900 text-right font-mono text-xs">{{ product.source_product_id }}</dd>
+                </div>
+                {% endif %}
+                {% if product.ref_key %}
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Ref Key</dt>
+                    <dd class="text-gray-900 text-right font-mono">#{{ product.ref_key }}</dd>
+                </div>
+                {% endif %}
+            </dl>
+        </div>
+
+        <!-- Timeline -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Timeline</h2>
+            <dl class="space-y-3 text-sm">
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Purchased at</dt>
+                    <dd class="text-gray-900 text-right">
+                        {% if product.purchased_at %}<span data-utc="{{ product.purchased_at|date:'c' }}">{{ product.purchased_at|date:"M-d-Y g:i A" }}</span>{% else %}—{% endif %}
+                    </dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Created</dt>
+                    <dd class="text-gray-900 text-right">
+                        <span data-utc="{{ product.created_at|date:'c' }}">{{ product.created_at|date:"M-d-Y g:i A" }}</span>
+                    </dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-500">Updated</dt>
+                    <dd class="text-gray-900 text-right">
+                        <span data-utc="{{ product.updated_at|date:'c' }}">{{ product.updated_at|date:"M-d-Y g:i A" }}</span>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    <!-- Dropship Origin -->
+    {% if product.product_origin %}
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Dropship Origin</h2>
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+            <div class="flex justify-between gap-3">
+                <dt class="text-gray-500">Source Product ID</dt>
+                <dd class="text-gray-900 font-mono">{{ product.product_origin.source_product_id }}</dd>
+            </div>
+            <div class="flex justify-between gap-3">
+                <dt class="text-gray-500">Title</dt>
+                <dd class="text-gray-900 text-right">{{ product.product_origin.product_title|truncatechars:60 }}</dd>
+            </div>
+            <div class="flex justify-between gap-3">
+                <dt class="text-gray-500">Price</dt>
+                <dd class="text-gray-900 text-right">{{ product.product_origin.price }} {{ product.product_origin.currency }}</dd>
+            </div>
+            <div class="flex justify-between gap-3">
+                <dt class="text-gray-500">Status</dt>
+                <dd class="text-gray-900 text-right">{{ product.product_origin.get_status_display }}</dd>
+            </div>
+            {% if product.product_origin.source_url %}
+            <div class="md:col-span-2 flex justify-between gap-3">
+                <dt class="text-gray-500">Source URL</dt>
+                <dd class="text-right truncate">
+                    <a href="{{ product.product_origin.source_url }}" target="_blank" rel="noopener"
+                       class="text-emerald-600 hover:text-emerald-800 text-xs break-all">
+                        {{ product.product_origin.source_url|truncatechars:80 }}
+                    </a>
+                </dd>
+            </div>
+            {% endif %}
+        </dl>
+    </div>
+    {% endif %}
+
+    <!-- Orders -->
+    <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+        <div class="px-6 py-3 bg-gray-50 border-b flex items-center justify-between">
+            <h2 class="font-semibold text-gray-700">Orders ({{ orders|length }})</h2>
+        </div>
+        {% if orders %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Marketplace</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                        <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Sold At</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Listing</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for order in orders %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-2 text-sm font-mono text-gray-800">
+                            <a href="{% url 'orders:list' %}?q={{ order.store_order_id }}"
+                               class="text-emerald-600 hover:text-emerald-800 hover:underline">
+                                {{ order.store_order_id|truncatechars:20 }}
+                            </a>
+                        </td>
+                        <td class="px-4 py-2 text-sm text-gray-500">
+                            {% if order.integration_account %}
+                                <span class="px-2 py-0.5 rounded text-xs font-medium
+                                    {% if order.integration_account.provider == 'eldorado' %}bg-purple-100 text-purple-700
+                                    {% elif order.integration_account.provider == 'gameboost' %}bg-blue-100 text-blue-700
+                                    {% elif order.integration_account.provider == 'playerauctions' %}bg-orange-100 text-orange-700
+                                    {% elif order.integration_account.provider == 'lzt' %}bg-cyan-100 text-cyan-700
+                                    {% elif order.integration_account.provider == 'g2g' %}bg-pink-100 text-pink-700
+                                    {% else %}bg-gray-100 text-gray-600{% endif %}">
+                                    {{ order.integration_account.provider }}
+                                </span>
+                                {{ order.integration_account.name }}
+                            {% else %}—{% endif %}
+                        </td>
+                        <td class="px-4 py-2 text-sm text-gray-700 whitespace-nowrap">
+                            {{ order.price }} {{ order.currency }}
+                        </td>
+                        <td class="px-4 py-2 text-center">
+                            <span class="inline-flex px-2 py-0.5 text-xs rounded-full font-medium
+                                {% if order.status == 'completed' %}bg-emerald-100 text-emerald-700
+                                {% elif order.status == 'delivered' %}bg-blue-100 text-blue-700
+                                {% elif order.status == 'pending' %}bg-yellow-100 text-yellow-700
+                                {% elif order.status == 'refunded' %}bg-red-100 text-red-700
+                                {% elif order.status == 'disputed' or order.status == 'dispute_resolved' %}bg-orange-100 text-orange-700
+                                {% elif order.status == 'cancelled' %}bg-gray-100 text-gray-600
+                                {% else %}bg-gray-100 text-gray-600{% endif %}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-2 text-xs text-gray-500 whitespace-nowrap">
+                            {% if order.sold_at %}{{ order.sold_at|date:"M d, Y H:i" }}{% else %}—{% endif %}
+                        </td>
+                        <td class="px-4 py-2 text-sm">
+                            {% if order.listing %}
+                            <a href="{% url 'listings:detail' order.listing.id %}"
+                               class="text-emerald-600 hover:text-emerald-800 hover:underline text-xs font-mono">
+                                {{ order.listing.store_listing_id|truncatechars:16 }}
+                            </a>
+                            {% else %}—{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="px-6 py-8 text-center text-gray-400 text-sm">No orders linked to this product.</div>
+        {% endif %}
+    </div>
+
+    <!-- Listings -->
+    <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+        <div class="px-6 py-3 bg-gray-50 border-b flex items-center justify-between">
+            <h2 class="font-semibold text-gray-700">Listings ({{ listings|length }})</h2>
+        </div>
+        {% if listings %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Listing ID</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Marketplace</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                        <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Listed At</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for listing in listings %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-2 text-sm font-mono">
+                            <a href="{% url 'listings:detail' listing.id %}"
+                               class="text-emerald-600 hover:text-emerald-800 hover:underline">
+                                {{ listing.store_listing_id|truncatechars:16 }}
+                            </a>
+                        </td>
+                        <td class="px-4 py-2 text-sm text-gray-700 max-w-xs truncate">
+                            {{ listing.title|default:"—"|truncatechars:40 }}
+                        </td>
+                        <td class="px-4 py-2 text-sm text-gray-500">
+                            {% if listing.integration_account %}
+                                <span class="px-2 py-0.5 rounded text-xs font-medium
+                                    {% if listing.integration_account.provider == 'eldorado' %}bg-purple-100 text-purple-700
+                                    {% elif listing.integration_account.provider == 'gameboost' %}bg-blue-100 text-blue-700
+                                    {% elif listing.integration_account.provider == 'playerauctions' %}bg-orange-100 text-orange-700
+                                    {% elif listing.integration_account.provider == 'lzt' %}bg-cyan-100 text-cyan-700
+                                    {% elif listing.integration_account.provider == 'g2g' %}bg-pink-100 text-pink-700
+                                    {% else %}bg-gray-100 text-gray-600{% endif %}">
+                                    {{ listing.integration_account.provider }}
+                                </span>
+                                {{ listing.integration_account.name }}
+                            {% else %}—{% endif %}
+                        </td>
+                        <td class="px-4 py-2 text-sm text-gray-700 whitespace-nowrap">
+                            {{ listing.price }} {{ listing.currency }}
+                        </td>
+                        <td class="px-4 py-2 text-center">
+                            <span class="inline-flex px-2 py-0.5 text-xs rounded-full font-medium
+                                {% if listing.status == 'listed' %}bg-emerald-100 text-emerald-700
+                                {% elif listing.status == 'paused' %}bg-yellow-100 text-yellow-700
+                                {% elif listing.status == 'closed' %}bg-gray-100 text-gray-600
+                                {% elif listing.status == 'deleted' %}bg-red-100 text-red-700
+                                {% else %}bg-gray-100 text-gray-600{% endif %}">
+                                {{ listing.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-2 text-xs text-gray-500 whitespace-nowrap">
+                            {% if listing.listed_at %}{{ listing.listed_at|date:"M d, Y H:i" }}{% else %}—{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="px-6 py-8 text-center text-gray-400 text-sm">No listings linked to this product.</div>
+        {% endif %}
+    </div>
+
+    <!-- Toast -->
+    <div x-show="toast.show" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-2"
+         class="fixed bottom-6 right-6 z-50 max-w-sm px-5 py-3 rounded-lg shadow-lg text-sm font-medium"
+         :class="toast.ok ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'"
+         x-text="toast.msg">
+    </div>
+</div>
+
+<script>
+function productDetail() {
+    return {
+        loading: false,
+        loadingMsg: '',
+        toast: { show: false, ok: true, msg: '' },
+
+        init() {},
+
+        showToast(ok, msg, duration = 4000) {
+            this.toast = { show: true, ok, msg };
+            setTimeout(() => { this.toast.show = false; }, duration);
+        },
+
+        csrfToken() {
+            return document.cookie.split('; ').find(r => r.startsWith('csrftoken='))?.split('=')[1] || '';
+        },
+
+        async updateStatus(status) {
+            this.loading = true;
+            this.loadingMsg = 'Updating status\u2026';
+            try {
+                const res = await fetch(`/inventory/api/products/{{ product.id }}/status/`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.csrfToken() },
+                    body: JSON.stringify({ status }),
+                });
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    this.loading = false;
+                    const data = await res.json().catch(() => ({}));
+                    this.showToast(false, 'Failed: ' + (data.error || 'Unknown error'));
+                }
+            } catch (e) {
+                this.loading = false;
+                this.showToast(false, 'Request failed: ' + e.message);
+            }
+        },
+    };
+}
+</script>
+{% endblock %}

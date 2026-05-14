@@ -3,29 +3,25 @@
 Renders plain-text templates with ``{field_name}`` placeholders against a
 flat context dict built from the resolved account model.
 
-The renderer is intentionally simple — no nested logic, no JSON specs.
-Future modifier support (``{field | limit:10}``) will be added via the
-``_resolve_placeholder`` extension point.
+Now uses an AST-based parser internally for placeholder substitution,
+modifier chains, and conditional blocks.
 
-Security note: uses regex-based placeholder extraction instead of
+Security note: uses regex-based field name validation instead of
 ``str.format_map`` to prevent Python attribute traversal attacks
 (e.g. ``{field.__class__}``).
 """
 
 from __future__ import annotations
 
-import re
 from collections.abc import Mapping
 from typing import Any
 
+from .ast_nodes import IfBlockNode, Node, PlaceholderNode, TextNode
+from .modifiers import apply_modifier_chain
+from .parser import TemplateParseError, parse
+
 
 Context = Mapping[str, Any]
-
-# Matches {field_name} — alphanumeric + underscores only (no dots, no dunders).
-_PLACEHOLDER_RE = re.compile(r"\{([a-zA-Z_][a-zA-Z0-9_]*)\}")
-
-# Matches any {…} block (for detecting invalid placeholder syntax after brace balance check).
-_ANY_BRACE_RE = re.compile(r"\{[^{}]*\}")
 
 
 class TemplateRenderError(ValueError):
@@ -51,40 +47,177 @@ class SimpleTemplateRenderer:
     def __init__(self, *, strict: bool = False) -> None:
         self.strict = strict
 
-    def render(self, template: str, context: Context) -> str:
-        """Render *template* by substituting placeholders from *context*."""
+    def render(
+        self,
+        template: str,
+        context: Context,
+        *,
+        max_length: int = 0,
+        separator: str = " | ",
+        pin_last: int = 0,
+    ) -> str:
+        """Render *template* by substituting placeholders from *context*.
+
+        When *max_length* is set (> 0), the rendered output is split by
+        *separator* into segments and reassembled keeping only as many
+        complete segments as fit within the character limit.
+
+        When *pin_last* is set (> 0), the last N non-empty segments are
+        always kept and the middle segments are truncated instead.
+        """
         if not template:
             return ""
-
-        def _replace(match: re.Match[str]) -> str:
-            field_name = match.group(1)
-            return self._resolve_placeholder(field_name, context)
-
-        return _PLACEHOLDER_RE.sub(_replace, template)
+        nodes = parse(template)
+        rendered = self._render_nodes(nodes, context)
+        if max_length > 0:
+            rendered = _assemble_segments(
+                rendered, max_length, separator, pin_last=pin_last,
+            )
+        return rendered
 
     def extract_fields(self, template: str) -> list[str]:
         """Return the list of unique field names referenced in *template*."""
+        nodes = parse(template)
         seen: set[str] = set()
         result: list[str] = []
-        for match in _PLACEHOLDER_RE.finditer(template):
-            name = match.group(1)
-            if name not in seen:
-                seen.add(name)
-                result.append(name)
+        self._collect_fields(nodes, seen, result)
         return result
 
-    def _resolve_placeholder(self, field_name: str, context: Context) -> str:
+    def _render_nodes(self, nodes: tuple[Node, ...], context: Context) -> str:
+        parts: list[str] = []
+        for node in nodes:
+            if isinstance(node, TextNode):
+                parts.append(node.text)
+            elif isinstance(node, PlaceholderNode):
+                parts.append(self._resolve_placeholder(node, context))
+            elif isinstance(node, IfBlockNode):
+                if self._evaluate_condition(node.condition, context):
+                    parts.append(self._render_nodes(node.if_body, context))
+                else:
+                    parts.append(self._render_nodes(node.else_body, context))
+        return "".join(parts)
+
+    def _resolve_placeholder(self, node: PlaceholderNode, context: Context) -> str:
         """Resolve a single placeholder to its string value.
 
         Extension point for future modifier support.
         """
-        if field_name not in context:
+        if node.field_name not in context:
             if self.strict:
-                raise TemplateRenderError(f"Missing template field: {field_name}")
+                raise TemplateRenderError(f"Missing template field: {node.field_name}")
             return ""
 
-        value = context[field_name]
+        value = context[node.field_name]
+        if node.modifiers:
+            value = apply_modifier_chain(value, node.modifiers)
         return _format_value(value)
+
+    def _evaluate_condition(self, cond, context: Context) -> bool:
+        """Evaluate an {#if} condition against the context."""
+        value = context.get(cond.field_name)
+
+        if cond.operator == "truthy":
+            return _is_truthy(value)
+
+        if value is None:
+            return cond.operator in ("!=",)
+
+        # Try numeric comparison
+        num_value = _try_numeric(value)
+        num_target = _try_numeric(cond.value)
+
+        if num_value is not None and num_target is not None:
+            return _compare(num_value, cond.operator, num_target)
+
+        # Fall back to string comparison
+        str_value = str(value)
+        str_target = cond.value if cond.value is not None else ""
+        return _compare(str_value, cond.operator, str_target)
+
+    def _collect_fields(
+        self, nodes: tuple[Node, ...], seen: set[str], result: list[str]
+    ) -> None:
+        for node in nodes:
+            if isinstance(node, PlaceholderNode):
+                if node.field_name not in seen:
+                    seen.add(node.field_name)
+                    result.append(node.field_name)
+            elif isinstance(node, IfBlockNode):
+                if node.condition.field_name not in seen:
+                    seen.add(node.condition.field_name)
+                    result.append(node.condition.field_name)
+                self._collect_fields(node.if_body, seen, result)
+                self._collect_fields(node.else_body, seen, result)
+
+
+def _assemble_segments(
+    rendered: str,
+    max_length: int,
+    separator: str,
+    *,
+    pin_last: int = 0,
+) -> str:
+    """Keep only as many segments as fit within *max_length*.
+
+    Splits *rendered* by *separator*, then reassembles left-to-right,
+    stopping before adding a segment that would exceed the limit.
+    Empty segments (from falsy conditionals) are silently dropped.
+
+    When *pin_last* > 0, the last N non-empty segments are always
+    reserved and the middle is filled with whatever fits.
+    """
+    segments = [s.strip() for s in rendered.split(separator) if s.strip()]
+
+    if not segments:
+        return ""
+
+    if pin_last <= 0 or pin_last >= len(segments):
+        # Simple mode: fill left-to-right
+        return _fill_left_to_right(segments, max_length, separator)
+
+    # Split into body and pinned tail
+    tail = segments[-pin_last:]
+    body = segments[:-pin_last]
+
+    # Calculate reserved tail cost
+    tail_cost = sum(len(s) for s in tail) + len(separator) * len(tail)
+
+    remaining = max_length - tail_cost
+    if remaining <= 0:
+        # Not even tail fits — just fit what we can from everything
+        return _fill_left_to_right(segments, max_length, separator)
+
+    # Fill body left-to-right within remaining budget
+    built: list[str] = []
+    current_length = 0
+    for segment in body:
+        addition = len(segment) + (len(separator) if built else 0)
+        if current_length + addition > remaining:
+            break
+        built.append(segment)
+        current_length += addition
+
+    built.extend(tail)
+    return separator.join(built)
+
+
+def _fill_left_to_right(
+    segments: list[str],
+    max_length: int,
+    separator: str,
+) -> str:
+    """Fill segments left-to-right until max_length is reached."""
+    built: list[str] = []
+    current_length = 0
+
+    for segment in segments:
+        addition = len(segment) + (len(separator) if built else 0)
+        if current_length + addition > max_length:
+            break
+        built.append(segment)
+        current_length += addition
+
+    return separator.join(built)
 
 
 def _format_value(value: Any) -> str:
@@ -97,6 +230,55 @@ def _format_value(value: Any) -> str:
         items = [_format_value(item) for item in value if item is not None]
         return ", ".join(items)
     return str(value)
+
+
+def _is_truthy(value: Any) -> bool:
+    """Truthiness rules for ``{#if field}``."""
+    if value is None:
+        return False
+    if value == "":
+        return False
+    if value is False:
+        return False
+    if isinstance(value, (int, float)) and not isinstance(value, bool) and value == 0:
+        return False
+    if isinstance(value, list) and len(value) == 0:
+        return False
+    return True
+
+
+def _try_numeric(value: Any) -> int | float | None:
+    """Try to interpret a value as a number."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return value
+    if isinstance(value, str):
+        try:
+            return int(value)
+        except (ValueError, TypeError):
+            pass
+        try:
+            return float(value)
+        except (ValueError, TypeError):
+            pass
+    return None
+
+
+def _compare(a: Any, op: str, b: Any) -> bool:
+    if op == ">":
+        return a > b
+    if op == ">=":
+        return a >= b
+    if op == "<":
+        return a < b
+    if op == "<=":
+        return a <= b
+    if op == "=":
+        return a == b
+    if op == "!=":
+        return a != b
+    return False
 
 
 def validate_template_body(
@@ -113,46 +295,17 @@ def validate_template_body(
         raise TemplateRenderError("Template body cannot be empty")
 
     warnings: list[str] = []
-    renderer = SimpleTemplateRenderer()
-    fields = renderer.extract_fields(body)
+
+    try:
+        nodes = parse(body)
+    except TemplateParseError as exc:
+        raise TemplateRenderError(str(exc)) from exc
 
     if available_fields is not None:
+        renderer = SimpleTemplateRenderer()
+        fields = renderer.extract_fields(body)
         for field_name in fields:
             if field_name not in available_fields:
                 warnings.append(f"Unknown field: {field_name}")
 
-    # Check for malformed placeholders (unclosed braces, nested braces)
-    _check_brace_balance(body)
-
-    # Check for {…} blocks that look like placeholders but aren't valid identifiers.
-    # e.g. {bad-field}, {123abc}, { space } — these pass brace balance but silently
-    # render as literal text, which is almost certainly a user typo.
-    for match in _ANY_BRACE_RE.finditer(body):
-        block = match.group()
-        if not _PLACEHOLDER_RE.fullmatch(block):
-            raise TemplateRenderError(
-                f"Invalid placeholder syntax: {block!r} — "
-                "use {field_name} with letters, digits, and underscores only"
-            )
-
     return warnings
-
-
-def _check_brace_balance(body: str) -> None:
-    """Raise if the template has unbalanced or nested braces."""
-    depth = 0
-    for i, ch in enumerate(body):
-        if ch == "{":
-            depth += 1
-            if depth > 1:
-                raise TemplateRenderError(
-                    f"Nested braces are not supported (position {i})"
-                )
-        elif ch == "}":
-            if depth == 0:
-                raise TemplateRenderError(
-                    f"Unexpected closing brace (position {i})"
-                )
-            depth -= 1
-    if depth > 0:
-        raise TemplateRenderError("Unclosed brace in template")

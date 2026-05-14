@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import Any
 
 from .renderer import TemplateRenderError, validate_template_body
+from .parser import TemplateParseError
 
 
 class TemplateValidationError(ValueError):

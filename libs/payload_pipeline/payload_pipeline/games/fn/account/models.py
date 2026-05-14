@@ -86,4 +86,39 @@ class FortniteResolvedAccount(ResolvedAccountBase):
         "psn_linkable_label": FieldMeta("Yes/No label for PSN linkability.", "Yes", "computed"),
         "xbox_linkable_label": FieldMeta("Yes/No label for Xbox linkability.", "Yes", "computed"),
         "email_access_label": FieldMeta("Yes/No label for email access.", "Yes", "computed"),
+        "platform_label": FieldMeta(
+            "Linkable platforms tag, e.g. [PC/PSN/XBOX].",
+            "[PC/PSN]",
+            "computed",
+        ),
+        "vbucks_display": FieldMeta(
+            "V-Bucks (only shown for EpicPC with ≥500).",
+            2500,
+            "computed",
+        ),
+        "priority_items": FieldMeta(
+            "Priority cosmetics found (Leviathan Axe, Floss, etc.).",
+            ["Leviathan Axe", "Take The L"],
+            "computed",
+        ),
+        "has_og_stw": FieldMeta(
+            "Account has OG Save the World.",
+            False,
+            "computed",
+        ),
+        "special_skins": FieldMeta(
+            "Rare/special skins found (Renegade Raider, Black Knight, etc.).",
+            ["Renegade Raider", "Black Knight"],
+            "computed",
+        ),
+        "cheap_items": FieldMeta(
+            "Budget cosmetics shown for accounts under $25 (Mako, Reaper Axe).",
+            [],
+            "computed",
+        ),
+        "other_cosmetics": FieldMeta(
+            "Remaining cosmetics after priority/special filtering.",
+            ["Scenario", "Sparkle Specialist"],
+            "computed",
+        ),
     }

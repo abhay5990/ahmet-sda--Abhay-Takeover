@@ -11,7 +11,7 @@ from django.views.decorators.http import require_GET, require_http_methods, requ
 
 from apps.accounts.decorators import role_required
 from apps.inventory.models import Game
-from apps.posting.models import ContentTemplate
+from apps.posting.models import ContentTemplate, CosmeticList
 from payload_pipeline.content_templates import (
     SimpleTemplateRenderer,
     TemplateRenderError,
@@ -29,10 +29,10 @@ from payload_pipeline.content_templates.field_registry import get_available_fiel
 def list_content_templates(request):
     """Return templates for a game, optionally filtered by marketplace/type."""
     game_id = request.GET.get('game_id')
-    if not game_id:
-        return JsonResponse({'error': 'game_id is required'}, status=400)
-
-    qs = ContentTemplate.objects.filter(game_id=game_id)
+    if game_id:
+        qs = ContentTemplate.objects.select_related('game').filter(game_id=game_id)
+    else:
+        qs = ContentTemplate.objects.select_related('game').all()
 
     marketplace = request.GET.get('marketplace')
     if marketplace:
@@ -55,8 +55,31 @@ def content_template_metadata(request):
     category = request.GET.get('category') or 'account'
     game_slug = _game_slug(game_id)
 
+    fields = get_field_registry(game_slug, category)
+
+    # Merge dynamic cosmetic list slugs as additional list-type fields
+    if game_id:
+        for cl in _get_cosmetic_list_dicts(game_id):
+            fields.append({
+                'name': cl['slug'],
+                'placeholder': '{' + cl['slug'] + '}',
+                'description': f"Cosmetic list: {cl['name']} ({len(cl['items'])} items, matches {cl['match_field']})",
+                'sample': ', '.join(cl['items'][:3]) + ('...' if len(cl['items']) > 3 else ''),
+                'source': 'cosmetic_list',
+                'field_type': 'list',
+            })
+        # Also add "remaining" field
+        fields.append({
+            'name': 'remaining',
+            'placeholder': '{remaining}',
+            'description': 'Cosmetics not matched by any cosmetic list.',
+            'sample': 'Scenario, Sparkle Specialist',
+            'source': 'cosmetic_list',
+            'field_type': 'list',
+        })
+
     return JsonResponse({
-        'fields': get_field_registry(game_slug, category),
+        'fields': fields,
         'model': get_resolved_model_name(game_slug, category),
     })
 
@@ -88,7 +111,7 @@ def create_content_template(request):
 
     # Validate template body
     game_slug = game.slug if game else ''
-    available = get_available_fields(game_slug) if game_slug else None
+    available = _get_available_fields_with_lists(game_slug, game_id)
     warnings = _validate_body(template_body, template_type, available)
     if isinstance(warnings, JsonResponse):
         return warnings
@@ -138,7 +161,7 @@ def content_template_detail(request, template_id: int):
 
     # Validate
     game_slug = template.game.slug if template.game else ''
-    available = get_available_fields(game_slug) if game_slug else None
+    available = _get_available_fields_with_lists(game_slug, template.game_id)
     warnings = _validate_body(template_body, template.template_type, available)
     if isinstance(warnings, JsonResponse):
         return warnings
@@ -175,7 +198,7 @@ def preview_content_template(request):
         return JsonResponse({'error': 'body is required'}, status=400)
 
     game_slug = _game_slug(game_id)
-    available = get_available_fields(game_slug) if game_slug else None
+    available = _get_available_fields_with_lists(game_slug, game_id)
 
     # Validate
     warnings = _validate_body(template_body, template_type, available)
@@ -184,6 +207,13 @@ def preview_content_template(request):
 
     # Render with sample context
     context = get_sample_context(game_slug, category)
+
+    # Inject cosmetic list sample values into context
+    if game_id:
+        for cl in _get_cosmetic_list_dicts(game_id):
+            context[cl['slug']] = cl['items'][:3]
+        context.setdefault('remaining', ['Scenario', 'Sparkle Specialist'])
+
     try:
         renderer = SimpleTemplateRenderer()
         rendered = renderer.render(template_body, context)
@@ -206,6 +236,7 @@ def _serialize(template: ContentTemplate) -> dict[str, Any]:
     return {
         'id': template.id,
         'game_id': template.game_id,
+        'game_name': template.game.name if template.game else '',
         'marketplace': template.marketplace,
         'template_type': template.template_type,
         'name': template.name,
@@ -255,3 +286,29 @@ def _game_slug(game_id: Any) -> str:
         return ''
     game = Game.objects.filter(id=game_id).first()
     return game.slug if game else ''
+
+
+def _get_cosmetic_list_dicts(game_id: Any) -> list[dict[str, Any]]:
+    """Return active cosmetic lists for a game as plain dicts (priority-ordered)."""
+    qs = CosmeticList.objects.filter(game_id=game_id, is_active=True).order_by('priority')
+    return [
+        {
+            'slug': cl.slug,
+            'name': cl.name,
+            'items': cl.items or [],
+            'match_field': cl.match_field,
+        }
+        for cl in qs
+    ]
+
+
+def _get_available_fields_with_lists(game_slug: str, game_id: Any) -> set[str] | None:
+    """Return available fields including dynamic cosmetic list slugs."""
+    if not game_slug:
+        return None
+    fields = get_available_fields(game_slug)
+    if game_id:
+        for cl in CosmeticList.objects.filter(game_id=game_id, is_active=True):
+            fields.add(cl.slug)
+        fields.add('remaining')
+    return fields

@@ -1,0 +1,375 @@
+{% extends "base.html" %}
+
+{% block title %}Cosmetic Lists{% endblock %}
+
+{% block content %}
+<div x-data="cosmeticLists()" x-init="init()" class="space-y-6">
+
+    <!-- Header -->
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Cosmetic Lists</h1>
+            <p class="mt-1 text-sm text-gray-500">
+                Define item matching lists for your templates. Lists are processed in priority order with automatic deduplication.
+            </p>
+        </div>
+        <div class="flex gap-2">
+            <a href="/posting/templates/"
+               class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200">
+                Back to Templates
+            </a>
+            <button @click="showCreate = true"
+                    class="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">
+                + New List
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Filter -->
+    <div class="bg-white rounded-lg shadow p-4">
+        <div class="max-w-xs">
+            <label class="block text-xs font-medium text-gray-500 mb-1">Game</label>
+            <select x-model="selectedGame" @change="loadLists()"
+                    class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                <option value="">Select a game</option>
+                <template x-for="game in games" :key="game.id">
+                    <option :value="String(game.id)" x-text="game.name"></option>
+                </template>
+            </select>
+        </div>
+    </div>
+
+    <!-- Lists -->
+    <div x-show="selectedGame" class="space-y-4">
+
+        <!-- Empty State -->
+        <div x-show="!loading && lists.length === 0" class="bg-white rounded-lg shadow p-8 text-center">
+            <p class="text-gray-500">No cosmetic lists yet. Create one to get started.</p>
+        </div>
+
+        <!-- Loading -->
+        <div x-show="loading" class="bg-white rounded-lg shadow p-8 text-center">
+            <p class="text-gray-400">Loading...</p>
+        </div>
+
+        <!-- List Cards -->
+        <template x-for="(cl, idx) in lists" :key="cl.id">
+            <div class="bg-white rounded-lg shadow">
+                <!-- Card Header -->
+                <div class="flex items-center justify-between p-4 border-b border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 text-sm font-bold"
+                              x-text="cl.priority + 1"></span>
+                        <div>
+                            <h3 class="font-semibold text-gray-900" x-text="cl.name"></h3>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-emerald-700"
+                                      x-text="'{' + cl.slug + '}'"></code>
+                                <span class="text-xs text-gray-400" x-text="cl.items.length + ' items'"></span>
+                                <span class="text-xs text-gray-400">matches: <span x-text="cl.match_field"></span></span>
+                                <span x-show="!cl.is_active"
+                                      class="text-xs bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded">inactive</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button @click="moveUp(idx)" :disabled="idx === 0"
+                                class="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 text-gray-500" title="Move up">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+                        </button>
+                        <button @click="moveDown(idx)" :disabled="idx === lists.length - 1"
+                                class="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 text-gray-500" title="Move down">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <button @click="startEdit(cl)"
+                                class="p-1.5 rounded hover:bg-gray-100 text-blue-600" title="Edit">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        </button>
+                        <button @click="toggleActive(cl)"
+                                class="p-1.5 rounded hover:bg-gray-100"
+                                :class="cl.is_active ? 'text-green-600' : 'text-gray-400'"
+                                :title="cl.is_active ? 'Deactivate' : 'Activate'">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        </button>
+                        <button @click="deleteList(cl)"
+                                class="p-1.5 rounded hover:bg-gray-100 text-red-500" title="Delete">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Items Preview -->
+                <div class="p-4">
+                    <div class="flex flex-wrap gap-1.5">
+                        <template x-for="item in cl.items.slice(0, 20)" :key="item">
+                            <span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
+                                  x-text="item"></span>
+                        </template>
+                        <span x-show="cl.items.length > 20"
+                              class="inline-block bg-gray-50 text-gray-400 text-xs px-2 py-1 rounded"
+                              x-text="'+' + (cl.items.length - 20) + ' more'"></span>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Remaining Info -->
+        <div x-show="lists.length > 0" class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div class="flex items-start gap-2">
+                <svg class="w-5 h-5 text-amber-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                <div class="text-sm text-amber-800">
+                    <strong>{remaining}</strong> is always available in templates. It contains all cosmetics not matched by any list above.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div x-show="showCreate || editingList" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div @click.outside="closeModal()" class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4">
+            <div class="p-6">
+                <h2 class="text-lg font-bold text-gray-900" x-text="editingList ? 'Edit List' : 'New Cosmetic List'"></h2>
+
+                <div class="mt-4 space-y-4">
+                    <!-- Name -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Name</label>
+                        <input x-model="form.name" type="text" placeholder="OG Skins"
+                               class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+
+                    <!-- Slug -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">
+                            Slug <span class="text-gray-400">(template field name)</span>
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <input x-model="form.slug" type="text" placeholder="og_skins"
+                                   :disabled="!!editingList"
+                                   class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500 disabled:bg-gray-50 disabled:text-gray-400">
+                            <code class="text-xs text-emerald-600 whitespace-nowrap" x-text="'{' + (form.slug || '...') + '}'"></code>
+                        </div>
+                        <p x-show="editingList" class="text-xs text-gray-400 mt-1">Slug cannot be changed after creation.</p>
+                    </div>
+
+                    <!-- Match Field -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Match Field</label>
+                        <select x-model="form.match_field"
+                                class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                            <option value="cosmetic_titles">cosmetic_titles</option>
+                        </select>
+                    </div>
+
+                    <!-- Items -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">
+                            Items <span class="text-gray-400">(one per line)</span>
+                        </label>
+                        <textarea x-model="form.itemsText" rows="10" placeholder="Renegade Raider
+Black Knight
+Aerial Assault Trooper
+Galaxy
+IKONIK"
+                                  class="w-full rounded-md border-gray-300 text-sm font-mono focus:ring-emerald-500 focus:border-emerald-500"></textarea>
+                        <p class="text-xs text-gray-400 mt-1"
+                           x-text="form.itemsText.split('\\n').filter(l => l.trim()).length + ' items'"></p>
+                    </div>
+                </div>
+
+                <!-- Error -->
+                <div x-show="formError" class="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700" x-text="formError"></div>
+
+                <!-- Actions -->
+                <div class="mt-6 flex justify-end gap-3">
+                    <button @click="closeModal()"
+                            class="px-4 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100">Cancel</button>
+                    <button @click="saveList()" :disabled="saving"
+                            class="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50">
+                        <span x-text="saving ? 'Saving...' : (editingList ? 'Update' : 'Create')"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function cosmeticLists() {
+    return {
+        games: {{ game_options_json|safe }},
+        selectedGame: '',
+        lists: [],
+        loading: false,
+
+        // Modal
+        showCreate: false,
+        editingList: null,
+        saving: false,
+        formError: '',
+        form: {
+            name: '',
+            slug: '',
+            match_field: 'cosmetic_titles',
+            itemsText: '',
+        },
+
+        init() {
+            // Auto-select first game if available
+            if (this.games.length === 1) {
+                this.selectedGame = String(this.games[0].id);
+                this.loadLists();
+            }
+        },
+
+        async loadLists() {
+            if (!this.selectedGame) {
+                this.lists = [];
+                return;
+            }
+            this.loading = true;
+            try {
+                const resp = await fetch(`/posting/api/cosmetic-lists/?game_id=${this.selectedGame}`);
+                const data = await resp.json();
+                this.lists = data.lists || [];
+            } catch (e) {
+                console.error('Failed to load cosmetic lists:', e);
+            }
+            this.loading = false;
+        },
+
+        startEdit(cl) {
+            this.editingList = cl;
+            this.form = {
+                name: cl.name,
+                slug: cl.slug,
+                match_field: cl.match_field,
+                itemsText: (cl.items || []).join('\n'),
+            };
+            this.formError = '';
+        },
+
+        closeModal() {
+            this.showCreate = false;
+            this.editingList = null;
+            this.formError = '';
+            this.form = { name: '', slug: '', match_field: 'cosmetic_titles', itemsText: '' };
+        },
+
+        async saveList() {
+            this.formError = '';
+            if (!this.form.name.trim()) { this.formError = 'Name is required'; return; }
+            if (!this.form.slug.trim()) { this.formError = 'Slug is required'; return; }
+
+            this.saving = true;
+            try {
+                const items = this.form.itemsText.split('\n').map(l => l.trim()).filter(Boolean);
+                let url, payload;
+
+                if (this.editingList) {
+                    url = `/posting/api/cosmetic-lists/${this.editingList.id}/`;
+                    payload = {
+                        name: this.form.name.trim(),
+                        items: items,
+                        match_field: this.form.match_field,
+                    };
+                } else {
+                    url = '/posting/api/cosmetic-lists/create/';
+                    payload = {
+                        game_id: parseInt(this.selectedGame),
+                        name: this.form.name.trim(),
+                        slug: this.form.slug.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_'),
+                        items: items,
+                        match_field: this.form.match_field,
+                        priority: this.lists.length,
+                    };
+                }
+
+                const resp = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                            || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '',
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const data = await resp.json();
+                if (data.error) {
+                    this.formError = data.error;
+                } else {
+                    this.closeModal();
+                    await this.loadLists();
+                }
+            } catch (e) {
+                this.formError = 'Request failed: ' + e.message;
+            }
+            this.saving = false;
+        },
+
+        async deleteList(cl) {
+            if (!confirm(`Delete "${cl.name}"? This cannot be undone.`)) return;
+            try {
+                await fetch(`/posting/api/cosmetic-lists/${cl.id}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                            || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '',
+                    },
+                });
+                await this.loadLists();
+            } catch (e) {
+                console.error('Delete failed:', e);
+            }
+        },
+
+        async toggleActive(cl) {
+            try {
+                await fetch(`/posting/api/cosmetic-lists/${cl.id}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                            || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '',
+                    },
+                    body: JSON.stringify({ is_active: !cl.is_active }),
+                });
+                await this.loadLists();
+            } catch (e) {
+                console.error('Toggle failed:', e);
+            }
+        },
+
+        async moveUp(idx) {
+            if (idx === 0) return;
+            await this._swap(idx, idx - 1);
+        },
+
+        async moveDown(idx) {
+            if (idx >= this.lists.length - 1) return;
+            await this._swap(idx, idx + 1);
+        },
+
+        async _swap(a, b) {
+            const ids = this.lists.map(l => l.id);
+            [ids[a], ids[b]] = [ids[b], ids[a]];
+            try {
+                await fetch('/posting/api/cosmetic-lists/reorder/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                            || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '',
+                    },
+                    body: JSON.stringify({ order: ids }),
+                });
+                await this.loadLists();
+            } catch (e) {
+                console.error('Reorder failed:', e);
+            }
+        },
+    };
+}
+</script>
+{% endblock %}

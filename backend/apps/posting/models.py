@@ -227,6 +227,60 @@ class PostingDefault(models.Model):
             )
 
 
+class CosmeticList(models.Model):
+    """User-defined cosmetic matching list for template engine.
+
+    Each list defines a set of item names that are matched against the
+    account's cosmetic_titles (or another source field via match_field).
+    Lists are processed in priority order with automatic deduplication:
+    items matched by a higher-priority list are excluded from lower ones.
+
+    The list's ``slug`` becomes a template field name, e.g. {og_skins}.
+    """
+
+    game = models.ForeignKey(
+        'inventory.Game',
+        on_delete=models.CASCADE,
+        related_name='cosmetic_lists',
+    )
+    name = models.CharField(
+        max_length=100,
+        help_text='Display name, e.g. "OG Skins"',
+    )
+    slug = models.SlugField(
+        max_length=50,
+        help_text='Template field name, e.g. "og_skins" -> {og_skins}',
+    )
+    items = models.JSONField(
+        default=list,
+        help_text='List of item names to match against, e.g. ["Renegade Raider", "Black Knight"]',
+    )
+    match_field = models.CharField(
+        max_length=50,
+        default='cosmetic_titles',
+        help_text='Account field to match against (e.g. cosmetic_titles)',
+    )
+    priority = models.PositiveIntegerField(
+        default=0,
+        help_text='Processing order (lower = first). Higher priority lists claim items first.',
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text='Inactive lists are skipped during context building.',
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'cosmetic_lists'
+        unique_together = [('game', 'slug')]
+        ordering = ['game', 'priority', 'name']
+
+    def __str__(self):
+        return f"{self.name} ({self.game} / priority={self.priority})"
+
+
 class ContentTemplate(models.Model):
     """User-created content template with {field_name} placeholders.
 

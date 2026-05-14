@@ -91,7 +91,21 @@ def _meta_to_dict(name: str, meta: FieldMeta) -> dict[str, Any]:
         "description": meta.description,
         "sample": _format_sample(meta.sample),
         "source": meta.source,
+        "field_type": _infer_field_type(meta.sample),
     }
+
+
+def _infer_field_type(sample: Any) -> str:
+    """Infer a simple type label from a sample value for the UI."""
+    if isinstance(sample, bool):
+        return "bool"
+    if isinstance(sample, int):
+        return "int"
+    if isinstance(sample, float):
+        return "float"
+    if isinstance(sample, list):
+        return "list"
+    return "str"
 
 
 def _format_sample(value: Any) -> str:

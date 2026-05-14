@@ -154,7 +154,12 @@
                                    @change="toggleOne({{ product.id }})"
                                    class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
                         </td>
-                        <td class="px-4 py-3 text-sm font-mono text-gray-900">{{ product.login }}</td>
+                        <td class="px-4 py-3 text-sm font-mono">
+                            <a href="{% url 'inventory:product_detail' product.id %}"
+                               class="text-emerald-600 hover:text-emerald-800 hover:underline">
+                                {{ product.login }}
+                            </a>
+                        </td>
                         <td class="px-4 py-3 text-sm text-gray-500">{{ product.game.name|default:"-" }}</td>
                         <td class="px-4 py-3 text-sm text-gray-500">{{ product.category.title|default:"-" }}</td>
                         <td class="px-4 py-3 text-sm">

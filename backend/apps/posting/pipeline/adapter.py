@@ -1,8 +1,18 @@
-"""Payload pipeline adapter — lazy singleton + Django-aware prepare/build API."""
+"""Payload pipeline adapter — lazy singleton + Django-aware prepare/build API.
+
+Thread safety
+-------------
+``_get_pipeline()`` uses double-checked locking so that the expensive
+first initialisation (DB queries for credentials, full registry build) is
+performed exactly once, even when multiple store-consumer threads race to
+call it.  ``reset_pipeline()`` is equally guarded so a credential-update
+signal cannot leave consumers with a half-torn reference.
+"""
 
 from __future__ import annotations
 
 import logging
+import threading
 
 from payload_pipeline import PayloadPipeline, build_default_registry
 from payload_pipeline.core.contracts import (
@@ -19,6 +29,7 @@ from .request import build_request
 logger = logging.getLogger(__name__)
 
 _pipeline: PayloadPipeline | None = None
+_pipeline_lock = threading.Lock()
 
 
 def _build_media_publisher():
@@ -72,22 +83,41 @@ def _build_media_publisher():
 
 
 def _get_pipeline() -> PayloadPipeline:
-    """Return the shared pipeline singleton, initialising it on first call."""
+    """Return the shared pipeline singleton, initialising it on first call.
+
+    Uses double-checked locking: the fast path (pipeline already created)
+    reads ``_pipeline`` without acquiring the lock.  Only the very first
+    call — or the first call after ``reset_pipeline()`` — enters the
+    critical section to perform the expensive initialisation.
+    """
     global _pipeline
-    if _pipeline is None:
-        publisher = _build_media_publisher()
-        _pipeline = PayloadPipeline(build_default_registry(), media_publisher=publisher)
-        logger.debug(
-            "PayloadPipeline initialised (media_publisher=%s)",
-            type(publisher).__name__,
-        )
+    # Fast path — no lock needed, the reference is already set.
+    if _pipeline is not None:
+        return _pipeline
+    # Slow path — acquire lock, check again, then initialise.
+    with _pipeline_lock:
+        if _pipeline is None:
+            publisher = _build_media_publisher()
+            instance = PayloadPipeline(build_default_registry(), media_publisher=publisher)
+            logger.debug(
+                "PayloadPipeline initialised (media_publisher=%s)",
+                type(publisher).__name__,
+            )
+            # Assign last so other threads never see a half-built object.
+            _pipeline = instance
     return _pipeline
 
 
 def reset_pipeline() -> None:
-    """Force re-initialisation on next call (e.g. after credential update)."""
+    """Force re-initialisation on next call (e.g. after credential update).
+
+    Thread-safe: acquires the same lock so no consumer thread can read a
+    stale or partially-torn reference while the reset is in progress.
+    """
     global _pipeline
-    _pipeline = None
+    with _pipeline_lock:
+        _pipeline = None
+        logger.debug("PayloadPipeline reset — will re-initialise on next call")
 
 
 def prepare(
@@ -100,6 +130,8 @@ def prepare(
     imgur_client_id: str = "",
     title_templates: dict[str, str] | None = None,
     description_templates: dict[str, str] | None = None,
+    cosmetic_lists: list[dict] | None = None,
+    ref_key: str = "",
 ) -> PrepareResult:
     """Run the shared preparation phase (resolve → validate → compose).
 
@@ -113,6 +145,8 @@ def prepare(
         disable_media:     Skip image download/upload (default True).
         lzt_image_fetcher: Optional LZT image fetcher for media steps.
         imgur_client_id:   Imgur Client-ID for downloading album images.
+        cosmetic_lists:    Dynamic cosmetic matching lists from DB.
+        ref_key:           Traceability ref key (#ABC1234) from OwnedProduct.
 
     Returns:
         PrepareResult — always check ``.success`` before using ``.prepared``.
@@ -126,6 +160,8 @@ def prepare(
         imgur_client_id=imgur_client_id,
         title_templates=title_templates,
         description_templates=description_templates,
+        cosmetic_lists=cosmetic_lists,
+        ref_key=ref_key,
     )
     return _get_pipeline().prepare_once(request)
 

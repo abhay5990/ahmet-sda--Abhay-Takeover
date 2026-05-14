@@ -96,7 +96,7 @@ def stock_job_detail(request, job_id):
 @role_required('admin', 'user')
 def content_templates_page(request):
     """Manage content templates with {field_name} placeholders."""
-    games = Game.objects.filter(is_active=True).order_by('name')
+    games = Game.objects.filter(is_active=True, slug__in=SUPPORTED_GAME_SLUGS).order_by('name')
     game_options = [
         {'id': game.id, 'name': game.name, 'slug': game.slug}
         for game in games
@@ -106,6 +106,51 @@ def content_templates_page(request):
         'game_options_json': json.dumps(game_options),
         'marketplace_options_json': json.dumps(ContentTemplate.MARKETPLACE_CHOICES),
         'template_type_options_json': json.dumps(ContentTemplate.TEMPLATE_TYPE_CHOICES),
+    })
+
+
+@ensure_csrf_cookie
+@role_required('admin', 'user')
+def content_template_editor_page(request, template_id=None):
+    """Dedicated full-page template editor with live preview."""
+    games = Game.objects.filter(is_active=True, slug__in=SUPPORTED_GAME_SLUGS).order_by('name')
+    game_options = [
+        {'id': game.id, 'name': game.name, 'slug': game.slug}
+        for game in games
+    ]
+
+    template_data = 'null'
+    if template_id:
+        tpl = get_object_or_404(ContentTemplate, id=template_id)
+        template_data = json.dumps({
+            'id': tpl.id,
+            'game_id': tpl.game_id,
+            'marketplace': tpl.marketplace,
+            'template_type': tpl.template_type,
+            'name': tpl.name,
+            'body': tpl.body,
+        })
+
+    return render(request, 'posting/content_template_editor.html', {
+        'games': games,
+        'game_options_json': json.dumps(game_options),
+        'marketplace_options_json': json.dumps(ContentTemplate.MARKETPLACE_CHOICES),
+        'template_type_options_json': json.dumps(ContentTemplate.TEMPLATE_TYPE_CHOICES),
+        'template_data_json': template_data,
+    })
+
+
+@ensure_csrf_cookie
+@role_required('admin', 'user')
+def cosmetic_lists_page(request):
+    """Cosmetic list management page."""
+    games = Game.objects.filter(is_active=True, slug__in=SUPPORTED_GAME_SLUGS).order_by('name')
+    game_options = [
+        {'id': game.id, 'name': game.name, 'slug': game.slug}
+        for game in games
+    ]
+    return render(request, 'posting/cosmetic_lists.html', {
+        'game_options_json': json.dumps(game_options),
     })
 
 

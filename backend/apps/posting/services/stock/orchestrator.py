@@ -415,6 +415,7 @@ class StockOrchestrator:
                 imgur_client_id=self._imgur_client_id,
                 title_templates=self._title_templates,
                 description_templates=self._description_templates,
+                ref_key=owned_product.ref_key or "",
             )
             if not prepare_result.success:
                 return {
