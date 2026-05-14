@@ -16,6 +16,7 @@ from django.views.decorators.http import require_POST, require_GET
 from apps.integrations.models import IntegrationAccount
 from apps.inventory.models import Game, OwnedProduct
 from apps.posting.models import (
+    ContentTemplate,
     PostingDefault,
     PostingJob,
     PostingJobItem,
@@ -104,21 +105,50 @@ def create_job(request):
         mp = store.provider
         store_defaults = defaults_data.get(store.slug, defaults_data.get(mp, {}))
         if store_defaults:
+            update_fields = {
+                k: v for k, v in {
+                    'multiplier_low': store_defaults.get('multiplier_low'),
+                    'multiplier_mid': store_defaults.get('multiplier_mid'),
+                    'multiplier_high': store_defaults.get('multiplier_high'),
+                    'min_price': store_defaults.get('min_price'),
+                    'forced_ending': store_defaults.get('forced_ending'),
+                    'exchange_rate': store_defaults.get('exchange_rate'),
+                    'sub_platform': store_defaults.get('sub_platform'),
+                    'account_type': store_defaults.get('account_type'),
+                }.items() if v is not None
+            }
+            # Template selections — explicit null clears the FK; validate match before writing
+            for fk_field, expected_type in (
+                ('title_template_id', 'title'),
+                ('description_template_id', 'description'),
+            ):
+                if fk_field not in store_defaults:
+                    continue
+                val = store_defaults[fk_field]
+                if val:
+                    template_id = int(val)
+                    if not ContentTemplate.objects.filter(
+                        id=template_id,
+                        game=game,
+                        marketplace=mp,
+                        template_type=expected_type,
+                    ).exists():
+                        return JsonResponse(
+                            {
+                                'error': (
+                                    f'Template {template_id} is not a valid {expected_type} '
+                                    f'template for {game.slug}/{mp}.'
+                                )
+                            },
+                            status=400,
+                        )
+                    update_fields[fk_field] = template_id
+                else:
+                    update_fields[fk_field] = None
             PostingDefault.objects.update_or_create(
                 game=game,
                 marketplace=mp,
-                defaults={
-                    k: v for k, v in {
-                        'multiplier_low': store_defaults.get('multiplier_low'),
-                        'multiplier_mid': store_defaults.get('multiplier_mid'),
-                        'multiplier_high': store_defaults.get('multiplier_high'),
-                        'min_price': store_defaults.get('min_price'),
-                        'forced_ending': store_defaults.get('forced_ending'),
-                        'exchange_rate': store_defaults.get('exchange_rate'),
-                        'sub_platform': store_defaults.get('sub_platform'),
-                        'account_type': store_defaults.get('account_type'),
-                    }.items() if v is not None
-                },
+                defaults=update_fields,
             )
 
     if source_type == 'manual':
@@ -544,6 +574,8 @@ def posting_defaults(request, game_id, marketplace):
                 'exchange_rate': str(d.exchange_rate) if d.exchange_rate is not None else None,
                 'sub_platform': d.sub_platform,
                 'account_type': d.account_type,
+                'title_template_id': d.title_template_id,
+                'description_template_id': d.description_template_id,
             })
         except PostingDefault.DoesNotExist:
             return JsonResponse({
@@ -555,6 +587,8 @@ def posting_defaults(request, game_id, marketplace):
                 'exchange_rate': '0.87' if marketplace == 'gameboost' else None,
                 'sub_platform': '',
                 'account_type': '',
+                'title_template_id': None,
+                'description_template_id': None,
             })
 
     elif request.method == 'POST':

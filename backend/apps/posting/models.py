@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -156,6 +157,24 @@ class PostingDefault(models.Model):
         help_text='USD→EUR conversion rate for Gameboost. Null = no conversion.',
     )
 
+    # Content templates (optional — null means use legacy generators)
+    title_template = models.ForeignKey(
+        'posting.ContentTemplate',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='posting_defaults_as_title',
+        limit_choices_to={'template_type': 'title'},
+        help_text='Selected title template. Null = use legacy title generator.',
+    )
+    description_template = models.ForeignKey(
+        'posting.ContentTemplate',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='posting_defaults_as_description',
+        limit_choices_to={'template_type': 'description'},
+        help_text='Selected description template. Null = use legacy description generator.',
+    )
+
     # Site-specific
     sub_platform = models.CharField(
         max_length=20, blank=True,
@@ -175,6 +194,172 @@ class PostingDefault(models.Model):
 
     def __str__(self):
         return f"{self.game} — {self.marketplace}"
+
+    def clean(self):
+        super().clean()
+        errors: dict[str, str] = {}
+        if self.title_template_id:
+            self._validate_template_fk(
+                self.title_template, 'title', 'title_template', errors,
+            )
+        if self.description_template_id:
+            self._validate_template_fk(
+                self.description_template, 'description', 'description_template', errors,
+            )
+        if errors:
+            raise ValidationError(errors)
+
+    def _validate_template_fk(self, template, expected_type, field_name, errors):
+        """Ensure the FK points to a template matching this default's game, marketplace, and type."""
+        if template.game_id != self.game_id:
+            errors[field_name] = (
+                f'Template "{template.name}" belongs to a different game.'
+            )
+        elif template.marketplace != self.marketplace:
+            errors[field_name] = (
+                f'Template "{template.name}" is for {template.marketplace}, '
+                f'not {self.marketplace}.'
+            )
+        elif template.template_type != expected_type:
+            errors[field_name] = (
+                f'Template "{template.name}" is a {template.template_type} template, '
+                f'expected {expected_type}.'
+            )
+
+
+class CosmeticList(models.Model):
+    """User-defined cosmetic matching list for template engine.
+
+    Each list defines a set of item names that are matched against the
+    account's cosmetic_titles (or another source field via match_field).
+    Lists are processed in priority order with automatic deduplication:
+    items matched by a higher-priority list are excluded from lower ones.
+
+    The list's ``slug`` becomes a template field name, e.g. {og_skins}.
+    """
+
+    game = models.ForeignKey(
+        'inventory.Game',
+        on_delete=models.CASCADE,
+        related_name='cosmetic_lists',
+    )
+    name = models.CharField(
+        max_length=100,
+        help_text='Display name, e.g. "OG Skins"',
+    )
+    slug = models.SlugField(
+        max_length=50,
+        help_text='Template field name, e.g. "og_skins" -> {og_skins}',
+    )
+    items = models.JSONField(
+        default=list,
+        help_text='List of item names to match against, e.g. ["Renegade Raider", "Black Knight"]',
+    )
+    match_field = models.CharField(
+        max_length=50,
+        default='cosmetic_titles',
+        help_text='Account field to match against (e.g. cosmetic_titles)',
+    )
+    priority = models.PositiveIntegerField(
+        default=0,
+        help_text='Processing order (lower = first). Higher priority lists claim items first.',
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text='Inactive lists are skipped during context building.',
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'cosmetic_lists'
+        unique_together = [('game', 'slug')]
+        ordering = ['game', 'priority', 'name']
+
+    def __str__(self):
+        return f"{self.name} ({self.game} / priority={self.priority})"
+
+
+class ContentTemplate(models.Model):
+    """User-created content template with {field_name} placeholders.
+
+    Users write plain text with placeholders like ``{rank}``, ``{level}``,
+    ``{valuable_skins}`` etc.  At posting time, placeholders are resolved
+    from the game's resolved account model.
+
+    Templates are scoped to game + marketplace + type (title/description).
+    A user can create multiple templates per combination and select which
+    one to use at posting time.
+    """
+
+    TEMPLATE_TYPE_CHOICES = [
+        ('title', 'Title'),
+        ('description', 'Description'),
+    ]
+    MARKETPLACE_CHOICES = [
+        ('eldorado', 'Eldorado'),
+        ('gameboost', 'GameBoost'),
+        ('g2g', 'G2G'),
+        ('playerauctions', 'PlayerAuctions'),
+    ]
+
+    game = models.ForeignKey(
+        'inventory.Game',
+        on_delete=models.CASCADE,
+        related_name='content_templates',
+    )
+    marketplace = models.CharField(
+        max_length=30,
+        choices=MARKETPLACE_CHOICES,
+    )
+    template_type = models.CharField(
+        max_length=20,
+        choices=TEMPLATE_TYPE_CHOICES,
+    )
+    name = models.CharField(
+        max_length=100,
+        help_text='User-friendly template name, e.g. "Detailed Valorant Title"',
+    )
+    body = models.TextField(
+        help_text='Template text with {field_name} placeholders',
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'content_templates'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['game', 'marketplace', 'name', 'template_type'],
+                name='unique_content_template',
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=['game', 'marketplace', 'template_type'],
+                name='content_template_lookup_idx',
+            ),
+        ]
+        ordering = ['game__name', 'marketplace', 'template_type', 'name']
+
+    def __str__(self):
+        return f"{self.name} ({self.game} / {self.marketplace} / {self.template_type})"
+
+    def clean(self):
+        super().clean()
+        from payload_pipeline.content_templates import (
+            TemplateValidationError,
+            validate_template,
+        )
+        try:
+            validate_template(
+                self.body,
+                template_type=self.template_type,
+            )
+        except TemplateValidationError as exc:
+            raise ValidationError({'body': str(exc)}) from exc
 
 
 class SubplatformLimit(models.Model):

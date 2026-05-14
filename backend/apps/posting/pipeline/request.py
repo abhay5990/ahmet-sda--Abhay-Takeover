@@ -14,22 +14,38 @@ def build_request(
     disable_media: bool = True,
     lzt_image_fetcher=None,
     imgur_album_downloader=None,
+    title_templates: dict[str, str] | None = None,
+    description_templates: dict[str, str] | None = None,
+    cosmetic_lists: list[dict] | None = None,
+    ref_key: str = "",
 ) -> PipelineRequest:
     """Build a lib PipelineRequest from Django-layer inputs.
 
     Args:
-        game_slug:              Canonical game slug from game_mapp.json (e.g. 'valorant').
-        sources:                Raw source dict, e.g. {'lzt': raw_data_dict}.
-        kind:                   STOCK or DROPSHIPPING.
-        disable_media:          Skip media download/upload (True = no IO, faster).
-        lzt_image_fetcher:      Optional LZT image fetcher for media steps.
+        game_slug:             Canonical game slug from game_mapp.json (e.g. 'valorant').
+        sources:               Raw source dict, e.g. {'lzt': raw_data_dict}.
+        kind:                  STOCK or DROPSHIPPING.
+        disable_media:         Skip media download/upload (True = no IO, faster).
+        lzt_image_fetcher:     Optional LZT image fetcher for media steps.
         imgur_album_downloader: Optional ImgurAlbumDownloader (AlbumDownloader protocol).
+        title_templates:       Marketplace->body mapping for title templates.
+        description_templates: Same for description templates.
+        cosmetic_lists:        Dynamic cosmetic matching lists from DB.
+        ref_key:               Traceability ref key (#ABC1234) from OwnedProduct.
     """
     ctx: dict = {ctx_keys.DISABLE_MEDIA: disable_media}
     if lzt_image_fetcher is not None:
         ctx[ctx_keys.LZT_IMAGE_FETCHER] = lzt_image_fetcher
     if imgur_album_downloader is not None:
         ctx[ctx_keys.IMGUR_ALBUM_DOWNLOADER] = imgur_album_downloader
+    if title_templates:
+        ctx[ctx_keys.TITLE_TEMPLATES] = title_templates
+    if description_templates:
+        ctx[ctx_keys.DESCRIPTION_TEMPLATES] = description_templates
+    if cosmetic_lists:
+        ctx[ctx_keys.COSMETIC_LISTS] = cosmetic_lists
+    if ref_key:
+        ctx[ctx_keys.REF_KEY] = ref_key
 
     return PipelineRequest(
         game=game_slug,

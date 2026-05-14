@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import (
     CleanerConfig,
+    ContentTemplate,
     OfferPool,
     OfferPoolActiveOffer,
     OfferPoolItem,
@@ -36,6 +37,14 @@ class PostingJobItemAdmin(admin.ModelAdmin):
 class PostingDefaultAdmin(admin.ModelAdmin):
     list_display = ['game', 'marketplace', 'multiplier_low', 'multiplier_mid', 'multiplier_high', 'min_price', 'forced_ending', 'exchange_rate', 'sub_platform']
     list_filter = ['marketplace']
+
+
+@admin.register(ContentTemplate)
+class ContentTemplateAdmin(admin.ModelAdmin):
+    list_display = ['name', 'game', 'marketplace', 'template_type', 'updated_at']
+    list_filter = ['game', 'marketplace', 'template_type']
+    search_fields = ['name', 'game__name', 'game__slug']
+    readonly_fields = ['created_at', 'updated_at']
 
 
 @admin.register(SubplatformLimit)

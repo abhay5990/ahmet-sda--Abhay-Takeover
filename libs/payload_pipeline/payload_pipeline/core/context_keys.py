@@ -96,3 +96,15 @@ TRACKER_URL: ContextKey[str] = ContextKey("tracker_url")
 # ── Traceability ────────────────────────────────────────────────────
 
 REF_KEY: ContextKey[str] = ContextKey("ref_key")
+
+# -- Content template rendering -----------------------------------------------
+# When set, composer uses SimpleTemplateRenderer instead of legacy generators.
+# Each is a plain template body string with {field_name} placeholders.
+# These are keyed by marketplace: {"eldorado": "...", "g2g": "...", ...}
+
+TITLE_TEMPLATES: ContextKey[dict[str, str]] = ContextKey("title_templates")
+DESCRIPTION_TEMPLATES: ContextKey[dict[str, str]] = ContextKey("description_templates")
+
+# Dynamic cosmetic lists (from DB CosmeticList model).
+# List of dicts: [{"slug": "og_skins", "items": [...], "match_field": "cosmetic_titles"}, ...]
+COSMETIC_LISTS: ContextKey[list[dict[str, Any]]] = ContextKey("cosmetic_lists")

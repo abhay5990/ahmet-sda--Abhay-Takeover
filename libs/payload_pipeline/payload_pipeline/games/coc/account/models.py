@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
-from ....core.contracts import ResolvedAccountBase
+from ....core.contracts import FieldMeta, ResolvedAccountBase
 
 
 @dataclass(slots=True)
@@ -40,3 +40,31 @@ class CocResolvedAccount(ResolvedAccountBase):
     battle_pass_active: bool = False
     player_tag: str = ""
     has_email_access: bool = False
+
+    FIELD_META: ClassVar[dict[str, FieldMeta]] = {
+        **ResolvedAccountBase.FIELD_META,
+        "town_hall_level": FieldMeta("Town Hall level.", 15),
+        "builder_hall_level": FieldMeta("Builder Hall level.", 10),
+        "account_level": FieldMeta("Experience level.", 220),
+        "trophies": FieldMeta("Current trophy count.", 5200),
+        "best_trophies": FieldMeta("Best trophy count.", 5800),
+        "war_stars": FieldMeta("War stars earned.", 1200),
+        "barbarian_king_level": FieldMeta("Barbarian King level.", 80),
+        "archer_queen_level": FieldMeta("Archer Queen level.", 80),
+        "grand_warden_level": FieldMeta("Grand Warden level.", 60),
+        "royal_champion_level": FieldMeta("Royal Champion level.", 35),
+        "total_heroes_level": FieldMeta("Combined hero levels.", 255),
+        "total_troops_level": FieldMeta("Combined troop levels.", 450),
+        "total_spells_level": FieldMeta("Combined spell levels.", 120),
+        "total_builder_heroes_level": FieldMeta("Combined builder hero levels.", 80),
+        "total_builder_troops_level": FieldMeta("Combined builder troop levels.", 150),
+        "creation_year": FieldMeta("Account creation year.", 2015),
+        "has_phone": FieldMeta("Phone number linked.", False),
+        "battle_pass_active": FieldMeta("Gold Pass active.", True),
+        "player_tag": FieldMeta("Supercell player tag.", "#ABC123DEF"),
+        "has_email_access": FieldMeta("Email access status.", True),
+    }
+
+    COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {
+        **ResolvedAccountBase.COMPUTED_FIELDS,
+    }

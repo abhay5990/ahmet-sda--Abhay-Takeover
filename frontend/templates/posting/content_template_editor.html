@@ -1,0 +1,958 @@
+{% extends "base.html" %}
+
+{% block title %}Template Editor{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Syntax highlighting overlay */
+    .editor-container { position: relative; }
+    .editor-container textarea {
+        background: transparent;
+        position: relative;
+        z-index: 2;
+        color: transparent;
+        caret-color: #1f2937;
+    }
+    .editor-container textarea::selection { background: rgba(59, 130, 246, 0.3); }
+    .editor-highlight {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow: hidden;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.875rem;
+        line-height: 1.5rem;
+        color: #1f2937;
+    }
+    .hl-field { color: #059669; font-weight: 600; }
+    .hl-cond { color: #7c3aed; font-weight: 600; }
+    .hl-modifier { color: #2563eb; }
+    .hl-unknown { color: #dc2626; text-decoration: wavy underline; text-decoration-color: #dc2626; }
+    .hl-separator { color: #9ca3af; }
+
+    /* Character counter colors */
+    .char-ok { color: #059669; }
+    .char-warn { color: #d97706; }
+    .char-over { color: #dc2626; font-weight: 600; }
+
+    /* Mobile overlay panels */
+    @media (max-width: 1023px) {
+        .panel-overlay {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            z-index: 30;
+            box-shadow: 4px 0 12px rgba(0,0,0,0.1);
+        }
+        .panel-overlay-left { left: 0; }
+        .panel-overlay-right { right: 0; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div x-data="templateEditor()" x-init="init()" class="flex flex-col h-[calc(100vh-4rem)]">
+
+    <!-- Top Bar -->
+    <div class="bg-white border-b border-gray-200 px-3 sm:px-4 py-3 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2 sm:gap-3">
+            <a href="{% url 'posting:content_templates' %}"
+               class="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100" title="Back to list">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            </a>
+            <h1 class="text-base sm:text-lg font-semibold text-gray-900" x-text="editingId ? 'Edit Template' : 'New Template'"></h1>
+        </div>
+        <div class="flex items-center gap-1 sm:gap-2">
+            <!-- Panel toggles -->
+            <button @click="showFields = !showFields" type="button"
+                    class="p-1.5 rounded-md transition-colors"
+                    :class="showFields ? 'text-emerald-600 bg-emerald-50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'"
+                    title="Toggle field palette">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            </button>
+            <button @click="showPreview = !showPreview" type="button"
+                    class="p-1.5 rounded-md transition-colors"
+                    :class="showPreview ? 'text-emerald-600 bg-emerald-50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'"
+                    title="Toggle preview">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+            <button @click="showGuide = !showGuide" type="button"
+                    class="p-1.5 rounded-md transition-colors"
+                    :class="showGuide ? 'text-amber-600 bg-amber-50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'"
+                    title="Template syntax guide">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            </button>
+            <div class="w-px h-5 bg-gray-200 mx-0.5 hidden sm:block"></div>
+            <template x-if="statusMessage">
+                <span class="text-sm text-emerald-600 hidden sm:inline" x-text="statusMessage"></span>
+            </template>
+            <template x-if="modalError">
+                <span class="text-sm text-red-600 hidden sm:inline" x-text="modalError"></span>
+            </template>
+            <button type="button" @click="saveTemplate()" :disabled="saving"
+                    class="px-3 sm:px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 disabled:opacity-50">
+                <span x-show="!saving" x-text="editingId ? 'Update' : 'Create'"></span>
+                <span x-show="saving">Saving...</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main 3-column layout -->
+    <div class="flex-1 flex overflow-hidden relative">
+
+        <!-- Mobile backdrop for panels -->
+        <div x-show="(showFields || showPreview) && isMobile" x-cloak
+             @click="showFields = false; showPreview = false"
+             class="fixed inset-0 bg-black/30 z-20 lg:hidden" x-transition.opacity></div>
+
+        <!-- LEFT: Field Palette -->
+        <div x-show="showFields" x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-x-4" x-transition:enter-end="opacity-100 translate-x-0"
+             class="w-72 bg-white border-r border-gray-200 flex flex-col shrink-0 overflow-hidden panel-overlay panel-overlay-left lg:relative lg:shadow-none">
+            <!-- Field search -->
+            <div class="p-3 border-b border-gray-100">
+                <input type="text" x-model="fieldSearch" placeholder="Search fields..."
+                       class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500 px-3 py-1.5">
+            </div>
+
+            <!-- Field list -->
+            <div class="flex-1 overflow-y-auto p-2 space-y-1">
+                <template x-for="field in filteredFields" :key="field.name">
+                    <div class="rounded-md border border-gray-200 bg-gray-50 hover:border-emerald-300 hover:bg-emerald-50 transition-colors">
+                        <!-- Field header - click to insert -->
+                        <button type="button" @click="insertField(field.name)"
+                                class="w-full text-left px-3 py-2">
+                            <div class="flex items-center justify-between gap-1">
+                                <code class="text-xs font-semibold truncate"
+                                      :class="fieldUsed(field.name) ? 'text-emerald-700' : 'text-gray-600'"
+                                      x-text="'{' + field.name + '}'"></code>
+                                <div class="flex items-center gap-1 shrink-0">
+                                    <!-- Type badge -->
+                                    <span class="rounded px-1.5 py-0.5 text-[10px] font-medium"
+                                          :class="{
+                                              'bg-blue-100 text-blue-700': field.field_type === 'list',
+                                              'bg-amber-100 text-amber-700': field.field_type === 'number' || field.field_type === 'int' || field.field_type === 'float',
+                                              'bg-green-100 text-green-700': field.field_type === 'str' || field.field_type === 'string',
+                                              'bg-purple-100 text-purple-700': field.field_type === 'bool',
+                                              'bg-gray-200 text-gray-600': !['list','number','int','float','str','string','bool'].includes(field.field_type)
+                                          }"
+                                          x-text="field.field_type || 'str'"></span>
+                                    <!-- Used indicator -->
+                                    <span x-show="fieldUsed(field.name)" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                                </div>
+                            </div>
+                            <p class="mt-0.5 text-[11px] text-gray-500 truncate" x-text="field.description || ''"></p>
+                            <p class="text-[10px] text-gray-400 truncate" x-text="'e.g. ' + (field.sample ?? '-')"></p>
+                        </button>
+                        <!-- Quick actions -->
+                        <div class="flex border-t border-gray-200 divide-x divide-gray-200 text-[10px]">
+                            <button @click="insertField(field.name)" title="Insert {field}"
+                                    class="flex-1 py-1 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50">
+                                {field}
+                            </button>
+                            <button @click="insertConditional(field.name)" title="Insert {#if field}...{/if}"
+                                    class="flex-1 py-1 text-gray-500 hover:text-purple-600 hover:bg-purple-50">
+                                #if
+                            </button>
+                            <template x-if="field.field_type === 'list'">
+                                <button @click="insertWithModifier(field.name, 'limit:3')" title="Insert with limit"
+                                        class="flex-1 py-1 text-gray-500 hover:text-blue-600 hover:bg-blue-50">
+                                    limit
+                                </button>
+                            </template>
+                            <template x-if="field.field_type === 'str' || field.field_type === 'string' || !field.field_type">
+                                <button @click="insertWithModifier(field.name, 'upper')" title="Insert uppercase"
+                                        class="flex-1 py-1 text-gray-500 hover:text-blue-600 hover:bg-blue-50">
+                                    upper
+                                </button>
+                            </template>
+                            <template x-if="field.field_type === 'number' || field.field_type === 'int' || field.field_type === 'float'">
+                                <button @click="insertWithModifier(field.name, 'number')" title="Insert with number format"
+                                        class="flex-1 py-1 text-gray-500 hover:text-blue-600 hover:bg-blue-50">
+                                    number
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+                <template x-if="!filteredFields.length && selectedGame">
+                    <p class="text-xs text-gray-400 py-4 text-center" x-text="fieldSearch ? 'No matching fields' : 'Loading fields...'"></p>
+                </template>
+                <template x-if="!selectedGame">
+                    <p class="text-xs text-gray-400 py-4 text-center">Select a game to see fields</p>
+                </template>
+            </div>
+        </div>
+
+        <!-- CENTER: Editor -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-gray-50">
+            <!-- Template metadata bar -->
+            <div class="bg-white border-b border-gray-200 px-3 sm:px-4 py-3">
+                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
+                    <div>
+                        <label class="block text-[11px] font-medium text-gray-500 mb-1">Name</label>
+                        <input type="text" x-model="form.name"
+                               class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500"
+                               placeholder="e.g. Detailed R6 Title">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-medium text-gray-500 mb-1">Game</label>
+                        <select x-model="selectedGame" @change="onGameChange()" :disabled="!!editingId"
+                                class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500 disabled:opacity-50">
+                            <option value="">Select game...</option>
+                            <template x-for="game in games" :key="game.id">
+                                <option :value="String(game.id)" x-text="game.name"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-medium text-gray-500 mb-1">Marketplace</label>
+                        <select x-model="form.marketplace" :disabled="!!editingId"
+                                class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500 disabled:opacity-50">
+                            <template x-for="mp in marketplaces" :key="mp[0]">
+                                <option :value="mp[0]" x-text="mp[1]"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-medium text-gray-500 mb-1">Type</label>
+                        <select x-model="form.template_type" :disabled="!!editingId"
+                                class="w-full rounded-md border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500 disabled:opacity-50">
+                            <template x-for="tt in templateTypes" :key="tt[0]">
+                                <option :value="tt[0]" x-text="tt[1]"></option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="bg-white border-b border-gray-200 px-3 sm:px-4 py-2 flex items-center gap-1 sm:gap-1.5 flex-wrap">
+                <span class="text-[11px] text-gray-500 mr-0.5 sm:mr-1 hidden sm:inline">Insert:</span>
+                <button @click="insertConditionalWizard()"
+                        class="px-2 py-1 rounded border border-purple-200 bg-purple-50 text-[11px] font-medium text-purple-700 hover:bg-purple-100">
+                    {#if ...} Conditional
+                </button>
+                <button @click="insertElse()"
+                        class="px-2 py-1 rounded border border-purple-200 bg-purple-50 text-[11px] font-medium text-purple-700 hover:bg-purple-100">
+                    {#else}
+                </button>
+                <div class="w-px h-5 bg-gray-200 mx-0.5 sm:mx-1 hidden sm:block"></div>
+                <span class="text-[11px] text-gray-500 mr-0.5 sm:mr-1 hidden sm:inline">Modifiers:</span>
+                <template x-for="mod in availableModifiers" :key="mod.name">
+                    <button @click="wrapWithModifier(mod.name, mod.defaultArg)"
+                            :title="mod.description"
+                            class="px-2 py-1 rounded border border-blue-200 bg-blue-50 text-[11px] font-medium text-blue-700 hover:bg-blue-100"
+                            x-text="mod.name"></button>
+                </template>
+            </div>
+
+            <!-- Editor area with syntax highlighting -->
+            <div class="flex-1 p-3 sm:p-4 overflow-y-auto">
+                <div class="editor-container rounded-lg border border-gray-300 bg-white">
+                    <div class="hl-highlight editor-highlight p-3" x-html="highlightedBody" aria-hidden="true"></div>
+                    <textarea x-ref="bodyInput" x-model="form.body"
+                              @input.debounce.500ms="onBodyChange()"
+                              @scroll="syncScroll($event)"
+                              :rows="form.template_type === 'title' ? 4 : 16"
+                              spellcheck="false"
+                              class="w-full rounded-lg border-0 font-mono text-sm leading-6 p-3 resize-y focus:ring-0"
+                              :placeholder="form.template_type === 'title'
+                                  ? '[PC] | {#if level}Level {level}{/if} | {#if current_rank}{current_rank}{/if} | Full Access'
+                                  : 'Level: {level}\nRank: {#if current_rank}{current_rank}{#else}Unranked{/if}\n\n{#if black_ice_count}Black Ice ({black_ice_count}):\n{black_ice_items | limit:15 | join:, }{/if}'"></textarea>
+                </div>
+
+                <!-- Character counters -->
+                <div x-show="previewResult" class="mt-2 flex flex-wrap gap-2 sm:gap-3">
+                    <template x-for="mp in allMarketplaces" :key="mp.key">
+                        <div class="flex items-center gap-1.5 text-[11px]">
+                            <span class="font-medium text-gray-600" x-text="mp.label + ':'"></span>
+                            <span :class="charCountClass(previewResult.length, mp.limit)"
+                                  x-text="previewResult.length + '/' + mp.limit"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Live Preview -->
+        <div x-show="showPreview" x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0"
+             class="w-80 bg-white border-l border-gray-200 flex flex-col shrink-0 overflow-hidden panel-overlay panel-overlay-right lg:relative lg:shadow-none">
+            <div class="p-3 border-b border-gray-100">
+                <h2 class="text-sm font-semibold text-gray-900">Live Preview</h2>
+                <p class="text-[11px] text-gray-400">Auto-updates as you type</p>
+            </div>
+
+            <!-- Preview result -->
+            <div class="flex-1 overflow-y-auto p-3">
+                <template x-if="previewLoading">
+                    <div class="flex items-center gap-2 text-sm text-gray-400 py-4">
+                        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        Rendering...
+                    </div>
+                </template>
+                <template x-if="previewResult && !previewLoading">
+                    <div>
+                        <pre class="rounded-md bg-gray-50 border border-gray-200 p-3 text-sm text-gray-800 whitespace-pre-wrap break-words"
+                             x-text="previewResult"></pre>
+                    </div>
+                </template>
+                <template x-if="!previewResult && !previewLoading && form.body">
+                    <p class="text-xs text-gray-400 py-4 text-center">Type to see preview...</p>
+                </template>
+                <template x-if="!form.body">
+                    <p class="text-xs text-gray-400 py-4 text-center">Start typing a template to see the preview</p>
+                </template>
+
+                <!-- Warnings -->
+                <template x-if="previewWarnings.length">
+                    <div class="mt-3 space-y-1">
+                        <template x-for="w in previewWarnings" :key="w">
+                            <div class="rounded-md bg-amber-50 border border-amber-200 px-2 py-1.5 text-[11px] text-amber-700" x-text="w"></div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- Preview error -->
+                <template x-if="previewError">
+                    <div class="mt-3 rounded-md bg-red-50 border border-red-200 px-2 py-1.5 text-[11px] text-red-700" x-text="previewError"></div>
+                </template>
+            </div>
+
+            <!-- Context values (collapsible) -->
+            <div class="border-t border-gray-200">
+                <button @click="showContext = !showContext"
+                        class="w-full px-3 py-2 flex items-center justify-between text-[11px] font-medium text-gray-500 hover:bg-gray-50">
+                    <span>Sample Context</span>
+                    <svg :class="showContext ? 'rotate-180' : ''" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div x-show="showContext" x-collapse class="px-3 pb-3 max-h-48 overflow-y-auto">
+                    <template x-for="(val, key) in previewContext" :key="key">
+                        <div class="flex justify-between gap-2 py-0.5 text-[10px]">
+                            <code class="text-gray-600 truncate" x-text="key"></code>
+                            <span class="text-gray-400 truncate text-right max-w-[120px]" x-text="JSON.stringify(val)"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guide Modal -->
+    <div x-show="showGuide" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center p-4"
+         @keydown.escape.window="showGuide = false">
+        <div x-show="showGuide" x-transition.opacity class="absolute inset-0 bg-black/40" @click="showGuide = false"></div>
+        <div x-show="showGuide" x-transition
+             class="relative bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[85vh] flex flex-col">
+            <!-- Guide header -->
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 shrink-0">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    <h2 class="text-lg font-semibold text-gray-900">Template Syntax Guide</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button @click="copyGuide()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-medium text-gray-600 hover:bg-gray-50" title="Copy guide for AI prompt">
+                        <span x-text="guideCopied ? 'Copied!' : 'Copy for AI'"></span>
+                    </button>
+                    <button @click="showGuide = false" class="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Guide body -->
+            <div class="flex-1 overflow-y-auto px-5 py-4 prose prose-sm max-w-none
+                        prose-headings:text-gray-900 prose-h2:text-base prose-h2:mt-6 prose-h2:mb-2
+                        prose-h3:text-sm prose-h3:mt-4 prose-h3:mb-1
+                        prose-table:text-xs prose-th:py-1.5 prose-td:py-1
+                        prose-code:text-emerald-700 prose-code:bg-emerald-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-xs
+                        prose-pre:bg-gray-50 prose-pre:text-xs prose-pre:border prose-pre:border-gray-200">
+                <div x-html="guideHtml"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const TEMPLATE_GAMES = {{ game_options_json|safe }};
+const TEMPLATE_MARKETPLACES = {{ marketplace_options_json|safe }};
+const TEMPLATE_TYPES = {{ template_type_options_json|safe }};
+const EXISTING_TEMPLATE = {{ template_data_json|safe }};
+
+const MARKETPLACE_TITLE_LIMITS = {
+    eldorado: 150, g2g: 120, gameboost: 140, playerauctions: 140
+};
+const MARKETPLACE_DESC_LIMITS = {
+    eldorado: 1900, g2g: 2000, gameboost: 1900, playerauctions: 2000
+};
+
+function templateEditor() {
+    return {
+        games: TEMPLATE_GAMES,
+        marketplaces: TEMPLATE_MARKETPLACES,
+        templateTypes: TEMPLATE_TYPES,
+        selectedGame: '',
+        editingId: null,
+        form: { name: '', marketplace: 'eldorado', template_type: 'title', body: '' },
+
+        // Field palette
+        metadataFields: [],
+        fieldSearch: '',
+
+        // Preview
+        previewResult: '',
+        previewWarnings: [],
+        previewError: '',
+        previewContext: {},
+        previewLoading: false,
+        showContext: false,
+
+        // UI state
+        saving: false,
+        statusMessage: '',
+        modalError: '',
+        showFields: window.innerWidth >= 1024,
+        showPreview: window.innerWidth >= 1280,
+        showGuide: false,
+        isMobile: window.innerWidth < 1024,
+
+        // Available modifiers for toolbar
+        availableModifiers: [
+            { name: 'upper', defaultArg: null, description: 'Convert to UPPERCASE' },
+            { name: 'lower', defaultArg: null, description: 'Convert to lowercase' },
+            { name: 'limit', defaultArg: '3', description: 'Limit list items (list only)' },
+            { name: 'join', defaultArg: ', ', description: 'Join list with separator' },
+            { name: 'number', defaultArg: null, description: 'Format as 45,000' },
+            { name: 'default', defaultArg: 'N/A', description: 'Fallback for empty fields' },
+            { name: 'suffix', defaultArg: '', description: 'Add text after value' },
+            { name: 'prefix', defaultArg: '', description: 'Add text before value' },
+        ],
+
+        get filteredFields() {
+            if (!this.fieldSearch) return this.metadataFields;
+            const q = this.fieldSearch.toLowerCase();
+            return this.metadataFields.filter(f =>
+                f.name.toLowerCase().includes(q) ||
+                (f.description || '').toLowerCase().includes(q)
+            );
+        },
+
+        get allMarketplaces() {
+            const limits = this.form.template_type === 'title' ? MARKETPLACE_TITLE_LIMITS : MARKETPLACE_DESC_LIMITS;
+            return Object.entries(limits).map(([key, limit]) => ({
+                key, limit, label: key.charAt(0).toUpperCase() + key.slice(1)
+            }));
+        },
+
+        get highlightedBody() {
+            return this.highlightSyntax(this.form.body || '');
+        },
+
+        async init() {
+            window.addEventListener('resize', () => {
+                this.isMobile = window.innerWidth < 1024;
+            });
+            if (EXISTING_TEMPLATE) {
+                this.editingId = EXISTING_TEMPLATE.id;
+                this.selectedGame = String(EXISTING_TEMPLATE.game_id);
+                this.form = {
+                    name: EXISTING_TEMPLATE.name,
+                    marketplace: EXISTING_TEMPLATE.marketplace,
+                    template_type: EXISTING_TEMPLATE.template_type,
+                    body: EXISTING_TEMPLATE.body,
+                };
+                await this.loadMetadata();
+                this.onBodyChange();
+            } else {
+                // New template mode
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('game_id')) {
+                    this.selectedGame = params.get('game_id');
+                    await this.loadMetadata();
+                } else if (this.games.length) {
+                    this.selectedGame = String(this.games[0].id);
+                    await this.loadMetadata();
+                }
+                if (params.get('template_type')) this.form.template_type = params.get('template_type');
+                if (params.get('marketplace')) this.form.marketplace = params.get('marketplace');
+            }
+        },
+
+        async onGameChange() {
+            await this.loadMetadata();
+            this.onBodyChange();
+        },
+
+        async loadMetadata() {
+            if (!this.selectedGame) return;
+            try {
+                const params = new URLSearchParams({ game_id: this.selectedGame });
+                const res = await fetch('/posting/api/content-templates/metadata/?' + params);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Could not load metadata');
+                this.metadataFields = data.fields || [];
+            } catch (e) {
+                this.modalError = e.message;
+            }
+        },
+
+        fieldUsed(fieldName) {
+            return this.form.body && this.form.body.includes(fieldName);
+        },
+
+        // --- Editor actions ---
+
+        insertField(fieldName) {
+            this._insertAtCursor('{' + fieldName + '}');
+        },
+
+        insertWithModifier(fieldName, modifier) {
+            this._insertAtCursor('{' + fieldName + ' | ' + modifier + '}');
+        },
+
+        insertConditional(fieldName) {
+            this._insertAtCursor('{#if ' + fieldName + '}', '{/if}');
+        },
+
+        insertConditionalWizard() {
+            const field = prompt('Field name for condition:');
+            if (!field) return;
+            const op = prompt('Operator (leave empty for truthy, or use >, >=, =, !=):', '');
+            let condStr = field;
+            if (op) {
+                const val = prompt('Comparison value:');
+                condStr = field + ' ' + op + ' ' + (val || '');
+            }
+            this._insertAtCursor('{#if ' + condStr + '}', '{/if}');
+        },
+
+        insertElse() {
+            this._insertAtCursor('{#else}');
+        },
+
+        wrapWithModifier(modName, defaultArg) {
+            const textarea = this.$refs.bodyInput;
+            if (!textarea) return;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selected = this.form.body.substring(start, end);
+
+            // Check if selection is a {field} placeholder
+            const fieldMatch = selected.match(/^\{([a-zA-Z_][a-zA-Z0-9_]*(?:\s*\|[^}]*)?)\}$/);
+            if (fieldMatch) {
+                const inner = fieldMatch[1].trim();
+                const modSuffix = defaultArg !== null ? modName + ':' + defaultArg : modName;
+                const replacement = '{' + inner + ' | ' + modSuffix + '}';
+                this.form.body = this.form.body.substring(0, start) + replacement + this.form.body.substring(end);
+                this.$nextTick(() => {
+                    textarea.focus();
+                    textarea.setSelectionRange(start, start + replacement.length);
+                    this.onBodyChange();
+                });
+            } else {
+                // No selection or not a field - prompt for field name
+                const field = prompt('Field name:');
+                if (!field) return;
+                const modSuffix = defaultArg !== null ? modName + ':' + defaultArg : modName;
+                this._insertAtCursor('{' + field + ' | ' + modSuffix + '}');
+            }
+        },
+
+        _insertAtCursor(before, after) {
+            const textarea = this.$refs.bodyInput;
+            if (!textarea) return;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selected = this.form.body.substring(start, end);
+
+            if (after !== undefined) {
+                // Wrap selection
+                const replacement = before + (selected || '') + after;
+                this.form.body = this.form.body.substring(0, start) + replacement + this.form.body.substring(end);
+                this.$nextTick(() => {
+                    const cursorPos = start + before.length + (selected ? selected.length : 0);
+                    textarea.focus();
+                    if (!selected) {
+                        textarea.setSelectionRange(start + before.length, start + before.length);
+                    } else {
+                        textarea.setSelectionRange(start, start + replacement.length);
+                    }
+                    this.onBodyChange();
+                });
+            } else {
+                this.form.body = this.form.body.substring(0, start) + before + this.form.body.substring(end);
+                this.$nextTick(() => {
+                    const pos = start + before.length;
+                    textarea.focus();
+                    textarea.setSelectionRange(pos, pos);
+                    this.onBodyChange();
+                });
+            }
+        },
+
+        // --- Debounced preview ---
+
+        onBodyChange() {
+            if (!this.form.body || !this.selectedGame) {
+                this.previewResult = '';
+                this.previewWarnings = [];
+                this.previewError = '';
+                return;
+            }
+            this.previewTemplate();
+        },
+
+        async previewTemplate() {
+            this.previewLoading = true;
+            this.previewError = '';
+            try {
+                const res = await fetch('/posting/api/content-templates/preview/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf() },
+                    body: JSON.stringify({
+                        game_id: Number(this.selectedGame),
+                        body: this.form.body,
+                        template_type: this.form.template_type,
+                    }),
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    this.previewError = data.error || 'Preview failed';
+                    this.previewResult = '';
+                } else {
+                    this.previewResult = data.rendered || '';
+                    this.previewWarnings = data.warnings || [];
+                    this.previewContext = data.context || {};
+                }
+            } catch (e) {
+                this.previewError = e.message;
+            }
+            this.previewLoading = false;
+        },
+
+        // --- Save ---
+
+        async saveTemplate() {
+            if (!this.form.name.trim()) {
+                this.modalError = 'Template name is required';
+                return;
+            }
+            if (!this.form.body.trim()) {
+                this.modalError = 'Template body is required';
+                return;
+            }
+
+            this.saving = true;
+            this.modalError = '';
+            this.statusMessage = '';
+            try {
+                let res;
+                if (this.editingId) {
+                    res = await fetch(`/posting/api/content-templates/${this.editingId}/`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf() },
+                        body: JSON.stringify({ name: this.form.name, body: this.form.body }),
+                    });
+                } else {
+                    res = await fetch('/posting/api/content-templates/create/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf() },
+                        body: JSON.stringify({
+                            game_id: Number(this.selectedGame),
+                            marketplace: this.form.marketplace,
+                            template_type: this.form.template_type,
+                            name: this.form.name,
+                            body: this.form.body,
+                        }),
+                    });
+                }
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Save failed');
+
+                if (!this.editingId && data.template) {
+                    // Redirect to edit mode after creation
+                    window.location.href = `/posting/templates/editor/${data.template.id}/`;
+                    return;
+                }
+                this.statusMessage = 'Saved';
+                setTimeout(() => this.statusMessage = '', 3000);
+            } catch (e) {
+                this.modalError = e.message;
+            }
+            this.saving = false;
+        },
+
+        // --- Syntax highlighting ---
+
+        highlightSyntax(text) {
+            if (!text) return '';
+            const knownFields = new Set(this.metadataFields.map(f => f.name));
+
+            // Escape HTML first
+            let html = text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            // Highlight conditionals: {#if ...}, {#else}, {/if}
+            html = html.replace(/(\{#if\s+[^}]+\})/g, '<span class="hl-cond">$1</span>');
+            html = html.replace(/(\{#else\})/g, '<span class="hl-cond">$1</span>');
+            html = html.replace(/(\{\/if\})/g, '<span class="hl-cond">$1</span>');
+
+            // Highlight placeholders with modifiers: {field | mod:arg}
+            html = html.replace(/\{([a-zA-Z_][a-zA-Z0-9_]*)(\s*\|[^}]+)\}/g, (match, field, mods) => {
+                const fieldClass = knownFields.has(field) ? 'hl-field' : 'hl-unknown';
+                return `<span class="${fieldClass}">{${field}</span><span class="hl-modifier">${mods}</span><span class="${fieldClass}">}</span>`;
+            });
+
+            // Highlight simple placeholders: {field}
+            html = html.replace(/\{([a-zA-Z_][a-zA-Z0-9_]*)\}/g, (match, field) => {
+                const cls = knownFields.has(field) ? 'hl-field' : 'hl-unknown';
+                return `<span class="${cls}">${match}</span>`;
+            });
+
+            return html;
+        },
+
+        syncScroll(event) {
+            const highlight = event.target.parentElement.querySelector('.editor-highlight');
+            if (highlight) {
+                highlight.scrollTop = event.target.scrollTop;
+                highlight.scrollLeft = event.target.scrollLeft;
+            }
+        },
+
+        // --- Character count ---
+
+        charCountClass(len, limit) {
+            if (len > limit) return 'char-over';
+            if (len > limit * 0.9) return 'char-warn';
+            return 'char-ok';
+        },
+
+        // --- Guide ---
+
+        guideCopied: false,
+        get guideHtml() { return GUIDE_HTML; },
+
+        copyGuide() {
+            navigator.clipboard.writeText(GUIDE_MARKDOWN).then(() => {
+                this.guideCopied = true;
+                setTimeout(() => this.guideCopied = false, 2000);
+            });
+        },
+
+        // --- Utils ---
+
+        getCsrf() {
+            return document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+        },
+    };
+}
+
+// --- Guide content (raw markdown for copy, pre-rendered HTML for display) ---
+
+const GUIDE_MARKDOWN = `# Content Template Engine — AI Prompt Guide
+
+You are helping a user write listing templates for an e-commerce content builder.
+Templates produce marketplace titles and descriptions by combining static text with dynamic field placeholders.
+
+The engine renders templates, then optionally auto-truncates the output to a character limit by dropping segments from the end while keeping priority segments intact.
+
+## Syntax Reference
+
+### Placeholders
+Insert a field value: \`{field_name}\`
+Example: \`{skin_count} skins\` → \`120 skins\`
+
+### Modifiers (pipe chain)
+Transform values: \`{field_name | modifier1 | modifier2:arg}\`
+
+| Modifier | Arg | What it does | Example |
+|---|---|---|---|
+| upper | — | UPPERCASE | \`{platform | upper}\` → PC |
+| lower | — | lowercase | \`{platform | lower}\` → pc |
+| limit | N | Keep first N list items | \`{items | limit:3}\` |
+| join | separator | Join list into string | \`{items | join:, }\` → A, B, C |
+| default | fallback | Use fallback if empty | \`{bio | default:N/A}\` |
+| prefix | text | Prepend if value exists | \`{v_bucks | prefix:VB: }\` → VB: 2500 |
+| suffix | text | Append if value exists | \`{level | suffix: LVL}\` → 250 LVL |
+| number | — | Format with commas | \`{price | number}\` → 2,500 |
+
+### Join separator aliases
+| Keyword | Produces |
+|---|---|
+| join:pipe | \` | \` |
+| join:comma | \`, \` |
+| join:dash | \` - \` |
+| join:hash | \` # \` |
+| join:space | \` \` |
+| join:newline | line break |
+
+### Conditional blocks
+\`{#if field_name}...shown when truthy...{/if}\`
+\`{#if field_name}...if true...{#else}...if false...{/if}\`
+\`{#if field_name >= 500}...shown when condition met...{/if}\`
+Operators: >, >=, <, <=, =, !=, or omit for truthy check.
+Conditionals cannot be nested (one level only).
+
+### Important: separator inside {#if}
+\`{#if vbucks_display >= 500} | {vbucks_display} V-bucks{/if}\`
+This way the " | " disappears when the field is empty.
+
+## Auto-truncation
+The renderer fits output within a character limit by keeping complete segments left-to-right.
+Use pin_last to protect the last N segments (e.g. V-Bucks always shown at the end).
+
+## Available Fields — Fortnite Account
+
+### Core Fields
+| Field | Type | Description | Example |
+|---|---|---|---|
+| level | int | Account level | 250 |
+| platform | str | Primary platform | PC |
+| skin_count | int | Total skin count | 120 |
+| pickaxe_count | int | Pickaxe count | 45 |
+| dance_count | int | Dance/emote count | 80 |
+| glider_count | int | Glider count | 35 |
+| v_bucks | int | V-Bucks balance | 2500 |
+| lifetime_wins | int | Total lifetime wins | 350 |
+| battle_pass_level | int | Current BP level | 100 |
+| season_num | int | Current season number | 5 |
+| refund_credits | int | Refund credits | 3 |
+| has_real_purchases | bool | Has real-money purchases | Yes |
+| psn_linkable | bool | Can link to PSN | Yes |
+| xbox_linkable | bool | Can link to Xbox | Yes |
+| has_email_access | bool | Has email access | Yes |
+| cosmetic_titles | list | All notable cosmetic names | ["Renegade Raider", ...] |
+| price | float | Listing price | 10.0 |
+
+### Computed Fields
+| Field | Type | Description | Example |
+|---|---|---|---|
+| platform_label | str | Platform tag with brackets | [PC/PSN] |
+| total_cosmetics | int | Skins+pickaxes+dances+gliders | 280 |
+| vbucks_display | int | V-Bucks if eligible, else 0 | 2500 |
+| priority_items | list | Priority cosmetics found | ["Leviathan Axe", "Take The L"] |
+| has_og_stw | bool | Has OG Save the World | No |
+| special_skins | list | Rare/OG skins found | ["Renegade Raider", "Black Knight"] |
+| cheap_items | list | Budget items (price<$25) | ["Mako"] |
+| other_cosmetics | list | Everything else | ["Scenario", "Fishstick"] |
+| psn_linkable_label | str | Yes/No for PSN | Yes |
+| xbox_linkable_label | str | Yes/No for Xbox | Yes |
+| email_access_label | str | Yes/No for email | Yes |
+
+### Cosmetic priority order (each item in only one list)
+1. priority_items — Leviathan Axe, Merry Mint Axe, Raider's Revenge, Floss, Take The L
+2. has_og_stw — true if Rose Team Leader present
+3. special_skins — Renegade Raider, OG Ghoul Trooper, OG Skull Trooper, Aerial Assault Trooper, Wildcat, Wonder, Black Knight, Honor Guard, IKONIK, Travis Scott, Galaxy, Sparkle Specialist, Royale Knight, The Reaper, Elite Agent, Blue Squire, Omega, Lara Croft
+4. cheap_items — Mako, Reaper Axe (only when price < $25)
+5. other_cosmetics — all remaining
+
+## Marketplace Character Limits
+| Marketplace | Title Limit |
+|---|---|
+| Eldorado | 150 |
+| G2G | 120 |
+| Gameboost | 140 |
+| PlayerAuctions | 140 |
+
+## Template Examples
+
+Standard title:
+\`{platform_label} | {skin_count} skins{#if vbucks_display >= 500} | {vbucks_display} V-bucks{/if}{#if priority_items} | {priority_items | join:pipe}{/if}{#if has_og_stw} | OG STW{/if}{#if special_skins} | {special_skins | join:pipe}{/if}{#if other_cosmetics} | {other_cosmetics | join:pipe}{/if}\`
+
+V-Bucks at end (use pin_last=1):
+\`{platform_label} | {skin_count} skins{#if priority_items} | {priority_items | join:pipe}{/if}{#if special_skins} | {special_skins | join:pipe}{/if}{#if other_cosmetics} | {other_cosmetics | join:pipe}{/if}{#if vbucks_display >= 500} | {vbucks_display} V-bucks{/if}\`
+
+Compact:
+\`{platform_label} | {skin_count} skins | {special_skins | limit:3 | join:pipe}{#if other_cosmetics} | {other_cosmetics | limit:2 | join:pipe}{/if}\`
+
+Stats-focused:
+\`{platform_label} | Lvl {level} | {skin_count} Skins | {total_cosmetics} Cosmetics{#if vbucks_display >= 500} | {vbucks_display} VB{/if}\`
+
+## Rules
+1. Start with {platform_label} — buyers need platform info
+2. {skin_count} skins is essential — primary value indicator
+3. Use {#if} for optional sections — no "0 V-bucks"
+4. Put separator inside {#if} — {#if field} | {field}{/if}
+5. Use limit before join on lists — prevents overflow
+6. Use join:pipe for titles, join:comma for descriptions
+7. Template order = priority order — first segments survive truncation
+8. Use pin_last for must-have tail segments
+9. Computed list fields are already deduplicated
+10. Bool fields render as Yes/No — use _label for display, raw for {#if}`;
+
+const GUIDE_HTML = (() => {
+    // Minimal markdown-to-HTML converter for the guide
+    const md = GUIDE_MARKDOWN;
+    let html = '';
+    let inTable = false;
+    let inCode = false;
+    const lines = md.split('\n');
+
+    for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+
+        // Code blocks
+        if (line.startsWith('```')) {
+            if (inCode) { html += '</code></pre>'; inCode = false; }
+            else { html += '<pre><code>'; inCode = true; }
+            continue;
+        }
+        if (inCode) { html += line.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\n'; continue; }
+
+        // Empty line
+        if (!line.trim()) {
+            if (inTable) { html += '</tbody></table>'; inTable = false; }
+            continue;
+        }
+
+        // Headings
+        if (line.startsWith('### ')) { html += `<h3>${esc(line.slice(4))}</h3>`; continue; }
+        if (line.startsWith('## ')) { html += `<h2>${esc(line.slice(3))}</h2>`; continue; }
+        if (line.startsWith('# ')) { html += `<h1>${esc(line.slice(2))}</h1>`; continue; }
+
+        // Horizontal rule
+        if (line.startsWith('---')) { html += '<hr>'; continue; }
+
+        // Table
+        if (line.startsWith('|')) {
+            const cells = line.split('|').slice(1, -1).map(c => c.trim());
+            if (cells.every(c => /^[-:]+$/.test(c))) continue; // separator row
+            if (!inTable) {
+                html += '<table><thead><tr>' + cells.map(c => `<th>${inlineFormat(c)}</th>`).join('') + '</tr></thead><tbody>';
+                inTable = true;
+            } else {
+                html += '<tr>' + cells.map(c => `<td>${inlineFormat(c)}</td>`).join('') + '</tr>';
+            }
+            continue;
+        }
+
+        // Numbered list
+        if (/^\d+\.\s/.test(line)) {
+            html += `<p>${inlineFormat(line)}</p>`;
+            continue;
+        }
+
+        // Regular paragraph
+        html += `<p>${inlineFormat(line)}</p>`;
+    }
+    if (inTable) html += '</tbody></table>';
+
+    function esc(s) { return s.replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function inlineFormat(s) {
+        return esc(s)
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/`([^`]+)`/g, '<code>$1</code>');
+    }
+    return html;
+})();
+</script>
+{% endblock %}

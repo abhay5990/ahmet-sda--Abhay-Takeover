@@ -6,6 +6,7 @@ app_name = 'inventory'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('products/<int:product_id>/', views.product_detail, name='product_detail'),
     path('dropship/', views.dropship_list, name='dropship'),
     # OwnedProduct API
     path('api/products/<int:product_id>/status/', views.owned_product_update_status, name='api_product_status'),

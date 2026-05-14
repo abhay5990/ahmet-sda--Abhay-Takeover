@@ -4,6 +4,8 @@ from . import views
 from .api import stock as stock_api
 from .api import dropship as dropship_api
 from .api import pool as pool_api
+from .api import content_templates as content_template_api
+from .api import cosmetic_lists as cosmetic_list_api
 from .api import manual as manual_api
 
 app_name = 'posting'
@@ -14,6 +16,10 @@ urlpatterns = [
     path('stock/active/', views.stock_active_page, name='stock_active'),
     path('stock/history/', views.stock_history_page, name='stock_history'),
     path('stock/jobs/<int:job_id>/', views.stock_job_detail, name='stock_job_detail'),
+    path('templates/', views.content_templates_page, name='content_templates'),
+    path('templates/editor/', views.content_template_editor_page, name='content_template_editor'),
+    path('templates/editor/<int:template_id>/', views.content_template_editor_page, name='content_template_editor_edit'),
+    path('templates/cosmetic-lists/', views.cosmetic_lists_page, name='cosmetic_lists'),
 
     # Dropship UI
     path('dropship/configs/', views.dropship_configs_page, name='dropship_configs'),
@@ -36,6 +42,19 @@ urlpatterns = [
     # API — defaults + stores
     path('api/defaults/<int:game_id>/<str:marketplace>/', stock_api.posting_defaults, name='api_posting_defaults'),
     path('api/stores/', stock_api.available_stores, name='api_available_stores'),
+
+    # API — content templates
+    path('api/content-templates/', content_template_api.list_content_templates, name='api_content_templates'),
+    path('api/content-templates/metadata/', content_template_api.content_template_metadata, name='api_content_template_metadata'),
+    path('api/content-templates/create/', content_template_api.create_content_template, name='api_create_content_template'),
+    path('api/content-templates/<int:template_id>/', content_template_api.content_template_detail, name='api_content_template_detail'),
+    path('api/content-templates/preview/', content_template_api.preview_content_template, name='api_preview_content_template'),
+
+    # API — cosmetic lists
+    path('api/cosmetic-lists/', cosmetic_list_api.list_cosmetic_lists, name='api_cosmetic_lists'),
+    path('api/cosmetic-lists/create/', cosmetic_list_api.create_cosmetic_list, name='api_create_cosmetic_list'),
+    path('api/cosmetic-lists/<int:list_id>/', cosmetic_list_api.cosmetic_list_detail, name='api_cosmetic_list_detail'),
+    path('api/cosmetic-lists/reorder/', cosmetic_list_api.reorder_cosmetic_lists, name='api_reorder_cosmetic_lists'),
 
     # API — dropship poster control
     path('api/dropship/configs/<int:config_id>/poster/stop/', dropship_api.poster_stop, name='api_poster_stop'),

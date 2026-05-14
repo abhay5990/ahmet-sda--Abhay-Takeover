@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import ClassVar
 
-from ....core.contracts import ResolvedAccountBase
+from ....core.contracts import FieldMeta, ResolvedAccountBase
 
 
 @dataclass(slots=True)
@@ -139,3 +140,62 @@ class R6ResolvedAccount(ResolvedAccountBase):
         if self.ownership_state == "owned":
             return "Uplay Account | Has The Game"
         return "Uplay Account"
+
+    FIELD_META: ClassVar[dict[str, FieldMeta]] = {
+        **ResolvedAccountBase.FIELD_META,
+        "tracker_url": FieldMeta("R6 tracker profile URL.", "https://r6.tracker.network/profile/id/12345"),
+        "level": FieldMeta("Account level.", 120),
+        "current_rank": FieldMeta("Current ranked season rank.", "Platinum"),
+        "current_rank_source": FieldMeta("Source of current rank data.", "tracker"),
+        "peak_rank": FieldMeta("Highest achieved rank.", "Diamond"),
+        "peak_rank_count": FieldMeta("Number of seasons at peak rank.", 2),
+        "peak_rank_source": FieldMeta("Source of peak rank data.", "tracker"),
+        "operators": FieldMeta("Unlocked operator names.", ["Ash", "Jager", "Mira"]),
+        "operator_count": FieldMeta("Unlocked operator count.", 45),
+        "skin_names": FieldMeta("Owned skin names.", ["Black Ice R4-C", "Glacier MP5"]),
+        "skin_count": FieldMeta("Total skin count.", 150),
+        "black_ice_count": FieldMeta("Black Ice skin count.", 12),
+        "marketplace_value": FieldMeta("R6 marketplace inventory value.", 25000),
+        "renown": FieldMeta("Renown currency balance.", 45000),
+        "credits": FieldMeta("R6 Credits balance.", 600),
+        "ownership_state": FieldMeta("Game ownership state.", "owned"),
+        "has_game": FieldMeta("Whether account owns the game.", True),
+        "use_fixed_price": FieldMeta("Use fixed pricing.", False),
+        "psn_connected": FieldMeta("PSN connection status.", False),
+        "xbox_connected": FieldMeta("Xbox connection status.", False),
+    }
+
+    COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {
+        **ResolvedAccountBase.COMPUTED_FIELDS,
+        "ranked_ready": FieldMeta("Level 50+ for ranked play.", True, "computed"),
+        "available_platforms": FieldMeta("Connected platform list.", ["PC"], "computed"),
+        "linkable_platforms": FieldMeta("Platforms available to link.", ["PC", "PlayStation", "Xbox"], "computed"),
+        "ownership_text": FieldMeta("Game ownership description.", "This account has the game, You don't have to buy it again.", "computed"),
+        "platform_type_text": FieldMeta("Platform type label.", "Uplay Account | Has The Game", "computed"),
+        # Inventory breakdown counts and items
+        "glacier_count": FieldMeta("Glacier skin count.", 2, "computed"),
+        "glacier_items": FieldMeta("Glacier skin names.", ["Glacier Black Ice MP5", "Glacier SMG-11"], "computed"),
+        "black_ice_count": FieldMeta("Black Ice skin count (from inventory).", 12, "computed"),
+        "black_ice_items": FieldMeta("Black Ice skin names.", ["Black Ice R4-C", "Black Ice MP7"], "computed"),
+        "dust_line_count": FieldMeta("Dust Line skin count.", 1, "computed"),
+        "dust_line_items": FieldMeta("Dust Line skin names.", ["Dust Line 556xi"], "computed"),
+        "universal_count": FieldMeta("Universal skin count.", 5, "computed"),
+        "universal_items": FieldMeta("Universal skin names.", ["Racer AK12", "Racer R4-C"], "computed"),
+        "seasonal_count": FieldMeta("Seasonal skin count.", 8, "computed"),
+        "seasonal_items": FieldMeta("Seasonal skin names.", ["Wind Bastion MP5", "Ember Rise F2"], "computed"),
+        "pro_league_old_count": FieldMeta("Old Pro League skin count.", 3, "computed"),
+        "pro_league_old_items": FieldMeta("Old Pro League skin names.", ["Pro League Ash", "Pro League Jager"], "computed"),
+        "pro_league_new_count": FieldMeta("New Pro League skin count.", 1, "computed"),
+        "pro_league_new_items": FieldMeta("New Pro League skin names.", ["Pro League Ace"], "computed"),
+        "pilot_program_count": FieldMeta("Pilot Program skin count.", 2, "computed"),
+        "pilot_program_items": FieldMeta("Pilot Program skin names.", ["DarkZero Ash", "TSM Jager"], "computed"),
+        "elite_count": FieldMeta("Elite skin count.", 4, "computed"),
+        "elite_items": FieldMeta("Elite skin names.", ["Elite Ash", "Elite Jager", "Elite Bandit"], "computed"),
+        "legendary_skin_count": FieldMeta("Legendary skin count.", 15, "computed"),
+        "legendary_skin_items": FieldMeta("Legendary skin names.", ["Plasma Pink", "Fire"], "computed"),
+        "ranked_charm_count": FieldMeta("Ranked charm count.", 6, "computed"),
+        "ranked_charm_items": FieldMeta("Ranked charm names.", ["Diamond Y5S3", "Platinum Y6S1"], "computed"),
+        "racer_count": FieldMeta("Racer universal skin count.", 2, "computed"),
+        "racer_items": FieldMeta("Racer skin names.", ["Racer AK12", "Racer R4-C"], "computed"),
+        "has_inventory_data": FieldMeta("Whether inventory data is available.", True, "computed"),
+    }

@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, ClassVar
 
-from ....core.contracts import ResolvedAccountBase
+from ....core.contracts import FieldMeta, ResolvedAccountBase
 
 
 @dataclass(slots=True)
@@ -34,3 +34,21 @@ class GtavResolvedAccount(ResolvedAccountBase):
     credential_extras: dict[str, Any] = field(default_factory=dict)
     """Platform-specific credential fields (steam_id, rock_id, dob, etc.)
     consumed by :func:`~.credentials.format_platform_credentials`."""
+
+    FIELD_META: ClassVar[dict[str, FieldMeta]] = {
+        **ResolvedAccountBase.FIELD_META,
+        "main_platform": FieldMeta("Primary platform.", "PC"),
+        "level": FieldMeta("GTA Online level.", 250),
+        "cash_amount": FieldMeta("In-game cash amount.", 500),
+        "cash_unit": FieldMeta("Cash unit label.", "Million"),
+        "cars_count": FieldMeta("Owned vehicle count.", 120),
+        "tags": FieldMeta("Account tags.", ["Modded", "High Level"]),
+        "has_dual_characters": FieldMeta("Has two online characters.", True),
+        "has_email_access": FieldMeta("Email access status.", True),
+        "title": FieldMeta("Listing title override.", "GTA V Account"),
+        "description": FieldMeta("Listing description override.", ""),
+    }
+
+    COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {
+        **ResolvedAccountBase.COMPUTED_FIELDS,
+    }

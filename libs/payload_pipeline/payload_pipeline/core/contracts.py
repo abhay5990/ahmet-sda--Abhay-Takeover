@@ -4,13 +4,29 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import Any, Generic, Literal, Protocol, TypeVar, overload
+from typing import Any, ClassVar, Generic, Literal, Protocol, TypeVar, overload
 
 TConfig = TypeVar("TConfig")
 
 from .enums import ListingCategory, ListingKind, Marketplace  # noqa: F401
 
 TSubject = TypeVar("TSubject")
+
+
+@dataclass(frozen=True, slots=True)
+class FieldMeta:
+    """Metadata for a single template-visible field.
+
+    Attributes:
+        description: Human-readable explanation shown in the template editor.
+        sample: Representative value used for template preview rendering.
+        source: Origin of the field — ``resolved`` (from model), ``computed``
+            (derived at render time), or ``runtime`` (injected by the pipeline).
+    """
+
+    description: str
+    sample: Any
+    source: str = "resolved"
 
 
 @dataclass(slots=True)
@@ -109,13 +125,34 @@ class ResolvedAccountBase:
     Every game-specific resolved model inherits from this base to
     guarantee a consistent contract for validation, pricing, and
     credential handling.
+
+    Subclasses should extend ``FIELD_META`` and ``COMPUTED_FIELDS`` to
+    provide template editor metadata (descriptions + sample values).
     """
 
     item_id: str = ""
     category_id: int = 0
     price: float = 0.0
     kind: Literal["stock", "dropshipping"] = "stock"
+    ref_key: str = ""
     credentials: CredentialBundle = field(default_factory=CredentialBundle)
+
+    FIELD_META: ClassVar[dict[str, FieldMeta]] = {
+        "item_id": FieldMeta("Source item ID.", "sample-item-123"),
+        "category_id": FieldMeta("Listing category ID.", 1),
+        "price": FieldMeta("Listing price.", 10.0),
+        "kind": FieldMeta("Listing kind: stock or dropshipping.", "stock"),
+        "ref_key": FieldMeta("Traceability reference key.", "#ABC1234"),
+    }
+
+    COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {
+        "album_url": FieldMeta(
+            "Hosted media album URL when available.",
+            "https://imgur.com/a/sample",
+            "runtime",
+        ),
+        "is_stock": FieldMeta("True for stock listings.", True, "runtime"),
+    }
 
 
 @dataclass(slots=True)
