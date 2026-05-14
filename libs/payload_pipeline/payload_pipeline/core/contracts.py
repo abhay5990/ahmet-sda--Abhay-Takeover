@@ -348,6 +348,23 @@ class AlbumUploader(Protocol):
         ...
 
 
+class AlbumDownloader(Protocol):
+    """Download all images from a remote album URL to a local directory.
+
+    The consuming project provides a concrete implementation (e.g.
+    ``ImgurAlbumDownloader``) that wraps the SDK facade.
+    ``payload_pipeline`` only sees this protocol.
+    """
+
+    def download_album(self, album_url: str, output_dir: str) -> list[str]:
+        """Download all images from *album_url* into *output_dir*.
+
+        Returns a list of absolute paths to the saved files.
+        Returns an empty list on failure — never raises.
+        """
+        ...
+
+
 class MediaPublisher(Protocol):
     """Publish prepared local media paths to shared hosts."""
 

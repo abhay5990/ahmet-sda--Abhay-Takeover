@@ -87,6 +87,7 @@ G2G_SERVICE_ID: ContextKey[str] = ContextKey("g2g_service_id")
 # ── Imgur ─────────────────────────────────────────────────────────────
 
 IMGUR_CLIENT_ID: ContextKey[str] = ContextKey("imgur_client_id")
+IMGUR_ALBUM_DOWNLOADER: ContextKey[Any] = ContextKey("imgur_album_downloader")
 
 # ── Source-level overrides ───────────────────────────────────────────
 

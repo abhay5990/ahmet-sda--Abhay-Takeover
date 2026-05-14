@@ -49,6 +49,13 @@ class ImgurApiClient(Protocol):
         client_id: str,
     ) -> ApiResult[dict[str, Any]]: ...
 
+    def fetch_album_media(
+        self,
+        album_hash: str,
+        *,
+        client_id: str,
+    ) -> ApiResult[list[dict]]: ...
+
     def get_credits(
         self,
         *,
@@ -130,6 +137,27 @@ class ImgurFacade:
                 album_deletehash,
                 deletehashes=deletehashes,
                 cover_image_id=cover_image_id,
+                client_id=self._client_id,
+            )
+        except Exception as exc:
+            return self._error(exc)
+
+    # ---------------------------------------------------------------------------
+    # Album fetch (read)
+    # ---------------------------------------------------------------------------
+
+    def fetch_album_media(self, album_hash: str) -> ApiResult[list[dict]]:
+        """Fetch media items from an Imgur album by hash.
+
+        Args:
+            album_hash: The album hash (e.g. ``"abc123"`` from ``imgur.com/a/abc123``).
+
+        Returns:
+            ApiResult with a list of media item dicts (url, ext, type, ...).
+        """
+        try:
+            return self._client.fetch_album_media(
+                album_hash,
                 client_id=self._client_id,
             )
         except Exception as exc:

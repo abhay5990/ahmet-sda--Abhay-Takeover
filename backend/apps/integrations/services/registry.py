@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     pass
 
 _services: dict[str, AbstractServiceDefinition] = {}
+_fully_loaded: bool = False
 
 
 def register_service(cls: type[AbstractServiceDefinition]) -> type[AbstractServiceDefinition]:
@@ -42,6 +43,8 @@ def get_service_fields(service_type: str) -> list[ServiceField]:
 
 def _ensure_loaded():
     """Lazily import all service modules so their @register_service decorators run."""
-    if _services:
+    global _fully_loaded
+    if _fully_loaded:
         return
     from . import dropbox, firstmail, google_sheets, imageshack, imgur, proxyline, robuxcrate, telegram  # noqa: F401 — trigger registration
+    _fully_loaded = True

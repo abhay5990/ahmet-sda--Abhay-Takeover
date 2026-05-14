@@ -13,23 +13,23 @@ def build_request(
     kind: ListingKind,
     disable_media: bool = True,
     lzt_image_fetcher=None,
-    imgur_client_id: str = "",
+    imgur_album_downloader=None,
 ) -> PipelineRequest:
     """Build a lib PipelineRequest from Django-layer inputs.
 
     Args:
-        game_slug:         Canonical game slug from game_mapp.json (e.g. 'valorant').
-        sources:           Raw source dict, e.g. {'lzt': raw_data_dict}.
-        kind:              STOCK or DROPSHIPPING.
-        disable_media:     Skip media download/upload (True = no IO, faster).
-        lzt_image_fetcher: Optional LZT image fetcher for media steps.
-        imgur_client_id:   Imgur Client-ID for downloading album images.
+        game_slug:              Canonical game slug from game_mapp.json (e.g. 'valorant').
+        sources:                Raw source dict, e.g. {'lzt': raw_data_dict}.
+        kind:                   STOCK or DROPSHIPPING.
+        disable_media:          Skip media download/upload (True = no IO, faster).
+        lzt_image_fetcher:      Optional LZT image fetcher for media steps.
+        imgur_album_downloader: Optional ImgurAlbumDownloader (AlbumDownloader protocol).
     """
     ctx: dict = {ctx_keys.DISABLE_MEDIA: disable_media}
     if lzt_image_fetcher is not None:
         ctx[ctx_keys.LZT_IMAGE_FETCHER] = lzt_image_fetcher
-    if imgur_client_id:
-        ctx[ctx_keys.IMGUR_CLIENT_ID] = imgur_client_id
+    if imgur_album_downloader is not None:
+        ctx[ctx_keys.IMGUR_ALBUM_DOWNLOADER] = imgur_album_downloader
 
     return PipelineRequest(
         game=game_slug,
