@@ -95,11 +95,16 @@ class FortniteComposer:
             if not media.album_url and account.manual_images:
                 media.album_url = account.manual_images
 
-            title = _smart_truncate(account.manual_title, 160)
+            title = _smart_truncate(account.manual_title, 150)
             g2g_title = _smart_truncate(account.manual_title, 120)
             description = account.manual_description or self.description_generator.generate(
                 account, media=media, marketplace="default"
             )
+            # Generator adds the album link automatically; manual descriptions bypass
+            # the generator so we prepend it here (protocol stripped, all marketplaces).
+            if account.manual_description and media.album_url:
+                clean_url = media.album_url.removeprefix("https://").removeprefix("http://")
+                description = f"Images:\n{clean_url}\n{description}"
         else:
             title = self.title_generator.generate(account, marketplace="default")
             g2g_title = self.title_generator.generate(account, marketplace="g2g")

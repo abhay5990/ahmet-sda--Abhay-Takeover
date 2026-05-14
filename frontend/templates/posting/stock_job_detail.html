@@ -134,9 +134,9 @@
                             <span class="text-gray-400">—</span>
                         {% endif %}
                     </td>
-                    <td class="px-4 py-3 text-xs text-red-600 max-w-xs truncate" id="item-error-{{ item.id }}"
+                    <td class="px-4 py-3 text-xs text-red-600 max-w-sm truncate" id="item-error-{{ item.id }}"
                         title="{{ item.error_message }}">
-                        {{ item.error_message|truncatechars:80 }}
+                        {{ item.error_message|truncatechars:120 }}
                     </td>
                 </tr>
                 {% endfor %}
@@ -244,7 +244,7 @@ function jobDetail() {
                 if (!title) offerTitleCell.innerHTML = '<span class="text-gray-400">—</span>';
             }
             if (errorCell && data.error) {
-                errorCell.textContent = data.error.substring(0, 80);
+                errorCell.textContent = data.error.substring(0, 120);
                 errorCell.title = data.error;
             }
         },

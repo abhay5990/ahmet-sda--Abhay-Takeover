@@ -11,3 +11,6 @@ class ImgurEndpoints:
     UPLOAD_IMAGE = "/image"
     ALBUM = "/album"
     CREDITS = "/credits"
+
+    # public/v1 endpoint — used with ImgurConfig.public_base_url
+    ALBUM_FETCH = "/albums/{hash}"

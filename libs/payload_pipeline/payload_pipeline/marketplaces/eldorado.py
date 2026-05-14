@@ -178,7 +178,7 @@ class BaseEldoradoBuilder(BasePayloadBuilder[Any]):
         if not listing.media.local_paths:
             return
 
-        formatted_paths = self.image_uploader.upload(listing.media.local_paths, ctx=ctx)
+        formatted_paths = self.image_uploader.upload(listing.media.local_paths[:4], ctx=ctx)
         if len(formatted_paths) < 3:
             raise RuntimeError(
                 f"Eldorado image upload returned {len(formatted_paths)} path(s); "

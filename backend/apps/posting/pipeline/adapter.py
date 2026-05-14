@@ -120,6 +120,39 @@ def reset_pipeline() -> None:
         logger.debug("PayloadPipeline reset — will re-initialise on next call")
 
 
+def _build_imgur_downloader(proxy_pool=None):
+    """Build ImgurAlbumDownloader from active ServiceCredential.
+
+    Returns None if the credential is missing or inactive.
+    """
+    try:
+        from apps.integrations.models import ServiceCredential, ServiceType
+        from apps.integrations.services.registry import get_service
+        from .media import ImgurAlbumDownloader
+
+        cred = ServiceCredential.objects.filter(
+            service_type=ServiceType.IMGUR,
+            is_active=True,
+        ).first()
+        if not cred:
+            logger.info("No active Imgur credential — album download disabled")
+            return None
+
+        imgur_svc = get_service('imgur')
+        if not imgur_svc:
+            logger.warning("Imgur service definition not found — album download disabled")
+            return None
+
+        facade = imgur_svc.build_client(cred)
+        proxy_record = proxy_pool.acquire() if proxy_pool else None
+        cdn_proxy_url = proxy_record.to_url() if proxy_record else None
+        return ImgurAlbumDownloader(facade, cdn_proxy_url=cdn_proxy_url)
+
+    except Exception as exc:
+        logger.warning("Failed to build ImgurAlbumDownloader: %s", exc)
+        return None
+
+
 def prepare(
     *,
     game_slug: str,
@@ -127,7 +160,7 @@ def prepare(
     kind: ListingKind,
     disable_media: bool = True,
     lzt_image_fetcher=None,
-    imgur_client_id: str = "",
+    imgur_album_downloader=None,
     title_templates: dict[str, str] | None = None,
     description_templates: dict[str, str] | None = None,
     cosmetic_lists: list[dict] | None = None,
@@ -144,7 +177,7 @@ def prepare(
         kind:              STOCK or DROPSHIPPING.
         disable_media:     Skip image download/upload (default True).
         lzt_image_fetcher: Optional LZT image fetcher for media steps.
-        imgur_client_id:   Imgur Client-ID for downloading album images.
+        imgur_album_downloader: Optional ImgurAlbumDownloader (AlbumDownloader protocol).
         cosmetic_lists:    Dynamic cosmetic matching lists from DB.
         ref_key:           Traceability ref key (#ABC1234) from OwnedProduct.
 
@@ -157,7 +190,7 @@ def prepare(
         kind=kind,
         disable_media=disable_media,
         lzt_image_fetcher=lzt_image_fetcher,
-        imgur_client_id=imgur_client_id,
+        imgur_album_downloader=imgur_album_downloader,
         title_templates=title_templates,
         description_templates=description_templates,
         cosmetic_lists=cosmetic_lists,

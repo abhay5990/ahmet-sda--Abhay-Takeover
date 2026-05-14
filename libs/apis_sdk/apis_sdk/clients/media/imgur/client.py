@@ -159,6 +159,77 @@ class ImgurClient:
         return self._handle_response(response)
 
     # ---------------------------------------------------------------------------
+    # Album fetch (read)
+    # ---------------------------------------------------------------------------
+
+    # Imgur's public v1 endpoint requires browser-like headers to avoid 429s.
+    # Using the v3 API for album reads is aggressively rate-limited by Imgur.
+    _BROWSER_HEADERS: dict[str, str] = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/143.0.0.0 Safari/537.36"
+        ),
+        "Accept": "*/*",
+        "Accept-Language": "en,tr-TR;q=0.9,tr;q=0.8,en-US;q=0.7",
+        "Origin": "https://imgur.com",
+        "Referer": "https://imgur.com/",
+        "sec-ch-ua": '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"Windows"',
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-site",
+    }
+
+    def fetch_album_media(
+        self,
+        album_hash: str,
+        *,
+        client_id: str,
+    ) -> ApiResult[list[dict]]:
+        """Fetch media items from an Imgur album.
+
+        Uses the public post/v1 endpoint with browser-like headers to avoid
+        the aggressive rate limiting on the v3 API.
+
+        Args:
+            album_hash: The album hash (e.g. ``"abc123"`` from ``imgur.com/a/abc123``).
+            client_id:  Imgur Client-ID for query param auth.
+
+        Returns:
+            ApiResult with a list of media item dicts on success.
+            Each item contains at minimum: ``url``, ``ext``, ``type``.
+        """
+        url = f"{self._config.public_base_url}{ImgurEndpoints.ALBUM_FETCH.format(hash=album_hash)}"
+        params = {"client_id": client_id, "include": "media,adconfig,account,tags"}
+        try:
+            response = self._transport.request(
+                HttpMethod.GET,
+                url,
+                headers=self._BROWSER_HEADERS,
+                params=params,
+                timeout=self._config.timeout,
+            )
+        except TransportError as exc:
+            return ApiResult.from_error(
+                ErrorCategory.NETWORK, str(exc),
+                provider=self.PROVIDER, is_retryable=True,
+            )
+        if not response.is_success:
+            return self._handle_error(response.status_code, response)
+        try:
+            body = response.json()
+            media = body.get("media", [])
+            return ApiResult.success(media, status_code=response.status_code)
+        except Exception as exc:
+            return ApiResult.from_error(
+                ErrorCategory.UNKNOWN,
+                f"Failed to parse album response: {exc}",
+                provider=self.PROVIDER,
+            )
+
+    # ---------------------------------------------------------------------------
     # Credits (read)
     # ---------------------------------------------------------------------------
 

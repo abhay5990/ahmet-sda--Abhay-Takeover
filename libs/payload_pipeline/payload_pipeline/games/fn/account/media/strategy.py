@@ -11,7 +11,6 @@ from ..models import FortniteResolvedAccount
 from .grid_renderer import FortniteGridRenderer
 from .....core import context_keys as ctx
 from .....core.contracts import PipelineRequest
-from .....shared.imgur_downloader import download_album
 from .....shared.lzt_image_fetcher import LztImageFetcher
 from .....shared.media_policy import MediaSource, media_source_order
 from .....shared.paths import default_media_output_dir
@@ -143,13 +142,13 @@ class FortniteMediaStrategy:
         request: PipelineRequest,
         output_dir: str,
     ) -> list[str]:
-        client_id = request.context.get(ctx.IMGUR_CLIENT_ID)
-        if not client_id:
-            logger.warning("No imgur_client_id in context, skipping Imgur download")
+        downloader = request.context.get(ctx.IMGUR_ALBUM_DOWNLOADER)
+        if not downloader:
+            logger.warning("No imgur_album_downloader in context, skipping Imgur download")
             return []
 
         try:
-            return download_album(album_url, output_dir, client_id=client_id)
+            return downloader.download_album(album_url, output_dir)
         except Exception as exc:
             logger.warning("Imgur album download failed for %s: %s", album_url, exc)
             return []

@@ -66,7 +66,7 @@ class StockOrchestrator:
     def __init__(self):
         self._resolver: StockResolver | None = None
         self._image_fetcher = None  # ImageFetcher protocol instance
-        self._imgur_client_id: str = ""
+        self._imgur_downloader = None  # AlbumDownloader protocol instance
         self._cancel_event = Event()
         self._rate_limit_event = Event()
         self._pa_uploader = PABulkUploader()
@@ -133,20 +133,8 @@ class StockOrchestrator:
                 list(self._description_templates) if self._description_templates else None,
             )
 
-    @staticmethod
-    def _resolve_imgur_client_id() -> str:
-        """Get Imgur client_id from ServiceCredential."""
-        try:
-            from apps.integrations.models import ServiceCredential, ServiceType
-            cred = ServiceCredential.objects.filter(
-                service_type=ServiceType.IMGUR,
-                is_active=True,
-            ).first()
-            if cred and cred.credentials:
-                return cred.credentials.get('client_id', '')
-        except Exception:
-            pass
-        return ""
+    def _build_imgur_downloader(self):
+        """Build ImgurAlbumDownloader from active ServiceCredential."""
 
     def _build_consumer(self) -> StockConsumer:
         """Build the StockConsumer with shared collaborators."""
@@ -186,8 +174,8 @@ class StockOrchestrator:
         if self._proxy_pool:
             logger.info("Proxy pool ready: %d proxies", self._proxy_pool.size)
 
-        # Resolve Imgur client_id for manual media downloads
-        self._imgur_client_id = self._resolve_imgur_client_id()
+        # Build ImgurAlbumDownloader for manual media downloads
+        self._imgur_downloader = self._build_imgur_downloader()
 
         # Load content templates from PostingDefault FK selections
         self._load_templates(job.game_id)
@@ -412,7 +400,7 @@ class StockOrchestrator:
                 kind=ListingKind.STOCK,
                 disable_media=False,
                 lzt_image_fetcher=self._image_fetcher,
-                imgur_client_id=self._imgur_client_id,
+                imgur_album_downloader=self._imgur_downloader,
                 title_templates=self._title_templates,
                 description_templates=self._description_templates,
                 ref_key=owned_product.ref_key or "",
