@@ -86,20 +86,21 @@ def cleaner_loop(cleaner_config: CleanerConfig, stop_event: Event) -> None:
         if not cleaner_config.enabled:
             break
 
-        listed_products = (
+        # Fetch only PKs ordered by last_checked_at — triggers a covering-index
+        # scan on ds_prod_status_checked_idx (no filesort, no table access).
+        # Full objects are loaded per-item to avoid the wide JOIN that prevents
+        # MySQL from using the index for ORDER BY.
+        listed_ids = list(
             DropshipProduct.objects
             .filter(
                 status=DropshipProductStatus.LISTED,
                 source_account=source_account,
             )
-            .select_related(
-                'source_account', 'source_account__credential',
-                'game', 'category',
-            )
-            .order_by('last_checked_at')  # oldest-checked first
+            .order_by('last_checked_at')
+            .values_list('id', flat=True)
         )
 
-        for dp in listed_products:
+        for dp_id in listed_ids:
             if stop_event.is_set():
                 break
 
@@ -108,6 +109,13 @@ def cleaner_loop(cleaner_config: CleanerConfig, stop_event: Event) -> None:
             if not cleaner_config.enabled:
                 stop_event.set()
                 break
+
+            try:
+                dp = DropshipProduct.objects.select_related(
+                    'source_account',
+                ).get(pk=dp_id)
+            except DropshipProduct.DoesNotExist:
+                continue  # processed or deleted between snapshot and now
 
             try:
                 _check_single_product(
