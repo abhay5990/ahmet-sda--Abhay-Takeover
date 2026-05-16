@@ -235,6 +235,10 @@ class DropshipProduct(models.Model):
             models.Index(fields=['status'], name='ds_product_status_idx'),
             models.Index(fields=['-created_at'], name='ds_product_created_idx'),
             models.Index(fields=['source_account', 'status'], name='ds_product_account_status_idx'),
+            models.Index(
+                fields=['source_account', 'status', 'last_checked_at'],
+                name='ds_prod_status_checked_idx',
+            ),
         ]
 
     def __str__(self):

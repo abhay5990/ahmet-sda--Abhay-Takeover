@@ -163,11 +163,18 @@ def main():
             print(f"     Action: _handle_item_gone -> status={new_status}")
 
         elif check.current_price and check.current_price > 0:
-            print(f"  -> ITEM EXISTS: price={check.current_price}")
-            print(f"     3% tolerance ile karsilastirilir (stored dp.price'a gore)")
-            print(f"     Ornek: dp.price=100 vs current={check.current_price}")
-            pct = abs(check.current_price - Decimal("100")) / Decimal("100") * 100
-            print(f"     -> %{pct:.1f} degisim {'-> SILER (>3%)' if pct > 3 else '-> no action (<=3%)'}")
+            print(f"  -> ITEM EXISTS: price(USD)={check.current_price}")
+            rub_price = check.raw_data.get("rub_price") if check.raw_data else None
+            if rub_price:
+                print(f"     rub_price={rub_price}  (karsilastirma bu uzerinden yapilir)")
+                print(f"     Ornek: dp.raw_data['rub_price']=100 vs current={rub_price}")
+                pct = abs(Decimal(str(rub_price)) - Decimal("100")) / Decimal("100") * 100
+                print(f"     -> %{pct:.1f} RUB degisim {'-> SILER (>3%)' if pct > 3 else '-> no action (<=3%)'}")
+            else:
+                print(f"     rub_price yok — USD ile karsilastirilir (fallback)")
+                print(f"     Ornek: dp.price=100 vs current={check.current_price}")
+                pct = abs(check.current_price - Decimal("100")) / Decimal("100") * 100
+                print(f"     -> %{pct:.1f} USD degisim {'-> SILER (>3%)' if pct > 3 else '-> no action (<=3%)'}")
 
         else:
             print("  -> ITEM EXISTS: price yok")

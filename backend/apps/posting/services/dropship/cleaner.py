@@ -247,18 +247,30 @@ def _check_single_product(
         _handle_item_gone(dp, reason=check.status or 'deleted', proxy_pool=proxy_pool)
         return
 
-    # Check price change — only act if price moved more than 3% from
-    # the price recorded when the DP was first posted.  Small fluctuations
-    # (floating-point noise, minor marketplace adjustments) are ignored.
+    # Check price change — only act if price moved more than 3%.
+    # Prefer source-currency (rub_price) comparison: LZT prices are set in RUB
+    # and converted to USD on-the-fly, so exchange-rate movements cause the USD
+    # value to drift without the seller changing anything.  Comparing RUB prices
+    # eliminates this noise.  Falls back to USD when rub_price is unavailable.
     if (
         check.current_price
         and check.current_price > 0
         and dp.price > 0
     ):
-        pct_change = abs(check.current_price - dp.price) / dp.price
-        if pct_change > Decimal('0.03'):
-            _handle_price_change(dp, check.current_price, check.raw_data, proxy_pool=proxy_pool)
-            return
+        old_rub = (dp.raw_data or {}).get('rub_price')
+        new_rub = (check.raw_data or {}).get('rub_price')
+        if old_rub and new_rub:
+            old_cmp = Decimal(str(old_rub))
+            new_cmp = Decimal(str(new_rub))
+        else:
+            old_cmp = dp.price
+            new_cmp = check.current_price
+
+        if old_cmp > 0:
+            pct_change = abs(new_cmp - old_cmp) / old_cmp
+            if pct_change > Decimal('0.03'):
+                _handle_price_change(dp, check.current_price, check.raw_data, proxy_pool=proxy_pool)
+                return
 
     # No change (or within tolerance) — just update last_checked_at
     dp.last_checked_at = timezone.now()
