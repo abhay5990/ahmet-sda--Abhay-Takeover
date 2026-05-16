@@ -151,6 +151,10 @@ class StockConsumer:
 
             store_listing_id = extract_listing_id(api_result.data)
 
+            # GameBoost: publish the newly created offer (draft → listed)
+            if item.marketplace == 'gameboost':
+                self._list_gameboost_offer(item, store_listing_id)
+
             persist_success(
                 item=item,
                 job=job,
@@ -181,6 +185,35 @@ class StockConsumer:
             )
 
         item.save(update_fields=['status', 'error_message', 'listing', 'updated_at'])
+
+    # ------------------------------------------------------------------
+    # GameBoost post-create: publish offer
+    # ------------------------------------------------------------------
+
+    def _list_gameboost_offer(
+        self,
+        item: PostingJobItem,
+        store_listing_id: str,
+    ) -> None:
+        """Call POST /account-offers/{id}/list to publish a GameBoost offer."""
+        from apps.integrations.providers import registry
+        from apps.integrations.proxy_pool import get_group_name
+
+        proxy_group = get_group_name(item.store)
+        facade = registry.get_or_build_client(
+            item.marketplace, item.store.credential,
+            proxy_pool=self._proxy_pool,
+            proxy_group=proxy_group,
+        )
+        result = facade.list_account_offer(
+            store_listing_id, proxy_group=proxy_group,
+        )
+        if not result.ok:
+            logger.warning(
+                "GameBoost list action failed for offer %s (store=%s): %s",
+                store_listing_id, item.store.name,
+                getattr(result.error, 'message', result.error),
+            )
 
     # ------------------------------------------------------------------
     # PA consumer (bulk upload)

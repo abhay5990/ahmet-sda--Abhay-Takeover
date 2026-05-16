@@ -22,6 +22,9 @@ _DEFAULT_CONFIG = {
             "eldorado": {"title": True, "description": True},
             "g2g": {"title": False, "description": False},
         },
+        "fake_password": {
+            "valorant": True,
+        },
     }
 }
 
@@ -54,3 +57,10 @@ def get_unique_key_config(marketplace: str) -> dict[str, bool]:
     config = _load_config()
     uk = config.get('features', {}).get('unique_key', {})
     return uk.get(marketplace.lower(), {"title": False, "description": False})
+
+
+def is_fake_password_enabled(game: str) -> bool:
+    """Check if fake password is enabled for a game."""
+    config = _load_config()
+    fp = config.get('features', {}).get('fake_password', {})
+    return fp.get(game.lower(), False)

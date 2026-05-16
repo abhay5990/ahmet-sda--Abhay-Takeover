@@ -18,6 +18,10 @@
         "title": false,
         "description": false
       }
+    },
+    "fake_password": {
+      "valorant": true,
+      "lol": true
     }
   }
 }

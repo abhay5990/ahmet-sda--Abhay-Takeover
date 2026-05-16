@@ -270,8 +270,6 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
 
         auto_delivery["firstCDKey"] = ""
 
-        screenshot = listing.media.external_urls[0] if listing.media.external_urls else ""
-
         return {
             "offerId": None,
             "gameId": self.game_id,
@@ -282,7 +280,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
             "offerDuration": 30,
             "title": _sanitize_text(_strip_url_schemes(content.title)),
             "offerDesc": _sanitize_text(_strip_url_schemes(content.description)).replace("\n", "<br>"),
-            "screenShot": screenshot,
+            "screenShot": "",
             "agreeCheck": True,
             "isAuto": is_stock,
             "autoDelivery": auto_delivery,
@@ -322,7 +320,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
             "price": round(max(price, 0.01), 2),
             "server": self._get_server(subject),
             "cover_image_url": self.cover_image_url,
-            "image_urls": list(listing.media.external_urls) if listing.media.external_urls else [],
+            "image_urls": [],
             "delivery_method": "instant" if is_stock else "manual",
             "delivery_instructions": _sanitize_text(
                 self._format_delivery(subject) if is_stock

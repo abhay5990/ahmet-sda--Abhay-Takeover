@@ -194,16 +194,25 @@ class ListingDraft:
     media: MediaBundle = field(default_factory=MediaBundle)
     marketplace_overrides: dict[str, MarketplaceListingOverride] = field(default_factory=dict)
 
+    # Maximum title lengths per marketplace (characters).
+    _TITLE_MAX_LENGTH: ClassVar[dict[str, int]] = {
+        "playerauctions": 80,
+        "gameboost": 150,
+        "eldorado": 200,
+        "g2g": 120,
+    }
+
     def content_for(self, marketplace: str, ref_key: str = "") -> ListingContent:
         """Return the effective listing content for the requested marketplace.
 
         When unique_key is enabled for the marketplace:
-        - PA/Gameboost: appends ref_key to title (e.g. ``#ABC1234``)
         - Eldorado: appends ``#`` to title, prepends ref_key to description
+        - Others: appends full ref_key to title (truncating title body if needed)
         """
         from .config import get_unique_key_config
 
-        override = self.marketplace_overrides.get(marketplace.lower())
+        mp = marketplace.lower()
+        override = self.marketplace_overrides.get(mp)
         if override is None:
             title = self.default.title
             description = self.default.description
@@ -217,15 +226,22 @@ class ListingDraft:
             )
             tags = list(override.tags) if override.tags is not None else list(self.default.tags)
 
-        uk = get_unique_key_config(marketplace)
+        uk = get_unique_key_config(mp)
 
         if title and uk.get("title"):
-            if ref_key and marketplace.lower() in ("playerauctions", "gameboost"):
-                if not title.rstrip().endswith(ref_key):
-                    title = title.rstrip() + ' ' + ref_key
-            else:
+            if mp == "eldorado":
+                # Eldorado: only a hash marker in title; real key goes to description
                 if not title.endswith('#'):
                     title = title.rstrip() + ' #'
+            elif ref_key:
+                # All other platforms: full unique key in title
+                if not title.rstrip().endswith(ref_key):
+                    suffix = ' ' + ref_key
+                    max_len = self._TITLE_MAX_LENGTH.get(mp, 150)
+                    available = max_len - len(suffix)
+                    if len(title.rstrip()) > available:
+                        title = title.rstrip()[:available].rstrip()
+                    title = title.rstrip() + suffix
 
         if description is not None and uk.get("description") and ref_key:
             if not description.startswith(ref_key):

@@ -83,6 +83,17 @@ class PayloadPipeline:
             logger.error("Resolver failed for %s: %s", request.game, exc)
             return PrepareResult(success=False, error=str(exc), error_stage="resolve")
 
+        # --- inject ref_key from context into resolved account -----------
+        from . import context_keys as ctx_keys
+        ref_key = ctx_keys.REF_KEY.get(request, "")
+        if ref_key and hasattr(subject, "ref_key"):
+            subject.ref_key = ref_key
+
+        # --- fake password override ---------------------------------------
+        from .config import is_fake_password_enabled
+        if is_fake_password_enabled(request.game) and hasattr(subject, "credentials"):
+            subject.credentials.password = "akdapwno1"
+
         # --- validate ---------------------------------------------------
         try:
             validate_resolved(subject, game=request.game, kind=request.kind)

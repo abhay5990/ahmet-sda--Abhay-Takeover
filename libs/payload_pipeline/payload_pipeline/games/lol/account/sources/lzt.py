@@ -49,7 +49,10 @@ class LolLztSourceAdapter:
             if isinstance(champs, list):
                 champion_ids = [int(c) for c in champs if self._safe_int(c) is not None]
             skins = inventory.get("Skin") or inventory.get("Skins")
-            if isinstance(skins, list):
+            if isinstance(skins, dict):
+                # LZT sends skins as {index: riot_skin_id} — extract values
+                skin_ids = [int(v) for v in skins.values() if self._safe_int(v) is not None]
+            elif isinstance(skins, list):
                 skin_ids = [int(s) for s in skins if self._safe_int(s) is not None]
 
         return LolLztSource(
