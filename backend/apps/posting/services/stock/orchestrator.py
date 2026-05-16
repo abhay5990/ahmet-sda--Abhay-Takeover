@@ -404,6 +404,7 @@ class StockOrchestrator:
                 title_templates=self._title_templates,
                 description_templates=self._description_templates,
                 ref_key=owned_product.ref_key or "",
+                media_override_path=self._media_override_path(job),
             )
             if not prepare_result.success:
                 return {
@@ -428,6 +429,19 @@ class StockOrchestrator:
                 'error': str(e),
                 'error_category': 'unexpected',
             }
+
+    @staticmethod
+    def _media_override_path(job: PostingJob) -> str:
+        manual_settings = job.settings.get('_manual', {})
+        if not isinstance(manual_settings, dict):
+            return ''
+        path = manual_settings.get('selected_image_path', '')
+        if path:
+            return str(path)
+        batch_data = manual_settings.get('batch_data', {})
+        if isinstance(batch_data, dict):
+            return str(batch_data.get('selected_image_path') or '')
+        return ''
 
     # ------------------------------------------------------------------
     # Reactive throttling

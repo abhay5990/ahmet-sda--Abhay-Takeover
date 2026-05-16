@@ -8,6 +8,7 @@ from .models import (
     OfferPoolItem,
     PostingJob,
     PostingJobItem,
+    PostingImagePreset,
     PostingDefault,
     SchedulerHeartbeat,
     SubplatformLimit,
@@ -45,6 +46,15 @@ class ContentTemplateAdmin(admin.ModelAdmin):
     list_filter = ['game', 'marketplace', 'template_type']
     search_fields = ['name', 'game__name', 'game__slug']
     readonly_fields = ['created_at', 'updated_at']
+
+
+@admin.register(PostingImagePreset)
+class PostingImagePresetAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'game', 'user', 'is_active', 'width', 'height', 'created_at', 'last_used_at']
+    list_filter = ['game', 'is_active']
+    search_fields = ['name', 'sha256', 'user__username']
+    readonly_fields = ['sha256', 'mime_type', 'size_bytes', 'width', 'height', 'created_at', 'updated_at', 'last_used_at']
+    raw_id_fields = ['user', 'game']
 
 
 @admin.register(SubplatformLimit)

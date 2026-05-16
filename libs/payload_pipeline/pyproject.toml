@@ -10,6 +10,7 @@ requires-python = ">=3.10"
 dependencies = [
     "openpyxl",
     "opencv-python",
+    "Pillow",
 ]
 
 [tool.setuptools.packages.find]
@@ -20,6 +21,7 @@ include = ["payload_pipeline*"]
 payload_pipeline = [
     "games/*/account/resources/*.json",
     "games/*/account/resources/media/*.png",
+    "games/*/account/resources/media/assets/*.png",
     "games/*/account/resources/image_map/*/*.png",
     "shared/resources/*.ttf",
 ]

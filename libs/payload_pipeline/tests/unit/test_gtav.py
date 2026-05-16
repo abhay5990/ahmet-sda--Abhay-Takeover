@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from payload_pipeline import PayloadPipeline, build_default_registry
 from payload_pipeline.core import context_keys as ctx
 from payload_pipeline.core.contracts import BuildContext, CredentialBundle, PipelineRequest
-from payload_pipeline.games.gtav.account import GtavResolver
+from payload_pipeline.games.gtav.account import GtavMediaStrategy, GtavResolver
+from payload_pipeline.games.gtav.account.media import GtavAccountCardRenderer, GtavCardData
 from payload_pipeline.games.gtav.account.credentials import (
     format_platform_credentials,
     resolve_platform_credentials,
@@ -307,6 +310,74 @@ class TestGtavRegistration:
         }
 
 
+# -- media strategy tests --------------------------------------------------
+
+class TestGtavMediaStrategy:
+    def test_media_strategy_uses_override_path(self, load_fixture, tmp_path):
+        override = tmp_path / "selected.png"
+        override.write_bytes(b"selected-image")
+        output_dir = tmp_path / "generated"
+        request = PipelineRequest(
+            game="grand-theft-auto-5",
+            category="account",
+            kind="stock",
+            sources={"lzt": load_fixture("lzt_gtav.json")},
+            context={
+                ctx.MEDIA_OUTPUT_DIR: str(output_dir),
+                ctx.MEDIA_OVERRIDE_PATH: str(override),
+            },
+        )
+        account = GtavResolver().resolve(request)
+
+        result = GtavMediaStrategy().prepare(account, request)
+
+        assert result == [str(override)]
+        assert not output_dir.exists()
+
+    def test_media_strategy_generates_cached_card(self, load_fixture, tmp_path):
+        request = PipelineRequest(
+            game="grand-theft-auto-5",
+            category="account",
+            kind="stock",
+            sources={"lzt": load_fixture("lzt_gtav.json")},
+            context={ctx.MEDIA_OUTPUT_DIR: str(tmp_path)},
+        )
+        account = GtavResolver().resolve(request)
+        strategy = GtavMediaStrategy()
+
+        first = strategy.prepare(account, request)
+        second = strategy.prepare(account, request)
+
+        assert len(first) == 1
+        assert first == second
+        assert first[0].startswith(str(tmp_path))
+        assert first[0].endswith(".png")
+        assert len(list(tmp_path.glob("gtav_account_*.png"))) == 1
+
+    def test_media_fingerprint_ignores_private_account_fields(self, load_fixture):
+        request = PipelineRequest(
+            game="grand-theft-auto-5",
+            category="account",
+            kind="stock",
+            sources={"lzt": load_fixture("lzt_gtav.json")},
+        )
+        account = GtavResolver().resolve(request)
+        changed_private_fields = replace(
+            account,
+            item_id="different-item",
+            credentials=CredentialBundle(login="private@example.com", password="secret"),
+            security_email="private-security@example.com",
+            email_backup_codes="PRIVATE-CODE",
+        )
+
+        renderer = GtavAccountCardRenderer()
+        first = GtavCardData.from_account(account, delivery_text="INSTANT DELIVERY")
+        second = GtavCardData.from_account(changed_private_fields, delivery_text="INSTANT DELIVERY")
+
+        assert first == second
+        assert renderer.fingerprint(first) == renderer.fingerprint(second)
+
+
 # -- end-to-end pipeline tests --------------------------------------------
 
 class TestGtavPipeline:
@@ -318,7 +389,7 @@ class TestGtavPipeline:
             category="account",
             kind="stock",
             sources=sources,
-            context={ctx.G2G_SELLER_ID: "1000959019"},
+            context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True},
         )
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
@@ -342,7 +413,7 @@ class TestGtavPipeline:
             category="account",
             kind="stock",
             sources=sources,
-            context={ctx.G2G_SELLER_ID: "1000959019"},
+            context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True},
         )
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
@@ -352,7 +423,7 @@ class TestGtavPipeline:
 
         assert result.payload["augmentedGame"]["gameId"] == "25"
         assert result.payload["augmentedGame"]["category"] == "Account"
-        assert result.payload["augmentedGame"]["tradeEnvironmentId"] == "0"  # PC - Enhanced -> 0
+        assert result.payload["augmentedGame"]["tradeEnvironmentId"] == "5"  # PC - Enhanced -> 5
         assert result.payload["details"]["pricing"]["pricePerUnit"]["amount"] == 450.0
         # Platform-aware delivery: PC - Enhanced → Steam labels
         secret = result.payload["accountSecretDetails"][0]
@@ -367,7 +438,7 @@ class TestGtavPipeline:
             category="account",
             kind="stock",
             sources=sources,
-            context={ctx.G2G_SELLER_ID: "1000959019"},
+            context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True},
         )
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
@@ -390,7 +461,7 @@ class TestGtavPipeline:
             category="account",
             kind="stock",
             sources=sources,
-            context={ctx.G2G_SELLER_ID: "1000959019"},
+            context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True},
         )
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
@@ -411,19 +482,21 @@ class TestGtavPipeline:
             category="account",
             kind="stock",
             sources=sources,
-            context={ctx.G2G_SELLER_ID: "1000959019"},
+            context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True},
         )
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
         prepared = _prepare_result.prepared
+        prepared.listing.media.external_urls.append("https://cdn.example.com/gtav.png")
         result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions"))
         assert result.success
 
-        assert result.payload["game_id"] == 8458
-        assert result.payload["game_name"] == "grand-theft-auto-5"
-        assert result.payload["cover_image_url"]
-        assert result.payload["server"] == ["IOS", "Android"]
-        assert result.payload["server_id"] == ["8458", "8459"]
+        assert result.payload["gameId"] == 5917
+        assert result.payload["serverId"] == 14270
+        assert result.payload["categoryId"] == 14270
+        assert result.payload["screenShot"] == "https://cdn.example.com/gtav.png"
+        assert result.payload["autoDelivery"]["loginName"] == "rockstar_user@example.com"
+        assert result.payload["autoDelivery"]["choose5"] is True
 
     def test_prepare_once_populates_subject(self, load_fixture):
         sources = {"lzt": load_fixture("lzt_gtav.json")}
@@ -433,7 +506,7 @@ class TestGtavPipeline:
             category="account",
             kind="stock",
             sources=sources,
-            context={ctx.G2G_SELLER_ID: "1000959019"},
+            context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True},
         )
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
@@ -454,7 +527,7 @@ class TestGtavG2GDeterminism:
         payloads = []
         for _ in range(5):
             pipeline = PayloadPipeline(registry=build_default_registry())
-            request = PipelineRequest(game="grand-theft-auto-5", category="account", kind="stock", sources=sources, context={ctx.G2G_SELLER_ID: "1000959019"})
+            request = PipelineRequest(game="grand-theft-auto-5", category="account", kind="stock", sources=sources, context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True})
             _prepare_result = pipeline.prepare_once(request)
             assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
             prepared = _prepare_result.prepared
@@ -470,7 +543,7 @@ class TestGtavG2GDeterminism:
         sources = {"lzt": load_fixture("lzt_gtav.json")}
         for _ in range(5):
             pipeline = PayloadPipeline(registry=build_default_registry())
-            request = PipelineRequest(game="grand-theft-auto-5", category="account", kind="stock", sources=sources, context={ctx.G2G_SELLER_ID: "1000959019"})
+            request = PipelineRequest(game="grand-theft-auto-5", category="account", kind="stock", sources=sources, context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True})
             _prepare_result = pipeline.prepare_once(request)
             assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
             prepared = _prepare_result.prepared
@@ -483,39 +556,37 @@ class TestGtavG2GDeterminism:
 
 
 class TestGtavPlayerAuctionsMappingIntent:
-    """PlayerAuctions mapping values are intentional legacy defaults."""
+    """PlayerAuctions mapping values should follow the GTA V template."""
 
-    def test_server_values_are_legacy_defaults(self, load_fixture):
-        """server/server_id are seller-wide PA defaults, not mobile-specific."""
+    def test_server_value_is_platform_specific(self, load_fixture):
         sources = {"lzt": load_fixture("lzt_gtav.json")}
         pipeline = PayloadPipeline(registry=build_default_registry())
-        request = PipelineRequest(game="grand-theft-auto-5", category="account", kind="stock", sources=sources, context={ctx.G2G_SELLER_ID: "1000959019"})
+        request = PipelineRequest(game="grand-theft-auto-5", category="account", kind="stock", sources=sources, context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True})
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
         prepared = _prepare_result.prepared
         result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions"))
         assert result.success
-        assert result.payload["server"] == ["IOS", "Android"]
-        assert result.payload["server_id"] == ["8458", "8459"]
+        assert result.payload["serverId"] == 14270
+        assert result.payload["categoryId"] == 14270
 
-    def test_game_id_matches_legacy(self, load_fixture):
+    def test_game_id_matches_template(self, load_fixture):
         sources = {"lzt": load_fixture("lzt_gtav.json")}
         pipeline = PayloadPipeline(registry=build_default_registry())
-        request = PipelineRequest(game="grand-theft-auto-5", category="account", kind="stock", sources=sources, context={ctx.G2G_SELLER_ID: "1000959019"})
+        request = PipelineRequest(game="grand-theft-auto-5", category="account", kind="stock", sources=sources, context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True})
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
         prepared = _prepare_result.prepared
         result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions"))
         assert result.success
-        assert result.payload["game_id"] == 8458
-        assert result.payload["game_name"] == "grand-theft-auto-5"
+        assert result.payload["gameId"] == 5917
 
     def test_playerauctions_payload_is_deterministic(self, load_fixture):
         sources = {"lzt": load_fixture("lzt_gtav.json")}
         payloads = []
         for _ in range(5):
             pipeline = PayloadPipeline(registry=build_default_registry())
-            request = PipelineRequest(game="grand-theft-auto-5", category="account", kind="stock", sources=sources, context={ctx.G2G_SELLER_ID: "1000959019"})
+            request = PipelineRequest(game="grand-theft-auto-5", category="account", kind="stock", sources=sources, context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True})
             _prepare_result = pipeline.prepare_once(request)
             assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
             prepared = _prepare_result.prepared

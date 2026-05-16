@@ -8,9 +8,11 @@ import logging
 import threading
 import uuid
 from decimal import Decimal
+from pathlib import Path
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.utils import timezone
 from django.views.decorators.http import require_POST, require_GET
 
 from apps.integrations.models import IntegrationAccount
@@ -18,6 +20,7 @@ from apps.inventory.models import Game, OwnedProduct
 from apps.posting.models import (
     ContentTemplate,
     PostingDefault,
+    PostingImagePreset,
     PostingJob,
     PostingJobItem,
     PostingJobItemStatus,
@@ -152,7 +155,7 @@ def create_job(request):
             )
 
     if source_type == 'manual':
-        return _create_manual_job(body, game, stores, job_settings)
+        return _create_manual_job(body, game, stores, job_settings, request.user)
 
     if source_type == 'sheet':
         from apps.posting.api.manual import _create_sheet_job
@@ -220,7 +223,7 @@ def _create_account_job(body: dict, game: Game, stores: list, job_settings: dict
     return _launch_job(job, total)
 
 
-def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict) -> JsonResponse:
+def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict, user) -> JsonResponse:
     """Create job from manual credentials.
 
     Creates OwnedProducts first, then builds PostingJobItems with distribution logic.
@@ -268,7 +271,34 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict)
             )
 
     # Batch-level fields from UI
-    is_gta = game.slug.startswith('grand-theft-auto')
+    is_gta = _is_gtav_game(game)
+    selected_image_preset = None
+    selected_image_path = ''
+
+    if is_gta:
+        selected_image_preset_id = body.get('selected_image_preset_id')
+        if selected_image_preset_id not in (None, '', 'auto'):
+            try:
+                selected_image_preset_id = int(selected_image_preset_id)
+            except (TypeError, ValueError):
+                return JsonResponse({'error': 'selected_image_preset_id must be a number'}, status=400)
+
+            selected_image_preset = PostingImagePreset.objects.filter(
+                id=selected_image_preset_id,
+                user=user,
+                game=game,
+                is_active=True,
+            ).first()
+            if selected_image_preset is None:
+                return JsonResponse({'error': 'Selected image preset not found'}, status=404)
+
+            try:
+                selected_image_path = selected_image_preset.image.path
+            except (ValueError, NotImplementedError):
+                return JsonResponse({'error': 'Selected image preset has no local file'}, status=400)
+
+            if not Path(selected_image_path).is_file():
+                return JsonResponse({'error': 'Selected image preset file is missing'}, status=400)
 
     # GTA-specific fields only accepted for GTA games
     if is_gta:
@@ -283,6 +313,10 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict)
             'has_dual_characters': bool(body.get('has_dual_characters', False)),
             'title': body.get('title') or '',
             'description': body.get('description') or '',
+            'selected_image_preset_id': selected_image_preset.id if selected_image_preset else None,
+            'selected_image_path': selected_image_path,
+            'selected_image_url': selected_image_preset.image.url if selected_image_preset else '',
+            'selected_image_name': selected_image_preset.name if selected_image_preset else '',
         }
     else:
         batch_data = {
@@ -310,6 +344,8 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict)
         'platform': platform,
         'distribution_mode': distribution_mode,
         'purchased_price': purchased_price,
+        'selected_image_preset_id': selected_image_preset.id if selected_image_preset else None,
+        'selected_image_path': selected_image_path,
         'batch_data': batch_data,
     }
 
@@ -319,6 +355,10 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict)
         settings=job_settings,
         total_count=len(items_data),
     )
+
+    if selected_image_preset:
+        selected_image_preset.last_used_at = timezone.now()
+        selected_image_preset.save(update_fields=['last_used_at', 'updated_at'])
 
     items = []
     for login, owned, store in items_data:
@@ -496,6 +536,11 @@ def _to_int(value, default: int) -> int:
         return int(value)
     except (TypeError, ValueError):
         return default
+
+
+def _is_gtav_game(game: Game) -> bool:
+    slug = (game.slug or '').lower()
+    return slug.startswith('gta') or slug.startswith('grand-theft-auto')
 
 
 def _launch_job(job: PostingJob, total: int) -> JsonResponse:

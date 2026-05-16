@@ -138,12 +138,15 @@ class StockConsumer:
             api_result = self._post_with_backoff(item, payload)
 
             if not api_result.ok:
-                error = api_result.error
-                messages = (getattr(error, 'details', {}) or {}).get('messages', [])
-                detail = ' | '.join(m for m in messages if m)
+                err = api_result.error
+                api_messages: list[str] = []
+                if isinstance(err.details, dict):
+                    msgs = err.details.get('messages')
+                    if isinstance(msgs, list):
+                        api_messages = [str(m) for m in msgs if m]
+                detail_text = "; ".join(api_messages) if api_messages else err.message
                 raise RuntimeError(
-                    f"API error: {error.message} (category={error.category})"
-                    + (f" — {detail}" if detail else "")
+                    f"API error: {detail_text} (category={err.category})"
                 )
 
             store_listing_id = extract_listing_id(api_result.data)

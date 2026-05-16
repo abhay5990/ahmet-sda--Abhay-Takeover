@@ -76,6 +76,7 @@ class R6LztSourceAdapter:
         email_data = self._resolve_email_data(payload)
 
         title_text = str(payload.get("title_en") or payload.get("title") or "").strip()
+        r6_skins_rich = payload.get("r6Skins")
         skin_ids = self._parse_list(payload.get("uplay_r6_skins"))
         operators = self._parse_list(
             payload.get("uplay_r6_operators"),
@@ -84,8 +85,15 @@ class R6LztSourceAdapter:
         linked_accounts = self._parse_linked_accounts(payload.get("uplayLinkedAccounts"))
         has_game, ownership_state = self._parse_ownership(payload.get("uplay_games"))
         resolved_rank = self._resolve_current_rank(payload)
-        skin_name_map = skin_lookup.resolve_skin_name_map(skin_ids)
-        skin_names = [skin_name_map[skin_id] for skin_id in skin_ids if skin_id in skin_name_map]
+
+        if isinstance(r6_skins_rich, list) and r6_skins_rich:
+            weapon_skins = self._build_weapon_skins_from_rich(r6_skins_rich)
+            skin_names = [s.name for s in weapon_skins if s.name]
+        else:
+            skin_name_map = skin_lookup.resolve_skin_name_map(skin_ids)
+            skin_names = [skin_name_map[skin_id] for skin_id in skin_ids if skin_id in skin_name_map]
+            weapon_skins = self._build_weapon_skins(skin_ids, skin_name_map)
+
         title_rank_signals = self._build_title_rank_signals(title_text)
         title_rank_hint = self._resolve_title_peak_rank(title_rank_signals)
         title_rank_count_hint = self._resolve_title_peak_rank_count(title_rank_signals, title_rank_hint)
@@ -114,10 +122,10 @@ class R6LztSourceAdapter:
             ),
             skin_ids=skin_ids,
             skin_names=skin_names,
-            weapon_skins=self._build_weapon_skins(skin_ids, skin_name_map),
+            weapon_skins=weapon_skins,
             skin_count=self._resolve_count(
                 payload.get("uplay_r6_skins_count"),
-                fallback=len(skin_ids),
+                fallback=len(weapon_skins) or len(skin_ids),
             ),
             rank_signals=self._build_rank_signals(resolved_rank, title_rank_signals),
             linked_accounts=linked_accounts,
@@ -265,6 +273,49 @@ class R6LztSourceAdapter:
         signals.extend(title_rank_signals)
 
         return signals
+
+    def _build_weapon_skins_from_rich(self, r6_skins: list[Any]) -> list[R6WeaponSkin]:
+        """Build weapon skins from the rich r6Skins array (new LZT format)."""
+        skins: list[R6WeaponSkin] = []
+        for item in r6_skins:
+            if not isinstance(item, dict):
+                continue
+            skin_id = str(item.get("item_id") or "").strip()
+            name = str(item.get("name") or "").strip()
+            image_url = str(item.get("image") or "").strip()
+            rarity = str(item.get("rarity") or "").strip()
+
+            if not skin_id and not name:
+                continue
+
+            bucket = self._resolve_bucket_from_rarity(rarity, name)
+            skins.append(
+                R6WeaponSkin(
+                    key=build_skin_key(source="lzt", source_id=skin_id, name=name),
+                    source="lzt",
+                    name=name,
+                    source_id=skin_id,
+                    image_url=image_url,
+                    bucket=bucket,
+                    category="r6Skins",
+                )
+            )
+        return skins
+
+    def _resolve_bucket_from_rarity(self, rarity: str, name: str) -> str:
+        """Map LZT rarity tag to internal bucket."""
+        name_lower = name.lower().replace("_", " ").replace("-", " ")
+        if "black ice" in name_lower or "blackice" in name_lower:
+            return "black_ice"
+        rarity_map = {
+            "rarity_legendary": "legendary",
+            "rarity_epic": "epic",
+            "rarity_superrare": "rare",
+            "rarity_rare": "rare",
+            "rarity_uncommon": "uncommon",
+            "rarity_common": "uncommon",
+        }
+        return rarity_map.get(rarity, "unknown")
 
     def _build_weapon_skins(
         self,

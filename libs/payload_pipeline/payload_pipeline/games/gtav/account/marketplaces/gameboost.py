@@ -49,7 +49,8 @@ class GtavGameBoostBuilder(BaseGameBoostBuilder):
         ctx: BuildContext,
     ) -> dict[str, Any]:
         payload = super().build_payload(subject, listing, ctx)
-        payload["image_urls"] = [_STATIC_IMAGE_URL]
+        if not payload.get("image_urls"):
+            payload["image_urls"] = [_STATIC_IMAGE_URL]
 
         # Override delivery_instructions with platform-aware credential text
         if ctx.kind == ListingKind.STOCK:

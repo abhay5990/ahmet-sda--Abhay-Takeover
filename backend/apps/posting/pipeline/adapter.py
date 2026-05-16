@@ -165,6 +165,7 @@ def prepare(
     description_templates: dict[str, str] | None = None,
     cosmetic_lists: list[dict] | None = None,
     ref_key: str = "",
+    media_override_path: str = '',
 ) -> PrepareResult:
     """Run the shared preparation phase (resolve → validate → compose).
 
@@ -180,6 +181,7 @@ def prepare(
         imgur_album_downloader: Optional ImgurAlbumDownloader (AlbumDownloader protocol).
         cosmetic_lists:    Dynamic cosmetic matching lists from DB.
         ref_key:           Traceability ref key (#ABC1234) from OwnedProduct.
+        media_override_path:    Optional local image path selected by the user.
 
     Returns:
         PrepareResult — always check ``.success`` before using ``.prepared``.
@@ -195,6 +197,7 @@ def prepare(
         description_templates=description_templates,
         cosmetic_lists=cosmetic_lists,
         ref_key=ref_key,
+        media_override_path=media_override_path,
     )
     return _get_pipeline().prepare_once(request)
 

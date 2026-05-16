@@ -18,6 +18,7 @@ def build_request(
     description_templates: dict[str, str] | None = None,
     cosmetic_lists: list[dict] | None = None,
     ref_key: str = "",
+    media_override_path: str = '',
 ) -> PipelineRequest:
     """Build a lib PipelineRequest from Django-layer inputs.
 
@@ -32,6 +33,7 @@ def build_request(
         description_templates: Same for description templates.
         cosmetic_lists:        Dynamic cosmetic matching lists from DB.
         ref_key:               Traceability ref key (#ABC1234) from OwnedProduct.
+        media_override_path:    Optional local image path selected by the user.
     """
     ctx: dict = {ctx_keys.DISABLE_MEDIA: disable_media}
     if lzt_image_fetcher is not None:
@@ -46,6 +48,8 @@ def build_request(
         ctx[ctx_keys.COSMETIC_LISTS] = cosmetic_lists
     if ref_key:
         ctx[ctx_keys.REF_KEY] = ref_key
+    if media_override_path:
+        ctx[ctx_keys.MEDIA_OVERRIDE_PATH] = media_override_path
 
     return PipelineRequest(
         game=game_slug,

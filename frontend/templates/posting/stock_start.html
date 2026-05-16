@@ -203,6 +203,52 @@
                                 <span class="text-xs text-gray-600">Has Dual Characters</span>
                             </label>
                         </div>
+                        <!-- Posting Image -->
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="block text-xs text-gray-500">Posting Image</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-400" x-show="gtavImageLoading">Loading...</span>
+                                    <button type="button"
+                                            @click="$refs.gtavImageInput.click()"
+                                            :disabled="gtavImageUploading"
+                                            class="px-2.5 py-1 text-xs font-medium rounded border bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+                                        <span x-show="!gtavImageUploading">Upload</span>
+                                        <span x-show="gtavImageUploading">Uploading...</span>
+                                    </button>
+                                    <input x-ref="gtavImageInput"
+                                           type="file"
+                                           accept="image/png,image/jpeg"
+                                           class="hidden"
+                                           @change="uploadGtavImage($event)">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                <button type="button"
+                                        @click="selectedGtavImagePresetId = 'auto'"
+                                        class="h-24 rounded-md border bg-white px-3 text-left transition-colors"
+                                        :class="selectedGtavImagePresetId === 'auto'
+                                            ? 'border-emerald-500 ring-2 ring-emerald-100'
+                                            : 'border-gray-200 hover:border-gray-300'">
+                                    <span class="block text-xs font-medium text-gray-800">Auto Generated</span>
+                                    <span class="block mt-1 text-xs text-gray-400">GTAV card</span>
+                                </button>
+                                <template x-for="preset in gtavImagePresets" :key="preset.id">
+                                    <button type="button"
+                                            @click="selectedGtavImagePresetId = String(preset.id)"
+                                            class="relative h-24 rounded-md border overflow-hidden bg-gray-100 transition-colors"
+                                            :class="selectedGtavImagePresetId === String(preset.id)
+                                                ? 'border-emerald-500 ring-2 ring-emerald-100'
+                                                : 'border-gray-200 hover:border-gray-300'">
+                                        <img :src="preset.url" :alt="preset.name || 'GTAV image'"
+                                             class="absolute inset-0 w-full h-full object-cover">
+                                        <span class="absolute left-0 right-0 bottom-0 bg-black bg-opacity-60 text-white text-xs px-2 py-1 truncate"
+                                              x-text="preset.name || 'Saved Image'"></span>
+                                    </button>
+                                </template>
+                            </div>
+                            <p x-show="gtavImageError" class="mt-2 text-xs text-red-600" x-text="gtavImageError"></p>
+                        </div>
                     </div>
                 </div>
 
@@ -531,24 +577,24 @@
                                 <label class="block text-xs text-gray-500 mb-1">Low (&le;$10)</label>
                                 <input type="number" step="0.01"
                                        x-model="defaults['{{ store.slug }}'].multiplier_low"
-                                       :disabled="sourceType === 'sheet'"
-                                       :class="sourceType === 'sheet' ? 'bg-gray-100 cursor-not-allowed' : ''"
+                                       :disabled="sheetHasSalesPrice"
+                                       :class="sheetHasSalesPrice ? 'bg-gray-100 cursor-not-allowed' : ''"
                                        class="w-full text-sm border-gray-300 rounded-md">
                             </div>
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1">Mid ($10-$100)</label>
                                 <input type="number" step="0.01"
                                        x-model="defaults['{{ store.slug }}'].multiplier_mid"
-                                       :disabled="sourceType === 'sheet'"
-                                       :class="sourceType === 'sheet' ? 'bg-gray-100 cursor-not-allowed' : ''"
+                                       :disabled="sheetHasSalesPrice"
+                                       :class="sheetHasSalesPrice ? 'bg-gray-100 cursor-not-allowed' : ''"
                                        class="w-full text-sm border-gray-300 rounded-md">
                             </div>
                             <div>
                                 <label class="block text-xs text-gray-500 mb-1">High (&gt;$100)</label>
                                 <input type="number" step="0.01"
                                        x-model="defaults['{{ store.slug }}'].multiplier_high"
-                                       :disabled="sourceType === 'sheet'"
-                                       :class="sourceType === 'sheet' ? 'bg-gray-100 cursor-not-allowed' : ''"
+                                       :disabled="sheetHasSalesPrice"
+                                       :class="sheetHasSalesPrice ? 'bg-gray-100 cursor-not-allowed' : ''"
                                        class="w-full text-sm border-gray-300 rounded-md">
                             </div>
                             <div>
@@ -803,6 +849,11 @@ function stockStart() {
         manualCarsCount: 0,
         manualAccountTags: [],
         manualHasDualCharacters: false,
+        selectedGtavImagePresetId: 'auto',
+        gtavImagePresets: [],
+        gtavImageLoading: false,
+        gtavImageUploading: false,
+        gtavImageError: '',
         // Manual mode — credentials & distribution
         distributionMode: 'cross_platform',
         credentials: [],
@@ -826,6 +877,11 @@ function stockStart() {
         templatesByMarketplace: {},  // { marketplace: { title: [...], description: [...] } }
         submitting: false,
         submitError: '',
+
+        get sheetHasSalesPrice() {
+            if (this.sourceType !== 'sheet' || this.sheetAccounts.length === 0) return false;
+            return this.sheetAccounts.some(a => a.sales_price && a.sales_price > 0);
+        },
 
         get loginCount() {
             return this.logins.split('\n').filter(l => l.trim()).length;
@@ -902,20 +958,21 @@ function stockStart() {
 
             if (this.selectedGame) this.onGameChange();
 
-            // Sheet mode: force multipliers to 1.0 (sales_price is final)
-            this.$watch('sourceType', (val) => {
-                if (val === 'sheet') {
-                    for (const slug of Object.keys(this.defaults)) {
-                        this.defaults[slug].multiplier_low = '1.00';
-                        this.defaults[slug].multiplier_mid = '1.00';
-                        this.defaults[slug].multiplier_high = '1.00';
-                    }
+            // Sheet mode: force multipliers to 1.0 when accounts have sales_price
+            this.$watch('sheetHasSalesPrice', (val) => {
+                if (val) {
+                    this._forceSheetMultipliers();
                 }
             });
         },
 
         async onGameChange() {
-            if (!this.selectedGame) return;
+            if (!this.selectedGame) {
+                this.selectedGtavImagePresetId = 'auto';
+                this.gtavImagePresets = [];
+                this.gtavImageError = '';
+                return;
+            }
             for (const slug of Object.keys(this.defaults)) {
                 this.defaults[slug].sub_platform = '';
                 this.defaults[slug].title_template_id = null;
@@ -959,6 +1016,26 @@ function stockStart() {
             })();
 
             await Promise.all([...defaultsPromises, templatesPromise]);
+
+            // Re-apply forced multipliers if sheet mode with sales_price
+            if (this.sheetHasSalesPrice) {
+                this._forceSheetMultipliers();
+            }
+            this.selectedGtavImagePresetId = 'auto';
+            this.gtavImageError = '';
+            if (this.isGtaGame) {
+                await this.loadGtavImagePresets();
+            } else {
+                this.gtavImagePresets = [];
+            }
+        },
+
+        _forceSheetMultipliers() {
+            for (const slug of Object.keys(this.defaults)) {
+                this.defaults[slug].multiplier_low = '1.00';
+                this.defaults[slug].multiplier_mid = '1.00';
+                this.defaults[slug].multiplier_high = '1.00';
+            }
         },
 
         onStoreToggle(slug) {},
@@ -971,6 +1048,63 @@ function stockStart() {
 
         toggleSettings(slug) {
             this.showSettings[slug] = !this.showSettings[slug];
+        },
+
+        async loadGtavImagePresets() {
+            if (!this.selectedGame || !this.isGtaGame) return;
+            this.gtavImageLoading = true;
+            this.gtavImageError = '';
+            try {
+                const resp = await fetch(`/posting/api/image-presets/?game_id=${encodeURIComponent(this.selectedGame)}`);
+                const data = await resp.json();
+                if (!resp.ok) {
+                    this.gtavImageError = data.error || 'Failed to load images';
+                    return;
+                }
+                this.gtavImagePresets = data.presets || [];
+            } catch (e) {
+                this.gtavImageError = 'Network error: ' + e.message;
+            } finally {
+                this.gtavImageLoading = false;
+            }
+        },
+
+        async uploadGtavImage(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file || !this.selectedGame || !this.isGtaGame) return;
+
+            this.gtavImageUploading = true;
+            this.gtavImageError = '';
+            const form = new FormData();
+            form.append('game_id', this.selectedGame);
+            form.append('image', file);
+            form.append('name', file.name.replace(/\.[^.]+$/, ''));
+
+            try {
+                const resp = await fetch('/posting/api/image-presets/upload/', {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                    body: form,
+                });
+                const data = await resp.json();
+                if (!resp.ok) {
+                    this.gtavImageError = data.error || 'Failed to upload image';
+                    return;
+                }
+
+                const preset = data.preset;
+                if (preset) {
+                    const idx = this.gtavImagePresets.findIndex(p => p.id === preset.id);
+                    if (idx >= 0) this.gtavImagePresets.splice(idx, 1, preset);
+                    else this.gtavImagePresets.unshift(preset);
+                    this.selectedGtavImagePresetId = String(preset.id);
+                }
+            } catch (e) {
+                this.gtavImageError = 'Network error: ' + e.message;
+            } finally {
+                this.gtavImageUploading = false;
+                event.target.value = '';
+            }
         },
 
         // --- Manual credential handling ---
@@ -1096,6 +1230,7 @@ function stockStart() {
                     stores: storeIds,
                     defaults: defaultsPayload,
                     accounts: this.sheetAccounts,
+                    has_sales_price: this.sheetHasSalesPrice,
                 };
             }
 
@@ -1123,6 +1258,9 @@ function stockStart() {
                 cars_count: this.manualCarsCount,
                 account_tags: this.manualAccountTags,
                 has_dual_characters: this.manualHasDualCharacters,
+                selected_image_preset_id: this.isGtaGame && this.selectedGtavImagePresetId !== 'auto'
+                    ? Number(this.selectedGtavImagePresetId)
+                    : null,
                 credentials: this.credentials,
                 distribution_mode: this.distributionMode,
                 distribution: distrib,

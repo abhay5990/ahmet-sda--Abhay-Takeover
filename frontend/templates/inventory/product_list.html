@@ -141,7 +141,7 @@
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Source</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Purchased</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
@@ -178,7 +178,7 @@
                             {% if product.price %}${{ product.price }} {{ product.currency }}{% else %}-{% endif %}
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-500">{{ product.source_account.name|default:"-" }}</td>
-                        <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{{ product.created_at|date:"M d, H:i" }}</td>
+                        <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{% if product.purchased_at %}{{ product.purchased_at|date:"M d, H:i" }}{% else %}-{% endif %}</td>
                         <!-- Actions dropdown -->
                         <td class="px-4 py-3 text-sm">
                             <div class="relative" x-data="{ open: false }">

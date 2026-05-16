@@ -15,7 +15,7 @@ Two payload formats:
 
 from __future__ import annotations
 
-import random
+import hashlib
 import re
 import string
 import unicodedata
@@ -121,8 +121,13 @@ def _strip_url_schemes(text: str) -> str:
     return re.sub(r"https?://", "", text)
 
 
-def _fake_owner_info(creds: CredentialBundle) -> dict[str, str]:
-    """Generate plausible owner info for the autoDelivery section."""
+def _stable_index(seed: str, salt: str, length: int) -> int:
+    digest = hashlib.sha256(f"{salt}|{seed}".encode("utf-8")).hexdigest()
+    return int(digest[:8], 16) % length
+
+
+def _fake_owner_info(creds: CredentialBundle, seed: str) -> dict[str, str]:
+    """Generate deterministic plausible owner info for the autoDelivery section."""
     first_names = [
         "James", "John", "Robert", "Michael", "David",
         "William", "Richard", "Joseph", "Thomas", "Charles",
@@ -140,13 +145,23 @@ def _fake_owner_info(creds: CredentialBundle) -> dict[str, str]:
         "Germany", "Australia",
     ]
     return {
-        "firstName": random.choice(first_names),
-        "lastName": random.choice(last_names),
+        "firstName": first_names[_stable_index(seed, "first", len(first_names))],
+        "lastName": last_names[_stable_index(seed, "last", len(last_names))],
         "phone": "5555555555",
         "email": creds.email_login or "randomemail@outlook.com",
-        "city": random.choice(cities),
-        "country": random.choice(countries),
+        "city": cities[_stable_index(seed, "city", len(cities))],
+        "country": countries[_stable_index(seed, "country", len(countries))],
     }
+
+
+def _fake_character_name(seed: str) -> str:
+    first_names = [
+        "James", "John", "Robert", "Michael", "David",
+        "William", "Richard", "Joseph", "Thomas", "Charles",
+    ]
+    name = first_names[_stable_index(seed, "character-name", len(first_names))]
+    suffix = 100 + _stable_index(seed, "character-suffix", 9900)
+    return f"{name}{suffix}"
 
 
 class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
@@ -223,14 +238,23 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
             else _DROPSHIPPING_DELIVERY
         )
 
-        owner_info = _fake_owner_info(creds)
+        owner_seed = "|".join(
+            [
+                str(self.game_id),
+                str(server_id),
+                content.title,
+                creds.login,
+                creds.email_login,
+            ]
+        )
+        owner_info = _fake_owner_info(creds, owner_seed)
 
         auto_delivery: dict[str, Any] = {
             "loginName": creds.login,
             "retypeLoginName": creds.login,
             "password": creds.password,
             "retypePassword": creds.password,
-            "characterName": f"{random.choice(['James', 'John', 'Robert', 'Michael', 'David', 'William', 'Richard', 'Joseph', 'Thomas', 'Charles'])}{random.randint(100, 9999)}",
+            "characterName": _fake_character_name(owner_seed),
             "isInfoSame": True,
             "original": owner_info,
             "current": dict(owner_info),
@@ -246,6 +270,8 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
 
         auto_delivery["firstCDKey"] = ""
 
+        screenshot = listing.media.external_urls[0] if listing.media.external_urls else ""
+
         return {
             "offerId": None,
             "gameId": self.game_id,
@@ -256,7 +282,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
             "offerDuration": 30,
             "title": _sanitize_text(_strip_url_schemes(content.title)),
             "offerDesc": _sanitize_text(_strip_url_schemes(content.description)).replace("\n", "<br>"),
-            "screenShot": "",
+            "screenShot": screenshot,
             "agreeCheck": True,
             "isAuto": is_stock,
             "autoDelivery": auto_delivery,

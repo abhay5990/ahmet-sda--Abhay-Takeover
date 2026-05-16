@@ -83,11 +83,29 @@ class R6LztImageGenerator(R6ImageRenderer):
         for skin in weapon_skins:
             skin_id = str(skin.source_id or "").strip()
             skin_name = str(skin.name or "").strip()
+            image_url = str(skin.image_url or "").strip()
+
             if not skin_id:
                 skin_id = skin_name
             if not skin_id:
                 continue
 
+            # Prefer the skin's own image_url from rich data (r6Skins)
+            if image_url:
+                cache_key = f"skin:{skin_id}"
+                if cache_key in seen:
+                    continue
+                seen.add(cache_key)
+                entries.append(
+                    R6ImageRenderEntry(
+                        cache_key=cache_key,
+                        title=skin_name or skin_id,
+                        image_urls=[image_url],
+                    )
+                )
+                continue
+
+            # Fallback to catalog lookup (legacy ID-only format)
             entry = catalog_by_id.get(skin_id)
             if entry is None:
                 entry = catalog_by_name.get(self._normalize_name(skin_name or skin_id))

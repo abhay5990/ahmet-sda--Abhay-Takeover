@@ -379,12 +379,17 @@ def _create_sheet_job(body: dict, game, stores: list, job_settings: dict):
     if not game.category_id:
         return JsonResponse({'error': 'Game has no category assigned'}, status=400)
 
+    # Determine if all accounts have sales_price (fixed-price mode)
+    # vs. no sales_price (multiplier mode, pipeline calculates final price).
+    has_sales_price = body.get('has_sales_price', False)
+
     owned_products = []
     for acc in accounts:
         mail = acc.get('mail', '').strip()
         mail_pw = acc.get('mail_pw', '').strip()
         epic_pw = acc.get('epic_pw', mail_pw).strip()
         sales_price = acc.get('sales_price', 0)
+        price_raw = acc.get('price', '').strip() if isinstance(acc.get('price'), str) else acc.get('price', '')
         platforms = acc.get('platforms', ['PC'])
         title = acc.get('title', '')
         items_raw = acc.get('items_raw', '')
@@ -397,13 +402,30 @@ def _create_sheet_job(body: dict, game, stores: list, job_settings: dict):
         login = mail.lower().strip()
         password = epic_pw or mail_pw
 
+        # Parse price column (purchased cost)
+        try:
+            price_val = float(str(price_raw).replace(',', '.')) if price_raw else 0.0
+        except (ValueError, TypeError):
+            price_val = 0.0
+
+        # Determine pipeline price and purchased price
+        if has_sales_price and sales_price:
+            # Fixed-price mode: sales_price is the final listing price
+            pipeline_price = float(sales_price)
+            # Purchased price: Price column if available, otherwise sales_price / 2
+            purchased_price = price_val if price_val > 0 else float(sales_price) / 2
+        else:
+            # Multiplier mode: price goes through pipeline with user's multiplier
+            pipeline_price = price_val if price_val > 0 else float(sales_price or 0)
+            purchased_price = pipeline_price
+
         # Build raw_data for the pipeline
         raw_data = {
             'source': 'manual',
             'game': 'fortnite',
             'main_platform': platforms[0] if platforms else 'PC',
             'platforms': platforms,
-            'price': float(sales_price),
+            'price': pipeline_price,
             'loginData': {
                 'login': login,
                 'password': password,
@@ -431,7 +453,7 @@ def _create_sheet_job(body: dict, game, stores: list, job_settings: dict):
                 'email_password': mail_pw,
                 'game': game,
                 'status': 'draft',
-                'price': Decimal(str(sales_price)),
+                'price': Decimal(str(purchased_price)),
                 'currency': 'USD',
                 'source_account': None,
                 'raw_data': raw_data,
@@ -448,14 +470,15 @@ def _create_sheet_job(body: dict, game, stores: list, job_settings: dict):
         for store in stores:
             items_data.append((owned.login, owned, store))
 
-    # Force multiplier=1.0 for sheet mode (sales_price is already final)
-    for store in stores:
-        store_key = store.slug
-        if store_key not in job_settings:
-            job_settings[store_key] = {}
-        job_settings[store_key]['multiplier_low'] = '1.00'
-        job_settings[store_key]['multiplier_mid'] = '1.00'
-        job_settings[store_key]['multiplier_high'] = '1.00'
+    # Force multiplier=1.0 only when sales_price is set (price is already final)
+    if has_sales_price:
+        for store in stores:
+            store_key = store.slug
+            if store_key not in job_settings:
+                job_settings[store_key] = {}
+            job_settings[store_key]['multiplier_low'] = '1.00'
+            job_settings[store_key]['multiplier_mid'] = '1.00'
+            job_settings[store_key]['multiplier_high'] = '1.00'
 
     # Mark sheet source in job settings
     job_settings['_manual'] = {

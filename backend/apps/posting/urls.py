@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 from .api import stock as stock_api
 from .api import dropship as dropship_api
+from .api import image_presets as image_presets_api
 from .api import pool as pool_api
 from .api import content_templates as content_template_api
 from .api import cosmetic_lists as cosmetic_list_api
@@ -42,6 +43,9 @@ urlpatterns = [
     # API — defaults + stores
     path('api/defaults/<int:game_id>/<str:marketplace>/', stock_api.posting_defaults, name='api_posting_defaults'),
     path('api/stores/', stock_api.available_stores, name='api_available_stores'),
+    path('api/image-presets/', image_presets_api.list_image_presets, name='api_image_presets'),
+    path('api/image-presets/upload/', image_presets_api.upload_image_preset, name='api_upload_image_preset'),
+    path('api/image-presets/<int:preset_id>/delete/', image_presets_api.delete_image_preset, name='api_delete_image_preset'),
 
     # API — content templates
     path('api/content-templates/', content_template_api.list_content_templates, name='api_content_templates'),

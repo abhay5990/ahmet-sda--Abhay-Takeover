@@ -1,5 +1,17 @@
+from pathlib import Path
+import uuid
+
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+
+
+def posting_image_preset_upload_to(instance, filename: str) -> str:
+    ext = Path(filename).suffix.lower()
+    if ext not in {'.jpg', '.jpeg', '.png'}:
+        ext = '.png'
+    token = instance.sha256[:24] if instance.sha256 else uuid.uuid4().hex[:24]
+    return f'posting/image_presets/game_{instance.game_id}/{token}{ext}'
 
 
 class PostingJobStatus(models.TextChoices):
@@ -360,6 +372,52 @@ class ContentTemplate(models.Model):
             )
         except TemplateValidationError as exc:
             raise ValidationError({'body': str(exc)}) from exc
+
+
+class PostingImagePreset(models.Model):
+    """Reusable marketplace media chosen during manual posting."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='posting_image_presets',
+    )
+    game = models.ForeignKey(
+        'inventory.Game',
+        on_delete=models.CASCADE,
+        related_name='posting_image_presets',
+    )
+    name = models.CharField(max_length=120, blank=True)
+    image = models.ImageField(upload_to=posting_image_preset_upload_to)
+    sha256 = models.CharField(max_length=64, db_index=True)
+    mime_type = models.CharField(max_length=50, blank=True)
+    size_bytes = models.PositiveIntegerField(default=0)
+    width = models.PositiveIntegerField(null=True, blank=True)
+    height = models.PositiveIntegerField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    last_used_at = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'posting_image_presets'
+        ordering = ['-last_used_at', '-created_at']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'game', 'sha256'],
+                name='unique_posting_image_preset_hash',
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=['user', 'game', 'is_active'],
+                name='posting_img_user_game_idx',
+            ),
+        ]
+
+    def __str__(self):
+        return self.name or f"Image preset #{self.pk}"
 
 
 class SubplatformLimit(models.Model):
