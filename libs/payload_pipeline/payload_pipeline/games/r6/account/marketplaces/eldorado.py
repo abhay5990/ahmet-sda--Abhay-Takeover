@@ -43,6 +43,7 @@ class R6EldoradoBuilder(BaseEldoradoBuilder):
                 _ATTR_RANK: self._resolve_rank(account),
                 _ATTR_BLACK_ICE: self._resolve_black_ice(account.black_ice_count),
             },
+            ref_key=account.ref_key,
         )
 
     def _resolve_trade_environment_id(self, account: R6ResolvedAccount) -> str:

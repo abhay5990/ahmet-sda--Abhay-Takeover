@@ -13,6 +13,25 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 
+class LztBatchJob(BaseModel):
+    """Single job in a batch request."""
+
+    id: str | None = None
+    uri: str
+    method: str = "GET"
+    params: dict[str, str] | None = None
+
+
+class LztBatchResult(BaseModel):
+    """Response from the /batch endpoint.
+
+    ``jobs`` maps job IDs to their individual results.
+    Each job result contains ``_job_result`` (success) or ``_job_error`` (failure).
+    """
+
+    jobs: dict[str, Any] = Field(default_factory=dict)
+
+
 class LztListingPage(BaseModel):
     """Envelope for a paginated category listing response.
 

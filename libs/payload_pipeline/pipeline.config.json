@@ -1,7 +1,23 @@
 {
   "features": {
-    "ref_key_in_description": true,
     "content_templates": false,
-    "title_hash_suffix": true
+    "unique_key": {
+      "playerauctions": {
+        "title": true,
+        "description": false
+      },
+      "gameboost": {
+        "title": true,
+        "description": false
+      },
+      "eldorado": {
+        "title": true,
+        "description": true
+      },
+      "g2g": {
+        "title": false,
+        "description": false
+      }
+    }
   }
 }

@@ -68,7 +68,7 @@ class BaseGameBoostBuilder(BasePayloadBuilder[Any]):
         listing: ListingDraft,
         ctx: BuildContext,
     ) -> dict[str, Any]:
-        content = listing.content_for(self.marketplace)
+        content = listing.content_for(self.marketplace, ref_key=subject.ref_key)
         price = self._apply_pricing(subject.price, ctx)
         if ctx.exchange_rate is not None:
             price = round(price * ctx.exchange_rate, 2)

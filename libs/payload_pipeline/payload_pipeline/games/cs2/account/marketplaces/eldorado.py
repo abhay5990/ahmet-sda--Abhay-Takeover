@@ -27,6 +27,7 @@ class CS2EldoradoBuilder(BaseEldoradoBuilder):
                 "counter-strike-2-prime-status": "active-prime" if account.is_prime else "non-prime",
                 "counter-strike-2-medals": self._medal_bucket(account.medal_count),
             },
+            ref_key=account.ref_key,
         )
 
     @staticmethod

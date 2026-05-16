@@ -225,7 +225,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
         marked ``"encrypted": true`` in the PA template (password,
         parentalPassword, securityAnswer) before sending to the API.
         """
-        content = listing.content_for(self.marketplace)
+        content = listing.content_for(self.marketplace, ref_key=subject.ref_key)
         price = self._apply_pricing(subject.price, ctx)
         is_stock = ctx.kind == ListingKind.STOCK
         creds: CredentialBundle = subject.credentials
@@ -310,7 +310,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
         ctx: BuildContext,
     ) -> dict[str, Any]:
         """Build intermediate dict for PA bulk/Excel upload."""
-        content = listing.content_for(self.marketplace)
+        content = listing.content_for(self.marketplace, ref_key=subject.ref_key)
         price = self._apply_pricing(subject.price, ctx)
         is_stock = ctx.kind == ListingKind.STOCK
 

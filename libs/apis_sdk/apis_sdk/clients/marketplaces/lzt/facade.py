@@ -27,6 +27,8 @@ from apis_sdk.infrastructure.retry.policy import RetryPolicy
 from apis_sdk.infrastructure.retry.strategy import RetryStrategy
 from apis_sdk.clients.marketplaces._facade_support import FacadeExecutor
 from apis_sdk.clients.marketplaces.lzt.models import (
+    LztBatchJob,
+    LztBatchResult,
     LztCheckAccountResult,
     LztListingPage,
     LztOrderPage,
@@ -95,6 +97,14 @@ class LztApiClient(Protocol):
         auth_headers: dict[str, str],
         proxy_url: str | None = None,
     ) -> ApiResult[LztPurchaseResult]: ...
+
+    def batch(
+        self,
+        jobs: list[LztBatchJob],
+        *,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[LztBatchResult]: ...
 
 
 class LztFacade:
@@ -319,6 +329,34 @@ class LztFacade:
             lambda proxy_url: self._client.confirm_buy(
                 item_id,
                 price,
+                auth_headers=self._exec.get_auth_headers(),
+                proxy_url=proxy_url,
+            ),
+            proxy_group=proxy_group,
+        )
+
+    # ---------------------------------------------------------------------------
+    # Batch
+    # ---------------------------------------------------------------------------
+
+    def batch(
+        self,
+        jobs: list[LztBatchJob],
+        *,
+        proxy_group: str | None = None,
+    ) -> ApiResult[LztBatchResult]:
+        """Execute multiple API requests in a single call (max 10).
+
+        Each job specifies a URI, HTTP method, and optional params.
+        Results are keyed by job ID (or URI if no ID provided).
+
+        Following methods are unavailable in batch:
+        - GET /{item_id}/image
+        - /item/fast-sell
+        """
+        return self._exec.execute_with_retry(
+            lambda proxy_url: self._client.batch(
+                jobs,
                 auth_headers=self._exec.get_auth_headers(),
                 proxy_url=proxy_url,
             ),

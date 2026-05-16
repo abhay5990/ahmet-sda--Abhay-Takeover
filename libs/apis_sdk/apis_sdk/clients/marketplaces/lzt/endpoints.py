@@ -12,6 +12,9 @@ class LztEndpoints:
     USER_ORDERS = "/user/orders"
     USER_ITEMS = "/user/items"
 
+    # Batch
+    BATCH = "/batch"
+
     # Mail access (email:password validation + inbox)
     LETTERS2 = "/letters2"
 

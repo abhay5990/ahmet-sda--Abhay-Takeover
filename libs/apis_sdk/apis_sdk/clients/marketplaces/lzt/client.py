@@ -19,6 +19,8 @@ from apis_sdk.infrastructure.logging.logger import NullLogger, SdkLogger
 from apis_sdk.clients.marketplaces.lzt.config import LztConfig
 from apis_sdk.clients.marketplaces.lzt.endpoints import LztEndpoints
 from apis_sdk.clients.marketplaces.lzt.models import (
+    LztBatchJob,
+    LztBatchResult,
     LztCheckAccountResult,
     LztListingPage,
     LztOrderPage,
@@ -454,6 +456,73 @@ class LztClient:
             return ApiResult.from_error(
                 ErrorCategory.UNKNOWN,
                 f"Failed to parse confirm-buy response: {exc}",
+                provider=self.PROVIDER,
+            )
+
+        meta = self._extract_meta(response)
+        return ApiResult.success(result, status_code=response.status_code, meta=meta)
+
+    # ---------------------------------------------------------------------------
+    # Batch
+    # ---------------------------------------------------------------------------
+
+    def batch(
+        self,
+        jobs: list[LztBatchJob],
+        *,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[LztBatchResult]:
+        """
+        Execute multiple API requests in a single call.
+
+        Maximum 10 jobs per batch. Following methods are unavailable:
+        - GET /{item_id}/image
+        - /item/fast-sell
+
+        Args:
+            jobs: List of batch jobs (max 10).
+            auth_headers: Auth headers injected by the facade.
+            proxy_url: Proxy URL injected by the facade.
+        """
+        if len(jobs) > 10:
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION,
+                "Maximum 10 batch jobs allowed",
+                provider=self.PROVIDER,
+            )
+
+        url = self._build_url(LztEndpoints.BATCH)
+        payload = [
+            {k: v for k, v in job.model_dump().items() if v is not None}
+            for job in jobs
+        ]
+
+        try:
+            response = self._transport.request(
+                HttpMethod.POST,
+                url,
+                headers=auth_headers,
+                json_body=payload,
+                timeout=self._config.timeout,
+                proxy_url=proxy_url,
+            )
+        except TransportError as exc:
+            return ApiResult.from_error(
+                ErrorCategory.NETWORK, str(exc),
+                provider=self.PROVIDER, is_retryable=True,
+            )
+
+        if not response.is_success:
+            return self._handle_error(response.status_code, response)
+
+        try:
+            body = response.json()
+            result = LztBatchResult.model_validate(body)
+        except Exception as exc:
+            return ApiResult.from_error(
+                ErrorCategory.UNKNOWN,
+                f"Failed to parse batch response: {exc}",
                 provider=self.PROVIDER,
             )
 

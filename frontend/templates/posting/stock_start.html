@@ -954,7 +954,7 @@ function stockStart() {
                     {% if store.provider == 'gameboost' %}exchange_rate: '0.87',{% endif %}
                     sub_platform: '', account_type: '',
                     title_template_id: null, description_template_id: null,
-                    {% if store.provider == 'playerauctions' %}pa_mode: 'bulk',{% endif %}
+                    {% if store.provider == 'playerauctions' %}pa_mode: 'single',{% endif %}
                 };
             }
             this.showSettings['{{ store.slug }}'] = false;

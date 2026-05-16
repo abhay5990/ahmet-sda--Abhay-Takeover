@@ -35,6 +35,7 @@ class GtavEldoradoBuilder(BaseEldoradoBuilder):
             price=account.price,
             credentials=account.credentials,
             trade_environment_id=trade_env,
+            ref_key=account.ref_key,
         )
 
         delivery = format_platform_credentials(

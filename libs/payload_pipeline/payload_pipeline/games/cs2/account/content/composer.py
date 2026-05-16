@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from ..models import CS2ResolvedAccount
-from .....core.content_hooks import prefix_ref_key
 from .....core.contracts import (
     ListingContent,
     ListingDraft,
@@ -45,7 +44,7 @@ class CS2Composer:
         if media.album_url:
             lines.append(f"Album: {media.album_url}")
 
-        description = prefix_ref_key("\n".join(lines), request)
+        description = "\n".join(lines)
 
         return ListingDraft(
             default=ListingContent(

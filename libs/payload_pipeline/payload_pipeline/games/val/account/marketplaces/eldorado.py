@@ -58,6 +58,7 @@ class ValorantEldoradoBuilder(BaseEldoradoBuilder):
                 _ATTR_AGENTS: self._resolve_agents(account.agent_count),
                 _ATTR_SKINS: self._resolve_skins(account.skin_count),
             },
+            ref_key=account.ref_key,
         )
 
     def _resolve_trade_environment_id(

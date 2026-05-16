@@ -101,10 +101,11 @@ class BaseEldoradoBuilder(BasePayloadBuilder[Any]):
         credentials: CredentialBundle,
         trade_environment_id: str | None = None,
         attributes: dict[str, Any] | None = None,
+        ref_key: str = "",
     ) -> dict[str, Any]:
         is_dropship = ctx.kind == ListingKind.DROPSHIPPING
         final_price = self._apply_pricing(price, ctx)
-        content = listing.content_for(self.marketplace)
+        content = listing.content_for(self.marketplace, ref_key=ref_key)
 
         # Pricing block — dropship omits minQuantity and volumeDiscounts
         if is_dropship:

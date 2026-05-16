@@ -35,4 +35,5 @@ class GenshinImpactEldoradoBuilder(BaseEldoradoBuilder):
             trade_environment_id=_REGION_TRADE_ENV.get(
                 account.region.lower(), "1-999"
             ),
+            ref_key=account.ref_key,
         )

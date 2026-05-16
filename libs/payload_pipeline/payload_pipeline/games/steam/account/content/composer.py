@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from ..models import SteamResolvedAccount
-from .....core.content_hooks import prefix_ref_key
 from .....core.contracts import (
     ListingContent,
     ListingDraft,
@@ -50,7 +49,7 @@ class SteamComposer:
         if media.album_url:
             lines.append(f"\nAlbum: {media.album_url}")
 
-        description = prefix_ref_key("\n".join(lines), request)
+        description = "\n".join(lines)
 
         return ListingDraft(
             default=ListingContent(

@@ -8,7 +8,6 @@ from .title_generator import FortniteTitleGenerator
 from ..models import FortniteResolvedAccount
 from .....content_templates import apply_template_overrides
 from .....core import context_keys as ctx
-from .....core.content_hooks import prefix_ref_key
 from .....core.contracts import (
     ListingContent,
     ListingDraft,
@@ -111,8 +110,6 @@ class FortniteComposer:
             description = self.description_generator.generate(
                 account, media=media, marketplace="default",
             )
-
-        description = prefix_ref_key(description, request)
 
         draft = ListingDraft(
             default=ListingContent(

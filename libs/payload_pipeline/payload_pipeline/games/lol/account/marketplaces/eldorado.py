@@ -68,6 +68,7 @@ class LolEldoradoBuilder(BaseEldoradoBuilder):
                 _ATTR_SKINS: self._resolve_skin_attribute(account.skin_count),
                 _ATTR_BLUE_ESSENCE: self._resolve_blue_essence_attribute(account.blue_essence),
             },
+            ref_key=account.ref_key,
         )
 
     @staticmethod

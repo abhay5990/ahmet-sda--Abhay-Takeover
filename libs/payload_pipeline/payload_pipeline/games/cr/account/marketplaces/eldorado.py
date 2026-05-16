@@ -22,4 +22,5 @@ class CrEldoradoBuilder(BaseEldoradoBuilder):
             ctx=ctx,
             price=account.price,
             credentials=account.credentials,
+            ref_key=account.ref_key,
         )

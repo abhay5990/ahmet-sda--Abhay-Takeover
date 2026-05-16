@@ -5,7 +5,6 @@ from __future__ import annotations
 from .description_generator import ValorantDescriptionGenerator
 from .title_generator import ValorantTitleGenerator
 from ..models import ValorantResolvedAccount
-from .....core.content_hooks import prefix_ref_key
 from .....core.contracts import (
     ListingContent,
     ListingDraft,
@@ -32,11 +31,8 @@ class ValorantComposer:
         title = self.title_generator.generate(account, marketplace="default")
         g2g_title = self.title_generator.generate(account, marketplace="g2g")
         is_dropshipping = request.kind == ListingKind.DROPSHIPPING
-        description = prefix_ref_key(
-            self.description_generator.generate(
-                account, media=media, marketplace="default", is_dropshipping=is_dropshipping,
-            ),
-            request,
+        description = self.description_generator.generate(
+            account, media=media, marketplace="default", is_dropshipping=is_dropshipping,
         )
 
         return ListingDraft(

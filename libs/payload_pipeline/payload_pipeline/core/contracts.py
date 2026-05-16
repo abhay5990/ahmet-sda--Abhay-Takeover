@@ -194,9 +194,14 @@ class ListingDraft:
     media: MediaBundle = field(default_factory=MediaBundle)
     marketplace_overrides: dict[str, MarketplaceListingOverride] = field(default_factory=dict)
 
-    def content_for(self, marketplace: str) -> ListingContent:
-        """Return the effective listing content for the requested marketplace."""
-        from .config import is_feature_enabled
+    def content_for(self, marketplace: str, ref_key: str = "") -> ListingContent:
+        """Return the effective listing content for the requested marketplace.
+
+        When unique_key is enabled for the marketplace:
+        - PA/Gameboost: appends ref_key to title (e.g. ``#ABC1234``)
+        - Eldorado: appends ``#`` to title, prepends ref_key to description
+        """
+        from .config import get_unique_key_config
 
         override = self.marketplace_overrides.get(marketplace.lower())
         if override is None:
@@ -212,8 +217,19 @@ class ListingDraft:
             )
             tags = list(override.tags) if override.tags is not None else list(self.default.tags)
 
-        if title and is_feature_enabled('title_hash_suffix') and not title.endswith('#'):
-            title = title.rstrip() + ' #'
+        uk = get_unique_key_config(marketplace)
+
+        if title and uk.get("title"):
+            if ref_key and marketplace.lower() in ("playerauctions", "gameboost"):
+                if not title.rstrip().endswith(ref_key):
+                    title = title.rstrip() + ' ' + ref_key
+            else:
+                if not title.endswith('#'):
+                    title = title.rstrip() + ' #'
+
+        if description is not None and uk.get("description") and ref_key:
+            if not description.startswith(ref_key):
+                description = f"{ref_key}\n{description}"
 
         return ListingContent(
             title=title,

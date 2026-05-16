@@ -60,6 +60,7 @@ class FortniteEldoradoBuilder(BaseEldoradoBuilder):
             attributes={
                 "fortnite-account-type": self._resolve_account_type(account),
             },
+            ref_key=account.ref_key,
         )
 
     # ── trade environment (subplatform) ──────────────────────────

@@ -69,7 +69,7 @@ class FortniteGameBoostBuilder(BaseGameBoostBuilder):
         ctx: BuildContext,
     ) -> dict[str, Any]:
         # Custom description trimming before base builds payload
-        content = listing.content_for(self.marketplace)
+        content = listing.content_for(self.marketplace, ref_key=subject.ref_key)
         desc = content.description
         if "Full Access" in desc:
             for i, line in enumerate(desc.splitlines()):

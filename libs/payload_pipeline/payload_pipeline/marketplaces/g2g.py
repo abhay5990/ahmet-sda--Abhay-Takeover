@@ -64,7 +64,7 @@ class BaseG2GBuilder(BasePayloadBuilder[Any]):
         listing: ListingDraft,
         ctx: BuildContext,
     ) -> dict[str, Any]:
-        content = listing.content_for(self.marketplace)
+        content = listing.content_for(self.marketplace, ref_key=subject.ref_key)
         price = self._apply_pricing(subject.price, ctx)
 
         config = ctx.get_config(G2GConfig)

@@ -15,9 +15,13 @@ _CONFIG_PATH = Path(__file__).resolve().parents[2] / 'pipeline.config.json'
 
 _DEFAULT_CONFIG = {
     "features": {
-        "ref_key_in_description": True,
         "content_templates": False,
-        "title_hash_suffix": True,
+        "unique_key": {
+            "playerauctions": {"title": True, "description": False},
+            "gameboost": {"title": True, "description": False},
+            "eldorado": {"title": True, "description": True},
+            "g2g": {"title": False, "description": False},
+        },
     }
 }
 
@@ -40,3 +44,13 @@ def is_feature_enabled(feature_name: str) -> bool:
     """Check if a feature toggle is enabled."""
     config = _load_config()
     return config.get('features', {}).get(feature_name, False)
+
+
+def get_unique_key_config(marketplace: str) -> dict[str, bool]:
+    """Return unique_key settings for a marketplace.
+
+    Returns dict with 'title' and 'description' booleans.
+    """
+    config = _load_config()
+    uk = config.get('features', {}).get('unique_key', {})
+    return uk.get(marketplace.lower(), {"title": False, "description": False})
