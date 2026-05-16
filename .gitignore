@@ -63,6 +63,9 @@ backend/tmp/
 # Generated output (all tools write here)
 output/
 
+# Pipeline config (machine-local feature toggles)
+libs/payload_pipeline/pipeline.config.json
+
 # AI orchestrator (local-only)
 _ai/
 .claude/

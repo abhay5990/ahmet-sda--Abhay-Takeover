@@ -2,6 +2,7 @@
 
 Reads pipeline.config.json from the lib root directory.
 Simple true/false feature toggles — edit the JSON file manually.
+If the file doesn't exist on first load it is auto-created with defaults.
 """
 
 from __future__ import annotations
@@ -12,11 +13,20 @@ from pathlib import Path
 
 _CONFIG_PATH = Path(__file__).resolve().parents[2] / 'pipeline.config.json'
 
+_DEFAULT_CONFIG = {
+    "features": {
+        "ref_key_in_description": True,
+        "content_templates": False,
+        "title_hash_suffix": True,
+    }
+}
+
 
 @lru_cache(maxsize=1)
 def _load_config() -> dict:
     if not _CONFIG_PATH.exists():
-        return {}
+        _CONFIG_PATH.write_text(json.dumps(_DEFAULT_CONFIG, indent=2) + '\n')
+        return _DEFAULT_CONFIG
     with open(_CONFIG_PATH) as f:
         return json.load(f)
 

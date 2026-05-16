@@ -1,6 +1,7 @@
 {
   "features": {
     "ref_key_in_description": true,
-    "content_templates": false
+    "content_templates": false,
+    "title_hash_suffix": true
   }
 }

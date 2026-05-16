@@ -196,22 +196,29 @@ class ListingDraft:
 
     def content_for(self, marketplace: str) -> ListingContent:
         """Return the effective listing content for the requested marketplace."""
+        from .config import is_feature_enabled
+
         override = self.marketplace_overrides.get(marketplace.lower())
         if override is None:
-            return ListingContent(
-                title=self.default.title,
-                description=self.default.description,
-                tags=list(self.default.tags),
-            )
-
-        return ListingContent(
-            title=override.title if override.title is not None else self.default.title,
-            description=(
+            title = self.default.title
+            description = self.default.description
+            tags = list(self.default.tags)
+        else:
+            title = override.title if override.title is not None else self.default.title
+            description = (
                 override.description
                 if override.description is not None
                 else self.default.description
-            ),
-            tags=list(override.tags) if override.tags is not None else list(self.default.tags),
+            )
+            tags = list(override.tags) if override.tags is not None else list(self.default.tags)
+
+        if title and is_feature_enabled('title_hash_suffix') and not title.endswith('#'):
+            title = title.rstrip() + ' #'
+
+        return ListingContent(
+            title=title,
+            description=description,
+            tags=tags,
         )
 
 

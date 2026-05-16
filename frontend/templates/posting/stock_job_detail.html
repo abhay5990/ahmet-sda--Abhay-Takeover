@@ -628,14 +628,7 @@ function jobDetail() {
             const rows = [];
 
             if (this.viewMode === 'grouped') {
-                // Header
-                const header = [...this.activeColumns.map(c => this.columnLabels[c])];
-                for (const mp of this.activeMarketplaces) {
-                    header.push(mp[1] + ' Status', mp[1] + ' Offer ID', mp[1] + ' Error');
-                }
-                rows.push(header.join(sep));
-
-                // Data rows
+                // Data rows (no header)
                 for (let idx = 0; idx < this.groupedRows.length; idx++) {
                     const row = this.groupedRows[idx];
                     const cells = this.activeColumns.map(col => this.getCellValue(row, col, idx));
@@ -650,8 +643,7 @@ function jobDetail() {
                     rows.push(cells.join(sep));
                 }
             } else {
-                // Flat view
-                rows.push(['#', 'Login', 'Store', 'Status', 'Offer ID', 'Title', 'Sale Price', 'Error'].join(sep));
+                // Flat view (no header)
                 for (let i = 0; i < this.flatItems.length; i++) {
                     const item = this.flatItems[i];
                     rows.push([i + 1, item.login, item.store, item.status, item.offer_id || '', item.offer_title || '', item.sale_price || '', item.error || ''].join(sep));
