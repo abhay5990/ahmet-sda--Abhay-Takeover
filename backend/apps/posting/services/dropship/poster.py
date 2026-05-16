@@ -351,9 +351,10 @@ def _attempt_post(
 
     # Prepare + build via pipeline
     sources: dict = {source_type: item}
-    tracker_data = fetch_tracker_data(game.slug, item)
-    if tracker_data is not None:
-        sources['tracker'] = tracker_data
+    if game.slug != "rainbow-six-siege":
+        tracker_data = fetch_tracker_data(game.slug, item)
+        if tracker_data is not None:
+            sources['tracker'] = tracker_data
 
     sources = scrub_sources(sources, game_slug=game.slug)
 

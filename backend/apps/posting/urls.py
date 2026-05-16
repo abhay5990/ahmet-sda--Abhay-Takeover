@@ -38,6 +38,7 @@ urlpatterns = [
 
     # API — job actions
     path('api/jobs/<int:job_id>/cancel/', stock_api.cancel_job, name='api_cancel_job'),
+    path('api/jobs/<int:job_id>/export/', stock_api.export_job_to_sheet, name='api_export_job'),
     path('api/repost-data/', stock_api.repost_data, name='api_repost_data'),
 
     # API — defaults + stores

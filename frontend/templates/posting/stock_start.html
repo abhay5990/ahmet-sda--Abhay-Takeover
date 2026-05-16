@@ -64,7 +64,7 @@
                            class="text-emerald-600 focus:ring-emerald-500">
                     <span class="text-sm text-gray-700">Manual Entry</span>
                 </label>
-                <label class="flex items-center space-x-2 cursor-pointer">
+                <label x-show="isFortniteGame" class="flex items-center space-x-2 cursor-pointer">
                     <input type="radio" value="sheet" x-model="sourceType"
                            class="text-emerald-600 focus:ring-emerald-500">
                     <span class="text-sm text-gray-700">Google Sheet</span>
@@ -927,6 +927,11 @@ function stockStart() {
             return slug.startsWith('gta') || slug.includes('grand-theft-auto');
         },
 
+        get isFortniteGame() {
+            const slug = (GAME_SLUGS[this.selectedGame] || '').toLowerCase();
+            return slug === 'fortnite' || slug === 'fn';
+        },
+
         get platformOptions() {
             if (this.isGtaGame) return GTA_PLATFORMS;
             return this.gameSubplatforms.length > 0 ? this.gameSubplatforms : [];
@@ -967,6 +972,10 @@ function stockStart() {
         },
 
         async onGameChange() {
+            // Reset sheet mode if switching away from Fortnite
+            if (this.sourceType === 'sheet' && !this.isFortniteGame) {
+                this.sourceType = 'account';
+            }
             if (!this.selectedGame) {
                 this.selectedGtavImagePresetId = 'auto';
                 this.gtavImagePresets = [];

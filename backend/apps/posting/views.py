@@ -83,12 +83,83 @@ def stock_history_page(request):
 
 @role_required('admin', 'user')
 def stock_job_detail(request, job_id):
-    """Job detail — items table + live SSE updates."""
+    """Job detail — grouped by login with per-marketplace status columns."""
     job = get_object_or_404(PostingJob.objects.select_related('game'), id=job_id)
-    items = job.items.select_related('owned_product', 'store', 'listing').order_by('id')
+    items = (
+        job.items
+        .select_related('owned_product', 'owned_product__category', 'store', 'listing')
+        .order_by('id')
+    )
+
+    # Build login-grouped data for the template
+    # Key by store_id (IntegrationAccount) so multiple stores on the same
+    # marketplace each get their own column, e.g. "Eldorado (Store4Gamers)".
+    from collections import OrderedDict
+    grouped: OrderedDict[str, dict] = OrderedDict()
+    job_stores: OrderedDict[str, str] = OrderedDict()  # store_id -> display
+
+    MARKETPLACE_DISPLAY = {
+        'eldorado': 'Eldorado', 'gameboost': 'GameBoost',
+        'g2g': 'G2G', 'playerauctions': 'PlayerAuctions',
+    }
+
+    for item in items:
+        store_key = str(item.store_id)
+        mp_label = MARKETPLACE_DISPLAY.get(item.marketplace, item.marketplace)
+        store_display = f"{mp_label} ({item.store.name})"
+        job_stores[store_key] = store_display
+
+        login = item.login
+        if login not in grouped:
+            op = item.owned_product
+            grouped[login] = {
+                'login': login,
+                'ref_key': op.ref_key if op else '',
+                'password': op.password if op else '',
+                'email': op.email if op else '',
+                'email_password': op.email_password if op else '',
+                'purchase_price': str(op.price) if op and op.price else '',
+                'currency': op.currency if op else 'USD',
+                'owned_product_id': op.id if op else None,
+                'updated_at': item.updated_at,
+                'marketplaces': {},
+            }
+        # Track latest updated_at
+        if item.updated_at and item.updated_at > grouped[login]['updated_at']:
+            grouped[login]['updated_at'] = item.updated_at
+
+        grouped[login]['marketplaces'][store_key] = {
+            'item_id': item.id,
+            'status': item.status,
+            'error': item.error_message,
+            'store_name': item.store.name,
+            'store_slug': item.store.slug,
+            'marketplace': item.marketplace,
+            'sale_price': str(item.listing.price) if item.listing else '',
+            'sale_currency': item.listing.currency if item.listing else '',
+            'offer_id': item.listing.store_listing_id if item.listing else '',
+            'offer_title': item.listing.title if item.listing else '',
+        }
+
+    # All system stores for "show all" mode — all active sell/both accounts
+    all_system_stores = OrderedDict()
+    for acct in IntegrationAccount.objects.filter(
+        is_active=True, role__in=['sell', 'both'],
+    ).order_by('provider', 'name'):
+        mp_label = MARKETPLACE_DISPLAY.get(acct.provider, acct.provider)
+        all_system_stores[str(acct.id)] = f"{mp_label} ({acct.name})"
+
+    # Check if Google Sheets credential is available
+    from apps.inventory.services.sheets_export import get_google_sheets_credential
+    has_sheets = get_google_sheets_credential() is not None
+
     return render(request, 'posting/stock_job_detail.html', {
         'job': job,
         'items': items,
+        'grouped_data_json': json.dumps(list(grouped.values()), default=str),
+        'job_marketplaces_json': json.dumps(dict(job_stores)),
+        'all_marketplaces_json': json.dumps(dict(all_system_stores)),
+        'has_sheets_credential': has_sheets,
     })
 
 

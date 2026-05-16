@@ -128,7 +128,7 @@ def create_job(request):
                 if fk_field not in store_defaults:
                     continue
                 val = store_defaults[fk_field]
-                if val:
+                if val and val != 'null':
                     template_id = int(val)
                     if not ContentTemplate.objects.filter(
                         id=template_id,
@@ -574,6 +574,45 @@ def job_status(request, job_id):
 
     items = job.items.select_related('owned_product', 'store', 'listing').all()
 
+    # Build grouped data for polling (same structure as view context)
+    from collections import OrderedDict
+    grouped: OrderedDict[str, dict] = OrderedDict()
+
+    for item in items:
+        login = item.login
+        if login not in grouped:
+            op = item.owned_product
+            grouped[login] = {
+                'login': login,
+                'ref_key': op.ref_key if op else '',
+                'password': op.password if op else '',
+                'email': op.email if op else '',
+                'email_password': op.email_password if op else '',
+                'purchase_price': str(op.price) if op and op.price else '',
+                'currency': op.currency if op else 'USD',
+                'updated_at': item.updated_at.isoformat() if item.updated_at else None,
+                'marketplaces': {},
+            }
+        if item.updated_at and (
+            not grouped[login]['updated_at']
+            or item.updated_at.isoformat() > grouped[login]['updated_at']
+        ):
+            grouped[login]['updated_at'] = item.updated_at.isoformat()
+
+        store_key = str(item.store_id)
+        grouped[login]['marketplaces'][store_key] = {
+            'item_id': item.id,
+            'status': item.status,
+            'error': item.error_message,
+            'store_name': item.store.name,
+            'store_slug': item.store.slug,
+            'marketplace': item.marketplace,
+            'sale_price': str(item.listing.price) if item.listing else '',
+            'sale_currency': item.listing.currency if item.listing else '',
+            'offer_id': item.listing.store_listing_id if item.listing else '',
+            'offer_title': item.listing.title if item.listing else '',
+        }
+
     return JsonResponse({
         'id': job.id,
         'game': job.game.name,
@@ -583,10 +622,13 @@ def job_status(request, job_id):
         'fail_count': job.fail_count,
         'created_at': job.created_at.isoformat(),
         'completed_at': job.completed_at.isoformat() if job.completed_at else None,
+        'grouped': list(grouped.values()),
+        # Keep flat items for backward compat
         'items': [
             {
                 'id': item.id,
                 'login': item.login,
+                'marketplace': item.marketplace,
                 'store': f"{item.marketplace} — {item.store.name}",
                 'status': item.status,
                 'offer_id': item.listing.store_listing_id if item.listing else None,
@@ -689,6 +731,52 @@ def cancel_job(request, job_id):
 
     logger.info("Job #%d cancelled by user", job_id)
     return JsonResponse({'ok': True, 'status': 'cancelled'})
+
+
+@login_required
+@require_POST
+def export_job_to_sheet(request, job_id):
+    """Export job detail data to Google Sheets.
+
+    POST body (JSON):
+        spreadsheet_id: str  — Google Sheets URL or ID
+        sheet_name: str      — worksheet name (default: 'Job #N')
+        columns: list[str]   — ordered column keys to include
+        marketplace_slugs: list[str] — store IDs (IntegrationAccount) for columns
+    """
+    try:
+        job = PostingJob.objects.select_related('game').get(id=job_id)
+    except PostingJob.DoesNotExist:
+        return JsonResponse({'error': 'Job not found'}, status=404)
+
+    try:
+        body = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    spreadsheet_id = body.get('spreadsheet_id', '').strip()
+    sheet_name = body.get('sheet_name', '').strip() or f'Job #{job.id}'
+    columns = body.get('columns', [])
+    store_keys = body.get('marketplace_slugs', [])
+
+    if not spreadsheet_id:
+        return JsonResponse({'error': 'spreadsheet_id is required'}, status=400)
+    if not columns:
+        return JsonResponse({'error': 'columns list is required'}, status=400)
+
+    try:
+        from apps.posting.services.sheets_export import export_job_to_sheet as do_export
+        count = do_export(job, spreadsheet_id, sheet_name, columns, store_keys)
+    except ValueError as exc:
+        return JsonResponse({'error': str(exc)}, status=400)
+    except Exception as exc:
+        logger.exception("Job export to Google Sheets failed")
+        msg = str(exc)
+        if 'not found' in msg.lower() or 'PERMISSION_DENIED' in msg:
+            msg = f"Cannot access spreadsheet. Make sure it's shared with the service account. ({msg})"
+        return JsonResponse({'error': msg}, status=500)
+
+    return JsonResponse({'ok': True, 'rows_exported': count})
 
 
 @login_required
