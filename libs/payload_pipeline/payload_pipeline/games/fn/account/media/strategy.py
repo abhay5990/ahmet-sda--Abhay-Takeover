@@ -91,9 +91,27 @@ class FortniteMediaStrategy:
                 else self._download_lzt(subject, request, output_dir)
             )
             if paths:
+                # Prepend exclusive showcase if cosmetic data available
+                exclusive = self._render_exclusive(subject, output_dir)
+                if exclusive:
+                    paths.insert(0, exclusive)
                 return paths
 
         return []
+
+    def _render_exclusive(self, subject: FortniteResolvedAccount, output_dir: str) -> str | None:
+        if not subject.cosmetic_items:
+            return None
+
+        renderer = self._renderer or FortniteGridRenderer()
+        try:
+            return renderer.render_exclusive(subject.cosmetic_items, output_dir)
+        except Exception as exc:
+            logger.warning(
+                "Exclusive showcase failed for item %s: %s",
+                subject.item_id, exc,
+            )
+            return None
 
     def _render_generated(self, subject: FortniteResolvedAccount, output_dir: str) -> list[str]:
         if not subject.cosmetic_items:

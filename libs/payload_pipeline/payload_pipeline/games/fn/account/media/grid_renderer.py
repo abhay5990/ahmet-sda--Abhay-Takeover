@@ -37,6 +37,27 @@ _RARITY_PALETTE: dict[str, tuple[tuple[int, int, int], tuple[int, int, int]]] = 
 }
 _FALLBACK_GRAD = ((75, 75, 75), (50, 50, 50))
 
+# ── Exclusive showcase palette ────────────────────────────────────
+_EXCLUSIVE_GRAD = ((255, 215, 0), (218, 165, 32))  # gold top → gold bottom
+_EXCLUSIVE_HEADER_BG = (28, 22, 8)
+_EXCLUSIVE_ACCENT = (255, 215, 0)
+
+_EXCLUSIVE_KEYWORDS: set[str] = {
+    "renegade raider", "aerial assault trooper",
+    "black knight", "royale knight", "blue squire", "sparkle specialist",
+    "the reaper", "elite agent", "omega",
+    "og ghoul trooper", "og skull trooper", "skull trooper", "ghoul trooper",
+    "drift", "ragnarok",
+    "travis scott", "galaxy", "ikonik", "wildcat", "honor guard", "wonder", "glow",
+    "midas", "peely", "deadpool", "lara croft", "havoc",
+    "take the l", "floss", "fresh", "orange justice",
+    "leviathan axe", "mako", "reaper",
+    "stw",
+}
+_EXCLUSIVE_RARITIES: set[str] = {
+    "legendary", "mythic", "icon", "marvel", "dc", "starwars", "superrare",
+}
+
 _RARITY_ORDER = ("legendary", "epic", "superrare", "rare", "uncommon", "common")
 
 # ── Layout ───────────────────────────────────────────────────────────
@@ -141,6 +162,53 @@ class FortniteGridRenderer:
 
     # ── public API ────────────────────────────────────────────────────
 
+    def render_exclusive(
+        self,
+        cosmetics: dict[str, list[CosmeticItem]],
+        output_dir: str,
+    ) -> str | None:
+        """Render an exclusive showcase grid from all cosmetic types.
+
+        Filters items by keyword/rarity, renders them with a gold palette,
+        and returns the saved file path (or *None* if no exclusives found).
+        """
+        exclusives = self._collect_exclusives(cosmetics)
+        if not exclusives:
+            logger.info("No exclusive items found, skipping showcase")
+            return None
+
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        dest = str(out / "fortnite_exclusive.png")
+
+        sorted_items = sorted(exclusives, key=self._rarity_sort_key)
+        icon_map = self._fetch_all(sorted_items)
+        cards = [self._render_exclusive_card(it, icon_map.get(it.id)) for it in sorted_items]
+
+        cols = self._grid_columns(len(cards))
+        rows = -(-len(cards) // cols)
+
+        canvas_w = 2 * _MARGIN + cols * _CARD_W + max(0, cols - 1) * _GAP
+        canvas_h = _HEADER_H + _MARGIN + rows * _CARD_H + max(0, rows - 1) * _GAP + _MARGIN
+
+        canvas = Image.new("RGBA", (canvas_w, canvas_h), (*_EXCLUSIVE_HEADER_BG, 255))
+        self._draw_exclusive_header(canvas, len(exclusives))
+
+        for i, card in enumerate(cards):
+            c, r = i % cols, i // cols
+            x = _MARGIN + c * (_CARD_W + _GAP)
+            y = _HEADER_H + _MARGIN + r * (_CARD_H + _GAP)
+            canvas.paste(card, (x, y), card)
+
+        try:
+            final = canvas.convert("RGB")
+            final.save(dest, "PNG", optimize=True)
+            logger.info("Exclusive showcase saved -> %s (%d items)", dest, len(exclusives))
+            return dest
+        except Exception as exc:
+            logger.error("Exclusive showcase save failed: %s", exc)
+            return None
+
     def render_all(
         self,
         cosmetics: dict[str, list[CosmeticItem]],
@@ -211,6 +279,77 @@ class FortniteGridRenderer:
         except Exception as exc:
             logger.error("Grid save failed: %s", exc)
             return None
+
+    # ── exclusive helpers ─────────────────────────────────────────────
+
+    @staticmethod
+    def _is_exclusive(item: CosmeticItem) -> bool:
+        title_lower = item.title.lower()
+        if any(kw in title_lower for kw in _EXCLUSIVE_KEYWORDS):
+            return True
+        return item.rarity in _EXCLUSIVE_RARITIES
+
+    @staticmethod
+    def _collect_exclusives(
+        cosmetics: dict[str, list[CosmeticItem]],
+    ) -> list[CosmeticItem]:
+        seen: set[str] = set()
+        result: list[CosmeticItem] = []
+        for items in cosmetics.values():
+            for item in items:
+                if item.id not in seen and FortniteGridRenderer._is_exclusive(item):
+                    seen.add(item.id)
+                    result.append(item)
+        return result
+
+    def _render_exclusive_card(
+        self, item: CosmeticItem, icon: Image.Image | None,
+    ) -> Image.Image:
+        """Card with gold gradient background for exclusive showcase."""
+        card = _vertical_gradient_custom(
+            _CARD_W, _CARD_H, _EXCLUSIVE_GRAD[0], _EXCLUSIVE_GRAD[1],
+        ).convert("RGBA")
+
+        if icon is not None:
+            thumb = self._prepare_icon(icon)
+            ix = (_CARD_W - thumb.width) // 2
+            iy = _CARD_H - thumb.height
+            card.paste(thumb, (ix, iy), thumb)
+
+        overlay = Image.new("RGBA", card.size, (0, 0, 0, 0))
+        overlay_draw = ImageDraw.Draw(overlay)
+        strip_y = _CARD_H - _LABEL_STRIP_H
+        overlay_draw.rectangle(
+            [(0, strip_y), (_CARD_W, _CARD_H)],
+            fill=(0, 0, 0, _LABEL_STRIP_ALPHA),
+        )
+        card = Image.alpha_composite(card, overlay)
+
+        self._draw_card_name(card, item.title)
+        return card
+
+    @staticmethod
+    def _draw_exclusive_header(canvas: Image.Image, count: int) -> None:
+        draw = ImageDraw.Draw(canvas)
+        title_font = _bold_font(28)
+        label_font = _bold_font(16)
+
+        x_start = _MARGIN + 8
+        draw.text(
+            (x_start, 10), str(count),
+            font=title_font, fill=_EXCLUSIVE_ACCENT,
+        )
+        draw.text(
+            (x_start, 42), "Exclusives",
+            font=label_font, fill=(220, 200, 140, 255),
+        )
+
+        sep_y = _HEADER_H - 1
+        draw.line(
+            [(0, sep_y), (canvas.width, sep_y)],
+            fill=(*_EXCLUSIVE_ACCENT, 80),
+            width=1,
+        )
 
     # ── card rendering ────────────────────────────────────────────────
 
@@ -437,6 +576,24 @@ def _vertical_gradient(
     """Create a vertical gradient from rarity top-color to bottom-color."""
     top, bot = _RARITY_PALETTE.get(rarity, _FALLBACK_GRAD)
     # Build a 1px-wide strip then stretch — fast and smooth
+    strip = Image.new("RGB", (1, 256))
+    px = strip.load()
+    for y in range(256):
+        t = y / 255.0
+        px[0, y] = (
+            int(top[0] + (bot[0] - top[0]) * t),
+            int(top[1] + (bot[1] - top[1]) * t),
+            int(top[2] + (bot[2] - top[2]) * t),
+        )
+    return strip.resize((w, h), Image.Resampling.BILINEAR)
+
+
+def _vertical_gradient_custom(
+    w: int, h: int,
+    top: tuple[int, int, int],
+    bot: tuple[int, int, int],
+) -> Image.Image:
+    """Create a vertical gradient from arbitrary top/bottom colours."""
     strip = Image.new("RGB", (1, 256))
     px = strip.load()
     for y in range(256):

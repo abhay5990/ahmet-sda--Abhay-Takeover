@@ -97,26 +97,39 @@ def _build_item_sections(
 
     Each section shows "Some {Label}:" to indicate a representative
     sample, matching the legacy listing format.
+
+    Budget is split fairly across non-empty categories so that a single
+    large category (e.g. outfits) cannot starve the others.
     """
+    # Determine which categories have items
+    active_categories = [
+        (cat, label) for cat, label in _CATEGORY_ORDER
+        if sections.get(cat)
+    ]
+    if not active_categories:
+        return ""
+
+    # Fair per-category budget: divide equally, leftover goes to later cats
+    per_cat_budget = budget // len(active_categories)
+
     result: list[str] = []
     remaining = budget
 
-    for category, label in _CATEGORY_ORDER:
-        all_items = sections.get(category, [])
-        if not all_items:
-            continue
+    for category, label in active_categories:
+        all_items = sections[category]
+        section_budget = min(per_cat_budget, remaining)
 
-        # Try fitting items one by one within char budget
+        # Try fitting items one by one within section budget
         fitted: list[str] = []
         for item in all_items:
             candidate = fitted + [item]
             section = _render_section(label, candidate)
-            if len(section) > remaining:
+            if len(section) > section_budget:
                 break
             fitted.append(item)
 
         if not fitted:
-            break  # no more budget for any section
+            continue  # skip if even one item doesn't fit
 
         section = _render_section(label, fitted)
         result.append(section)
