@@ -465,31 +465,31 @@ class BaseSyncService:
             stale_raw_qs.values_list('remote_id', flat=True),
         )
 
-        # Close listings whose RawPayload was not seen
-        closed_count = 0
+        # Mark stale listings as DELETED (not seen during backfill = gone from marketplace)
+        deleted_count = 0
         if stale_remote_ids:
-            closed_count = Listing.objects.filter(
+            deleted_count = Listing.objects.filter(
                 integration_account=account,
                 store_listing_id__in=stale_remote_ids,
             ).exclude(
                 status__in=[ListingStatus.CLOSED, ListingStatus.DELETED],
             ).update(
-                status=ListingStatus.CLOSED,
+                status=ListingStatus.DELETED,
                 removed_at=now,
             )
 
         # Hard-delete stale RawPayload rows
         raw_deleted_count, _ = stale_raw_qs.delete()
 
-        if closed_count or raw_deleted_count:
+        if deleted_count or raw_deleted_count:
             logger.info(
-                "Reconciliation: closed %d stale listings, "
+                "Reconciliation: marked %d stale listings as deleted, "
                 "deleted %d stale raw payloads for account=%s",
-                closed_count, raw_deleted_count, account.slug,
+                deleted_count, raw_deleted_count, account.slug,
             )
             run.meta = {
                 **run.meta,
-                'reconciled_closed': closed_count,
+                'reconciled_deleted': deleted_count,
                 'reconciled_raw_deleted': raw_deleted_count,
             }
             run.save(update_fields=['meta', 'updated_at'])

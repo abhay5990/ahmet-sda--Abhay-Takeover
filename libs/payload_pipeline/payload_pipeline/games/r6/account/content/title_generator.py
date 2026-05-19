@@ -138,7 +138,7 @@ class R6ResolvedTitleGenerator:
     # ------------------------------------------------------------------
 
     def _platform_string(self, account: R6ResolvedAccount) -> str:
-        labels = [_PLATFORM_LABELS.get(p, p.upper()) for p in account.available_platforms]
+        labels = [_PLATFORM_LABELS.get(p, p.upper()) for p in account.linkable_platforms]
         return f"[{'/'.join(labels)}]"
 
     def _rank_text(self, account: R6ResolvedAccount) -> str:

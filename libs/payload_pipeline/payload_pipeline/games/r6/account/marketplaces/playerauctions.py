@@ -50,8 +50,8 @@ class R6PlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
         return "Ubisoft Account"
 
     def _get_server(self, account: R6ResolvedAccount) -> list[str]:
-        return [account.available_platforms[0] if account.available_platforms else _FALLBACK_SERVER]
+        return [account.linkable_platforms[0] if account.linkable_platforms else _FALLBACK_SERVER]
 
     def _get_server_id(self, account: R6ResolvedAccount) -> list[str] | None:
-        server = account.available_platforms[0] if account.available_platforms else _FALLBACK_SERVER
+        server = account.linkable_platforms[0] if account.linkable_platforms else _FALLBACK_SERVER
         return [_SERVER_ID_MAP.get(server, _FALLBACK_SERVER_ID)]

@@ -20,7 +20,7 @@ GAMEBOOST_OFFER_STATUS_MAP = {
 def map_status(status_str: str) -> str:
     """Map Gameboost offer status string to ListingStatus."""
     return GAMEBOOST_OFFER_STATUS_MAP.get(
-        status_str.lower(), ListingStatus.CLOSED,
+        status_str.lower(), ListingStatus.DELETED,
     )
 
 

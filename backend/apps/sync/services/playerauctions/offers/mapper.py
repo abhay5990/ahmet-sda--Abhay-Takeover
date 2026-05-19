@@ -15,7 +15,7 @@ from core.enums import ProductCategory
 PA_OFFER_STATUS_MAP = {
     'active': ListingStatus.LISTED,
     'hidden': ListingStatus.PAUSED,
-    'expired': ListingStatus.CLOSED,
+    'expired': ListingStatus.PAUSED,
     'cancelled': ListingStatus.DELETED,
 }
 
@@ -23,8 +23,8 @@ PA_OFFER_STATUS_MAP = {
 def map_status(status_str: str) -> str:
     """Map PA systemStatus to ListingStatus."""
     if not status_str:
-        return ListingStatus.CLOSED
-    return PA_OFFER_STATUS_MAP.get(status_str.strip().lower(), ListingStatus.CLOSED)
+        return ListingStatus.DELETED
+    return PA_OFFER_STATUS_MAP.get(status_str.strip().lower(), ListingStatus.DELETED)
 
 
 # ---------------------------------------------------------------------------

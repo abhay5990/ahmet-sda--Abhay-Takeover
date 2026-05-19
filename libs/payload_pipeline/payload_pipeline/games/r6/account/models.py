@@ -102,18 +102,8 @@ class R6ResolvedAccount(ResolvedAccountBase):
         return self.level >= 50
 
     @property
-    def available_platforms(self) -> list[str]:
-        """Platforms the account is currently connected to."""
-        platforms = ["PC"]
-        if self.psn_connected:
-            platforms.append("PlayStation")
-        if self.xbox_connected:
-            platforms.append("Xbox")
-        return platforms
-
-    @property
     def linkable_platforms(self) -> list[str]:
-        """Platforms a buyer can still link (not yet connected)."""
+        """Platforms a buyer can use — PC always, plus unlinked consoles."""
         platforms = ["PC"]
         if not self.psn_connected:
             platforms.append("PlayStation")
@@ -168,8 +158,7 @@ class R6ResolvedAccount(ResolvedAccountBase):
     COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {
         **ResolvedAccountBase.COMPUTED_FIELDS,
         "ranked_ready": FieldMeta("Level 50+ for ranked play.", True, "computed"),
-        "available_platforms": FieldMeta("Connected platform list.", ["PC"], "computed"),
-        "linkable_platforms": FieldMeta("Platforms available to link.", ["PC", "PlayStation", "Xbox"], "computed"),
+        "linkable_platforms": FieldMeta("Platforms buyer can use — PC always, plus unlinked consoles.", ["PC", "PlayStation", "Xbox"], "computed"),
         "ownership_text": FieldMeta("Game ownership description.", "This account has the game, You don't have to buy it again.", "computed"),
         "platform_type_text": FieldMeta("Platform type label.", "Uplay Account | Has The Game", "computed"),
         # Inventory breakdown counts and items

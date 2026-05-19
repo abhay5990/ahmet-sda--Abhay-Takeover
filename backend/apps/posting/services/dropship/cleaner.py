@@ -377,8 +377,8 @@ def _delete_marketplace_offer(listing: Listing, *, proxy_pool=None) -> bool:
     """
     store = listing.integration_account
     if not store or not store.credential:
-        # Store gone — mark closed, nothing to delete remotely
-        listing.status = ListingStatus.CLOSED
+        # Store gone — mark deleted, nothing to delete remotely
+        listing.status = ListingStatus.DELETED
         listing.removed_at = timezone.now()
         listing.save(update_fields=['status', 'removed_at'])
         return True

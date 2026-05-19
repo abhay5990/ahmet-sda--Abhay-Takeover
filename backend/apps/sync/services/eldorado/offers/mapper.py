@@ -21,7 +21,7 @@ ELDORADO_OFFER_STATUS_MAP = {
 def map_status(offer_state: str) -> str:
     """Map Eldorado offerState to ListingStatus."""
     return ELDORADO_OFFER_STATUS_MAP.get(
-        offer_state.lower(), ListingStatus.CLOSED,
+        offer_state.lower(), ListingStatus.DELETED,
     )
 
 

@@ -60,7 +60,6 @@ def build_r6_context(
         "has_inventory_data": inv.has_data,
         # Computed properties
         "ranked_ready": account.ranked_ready,
-        "available_platforms": account.available_platforms,
         "linkable_platforms": account.linkable_platforms,
         "ownership_text": account.ownership_text,
         "platform_type_text": account.platform_type_text,
