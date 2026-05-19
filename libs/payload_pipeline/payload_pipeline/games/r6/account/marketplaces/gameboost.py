@@ -25,7 +25,7 @@ class R6GameBoostBuilder(BaseGameBoostBuilder):
         self, account: R6ResolvedAccount,
     ) -> dict[str, Any]:
         return {
-            "platform": self._get_primary_platform(account),
+            "platform": account.primary_linkable_platform,
             "linkable_platforms": account.linkable_platforms,
             "operators_count": account.operator_count,
             "current_level": account.level,
@@ -47,14 +47,6 @@ class R6GameBoostBuilder(BaseGameBoostBuilder):
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------
-
-    @staticmethod
-    def _get_primary_platform(account: R6ResolvedAccount) -> str:
-        if account.psn_connected:
-            return "PlayStation"
-        if account.xbox_connected:
-            return "Xbox"
-        return "PC"
 
     @staticmethod
     def _extract_tier(rank: str) -> str:

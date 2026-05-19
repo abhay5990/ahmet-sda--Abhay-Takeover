@@ -1,49 +1,46 @@
 """Fetch Eldorado account offer data for all Account games.
 
 For each Account game, fetches:
-  1. /api/library/{gameId}/Account           → service.json  (trade environments + attributes)
-  2. /api/library/{gameId}/Account/attributes/offers → attributes_offers.json
+  1. /api/library/{gameId}/Account           -> service.json  (trade environments + attributes)
+  2. /api/library/{gameId}/Account/attributes/offers -> attributes_offers.json
 
 Saves to: tmp/eldorado/account/{gameId}/
 
+Uses Django integration account (eldorado-store4gamers) for auth.
+Existing files are skipped unless --force is passed.
+
 Usage (from project root):
     python scripts/fetch_eldorado_account_data.py
-
-Note: Requires valid Eldorado session cookies. Update COOKIES dict below
-      with fresh values from browser DevTools before running.
+    python scripts/fetch_eldorado_account_data.py --account eldorado-store4gamers
+    python scripts/fetch_eldorado_account_data.py --force          # re-fetch all
+    python scripts/fetch_eldorado_account_data.py --game-id 32     # single game
 """
 
+import argparse
 import json
 import os
 import sys
 import time
 
-import requests
-
-# ── Config ──────────────────────────────────────────────────────────
+# ── Bootstrap Django ────────────────────────────────────────────────
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+BACKEND_DIR = os.path.join(PROJECT_ROOT, 'backend')
+
+sys.path.insert(0, BACKEND_DIR)
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.dev')
+
+import django  # noqa: E402
+django.setup()
+
+from apps.integrations.models import IntegrationAccount  # noqa: E402
+from apps.integrations.providers.registry import get_or_build_client  # noqa: E402
+
+# ── Config ──────────────────────────────────────────────────────────
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, 'tmp', 'eldorado', 'account')
 SERVICES_PATH = os.path.join(PROJECT_ROOT, '_data_samples', 'eldorado', 'services.json')
 BASE_URL = 'https://www.eldorado.gg/api/library'
 DELAY = 0.3  # seconds between requests
-
-# ── Cookies (update before running) ─────────────────────────────────
-# Minimum required cookies — copy fresh values from browser DevTools
-COOKIES = {
-    '__Host-EldoradoIdToken': 'eyJraWQiOiJETTJSdklPTldaZThEd01ZNDNlbHZDTE9mbmZVNFozcWljOFQ4bmhTbmFBPSIsImFsZyI6IlJTMjU2In0.eyJhdF9oYXNoIjoicVp6Y2JHUHROd0hzUmtVcTFmN2FDdyIsInN1YiI6ImRhYTZhNmJhLWMzZGMtNDQ0OC05YTQ0LTU3ODE0NmYxYTBlMSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0yLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMl9NbG56Q0ZnSGsiLCJjb2duaXRvOnVzZXJuYW1lIjoiZGFhNmE2YmEtYzNkYy00NDQ4LTlhNDQtNTc4MTQ2ZjFhMGUxIiwiY3VzdG9tOnVzZXJpZF9vdmVycmlkZSI6ImF1dGgwfDYwYzU2YWQ4MTU1ODlkMDA2OTM0OGI0YiIsInVzZXJJZCI6ImF1dGgwfDYwYzU2YWQ4MTU1ODlkMDA2OTM0OGI0YiIsIm9yaWdpbl9qdGkiOiJkNGVmYzk0Yi04OTBkLTQxNTAtYjFmYS03ZWJkNTRkZGNlNzgiLCJhdWQiOiIzYTRoYWw2amdsOGdmNWhubmpvMDZrMDVzNSIsImlkZW50aXRpZXMiOlt7InVzZXJJZCI6IjEwNTgwMjgzMTU2NjI1MzMxNTAxOSIsInByb3ZpZGVyTmFtZSI6Ikdvb2dsZSIsInByb3ZpZGVyVHlwZSI6Ikdvb2dsZSIsImlzc3VlciI6bnVsbCwicHJpbWFyeSI6ImZhbHNlIiwiZGF0ZUNyZWF0ZWQiOiIxNjQxMDc3ODYzODM5In1dLCJldmVudF9pZCI6ImFiOWE4ZmQ2LTQ5YzMtNGY3Zi1hYzAxLTU2YTljMmE4MGI5YiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzc0MTgyNzI4LCJleHAiOjE3NzQ5NTY1NDEsImlhdCI6MTc3NDk1NDc0MSwianRpIjoiOTE1YzdlOWItOTFlZC00YTk3LWE1MmEtNTc0N2Y1NzVlYTRiIiwiZW1haWwiOiJzZW5lcmFkMTVAZ21haWwuY29tIn0.e_W8f0MaWPqP6GCuKnZTzbfFXDKxjdn59DtwnC1yCGkxAcn7Qd81UT_Zx-UIcbQkPKuGCrkOI_1WCFxKld80h-OuHDb-goeIMh-XI_5i-eAAvGo4fUXt8qXGSf3TtYQjGppedbFednfKtRBKnLeRBIUKUJN4en0FuasTedg5NWplLwiPt2IiIdHhEFThVO9QWGlWRBY86Ok5WcU2GxxW8reQm4Xo0PD4Ds4H4dA0ag17usJc4YJ3DwoRlgCp4JfKV9GAilU6xvOsQgpwCZCNxJE3kY86F8wczJP0RKQCR0IZxXgdUPCwPDpYjCSI057C0JfBTGyv4SeUDAI95RtKjg',   # ← paste from browser
-    '__Host-XSRF-TOKEN': 'ca7df5344df7e8f4100b61dfa971085cab26a9dd770f2b25ddfcc391de7231ec',        # ← paste from browser
-    'cf_clearance': 'R6d8P1ng2aywZzgtKC_gjmUi.lzC_UX4vM4Cj_nSRWw-1774182676-1.2.1.1-SRw2tsK_jCbO0ylxNvZ6qAySn4p_IKICZyFIRUTFiW9oaAKETpg23Y0maHe96UzEU__G4LjmwthGKf49kpqirjKFkj2yOQTgq8uJJCd_rXHHXRvGODE8Zg8DiCu7s90eyygE0Mgvftl1SNg95BmNRcVsz8Y0kzUIfYIwr6t7gp7x_yNn_k2mmEXALzEjYjxNlmVxIs7rlL5lvSoRMl.s0avZtgkRogiwlHkbXBToHNQ',             # ← paste from browser
-    'eldoradogg_locale': 'en-US',
-}
-
-HEADERS = {
-    'accept': 'application/json, text/plain, */*',
-    'accept-language': 'en-US',
-    'cache-control': 'no-cache',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
-    'x-xsrf-token': '',  # ← will be set from COOKIES
-}
 
 
 def load_account_games():
@@ -53,38 +50,107 @@ def load_account_games():
     return [g for g in data if g.get('category') == 'Account']
 
 
-def fetch_and_save(url, out_path, params=None):
-    """Fetch URL and save JSON response. Returns True on success."""
-    if os.path.exists(out_path):
-        return 'skip'
+def find_account(slug=None):
+    """Find an active Eldorado integration account."""
+    if slug:
+        try:
+            return IntegrationAccount.objects.select_related('credential').get(
+                slug=slug, is_active=True,
+            )
+        except IntegrationAccount.DoesNotExist:
+            print(f"ERROR: Account '{slug}' not found or inactive")
+            return None
+
+    accounts = IntegrationAccount.objects.select_related('credential').filter(
+        provider='eldorado', is_active=True,
+    )
+    if not accounts.exists():
+        print("ERROR: No active Eldorado accounts found in DB")
+        return None
+
+    account = accounts.first()
+    print(f"Using account: {account.slug}")
+    return account
+
+
+def fetch_url(facade, url, params=None):
+    """Fetch a URL using the facade's transport and auth headers.
+
+    Returns (json_data, status_code) or (None, error_string).
+    """
+    transport = facade._exec._transport
+    auth_headers = facade._exec.get_auth_headers()
+
+    headers = {
+        **auth_headers,
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'en-US',
+    }
+
     try:
-        resp = requests.get(url, params=params, cookies=COOKIES, headers=HEADERS, timeout=15)
-        if resp.status_code == 200:
-            data = resp.json()
-            with open(out_path, 'w', encoding='utf-8') as f:
-                json.dump(data, f, indent=2, ensure_ascii=False)
-            return 'ok'
-        else:
-            return f'http_{resp.status_code}'
+        from apis_sdk.core.enums import HttpMethod
+        response = transport.request(
+            HttpMethod.GET,
+            url,
+            headers=headers,
+            params=params,
+            timeout=15,
+        )
+        if response.is_success:
+            return response.json(), response.status_code
+        return None, f'http_{response.status_code}'
     except Exception as e:
-        return f'error: {e}'
+        return None, f'error: {e}'
+
+
+def fetch_and_save(facade, url, out_path, *, force=False, params=None):
+    """Fetch URL via SDK transport and save JSON response."""
+    if not force and os.path.exists(out_path):
+        return 'skip'
+
+    data, status = fetch_url(facade, url, params=params)
+    if data is not None:
+        with open(out_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        return 'ok'
+    return status
 
 
 def main():
-    # Set XSRF header from cookie
-    HEADERS['x-xsrf-token'] = COOKIES.get('__Host-XSRF-TOKEN', '')
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--account', type=str, default=None,
+                        help='Account slug (default: auto-detect first active eldorado account)')
+    parser.add_argument('--force', action='store_true',
+                        help='Re-fetch even if files already exist')
+    parser.add_argument('--game-id', type=str, default=None,
+                        help='Fetch single game ID only (e.g. "32" for Valorant)')
+    args = parser.parse_args()
 
-    # Validate cookies
-    if not COOKIES.get('__Host-EldoradoIdToken'):
-        print('ERROR: Cookies are empty! Update COOKIES dict with fresh browser values.')
-        print('Required: __Host-EldoradoIdToken, __Host-XSRF-TOKEN, cf_clearance')
+    # ── 1. Build SDK client ────────────────────────────────────────
+    account = find_account(args.account)
+    if not account:
         sys.exit(1)
+    if not hasattr(account, 'credential') or not account.credential.is_active:
+        sys.exit(f'ERROR: {account.slug} has no active credentials')
 
+    facade = get_or_build_client('eldorado', account.credential)
+    print(f"SDK client ready ({account.slug})")
+
+    # ── 2. Load game list ──────────────────────────────────────────
     games = load_account_games()
     print(f'Found {len(games)} Account games')
 
+    if args.game_id:
+        games = [g for g in games if str(g['gameId']) == args.game_id]
+        if not games:
+            print(f'ERROR: Game ID {args.game_id} not found in services.json')
+            sys.exit(1)
+        print(f'Filtering to game ID: {args.game_id}')
+
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+    # ── 3. Fetch ───────────────────────────────────────────────────
     stats = {'ok': 0, 'skip': 0, 'fail': 0}
     failures = []
 
@@ -94,21 +160,23 @@ def main():
         game_dir = os.path.join(OUTPUT_DIR, game_id)
         os.makedirs(game_dir, exist_ok=True)
 
-        # Also save basic game info from library
+        # Save basic game info
         info_path = os.path.join(game_dir, 'info.json')
-        if not os.path.exists(info_path):
+        if not os.path.exists(info_path) or args.force:
             with open(info_path, 'w', encoding='utf-8') as f:
                 json.dump(game, f, indent=2, ensure_ascii=False)
 
         # 1. Service details (trade environments + attributes)
         svc_path = os.path.join(game_dir, 'service.json')
         svc_url = f'{BASE_URL}/{game_id}/Account'
-        r1 = fetch_and_save(svc_url, svc_path, params={'locale': 'en-US'})
+        r1 = fetch_and_save(facade, svc_url, svc_path,
+                            force=args.force, params={'locale': 'en-US'})
 
         # 2. Offer attributes
         attr_path = os.path.join(game_dir, 'attributes_offers.json')
         attr_url = f'{BASE_URL}/{game_id}/Account/attributes/offers'
-        r2 = fetch_and_save(attr_url, attr_path, params={'locale': 'en-US'})
+        r2 = fetch_and_save(facade, attr_url, attr_path,
+                            force=args.force, params={'locale': 'en-US'})
 
         # Stats
         label = f'[{i:>3}/{len(games)}] {game_id:>4} {game_name}'
@@ -116,11 +184,11 @@ def main():
             stats['skip'] += 1
         elif r1 == 'ok' or r2 == 'ok':
             stats['ok'] += 1
-            print(f'  {label} — service:{r1} attr:{r2}')
+            print(f'  {label} -- service:{r1} attr:{r2}')
         else:
             stats['fail'] += 1
             failures.append((game_id, game_name, r1, r2))
-            print(f'  {label} — FAIL service:{r1} attr:{r2}')
+            print(f'  {label} -- FAIL service:{r1} attr:{r2}')
 
         # Rate limit
         if r1 != 'skip' or r2 != 'skip':

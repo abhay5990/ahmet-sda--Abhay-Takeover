@@ -112,6 +112,15 @@ class R6ResolvedAccount(ResolvedAccountBase):
         return platforms
 
     @property
+    def primary_linkable_platform(self) -> str:
+        """Best single platform for marketplace listing — PlayStation > Xbox > PC."""
+        if not self.psn_connected:
+            return "PlayStation"
+        if not self.xbox_connected:
+            return "Xbox"
+        return "PC"
+
+    @property
     def ownership_text(self) -> str:
         if self.ownership_state == "external" or self.ownership_state == "steam":
             return (
@@ -159,6 +168,7 @@ class R6ResolvedAccount(ResolvedAccountBase):
         **ResolvedAccountBase.COMPUTED_FIELDS,
         "ranked_ready": FieldMeta("Level 50+ for ranked play.", True, "computed"),
         "linkable_platforms": FieldMeta("Platforms buyer can use — PC always, plus unlinked consoles.", ["PC", "PlayStation", "Xbox"], "computed"),
+        "primary_linkable_platform": FieldMeta("Best single platform for listing — PSN > Xbox > PC.", "PlayStation", "computed"),
         "ownership_text": FieldMeta("Game ownership description.", "This account has the game, You don't have to buy it again.", "computed"),
         "platform_type_text": FieldMeta("Platform type label.", "Uplay Account | Has The Game", "computed"),
         # Inventory breakdown counts and items

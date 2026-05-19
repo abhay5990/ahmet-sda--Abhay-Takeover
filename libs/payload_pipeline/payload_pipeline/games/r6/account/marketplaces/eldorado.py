@@ -46,12 +46,14 @@ class R6EldoradoBuilder(BaseEldoradoBuilder):
             ref_key=account.ref_key,
         )
 
+    _TRADE_ENV_MAP: dict[str, str] = {
+        "PlayStation": "1",
+        "Xbox": "2",
+        "PC": "0",
+    }
+
     def _resolve_trade_environment_id(self, account: R6ResolvedAccount) -> str:
-        if account.psn_connected:
-            return "1"
-        if account.xbox_connected:
-            return "2"
-        return "0"
+        return self._TRADE_ENV_MAP.get(account.primary_linkable_platform, "0")
 
     def _resolve_rank(self, account: R6ResolvedAccount) -> str:
         rank = account.current_rank.strip().lower()
