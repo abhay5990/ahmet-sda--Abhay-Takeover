@@ -3,7 +3,7 @@
 -e libs/apis_sdk
 
 # Core Django
-Django==5.0.6
+Django==5.2.14
 python-decouple==3.8
 django-environ==0.11.2
 
