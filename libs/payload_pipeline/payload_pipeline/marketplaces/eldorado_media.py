@@ -56,34 +56,25 @@ def upload_images_to_eldorado(
                     index, len(image_paths), attempt, max_retries, image_name,
                 )
 
-                result = uploader.upload_image(upload_path)
-
-                if result is not None:
-                    logger.info(
-                        "[%s/%s] Upload successful: received %s paths for %s",
-                        index, len(image_paths), len(result), image_name,
-                    )
-                    formatted_paths.extend(result)
-                    success = True
-                    break
-
-                last_error = "upload returned None"
-                if attempt < max_retries:
-                    logger.warning(
-                        "[%s/%s] Upload failed (attempt %s/%s). Retrying.",
-                        index, len(image_paths), attempt, max_retries,
-                    )
+                paths = uploader.upload_image(upload_path)
+                logger.info(
+                    "[%s/%s] Upload successful: received %s paths for %s",
+                    index, len(image_paths), len(paths), image_name,
+                )
+                formatted_paths.extend(paths)
+                success = True
+                break
 
             except Exception as exc:
                 last_error = str(exc)
                 if attempt < max_retries:
                     logger.warning(
-                        "[%s/%s] Exception during upload (attempt %s/%s): %s. Retrying.",
+                        "[%s/%s] Upload failed (attempt %s/%s): %s. Retrying.",
                         index, len(image_paths), attempt, max_retries, exc,
                     )
                 else:
                     logger.error(
-                        "[%s/%s] Exception after %s attempts: %s",
+                        "[%s/%s] Upload failed after %s attempts: %s",
                         index, len(image_paths), max_retries, exc,
                     )
 

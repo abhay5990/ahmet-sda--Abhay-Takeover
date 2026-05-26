@@ -401,11 +401,11 @@ class MarketplaceImageUploader(Protocol):
     its vendor-specific client in an adapter that satisfies this protocol.
     """
 
-    def upload_image(self, file_path: str) -> list[str] | None:
+    def upload_image(self, file_path: str) -> list[str]:
         """Upload *file_path* and return a list of formatted image URLs.
 
         Typically returns 3 URLs per image (small, large, original).
-        Returns ``None`` on failure.
+        Raises ``RuntimeError`` on failure so the caller gets the real error reason.
         """
         ...
 

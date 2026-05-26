@@ -25,16 +25,17 @@ class EldoradoMarketplaceUploader:
         self._facade = facade
         self._proxy_group = proxy_group
 
-    def upload_image(self, file_path: str) -> list[str] | None:
-        """Upload *file_path* to Eldorado, return paths or None on failure."""
+    def upload_image(self, file_path: str) -> list[str]:
+        """Upload *file_path* to Eldorado, return paths or raise on failure."""
         result = self._facade.upload_image(
             file_path, proxy_group=self._proxy_group,
         )
-        if not result.ok or not result.data:
-            logger.warning(
-                "Eldorado image upload failed for %s: %s",
-                file_path,
-                result.error.message if result.error else 'no data',
+        if not result.ok:
+            error_msg = result.error.message if result.error else 'unknown error'
+            category = result.error.category if result.error else 'unknown'
+            raise RuntimeError(
+                f"Eldorado upload API error [{category}]: {error_msg}"
             )
-            return None
+        if not result.data:
+            raise RuntimeError("Eldorado upload succeeded but returned empty path list")
         return result.data

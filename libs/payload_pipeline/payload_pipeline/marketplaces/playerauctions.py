@@ -69,6 +69,55 @@ _EMOJI_RE = re.compile(
 
 _EMOJI_REPLACEMENT = "*"
 
+# Words banned by PlayerAuctions — any pipe/comma segment containing these
+# (case-insensitive) is removed entirely.
+_BANNED_WORDS = {"hack"}
+
+_SEGMENT_SEP_RE = re.compile(r"\s*\|\s*|\s*,\s*")
+
+
+def _strip_banned_segments(text: str) -> str:
+    """Remove pipe- or comma-separated segments that contain a banned word.
+
+    Processes each line independently so section headers (e.g. "Some Pickaxes:")
+    are preserved even when an item on the same line is removed.
+    """
+    if not text:
+        return text
+
+    out_lines: list[str] = []
+    for line in text.split("\n"):
+        out_lines.append(_strip_banned_from_line(line))
+    return "\n".join(out_lines)
+
+
+def _strip_banned_from_line(line: str) -> str:
+    """Strip banned segments from a single line."""
+    parts: list[str] = []
+    last = 0
+    for m in _SEGMENT_SEP_RE.finditer(line):
+        parts.append(line[last:m.start()])
+        last = m.end()
+    parts.append(line[last:])
+
+    # Detect dominant separator from original line
+    pipe_count = line.count("|")
+    comma_count = line.count(",")
+    sep = " | " if pipe_count >= comma_count else ", "
+
+    cleaned = [
+        p for p in parts
+        if not any(w in p.lower().split() for w in _BANNED_WORDS)
+    ]
+
+    if len(cleaned) == len(parts):
+        return line
+
+    result = sep.join(cleaned)
+    result = re.sub(r"^[\s|,]+|[\s|,]+$", "", result)
+    result = re.sub(r"  +", " ", result)
+    return result
+
 
 def _sanitize_text(text: str) -> str:
     """Sanitize text for PlayerAuctions: Latin-only, no emoji.
@@ -278,8 +327,8 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
             "price": round(max(price, 0.01), 2),
             "freeInsurance": 7,
             "offerDuration": 30,
-            "title": _sanitize_text(_strip_url_schemes(content.title)),
-            "offerDesc": _sanitize_text(_strip_url_schemes(content.description)).replace("\n", "<br>"),
+            "title": _strip_banned_segments(_sanitize_text(_strip_url_schemes(content.title))),
+            "offerDesc": _strip_banned_segments(_sanitize_text(_strip_url_schemes(content.description))).replace("\n", "<br>"),
             "screenShot": "",
             "agreeCheck": True,
             "isAuto": is_stock,
@@ -323,10 +372,10 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
         servers = self._get_server(subject, ctx)
         server_name = servers[0] if servers else ""
 
-        title = _sanitize_text(_strip_url_schemes(content.title))
-        description = _sanitize_text(
+        title = _strip_banned_segments(_sanitize_text(_strip_url_schemes(content.title)))
+        description = _strip_banned_segments(_sanitize_text(
             _strip_url_schemes(content.description),
-        ).replace("\n", "<br>")
+        )).replace("\n", "<br>")
 
         delivery_instructions = _sanitize_text(
             self._format_delivery(subject) if is_stock

@@ -21,6 +21,24 @@ _ALBUM_RE = re.compile(r"imgur\.com/(?:a|gallery)/([A-Za-z0-9]+)")
 _MAX_RETRIES = 3
 _RETRY_BACKOFF = 2.0  # seconds between 429 retries
 _DOWNLOAD_TIMEOUT = 30
+_INTER_REQUEST_DELAY = 0.3  # seconds between consecutive image downloads
+
+_CDN_HEADERS: dict[str, str] = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/143.0.0.0 Safari/537.36"
+    ),
+    "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+    "Accept-Language": "en,tr-TR;q=0.9,tr;q=0.8,en-US;q=0.7",
+    "Referer": "https://imgur.com/",
+    "sec-ch-ua": '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"Windows"',
+    "sec-fetch-dest": "image",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-site": "cross-site",
+}
 
 
 def _extract_hash(url: str) -> str | None:
@@ -75,6 +93,9 @@ class ImgurAlbumDownloader:
             ext = item.get("ext", "png")
             dest = out / f"imgur_{idx:02d}.{ext}"
 
+            if saved:
+                time.sleep(_INTER_REQUEST_DELAY)
+
             data = self._download_with_retry(url)
             if data is None:
                 continue
@@ -89,7 +110,12 @@ class ImgurAlbumDownloader:
         """Download a single image URL with retry on 429."""
         for attempt in range(_MAX_RETRIES):
             try:
-                resp = requests.get(url, timeout=_DOWNLOAD_TIMEOUT, proxies=self._proxies)
+                resp = requests.get(
+                    url,
+                    headers=_CDN_HEADERS,
+                    timeout=_DOWNLOAD_TIMEOUT,
+                    proxies=self._proxies,
+                )
                 if resp.status_code == 429:
                     time.sleep(_RETRY_BACKOFF * (attempt + 1))
                     continue
