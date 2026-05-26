@@ -19,7 +19,7 @@ class RobloxGameBoostBuilder(BaseGameBoostBuilder):
     def _platform_name(self) -> str:
         return "Roblox Account"
 
-    def _build_account_data(self, account: RobloxResolvedAccount) -> dict[str, Any]:
+    def _build_account_data(self, account: RobloxResolvedAccount, ctx=None) -> dict[str, Any]:
         return {
             "robux_count": account.robux,
         }

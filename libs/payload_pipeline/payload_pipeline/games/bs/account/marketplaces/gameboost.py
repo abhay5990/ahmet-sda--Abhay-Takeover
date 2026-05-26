@@ -19,7 +19,7 @@ class BSGameBoostBuilder(BaseGameBoostBuilder):
     def _platform_name(self) -> str:
         return "Supercell ID"
 
-    def _build_account_data(self, account: BSResolvedAccount) -> dict[str, Any]:
+    def _build_account_data(self, account: BSResolvedAccount, ctx=None) -> dict[str, Any]:
         return {
             "max_level_brawlers_count": account.max_level_brawlers_count,
             "trophies_count": account.trophies,

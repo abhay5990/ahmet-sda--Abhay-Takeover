@@ -25,8 +25,6 @@ class EldoradoConfig:
 
     image_uploader: MarketplaceImageUploader | None = None
     image_retries: int = 2
-    subplatform_status: dict[str, dict[str, Any]] | None = None
-    current_subplatform: str = ""
 
 
 class EldoradoImageUploader:

@@ -17,10 +17,12 @@ from django.db import transaction
 from django.utils import timezone
 
 from apps.integrations.providers import registry
-from apps.integrations.proxy_pool import build_proxy_pool
+from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
 from apps.listings.enums import ListingStatus
 from apps.listings.models import Listing, ListingOwnedProduct
 from apps.posting.models import OfferPool
+from core.marketplace.normalizers import normalize_offer_response
+from core.marketplace.payload_extractor import extract_create_payload
 
 logger = logging.getLogger(__name__)
 
@@ -49,12 +51,25 @@ def relist_listing(listing: Listing) -> RelistResult:
 
     marketplace = store.provider
 
+    proxy_pool = build_proxy_pool()
+    proxy_group = get_group_name(store)
+    provider = registry.get_provider(marketplace)
+    client = registry.get_or_build_client(
+        marketplace,
+        store.credential,
+        proxy_pool=proxy_pool,
+        proxy_group=proxy_group,
+    )
+
     # 1. Build payload --------------------------------------------------------
-    payload = _extract_payload(listing, marketplace)
+    payload = _extract_payload(
+        listing,
+        marketplace,
+        client=client,
+        proxy_group=proxy_group,
+    )
     if payload is None:
         return RelistResult(ok=False, error='Cannot extract payload from raw_data')
-
-    proxy_pool = build_proxy_pool()
 
     # Eldorado requires credential data — fetch from API if missing in raw_data
     if marketplace == 'eldorado':
@@ -80,12 +95,10 @@ def relist_listing(listing: Listing) -> RelistResult:
             return RelistResult(ok=False, error='Failed to delete old marketplace offer')
 
     # 3. Create new offer -----------------------------------------------------
-    provider = registry.get_provider(marketplace)
     try:
-        client = registry.get_or_build_client(
-            marketplace, store.credential, proxy_pool=proxy_pool,
-        )
         product_data = {'payload': payload}
+        if proxy_group:
+            product_data['proxy_group'] = proxy_group
         api_result = provider.create_listing(client, product_data)
     except Exception as e:
         logger.error('Relist create failed for listing #%s: %s', listing.id, e)
@@ -117,7 +130,15 @@ def relist_listing(listing: Listing) -> RelistResult:
         )
 
     # 4. Update DB atomically -------------------------------------------------
-    new_listing = _replace_in_db(listing, new_offer_id, api_result, payload)
+    response_data = api_result.data if hasattr(api_result, 'data') else api_result
+    new_listing = _replace_in_db(
+        listing,
+        new_offer_id,
+        response_data,
+        payload,
+        client=client,
+        proxy_group=proxy_group,
+    )
 
     logger.info(
         'Relisted listing #%s → #%s (offer_id=%s, provider=%s)',
@@ -131,37 +152,26 @@ def relist_listing(listing: Listing) -> RelistResult:
 # Payload extraction
 # ---------------------------------------------------------------------------
 
-def _extract_payload(listing: Listing, marketplace: str) -> dict | None:
+def _extract_payload(
+    listing: Listing,
+    marketplace: str,
+    *,
+    client=None,
+    proxy_group=None,
+) -> dict | None:
     """Extract a create-ready payload from listing.raw_data.
 
-    Handles two raw_data formats:
-    - Dropship/pool: ``{"payload": {...}, "response": {...}}``
-    - Sync source:   flat API response dict (Eldorado format)
+    Handles legacy envelopes and sync-style flat marketplace payloads.
     """
-    raw = listing.raw_data
-    if not raw:
-        return None
-
-    # Format 1: dropship/pool — payload key exists and is a dict
-    if 'payload' in raw and isinstance(raw['payload'], dict):
-        return raw['payload']
-
-    # Format 2: sync source — flat API response, needs provider-specific mapper
-    try:
-        if marketplace == 'eldorado' and ('id' in raw or 'offerTitle' in raw):
-            from apis_sdk.clients.marketplaces.eldorado.mapper import EldoradoMapper
-            return EldoradoMapper.build_from_raw(raw)
-
-        if marketplace == 'playerauctions' and ('details' in raw or 'offerId' in raw):
-            from apis_sdk.clients.marketplaces.playerauctions.mapper import PlayerAuctionsMapper
-            return PlayerAuctionsMapper.build_from_raw(raw)
-
-        if marketplace == 'gameboost' and ('game' in raw or 'slug' in raw):
-            from apis_sdk.clients.marketplaces.gameboost.mapper import GameBoostMapper
-            return GameBoostMapper.build_from_raw(raw)
-    except Exception as e:
-        logger.warning('build_from_raw failed for listing #%s: %s', listing.id, e)
-        return None
+    raw = listing.raw_data or {}
+    payload = extract_create_payload(
+        raw,
+        marketplace,
+        client=client,
+        proxy_group=proxy_group,
+    )
+    if payload is not None:
+        return payload
 
     logger.warning(
         'Cannot extract relist payload for listing #%s (provider=%s, '
@@ -268,7 +278,7 @@ def _extract_offer_id(api_result: Any, marketplace: str) -> str | None:
 
     # Direct dict response (PA)
     if isinstance(api_result, dict):
-        return str(api_result.get('id') or api_result.get('offerId') or '')
+        return str(api_result.get('id') or api_result.get('offerId') or api_result.get('offer_id') or '')
 
     # Object with .id
     if hasattr(api_result, 'id'):
@@ -288,22 +298,14 @@ def _mark_deleted(listing: Listing) -> None:
     listing.save(update_fields=['status', 'removed_at', 'updated_at'])
 
 
-def _serialize_response(data: Any) -> Any:
-    """Best-effort serialisation of API response for raw_data storage."""
-    if data is None:
-        return None
-    if hasattr(data, 'model_dump'):
-        return data.model_dump()
-    if hasattr(data, '__dict__'):
-        return {k: v for k, v in data.__dict__.items() if not k.startswith('_')}
-    return data
-
-
 def _replace_in_db(
     old_listing: Listing,
     new_offer_id: str,
-    api_result: Any,
+    response_data: Any,
     payload: dict,
+    *,
+    client=None,
+    proxy_group=None,
 ) -> Listing:
     """Atomically replace old listing with a new one, transfer links and pools."""
     with transaction.atomic():
@@ -320,16 +322,14 @@ def _replace_in_db(
         old_listing.removed_at = timezone.now()
         old_listing.save(update_fields=['status', 'removed_at', 'updated_at'])
 
-        # Build raw_data for new listing
-        response_data = None
-        if hasattr(api_result, 'data'):
-            response_data = _serialize_response(api_result.data)
-        else:
-            response_data = _serialize_response(api_result)
-
-        new_raw_data: dict = {'payload': payload}
-        if response_data is not None:
-            new_raw_data['response'] = response_data
+        marketplace = old_listing.integration_account.provider
+        new_raw_data = normalize_offer_response(
+            marketplace,
+            response_data,
+            payload=payload,
+            client=client,
+            proxy_group=proxy_group,
+        )
 
         # Create new listing
         new_listing = Listing.objects.create(
@@ -337,7 +337,7 @@ def _replace_in_db(
             game=old_listing.game,
             store_listing_id=new_offer_id,
             product_category=old_listing.product_category,
-            sub_platform=old_listing.sub_platform,
+            variant=old_listing.variant,
             status=ListingStatus.LISTED,
             title=old_listing.title,
             price=old_listing.price,

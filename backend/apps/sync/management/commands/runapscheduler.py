@@ -39,6 +39,9 @@ _review_monitor_first_run = True
 @apscheduler_util.close_old_connections
 def run_review_monitor_job():
     """APScheduler wrapper — checks all Eldorado accounts for new negative reviews."""
+    from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled
+    if not is_sync_feature_enabled(SyncFlag.REVIEW_MONITOR):
+        return
     global _review_monitor_first_run
     from apps.sync.services.eldorado.reviews.monitor import EldoradoReviewMonitor
     EldoradoReviewMonitor().check_all_accounts(first_run=_review_monitor_first_run)
@@ -48,6 +51,9 @@ def run_review_monitor_job():
 @apscheduler_util.close_old_connections
 def run_order_status_refresh_job():
     """APScheduler wrapper — refreshes non-final order statuses (Eldorado/Gameboost)."""
+    from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled
+    if not is_sync_feature_enabled(SyncFlag.ORDER_STATUS_REFRESH):
+        return
     from apps.sync.services.order_status_refresh import run_order_status_refresh
     run_order_status_refresh()
 
@@ -55,6 +61,9 @@ def run_order_status_refresh_job():
 @apscheduler_util.close_old_connections
 def run_pool_sweep_job():
     """APScheduler wrapper — checks all active offer pools and replenishes if needed."""
+    from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled
+    if not is_sync_feature_enabled(SyncFlag.POOL_SWEEP):
+        return
     from apps.posting.services.pool.checker import sweep_all_pools
     sweep_all_pools()
 
@@ -62,6 +71,9 @@ def run_pool_sweep_job():
 @apscheduler_util.close_old_connections
 def run_pause_expiring_listings_job():
     """APScheduler wrapper — pauses listings approaching marketplace expiry."""
+    from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled
+    if not is_sync_feature_enabled(SyncFlag.PAUSE_EXPIRING):
+        return
     from django.core.management import call_command
     call_command('pause_expiring_listings', '--execute')
 

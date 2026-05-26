@@ -330,3 +330,39 @@ class SyncLog(models.Model):
 
     def __str__(self):
         return f"[{self.level}] {self.task_name}: {self.message[:80]}"
+
+
+class SyncFeatureFlag(models.Model):
+    """Runtime feature toggles for sync chain steps.
+
+    Each row represents a toggleable sync feature (e.g. cross-platform
+    reconciliation, review monitor, order status refresh).  Checked at
+    runtime via ``is_sync_feature_enabled(key)`` — no restart needed.
+    """
+
+    key = models.CharField(
+        max_length=100,
+        unique=True,
+        help_text='Unique identifier (e.g. sync.reconcile, sync.review_monitor)',
+    )
+    is_enabled = models.BooleanField(
+        default=True,
+        help_text='Uncheck to disable this sync feature at runtime',
+    )
+    description = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text='Human-readable description of what this flag controls',
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'sync_feature_flags'
+        ordering = ['key']
+        verbose_name = 'Sync Feature Flag'
+        verbose_name_plural = 'Sync Feature Flags'
+
+    def __str__(self):
+        state = 'ON' if self.is_enabled else 'OFF'
+        return f'{self.key} [{state}]'

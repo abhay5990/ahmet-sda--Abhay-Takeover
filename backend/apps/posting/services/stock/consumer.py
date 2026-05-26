@@ -30,9 +30,13 @@ from apps.posting.models import (
     PostingLogLevel,
 )
 from apps.posting.services.shared import persist_success
+from apps.posting.services.shared.max_offer_error import is_max_offer_error
 from apps.posting.services.shared.utils import extract_listing_id
+from apps.posting.services.variant_context import build_variant_context
+from apps.posting.services.variant_routing import PLATFORM_PRIORITY, VariantRouter
 from apps.posting.services.stock.pa_bulk_uploader import PABulkUploader, PABatchResult
 from apps.posting.services.stock.payload_builder import build_item_payload
+from core.marketplace.normalizers import normalize_offer_response
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +85,11 @@ class StockConsumer:
         try:
             close_old_connections()
 
+            # Lazily initialised once from the first item
+            variant_ctx: dict | None = None
+            router: VariantRouter | None = None
+            _routing_init = False
+
             while True:
                 entry = queue.get()
                 if entry is self._sentinel:
@@ -104,7 +113,19 @@ class StockConsumer:
                     ])
                     continue
 
-                self._process_item(item, prepared_data, job)
+                # Build variant routing once per store thread
+                if not _routing_init:
+                    variant_ctx = build_variant_context(
+                        store=item.store, game=job.game,
+                        marketplace=item.marketplace,
+                    )
+                    router = VariantRouter(variant_ctx, mode='stock')
+                    _routing_init = True
+
+                self._process_item(
+                    item, prepared_data, job,
+                    variant_ctx=variant_ctx, router=router,
+                )
 
                 # Throttle between items — wake immediately on cancel
                 self._cancel_event.wait(timeout=10)
@@ -117,13 +138,19 @@ class StockConsumer:
         item: PostingJobItem,
         prepared_data: dict,
         job: PostingJob,
+        *,
+        variant_ctx: dict | None = None,
+        router: VariantRouter | None = None,
     ) -> None:
         """Process a single non-PA item: build payload → POST → create Listing."""
         item.status = PostingJobItemStatus.PROCESSING
         item.save(update_fields=['status', 'updated_at'])
 
         try:
-            build_result = build_item_payload(item, prepared_data, job)
+            build_result = build_item_payload(
+                item, prepared_data, job,
+                variant_ctx=variant_ctx, router=router,
+            )
 
             if not build_result['ok']:
                 raise ValueError(
@@ -132,12 +159,29 @@ class StockConsumer:
 
             payload = build_result['data']['payload']
             final_price: Decimal = build_result['data']['final_price']
-            sub_platform: str = build_result['data']['sub_platform']
+            variant_slug: str = build_result['data']['variant_slug']
+            listing_variant_slug: str = build_result['data'].get(
+                'listing_variant_slug', variant_slug,
+            )
             owned_product = prepared_data['owned_product']
 
             api_result = self._post_with_backoff(item, payload)
 
             if not api_result.ok:
+                # Variant fallback: try other variants on max offer error
+                if (
+                    is_max_offer_error(api_result)
+                    and item.marketplace == 'eldorado'
+                    and job.game.slug in PLATFORM_PRIORITY
+                ):
+                    fallback_result = self._retry_with_variant_fallback(
+                        item, prepared_data, job,
+                        excluded=[variant_slug],
+                        router=router,
+                    )
+                    if fallback_result:
+                        return  # success via fallback
+
                 err = api_result.error
                 api_messages: list[str] = []
                 if isinstance(err.details, dict):
@@ -155,16 +199,27 @@ class StockConsumer:
             if item.marketplace == 'gameboost':
                 self._list_gameboost_offer(item, store_listing_id)
 
+            normalized_raw = self._normalize_raw_data(
+                item,
+                api_result.data,
+                payload=payload,
+            )
+
             persist_success(
                 item=item,
                 job=job,
                 owned_product=owned_product,
                 store_listing_id=store_listing_id,
-                sub_platform=sub_platform,
+                variant_slug=listing_variant_slug,
                 final_price=final_price,
                 payload=payload,
                 response_data=api_result.data,
+                raw_data_override=normalized_raw,
             )
+
+            # Update in-memory counter so next item sees correct capacity
+            if router is not None and variant_slug:
+                router.record_post('platform', variant_slug)
 
         except Exception as e:
             item.status = PostingJobItemStatus.FAILED
@@ -185,6 +240,121 @@ class StockConsumer:
             )
 
         item.save(update_fields=['status', 'error_message', 'listing', 'updated_at'])
+
+    def _retry_with_variant_fallback(
+        self,
+        item: PostingJobItem,
+        prepared_data: dict,
+        job: PostingJob,
+        *,
+        excluded: list[str],
+        router: VariantRouter | None,
+    ) -> bool:
+        """Try posting with alternative variants when max offer limit is hit.
+
+        Iterates through available variants (excluding already-tried ones).
+        Returns True if any variant succeeds.
+        """
+        game_slug = job.game.slug
+        tiers = PLATFORM_PRIORITY.get(game_slug, [])
+        all_variants = [slug for tier in tiers for slug in tier]
+        available = [v for v in all_variants if v not in excluded]
+
+        # Build context once — it's variant-independent (DB counts + limits)
+        fresh_ctx = build_variant_context(
+            store=item.store, game=job.game, marketplace=item.marketplace,
+        )
+
+        for candidate in available:
+            fresh_router = VariantRouter(fresh_ctx, mode='stock')
+
+            build_result = build_item_payload(
+                item, prepared_data, job,
+                variant_ctx=fresh_ctx,
+                router=fresh_router,
+                force_variant=candidate,
+            )
+
+            if not build_result['ok']:
+                continue
+
+            payload = build_result['data']['payload']
+            final_price = build_result['data']['final_price']
+            variant_slug = build_result['data']['variant_slug']
+            listing_variant_slug = build_result['data'].get(
+                'listing_variant_slug', variant_slug,
+            )
+
+            api_result = self._post_with_backoff(item, payload)
+
+            if api_result.ok:
+                store_listing_id = extract_listing_id(api_result.data)
+
+                normalized_raw = self._normalize_raw_data(
+                    item, api_result.data, payload=payload,
+                )
+
+                persist_success(
+                    item=item,
+                    job=job,
+                    owned_product=prepared_data['owned_product'],
+                    store_listing_id=store_listing_id,
+                    variant_slug=listing_variant_slug,
+                    final_price=final_price,
+                    payload=payload,
+                    response_data=api_result.data,
+                    raw_data_override=normalized_raw,
+                )
+
+                if router is not None and variant_slug:
+                    router.record_post('platform', variant_slug)
+
+                logger.info(
+                    "Variant fallback succeeded: item #%d → variant=%s (tried %d)",
+                    item.id, variant_slug, len(excluded) + 1,
+                )
+                return True
+
+            if is_max_offer_error(api_result):
+                excluded.append(candidate)
+                continue
+
+            # Different error — stop trying
+            break
+
+        logger.warning(
+            "All variants exhausted for item #%d (%s/%s)",
+            item.id, game_slug, item.store.name,
+        )
+        return False
+
+    def _normalize_raw_data(
+        self,
+        item: PostingJobItem,
+        response_data: object,
+        *,
+        payload: dict,
+    ) -> dict | None:
+        if item.marketplace not in {'eldorado', 'gameboost', 'playerauctions'}:
+            return None
+
+        kwargs = {}
+        if item.marketplace == 'playerauctions':
+            proxy_group = get_group_name(item.store)
+            kwargs['client'] = registry.get_or_build_client(
+                item.marketplace,
+                item.store.credential,
+                proxy_pool=self._proxy_pool,
+                proxy_group=proxy_group,
+            )
+            kwargs['proxy_group'] = proxy_group
+
+        return normalize_offer_response(
+            item.marketplace,
+            response_data,
+            payload=payload,
+            **kwargs,
+        )
 
     # ------------------------------------------------------------------
     # GameBoost post-create: publish offer
@@ -237,6 +407,11 @@ class StockConsumer:
             proxy_group: str | None = None
             accumulator: list[tuple] = []
 
+            # Lazily initialised once from the first item
+            variant_ctx: dict | None = None
+            router: VariantRouter | None = None
+            _routing_init = False
+
             while True:
                 entry = queue.get()
                 if entry is self._sentinel:
@@ -261,7 +436,19 @@ class StockConsumer:
                         proxy_group=proxy_group,
                     )
 
-                build_result = build_item_payload(item, prepared_data, job)
+                # Build variant routing once per store thread
+                if not _routing_init:
+                    variant_ctx = build_variant_context(
+                        store=item.store, game=job.game,
+                        marketplace=item.marketplace,
+                    )
+                    router = VariantRouter(variant_ctx, mode='stock')
+                    _routing_init = True
+
+                build_result = build_item_payload(
+                    item, prepared_data, job,
+                    variant_ctx=variant_ctx, router=router,
+                )
 
                 if not build_result['ok']:
                     item.status = PostingJobItemStatus.FAILED
@@ -289,6 +476,11 @@ class StockConsumer:
                 excel_row = build_result['data']['payload']
                 build_data = build_result['data']
                 accumulator.append((item, prepared_data, excel_row, build_data))
+
+                # Update in-memory counter so next item sees correct capacity
+                pa_variant_slug = build_data.get('variant_slug', '')
+                if router is not None and pa_variant_slug:
+                    router.record_post('platform', pa_variant_slug)
 
                 if len(accumulator) >= _PA_BATCH_SIZE:
                     self._flush_pa_batch(accumulator, facade, job, proxy_group)
@@ -328,19 +520,30 @@ class StockConsumer:
             if idx in batch_result.successful:
                 offer_id = batch_result.successful[idx]
                 final_price: Decimal = build_data_list[idx]['final_price']
-                sub_platform: str = build_data_list[idx]['sub_platform']
+                variant_slug: str = build_data_list[idx]['variant_slug']
+                listing_variant_slug: str = build_data_list[idx].get(
+                    'listing_variant_slug', variant_slug,
+                )
                 owned_product = prepared_data_list[idx]['owned_product']
 
                 try:
+                    normalized_raw = normalize_offer_response(
+                        'playerauctions',
+                        {'offer_id': offer_id},
+                        payload=excel_rows[idx],
+                        client=facade,
+                        proxy_group=proxy_group,
+                    )
                     persist_success(
                         item=item,
                         job=job,
                         owned_product=owned_product,
                         store_listing_id=offer_id,
-                        sub_platform=sub_platform,
+                        variant_slug=listing_variant_slug,
                         final_price=final_price,
                         payload=excel_rows[idx],
                         response_data={'offer_id': offer_id},
+                        raw_data_override=normalized_raw,
                     )
                 except Exception as exc:
                     item.status = PostingJobItemStatus.FAILED

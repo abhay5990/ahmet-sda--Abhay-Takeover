@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from payload_pipeline.games.val.account.models import ValorantResolvedAccount
 
 
-# Valorant server mapping: sub_platform / region → PA server name
+# Valorant server mapping: variant slug / region → PA server name
 # PA uses server names directly in the Excel (not IDs for bulk upload)
 _SERVER_MAP: dict[str, str] = {
     'eu':    'Europe',
@@ -28,7 +28,7 @@ _SERVER_MAP: dict[str, str] = {
     'br':    'Brazil',
     'latam': 'Latin America',
     'tr':    'Turkey',
-    # fallback to sub_platform value if not in map
+    # fallback to variant_slug value if not in map
 }
 
 
@@ -36,14 +36,14 @@ def build_row(
     *,
     resolved_account: ValorantResolvedAccount,
     final_price: Decimal,
-    sub_platform: str,
+    variant_slug: str,
 ) -> dict[str, Any]:
     """Build Valorant Excel row dict for PA bulk upload.
 
     Args:
         resolved_account: ValorantResolvedAccount from adapter.prepare().
         final_price:      Calculated listing price (Decimal).
-        sub_platform:     Pre-selected sub-platform / region slug.
+        variant_slug:     Pre-selected variant slug / region.
 
     Returns:
         Flat dict with keys matching TEMPLATE_COLUMNS.
@@ -52,7 +52,7 @@ def build_row(
     login = creds.login or ''
     password = creds.password or ''
     email = creds.email_login or _extract_email({}) or f'{login}@outlook.com'
-    server = _SERVER_MAP.get(sub_platform.lower(), sub_platform or 'Europe')
+    server = _SERVER_MAP.get(variant_slug.lower(), variant_slug or 'Europe')
 
     personal = _fake_personal_info()
 

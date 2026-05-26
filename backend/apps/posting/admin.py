@@ -3,6 +3,9 @@ from django.contrib import admin
 from .models import (
     CleanerConfig,
     ContentTemplate,
+    GameVariant,
+    GameVariantLimit,
+    GameVariantMapping,
     OfferPool,
     OfferPoolActiveOffer,
     OfferPoolItem,
@@ -11,7 +14,6 @@ from .models import (
     PostingImagePreset,
     PostingDefault,
     SchedulerHeartbeat,
-    SubplatformLimit,
     PostingLog,
     DropshippingJobConfig,
     DropshipTargetURL,
@@ -36,7 +38,7 @@ class PostingJobItemAdmin(admin.ModelAdmin):
 
 @admin.register(PostingDefault)
 class PostingDefaultAdmin(admin.ModelAdmin):
-    list_display = ['game', 'marketplace', 'multiplier_low', 'multiplier_mid', 'multiplier_high', 'min_price', 'forced_ending', 'exchange_rate', 'sub_platform']
+    list_display = ['game', 'marketplace', 'multiplier_low', 'multiplier_mid', 'multiplier_high', 'min_price', 'forced_ending', 'exchange_rate', 'variant']
     list_filter = ['marketplace']
 
 
@@ -57,10 +59,36 @@ class PostingImagePresetAdmin(admin.ModelAdmin):
     raw_id_fields = ['user', 'game']
 
 
-@admin.register(SubplatformLimit)
-class SubplatformLimitAdmin(admin.ModelAdmin):
-    list_display = ['store', 'game', 'sub_platform', 'max_offers', 'stock_reserve']
-    list_filter = ['game', 'sub_platform']
+# ── Game Variant System ──────────────────────────────────────────
+
+
+class GameVariantMappingInline(admin.TabularInline):
+    model = GameVariantMapping
+    extra = 0
+    fields = ['marketplace', 'external_id', 'external_name']
+
+
+@admin.register(GameVariant)
+class GameVariantAdmin(admin.ModelAdmin):
+    list_display = ['game', 'type', 'slug', 'label', 'source_key', 'sort_order']
+    list_filter = ['type', 'game']
+    search_fields = ['slug', 'label', 'game__name']
+    ordering = ['game', 'type', 'sort_order']
+    inlines = [GameVariantMappingInline]
+
+
+@admin.register(GameVariantMapping)
+class GameVariantMappingAdmin(admin.ModelAdmin):
+    list_display = ['variant', 'marketplace', 'external_id', 'external_name']
+    list_filter = ['marketplace']
+    raw_id_fields = ['variant']
+
+
+@admin.register(GameVariantLimit)
+class GameVariantLimitAdmin(admin.ModelAdmin):
+    list_display = ['store', 'variant', 'max_offers', 'stock_reserve']
+    list_filter = ['variant__game', 'variant__type']
+    raw_id_fields = ['store', 'variant']
 
 
 @admin.register(PostingLog)

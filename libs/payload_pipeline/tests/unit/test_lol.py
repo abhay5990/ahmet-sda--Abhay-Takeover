@@ -17,6 +17,8 @@ from payload_pipeline.games.lol.account import (
 )
 from payload_pipeline.games.lol.account import catalog as lol_catalog
 
+from _variant_ctx import lol_eldorado, lol_gameboost, lol_playerauctions
+
 
 # ── Source normalization ────────────────────────────────────────────
 
@@ -113,7 +115,10 @@ def test_lol_pipeline_builds_eldorado_payload(load_fixture) -> None:
     _prepare_result = pipeline.prepare_once(request)
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado"))
+    result = pipeline.build(prepared, BuildContext(
+        kind="stock", marketplace="eldorado",
+        variant_context=lol_eldorado(),
+    ))
     assert result.success
 
     assert result.payload["augmentedGame"]["gameId"] == "17"
@@ -170,7 +175,10 @@ def test_lol_pipeline_builds_gameboost_payload(load_fixture) -> None:
     _prepare_result = pipeline.prepare_once(request)
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="gameboost"))
+    result = pipeline.build(prepared, BuildContext(
+        kind="stock", marketplace="gameboost",
+        variant_context=lol_gameboost(),
+    ))
     assert result.success
 
     assert result.payload["game"] == "league-of-legends"
@@ -196,7 +204,7 @@ def test_lol_gameboost_dropshipping_mode(load_fixture) -> None:
 
     account = LolResolver().resolve(request)
     listing = LolComposer().compose(account, request, MediaBundle())
-    build_ctx = BuildContext(kind="dropshipping", marketplace="gameboost")
+    build_ctx = BuildContext(kind="dropshipping", marketplace="gameboost", variant_context=lol_gameboost())
     payload = LolGameBoostBuilder().build_payload(account, listing, build_ctx)
 
     assert payload["is_manual"] is True
@@ -279,18 +287,46 @@ def test_lol_pipeline_builds_playerauctions_payload(load_fixture) -> None:
     _prepare_result = pipeline.prepare_once(request)
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions"))
+    result = pipeline.build(prepared, BuildContext(
+        kind="stock", marketplace="playerauctions",
+        variant_context=lol_playerauctions(),
+    ))
     assert result.success
 
-    assert result.payload["game_name"] == "league-of-legends"
-    assert result.payload["game_id"] == 8445
-    assert result.payload["server"] == ["EU Nordic and East"]
-    assert result.payload["server_id"] == ["4144"]
+    assert result.payload["gameId"] == 3637
+    assert result.payload["serverId"] == 4144  # Europe Nordic & East
+    assert result.payload["categoryId"] == 4144
     assert result.payload["title"]
     assert result.payload["price"] > 0
-    assert result.payload["delivery_method"] == "instant"
-    assert result.payload["delivery_instructions"]
-    assert result.payload["cover_image_url"]
+    assert result.payload["isAuto"] is True
+    assert result.payload["autoDelivery"]["loginName"] == "prajvi1"
+    assert result.payload["autoDelivery"]["instruction"]
+    assert result.payload["screenShot"] == ""
+    assert result.payload["freeInsurance"] == 7
+    assert result.payload["offerDuration"] == 30
+
+
+def test_lol_playerauctions_bulk_payload(load_fixture) -> None:
+    raw = load_fixture("lzt_lol.json")
+    request = PipelineRequest(
+        game="league-of-legends",
+        category="account",
+        kind="stock",
+        sources={"lzt": raw},
+    )
+
+    account = LolResolver().resolve(request)
+    listing = LolComposer().compose(account, request, MediaBundle())
+    build_ctx = BuildContext(kind="stock", marketplace="playerauctions", variant_context=lol_playerauctions())
+    row = LolPlayerAuctionsBuilder().build_bulk_payload(account, listing, build_ctx)
+
+    assert row["Game"] == "League of Legends"
+    assert row["Server"] == "EU Nordic and East"
+    assert row["Listing Price"] > 0
+    assert row["Title"]
+    assert row["Delivery Method"] == "Automatic"
+    assert row["Login name  (Auto)"] == "prajvi1"
+    assert row["Password"]
 
 
 # ── Pipeline builds all marketplaces ───────────────────────────────
@@ -311,8 +347,13 @@ def test_lol_pipeline_builds_all_marketplace_payloads(load_fixture) -> None:
     _prepare_result = pipeline.prepare_once(request)
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
+    _variant_ctxs = {
+        "eldorado": lol_eldorado(),
+        "gameboost": lol_gameboost(),
+        "playerauctions": lol_playerauctions(),
+    }
     for mp in marketplaces:
-        build_ctx = BuildContext(kind="stock", marketplace=mp)
+        build_ctx = BuildContext(kind="stock", marketplace=mp, variant_context=_variant_ctxs.get(mp))
         if mp == "g2g":
             build_ctx = BuildContext(kind="stock", marketplace=mp, marketplace_config=G2GConfig(seller_id="1000959019"))
         result = pipeline.build(prepared, build_ctx)
@@ -386,7 +427,7 @@ def test_lol_gameboost_dump_contains_titles(load_fixture) -> None:
     )
     account = LolResolver().resolve(request)
     listing = LolComposer().compose(account, request, MediaBundle())
-    build_ctx = BuildContext(kind="stock", marketplace="gameboost")
+    build_ctx = BuildContext(kind="stock", marketplace="gameboost", variant_context=lol_gameboost())
     payload = LolGameBoostBuilder().build_payload(account, listing, build_ctx)
 
     dump = payload["dump"]
@@ -404,7 +445,7 @@ def test_lol_gameboost_game_items_populated(load_fixture) -> None:
     )
     account = LolResolver().resolve(request)
     listing = LolComposer().compose(account, request, MediaBundle())
-    build_ctx = BuildContext(kind="stock", marketplace="gameboost")
+    build_ctx = BuildContext(kind="stock", marketplace="gameboost", variant_context=lol_gameboost())
     payload = LolGameBoostBuilder().build_payload(account, listing, build_ctx)
 
     game_items = payload["game_items"]

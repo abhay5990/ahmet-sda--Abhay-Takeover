@@ -7,7 +7,7 @@ Re-exports the most commonly used helpers for convenience:
         extract_listing_id, persist_success,
     )
 
-Finer-grained modules (pricing, utils, subplatform, lzt_fetcher, listing_writer)
+Finer-grained modules (pricing, utils, lzt_fetcher, listing_writer)
 can also be imported directly.
 """
 
@@ -25,6 +25,7 @@ from apps.posting.services.shared.utils import (
     serialize_response,
 )
 from apps.posting.services.shared.listing_writer import persist_success
+from apps.posting.services.shared.max_offer_error import is_max_offer_error
 
 __all__ = [
     'PricingDefaults',
@@ -35,6 +36,7 @@ __all__ = [
     'extract_price_from_response',
     'extract_title_from_payload',
     'extract_title_from_response',
+    'is_max_offer_error',
     'persist_success',
     'serialize_response',
 ]

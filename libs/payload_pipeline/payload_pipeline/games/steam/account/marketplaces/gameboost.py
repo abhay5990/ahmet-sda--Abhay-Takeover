@@ -19,7 +19,7 @@ class SteamGameBoostBuilder(BaseGameBoostBuilder):
     def _platform_name(self) -> str:
         return "Steam Account"
 
-    def _build_account_data(self, account: SteamResolvedAccount) -> dict[str, Any]:
+    def _build_account_data(self, account: SteamResolvedAccount, ctx=None) -> dict[str, Any]:
         return {
             "platform": "PC",
             "steam_level": account.steam_level,

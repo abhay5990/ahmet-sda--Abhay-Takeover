@@ -39,8 +39,8 @@ class BSPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     def _platform_name(self) -> str:
         return "Supercell ID"
 
-    def _get_server(self, account: BSResolvedAccount) -> list[str]:
+    def _get_server(self, account: BSResolvedAccount, ctx=None) -> list[str]:
         return ["Main Server"]
 
-    def _get_server_id(self, account: BSResolvedAccount) -> list[str] | None:
+    def _get_server_id(self, account: BSResolvedAccount, ctx=None) -> list[str] | None:
         return ["8465"]

@@ -21,6 +21,10 @@ class CocPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     """Build PlayerAuctions payloads for the Clash of Clans account slice."""
 
     @property
+    def _pa_game_display_name(self) -> str:
+        return "Clash of Clans"
+
+    @property
     def game_name(self) -> str:
         return "clash-of-clans"
 
@@ -36,8 +40,8 @@ class CocPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     def _platform_name(self) -> str:
         return "Supercell ID"
 
-    def _get_server(self, account: CocResolvedAccount) -> list[str]:
+    def _get_server(self, account: CocResolvedAccount, ctx=None) -> list[str]:
         return ["Main Server"]
 
-    def _get_server_id(self, account: CocResolvedAccount) -> list[str] | None:
+    def _get_server_id(self, account: CocResolvedAccount, ctx=None) -> list[str] | None:
         return ["6157"]

@@ -18,6 +18,8 @@ from payload_pipeline.games.gtav.account.credentials import (
 from payload_pipeline.games.gtav.account.sources.manual import GtavManualSourceAdapter
 from payload_pipeline.marketplaces.g2g import G2GConfig
 
+from _variant_ctx import gtav_eldorado, gtav_gameboost, gtav_playerauctions
+
 
 # -- source adapter tests -------------------------------------------------
 
@@ -395,9 +397,14 @@ class TestGtavPipeline:
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
         prepared = _prepare_result.prepared
         marketplaces = ["eldorado", "gameboost", "g2g", "playerauctions"]
+        _variant_ctxs = {
+            "eldorado": gtav_eldorado(),
+            "gameboost": gtav_gameboost(),
+            "playerauctions": gtav_playerauctions(),
+        }
         results = {}
         for mp in marketplaces:
-            build_ctx = BuildContext(kind="stock", marketplace=mp)
+            build_ctx = BuildContext(kind="stock", marketplace=mp, variant_context=_variant_ctxs.get(mp))
             if mp == "g2g":
                 build_ctx = BuildContext(kind="stock", marketplace=mp, marketplace_config=G2GConfig(seller_id="1000959019"))
             result = pipeline.build(prepared, build_ctx)
@@ -418,7 +425,10 @@ class TestGtavPipeline:
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
         prepared = _prepare_result.prepared
-        result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado"))
+        result = pipeline.build(prepared, BuildContext(
+            kind="stock", marketplace="eldorado",
+            variant_context=gtav_eldorado(),
+        ))
         assert result.success
 
         assert result.payload["augmentedGame"]["gameId"] == "25"
@@ -443,7 +453,10 @@ class TestGtavPipeline:
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
         prepared = _prepare_result.prepared
-        result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="gameboost"))
+        result = pipeline.build(prepared, BuildContext(
+            kind="stock", marketplace="gameboost",
+            variant_context=gtav_gameboost(),
+        ))
         assert result.success
 
         assert result.payload["game"] == "grand-theft-auto-v"
@@ -487,16 +500,49 @@ class TestGtavPipeline:
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
         prepared = _prepare_result.prepared
-        prepared.listing.media.external_urls.append("https://cdn.example.com/gtav.png")
-        result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions"))
+        result = pipeline.build(prepared, BuildContext(
+            kind="stock", marketplace="playerauctions",
+            variant_context=gtav_playerauctions(),
+        ))
         assert result.success
 
         assert result.payload["gameId"] == 5917
         assert result.payload["serverId"] == 14270
         assert result.payload["categoryId"] == 14270
-        assert result.payload["screenShot"] == "https://cdn.example.com/gtav.png"
+        assert result.payload["screenShot"] == ""
         assert result.payload["autoDelivery"]["loginName"] == "rockstar_user@example.com"
         assert result.payload["autoDelivery"]["choose5"] is True
+        assert result.payload["isAuto"] is True
+        assert result.payload["freeInsurance"] == 7
+        assert result.payload["offerDuration"] == 30
+
+    def test_playerauctions_bulk_payload_shape(self, load_fixture):
+        sources = {"lzt": load_fixture("lzt_gtav.json")}
+        pipeline = PayloadPipeline(registry=build_default_registry())
+        request = PipelineRequest(
+            game="grand-theft-auto-5",
+            category="account",
+            kind="stock",
+            sources=sources,
+            context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True},
+        )
+        _prepare_result = pipeline.prepare_once(request)
+        assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
+        prepared = _prepare_result.prepared
+
+        from payload_pipeline.games.gtav.account import GtavPlayerAuctionsBuilder
+        row = GtavPlayerAuctionsBuilder().build_bulk_payload(
+            prepared.subject, prepared.listing,
+            BuildContext(kind="stock", marketplace="playerauctions", variant_context=gtav_playerauctions()),
+        )
+
+        assert row["Game"] == "GTA 5 Online"
+        assert row["Server"] == "PC-Steam-Enhanced"
+        assert row["Listing Price"] > 0
+        assert row["Title"]
+        assert row["Delivery Method"] == "Automatic"
+        assert row["Login name  (Auto)"] == "rockstar_user@example.com"
+        assert row["Password"]
 
     def test_prepare_once_populates_subject(self, load_fixture):
         sources = {"lzt": load_fixture("lzt_gtav.json")}
@@ -565,7 +611,7 @@ class TestGtavPlayerAuctionsMappingIntent:
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
         prepared = _prepare_result.prepared
-        result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions"))
+        result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions", variant_context=gtav_playerauctions()))
         assert result.success
         assert result.payload["serverId"] == 14270
         assert result.payload["categoryId"] == 14270
@@ -577,7 +623,7 @@ class TestGtavPlayerAuctionsMappingIntent:
         _prepare_result = pipeline.prepare_once(request)
         assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
         prepared = _prepare_result.prepared
-        result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions"))
+        result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions", variant_context=gtav_playerauctions()))
         assert result.success
         assert result.payload["gameId"] == 5917
 
@@ -590,7 +636,7 @@ class TestGtavPlayerAuctionsMappingIntent:
             _prepare_result = pipeline.prepare_once(request)
             assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
             prepared = _prepare_result.prepared
-            result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions"))
+            result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions", variant_context=gtav_playerauctions()))
             assert result.success
             payloads.append(result.payload)
         first = payloads[0]

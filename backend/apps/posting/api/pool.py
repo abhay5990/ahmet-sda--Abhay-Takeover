@@ -427,7 +427,7 @@ def available_listings(request):
             'game': lst.game.name if lst.game else '',
             'game_id': lst.game_id,
             'price': str(lst.price),
-            'sub_platform': lst.sub_platform,
+            'variant': lst.variant,
             'created_at': lst.created_at.isoformat(),
         })
 
@@ -516,8 +516,8 @@ def _add_credentials_to_pool(
     added = 0
     max_order = pool.items.count()
 
-    # Resolve platform from listing's sub_platform (stored as full name)
-    platform = (listing.sub_platform or '') if listing else ''
+    # Resolve platform from listing's variant slug
+    platform = (listing.variant or '') if listing else ''
 
     # Get reference price from listing's existing owned products
     ref_price = None

@@ -324,13 +324,13 @@ const _PC_SPEC = [
     ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
 ];
 
-const _GTA_SPEC_BY_SUBPLATFORM = {
-    'PlayStation 4': _PSN_SPEC,
-    'PlayStation 5': _PSN_SPEC,
-    'Xbox One': _XBOX_SPEC,
-    'Xbox Series X/S': _XBOX_SPEC,
-    'PC - Legacy': _PC_SPEC,
-    'PC - Enhanced': _PC_SPEC,
+const _GTA_SPEC_BY_VARIANT = {
+    'ps4': _PSN_SPEC,
+    'ps5': _PSN_SPEC,
+    'xbox-one': _XBOX_SPEC,
+    'xbox-series': _XBOX_SPEC,
+    'pc-legacy': _PC_SPEC,
+    'pc-enhanced': _PC_SPEC,
 };
 
 const _DEFAULT_CREDENTIAL_SPEC = [
@@ -341,9 +341,9 @@ const _DEFAULT_CREDENTIAL_SPEC = [
 
 // Resolve credential spec for this pool
 const _POOL_GAME_SLUG = '{{ pool.game.slug|default:"" }}';
-const _POOL_SUB_PLATFORM = '{{ pool.listing.sub_platform|default:"" }}';
+const _POOL_VARIANT = '{{ pool.listing.variant|default:"" }}';
 const _IS_GTA = _POOL_GAME_SLUG.startsWith('grand-theft-auto');
-const CREDENTIAL_SPEC = (_IS_GTA && _GTA_SPEC_BY_SUBPLATFORM[_POOL_SUB_PLATFORM]) || null;
+const CREDENTIAL_SPEC = (_IS_GTA && _GTA_SPEC_BY_VARIANT[_POOL_VARIANT]) || null;
 const CREDENTIAL_COLUMNS = CREDENTIAL_SPEC || _DEFAULT_CREDENTIAL_SPEC;
 
 // Shared helpers

@@ -215,20 +215,20 @@
                     </div>
                 </template>
 
-                <!-- Subplatform Limits (only for games that support subplatforms) -->
-                <template x-if="config.has_subplatforms">
+                <!-- Variant Limits (only for games that support variants) -->
+                <template x-if="config.has_variants">
                     <div class="p-4 border-b border-gray-100">
                         <!-- Warning: no limits configured -->
-                        <template x-if="!config.subplatform_limits.some(sp => sp.max_offers !== null && sp.max_offers > 0)">
+                        <template x-if="!config.variant_limits.some(sp => sp.max_offers !== null && sp.max_offers > 0)">
                             <div class="mb-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-2 text-xs text-amber-700">
                                 <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
                                 </svg>
-                                <span>No subplatform limits configured. This config cannot be enabled until at least one limit is set.</span>
+                                <span>No variant limits configured. This config cannot be enabled until at least one limit is set.</span>
                             </div>
                         </template>
                         <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-sm font-medium text-gray-700">Subplatform Limits</h3>
+                            <h3 class="text-sm font-medium text-gray-700">Variant Limits</h3>
                             <span class="text-xs font-medium transition-colors"
                                   :class="config._savingSp ? 'text-gray-400' : (config._spError ? 'text-red-600' : (config._spMessage ? 'text-emerald-600' : 'text-gray-400'))"
                                   x-text="config._savingSp ? 'Saving...' : (config._spMessage || 'Auto-save')">
@@ -245,22 +245,22 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template x-for="sp in config.subplatform_limits" :key="sp.sub_platform">
+                                    <template x-for="sp in config.variant_limits" :key="sp.variant">
                                         <tr class="border-b border-gray-50">
                                             <td class="py-1.5 pr-3">
-                                                <span class="font-medium text-gray-700" x-text="sp.sub_platform"></span>
+                                                <span class="font-medium text-gray-700" x-text="sp.label || sp.variant.toUpperCase()"></span>
                                             </td>
                                             <td class="py-1.5 px-3">
                                                 <input type="number" min="0" step="1"
                                                        x-model.number="sp.max_offers"
-                                                       @change="debounceSaveSubplatformLimits(config)"
+                                                       @change="debounceSaveVariantLimits(config)"
                                                        placeholder="—"
                                                        class="w-20 border border-gray-300 rounded px-2 py-1 text-sm text-center focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400">
                                             </td>
                                             <td class="py-1.5 px-3">
                                                 <input type="number" min="0" step="1"
                                                        x-model.number="sp.stock_reserve"
-                                                       @change="debounceSaveSubplatformLimits(config)"
+                                                       @change="debounceSaveVariantLimits(config)"
                                                        placeholder="—"
                                                        class="w-20 border border-gray-300 rounded px-2 py-1 text-sm text-center focus:ring-1 focus:ring-indigo-400 focus:border-indigo-400">
                                             </td>
@@ -758,34 +758,34 @@ function dropshipManager() {
             if (res.ok) await this.loadConfigs();
         },
 
-        // --- Subplatform Limits ---
+        // --- Variant Limits ---
 
         _spTimers: {},
 
-        debounceSaveSubplatformLimits(config) {
+        debounceSaveVariantLimits(config) {
             const key = config.id;
             if (this._spTimers[key]) clearTimeout(this._spTimers[key]);
             this._spTimers[key] = setTimeout(() => {
-                this.saveSubplatformLimits(config);
+                this.saveVariantLimits(config);
             }, 600);
         },
 
-        async saveSubplatformLimits(config) {
+        async saveVariantLimits(config) {
             config._savingSp = true;
             config._spMessage = '';
             config._spError = false;
 
             // Only send rows where max_offers is set (non-null, non-empty)
-            const limits = (config.subplatform_limits || [])
+            const limits = (config.variant_limits || [])
                 .filter(sp => sp.max_offers !== null && sp.max_offers !== '' && sp.max_offers !== undefined)
                 .map(sp => ({
-                    sub_platform: sp.sub_platform,
+                    variant: sp.variant,
                     max_offers: parseInt(sp.max_offers) || 0,
                     stock_reserve: parseInt(sp.stock_reserve) || 0,
                 }));
 
             try {
-                const res = await fetch('/posting/api/dropship/subplatform-limits/save/', {
+                const res = await fetch('/posting/api/dropship/variant-limits/save/', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
                     body: JSON.stringify({

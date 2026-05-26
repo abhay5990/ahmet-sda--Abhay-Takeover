@@ -37,9 +37,9 @@ class Listing(models.Model):
         choices=ProductCategory.choices,
         default=ProductCategory.ACCOUNTS,
     )
-    sub_platform = models.CharField(
-        max_length=20, blank=True,
-        help_text='pc, psn, xbox, ios, android, switch, main',
+    variant = models.CharField(
+        max_length=64, blank=True,
+        help_text='Canonical variant slug: pc, psn, xbox, na, euw, etc.',
     )
     status = models.CharField(
         max_length=20,
@@ -73,6 +73,10 @@ class Listing(models.Model):
             models.Index(fields=['store_listing_id']),
             models.Index(fields=['-created_at']),
             models.Index(fields=['integration_account', '-created_at']),
+            models.Index(
+                fields=['integration_account', 'game', 'status', 'variant'],
+                name='listing_acct_game_status_var',
+            ),
         ]
 
     def __str__(self):

@@ -62,7 +62,12 @@ class EldoradoAugmentedGame(BaseModel):
 
 
 class EldoradoOffer(BaseModel):
-    """Full Eldorado offer as returned by create/update endpoints."""
+    """Nested Eldorado offer structure (used for update payloads).
+
+    NOTE: The create endpoint actually returns a flat structure matching
+    EldoradoOfferSearchItem, not this nested layout. This model is kept
+    for update_offer payload construction via EldoradoMapper.to_update_payload.
+    """
 
     id: str = ""
     details: EldoradoOfferDetails = Field(default_factory=EldoradoOfferDetails)
@@ -85,10 +90,9 @@ class EldoradoOfferAccountDetail(BaseModel):
 
 
 class EldoradoOfferSearchItem(BaseModel):
-    """A single offer as returned by the search endpoint.
+    """A single offer in flat format.
 
-    The search endpoint returns a flat structure (unlike the nested
-    create/update response captured by ``EldoradoOffer``).
+    Used by both the search endpoint and the create endpoint response.
     """
 
     model_config = {"extra": "allow"}
@@ -237,12 +241,12 @@ class EldoradoSellerOrdersPage(BaseModel):
 # ---------------------------------------------------------------------------
 
 class EldoradoOfferStateCount(BaseModel):
-    """State counts for offers grouped by game/category."""
+    """State counts for offers (real API field names)."""
 
-    active: int = 0
-    inactive: int = 0
-    pending: int = 0
-    suspended: int = 0
+    activeOffers: int = 0
+    pausedOffers: int = 0
+    closedOffers: int = 0
+    offlineOffers: int = 0
 
 
 class EldoradoOrderAccountDetails(BaseModel):

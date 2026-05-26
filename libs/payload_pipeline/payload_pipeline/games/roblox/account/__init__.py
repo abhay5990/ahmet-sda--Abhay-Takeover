@@ -4,7 +4,7 @@ from .resolver import RobloxResolver
 from .content import RobloxComposer
 from .media import RobloxMediaStrategy
 from .sources import RobloxLztSourceAdapter
-from .marketplaces import RobloxEldoradoBuilder, RobloxGameBoostBuilder, RobloxG2GBuilder
+from .marketplaces import RobloxEldoradoBuilder, RobloxGameBoostBuilder, RobloxG2GBuilder, RobloxPlayerAuctionsBuilder
 from ....core.enums import ListingCategory
 from ....core.registry import GameDefinition
 
@@ -21,6 +21,7 @@ def register(registry) -> None:
                 "eldorado": RobloxEldoradoBuilder(),
                 "gameboost": RobloxGameBoostBuilder(),
                 "g2g": RobloxG2GBuilder(),
+                "playerauctions": RobloxPlayerAuctionsBuilder(),
             },
         )
     )
@@ -31,6 +32,7 @@ __all__ = [
     "RobloxEldoradoBuilder",
     "RobloxGameBoostBuilder",
     "RobloxG2GBuilder",
+    "RobloxPlayerAuctionsBuilder",
     "RobloxLztSourceAdapter",
     "RobloxMediaStrategy",
     "RobloxResolver",

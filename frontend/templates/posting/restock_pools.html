@@ -315,13 +315,13 @@ const _PC_SPEC = [
     ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
 ];
 
-const _GTA_SPEC_BY_SUBPLATFORM = {
-    'PlayStation 4': _PSN_SPEC,
-    'PlayStation 5': _PSN_SPEC,
-    'Xbox One': _XBOX_SPEC,
-    'Xbox Series X/S': _XBOX_SPEC,
-    'PC - Legacy': _PC_SPEC,
-    'PC - Enhanced': _PC_SPEC,
+const _GTA_SPEC_BY_VARIANT = {
+    'ps4': _PSN_SPEC,
+    'ps5': _PSN_SPEC,
+    'xbox-one': _XBOX_SPEC,
+    'xbox-series': _XBOX_SPEC,
+    'pc-legacy': _PC_SPEC,
+    'pc-enhanced': _PC_SPEC,
 };
 
 const _DEFAULT_CREDENTIAL_SPEC = [
@@ -335,10 +335,10 @@ const _GAME_SLUGS = {
     {% for game in games %}'{{ game.id }}': '{{ game.slug }}',{% endfor %}
 };
 
-function _getCredentialSpec(gameSlug, subPlatform) {
+function _getCredentialSpec(gameSlug, variant) {
     const isGta = (gameSlug || '').startsWith('grand-theft-auto');
-    if (isGta && subPlatform) {
-        return _GTA_SPEC_BY_SUBPLATFORM[subPlatform] || null;
+    if (isGta && variant) {
+        return _GTA_SPEC_BY_VARIANT[variant] || null;
     }
     return null;
 }
@@ -420,7 +420,7 @@ function restockManager() {
             selectedTitle: '',
             selectedMeta: '',
             selectedGameSlug: '',
-            selectedSubPlatform: '',
+            selectedVariant: '',
             gameFilter: '',
             storeFilter: '',
             listingSearch: '',
@@ -462,10 +462,10 @@ function restockManager() {
             this.createForm.selectedTitle = lst.title;
             this.createForm.selectedMeta = `${lst.store} · ${lst.marketplace} · $${lst.price}`;
             this.createForm.selectedGameSlug = _GAME_SLUGS[lst.game_id] || '';
-            this.createForm.selectedSubPlatform = lst.sub_platform || '';
+            this.createForm.selectedVariant = lst.variant || '';
             this.listingResults = [];
             // Update credential spec based on selected listing
-            this.credentialSpec = _getCredentialSpec(this.createForm.selectedGameSlug, this.createForm.selectedSubPlatform);
+            this.credentialSpec = _getCredentialSpec(this.createForm.selectedGameSlug, this.createForm.selectedVariant);
             this.credentialColumns = this.credentialSpec || _DEFAULT_CREDENTIAL_SPEC;
             this.credentials = [];  // Reset credentials when listing changes
         },
@@ -475,7 +475,7 @@ function restockManager() {
             this.createForm.selectedTitle = '';
             this.createForm.selectedMeta = '';
             this.createForm.selectedGameSlug = '';
-            this.createForm.selectedSubPlatform = '';
+            this.createForm.selectedVariant = '';
             this.credentialSpec = null;
             this.credentialColumns = _DEFAULT_CREDENTIAL_SPEC;
             this.credentials = [];
@@ -589,7 +589,7 @@ function restockManager() {
         resetCreateForm() {
             this.createForm = {
                 listing_id: null, selectedTitle: '', selectedMeta: '',
-                selectedGameSlug: '', selectedSubPlatform: '',
+                selectedGameSlug: '', selectedVariant: '',
                 gameFilter: '', storeFilter: '',
                 listingSearch: '', threshold: 10, target_count: 50, max_concurrent: 1,
                 pasteData: '',

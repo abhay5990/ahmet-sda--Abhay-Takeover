@@ -6,15 +6,8 @@ from typing import Any
 
 from ..models import GenshinResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
+from .....core.variant_mapping import get_external_id
 from .....marketplaces.eldorado import BaseEldoradoBuilder
-
-
-_REGION_TRADE_ENV: dict[str, str] = {
-    "na": "0",
-    "eu": "1",
-    "asia": "2",
-    "tw": "3",
-}
 
 
 class GenshinImpactEldoradoBuilder(BaseEldoradoBuilder):
@@ -26,14 +19,16 @@ class GenshinImpactEldoradoBuilder(BaseEldoradoBuilder):
         listing: ListingDraft,
         ctx: BuildContext,
     ) -> dict[str, Any]:
+        trade_env = get_external_id(
+            ctx.variant_context, "region", account.region.lower(),
+        ) or "1-999"
+
         return self.build_base_payload(
             game_id="39",
             listing=listing,
             ctx=ctx,
             price=account.price,
             credentials=account.credentials,
-            trade_environment_id=_REGION_TRADE_ENV.get(
-                account.region.lower(), "1-999"
-            ),
+            trade_environment_id=trade_env,
             ref_key=account.ref_key,
         )

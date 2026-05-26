@@ -2,7 +2,7 @@
 
 Given a ``PostingJobItem`` and its resolver-prepared data, this module:
 - Reads store-scoped pricing from ``job.settings`` (baseline fallback)
-- Selects a sub-platform (fixed or auto via capacity)
+- Selects a variant via the VariantRouter (capacity-aware)
 - Builds the marketplace payload via the payload pipeline (non-PA) or the
   PA Excel row builder (PA)
 - Returns a standard pipeline-result dict
@@ -15,19 +15,14 @@ from decimal import Decimal
 
 from payload_pipeline.pricing.rules import calculate_price
 
-from apps.posting.models import PostingJob, PostingJobItem, SubplatformLimit
+from apps.posting.models import PostingJob, PostingJobItem
 from apps.posting.pipeline import adapter
 from apps.posting.services.shared.pricing import (
     STOCK_PRICING_BASELINE,
     build_pricing_rule,
 )
-from apps.posting.services.shared.subplatform import (
-    STOCK_PLATFORM_PRIORITY,
-    get_active_offer_counts,
-    get_allowed_platforms,
-    select_best_subplatform,
-    select_best_subplatform_tiered,
-)
+from apps.posting.services.variant_slug import resolve_listing_variant_slug
+from apps.posting.services.variant_routing import VariantRouter, get_eligible_variants
 from payload_pipeline.core.contracts import ListingKind
 
 logger = logging.getLogger(__name__)
@@ -37,11 +32,22 @@ def build_item_payload(
     item: PostingJobItem,
     prepared_data: dict,
     job: PostingJob,
+    *,
+    variant_ctx: dict | None = None,
+    router: VariantRouter | None = None,
+    force_variant: str = '',
 ) -> dict:
-    """Select subplatform, compute final_price, then build marketplace payload.
+    """Select variant, compute final_price, then build marketplace payload.
+
+    Args:
+        item: The posting job item being processed.
+        prepared_data: Dict with 'prepared' (PreparedListing) and 'owned_product'.
+        job: Parent posting job (provides game + settings).
+        variant_ctx: Pre-built variant context dict (from build_variant_context).
+        router: Pre-built VariantRouter (created once per consumer thread).
 
     Returns a standard result dict:
-      ok path:  {'ok': True, 'stage': str, 'data': {'payload', 'final_price', 'sub_platform', 'mode'}}
+      ok path:  {'ok': True, 'stage': str, 'data': {'payload', 'final_price', 'variant_slug', 'mode'}}
       fail path: {'ok': False, 'stage': str, 'error': str, 'error_category': str}
     """
     stage = f'build_{item.marketplace}'
@@ -67,60 +73,31 @@ def build_item_payload(
         if pricing.exchange_rate is not None:
             final_price = (final_price * Decimal(str(pricing.exchange_rate))).quantize(Decimal('0.01'))
 
-        # --- Subplatform selection ---
-        fixed_sp = (store_settings.get('sub_platform') or '').strip()
-        allowed = get_allowed_platforms(job.game.slug, prepared.subject)
-        limits = list(SubplatformLimit.objects.filter(
-            store=item.store, game=job.game,
-        ))
+        # --- Variant selection ---
+        manual_variant = (
+            force_variant
+            or store_settings.get('variant')
+            or store_settings.get('sub_platform')
+            or ''
+        ).strip()
 
-        # Helper: pick best sub-platform using priority tiers when available
-        tiers = STOCK_PLATFORM_PRIORITY.get(job.game.slug)
-
-        def _pick_best(lims, cnts):
-            if tiers:
-                return select_best_subplatform_tiered(
-                    lims, cnts, mode='stock',
-                    allowed_platforms=allowed, tiers=tiers,
-                )
-            return select_best_subplatform(
-                lims, cnts, mode='stock', allowed_platforms=allowed,
+        if router is not None:
+            allowed = get_eligible_variants(job.game.slug, prepared.subject)
+            variant_slug = router.select(
+                'platform',
+                allowed=allowed,
+                game_slug=job.game.slug,
+                manual=manual_variant,
             )
-
-        if fixed_sp and fixed_sp.lower() != 'auto':
-            if limits:
-                counts = get_active_offer_counts(item.store, job.game)
-                fixed_limit = next(
-                    (l for l in limits if l.sub_platform == fixed_sp), None,
-                )
-                if fixed_limit:
-                    current = counts.get(fixed_sp, 0)
-                    if fixed_limit.max_offers - current <= 0:
-                        sub_platform = _pick_best(limits, counts)
-                        if sub_platform is None:
-                            return {
-                                'ok': False, 'stage': stage,
-                                'error': f'{fixed_sp} is full and no other sub-platform has slots',
-                                'error_category': 'capacity',
-                            }
-                    else:
-                        sub_platform = fixed_sp
-                else:
-                    sub_platform = fixed_sp
-            else:
-                sub_platform = fixed_sp
+            if variant_slug is None:
+                return {
+                    'ok': False, 'stage': stage,
+                    'error': 'No available variant slots',
+                    'error_category': 'capacity',
+                }
         else:
-            if not limits:
-                sub_platform = getattr(prepared.subject, 'main_platform', '') or ''
-            else:
-                counts = get_active_offer_counts(item.store, job.game)
-                sub_platform = _pick_best(limits, counts)
-                if sub_platform is None:
-                    return {
-                        'ok': False, 'stage': stage,
-                        'error': 'No available sub-platform slots',
-                        'error_category': 'capacity',
-                    }
+            # Fallback for callers that don't provide a router (e.g. relist)
+            variant_slug = manual_variant or getattr(prepared.subject, 'main_platform', '') or ''
 
         # --- PA routing: single (API JSON) or bulk (Excel row) ---
         if item.marketplace == 'playerauctions':
@@ -134,7 +111,8 @@ def build_item_payload(
                     pricing_defaults=pricing,
                     store=item.store,
                     kind=ListingKind.STOCK,
-                    sub_platform=sub_platform,
+                    variant_slug=variant_slug,
+                    variant_context=variant_ctx,
                 )
                 if not pipeline_result.success:
                     return {
@@ -148,7 +126,10 @@ def build_item_payload(
                     'data': {
                         'payload': pipeline_result.payload,
                         'final_price': final_price,
-                        'sub_platform': sub_platform,
+                        'variant_slug': variant_slug,
+                        'listing_variant_slug': _listing_variant_slug(
+                            prepared.subject, variant_ctx, variant_slug,
+                        ),
                         'mode': 'json',
                     },
                 }
@@ -160,7 +141,8 @@ def build_item_payload(
                 pricing_defaults=pricing,
                 store=item.store,
                 kind=ListingKind.STOCK,
-                sub_platform=sub_platform,
+                variant_slug=variant_slug,
+                variant_context=variant_ctx,
             )
             if not pipeline_result.success:
                 return {
@@ -174,7 +156,10 @@ def build_item_payload(
                 'data': {
                     'payload': pipeline_result.payload,
                     'final_price': final_price,
-                    'sub_platform': sub_platform,
+                    'variant_slug': variant_slug,
+                    'listing_variant_slug': _listing_variant_slug(
+                        prepared.subject, variant_ctx, variant_slug,
+                    ),
                     'mode': 'excel_row',
                 },
             }
@@ -186,7 +171,8 @@ def build_item_payload(
             pricing_defaults=pricing,
             store=item.store,
             kind=ListingKind.STOCK,
-            sub_platform=sub_platform,
+            variant_slug=variant_slug,
+            variant_context=variant_ctx,
         )
         if not pipeline_result.success:
             return {
@@ -200,7 +186,10 @@ def build_item_payload(
             'data': {
                 'payload': pipeline_result.payload,
                 'final_price': final_price,
-                'sub_platform': sub_platform,
+                'variant_slug': variant_slug,
+                'listing_variant_slug': _listing_variant_slug(
+                    prepared.subject, variant_ctx, variant_slug,
+                ),
                 'mode': 'json',
             },
         }
@@ -213,3 +202,13 @@ def build_item_payload(
             'error': str(exc),
             'error_category': 'unexpected',
         }
+
+
+def _listing_variant_slug(subject, variant_ctx: dict | None, platform_slug: str) -> str:
+    selected = {'platform': platform_slug} if platform_slug else None
+    return resolve_listing_variant_slug(
+        subject=subject,
+        variant_ctx=variant_ctx,
+        selected_variants=selected,
+        fallback=platform_slug,
+    )

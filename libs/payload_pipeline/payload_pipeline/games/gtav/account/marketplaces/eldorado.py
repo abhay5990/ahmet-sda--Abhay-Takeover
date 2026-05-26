@@ -5,16 +5,8 @@ from __future__ import annotations
 from ..credentials import format_platform_credentials
 from ..models import GtavResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
-from .....marketplaces.eldorado import BaseEldoradoBuilder, EldoradoConfig
-
-_PLATFORM_TO_TRADE_ENV = {
-    "PC - Legacy": "0",
-    "PlayStation 4": "1",
-    "Xbox One": "2",
-    "PlayStation 5": "3",
-    "Xbox Series X/S": "4",
-    "PC - Enhanced": "5",
-}
+from .....core.variant_mapping import get_external_id
+from .....marketplaces.eldorado import BaseEldoradoBuilder
 
 
 class GtavEldoradoBuilder(BaseEldoradoBuilder):
@@ -50,13 +42,11 @@ class GtavEldoradoBuilder(BaseEldoradoBuilder):
 
         return payload
 
+    @staticmethod
     def _resolve_trade_environment(
-        self,
         account: GtavResolvedAccount,
         ctx: BuildContext,
     ) -> str:
-        el_config = ctx.get_config(EldoradoConfig)
-        manual = el_config.current_subplatform
-        if manual and manual != "Auto":
-            return _PLATFORM_TO_TRADE_ENV.get(manual, "0")
-        return _PLATFORM_TO_TRADE_ENV.get(account.main_platform, "0")
+        return get_external_id(
+            ctx.variant_context, "platform", account.main_platform,
+        ) or "0"

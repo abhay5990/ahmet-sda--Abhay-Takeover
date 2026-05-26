@@ -241,15 +241,17 @@ def test_ubisoft_playerauctions_payload_structure(load_fixture) -> None:
     result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions"))
 
     assert result.success
-    assert result.payload["game_name"] == "ubisoft-connect"
-    assert result.payload["game_id"] == 8485
-    assert result.payload["server"] == ["PC"]
-    assert result.payload["server_id"] == ["8485"]
+    assert result.payload["gameId"] == 8485
+    assert result.payload["serverId"] == 8485  # PC server
+    assert result.payload["categoryId"] == 8485
     assert result.payload["title"]
     assert result.payload["price"] > 0
-    assert result.payload["delivery_method"] == "instant"
-    assert result.payload["delivery_instructions"]
-    assert result.payload["cover_image_url"]
+    assert result.payload["isAuto"] is True
+    assert result.payload["autoDelivery"]["loginName"]
+    assert result.payload["autoDelivery"]["instruction"]
+    assert result.payload["screenShot"] == ""
+    assert result.payload["freeInsurance"] == 7
+    assert result.payload["offerDuration"] == 30
 
 
 def test_ubisoft_playerauctions_dropshipping_mode(load_fixture) -> None:
@@ -266,8 +268,48 @@ def test_ubisoft_playerauctions_dropshipping_mode(load_fixture) -> None:
     build_ctx = BuildContext(kind="dropshipping", marketplace="playerauctions")
     payload = UbisoftPlayerAuctionsBuilder().build_payload(account, listing, build_ctx)
 
-    assert payload["delivery_method"] == "manual"
-    assert "Thanks for purchase" in payload["delivery_instructions"]
+    assert payload["isAuto"] is False
+
+
+def test_ubisoft_playerauctions_bulk_payload_structure(load_fixture) -> None:
+    raw = load_fixture("lzt_ubisoft_connect.json")
+    request = PipelineRequest(
+        game="ubisoft-connect",
+        category="account",
+        kind="stock",
+        sources={"lzt": raw},
+    )
+
+    account = UbisoftResolver().resolve(request)
+    listing = UbisoftComposer().compose(account, request, MediaBundle())
+    build_ctx = BuildContext(kind="stock", marketplace="playerauctions")
+    row = UbisoftPlayerAuctionsBuilder().build_bulk_payload(account, listing, build_ctx)
+
+    assert row["Game"] == "Ubisoft Connect"
+    assert row["Server"] == "PC"
+    assert row["Listing Price"] > 0
+    assert row["Title"]
+    assert row["Delivery Method"] == "Automatic"
+    assert row["Login name  (Auto)"]
+    assert row["Password"]
+
+
+def test_ubisoft_playerauctions_bulk_dropshipping_mode(load_fixture) -> None:
+    raw = load_fixture("lzt_ubisoft_connect.json")
+    request = PipelineRequest(
+        game="ubisoft-connect",
+        category="account",
+        kind="dropshipping",
+        sources={"lzt": raw},
+    )
+
+    account = UbisoftResolver().resolve(request)
+    listing = UbisoftComposer().compose(account, request, MediaBundle())
+    build_ctx = BuildContext(kind="dropshipping", marketplace="playerauctions")
+    row = UbisoftPlayerAuctionsBuilder().build_bulk_payload(account, listing, build_ctx)
+
+    assert row["Delivery Method"] == "Manual"
+    assert row["Login name  (Auto)"] == ""
 
 
 # ── Pipeline builds all marketplaces ─────────────────────────────

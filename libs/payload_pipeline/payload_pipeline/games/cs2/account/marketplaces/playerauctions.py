@@ -24,6 +24,10 @@ class CS2PlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     requires_parental_password = False
 
     @property
+    def _pa_game_display_name(self) -> str:
+        return "Counter-Strike 2"
+
+    @property
     def game_name(self) -> str:
         return "cs2"
 
@@ -39,8 +43,8 @@ class CS2PlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     def _platform_name(self) -> str:
         return "Steam Account"
 
-    def _get_server(self, account: CS2ResolvedAccount) -> list[str]:
+    def _get_server(self, account: CS2ResolvedAccount, ctx=None) -> list[str]:
         return ["Steam"]
 
-    def _get_server_id(self, account: CS2ResolvedAccount) -> list[str] | None:
+    def _get_server_id(self, account: CS2ResolvedAccount, ctx=None) -> list[str] | None:
         return ["6905"]

@@ -15,6 +15,8 @@ from payload_pipeline.games.gi.account import (
     register,
 )
 
+from _variant_ctx import genshin_eldorado, genshin_gameboost, genshin_playerauctions
+
 
 def _build_registry() -> PipelineRegistry:
     """Build a registry containing only the Genshin slice."""
@@ -141,7 +143,7 @@ def test_eldorado_payload_has_correct_game_id(load_fixture) -> None:
     _prepare_result = pipeline.prepare_once(request)
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado"))
+    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado", variant_context=genshin_eldorado()))
     assert result.success
 
     assert result.payload["augmentedGame"]["gameId"] == "39"
@@ -161,7 +163,7 @@ def test_eldorado_trade_environment_maps_eu_region(load_fixture) -> None:
     _prepare_result = pipeline.prepare_once(request)
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado"))
+    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado", variant_context=genshin_eldorado()))
     assert result.success
 
     assert result.payload["augmentedGame"]["tradeEnvironmentId"] == "1"
@@ -180,7 +182,7 @@ def test_eldorado_payload_includes_credentials(load_fixture) -> None:
     _prepare_result = pipeline.prepare_once(request)
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado"))
+    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado", variant_context=genshin_eldorado()))
     assert result.success
 
     assert result.payload["accountSecretDetails"]
@@ -205,7 +207,7 @@ def test_gameboost_payload_core_fields(load_fixture) -> None:
     _prepare_result = pipeline.prepare_once(request)
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="gameboost"))
+    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="gameboost", variant_context=genshin_gameboost()))
     assert result.success
 
     assert result.payload["game"] == "genshin-impact"
@@ -227,7 +229,7 @@ def test_gameboost_account_data_fields(load_fixture) -> None:
 
     account = GenshinResolver().resolve(request)
     listing = GenshinComposer().compose(account, request, MediaBundle())
-    build_ctx = BuildContext(kind="stock", marketplace="gameboost")
+    build_ctx = BuildContext(kind="stock", marketplace="gameboost", variant_context=genshin_gameboost())
     payload = GenshinImpactGameBoostBuilder().build_payload(account, listing, build_ctx)
 
     ad = payload["account_data"]
@@ -251,7 +253,7 @@ def test_gameboost_dropshipping_mode(load_fixture) -> None:
 
     account = GenshinResolver().resolve(request)
     listing = GenshinComposer().compose(account, request, MediaBundle())
-    build_ctx = BuildContext(kind="dropshipping", marketplace="gameboost")
+    build_ctx = BuildContext(kind="dropshipping", marketplace="gameboost", variant_context=genshin_gameboost())
     payload = GenshinImpactGameBoostBuilder().build_payload(account, listing, build_ctx)
 
     assert payload["is_manual"] is True
@@ -276,17 +278,20 @@ def test_playerauctions_payload_core_fields(load_fixture) -> None:
     _prepare_result = pipeline.prepare_once(request)
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions"))
+    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions", variant_context=genshin_playerauctions()))
     assert result.success
 
-    assert result.payload["game_name"] == "genshin-impact"
-    assert result.payload["game_id"] == 8480
-    assert result.payload["server"] == ["EU"]
+    assert result.payload["gameId"] == 9334
+    assert result.payload["serverId"] == 9336  # eu -> Europe (9336)
+    assert result.payload["categoryId"] == 9336
     assert result.payload["title"]
     assert result.payload["price"] > 0
-    assert result.payload["delivery_method"] == "instant"
-    assert result.payload["delivery_instructions"]
-    assert result.payload["cover_image_url"]
+    assert result.payload["isAuto"] is True
+    assert result.payload["autoDelivery"]["loginName"]
+    assert result.payload["autoDelivery"]["instruction"]
+    assert result.payload["screenShot"] == ""
+    assert result.payload["freeInsurance"] == 7
+    assert result.payload["offerDuration"] == 30
 
 
 def test_playerauctions_dropshipping_uses_manual_delivery(load_fixture) -> None:
@@ -300,10 +305,51 @@ def test_playerauctions_dropshipping_uses_manual_delivery(load_fixture) -> None:
 
     account = GenshinResolver().resolve(request)
     listing = GenshinComposer().compose(account, request, MediaBundle())
-    build_ctx = BuildContext(kind="dropshipping", marketplace="playerauctions")
+    build_ctx = BuildContext(kind="dropshipping", marketplace="playerauctions", variant_context=genshin_playerauctions())
     payload = GenshinImpactPlayerAuctionsBuilder().build_payload(account, listing, build_ctx)
 
-    assert payload["delivery_method"] == "manual"
+    assert payload["isAuto"] is False
+
+
+def test_playerauctions_bulk_payload_core_fields(load_fixture) -> None:
+    raw = load_fixture("lzt_gi.json")
+    request = PipelineRequest(
+        game="genshin-impact",
+        category="account",
+        kind="stock",
+        sources={"lzt": raw},
+    )
+
+    account = GenshinResolver().resolve(request)
+    listing = GenshinComposer().compose(account, request, MediaBundle())
+    build_ctx = BuildContext(kind="stock", marketplace="playerauctions", variant_context=genshin_playerauctions())
+    row = GenshinImpactPlayerAuctionsBuilder().build_bulk_payload(account, listing, build_ctx)
+
+    assert row["Game"] == "Genshin Impact"
+    assert row["Server"] == "Europe"
+    assert row["Listing Price"] > 0
+    assert row["Title"]
+    assert row["Delivery Method"] == "Automatic"
+    assert row["Login name  (Auto)"]  # double space is intentional
+    assert row["Password"]
+
+
+def test_playerauctions_bulk_dropshipping_uses_manual(load_fixture) -> None:
+    raw = load_fixture("lzt_gi.json")
+    request = PipelineRequest(
+        game="genshin-impact",
+        category="account",
+        kind="dropshipping",
+        sources={"lzt": raw},
+    )
+
+    account = GenshinResolver().resolve(request)
+    listing = GenshinComposer().compose(account, request, MediaBundle())
+    build_ctx = BuildContext(kind="dropshipping", marketplace="playerauctions", variant_context=genshin_playerauctions())
+    row = GenshinImpactPlayerAuctionsBuilder().build_bulk_payload(account, listing, build_ctx)
+
+    assert row["Delivery Method"] == "Manual"
+    assert row["Login name  (Auto)"] == ""
 
 
 # ── Pipeline builds all marketplaces ─────────────────────────────
@@ -323,8 +369,13 @@ def test_pipeline_builds_all_marketplace_payloads(load_fixture) -> None:
     _prepare_result = pipeline.prepare_once(request)
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
+    _variant_ctxs = {
+        "eldorado": genshin_eldorado(),
+        "gameboost": genshin_gameboost(),
+        "playerauctions": genshin_playerauctions(),
+    }
     for mp in marketplaces:
-        result = pipeline.build(prepared, BuildContext(kind="stock", marketplace=mp))
+        result = pipeline.build(prepared, BuildContext(kind="stock", marketplace=mp, variant_context=_variant_ctxs.get(mp)))
         assert result.success
         assert result.payload
 

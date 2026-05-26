@@ -21,6 +21,7 @@ from apps.integrations.providers.registry import clear_client_cache
 from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
 from apps.sync.enums import ResourceType, SyncLogLevel, SyncMode, SyncPhase
 from apps.sync.services.registry import build_service, get_service_class
+from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled
 from apps.sync.services.shared.sync_log import log_sync, log_sync_error
 
 if TYPE_CHECKING:
@@ -65,6 +66,9 @@ def _sync_account(
 
 def sync_lzt(*, proxy_pool=None) -> None:
     """Sync LZT owned_products for all active LZT accounts."""
+    if not is_sync_feature_enabled(SyncFlag.LZT):
+        log_sync('lzt_sync', SyncLogLevel.INFO, 'LZT sync disabled via feature flag, skipping')
+        return
     accounts = _get_active_accounts('lzt')
     for account in accounts:
         try:
@@ -81,6 +85,9 @@ def sync_lzt(*, proxy_pool=None) -> None:
 
 def sync_offers(*, proxy_pool=None) -> None:
     """Sync offers/listings for all marketplace accounts."""
+    if not is_sync_feature_enabled(SyncFlag.OFFERS):
+        log_sync('offer_sync', SyncLogLevel.INFO, 'Offer sync disabled via feature flag, skipping')
+        return
     accounts = _get_active_accounts(*_MARKETPLACE_PROVIDERS)
     for account in accounts:
         try:
@@ -104,6 +111,10 @@ def sync_orders(*, proxy_pool=None) -> list[int]:
     """
     from apps.orders.enums import OrderStatus
     from apps.orders.models import Order
+
+    if not is_sync_feature_enabled(SyncFlag.ORDERS):
+        log_sync('order_sync', SyncLogLevel.INFO, 'Order sync disabled via feature flag, skipping')
+        return []
 
     chain_start = timezone.now()
     accounts = _get_active_accounts(*_MARKETPLACE_PROVIDERS)
@@ -177,19 +188,27 @@ def run_sync_chain() -> None:
                     reconcile_cross_platform,
                     notify_unlinked_orders,
                 )
-                reconcile_cross_platform(new_order_ids)
-                notify_unlinked_orders(new_order_ids)
+                if is_sync_feature_enabled(SyncFlag.RECONCILE):
+                    reconcile_cross_platform(new_order_ids)
+                else:
+                    log_sync('sync_chain', SyncLogLevel.INFO,
+                             f'Reconciliation disabled via feature flag, skipping '
+                             f'({len(new_order_ids)} orders not reconciled)')
+
+                if is_sync_feature_enabled(SyncFlag.UNLINKED_NOTIFY):
+                    notify_unlinked_orders(new_order_ids)
             except Exception as e:
                 log_sync_error('sync_chain', f'Reconciliation phase failed: {e}', exc=e)
 
         # 5. Eldorado notification → order status sync (runs after orders exist)
-        try:
-            from apps.sync.services.eldorado.notifications.status_sync import (
-                EldoradoNotificationStatusSync,
-            )
-            EldoradoNotificationStatusSync().run()
-        except Exception as e:
-            log_sync_error('sync_chain', f'Notification status sync failed: {e}', exc=e)
+        if is_sync_feature_enabled(SyncFlag.ELDORADO_NOTIFICATIONS):
+            try:
+                from apps.sync.services.eldorado.notifications.status_sync import (
+                    EldoradoNotificationStatusSync,
+                )
+                EldoradoNotificationStatusSync().run()
+            except Exception as e:
+                log_sync_error('sync_chain', f'Notification status sync failed: {e}', exc=e)
     finally:
         clear_client_cache()
 

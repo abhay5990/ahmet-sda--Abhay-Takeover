@@ -7,6 +7,8 @@ from decimal import Decimal
 from apps.listings.enums import ListingStatus
 from core.enums import ProductCategory
 
+VariantSlugLookup = dict[str, dict[str, str]]
+
 
 # ---------------------------------------------------------------------------
 # Status mapping
@@ -101,32 +103,80 @@ def extract_game_external_id(item: dict) -> str:
 # Sub-platform extraction
 # ---------------------------------------------------------------------------
 
-# Reverse of payload_pipeline GTA V _SERVER_ID_MAP.
-# Only GTA V uses platform-based server IDs; other games use region-based.
-_SERVER_ID_TO_PLATFORM: dict[str, str] = {
-    '9874': 'PlayStation 5',
-    '9889': 'Xbox Series X/S',
-    '5921': 'PlayStation 4',
-    '5922': 'Xbox One',
-    '14270': 'PC - Enhanced',
-    '14271': 'PC - Enhanced',
-    '14272': 'PC - Enhanced',
-    '5920': 'PC - Legacy',
-    '5919': 'PC - Legacy',
-    '7706': 'PC - Legacy',
+# Legacy fallback maps. Prefer GameVariantMapping when service passes a lookup.
+_SERVER_ID_TO_PLATFORM_SLUG: dict[str, str] = {
+    '9874': 'ps5',
+    '9889': 'xbox-series',
+    '5921': 'ps4',
+    '5922': 'xbox-one',
+    '14270': 'pc-enhanced',
+    '14271': 'pc-enhanced',
+    '14272': 'pc-enhanced',
+    '5920': 'pc-legacy',
+    '5919': 'pc-legacy',
+    '7706': 'pc-legacy',
+    # Fortnite
+    '7877': 'pc',
+    '7878': 'psn',
+    '7879': 'xbox',
+    '8173': 'android',
+    '8172': 'ios',
+    '8321': 'switch',
+    # Rainbow Six Siege
+    '7774': 'pc',
+    '7775': 'psn',
+    '7776': 'xbox',
+}
+
+_SERVER_ID_TO_REGION_SLUG: dict[str, str] = {
+    # Valorant
+    '9089': 'na',
+    '9128': 'eu',
+    '9207': 'la',
+    '9208': 'br',
+    '9309': 'ap',
+    '9206': 'kr',
+    '14995': 'tr',
 }
 
 
-def extract_sub_platform(item: dict) -> str:
-    """Extract sub-platform from details.serverId.
+def extract_variant(
+    item: dict,
+    slug_lookup: VariantSlugLookup | None = None,
+    *,
+    game_slug: str = '',
+) -> str:
+    """Extract canonical variant slug from details.serverId.
 
     PA offers store platform/server as a numeric ID in ``details.serverId``.
-    For GTA V, this maps to platform names (PlayStation 5, Xbox One, etc.).
-    Returns empty string when no mapping is found.
+    Valorant has no platform dimension on PA, so we persist ``region-pc`` as
+    an explicit canonical fallback.
     """
     details = item.get('details') or {}
     server_id = str(details.get('serverId') or '')
-    return _SERVER_ID_TO_PLATFORM.get(server_id, '')
+
+    if game_slug == 'valorant':
+        region_slug = (
+            _lookup_slug(slug_lookup, 'region', server_id)
+            or _SERVER_ID_TO_REGION_SLUG.get(server_id, '')
+        )
+        return f'{region_slug}-pc' if region_slug else 'pc'
+
+    return (
+        _lookup_slug(slug_lookup, 'platform', server_id)
+        or _lookup_slug(slug_lookup, 'region', server_id)
+        or _SERVER_ID_TO_PLATFORM_SLUG.get(server_id, '')
+    )
+
+
+def _lookup_slug(
+    slug_lookup: VariantSlugLookup | None,
+    variant_type: str,
+    external_id: str,
+) -> str:
+    if not external_id or not slug_lookup:
+        return ''
+    return (slug_lookup.get(variant_type) or {}).get(str(external_id), '')
 
 
 # ---------------------------------------------------------------------------

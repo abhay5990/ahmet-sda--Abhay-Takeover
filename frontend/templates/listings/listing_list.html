@@ -125,7 +125,7 @@
                             </span>
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">${{ listing.price }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-500">{{ listing.sub_platform|default:"-" }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-500">{{ listing.variant|default:"-" }}</td>
                         <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{% if listing.listed_at %}<span data-utc="{{ listing.listed_at|date:'c' }}">{{ listing.listed_at|date:"M-d-Y g:i A" }}</span>{% else %}-{% endif %}</td>
                         <!-- Actions dropdown -->
                         <td class="px-4 py-3 text-sm">

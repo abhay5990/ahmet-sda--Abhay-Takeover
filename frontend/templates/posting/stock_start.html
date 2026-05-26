@@ -618,12 +618,12 @@
                             </div>
                             {% endif %}
                             <div>
-                                <label class="block text-xs text-gray-500 mb-1">Sub-Platform</label>
-                                <select x-model="defaults['{{ store.slug }}'].sub_platform"
+                                <label class="block text-xs text-gray-500 mb-1">Variant</label>
+                                <select x-model="defaults['{{ store.slug }}'].variant"
                                         class="w-full text-sm border-gray-300 rounded-md">
                                     <option value="">Default</option>
-                                    <option value="Auto" x-show="gameSubplatforms.length > 0">Auto</option>
-                                    <template x-for="sp in gameSubplatforms" :key="sp">
+                                    <option value="Auto" x-show="gameVariants.length > 0">Auto</option>
+                                    <template x-for="sp in gameVariants" :key="sp">
                                         <option :value="sp" x-text="sp"></option>
                                     </template>
                                 </select>
@@ -658,8 +658,8 @@
 
 {% block extra_js %}
 <script>
-// Game slug -> supported sub-platforms (mirrors backend GAME_SUBPLATFORMS registry)
-const GAME_SUBPLATFORMS = {{ game_subplatforms_json|safe }};
+// Game slug -> supported variants (mirrors backend GameVariant registry)
+const GAME_VARIANTS = {{ game_variants_json|safe }};
 
 // Game ID -> slug lookup
 const GAME_SLUGS = {
@@ -917,9 +917,9 @@ function stockStart() {
             return true;
         },
 
-        get gameSubplatforms() {
+        get gameVariants() {
             const slug = GAME_SLUGS[this.selectedGame] || '';
-            return GAME_SUBPLATFORMS[slug] || [];
+            return GAME_VARIANTS[slug] || [];
         },
 
         get isGtaGame() {
@@ -934,7 +934,7 @@ function stockStart() {
 
         get platformOptions() {
             if (this.isGtaGame) return GTA_PLATFORMS;
-            return this.gameSubplatforms.length > 0 ? this.gameSubplatforms : [];
+            return this.gameVariants.length > 0 ? this.gameVariants : [];
         },
 
         get totalDistributed() {
@@ -952,7 +952,7 @@ function stockStart() {
                     multiplier_low: '2.00', multiplier_mid: '1.80', multiplier_high: '1.50',
                     min_price: '0.00', forced_ending: '0.99',
                     {% if store.provider == 'gameboost' %}exchange_rate: '0.87',{% endif %}
-                    sub_platform: '', account_type: '',
+                    variant: '', account_type: '',
                     title_template_id: null, description_template_id: null,
                     {% if store.provider == 'playerauctions' %}pa_mode: 'single',{% endif %}
                 };
@@ -983,7 +983,7 @@ function stockStart() {
                 return;
             }
             for (const slug of Object.keys(this.defaults)) {
-                this.defaults[slug].sub_platform = '';
+                this.defaults[slug].variant = '';
                 this.defaults[slug].title_template_id = null;
                 this.defaults[slug].description_template_id = null;
             }

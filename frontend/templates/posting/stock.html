@@ -107,8 +107,8 @@
                                            class="w-full text-sm border-gray-300 rounded-md">
                                 </div>
                                 <div>
-                                    <label class="block text-xs text-gray-500 mb-1">Sub-Platform</label>
-                                    <select x-model="defaults['{{ store.provider }}'].sub_platform"
+                                    <label class="block text-xs text-gray-500 mb-1">Variant</label>
+                                    <select x-model="defaults['{{ store.provider }}'].variant"
                                             class="w-full text-sm border-gray-300 rounded-md">
                                         <option value="">Default</option>
                                         <option value="Auto">Auto</option>
@@ -275,7 +275,7 @@ function stockPosting() {
                     multiplier_high: '1.50',
                     min_price: '0.00',
                     forced_ending: '0.99',
-                    sub_platform: '',
+                    variant: '',
                     account_type: '',
                 };
             }

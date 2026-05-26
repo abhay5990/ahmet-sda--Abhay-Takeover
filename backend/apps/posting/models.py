@@ -188,9 +188,9 @@ class PostingDefault(models.Model):
     )
 
     # Site-specific
-    sub_platform = models.CharField(
+    variant = models.CharField(
         max_length=20, blank=True,
-        help_text='Last selected sub-platform (PC/PSN/Xbox/Auto)',
+        help_text='Last selected variant slug (pc/psn/xbox/auto)',
     )
     account_type = models.CharField(
         max_length=50, blank=True,
@@ -420,27 +420,113 @@ class PostingImagePreset(models.Model):
         return self.name or f"Image preset #{self.pk}"
 
 
-class SubplatformLimit(models.Model):
-    """Max offer limits per store × game × sub-platform. Shared by stock + dropship."""
+# ── Game Variant System ──────────────────────────────────────────
+
+
+class GameVariant(models.Model):
+    """A dimension that differentiates listings for a game (platform, region, etc.).
+
+    Examples:
+        Fortnite + platform + "pc" → "PC"
+        Valorant + region + "na"   → "North America"
+        GTA V    + platform + "ps5" → "PlayStation 5"
+    """
+
+    class VariantType(models.TextChoices):
+        PLATFORM = 'platform', 'Platform'
+        REGION = 'region', 'Region'
+
+    game = models.ForeignKey(
+        'inventory.Game',
+        on_delete=models.CASCADE,
+        related_name='variants',
+    )
+    type = models.CharField(
+        max_length=20,
+        choices=VariantType.choices,
+    )
+    slug = models.CharField(
+        max_length=30,
+        help_text='Internal key: pc, psn, na, euw, etc.',
+    )
+    label = models.CharField(
+        max_length=60,
+        help_text='Display name: PC, PlayStation, North America',
+    )
+    source_key = models.CharField(
+        max_length=60,
+        blank=True,
+        help_text='Account field value for lookup. Empty = use slug.',
+    )
+    sort_order = models.PositiveIntegerField(default=0)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'game_variants'
+        unique_together = [('game', 'type', 'slug')]
+        ordering = ['game', 'type', 'sort_order']
+
+    def __str__(self):
+        return f"{self.game} — {self.type}/{self.slug} ({self.label})"
+
+
+class GameVariantMapping(models.Model):
+    """Marketplace-specific external ID for a game variant."""
+
+    class Marketplace(models.TextChoices):
+        ELDORADO = 'eldorado', 'Eldorado'
+        GAMEBOOST = 'gameboost', 'GameBoost'
+        PLAYERAUCTIONS = 'playerauctions', 'PlayerAuctions'
+
+    variant = models.ForeignKey(
+        GameVariant,
+        on_delete=models.CASCADE,
+        related_name='mappings',
+    )
+    marketplace = models.CharField(
+        max_length=20,
+        choices=Marketplace.choices,
+    )
+    external_id = models.CharField(
+        max_length=30,
+        help_text='Marketplace-specific ID: "0", "9874", "1-0"',
+    )
+    external_name = models.CharField(
+        max_length=60,
+        blank=True,
+        help_text='Optional display name on the marketplace',
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'game_variant_mappings'
+        unique_together = [('variant', 'marketplace')]
+
+    def __str__(self):
+        return f"{self.variant} → {self.marketplace}:{self.external_id}"
+
+
+class GameVariantLimit(models.Model):
+    """Capacity limit per store × variant. Replaces SubplatformLimit."""
 
     store = models.ForeignKey(
         'integrations.IntegrationAccount',
         on_delete=models.CASCADE,
-        related_name='subplatform_limits',
+        related_name='variant_limits',
     )
-    game = models.ForeignKey(
-        'inventory.Game',
+    variant = models.ForeignKey(
+        GameVariant,
         on_delete=models.CASCADE,
-        related_name='subplatform_limits',
+        related_name='limits',
     )
-    sub_platform = models.CharField(
-        max_length=20,
-        help_text='PC, PSN, Xbox, etc.',
+    max_offers = models.PositiveIntegerField(
+        help_text='Maximum offers allowed for this variant',
     )
-    max_offers = models.IntegerField(
-        help_text='Maximum offers allowed on this sub-platform',
-    )
-    stock_reserve = models.IntegerField(
+    stock_reserve = models.PositiveIntegerField(
         default=0,
         help_text='Slots reserved for stock (dropship cannot use these)',
     )
@@ -449,11 +535,17 @@ class SubplatformLimit(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'subplatform_limits'
-        unique_together = [('store', 'game', 'sub_platform')]
+        db_table = 'game_variant_limits'
+        unique_together = [('store', 'variant')]
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(stock_reserve__lte=models.F('max_offers')),
+                name='stock_reserve_lte_max_offers',
+            ),
+        ]
 
     def __str__(self):
-        return f"{self.store.name} — {self.game} — {self.sub_platform} (max={self.max_offers})"
+        return f"{self.store.name} — {self.variant} (max={self.max_offers})"
 
 
 class PostingLog(models.Model):

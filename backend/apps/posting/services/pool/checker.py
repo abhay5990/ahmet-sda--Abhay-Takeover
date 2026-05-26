@@ -21,7 +21,7 @@ from apps.posting.models import (
     PostingLogLevel,
 )
 
-from .replenisher import replenish_pool
+from .replenisher import _is_gameboost_legacy_payload, replenish_pool
 
 logger = logging.getLogger(__name__)
 
@@ -211,23 +211,6 @@ def _count_gameboost(client: Any, offer_id: str, proxy_group: str | None, pool: 
     if hasattr(data, 'total'):
         return data.total
     return 0
-
-
-def _is_gameboost_legacy_payload(listing: Any) -> bool:
-    """Detect Gameboost offer format from DB payload — no API call needed.
-
-    Legacy: listing.raw_data.payload has 'login' field (single-credential).
-    New:    listing.raw_data.payload has 'credentials' list (multi-credential).
-    """
-    raw = getattr(listing, 'raw_data', None) or {}
-    payload = raw.get('payload', {})
-    if not payload:
-        return False
-    # If credentials array exists → new format
-    if payload.get('credentials'):
-        return False
-    # If login field exists → legacy format
-    return bool(payload.get('login'))
 
 
 def _get_pa_active_count(pool: OfferPool) -> int:

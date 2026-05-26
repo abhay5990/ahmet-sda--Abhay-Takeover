@@ -70,9 +70,9 @@ class Command(BaseCommand):
         # 3. Seed platform mappings
         mapping_count = 0
         platform_extractors = {
-            'eldorado': lambda p: (str(p['gameId']), p.get('name', '')),
-            'gameboost': lambda p: (str(p['id']), p.get('name', '')),
-            'playerauctions': lambda p: (str(p['gameId']), p.get('name', '')),
+            'eldorado': lambda p: (p.get('gameId'), p.get('name', '')),
+            'gameboost': lambda p: (p.get('id'), p.get('name', '')),
+            'playerauctions': lambda p: (p.get('gameId'), p.get('name', '')),
         }
 
         for g in games_data:
@@ -80,21 +80,34 @@ class Command(BaseCommand):
             platforms = g.get('platforms', {})
 
             for platform_key, extractor in platform_extractors.items():
-                platform_data = platforms.get(platform_key)
-                if not platform_data:
+                raw_platform_data = platforms.get(platform_key)
+                if not raw_platform_data:
                     continue
 
-                external_id, external_name = extractor(platform_data)
-                _, created = GamePlatformMapping.objects.update_or_create(
-                    platform=platform_key,
-                    external_id=external_id,
-                    defaults={
-                        'game': game,
-                        'external_name': external_name,
-                    },
+                platform_entries = (
+                    raw_platform_data
+                    if isinstance(raw_platform_data, list)
+                    else [raw_platform_data]
                 )
-                if created:
-                    mapping_count += 1
+
+                for platform_data in platform_entries:
+                    if not platform_data:
+                        continue
+
+                    external_id, external_name = extractor(platform_data)
+                    if external_id is None or str(external_id).strip() == '':
+                        continue
+
+                    _, created = GamePlatformMapping.objects.update_or_create(
+                        platform=platform_key,
+                        external_id=str(external_id),
+                        defaults={
+                            'game': game,
+                            'external_name': external_name,
+                        },
+                    )
+                    if created:
+                        mapping_count += 1
 
         self.stdout.write(self.style.SUCCESS(
             f'Seed complete. Mappings: {mapping_count} created'

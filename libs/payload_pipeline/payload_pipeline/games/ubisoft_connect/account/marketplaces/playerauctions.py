@@ -30,8 +30,8 @@ class UbisoftPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     def _platform_name(self) -> str:
         return "Ubisoft Account"
 
-    def _get_server(self, account: UbisoftResolvedAccount) -> list[str]:
+    def _get_server(self, account: UbisoftResolvedAccount, ctx=None) -> list[str]:
         return ["PC"]
 
-    def _get_server_id(self, account: UbisoftResolvedAccount) -> list[str] | None:
+    def _get_server_id(self, account: UbisoftResolvedAccount, ctx=None) -> list[str] | None:
         return ["8485"]

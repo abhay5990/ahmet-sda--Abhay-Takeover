@@ -29,8 +29,10 @@ from apps.posting.models import (
 )
 
 from apps.posting.services.shared.utils import extract_listing_id
+from core.marketplace.normalizers import normalize_offer_response
+from core.marketplace.payload_extractor import extract_create_payload
 
-from .formatter import format_credential_for_marketplace
+from .formatter import build_credential_bundle, format_credential_for_marketplace
 
 logger = logging.getLogger(__name__)
 
@@ -196,7 +198,7 @@ def _recreate_eldorado_offer(
 
     # Get the original payload from listing.raw_data
     raw = listing.raw_data or {}
-    original_payload = raw.get('payload', {})
+    original_payload = extract_create_payload(raw, 'eldorado')
     if not original_payload:
         _log(
             PostingLogLevel.ERROR,
@@ -218,6 +220,7 @@ def _recreate_eldorado_offer(
     # Create new offer with all credentials
     create_payload = dict(original_payload)
     create_payload['accountSecretDetails'] = all_creds
+    create_payload.setdefault('details', {}).setdefault('pricing', {})['quantity'] = len(all_creds)
 
     create_result = client.create_offer(create_payload, proxy_group=proxy_group)
     if not create_result.ok:
@@ -242,7 +245,12 @@ def _recreate_eldorado_offer(
 
     with transaction.atomic():
         listing.store_listing_id = new_offer_id
-        listing.save(update_fields=['store_listing_id', 'updated_at'])
+        listing.raw_data = normalize_offer_response(
+            'eldorado',
+            create_result.data,
+            payload=create_payload,
+        )
+        listing.save(update_fields=['store_listing_id', 'raw_data', 'updated_at'])
 
         # Update pool's active offers if any
         OfferPoolActiveOffer.objects.filter(
@@ -347,7 +355,7 @@ def _gameboost_recreate(
     """
     listing = pool.listing
     raw = listing.raw_data or {}
-    original_payload = raw.get('payload', {})
+    original_payload = extract_create_payload(raw, 'gameboost')
     if not original_payload:
         _log(
             PostingLogLevel.ERROR,
@@ -357,7 +365,7 @@ def _gameboost_recreate(
         return 0
 
     # Extract existing credential from old offer before deleting
-    existing_cred = _extract_legacy_gameboost_credential(original_payload)
+    existing_creds = _extract_existing_gameboost_credentials(original_payload)
 
     # Delete old offer
     delete_result = client.delete_offer(old_offer_id, proxy_group=proxy_group)
@@ -371,9 +379,9 @@ def _gameboost_recreate(
 
     # Build new payload: remove old single-credential fields, add credentials list
     # Preserve existing credential + append new ones
-    all_creds = ([existing_cred] if existing_cred else []) + cred_strings
+    all_creds = existing_creds + cred_strings
     create_payload = dict(original_payload)
-    for field in ('login', 'password', 'email_login', 'email_password', 'email_provider'):
+    for field in ('login', 'password', 'email_login', 'email_password', 'email_provider', 'mail_provider'):
         create_payload.pop(field, None)
     create_payload['credentials'] = all_creds
 
@@ -401,8 +409,11 @@ def _gameboost_recreate(
 
     with transaction.atomic():
         listing.store_listing_id = new_offer_id
-        # Update raw_data with new format payload so future checks detect multi-cred
-        listing.raw_data = {**(listing.raw_data or {}), 'payload': create_payload}
+        listing.raw_data = normalize_offer_response(
+            'gameboost',
+            create_result.data,
+            payload=create_payload,
+        )
         listing.save(update_fields=['store_listing_id', 'raw_data', 'updated_at'])
 
     _log(
@@ -451,7 +462,12 @@ def _replenish_pa(pool: OfferPool) -> int:
 
     # Get the original payload template from the pool's listing
     raw = pool.listing.raw_data or {}
-    original_payload = raw.get('payload', {})
+    original_payload = extract_create_payload(
+        raw,
+        'playerauctions',
+        client=client,
+        proxy_group=proxy_group,
+    )
     if not original_payload:
         _log(
             PostingLogLevel.ERROR,
@@ -496,7 +512,7 @@ def _clone_pa_offer(
 
     # Replace credentials with platform-aware format
     product = item.owned_product
-    payload['delivery'] = format_credential_for_marketplace(product, 'playerauctions')
+    _apply_pa_auto_delivery_credentials(payload, product)
 
     result = client.create_offer(payload, proxy_group=proxy_group)
     if not result.ok:
@@ -514,6 +530,14 @@ def _clone_pa_offer(
         item.save(update_fields=['status', 'error_message', 'updated_at'])
         return 0
 
+    raw_data = normalize_offer_response(
+        'playerauctions',
+        result.data,
+        payload=payload,
+        client=client,
+        proxy_group=proxy_group,
+    )
+
     with transaction.atomic():
         # Create Listing for the clone
         new_listing = Listing.objects.create(
@@ -521,11 +545,11 @@ def _clone_pa_offer(
             integration_account=pool.store,
             game=pool.game,
             store_listing_id=new_offer_id,
-            sub_platform=pool.listing.sub_platform,
+            variant=pool.listing.variant,
             title=pool.listing.title,
             price=pool.listing.price,
             currency=pool.listing.currency,
-            raw_data={'payload': payload, 'source': 'pool_clone', 'pool_id': pool.pk},
+            raw_data=raw_data,
         )
 
         ListingOwnedProduct.objects.create(
@@ -550,6 +574,28 @@ def _clone_pa_offer(
     return 1
 
 
+def _apply_pa_auto_delivery_credentials(payload: dict, product: Any) -> None:
+    bundle = build_credential_bundle(product)
+    auto_delivery = dict(payload.get('autoDelivery') or {})
+    auto_delivery.update({
+        'loginName': bundle.login,
+        'retypeLoginName': bundle.login,
+        'password': bundle.password,
+        'retypePassword': bundle.password,
+        'instruction': format_credential_for_marketplace(product, 'playerauctions'),
+    })
+
+    if bundle.email_login:
+        for owner_key in ('original', 'current'):
+            owner = auto_delivery.get(owner_key)
+            if isinstance(owner, dict):
+                owner = dict(owner)
+                owner['email'] = bundle.email_login
+                auto_delivery[owner_key] = owner
+
+    payload['autoDelivery'] = auto_delivery
+
+
 # ── Helpers ───────────────────────────────────────────────────────
 
 
@@ -560,12 +606,30 @@ def _is_gameboost_legacy_payload(listing: Any) -> bool:
     New:    listing.raw_data.payload has 'credentials' list (multi-credential).
     """
     raw = getattr(listing, 'raw_data', None) or {}
-    payload = raw.get('payload', {})
-    if not payload:
+    if raw.get('_credential_entries'):
         return False
-    if payload.get('credentials'):
-        return False
-    return bool(payload.get('login'))
+
+    payload = raw.get('payload')
+    if isinstance(payload, dict):
+        if payload.get('credentials'):
+            return False
+        if payload.get('login'):
+            return True
+
+    credentials = raw.get('credentials')
+    if isinstance(credentials, dict):
+        return bool(credentials.get('login'))
+
+    return False
+
+
+def _extract_existing_gameboost_credentials(payload: dict) -> list[str]:
+    credentials = payload.get('credentials')
+    if isinstance(credentials, list):
+        return [str(credential) for credential in credentials if credential]
+
+    legacy = _extract_legacy_gameboost_credential(payload)
+    return [legacy] if legacy else []
 
 
 def _extract_legacy_gameboost_credential(payload: dict) -> str | None:

@@ -129,11 +129,11 @@ class GameBoostMapper:
         game_slug = game_obj.get('slug') or raw_data.get('game_slug') or ''
 
         # --- pricing ----------------------------------------------------------
-        price_usd_obj = raw_data.get('price_usd') or {}
-        price = float(price_usd_obj.get('value', 0)) if price_usd_obj else 0.0
+        price_obj = raw_data.get('price') or {}
+        price = float(price_obj.get('value', 0)) if price_obj else 0.0
         if not price:
-            price_obj = raw_data.get('price') or {}
-            price = float(price_obj.get('value', 0)) if price_obj else 0.0
+            price_usd_obj = raw_data.get('price_usd') or {}
+            price = float(price_usd_obj.get('value', 0)) if price_usd_obj else 0.0
 
         # --- title / description ----------------------------------------------
         title = raw_data.get('title') or ''

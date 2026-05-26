@@ -26,7 +26,7 @@ class CocGameBoostBuilder(BaseGameBoostBuilder):
     def _platform_name(self) -> str:
         return "Supercell ID"
 
-    def _build_account_data(self, account: CocResolvedAccount) -> dict[str, Any]:
+    def _build_account_data(self, account: CocResolvedAccount, ctx=None) -> dict[str, Any]:
         return {
             "clan_role": None,
             "town_hall_level": account.town_hall_level,

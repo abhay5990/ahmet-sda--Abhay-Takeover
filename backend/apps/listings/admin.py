@@ -38,6 +38,7 @@ class ListingAdmin(admin.ModelAdmin):
         'listed_at',
     )
     list_select_related = ('integration_account', 'game')
+    raw_id_fields = ('dropship_product',)
 
     def get_queryset(self, request):
         return super().get_queryset(request).defer('raw_data')

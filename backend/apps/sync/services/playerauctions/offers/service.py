@@ -5,9 +5,11 @@ from datetime import timedelta
 from typing import TYPE_CHECKING
 
 from apps.inventory.services import resolve_game
+from apps.posting.models import GameVariantMapping
 from apps.sync.enums import ResourceType, SyncMode
 from apps.sync.models import RawPayload, SyncCheckpoint
 from apps.sync.services.base import BaseSyncService
+from core.marketplace.normalizers import normalize_offer_response
 from . import mapper
 
 if TYPE_CHECKING:
@@ -59,6 +61,7 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
     def __init__(self, provider=None, client=None) -> None:
         self.provider = provider
         self.client = client
+        self._variant_slug_lookups: dict[int, mapper.VariantSlugLookup] = {}
 
     # ── Hook implementations ──────────────────────────────────────────
 
@@ -261,6 +264,7 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
             resolve_game('playerauctions', game_ext_id)
             if game_ext_id else None
         )
+        slug_lookup = self._get_variant_slug_lookup(game) if game else None
 
         instant = mapper.is_instant(payload)
         status_str = (
@@ -281,7 +285,11 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
             'price': price_value,
             'currency': currency,
             'game': game,
-            'sub_platform': mapper.extract_sub_platform(payload),
+            'variant': mapper.extract_variant(
+                payload,
+                slug_lookup=slug_lookup,
+                game_slug=game.slug if game else '',
+            ),
             'listed_at': _expire_to_listed(
                 mapper.parse_pa_datetime(
                     payload.get('expired_time_string')
@@ -291,7 +299,7 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
                 payload,
             ),
             'last_synced_at': raw_payload.fetched_at,
-            'raw_data': payload,
+            'raw_data': normalize_offer_response('playerauctions', payload),
         }
 
         result = self._upsert_listing(raw_payload, defaults)
@@ -305,6 +313,28 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
         return result
 
     # ── Private helpers ───────────────────────────────────────────────
+
+    def _get_variant_slug_lookup(self, game) -> mapper.VariantSlugLookup:
+        """Build a typed PlayerAuctions external_id -> slug lookup for one game."""
+        cached = self._variant_slug_lookups.get(game.id)
+        if cached is not None:
+            return cached
+
+        lookup: mapper.VariantSlugLookup = {}
+        mappings = (
+            GameVariantMapping.objects
+            .select_related('variant')
+            .filter(variant__game=game, marketplace='playerauctions')
+            .order_by('variant__type', 'variant__sort_order')
+        )
+        for mapping in mappings:
+            lookup.setdefault(mapping.variant.type, {}).setdefault(
+                mapping.external_id,
+                mapping.variant.slug,
+            )
+
+        self._variant_slug_lookups[game.id] = lookup
+        return lookup
 
     def _upsert_listing(
         self,

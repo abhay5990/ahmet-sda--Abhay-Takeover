@@ -36,6 +36,7 @@ from apps.sync.enums import SyncLogLevel
 from apps.sync.models import RawPayload
 from apps.sync.services.shared.credentials import parse_credentials_text
 from apps.sync.services.shared.sync_log import log_sync, log_sync_error
+from core.marketplace.normalizers import normalize_offer_response
 
 logger = logging.getLogger(__name__)
 
@@ -264,7 +265,7 @@ def _reconcile_eldorado(
         )
 
     # Step 3: Update DB atomically
-    _replace_listing_in_db(listing, new_offer_id, remaining, new_offer)
+    _replace_listing_in_db(listing, new_offer_id, remaining, new_offer, payload=payload)
 
     logger.info(
         'Eldorado reconcile: %s → %s (%d credentials)',
@@ -466,6 +467,8 @@ def _replace_listing_in_db(
     new_offer_id: Any,
     remaining_owned_products: list,
     new_offer: Any = None,
+    *,
+    payload: dict | None = None,
 ) -> None:
     """Atomically replace old listing with new one and update OwnedProduct links."""
     with transaction.atomic():
@@ -481,7 +484,7 @@ def _replace_listing_in_db(
             game=old_listing.game,
             store_listing_id=new_offer_id,
             product_category=old_listing.product_category,
-            sub_platform=old_listing.sub_platform,
+            variant=old_listing.variant,
             status=ListingStatus.LISTED,
             title=old_listing.title,
             price=old_listing.price,
@@ -489,7 +492,10 @@ def _replace_listing_in_db(
             listed_at=timezone.now(),
             last_synced_at=timezone.now(),
             is_instant=old_listing.is_instant,
-            raw_data=new_offer.model_dump() if new_offer else {},
+            raw_data=(
+                normalize_offer_response('eldorado', new_offer, payload=payload)
+                if new_offer else {}
+            ),
         )
 
         # Link remaining OwnedProducts to new listing

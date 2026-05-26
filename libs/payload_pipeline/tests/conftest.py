@@ -3,9 +3,13 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 import pytest
+
+# Make test helper modules importable (e.g. _variant_ctx)
+sys.path.insert(0, str(Path(__file__).resolve().parent / "unit"))
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 

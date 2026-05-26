@@ -51,7 +51,7 @@ class PricingDefaults:
         """Return a new (immutable) copy with job-scoped overrides applied.
 
         Only recognised pricing fields with non-None values are applied.
-        Non-pricing keys (sub_platform, account_type, ...) are ignored here.
+        Non-pricing keys (variant, account_type, ...) are ignored here.
         """
         allowed = {
             'multiplier_low', 'multiplier_mid', 'multiplier_high',

@@ -5,17 +5,9 @@ from __future__ import annotations
 from typing import Any
 
 from ..models import ValorantResolvedAccount
+from .....core.contracts import BuildContext
+from .....core.variant_mapping import get_external_id
 from .....marketplaces.gameboost import BaseGameBoostBuilder
-
-
-_REGION_MAP: dict[str, str] = {
-    "EU": "Europe",
-    "NA": "North America",
-    "AP": "Asia Pacific",
-    "LA": "Latin America",
-    "BR": "Brazil",
-    "KR": "Asia Pacific",
-}
 
 _UNRANKED_VALUES = {"Unranked", "Ranked Ready", "No rank", "No Rank", "Unrated", ""}
 
@@ -31,9 +23,14 @@ class ValorantGameBoostBuilder(BaseGameBoostBuilder):
     def _platform_name(self) -> str:
         return "Riot Account"
 
-    def _build_account_data(self, account: ValorantResolvedAccount) -> dict[str, Any]:
+    def _build_account_data(
+        self, account: ValorantResolvedAccount, ctx: BuildContext | None = None,
+    ) -> dict[str, Any]:
+        server = get_external_id(
+            ctx.variant_context if ctx else None, "region", account.region,
+        ) or "Asia Pacific"
         return {
-            "server": _REGION_MAP.get(account.region, "Asia Pacific"),
+            "server": server,
             "current_tier": self._extract_rank(account.current_rank),
             "current_division": self._extract_division(account.current_rank),
             "peak_tier": self._extract_rank(account.last_rank),

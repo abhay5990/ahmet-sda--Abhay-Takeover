@@ -6,26 +6,9 @@ from typing import Any
 
 from ..models import LolResolvedAccount
 from .. import catalog
+from .....core.contracts import BuildContext
+from .....core.variant_mapping import get_external_id
 from .....marketplaces.gameboost import BaseGameBoostBuilder
-
-
-# region_phrase -> GameBoost server name
-_SERVER_MAP: dict[str, str] = {
-    "Latin America North": "Latin America North",
-    "Europe Nordic & East": "Europe Nordic & East",
-    "Europe West": "Europe West",
-    "Turkey": "Turkey",
-    "North America": "North America",
-    "Russia": "Russia",
-    "Vietnam": "Vietnam",
-    "Japan": "Japan",
-    "Brazil": "Brazil",
-    "Latin America South": "Latin America South",
-    "Singapore, Malaysia & Indonesia": "Singapore",
-    "Thailand": "Thailand",
-    "Oceania": "Oceania",
-    "Philippines": "Philippines",
-}
 
 _UNRANKED_VALUES = {"Unranked", "Ranked Ready", "Rank Ready", "No rank", "No Rank", "Unrated", ""}
 
@@ -41,9 +24,14 @@ class LolGameBoostBuilder(BaseGameBoostBuilder):
     def _platform_name(self) -> str:
         return "Riot Account"
 
-    def _build_account_data(self, account: LolResolvedAccount) -> dict[str, Any]:
+    def _build_account_data(
+        self, account: LolResolvedAccount, ctx: BuildContext | None = None,
+    ) -> dict[str, Any]:
+        server = get_external_id(
+            ctx.variant_context if ctx else None, "region", account.region_phrase,
+        ) or "Public Beta Environment"
         return {
-            "server": _SERVER_MAP.get(account.region_phrase, "Public Beta Environment"),
+            "server": server,
             "level_up_method": "by_hand",
             "current_tier": self._extract_rank(account.rank),
             "current_division": self._extract_division(account.rank),

@@ -9,19 +9,14 @@ Template reference: ``assets/playerauctions_templates/accounts/rainbow-six-siege
 from __future__ import annotations
 
 from ..models import R6ResolvedAccount
+from .....core.contracts import BuildContext
+from .....core.variant_mapping import get_external_id, get_external_name
 from .....marketplaces.playerauctions import BasePlayerAuctionsBuilder
 
 
 _COVER_IMAGE_URL = (
     "https://image-cdn-p.azureedge.net/title-image/R6/rainbow-six-siege_cover.png"
 )
-
-# PA server name -> server ID
-_SERVER_ID_MAP: dict[str, str] = {
-    "PC": "7774",
-    "PlayStation": "7775",
-    "Xbox": "7776",
-}
 
 _FALLBACK_SERVER = "PC"
 _FALLBACK_SERVER_ID = "7774"
@@ -32,6 +27,10 @@ class R6PlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
 
     requires_security_qa = True
     requires_parental_password = True
+
+    @property
+    def _pa_game_display_name(self) -> str:
+        return "Tom Clancys Rainbow Six Siege"
 
     @property
     def game_name(self) -> str:
@@ -49,9 +48,22 @@ class R6PlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     def _platform_name(self) -> str:
         return "Ubisoft Account"
 
-    def _get_server(self, account: R6ResolvedAccount) -> list[str]:
+    def _get_server(
+        self, account: R6ResolvedAccount, ctx: BuildContext | None = None,
+    ) -> list[str]:
+        slug = (ctx.selected_variants or {}).get("platform") if ctx else None
+        if slug and ctx:
+            name = get_external_name(ctx.variant_context, "platform", slug)
+            if name:
+                return [name]
         return [account.linkable_platforms[0] if account.linkable_platforms else _FALLBACK_SERVER]
 
-    def _get_server_id(self, account: R6ResolvedAccount) -> list[str] | None:
-        server = account.linkable_platforms[0] if account.linkable_platforms else _FALLBACK_SERVER
-        return [_SERVER_ID_MAP.get(server, _FALLBACK_SERVER_ID)]
+    def _get_server_id(
+        self, account: R6ResolvedAccount, ctx: BuildContext | None = None,
+    ) -> list[str] | None:
+        slug = (ctx.selected_variants or {}).get("platform") if ctx else None
+        if slug and ctx:
+            eid = get_external_id(ctx.variant_context, "platform", slug)
+            if eid:
+                return [eid]
+        return [_FALLBACK_SERVER_ID]

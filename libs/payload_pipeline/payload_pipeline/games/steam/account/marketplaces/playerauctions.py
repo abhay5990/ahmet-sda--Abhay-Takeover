@@ -39,8 +39,8 @@ class SteamPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     def _platform_name(self) -> str:
         return "Steam Account"
 
-    def _get_server(self, account: SteamResolvedAccount) -> list[str]:
+    def _get_server(self, account: SteamResolvedAccount, ctx=None) -> list[str]:
         return ["All Server"]
 
-    def _get_server_id(self, account: SteamResolvedAccount) -> list[str] | None:
+    def _get_server_id(self, account: SteamResolvedAccount, ctx=None) -> list[str] | None:
         return ["5847"]

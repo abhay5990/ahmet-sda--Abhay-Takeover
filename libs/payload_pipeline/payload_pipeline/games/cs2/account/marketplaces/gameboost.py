@@ -19,7 +19,7 @@ class CS2GameBoostBuilder(BaseGameBoostBuilder):
     def _platform_name(self) -> str:
         return "Steam Account"
 
-    def _build_account_data(self, account: CS2ResolvedAccount) -> dict[str, Any]:
+    def _build_account_data(self, account: CS2ResolvedAccount, ctx=None) -> dict[str, Any]:
         return {
             "premier_rating_count": account.premier_elo,
             "hours_played_count": account.hours_played,

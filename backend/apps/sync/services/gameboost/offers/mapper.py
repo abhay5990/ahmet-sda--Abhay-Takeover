@@ -6,6 +6,24 @@ from decimal import Decimal
 from apps.listings.enums import ListingStatus
 from core.enums import ProductCategory
 
+VariantSlugLookup = dict[str, dict[str, str]]
+
+_PLATFORM_SLUG_MAP = {
+    'pc': 'pc',
+    'playstation': 'psn',
+    'psn': 'psn',
+    'xbox': 'xbox',
+}
+
+_REGION_SLUG_MAP = {
+    'north america': 'na',
+    'europe': 'eu',
+    'latin america': 'la',
+    'brazil': 'br',
+    'asia pacific': 'ap',
+    'korea': 'kr',
+}
+
 
 # ---------------------------------------------------------------------------
 # Status mapping
@@ -73,17 +91,71 @@ def extract_game_external_id(item: dict) -> str:
     return str(game.get('id') or '')
 
 
-def extract_sub_platform(item: dict) -> str:
-    """Extract sub-platform from parameters.platform.
+def extract_variant(
+    item: dict,
+    slug_lookup: VariantSlugLookup | None = None,
+    *,
+    game_slug: str = '',
+) -> str:
+    """Extract canonical variant slug from GameBoost parameters.
 
     Gameboost offers include platform info in ``parameters``::
 
         "parameters": {"platform": "PlayStation 5", ...}
 
-    Returns the value as-is (e.g. "PC", "PlayStation", "Xbox Series X/S").
+    Valorant carries region in ``parameters.server`` and platforms in
+    ``parameters.platforms``. For that game we persist ``region-platform``
+    to match the canonical Listing.variant format used across marketplaces.
     """
     params = item.get('parameters') or {}
-    return (params.get('platform') or '').strip()
+
+    if game_slug == 'valorant':
+        region_slug = (
+            _lookup_slug(slug_lookup, 'region', params.get('server'))
+            or _normalize_region(params.get('server'))
+        )
+        platform_slug = (
+            _lookup_slug(slug_lookup, 'platform', _first_platform(params))
+            or _normalize_platform(_first_platform(params))
+            or 'pc'
+        )
+        if region_slug:
+            return f'{region_slug}-{platform_slug}'
+        return platform_slug
+
+    platform = params.get('platform') or _first_platform(params)
+    return (
+        _lookup_slug(slug_lookup, 'platform', platform)
+        or _normalize_platform(platform)
+    )
+
+
+def _first_platform(params: dict) -> str:
+    platforms = params.get('platforms')
+    if isinstance(platforms, list) and platforms:
+        return str(platforms[0] or '').strip()
+    return str(params.get('platform') or '').strip()
+
+
+def _lookup_slug(
+    slug_lookup: VariantSlugLookup | None,
+    variant_type: str,
+    external_value: object,
+) -> str:
+    value = str(external_value or '').strip()
+    if not value or not slug_lookup:
+        return ''
+    return (slug_lookup.get(variant_type) or {}).get(value, '')
+
+
+def _normalize_platform(value: object) -> str:
+    key = str(value or '').strip().lower()
+    return _PLATFORM_SLUG_MAP.get(key, '')
+
+
+def _normalize_region(value: object) -> str:
+    key = str(value or '').strip().lower()
+    return _REGION_SLUG_MAP.get(key, '')
 
 
 # ---------------------------------------------------------------------------

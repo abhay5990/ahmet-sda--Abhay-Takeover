@@ -101,7 +101,7 @@ def build_generic_row(
     owned_product,
     sources: dict,
     final_price: Decimal,
-    sub_platform: str,
+    variant_slug: str,
 ) -> dict[str, Any]:
     """Minimal PA row for games without a dedicated builder.
 
@@ -116,7 +116,7 @@ def build_generic_row(
 
     return {
         'Game': game_name,
-        'Server': sub_platform or 'PC',
+        'Server': variant_slug or 'PC',
         'Faction': '',
         'Listing Price': float(final_price),
         'Seller After-Sale Protection': 7,

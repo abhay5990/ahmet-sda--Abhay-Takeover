@@ -19,7 +19,7 @@ class UbisoftGameBoostBuilder(BaseGameBoostBuilder):
     def _platform_name(self) -> str:
         return "Ubisoft Account"
 
-    def _build_account_data(self, account: UbisoftResolvedAccount) -> dict[str, Any]:
+    def _build_account_data(self, account: UbisoftResolvedAccount, ctx=None) -> dict[str, Any]:
         linked_platforms: list[str] = []
         if account.psn_connected:
             linked_platforms.append("PlayStation")

@@ -19,7 +19,8 @@ def build_context(
     pricing_defaults,
     store,
     kind: ListingKind,
-    sub_platform: str = '',
+    variant_slug: str = '',
+    variant_context: dict | None = None,
 ) -> BuildContext:
     """Build a lib BuildContext from Django-layer inputs.
 
@@ -32,7 +33,8 @@ def build_context(
                           (dropship). Duck-typed pricing fields.
         store:            IntegrationAccount (used for G2G seller_id lookup).
         kind:             STOCK or DROPSHIPPING.
-        sub_platform:     Pre-selected sub-platform (empty string = none / auto).
+        variant_slug:     Pre-selected variant slug (empty string = none / auto).
+        variant_context:  DB-driven variant mappings (from build_variant_context).
     """
     forced = pricing_defaults.forced_ending
     rule = PricingRule(
@@ -43,21 +45,26 @@ def build_context(
         forced_ending=float(forced) if forced is not None else None,
     )
     exchange_rate = getattr(pricing_defaults, 'exchange_rate', None)
+    selected_variants: dict[str, str] | None = None
+    if variant_slug and variant_slug.lower() != 'auto':
+        selected_variants = {"platform": variant_slug}
+
     return BuildContext(
         kind=kind,
         marketplace=marketplace,
         pricing_rules={marketplace: rule},
-        marketplace_config=_marketplace_config(marketplace, store, sub_platform),
+        marketplace_config=_marketplace_config(marketplace, store, variant_slug),
         exchange_rate=float(exchange_rate) if exchange_rate is not None else None,
+        variant_context=variant_context,
+        selected_variants=selected_variants,
     )
 
 
-def _marketplace_config(marketplace: str, store, sub_platform: str) -> Any:
+def _marketplace_config(marketplace: str, store, variant_slug: str) -> Any:
     """Return the marketplace-specific config object, or None if not needed."""
     if marketplace == 'eldorado':
         return EldoradoConfig(
             image_uploader=_build_eldorado_uploader(store),
-            current_subplatform=sub_platform,
         )
     if marketplace == 'g2g':
         seller_id = store.credential.credentials.get('seller_id', '')

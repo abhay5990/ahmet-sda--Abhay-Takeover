@@ -39,8 +39,8 @@ class RobloxPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     def _platform_name(self) -> str:
         return "Roblox Account"
 
-    def _get_server(self, account: RobloxResolvedAccount) -> list[str]:
+    def _get_server(self, account: RobloxResolvedAccount, ctx=None) -> list[str]:
         return ["Tax Not Covered"]
 
-    def _get_server_id(self, account: RobloxResolvedAccount) -> list[str] | None:
+    def _get_server_id(self, account: RobloxResolvedAccount, ctx=None) -> list[str] | None:
         return ["5205"]

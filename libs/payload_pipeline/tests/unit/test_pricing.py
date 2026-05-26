@@ -6,6 +6,8 @@ from payload_pipeline.pricing import PricingRule, calculate_price
 from payload_pipeline.core.contracts import BuildContext, PipelineRequest
 from payload_pipeline import PayloadPipeline, build_default_registry
 
+from _variant_ctx import valorant_eldorado
+
 
 # ── Unit tests for calculate_price ──────────────────────────────────────
 
@@ -101,7 +103,7 @@ def test_valorant_pipeline_applies_pricing_rule_to_payload(load_fixture) -> None
     _prepare_result = pipeline.prepare_once(request)
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado", pricing_rules=pricing_rules))
+    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado", pricing_rules=pricing_rules, variant_context=valorant_eldorado()))
     assert result.success
 
     raw_price = prepared.subject.price
@@ -126,7 +128,7 @@ def test_pipeline_without_pricing_rule_uses_raw_price(load_fixture) -> None:
     _prepare_result = pipeline.prepare_once(request)
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado"))
+    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado", variant_context=valorant_eldorado()))
     assert result.success
 
     raw_price = prepared.subject.price

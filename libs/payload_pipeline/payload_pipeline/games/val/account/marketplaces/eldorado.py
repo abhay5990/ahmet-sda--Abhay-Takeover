@@ -4,18 +4,8 @@ from __future__ import annotations
 
 from ..models import ValorantResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
-from .....marketplaces.eldorado import BaseEldoradoBuilder, EldoradoConfig
-from .subplatform import resolve_platform_id
-
-
-_REGION_IDS = {
-    "NA": "0",
-    "EU": "1",
-    "LA": "2",
-    "BR": "3",
-    "AP": "5",
-    "KR": "6",
-}
+from .....core.variant_mapping import get_external_id
+from .....marketplaces.eldorado import BaseEldoradoBuilder
 
 # Eldorado attribute keys & value IDs (from template)
 _ATTR_RANK = "valorant-rank"
@@ -61,18 +51,19 @@ class ValorantEldoradoBuilder(BaseEldoradoBuilder):
             ref_key=account.ref_key,
         )
 
-    def _resolve_trade_environment_id(
-        self, region: str, ctx: BuildContext,
-    ) -> str:
-        region_id = _REGION_IDS.get(region.upper(), "1-999")
+    @staticmethod
+    def _resolve_trade_environment_id(region: str, ctx: BuildContext) -> str:
+        """Build composite trade_env_id: ``"{region_id}-{platform_id}"``."""
+        region_id = get_external_id(
+            ctx.variant_context, "region", region.upper(),
+        ) or "1-999"
         if region_id == "1-999":
             return region_id
 
-        el_config = ctx.get_config(EldoradoConfig)
-        platform_id = resolve_platform_id(
-            manual_selection=el_config.current_subplatform,
-            subplatform_status=el_config.subplatform_status,
-        )
+        platform_slug = (ctx.selected_variants or {}).get("platform")
+        platform_id = get_external_id(
+            ctx.variant_context, "platform", platform_slug,
+        ) or "0"
         return f"{region_id}-{platform_id}"
 
     def _resolve_rank(self, account: ValorantResolvedAccount) -> str:

@@ -10,7 +10,7 @@ Two payload formats:
 * ``build_payload``  — PA ``create_offer`` API JSON (single post).
   Passwords are **plain text**; encryption is the caller's responsibility
   (see ``PAPasswordEncryptor`` in ``apis_sdk``).
-* ``build_bulk_payload`` — intermediate dict that feeds into Excel/bulk upload.
+* ``build_bulk_payload`` — Excel row dict matching PA bulk upload template columns.
 """
 
 from __future__ import annotations
@@ -199,7 +199,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
         """CDN URL for the game cover image."""
 
     @abstractmethod
-    def _get_server(self, subject: Any) -> list[str]:
+    def _get_server(self, subject: Any, ctx: BuildContext | None = None) -> list[str]:
         """Return the server name(s) for this account."""
 
     # ------------------------------------------------------------------
@@ -230,7 +230,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
         is_stock = ctx.kind == ListingKind.STOCK
         creds: CredentialBundle = subject.credentials
 
-        server_ids = self._get_server_id(subject)
+        server_ids = self._get_server_id(subject, ctx)
         server_id = int(server_ids[0]) if server_ids else 0
 
         delivery_instructions = _sanitize_text(
@@ -307,38 +307,88 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
         listing: ListingDraft,
         ctx: BuildContext,
     ) -> dict[str, Any]:
-        """Build intermediate dict for PA bulk/Excel upload."""
+        """Build PA Excel row dict for bulk upload.
+
+        Returns a flat dict whose keys match the PA bulk upload template
+        columns (28 fixed columns).  The consumer feeds these dicts straight
+        into ``rows_to_xlsx()`` without any further transformation.
+
+        Column reference: ``backend/apps/posting/pipeline/playerauctions/common.py``
+        """
         content = listing.content_for(self.marketplace, ref_key=subject.ref_key)
         price = self._apply_pricing(subject.price, ctx)
         is_stock = ctx.kind == ListingKind.STOCK
+        creds: CredentialBundle = subject.credentials
 
-        payload: dict[str, Any] = {
-            "game_name": self.game_name,
-            "game_id": self.game_id,
-            "title": _sanitize_text(_strip_url_schemes(content.title)),
-            "description": _sanitize_text(_strip_url_schemes(content.description)),
-            "price": round(max(price, 0.01), 2),
-            "server": self._get_server(subject),
-            "cover_image_url": self.cover_image_url,
-            "image_urls": [],
-            "delivery_method": "instant" if is_stock else "manual",
-            "delivery_instructions": _sanitize_text(
-                self._format_delivery(subject) if is_stock
-                else _DROPSHIPPING_DELIVERY
-            ),
+        servers = self._get_server(subject, ctx)
+        server_name = servers[0] if servers else ""
+
+        title = _sanitize_text(_strip_url_schemes(content.title))
+        description = _sanitize_text(
+            _strip_url_schemes(content.description),
+        ).replace("\n", "<br>")
+
+        delivery_instructions = _sanitize_text(
+            self._format_delivery(subject) if is_stock
+            else _DROPSHIPPING_DELIVERY
+        )
+
+        # Deterministic fake owner info (same seed logic as build_payload)
+        owner_seed = "|".join([
+            str(self.game_id),
+            server_name,
+            title,
+            creds.login,
+            creds.email_login,
+        ])
+        owner = _fake_owner_info(creds, owner_seed)
+
+        return {
+            "Game": self._pa_game_display_name,
+            "Server": server_name,
+            "Faction": "",
+            "Listing Price": round(max(price, 0.01), 2),
+            "Seller After-Sale Protection": 7,
+            "Offer Duration": 30,
+            "Cover image (PA hosted)": "",
+            "Title": title,
+            "Description": description,
+            "Delivery Method": "Automatic" if is_stock else "Manual",
+            "Login name  (Auto)": creds.login if is_stock else "",
+            "Password": creds.password if is_stock else "",
+            "Character name": _fake_character_name(owner_seed) if is_stock else "",
+            "Registration CD Key": "",
+            "Parental password": "",
+            "Security question": "",
+            "Security question answer": "",
+            "First name": owner["firstName"],
+            "Last name": owner["lastName"],
+            "Phone with area code": owner["phone"],
+            "Email": owner["email"],
+            "City": owner["city"],
+            "Country": owner["country"],
+            "Birth Date": "1995/1/1",
+            "Extra information": delivery_instructions if is_stock else "",
+            "Login name": "" if is_stock else creds.login,
+            "Delivery guarantee": "",
+            "Delivery info": delivery_instructions if not is_stock else "",
         }
-
-        server_id = self._get_server_id(subject)
-        if server_id is not None:
-            payload["server_id"] = server_id
-
-        return payload
 
     # ------------------------------------------------------------------
     # Overridable hooks
     # ------------------------------------------------------------------
 
-    def _get_server_id(self, subject: Any) -> list[str] | None:
+    @property
+    def _pa_game_display_name(self) -> str:
+        """Human-readable game name for the PA Excel ``Game`` column.
+
+        Default converts the slug (e.g. ``"clash-of-clans"``) to title case
+        (``"Clash Of Clans"``).  Subclasses should override when the PA
+        server list uses a different spelling.
+        """
+        return self.game_name.replace("-", " ").title()
+
+    def _get_server_id(self, subject: Any, ctx: BuildContext | None = None) -> list[str] | None:
         """Return server ID list or ``None`` to omit from payload."""
         return None
 

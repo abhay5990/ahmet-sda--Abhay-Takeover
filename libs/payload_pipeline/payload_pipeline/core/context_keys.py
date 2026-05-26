@@ -75,11 +75,6 @@ MEDIA_OUTPUT_DIR: ContextKey[str] = ContextKey("media_output_dir")
 FILE_OUTPUT_DIR: ContextKey[str] = ContextKey("file_output_dir")
 CACHE_BASE_DIR: ContextKey[str] = ContextKey("cache_base_dir")
 
-# ── Subplatform / slot management ────────────────────────────────────
-
-SUBPLATFORM_STATUS: ContextKey[dict[str, dict[str, Any]]] = ContextKey("subplatform_status")
-CURRENT_SUBPLATFORM: ContextKey[str] = ContextKey("current_subplatform")
-
 # ── G2G seller config ────────────────────────────────────────────────
 
 G2G_SELLER_ID: ContextKey[str] = ContextKey("g2g_seller_id")

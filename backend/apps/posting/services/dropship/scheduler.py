@@ -37,12 +37,12 @@ from apps.posting.models import (
     PostingLog,
     PostingLogLevel,
     SchedulerHeartbeat,
-    SubplatformLimit,
+    GameVariant,
+    GameVariantLimit,
 )
 from apps.posting.services.dropship.backoff import PauseRequired
 from apps.posting.services.dropship.cleaner import cleaner_loop
 from apps.posting.services.dropship.poster import poster_loop
-from apps.posting.services.shared.subplatform import has_subplatforms
 
 logger = logging.getLogger(__name__)
 
@@ -273,7 +273,7 @@ class DropshipScheduler:
 
         Second-layer guard (mirrors API-level _check_config_ready) so that
         even if the DB is manually edited, the scheduler won't start a
-        poster without URLs or subplatform limits.
+        poster without URLs or variant limits.
         """
         has_urls = DropshipTargetURL.objects.filter(
             config=config, enabled=True,
@@ -281,12 +281,12 @@ class DropshipScheduler:
         if not has_urls:
             return 'No enabled target URLs'
 
-        if has_subplatforms(config.game.slug):
-            has_limits = SubplatformLimit.objects.filter(
-                store=config.store, game=config.game,
+        if GameVariant.objects.filter(game=config.game, type='platform').exists():
+            has_limits = GameVariantLimit.objects.filter(
+                store=config.store, variant__game=config.game,
             ).exists()
             if not has_limits:
-                return f'No subplatform limits configured (game: {config.game.name})'
+                return f'No variant limits configured (game: {config.game.name})'
 
         return None
 

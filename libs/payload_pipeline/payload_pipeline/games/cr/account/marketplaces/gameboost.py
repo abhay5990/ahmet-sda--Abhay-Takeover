@@ -27,7 +27,7 @@ class CrGameBoostBuilder(BaseGameBoostBuilder):
     def _platform_name(self) -> str:
         return "Supercell ID"
 
-    def _build_account_data(self, account: CrResolvedAccount) -> dict[str, Any]:
+    def _build_account_data(self, account: CrResolvedAccount, ctx=None) -> dict[str, Any]:
         return {
             "arena_level": self._extract_arena_level(account.arena_name),
             "king_tower_level": account.king_level,

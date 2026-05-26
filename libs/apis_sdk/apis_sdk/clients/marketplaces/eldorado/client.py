@@ -22,6 +22,7 @@ from apis_sdk.clients.marketplaces.eldorado.models import (
     EldoradoNotificationsPage,
     EldoradoOffer,
     EldoradoOfferCredentialsResponse,
+    EldoradoOfferSearchItem,
     EldoradoOfferSearchPage,
     EldoradoOfferStateCount,
     EldoradoOrder,
@@ -73,15 +74,19 @@ class EldoradoClient:
         *,
         auth_headers: dict[str, str],
         proxy_url: str | None = None,
-    ) -> ApiResult[EldoradoOffer]:
-        """Create a new offer on Eldorado."""
+    ) -> ApiResult[EldoradoOfferSearchItem]:
+        """Create a new offer on Eldorado.
+
+        The create endpoint returns a flat structure matching
+        EldoradoOfferSearchItem, not the nested EldoradoOffer layout.
+        """
         return self._request(
             HttpMethod.POST,
             EldoradoEndpoints.CREATE_OFFER,
             json_body=payload,
             auth_headers=auth_headers,
             proxy_url=proxy_url,
-            response_type=EldoradoOffer,
+            response_type=EldoradoOfferSearchItem,
         )
 
     def update_offer(
@@ -176,13 +181,15 @@ class EldoradoClient:
         self,
         *,
         auth_headers: dict[str, str],
+        params: dict[str, Any] | None = None,
         proxy_url: str | None = None,
     ) -> ApiResult[EldoradoOfferStateCount]:
-        """Fetch offer state counts (active, inactive, pending, suspended)."""
+        """Fetch offer state counts (active, paused, closed, offline)."""
         return self._request(
             HttpMethod.GET,
             EldoradoEndpoints.OFFER_STATE_COUNTS,
             auth_headers=auth_headers,
+            params=params,
             proxy_url=proxy_url,
             response_type=EldoradoOfferStateCount,
         )

@@ -8,6 +8,7 @@ from ..credentials import format_platform_credentials
 from ..models import GtavResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....core.enums import ListingKind
+from .....core.variant_mapping import get_external_id
 from .....marketplaces.base import _DISCLAIMER, _DROPSHIPPING_DELIVERY
 from .....marketplaces.gameboost import BaseGameBoostBuilder
 
@@ -15,12 +16,6 @@ _STATIC_IMAGE_URL = (
     "https://www.dropbox.com/scl/fi/vp0gnpqlt5g6w12vofuxl/"
     "g-rsel_2025-12-04_085834084.png?rlkey=b84z5cr67r05ykj05yb7eao3e&st=rjxu1pa6&dl=1"
 )
-
-# Canonical platform (UI) -> GameBoost platform value
-_PLATFORM_TO_GB: dict[str, str] = {
-    "PC - Legacy": "PC · Legacy",
-    "PC - Enhanced": "PC · Enhanced",
-}
 
 
 class GtavGameBoostBuilder(BaseGameBoostBuilder):
@@ -30,9 +25,13 @@ class GtavGameBoostBuilder(BaseGameBoostBuilder):
     def game_slug(self) -> str:
         return "grand-theft-auto-v"
 
-    def _build_account_data(self, account: GtavResolvedAccount) -> dict[str, Any]:
+    def _build_account_data(
+        self, account: GtavResolvedAccount, ctx: BuildContext | None = None,
+    ) -> dict[str, Any]:
         cash_display = f"{account.cash_amount} {account.cash_unit}"
-        gb_platform = _PLATFORM_TO_GB.get(account.main_platform, account.main_platform)
+        gb_platform = get_external_id(
+            ctx.variant_context if ctx else None, "platform", account.main_platform,
+        ) or account.main_platform
         return {
             "platform": gb_platform,
             "account_tags": account.tags or [],

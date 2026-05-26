@@ -29,10 +29,11 @@ def persist_success(
     job: PostingJob,
     owned_product,
     store_listing_id: str,
-    sub_platform: str,
+    variant_slug: str,
     final_price: Decimal,
     payload: dict | None = None,
     response_data: Any = None,
+    raw_data_override: dict | None = None,
 ) -> Listing:
     """Create Listing + ListingOwnedProduct and mark ``item`` as SUCCESS.
 
@@ -46,10 +47,12 @@ def persist_success(
         job: Parent PostingJob (provides the game for the Listing title).
         owned_product: OwnedProduct instance linked to the new Listing.
         store_listing_id: Marketplace-side offer/listing identifier.
-        sub_platform: Resolved sub-platform (may be empty).
+        variant_slug: Resolved variant slug (may be empty).
         final_price: Final USD price to store on the Listing.
         payload: The marketplace payload that was POSTed (for title/currency/audit).
         response_data: The raw API response (Pydantic model, dict, or None).
+        raw_data_override: Normalized raw_data to persist instead of the
+            legacy ``{"payload": ..., "response": ...}`` envelope.
 
     Returns:
         The newly-created Listing instance.
@@ -70,19 +73,21 @@ def persist_success(
     # Currency: from payload when available
     currency = extract_currency_from_payload(payload, marketplace) if payload else 'USD'
 
-    # raw_data: store both sent payload and API response for audit
-    raw_data: dict = {}
-    if payload:
-        raw_data['payload'] = payload
-    if response_data is not None:
-        raw_data['response'] = serialize_response(response_data)
+    if raw_data_override is not None:
+        raw_data = raw_data_override
+    else:
+        raw_data: dict = {}
+        if payload:
+            raw_data['payload'] = payload
+        if response_data is not None:
+            raw_data['response'] = serialize_response(response_data)
 
     listing = Listing.objects.create(
         is_instant=True,
         integration_account=item.store,
         game=job.game,
         store_listing_id=store_listing_id,
-        sub_platform=sub_platform,
+        variant=variant_slug,
         status=ListingStatus.LISTED,
         title=title,
         price=price,

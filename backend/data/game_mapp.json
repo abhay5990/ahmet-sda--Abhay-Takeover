@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "generated_at": "2025-01-31",
   "description": "Unified game mapping with platform-specific identifiers",
-  "total_games": 136,
+  "total_games": 141,
   "games": [
     {
       "id": 1,
@@ -2421,10 +2421,16 @@
       "slug": "rust",
       "acronym": "RUST",
       "platforms": {
-        "eldorado": {
-          "gameId": "37",
-          "name": "Rust"
-        },
+        "eldorado": [
+          {
+            "gameId": "37",
+            "name": "Rust"
+          },
+          {
+            "gameId": "235",
+            "name": "Rust Twitch Drops"
+          }
+        ],
         "gameboost": {
           "id": 27,
           "slug": "rust",
@@ -2504,9 +2510,9 @@
           "name": "Steam"
         },
         "gameboost": {
-          "id": null,
+          "id": 91,
           "slug": "steam",
-          "name": "Steam"
+          "name": "Steam Accounts"
         },
         "playerauctions": {
           "gameId": 4879,
@@ -2600,7 +2606,11 @@
           "gameId": "46",
           "name": "Garena Free Fire"
         },
-        "gameboost": null,
+        "gameboost": {
+          "id": 29,
+          "slug": "free-fire",
+          "name": "Free Fire"
+        },
         "playerauctions": null
       },
       "lztCategory": {
@@ -2942,10 +2952,16 @@
       "slug": "roblox",
       "acronym": "RBLX",
       "platforms": {
-        "eldorado": {
-          "gameId": "70",
-          "name": "Roblox"
-        },
+        "eldorado": [
+          {
+            "gameId": "70",
+            "name": "Roblox"
+          },
+          {
+            "gameId": "206",
+            "name": "Roblox Accessories"
+          }
+        ],
         "gameboost": {
           "id": 15,
           "slug": "roblox",
@@ -3202,6 +3218,101 @@
       "lztCategory": {
         "id": 7,
         "name": "Social Club"
+      },
+      "aliases": []
+    },
+    {
+      "id": 137,
+      "name": "Growtopia",
+      "slug": "growtopia",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "99",
+          "name": "Growtopia"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 5,
+        "name": "Uplay"
+      },
+      "aliases": []
+    },
+    {
+      "id": 138,
+      "name": "Team Fortress 2",
+      "slug": "team-fortress-2",
+      "acronym": "TF2",
+      "platforms": {
+        "eldorado": {
+          "gameId": "113",
+          "name": "Team Fortress 2"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
+      "id": 139,
+      "name": "Blade Ball",
+      "slug": "blade-ball",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "203",
+          "name": "Blade Ball"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 31,
+        "name": "Roblox"
+      },
+      "aliases": []
+    },
+    {
+      "id": 140,
+      "name": "Murder Mystery 2",
+      "slug": "murder-mystery-2",
+      "acronym": "MM2",
+      "platforms": {
+        "eldorado": {
+          "gameId": "204",
+          "name": "Murder Mystery 2"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 31,
+        "name": "Roblox"
+      },
+      "aliases": []
+    },
+    {
+      "id": 141,
+      "name": "Steal A Brainrot",
+      "slug": "steal-a-brainrot",
+      "acronym": null,
+      "platforms": {
+        "eldorado": {
+          "gameId": "259",
+          "name": "Steal A Brainrot"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 31,
+        "name": "Roblox"
       },
       "aliases": []
     }

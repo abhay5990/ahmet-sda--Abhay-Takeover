@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from ..models import R6ResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
+from .....core.variant_mapping import get_external_id
 from .....marketplaces.eldorado import BaseEldoradoBuilder
 
 # Eldorado attribute keys & value IDs (from template)
@@ -38,7 +39,7 @@ class R6EldoradoBuilder(BaseEldoradoBuilder):
             ctx=ctx,
             price=price,
             credentials=account.credentials,
-            trade_environment_id=self._resolve_trade_environment_id(account),
+            trade_environment_id=self._resolve_trade_environment_id(account, ctx),
             attributes={
                 _ATTR_RANK: self._resolve_rank(account),
                 _ATTR_BLACK_ICE: self._resolve_black_ice(account.black_ice_count),
@@ -46,14 +47,17 @@ class R6EldoradoBuilder(BaseEldoradoBuilder):
             ref_key=account.ref_key,
         )
 
-    _TRADE_ENV_MAP: dict[str, str] = {
-        "PlayStation": "1",
-        "Xbox": "2",
-        "PC": "0",
-    }
-
-    def _resolve_trade_environment_id(self, account: R6ResolvedAccount) -> str:
-        return self._TRADE_ENV_MAP.get(account.primary_linkable_platform, "0")
+    @staticmethod
+    def _resolve_trade_environment_id(
+        account: R6ResolvedAccount, ctx: BuildContext,
+    ) -> str:
+        selected = (ctx.selected_variants or {}).get("platform")
+        if selected:
+            return get_external_id(ctx.variant_context, "platform", selected) or "0"
+        # Fallback: map from account field (transition until Phase B)
+        return get_external_id(
+            ctx.variant_context, "platform", account.primary_linkable_platform,
+        ) or "0"
 
     def _resolve_rank(self, account: R6ResolvedAccount) -> str:
         rank = account.current_rank.strip().lower()

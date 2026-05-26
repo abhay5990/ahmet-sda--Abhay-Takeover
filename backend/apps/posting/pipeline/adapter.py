@@ -25,6 +25,7 @@ from payload_pipeline.shared.media import NullMediaPublisher
 
 from .context import build_context
 from .request import build_request
+from ..services.variant_context import build_variant_context
 
 logger = logging.getLogger(__name__)
 
@@ -208,8 +209,10 @@ def build(
     marketplace: str,
     pricing_defaults,
     store,
+    game=None,
     kind: ListingKind,
-    sub_platform: str = '',
+    variant_slug: str = '',
+    variant_context: dict | None = None,
 ) -> PipelineResult:
     """Run the marketplace-specific build phase.
 
@@ -222,18 +225,27 @@ def build(
                           (dropship). Duck-typed: must expose multiplier_low/mid/high,
                           min_price, forced_ending fields.
         store:            IntegrationAccount — used for G2G seller_id lookup.
+        game:             Game instance — used for variant context lookup.
         kind:             STOCK or DROPSHIPPING.
-        sub_platform:     Pre-selected sub-platform (empty string = not applicable).
+        variant_slug:     Pre-selected variant slug (empty string = not applicable).
+        variant_context:  Pre-built variant context dict. If provided, skips the
+                          DB query. If None and game is given, queries DB.
 
     Returns:
         PipelineResult — always check ``.success`` before using ``.payload``.
     """
+    variant_ctx = variant_context
+    if variant_ctx is None and game is not None:
+        variant_ctx = build_variant_context(
+            store=store, game=game, marketplace=marketplace,
+        )
     ctx = build_context(
         marketplace=marketplace,
         pricing_defaults=pricing_defaults,
         store=store,
         kind=kind,
-        sub_platform=sub_platform,
+        variant_slug=variant_slug,
+        variant_context=variant_ctx,
     )
     return _get_pipeline().build(prepared, ctx)
 
@@ -244,19 +256,27 @@ def build_bulk(
     marketplace: str,
     pricing_defaults,
     store,
+    game=None,
     kind: ListingKind,
-    sub_platform: str = '',
+    variant_slug: str = '',
+    variant_context: dict | None = None,
 ) -> PipelineResult:
     """Run the marketplace-specific bulk build phase (Excel row dict).
 
     Same as :func:`build` but produces a bulk/Excel payload via
     ``build_bulk_payload()`` instead of ``build_payload()``.
     """
+    variant_ctx = variant_context
+    if variant_ctx is None and game is not None:
+        variant_ctx = build_variant_context(
+            store=store, game=game, marketplace=marketplace,
+        )
     ctx = build_context(
         marketplace=marketplace,
         pricing_defaults=pricing_defaults,
         store=store,
         kind=kind,
-        sub_platform=sub_platform,
+        variant_slug=variant_slug,
+        variant_context=variant_ctx,
     )
     return _get_pipeline().build_bulk(prepared, ctx)

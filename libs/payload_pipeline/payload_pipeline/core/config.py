@@ -25,8 +25,23 @@ _DEFAULT_CONFIG = {
         "fake_password": {
             "valorant": True,
         },
+        "asset_scrubber": True,
     }
 }
+
+
+def _deep_merge(base: dict, override: dict) -> dict:
+    """Merge *override* into *base* recursively.
+
+    Existing values in *override* win; missing keys are filled from *base*.
+    """
+    merged = base.copy()
+    for key, value in override.items():
+        if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
+            merged[key] = _deep_merge(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
 
 
 @lru_cache(maxsize=1)
@@ -34,8 +49,17 @@ def _load_config() -> dict:
     if not _CONFIG_PATH.exists():
         _CONFIG_PATH.write_text(json.dumps(_DEFAULT_CONFIG, indent=2) + '\n')
         return _DEFAULT_CONFIG
+
     with open(_CONFIG_PATH) as f:
-        return json.load(f)
+        user_config = json.load(f)
+
+    merged = _deep_merge(_DEFAULT_CONFIG, user_config)
+
+    # Persist back so newly added defaults are visible in the file.
+    if merged != user_config:
+        _CONFIG_PATH.write_text(json.dumps(merged, indent=2) + '\n')
+
+    return merged
 
 
 def reload_config() -> None:

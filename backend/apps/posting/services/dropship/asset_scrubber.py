@@ -17,14 +17,9 @@ import math
 import random
 from typing import Any
 
+from payload_pipeline.core.config import is_feature_enabled
+
 logger = logging.getLogger(__name__)
-
-
-# ---------------------------------------------------------------------------
-# Feature flag — flip to False to disable globally
-# ---------------------------------------------------------------------------
-
-SCRUB_ENABLED = True
 
 
 # ---------------------------------------------------------------------------
@@ -35,10 +30,10 @@ def scrub_sources(sources: dict, game_slug: str) -> dict:
     """Return a scrubbed deep-copy of *sources* for *game_slug*.
 
     * Always operates on a deep copy — the original ``sources`` dict is never mutated.
-    * No-op (returns original) when SCRUB_ENABLED is False or game_slug is not handled.
+    * No-op when ``asset_scrubber`` feature is disabled or game_slug is not handled.
     * On unexpected errors the original is returned and a warning is logged.
     """
-    if not SCRUB_ENABLED:
+    if not is_feature_enabled('asset_scrubber'):
         return sources
 
     handler = _HANDLERS.get(game_slug)

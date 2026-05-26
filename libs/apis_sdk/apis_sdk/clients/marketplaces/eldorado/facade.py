@@ -43,6 +43,7 @@ from apis_sdk.clients.marketplaces.eldorado.models import (
     EldoradoNotificationsPage,
     EldoradoOffer,
     EldoradoOfferCredentialsResponse,
+    EldoradoOfferSearchItem,
     EldoradoOfferSearchPage,
     EldoradoOfferStateCount,
     EldoradoOrder,
@@ -61,7 +62,7 @@ class EldoradoApiClient(Protocol):
         *,
         auth_headers: dict[str, str],
         proxy_url: str | None = None,
-    ) -> ApiResult[EldoradoOffer]:
+    ) -> ApiResult[EldoradoOfferSearchItem]:
         ...
 
     def update_offer(
@@ -123,6 +124,7 @@ class EldoradoApiClient(Protocol):
         self,
         *,
         auth_headers: dict[str, str],
+        params: dict[str, Any] | None = None,
         proxy_url: str | None = None,
     ) -> ApiResult[EldoradoOfferStateCount]:
         ...
@@ -219,7 +221,7 @@ class EldoradoFacade:
         payload: dict[str, Any],
         *,
         proxy_group: str | None = None,
-    ) -> ApiResult[EldoradoOffer]:
+    ) -> ApiResult[EldoradoOfferSearchItem]:
         """Create a new offer on Eldorado.
 
         This operation is NOT retried automatically.  POST offer creation
@@ -348,12 +350,14 @@ class EldoradoFacade:
     def get_offer_state_counts(
         self,
         *,
+        params: dict[str, Any] | None = None,
         proxy_group: str | None = None,
     ) -> ApiResult[EldoradoOfferStateCount]:
-        """Fetch offer state counts (active, inactive, pending, suspended)."""
+        """Fetch offer state counts (active, paused, closed, offline)."""
         return self._exec.execute_with_retry(
             lambda proxy_url: self._client.get_offer_state_counts(
                 auth_headers=self._exec.get_auth_headers(),
+                params=params,
                 proxy_url=proxy_url,
             ),
             proxy_group=proxy_group,

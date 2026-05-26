@@ -11,27 +11,14 @@ from __future__ import annotations
 import re
 
 from ..models import GenshinResolvedAccount
+from .....core.contracts import BuildContext
+from .....core.variant_mapping import get_external_id, get_external_name
 from .....marketplaces.playerauctions import BasePlayerAuctionsBuilder
 
 
 _COVER_IMAGE_URL = (
     "https://image-cdn-p.azureedge.net/title-image/Genshin/genshin-impact_cover.png"
 )
-
-# Region-based server mapping (from template).
-_REGION_SERVER: dict[str, str] = {
-    "na": "America",
-    "eu": "Europe",
-    "asia": "Asia",
-    "tw": "TW/HK/MO",
-}
-
-_SERVER_ID_MAP: dict[str, str] = {
-    "na": "9335",
-    "eu": "9336",
-    "asia": "9337",
-    "tw": "10104",
-}
 
 _FALLBACK_SERVER = "Europe"
 _FALLBACK_SERVER_ID = "9336"
@@ -56,13 +43,23 @@ class GenshinImpactPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     def _platform_name(self) -> str:
         return "miHoYo Account"
 
-    def _get_server(self, account: GenshinResolvedAccount) -> list[str]:
-        region = account.region or ""
-        return [_REGION_SERVER.get(region.lower(), _FALLBACK_SERVER)]
+    def _get_server(
+        self, account: GenshinResolvedAccount, ctx: BuildContext | None = None,
+    ) -> list[str]:
+        region = (account.region or "").lower()
+        name = get_external_name(
+            ctx.variant_context if ctx else None, "region", region,
+        )
+        return [name or _FALLBACK_SERVER]
 
-    def _get_server_id(self, account: GenshinResolvedAccount) -> list[str] | None:
-        region = account.region or ""
-        return [_SERVER_ID_MAP.get(region.lower(), _FALLBACK_SERVER_ID)]
+    def _get_server_id(
+        self, account: GenshinResolvedAccount, ctx: BuildContext | None = None,
+    ) -> list[str] | None:
+        region = (account.region or "").lower()
+        eid = get_external_id(
+            ctx.variant_context if ctx else None, "region", region,
+        )
+        return [eid or _FALLBACK_SERVER_ID]
 
     def _format_delivery(self, account: GenshinResolvedAccount) -> str:
         """Custom delivery: does not filter 'Not Found' values."""

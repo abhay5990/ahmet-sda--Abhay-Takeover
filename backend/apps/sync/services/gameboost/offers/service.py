@@ -4,9 +4,12 @@ import logging
 from typing import TYPE_CHECKING
 
 from apps.inventory.services import resolve_game, resolve_owned_product_status
+from apps.posting.models import GameVariantMapping
 from apps.sync.enums import ResourceType, SyncMode
 from apps.sync.models import RawPayload, SyncCheckpoint
 from apps.sync.services.base import BaseSyncService
+from core.marketplace.enrichment import collect_credential_entries
+from core.marketplace.normalizers import normalize_offer_response
 from core.enums import ProductCategory
 from . import mapper
 
@@ -45,6 +48,7 @@ class GameboostOfferSyncService(BaseSyncService):
         self.provider = provider
         self.client = client
         self._stop_timestamp = None
+        self._variant_slug_lookups: dict[int, mapper.VariantSlugLookup] = {}
 
     # ── Hook implementations ──────────────────────────────────────────
 
@@ -254,15 +258,7 @@ class GameboostOfferSyncService(BaseSyncService):
                 account_id=offer_id,
             )
             if result.ok and result.data:
-                entries = []
-                for entry in result.data:
-                    if hasattr(entry, 'model_dump'):
-                        entries.append(entry.model_dump())
-                    elif isinstance(entry, dict):
-                        entries.append(entry)
-                    else:
-                        entries.append(dict(entry))
-
+                entries = collect_credential_entries(result.data)
                 item = {**item, '_credential_entries': entries}
                 return item, {'credentials_source': 'api'}
 
@@ -288,6 +284,7 @@ class GameboostOfferSyncService(BaseSyncService):
 
         game_ext_id = mapper.extract_game_external_id(payload)
         game = resolve_game('gameboost', game_ext_id) if game_ext_id else None
+        slug_lookup = self._get_variant_slug_lookup(game) if game else None
 
         is_instant = not payload.get('is_manual_delivery', False)
 
@@ -299,12 +296,16 @@ class GameboostOfferSyncService(BaseSyncService):
             'price': price_value,
             'currency': currency,
             'game': game,
-            'sub_platform': mapper.extract_sub_platform(payload),
+            'variant': mapper.extract_variant(
+                payload,
+                slug_lookup=slug_lookup,
+                game_slug=game.slug if game else '',
+            ),
             'listed_at': mapper.parse_unix_timestamp(
                 payload.get('listed_at'),
             ),
             'last_synced_at': raw_payload.fetched_at,
-            'raw_data': payload,
+            'raw_data': normalize_offer_response('gameboost', payload),
         }
 
         result = self._upsert_listing(raw_payload, defaults)
@@ -318,6 +319,28 @@ class GameboostOfferSyncService(BaseSyncService):
         return result
 
     # ── Private helpers ───────────────────────────────────────────────
+
+    def _get_variant_slug_lookup(self, game) -> mapper.VariantSlugLookup:
+        """Build a typed GameBoost external value -> slug lookup for one game."""
+        cached = self._variant_slug_lookups.get(game.id)
+        if cached is not None:
+            return cached
+
+        lookup: mapper.VariantSlugLookup = {}
+        mappings = (
+            GameVariantMapping.objects
+            .select_related('variant')
+            .filter(variant__game=game, marketplace='gameboost')
+            .order_by('variant__type', 'variant__sort_order')
+        )
+        for mapping in mappings:
+            type_lookup = lookup.setdefault(mapping.variant.type, {})
+            type_lookup.setdefault(mapping.external_id, mapping.variant.slug)
+            if mapping.external_name:
+                type_lookup.setdefault(mapping.external_name, mapping.variant.slug)
+
+        self._variant_slug_lookups[game.id] = lookup
+        return lookup
 
     def _upsert_listing(
         self,

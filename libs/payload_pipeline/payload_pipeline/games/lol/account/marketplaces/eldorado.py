@@ -6,27 +6,8 @@ from typing import Any
 
 from ..models import LolResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
+from .....core.variant_mapping import get_external_id
 from .....marketplaces.eldorado import BaseEldoradoBuilder
-
-
-# region_phrase → Eldorado trade environment ID
-# Sourced from old builder: src/games/games/lol/builders/eldorado_payload_builder.py
-_REGION_TRADE_ENV_IDS: dict[str, str] = {
-    "Latin America North": "3",
-    "Europe Nordic & East": "1",
-    "Europe West": "2",
-    "Turkey": "7",
-    "North America": "9",
-    "Russia": "6",
-    "Vietnam": "14",
-    "Japan": "8",
-    "Brazil": "0",
-    "Latin America South": "4",
-    "Singapore, Malaysia & Indonesia": "12",
-    "Thailand": "15",
-    "Oceania": "5",
-    "Philippines": "13",
-}
 
 # Eldorado semantic attribute keys (from template)
 _ATTR_RANK = "lol-current-rank"
@@ -62,7 +43,9 @@ class LolEldoradoBuilder(BaseEldoradoBuilder):
             ctx=ctx,
             price=account.price,
             credentials=account.credentials,
-            trade_environment_id=self._resolve_trade_environment_id(account.region_phrase),
+            trade_environment_id=self._resolve_trade_environment_id(
+                account.region_phrase, ctx,
+            ),
             attributes={
                 _ATTR_RANK: self._resolve_rank_attribute(account.rank),
                 _ATTR_SKINS: self._resolve_skin_attribute(account.skin_count),
@@ -72,8 +55,8 @@ class LolEldoradoBuilder(BaseEldoradoBuilder):
         )
 
     @staticmethod
-    def _resolve_trade_environment_id(region_phrase: str) -> str:
-        return _REGION_TRADE_ENV_IDS.get(region_phrase, "0")
+    def _resolve_trade_environment_id(region_phrase: str, ctx: BuildContext) -> str:
+        return get_external_id(ctx.variant_context, "region", region_phrase) or "0"
 
     @staticmethod
     def _resolve_rank_attribute(rank: str) -> str:

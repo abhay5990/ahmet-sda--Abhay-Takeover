@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import RawPayload, SyncCheckpoint, SyncRun, SyncLog
+from .models import RawPayload, SyncCheckpoint, SyncFeatureFlag, SyncRun, SyncLog
 
 
 @admin.register(RawPayload)
@@ -175,3 +175,12 @@ class SyncLogAdmin(admin.ModelAdmin):
         if len(obj.message) > 80:
             return obj.message[:80] + '...'
         return obj.message
+
+
+@admin.register(SyncFeatureFlag)
+class SyncFeatureFlagAdmin(admin.ModelAdmin):
+    list_display = ('key', 'is_enabled', 'description', 'updated_at')
+    list_editable = ('is_enabled',)
+    list_display_links = ('key',)
+    search_fields = ('key', 'description')
+    readonly_fields = ('updated_at',)

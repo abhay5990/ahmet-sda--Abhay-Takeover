@@ -30,7 +30,9 @@ class FortniteGameBoostBuilder(BaseGameBoostBuilder):
     def _platform_name(self) -> str:
         return "Epic Games Account"
 
-    def _build_account_data(self, account: FortniteResolvedAccount) -> dict[str, Any]:
+    def _build_account_data(
+        self, account: FortniteResolvedAccount, ctx: BuildContext | None = None,
+    ) -> dict[str, Any]:
         other_count = (
             (account.skin_count + account.pickaxe_count + account.glider_count + account.dance_count) // 4
             if (account.skin_count + account.pickaxe_count + account.glider_count + account.dance_count)

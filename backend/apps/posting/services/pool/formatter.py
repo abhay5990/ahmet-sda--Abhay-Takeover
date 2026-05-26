@@ -10,7 +10,7 @@ from payload_pipeline.core.contracts import CredentialBundle
 from payload_pipeline.games.gtav.account.credentials import format_platform_credentials
 
 
-def _build_credential_bundle(product: OwnedProduct) -> CredentialBundle:
+def build_credential_bundle(product: OwnedProduct) -> CredentialBundle:
     """Build a CredentialBundle from OwnedProduct fields."""
     return CredentialBundle(
         login=product.login or "",
@@ -61,7 +61,7 @@ def format_credential_for_marketplace(
     Backup codes are appended for Eldorado only.
     """
     platform = _get_platform(product)
-    creds = _build_credential_bundle(product)
+    creds = build_credential_bundle(product)
     extras = _get_credential_extras(product)
 
     result = format_platform_credentials(platform, creds, extras)

@@ -19,6 +19,7 @@ from typing import Any
 from ..credentials import format_platform_credentials
 from ..models import GtavResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
+from .....core.variant_mapping import get_external_id, get_external_name
 from .....marketplaces.base import _DISCLAIMER
 from .....marketplaces.playerauctions import BasePlayerAuctionsBuilder
 
@@ -27,32 +28,16 @@ _COVER_IMAGE_URL = (
     "https://image-cdn-p.azureedge.net/title-image/Gta/gta-v_cover.png"
 )
 
-# main_platform -> PA server name (Steam default for PC variants)
-_SERVER_NAME_MAP: dict[str, str] = {
-    "PlayStation 5": "PS5",
-    "Xbox Series X/S": "Xbox Series",
-    "PlayStation 4": "PS4",
-    "Xbox One": "XBOX ONE",
-    "PC - Enhanced": "PC-Steam-Enhanced",
-    "PC - Legacy": "PC-Steam-Legacy",
-}
-
-# main_platform -> PA server ID (Steam default for PC variants)
-_SERVER_ID_MAP: dict[str, str] = {
-    "PlayStation 5": "9874",
-    "Xbox Series X/S": "9889",
-    "PlayStation 4": "5921",
-    "Xbox One": "5922",
-    "PC - Enhanced": "14270",
-    "PC - Legacy": "5920",
-}
-
 _FALLBACK_SERVER = "PC-Steam-Legacy"
 _FALLBACK_SERVER_ID = "5920"
 
 
 class GtavPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     """Build PlayerAuctions payloads for the GTA V account slice."""
+
+    @property
+    def _pa_game_display_name(self) -> str:
+        return "GTA 5 Online"
 
     @property
     def game_name(self) -> str:
@@ -70,13 +55,23 @@ class GtavPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     def _platform_name(self) -> str:
         return "Rockstar Login"
 
-    def _get_server(self, account: GtavResolvedAccount) -> list[str]:
+    def _get_server(
+        self, account: GtavResolvedAccount, ctx: BuildContext | None = None,
+    ) -> list[str]:
         platform = account.main_platform or ""
-        return [_SERVER_NAME_MAP.get(platform, _FALLBACK_SERVER)]
+        name = get_external_name(
+            ctx.variant_context if ctx else None, "platform", platform,
+        )
+        return [name or _FALLBACK_SERVER]
 
-    def _get_server_id(self, account: GtavResolvedAccount) -> list[str] | None:
+    def _get_server_id(
+        self, account: GtavResolvedAccount, ctx: BuildContext | None = None,
+    ) -> list[str] | None:
         platform = account.main_platform or ""
-        return [_SERVER_ID_MAP.get(platform, _FALLBACK_SERVER_ID)]
+        eid = get_external_id(
+            ctx.variant_context if ctx else None, "platform", platform,
+        )
+        return [eid or _FALLBACK_SERVER_ID]
 
     def build_payload(
         self,

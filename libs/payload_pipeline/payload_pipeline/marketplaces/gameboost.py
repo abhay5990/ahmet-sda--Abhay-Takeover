@@ -55,7 +55,7 @@ class BaseGameBoostBuilder(BasePayloadBuilder[Any]):
         """GameBoost game identifier (e.g. ``"valorant"``, ``"counter-strike-2"``)."""
 
     @abstractmethod
-    def _build_account_data(self, subject: Any) -> dict[str, Any]:
+    def _build_account_data(self, subject: Any, ctx: BuildContext | None = None) -> dict[str, Any]:
         """Return the game-specific ``account_data`` dict."""
 
     # ------------------------------------------------------------------
@@ -100,7 +100,7 @@ class BaseGameBoostBuilder(BasePayloadBuilder[Any]):
                 else _DROPSHIPPING_DELIVERY
             ),
             "image_urls": list(listing.media.external_urls) if listing.media.external_urls else [],
-            "account_data": self._build_account_data(subject),
+            "account_data": self._build_account_data(subject, ctx),
         }
 
         dump = self._build_dump(subject)

@@ -1,7 +1,7 @@
 """R6 account slice."""
 
 from .content import R6Composer
-from .marketplaces import R6EldoradoBuilder, R6GameBoostBuilder
+from .marketplaces import R6EldoradoBuilder, R6GameBoostBuilder, R6PlayerAuctionsBuilder
 from .media import R6MediaStrategy
 from .resolver import R6Resolver
 from .sources import R6LztSourceAdapter, R6TrackerSourceAdapter
@@ -20,6 +20,7 @@ def register(registry) -> None:
             marketplaces={
                 "eldorado": R6EldoradoBuilder(),
                 "gameboost": R6GameBoostBuilder(),
+                "playerauctions": R6PlayerAuctionsBuilder(),
             },
         )
     )
@@ -29,6 +30,7 @@ __all__ = [
     "R6Composer",
     "R6EldoradoBuilder",
     "R6GameBoostBuilder",
+    "R6PlayerAuctionsBuilder",
     "R6LztSourceAdapter",
     "R6MediaStrategy",
     "R6Resolver",

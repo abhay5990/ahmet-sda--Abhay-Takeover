@@ -19,6 +19,12 @@ from payload_pipeline.games.val.account import (
     ValorantResolver,
 )
 
+from _variant_ctx import (
+    valorant_eldorado,
+    valorant_gameboost,
+    valorant_playerauctions,
+)
+
 
 def test_valorant_lzt_source_normalization_resolves_catalog_titles(load_fixture) -> None:
     source = ValorantLztSourceAdapter().parse(load_fixture("lzt_val.json"))
@@ -70,7 +76,10 @@ def test_valorant_pipeline_builds_eldorado_payload(load_fixture) -> None:
     )
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado"))
+    result = pipeline.build(prepared, BuildContext(
+        kind="stock", marketplace="eldorado",
+        variant_context=valorant_eldorado(),
+    ))
 
     assert result.success
     assert prepared.subject.region == "EU"
@@ -160,33 +169,11 @@ def test_g2g_payload_uses_marketplace_override_title(load_fixture) -> None:
     assert payload["title"]  # not empty
 
 
-# ── Eldorado subplatform tests ──────────────────────────────────────
+# ── Eldorado platform selection tests ────────────────────────────────
 
 
-def test_eldorado_current_subplatform_overrides_environment(load_fixture) -> None:
-    """When CURRENT_SUBPLATFORM is set, Eldorado uses that platform ID."""
-    raw = load_fixture("lzt_val.json")
-    pipeline = PayloadPipeline(registry=build_default_registry())
-
-    _prepare_result = pipeline.prepare_once(
-        PipelineRequest(
-            game="valorant",
-            category="account",
-            kind="stock",
-            sources={"lzt": raw},
-        ),
-    )
-    assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
-    prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado", marketplace_config=EldoradoConfig(current_subplatform="PSN")))
-
-    assert result.success
-    # EU = region_id "1", PSN = platform "1"  →  "1-1"
-    assert result.payload["augmentedGame"]["tradeEnvironmentId"] == "1-1"
-
-
-def test_eldorado_subplatform_status_auto_selects_least_full(load_fixture) -> None:
-    """When SUBPLATFORM_STATUS is provided, builder picks the least-full platform."""
+def test_eldorado_selected_platform_overrides_default(load_fixture) -> None:
+    """When selected_variants['platform'] is set, Eldorado uses that platform ID."""
     raw = load_fixture("lzt_val.json")
     pipeline = PayloadPipeline(registry=build_default_registry())
 
@@ -201,13 +188,38 @@ def test_eldorado_subplatform_status_auto_selects_least_full(load_fixture) -> No
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
     result = pipeline.build(prepared, BuildContext(
+        kind="stock", marketplace="eldorado",
+        variant_context=valorant_eldorado(),
+        selected_variants={"platform": "psn"},
+    ))
+
+    assert result.success
+    # EU = region_id "1", PSN = platform "1"  →  "1-1"
+    assert result.payload["augmentedGame"]["tradeEnvironmentId"] == "1-1"
+
+
+def test_eldorado_backend_selected_platform_is_used(load_fixture) -> None:
+    """When backend passes selected_variants, builder uses that platform slug."""
+    raw = load_fixture("lzt_val.json")
+    pipeline = PayloadPipeline(registry=build_default_registry())
+
+    _prepare_result = pipeline.prepare_once(
+        PipelineRequest(
+            game="valorant",
+            category="account",
+            kind="stock",
+            sources={"lzt": raw},
+        ),
+    )
+    assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
+    prepared = _prepare_result.prepared
+    # Platform selection now happens in the backend (VariantRouter);
+    # pipeline receives the already-selected variant slug.
+    result = pipeline.build(prepared, BuildContext(
         kind="stock",
         marketplace="eldorado",
-        marketplace_config=EldoradoConfig(subplatform_status={
-            "pc": {"available": 5, "percentage_used": 90.0},
-            "psn": {"available": 40, "percentage_used": 20.0},
-            "xbox": {"available": 20, "percentage_used": 60.0},
-        }),
+        variant_context=valorant_eldorado(),
+        selected_variants={"platform": "psn"},  # backend chose PSN
     ))
 
     assert result.success
@@ -230,7 +242,10 @@ def test_eldorado_no_context_falls_back_to_default_platform(load_fixture) -> Non
     )
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="eldorado"))
+    result = pipeline.build(prepared, BuildContext(
+        kind="stock", marketplace="eldorado",
+        variant_context=valorant_eldorado(),
+    ))
 
     assert result.success
     # EU = "1", default PC = "0" → "1-0"
@@ -255,7 +270,10 @@ def test_valorant_pipeline_builds_gameboost_payload(load_fixture) -> None:
     )
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="gameboost"))
+    result = pipeline.build(prepared, BuildContext(
+        kind="stock", marketplace="gameboost",
+        variant_context=valorant_gameboost(),
+    ))
 
     assert result.success
     assert result.payload["game"] == "valorant"
@@ -284,7 +302,10 @@ def test_gameboost_dropshipping_mode_uses_manual_delivery(load_fixture) -> None:
 
     account = ValorantResolver().resolve(request)
     listing = ValorantComposer().compose(account, request, MediaBundle())
-    build_ctx = BuildContext(kind="dropshipping", marketplace="gameboost")
+    build_ctx = BuildContext(
+        kind="dropshipping", marketplace="gameboost",
+        variant_context=valorant_gameboost(),
+    )
     payload = ValorantGameBoostBuilder().build_payload(account, listing, build_ctx)
 
     assert payload["is_manual"] is True
@@ -297,7 +318,7 @@ def test_gameboost_dropshipping_mode_uses_manual_delivery(load_fixture) -> None:
 
 
 def test_valorant_pipeline_builds_playerauctions_payload(load_fixture) -> None:
-    """Full pipeline with marketplace='playerauctions' produces a valid payload."""
+    """Full pipeline with marketplace='playerauctions' produces a valid single-post payload."""
     raw = load_fixture("lzt_val.json")
     pipeline = PayloadPipeline(registry=build_default_registry())
 
@@ -311,18 +332,181 @@ def test_valorant_pipeline_builds_playerauctions_payload(load_fixture) -> None:
     )
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
-    result = pipeline.build(prepared, BuildContext(kind="stock", marketplace="playerauctions"))
+    result = pipeline.build(prepared, BuildContext(
+        kind="stock", marketplace="playerauctions",
+        variant_context=valorant_playerauctions(),
+    ))
 
     assert result.success
-    assert result.payload["game_name"] == "valorant"
-    assert result.payload["game_id"] == 8470
-    assert result.payload["server"] == ["EU"]
-    assert result.payload["server_id"] == ["9128"]
-    assert result.payload["title"]
+    assert result.payload["gameId"] == 9078
     assert result.payload["price"] > 0
-    assert result.payload["delivery_method"] == "instant"
-    assert result.payload["delivery_instructions"]
-    assert result.payload["cover_image_url"]
+    assert result.payload["title"]
+    assert result.payload["isAuto"] is True
+    assert result.payload["autoDelivery"]["loginName"]
+    assert result.payload["autoDelivery"]["password"]
+
+
+def test_valorant_pipeline_builds_playerauctions_bulk_payload(load_fixture) -> None:
+    """Full pipeline build_bulk produces Excel row dict matching PA template columns."""
+    raw = load_fixture("lzt_val.json")
+    pipeline = PayloadPipeline(registry=build_default_registry())
+
+    _prepare_result = pipeline.prepare_once(
+        PipelineRequest(
+            game="valorant",
+            category="account",
+            kind="stock",
+            sources={"lzt": raw},
+        ),
+    )
+    assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
+    prepared = _prepare_result.prepared
+    result = pipeline.build_bulk(prepared, BuildContext(
+        kind="stock", marketplace="playerauctions",
+        variant_context=valorant_playerauctions(),
+    ))
+
+    assert result.success
+    row = result.payload
+
+    # PA template column keys
+    assert row["Game"] == "Valorant"
+    assert row["Server"] == "EU"
+    assert row["Listing Price"] > 0
+    assert row["Title"]
+    assert row["Description"]
+    assert row["Delivery Method"] == "Automatic"
+    assert row["Login name  (Auto)"]  # double space is PA requirement
+    assert row["Password"]
+    assert row["First name"]
+    assert row["Last name"]
+    assert row["Email"]
+    assert row["Country"]
+    assert row["Birth Date"] == "1995/1/1"
+    assert row["Seller After-Sale Protection"] == 7
+    assert row["Offer Duration"] == 30
+
+    # Stock mode: auto delivery fields populated, manual delivery empty
+    assert row["Login name"] == ""
+    assert row["Delivery info"] == ""
+
+
+# ── Phase C: composite ID correctness ────────────────────────────
+
+
+def test_eldorado_composite_id_na_plus_pc() -> None:
+    """NA + PC → '0-0'."""
+    from payload_pipeline.games.val.account.marketplaces.eldorado import (
+        ValorantEldoradoBuilder,
+    )
+    ctx = BuildContext(
+        kind="stock", marketplace="eldorado",
+        variant_context=valorant_eldorado(),
+        selected_variants={"platform": "pc"},
+    )
+    assert ValorantEldoradoBuilder._resolve_trade_environment_id("NA", ctx) == "0-0"
+
+
+def test_eldorado_composite_id_ap_plus_xbox() -> None:
+    """AP + Xbox → '5-2'."""
+    from payload_pipeline.games.val.account.marketplaces.eldorado import (
+        ValorantEldoradoBuilder,
+    )
+    ctx = BuildContext(
+        kind="stock", marketplace="eldorado",
+        variant_context=valorant_eldorado(),
+        selected_variants={"platform": "xbox"},
+    )
+    assert ValorantEldoradoBuilder._resolve_trade_environment_id("AP", ctx) == "5-2"
+
+
+def test_eldorado_composite_id_kr_plus_psn() -> None:
+    """KR + PSN → '6-1'."""
+    from payload_pipeline.games.val.account.marketplaces.eldorado import (
+        ValorantEldoradoBuilder,
+    )
+    ctx = BuildContext(
+        kind="stock", marketplace="eldorado",
+        variant_context=valorant_eldorado(),
+        selected_variants={"platform": "psn"},
+    )
+    assert ValorantEldoradoBuilder._resolve_trade_environment_id("KR", ctx) == "6-1"
+
+
+def test_eldorado_composite_id_unknown_region_returns_sentinel() -> None:
+    """Unknown region → '1-999' sentinel regardless of platform."""
+    from payload_pipeline.games.val.account.marketplaces.eldorado import (
+        ValorantEldoradoBuilder,
+    )
+    ctx = BuildContext(
+        kind="stock", marketplace="eldorado",
+        variant_context=valorant_eldorado(),
+        selected_variants={"platform": "pc"},
+    )
+    assert ValorantEldoradoBuilder._resolve_trade_environment_id("XX", ctx) == "1-999"
+
+
+def test_pa_builder_ignores_selected_platform(load_fixture) -> None:
+    """PA builder output is unaffected by selected_variants['platform'] — uses region only."""
+    raw = load_fixture("lzt_val.json")
+    pipeline = PayloadPipeline(registry=build_default_registry())
+
+    _prepare_result = pipeline.prepare_once(
+        PipelineRequest(
+            game="valorant",
+            category="account",
+            kind="stock",
+            sources={"lzt": raw},
+        ),
+    )
+    assert _prepare_result.success
+    prepared = _prepare_result.prepared
+
+    result_no_platform = pipeline.build(prepared, BuildContext(
+        kind="stock", marketplace="playerauctions",
+        variant_context=valorant_playerauctions(),
+    ))
+    result_with_platform = pipeline.build(prepared, BuildContext(
+        kind="stock", marketplace="playerauctions",
+        variant_context=valorant_playerauctions(),
+        selected_variants={"platform": "psn"},
+    ))
+
+    assert result_no_platform.success
+    assert result_with_platform.success
+    # Both payloads must be identical — platform has no effect on PA
+    assert result_no_platform.payload == result_with_platform.payload
+
+
+def test_gb_builder_ignores_selected_platform(load_fixture) -> None:
+    """GB builder output is unaffected by selected_variants['platform'] — uses region only."""
+    raw = load_fixture("lzt_val.json")
+    pipeline = PayloadPipeline(registry=build_default_registry())
+
+    _prepare_result = pipeline.prepare_once(
+        PipelineRequest(
+            game="valorant",
+            category="account",
+            kind="stock",
+            sources={"lzt": raw},
+        ),
+    )
+    assert _prepare_result.success
+    prepared = _prepare_result.prepared
+
+    result_no_platform = pipeline.build(prepared, BuildContext(
+        kind="stock", marketplace="gameboost",
+        variant_context=valorant_gameboost(),
+    ))
+    result_with_platform = pipeline.build(prepared, BuildContext(
+        kind="stock", marketplace="gameboost",
+        variant_context=valorant_gameboost(),
+        selected_variants={"platform": "psn"},
+    ))
+
+    assert result_no_platform.success
+    assert result_with_platform.success
+    assert result_no_platform.payload == result_with_platform.payload
 
 
 # ── Multi-marketplace / error tests ──────────────────────────────
@@ -345,12 +529,17 @@ def test_pipeline_builds_all_marketplace_payloads(load_fixture) -> None:
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
 
+    _variant_ctxs = {
+        "eldorado": valorant_eldorado(),
+        "gameboost": valorant_gameboost(),
+        "playerauctions": valorant_playerauctions(),
+    }
     results = {}
     for mp in marketplaces:
         if mp == "g2g":
             build_ctx = BuildContext(kind="stock", marketplace=mp, marketplace_config=G2GConfig(seller_id="1000959019"))
         else:
-            build_ctx = BuildContext(kind="stock", marketplace=mp)
+            build_ctx = BuildContext(kind="stock", marketplace=mp, variant_context=_variant_ctxs.get(mp))
         results[mp] = pipeline.build(prepared, build_ctx)
 
     assert set(results.keys()) == set(marketplaces)

@@ -49,8 +49,12 @@ from apps.posting.services.shared import (
     extract_title_from_response,
     serialize_response,
 )
-from apps.posting.services.shared.subplatform import SubplatformCache, get_allowed_platforms
+from apps.posting.services.shared.max_offer_error import is_max_offer_error
+from apps.posting.services.variant_context import build_variant_context
+from apps.posting.services.variant_routing import PLATFORM_PRIORITY, VariantRouter, get_eligible_variants
+from apps.posting.services.variant_slug import resolve_listing_variant_slug
 from apps.posting.services.shared.tracker_fetcher import fetch_tracker_data
+from core.marketplace.normalizers import normalize_offer_response
 from payload_pipeline.core.contracts import ListingKind
 from payload_pipeline.pricing.rules import PricingRule as LibPricingRule, calculate_price
 
@@ -74,6 +78,14 @@ class _ValidationError(Exception):
 
 class _ServerError(Exception):
     pass
+
+
+class _MaxOfferError(Exception):
+    """Raised when Eldorado returns 'Maximum of N active offers is allowed'."""
+
+    def __init__(self, msg: str, variant_slug: str = ''):
+        super().__init__(msg)
+        self.variant_slug = variant_slug
 
 
 # ---------------------------------------------------------------------------
@@ -199,7 +211,11 @@ def _process_target_url(
 
     # === Phase 2: Post new items (with stop checks + backoff) ===
     pricing = build_pricing_rule(PricingDefaults.from_model(target_url))
-    subplatform_cache = SubplatformCache(config.store, config.game, mode='dropship')
+    marketplace = config.store.provider
+    variant_ctx = build_variant_context(
+        store=config.store, game=config.game, marketplace=marketplace,
+    )
+    variant_router = VariantRouter(variant_ctx, mode='dropship')
     posted_count = 0
 
     for item in new_items:
@@ -220,7 +236,8 @@ def _process_target_url(
                 source_provider=source_provider,
                 source_type=source_type,
                 pricing=pricing,
-                subplatform_cache=subplatform_cache,
+                variant_router=variant_router,
+                variant_ctx=variant_ctx,
                 target_facade=target_facade,
                 target_provider=target_provider,
                 target_proxy_group=target_proxy_group,
@@ -230,6 +247,62 @@ def _process_target_url(
             if posted:
                 tracker.on_success()
                 posted_count += 1
+
+        except _MaxOfferError as e:
+            # Variant fallback: try remaining variants
+            _item_id = source_provider.extract_item_id(item)
+            excluded = [e.variant_slug] if e.variant_slug else []
+            tiers = PLATFORM_PRIORITY.get(config.game.slug, [])
+            all_variants = [slug for tier in tiers for slug in tier]
+            available = [v for v in all_variants if v not in excluded]
+
+            # Build context once — it's variant-independent (DB counts + limits)
+            fresh_ctx = build_variant_context(
+                store=config.store, game=config.game, marketplace=marketplace,
+            )
+
+            fallback_posted = False
+            for candidate in available:
+                fresh_router = VariantRouter(fresh_ctx, mode='dropship')
+                # Force variant by setting manual override on the router
+                try:
+                    posted = _attempt_post(
+                        item=item,
+                        config=config,
+                        target_url=target_url,
+                        source_provider=source_provider,
+                        source_type=source_type,
+                        pricing=pricing,
+                        variant_router=fresh_router,
+                        variant_ctx=fresh_ctx,
+                        target_facade=target_facade,
+                        target_provider=target_provider,
+                        target_proxy_group=target_proxy_group,
+                        lzt_image_fetcher=lzt_image_fetcher,
+                        stop_event=stop_event,
+                    )
+                    if posted:
+                        tracker.on_success()
+                        posted_count += 1
+                        fallback_posted = True
+                        break
+                except _MaxOfferError as inner:
+                    excluded.append(inner.variant_slug)
+                    continue
+                except (_ValidationError, _RateLimitError, _ServerError):
+                    break
+                except Exception as exc:
+                    logger.warning(
+                        "Unexpected error during variant fallback for %s/%s: %s",
+                        config.game.slug, config.store.name, exc,
+                    )
+                    break
+
+            if not fallback_posted:
+                logger.warning(
+                    "All variants exhausted for item %s (%s/%s)",
+                    _item_id, config.game.slug, config.store.name,
+                )
 
         except _RateLimitError:
             tracker.on_rate_limit()  # backoff or PauseRequired
@@ -311,7 +384,8 @@ def _attempt_post(
     source_provider: DropshipSourceProvider,
     source_type: str,
     pricing: LibPricingRule,
-    subplatform_cache: SubplatformCache,
+    variant_router: VariantRouter,
+    variant_ctx: dict | None,
     target_facade,
     target_provider,
     target_proxy_group: str | None,
@@ -342,9 +416,9 @@ def _attempt_post(
     raw_price = Decimal(str(raw_price_float))
 
     # Early slot check — skip before expensive prepare() if all slots are full
-    if subplatform_cache.resolve(fallback='') is None:
+    if variant_router.select('platform', game_slug=game.slug) is None:
         logger.info(
-            "No available sub-platform slots for %s/%s, skipping item %s",
+            "No available variant slots for %s/%s, skipping item %s",
             config.store.name, game.name, item.get('item_id'),
         )
         return False
@@ -370,13 +444,14 @@ def _attempt_post(
             f"Pipeline prepare failed [{prepare_result.error_stage}]: {prepare_result.error}"
         )
 
-    # Final sub-platform selection — filter by account compatibility
-    allowed = get_allowed_platforms(game.slug, prepare_result.prepared.subject)
-    account_platform = getattr(prepare_result.prepared.subject, 'main_platform', '') or ''
-    sub_platform = subplatform_cache.resolve(fallback=account_platform, allowed_platforms=allowed)
-    if sub_platform is None:
+    # Final variant selection — filter by account compatibility
+    allowed = get_eligible_variants(game.slug, prepare_result.prepared.subject)
+    variant_slug = variant_router.select(
+        'platform', allowed=allowed, game_slug=game.slug,
+    )
+    if variant_slug is None:
         logger.info(
-            "No compatible sub-platform slot for %s/%s, skipping item %s",
+            "No compatible variant slot for %s/%s, skipping item %s",
             config.store.name, game.name, item.get('item_id'),
         )
         return False
@@ -387,7 +462,8 @@ def _attempt_post(
         pricing_defaults=target_url,
         store=config.store,
         kind=ListingKind.DROPSHIPPING,
-        sub_platform=sub_platform or '',
+        variant_slug=variant_slug or '',
+        variant_context=variant_ctx,
     )
     if not pipeline_result.success:
         raise RuntimeError(
@@ -395,6 +471,12 @@ def _attempt_post(
         )
 
     payload = pipeline_result.payload
+    listing_variant_slug = resolve_listing_variant_slug(
+        subject=prepare_result.prepared.subject,
+        variant_ctx=variant_ctx,
+        selected_variants={'platform': variant_slug} if variant_slug else None,
+        fallback=variant_slug or '',
+    )
 
     # Stop check after pipeline (which can take 30s+ with image uploads)
     # — avoids sending to marketplace when user already requested stop
@@ -410,6 +492,12 @@ def _attempt_post(
     api_result = target_provider.create_listing(target_facade, product_data)
 
     if not api_result.ok:
+        # Check max offer error before generic classification
+        if is_max_offer_error(api_result) and game.slug in PLATFORM_PRIORITY:
+            err = api_result.error
+            msg = f"Max offer limit: {err.message}" if err else "Max offer limit reached"
+            raise _MaxOfferError(msg, variant_slug=variant_slug or '')
+
         error_type = classify_api_error(api_result)
         err = api_result.error
         parts = [f"API error: {err.message} (category={err.category})"]
@@ -446,10 +534,18 @@ def _attempt_post(
 
     posted_currency = extract_currency_from_payload(payload, marketplace)
 
-    # raw_data: store both sent payload and API response for audit
-    listing_raw_data: dict = {'payload': payload}
-    if api_result.data is not None:
-        listing_raw_data['response'] = serialize_response(api_result.data)
+    if marketplace in {'eldorado', 'gameboost', 'playerauctions'}:
+        listing_raw_data = normalize_offer_response(
+            marketplace,
+            api_result.data,
+            payload=payload,
+            client=target_facade,
+            proxy_group=target_proxy_group,
+        )
+    else:
+        listing_raw_data: dict = {'payload': payload}
+        if api_result.data is not None:
+            listing_raw_data['response'] = serialize_response(api_result.data)
 
     with transaction.atomic():
         dp, created = DropshipProduct.objects.get_or_create(
@@ -490,7 +586,7 @@ def _attempt_post(
             integration_account=config.store,
             game=game,
             store_listing_id=store_listing_id,
-            sub_platform=sub_platform,
+            variant=listing_variant_slug,
             status=ListingStatus.LISTED,
             title=posted_title,
             price=listing_price,
@@ -499,7 +595,7 @@ def _attempt_post(
             raw_data=listing_raw_data,
         )
 
-    subplatform_cache.record_post(sub_platform)
+    variant_router.record_post('platform', variant_slug)
     return True
 
 

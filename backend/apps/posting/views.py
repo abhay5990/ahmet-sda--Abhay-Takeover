@@ -15,10 +15,18 @@ from apps.posting.models import (
     ContentTemplate,
     DropshippingJobConfig, OfferPool, PostingJob, PostingLog,
 )
-from apps.posting.services.shared.subplatform import GAME_SUBPLATFORMS
+from apps.posting.models import GameVariant
 from payload_pipeline.core.enums import GameSlug
 
 SUPPORTED_GAME_SLUGS = {gs.value for gs in GameSlug}
+
+
+def _get_game_variants() -> dict[str, list[str]]:
+    """Return {game_slug: [variant_label, ...]} for UI platform selector."""
+    result: dict[str, list[str]] = {}
+    for v in GameVariant.objects.select_related('game').order_by('game__slug', 'type', 'sort_order'):
+        result.setdefault(v.game.slug, []).append(v.label)
+    return result
 
 
 # ── Stock Posting ──────────────────────────────────────────────────
@@ -38,7 +46,7 @@ def stock_start_page(request):
         'games': games,
         'stores': stores,
         'source_accounts': source_accounts,
-        'game_subplatforms_json': json.dumps(GAME_SUBPLATFORMS),
+        'game_variants_json': json.dumps(_get_game_variants()),
     })
 
 

@@ -86,9 +86,9 @@ urlpatterns = [
     path('api/dropship/urls/<int:url_id>/', dropship_api.update_dropship_url, name='api_update_dropship_url'),
     path('api/dropship/urls/<int:url_id>/delete/', dropship_api.delete_dropship_url, name='api_delete_dropship_url'),
 
-    # API — subplatform limits
-    path('api/dropship/subplatform-limits/', dropship_api.subplatform_limits, name='api_subplatform_limits'),
-    path('api/dropship/subplatform-limits/save/', dropship_api.save_subplatform_limits, name='api_save_subplatform_limits'),
+    # API — variant limits
+    path('api/dropship/variant-limits/', dropship_api.variant_limits, name='api_variant_limits'),
+    path('api/dropship/variant-limits/save/', dropship_api.save_variant_limits, name='api_save_variant_limits'),
 
     # API — dropship stats
     path('api/dropship/stats/', dropship_api.dropship_stats, name='api_dropship_stats'),

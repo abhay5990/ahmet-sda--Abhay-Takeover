@@ -7,6 +7,7 @@ import logging
 from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_GET
@@ -15,18 +16,16 @@ from apps.accounts.decorators import role_required
 from apps.integrations.models import IntegrationAccount
 from apps.inventory.enums import DropshipProductStatus
 from apps.inventory.models import DropshipProduct, Game
+from apps.listings.enums import ListingStatus
+from apps.listings.models import Listing
 from apps.posting.models import (
     CleanerConfig,
     DropshippingJobConfig,
     DropshipTargetURL,
+    GameVariant,
+    GameVariantLimit,
     PostingLog,
     SchedulerHeartbeat,
-    SubplatformLimit,
-)
-from apps.posting.services.shared.subplatform import (
-    get_active_offer_counts,
-    get_subplatforms,
-    has_subplatforms,
 )
 
 logger = logging.getLogger(__name__)
@@ -73,20 +72,20 @@ def _check_config_ready(config: DropshippingJobConfig) -> str | None:
 
     Guards:
     1. At least one enabled target URL must exist.
-    2. If the game supports sub-platforms, at least one SubplatformLimit must be configured.
+    2. If the game has platform variants, at least one GameVariantLimit must be configured.
     """
     has_urls = DropshipTargetURL.objects.filter(config=config, enabled=True).exists()
     if not has_urls:
         return 'Cannot enable: add at least one enabled target URL first'
 
-    if has_subplatforms(config.game.slug):
-        has_limits = SubplatformLimit.objects.filter(
-            store=config.store, game=config.game,
+    if GameVariant.objects.filter(game=config.game, type='platform').exists():
+        has_limits = GameVariantLimit.objects.filter(
+            store=config.store, variant__game=config.game,
         ).exists()
         if not has_limits:
             return (
-                'Cannot enable: configure subplatform limits first '
-                f'(game "{config.game.name}" requires sub-platform selection)'
+                'Cannot enable: configure variant limits first '
+                f'(game "{config.game.name}" requires variant selection)'
             )
 
     return None
@@ -95,7 +94,7 @@ def _check_config_ready(config: DropshippingJobConfig) -> str | None:
 @login_required
 @require_GET
 def dropship_configs(request):
-    """List all dropship configs with their URLs + subplatform info."""
+    """List all dropship configs with their URLs + variant info."""
     configs = (
         DropshippingJobConfig.objects
         .select_related('source_account', 'store', 'game')
@@ -103,39 +102,59 @@ def dropship_configs(request):
         .order_by('-created_at')
     )
 
-    # Pre-fetch subplatform limits + active counts for all relevant (store, game) pairs
+    # Pre-fetch platform variants + limits + active counts for all (store, game) pairs
     # to avoid N+1 queries inside the config loop.
-    sp_limits_map: dict[tuple[int, int], list[SubplatformLimit]] = {}
-    sp_counts_map: dict[tuple[int, int], dict[str, int]] = {}
+    _all_game_ids = {c.game_id for c in configs}
+    _platform_variants = list(
+        GameVariant.objects
+        .filter(game_id__in=_all_game_ids, type='platform')
+        .order_by('game_id', 'sort_order')
+    )
+    variants_by_game: dict[int, list[GameVariant]] = {}
+    for v in _platform_variants:
+        variants_by_game.setdefault(v.game_id, []).append(v)
+
+    variant_limits_map: dict[tuple[int, int], list[GameVariantLimit]] = {}
+    active_counts_map: dict[tuple[int, int], dict[str, int]] = {}
 
     for c in configs:
         key = (c.store_id, c.game_id)
-        if key not in sp_limits_map and has_subplatforms(c.game.slug):
-            sp_limits_map[key] = list(
-                SubplatformLimit.objects.filter(store_id=c.store_id, game_id=c.game_id)
+        if key not in variant_limits_map and c.game_id in variants_by_game:
+            variant_limits_map[key] = list(
+                GameVariantLimit.objects
+                .filter(store_id=c.store_id, variant__game_id=c.game_id, variant__type='platform')
+                .select_related('variant')
             )
-            sp_counts_map[key] = get_active_offer_counts(c.store, c.game)
+            active_counts_map[key] = dict(
+                Listing.objects.filter(
+                    integration_account=c.store, game=c.game, status=ListingStatus.LISTED,
+                )
+                .values('variant')
+                .annotate(count=Count('id'))
+                .values_list('variant', 'count')
+            )
 
-    def _build_subplatform_info(config):
-        available = get_subplatforms(config.game.slug)
-        if not available:
-            return {'has_subplatforms': False}
+    def _build_variant_info(config):
+        game_variants = variants_by_game.get(config.game_id)
+        if not game_variants:
+            return {'has_variants': False}
 
         key = (config.store_id, config.game_id)
-        limits = sp_limits_map.get(key, [])
-        counts = sp_counts_map.get(key, {})
-        limits_by_sp = {lim.sub_platform: lim for lim in limits}
+        limits = variant_limits_map.get(key, [])
+        counts = active_counts_map.get(key, {})
+        limits_by_slug = {lim.variant.slug: lim for lim in limits}
 
         return {
-            'has_subplatforms': True,
-            'subplatform_limits': [
+            'has_variants': True,
+            'variant_limits': [
                 {
-                    'sub_platform': sp,
-                    'max_offers': limits_by_sp[sp].max_offers if sp in limits_by_sp else None,
-                    'stock_reserve': limits_by_sp[sp].stock_reserve if sp in limits_by_sp else None,
-                    'active': counts.get(sp, 0),
+                    'variant': v.slug,
+                    'label': v.label,
+                    'max_offers': limits_by_slug[v.slug].max_offers if v.slug in limits_by_slug else None,
+                    'stock_reserve': limits_by_slug[v.slug].stock_reserve if v.slug in limits_by_slug else None,
+                    'active': counts.get(v.slug, 0),
                 }
-                for sp in available
+                for v in game_variants
             ],
         }
 
@@ -152,7 +171,7 @@ def dropship_configs(request):
             'source_delay': str(c.source_delay),
             'poster_cycle_interval': c.poster_cycle_interval,
             'poster_last_cycle_at': c.poster_last_cycle_at.isoformat() if c.poster_last_cycle_at else None,
-            **_build_subplatform_info(c),
+            **_build_variant_info(c),
             'urls': [
                 {
                     'id': u.id,
@@ -639,13 +658,13 @@ def dropship_item_bulk_action(request):
 
 
 # ---------------------------------------------------------------------------
-# Subplatform limits
+# Variant limits
 # ---------------------------------------------------------------------------
 
 @login_required
 @require_GET
-def subplatform_limits(request):
-    """Return subplatform limits + active counts for a store×game pair."""
+def variant_limits(request):
+    """Return platform variant limits + active counts for a store×game pair."""
     store_id = request.GET.get('store_id')
     game_id = request.GET.get('game_id')
 
@@ -658,21 +677,38 @@ def subplatform_limits(request):
     except (IntegrationAccount.DoesNotExist, Game.DoesNotExist):
         return JsonResponse({'error': 'Store or game not found'}, status=404)
 
-    available = get_subplatforms(game.slug)
-    limits = SubplatformLimit.objects.filter(store=store, game=game)
-    counts = get_active_offer_counts(store, game) if available else {}
+    game_variants = list(
+        GameVariant.objects.filter(game=game, type='platform').order_by('sort_order')
+    )
+    limits = list(
+        GameVariantLimit.objects
+        .filter(store=store, variant__game=game, variant__type='platform')
+        .select_related('variant')
+    )
+    counts: dict[str, int] = {}
+    if game_variants:
+        counts = dict(
+            Listing.objects
+            .filter(integration_account=store, game=game, status=ListingStatus.LISTED)
+            .values('variant')
+            .annotate(count=Count('id'))
+            .values_list('variant', 'count')
+        )
+
+    limits_by_slug = {lim.variant.slug: lim for lim in limits}
 
     return JsonResponse({
-        'has_subplatforms': bool(available),
-        'available_subplatforms': available,
+        'has_variants': bool(game_variants),
+        'available_variants': [v.slug for v in game_variants],
         'limits': [
             {
-                'id': lim.id,
-                'sub_platform': lim.sub_platform,
-                'max_offers': lim.max_offers,
-                'stock_reserve': lim.stock_reserve,
+                'id': limits_by_slug[v.slug].id if v.slug in limits_by_slug else None,
+                'variant': v.slug,
+                'label': v.label,
+                'max_offers': limits_by_slug[v.slug].max_offers if v.slug in limits_by_slug else None,
+                'stock_reserve': limits_by_slug[v.slug].stock_reserve if v.slug in limits_by_slug else None,
             }
-            for lim in limits
+            for v in game_variants
         ],
         'active_counts': counts,
     })
@@ -681,11 +717,11 @@ def subplatform_limits(request):
 @login_required
 @role_required('admin', 'user')
 @require_POST
-def save_subplatform_limits(request):
-    """Bulk upsert subplatform limits for a store×game pair.
+def save_variant_limits(request):
+    """Bulk upsert platform variant limits for a store×game pair.
 
-    Body: { store_id, game_id, limits: [{ sub_platform, max_offers, stock_reserve }] }
-    Subplatforms not included in the list are deleted.
+    Body: { store_id, game_id, limits: [{ variant, max_offers, stock_reserve }] }
+    Variants not included in the list are deleted.
     """
     try:
         body = json.loads(request.body)
@@ -705,19 +741,22 @@ def save_subplatform_limits(request):
     except (IntegrationAccount.DoesNotExist, Game.DoesNotExist):
         return JsonResponse({'error': 'Store or game not found'}, status=404)
 
-    available = get_subplatforms(game.slug)
-    if not available:
-        return JsonResponse({'error': 'This game does not support subplatforms'}, status=400)
+    game_variants = {
+        v.slug: v
+        for v in GameVariant.objects.filter(game=game, type='platform')
+    }
+    if not game_variants:
+        return JsonResponse({'error': 'This game does not support variants'}, status=400)
 
     # Validate incoming limits
-    seen = set()
-    validated = []
+    seen: set[str] = set()
+    validated: list[tuple[str, int, int]] = []
     for entry in limits_data:
-        sp = entry.get('sub_platform', '').strip()
-        if not sp or sp not in available:
-            return JsonResponse({'error': f'Invalid sub_platform: {sp}'}, status=400)
+        sp = (entry.get('variant') or '').strip()
+        if not sp or sp not in game_variants:
+            return JsonResponse({'error': f'Invalid variant: {sp}'}, status=400)
         if sp in seen:
-            return JsonResponse({'error': f'Duplicate sub_platform: {sp}'}, status=400)
+            return JsonResponse({'error': f'Duplicate variant: {sp}'}, status=400)
         seen.add(sp)
 
         try:
@@ -736,15 +775,15 @@ def save_subplatform_limits(request):
 
         validated.append((sp, max_offers, stock_reserve))
 
-    # Delete limits for subplatforms not in the request
-    SubplatformLimit.objects.filter(store=store, game=game).exclude(
-        sub_platform__in=seen,
-    ).delete()
+    # Delete limits for variants not in the request
+    GameVariantLimit.objects.filter(
+        store=store, variant__game=game, variant__type='platform',
+    ).exclude(variant__slug__in=seen).delete()
 
     # Upsert each limit
     for sp, max_offers, stock_reserve in validated:
-        SubplatformLimit.objects.update_or_create(
-            store=store, game=game, sub_platform=sp,
+        GameVariantLimit.objects.update_or_create(
+            store=store, variant=game_variants[sp],
             defaults={'max_offers': max_offers, 'stock_reserve': stock_reserve},
         )
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from ..models import R6ResolvedAccount
+from .....core.contracts import BuildContext
 from .....marketplaces.gameboost import BaseGameBoostBuilder
 
 _UNRANKED_VALUES = {"Unranked", "Ranked Ready", "No Rank", "No rank", ""}
@@ -22,7 +23,7 @@ class R6GameBoostBuilder(BaseGameBoostBuilder):
         return "Ubisoft Account"
 
     def _build_account_data(
-        self, account: R6ResolvedAccount,
+        self, account: R6ResolvedAccount, ctx: BuildContext | None = None,
     ) -> dict[str, Any]:
         return {
             "platform": account.primary_linkable_platform,

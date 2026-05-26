@@ -4,7 +4,7 @@ from .resolver import SteamResolver
 from .content import SteamComposer
 from .media import SteamMediaStrategy
 from .sources import SteamLztSourceAdapter
-from .marketplaces import SteamEldoradoBuilder, SteamGameBoostBuilder, SteamG2GBuilder
+from .marketplaces import SteamEldoradoBuilder, SteamGameBoostBuilder, SteamG2GBuilder, SteamPlayerAuctionsBuilder
 from ....core.enums import ListingCategory
 from ....core.registry import GameDefinition
 
@@ -21,6 +21,7 @@ def register(registry) -> None:
                 "eldorado": SteamEldoradoBuilder(),
                 "gameboost": SteamGameBoostBuilder(),
                 "g2g": SteamG2GBuilder(),
+                "playerauctions": SteamPlayerAuctionsBuilder(),
             },
         )
     )
@@ -31,6 +32,7 @@ __all__ = [
     "SteamEldoradoBuilder",
     "SteamGameBoostBuilder",
     "SteamG2GBuilder",
+    "SteamPlayerAuctionsBuilder",
     "SteamMediaStrategy",
     "SteamLztSourceAdapter",
     "SteamResolver",
