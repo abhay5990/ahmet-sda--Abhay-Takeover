@@ -126,9 +126,11 @@ class DropboxClient:
     ) -> ApiResult[dict[str, Any]]:
         """Create a shared link for a file.
 
-        If a shared link already exists for the path, Dropbox returns
-        409 with ``shared_link_already_exists``. The error details
-        include the existing link metadata.
+        If a shared link already exists for the path, Dropbox returns 409
+        ``shared_link_already_exists``. Inline metadata MAY be included, but
+        is omitted when custom settings (as we send) could be incompatible
+        with the existing link — in that case the facade falls back to
+        ``list_shared_links``.
 
         Args:
             path: File path in Dropbox (e.g. ``/media/img.png``).
@@ -159,6 +161,50 @@ class DropboxClient:
                 provider=self.PROVIDER, is_retryable=True,
             )
         return self._handle_shared_link_response(response)
+
+    def list_shared_links(
+        self,
+        *,
+        path: str,
+        auth_headers: dict[str, str],
+        direct_only: bool = True,
+        cursor: str | None = None,
+    ) -> ApiResult[dict[str, Any]]:
+        """List shared links for a path.
+
+        Used as the recommended fallback when ``create_shared_link`` returns
+        409 ``shared_link_already_exists`` without metadata (per Dropbox spec,
+        metadata is omitted when the request specifies custom settings that
+        may be incompatible with the existing link).
+
+        Args:
+            path: File path in Dropbox.
+            auth_headers: Must include ``Authorization: Bearer {token}``.
+            direct_only: If True, suppress links to parent folders.
+            cursor: Pagination cursor from a previous call.
+        """
+        url = f"{self._config.api_base_url}{DropboxEndpoints.LIST_SHARED_LINKS}"
+
+        headers = {**auth_headers, "Content-Type": "application/json"}
+
+        body: dict[str, Any] = {"path": path, "direct_only": direct_only}
+        if cursor:
+            body["cursor"] = cursor
+
+        try:
+            response = self._transport.request(
+                HttpMethod.POST,
+                url,
+                headers=headers,
+                json_body=body,
+                timeout=self._config.timeout,
+            )
+        except TransportError as exc:
+            return ApiResult.from_error(
+                ErrorCategory.NETWORK, str(exc),
+                provider=self.PROVIDER, is_retryable=True,
+            )
+        return self._handle_response(response)
 
     # ---------------------------------------------------------------------------
     # Metadata (read) — RPC endpoint
@@ -220,9 +266,12 @@ class DropboxClient:
     ) -> ApiResult[dict[str, Any]]:
         """Handle shared link response, including 409 (link already exists).
 
-        Dropbox returns 409 when a shared link already exists.
-        The response body contains the existing link in
-        ``error.shared_link_already_exists.metadata``.
+        Dropbox returns 409 when a shared link already exists. Per the API
+        spec, ``error.shared_link_already_exists.metadata`` MAY be omitted
+        when the request specifies custom settings that could be incompatible
+        with the existing link — which is our case (we pass ``requested_visibility``
+        / ``audience`` / ``access``). In that case the caller (facade) must
+        fall back to ``list_shared_links``.
         """
         if response.is_success:
             try:
@@ -236,7 +285,7 @@ class DropboxClient:
                 )
             return ApiResult.success(body, status_code=response.status_code)
 
-        # 409 = shared_link_already_exists — extract the existing link
+        # 409 = shared_link_already_exists — try to extract inline metadata
         if response.status_code == 409:
             try:
                 body = response.json()
@@ -249,6 +298,9 @@ class DropboxClient:
                     return ApiResult.success(
                         existing, status_code=response.status_code,
                     )
+                self._logger.debug(
+                    f"Dropbox 409 shared_link_already_exists without metadata; body={body!r}",
+                )
             except Exception:
                 pass
 

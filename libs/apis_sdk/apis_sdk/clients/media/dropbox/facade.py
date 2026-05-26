@@ -44,6 +44,15 @@ class DropboxApiClient(Protocol):
         auth_headers: dict[str, str],
     ) -> ApiResult[dict[str, Any]]: ...
 
+    def list_shared_links(
+        self,
+        *,
+        path: str,
+        auth_headers: dict[str, str],
+        direct_only: bool = True,
+        cursor: str | None = None,
+    ) -> ApiResult[dict[str, Any]]: ...
+
     def get_metadata(
         self,
         *,
@@ -120,7 +129,11 @@ class DropboxFacade:
     ) -> ApiResult[dict[str, Any]]:
         """Create a public shared link for a file.
 
-        If a link already exists, returns the existing link metadata.
+        If a link already exists, returns the existing link metadata. When
+        Dropbox returns 409 ``shared_link_already_exists`` without inline
+        metadata (the API omits it when custom settings could be incompatible
+        with the existing link), this falls back to ``list_shared_links`` to
+        retrieve the existing link URL.
 
         Args:
             path: File path in Dropbox (e.g. ``/media/img.png``).
@@ -129,12 +142,33 @@ class DropboxFacade:
             ApiResult containing link metadata with ``url`` field.
         """
         try:
-            return self._client.create_shared_link(
+            result = self._client.create_shared_link(
                 path=path,
                 auth_headers=self._auth_headers(),
             )
         except Exception as exc:
             return self._error(exc)
+
+        if result.ok or result.status_code != 409:
+            return result
+
+        try:
+            list_result = self._client.list_shared_links(
+                path=path,
+                auth_headers=self._auth_headers(),
+                direct_only=True,
+            )
+        except Exception as exc:
+            return self._error(exc)
+
+        if not list_result.ok:
+            return result
+
+        links = (list_result.data or {}).get("links") or []
+        if not links:
+            return result
+
+        return ApiResult.success(links[0], status_code=200)
 
     # ---------------------------------------------------------------------------
     # Upload + share (convenience)

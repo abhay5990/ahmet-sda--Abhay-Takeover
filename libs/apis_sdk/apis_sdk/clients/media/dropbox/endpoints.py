@@ -17,5 +17,6 @@ class DropboxEndpoints:
 
     # RPC endpoints (api_base_url)
     CREATE_SHARED_LINK = "/sharing/create_shared_link_with_settings"
+    LIST_SHARED_LINKS = "/sharing/list_shared_links"
     GET_METADATA = "/files/get_metadata"
     DELETE = "/files/delete_v2"
