@@ -135,6 +135,7 @@ class StockOrchestrator:
 
     def _build_imgur_downloader(self):
         """Build ImgurAlbumDownloader from active ServiceCredential."""
+        return adapter._build_imgur_downloader(proxy_pool=self._proxy_pool)
 
     def _build_consumer(self) -> StockConsumer:
         """Build the StockConsumer with shared collaborators."""
