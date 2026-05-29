@@ -111,7 +111,10 @@ def seed_missing_game_platform_mappings(apps, schema_editor):
             )
 
     for game_slug, platform, external_id, external_name in MAPPINGS:
-        game = Game.objects.get(slug=game_slug)
+        try:
+            game = Game.objects.get(slug=game_slug)
+        except Game.DoesNotExist:
+            continue
         GamePlatformMapping.objects.update_or_create(
             platform=platform,
             external_id=external_id,

@@ -159,6 +159,37 @@ class ServiceCredential(models.Model):
         return f"{self.name} ({self.get_service_type_display()})"
 
 
+class TokenApiClient(models.Model):
+    """API client authorized to request tokens from the token broker endpoint."""
+
+    name = models.CharField(max_length=100, help_text='Client identifier, e.g. "order-tracker-server"')
+    api_key_hash = models.CharField(
+        max_length=64, unique=True, editable=False,
+        help_text='SHA-256 hex digest of the API key',
+    )
+    api_key_prefix = models.CharField(
+        max_length=8, editable=False,
+        help_text='First 8 chars of key (display/debug only)',
+    )
+    allowed_ips = models.JSONField(
+        default=list, blank=True,
+        help_text='IP addresses or CIDR ranges. Ignored if allow_any_ip=True.',
+    )
+    allow_any_ip = models.BooleanField(
+        default=False,
+        help_text='If True, any IP is accepted. If False and allowed_ips is empty, NO IP is accepted.',
+    )
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    note = models.TextField(blank=True)
+
+    class Meta:
+        db_table = 'integrations_token_api_client'
+
+    def __str__(self):
+        return f"{self.name} ({self.api_key_prefix}...)"
+
+
 class Proxy(models.Model):
     """Proxy assigned to an AccountGroup for IP isolation."""
 

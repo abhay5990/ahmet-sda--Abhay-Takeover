@@ -34,13 +34,15 @@ class EldoradoProvider(AbstractProvider):
         ]
 
     def build_client(self, credential: IntegrationCredential, *, proxy_pool=None, proxy_group=None) -> Any:
-        creds = credential.credentials
+        from .broker_auth import BrokerAuthProvider
+
         transport = self._create_transport()
+        auth = BrokerAuthProvider(
+            marketplace='eldorado',
+            store_slug=credential.account.slug,
+        )
         return EldoradoFactory.create(
-            email=creds.get('email', ''),
-            password=creds.get('password', ''),
-            id_token=creds.get('id_token', ''),
-            enable_cognito_auth=bool(creds.get('email') and creds.get('password')),
+            auth=auth,
             transport=transport,
             proxy_pool=proxy_pool,
             logger=_sdk_logger,

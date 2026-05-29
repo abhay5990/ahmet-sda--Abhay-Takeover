@@ -1,8 +1,11 @@
 from django import forms
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.utils.html import format_html, mark_safe
 
-from .models import IntegrationAccount, AccountGroup, IntegrationCredential, Proxy, ServiceCredential
+from .models import (
+    IntegrationAccount, AccountGroup, IntegrationCredential,
+    Proxy, ServiceCredential, TokenApiClient,
+)
 from .providers.registry import get_credential_fields
 from .services.registry import get_service_fields
 
@@ -232,6 +235,44 @@ class ServiceCredentialAdmin(admin.ModelAdmin):
             base += [f'cred_{f.name}' for f in credential_fields]
         base += ['created_at', 'updated_at']
         return base
+
+
+@admin.register(TokenApiClient)
+class TokenApiClientAdmin(admin.ModelAdmin):
+    list_display = ('name', 'api_key_prefix', 'allow_any_ip', 'is_active', 'created_at')
+    list_filter = ('is_active', 'allow_any_ip')
+    search_fields = ('name', 'note')
+    readonly_fields = ('api_key_prefix', 'api_key_hash', 'created_at')
+
+    def get_fields(self, request, obj=None):
+        if obj:
+            # Editing existing: show read-only hash/prefix, no key generation
+            return ['name', 'api_key_prefix', 'api_key_hash', 'allowed_ips', 'allow_any_ip', 'is_active', 'note', 'created_at']
+        # Creating new: only editable fields (key auto-generated on save)
+        return ['name', 'allowed_ips', 'allow_any_ip', 'is_active', 'note']
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            # New client: generate API key
+            import hashlib
+            import secrets
+            plain_key = secrets.token_urlsafe(32)
+            obj.api_key_hash = hashlib.sha256(plain_key.encode()).hexdigest()
+            obj.api_key_prefix = plain_key[:8]
+            obj.save()
+            self.message_user(
+                request,
+                format_html(
+                    '🔑 API key for <strong>{}</strong>: '
+                    '<code style="user-select:all; background:#fff3cd; padding:4px 8px; '
+                    'font-size:14px; border:1px solid #ffc107; border-radius:4px">{}</code> '
+                    '— <strong>Copy now, it will NOT be shown again!</strong>',
+                    obj.name, plain_key,
+                ),
+                messages.WARNING,
+            )
+        else:
+            obj.save()
 
 
 @admin.register(IntegrationCredential)

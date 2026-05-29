@@ -6,6 +6,7 @@ Creates configured Eldorado marketplace client instances.
 
 from __future__ import annotations
 
+from apis_sdk.infrastructure.auth.base import BaseAuthProvider
 from apis_sdk.infrastructure.http.base import BaseHttpTransport
 from apis_sdk.infrastructure.logging.logger import SdkLogger
 from apis_sdk.infrastructure.proxy.pool import ProxyPool
@@ -29,6 +30,7 @@ class EldoradoFactory:
         id_token: str = "",
         id_token_ttl_seconds: float = 3600.0,
         enable_cognito_auth: bool = False,
+        auth: BaseAuthProvider | None = None,
         transport: BaseHttpTransport,
         store_identifier: str = "eldorado_main",
         base_url: str = "https://www.eldorado.gg",
@@ -51,6 +53,8 @@ class EldoradoFactory:
             id_token: Optional pre-fetched Eldorado ID token for pilot mode.
             id_token_ttl_seconds: TTL for id_token mode.
             enable_cognito_auth: Enable Cognito SRP auth flow.
+            auth: Optional pre-built auth provider. When provided, skips
+                creating EldoradoCognitoAuth (used by BrokerAuthProvider).
             transport: HTTP transport for API calls.
             store_identifier: Unique store instance identifier.
             base_url: Eldorado API base URL.
@@ -81,7 +85,8 @@ class EldoradoFactory:
             cognito_client_id=cognito_client_id,
         )
 
-        auth = EldoradoCognitoAuth(config=config, logger=logger)
+        if auth is None:
+            auth = EldoradoCognitoAuth(config=config, logger=logger)
         policy = retry_policy or MarketplaceRetryPolicy()
         strategy = retry_strategy or EldoradoRetryStrategy()
 
