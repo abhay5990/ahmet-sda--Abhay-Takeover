@@ -17,7 +17,104 @@
       "name": "Xbox"
     }
   ],
-  "attributes": {},
+  "attributes": {
+    "premium-status": {
+      "name": "Premium Status",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "premium-yes",
+          "name": "Yes"
+        },
+        {
+          "id": "premium-no",
+          "name": "No"
+        },
+        {
+          "id": "premium-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "rust-hours": {
+      "name": "Hours Played",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "hours-099",
+          "name": "0-99"
+        },
+        {
+          "id": "hours-100499",
+          "name": "100-499"
+        },
+        {
+          "id": "hours-5001999",
+          "name": "500-1999"
+        },
+        {
+          "id": "hours-2000",
+          "name": "2000+"
+        },
+        {
+          "id": "hours-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "rust-skins": {
+      "name": "Skins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "skins-014",
+          "name": "0-14"
+        },
+        {
+          "id": "skins-1549",
+          "name": "15-49"
+        },
+        {
+          "id": "skins-5099",
+          "name": "50-99"
+        },
+        {
+          "id": "skins-100",
+          "name": "100+"
+        },
+        {
+          "id": "skins-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "steam-account-level": {
+      "name": "Steam Account Level",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "level-05",
+          "name": "0-5"
+        },
+        {
+          "id": "level-624",
+          "name": "6-24"
+        },
+        {
+          "id": "level-25",
+          "name": "25+"
+        },
+        {
+          "id": "level-other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
   "details": {
     "offerTitle": {
       "type": "string",

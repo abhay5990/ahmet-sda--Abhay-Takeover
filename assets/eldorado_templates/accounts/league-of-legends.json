@@ -86,6 +86,138 @@
     }
   ],
   "attributes": {
+    "league-of-legends-champion-count": {
+      "name": "Champion Count",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "champion-119",
+          "name": "1-19"
+        },
+        {
+          "id": "champion-2049",
+          "name": "20-49"
+        },
+        {
+          "id": "champion-5079",
+          "name": "50-79"
+        },
+        {
+          "id": "champion-80119",
+          "name": "80-119"
+        },
+        {
+          "id": "champion-120plus",
+          "name": "120+"
+        },
+        {
+          "id": "champion-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "league-of-legends-previous-rank": {
+      "name": "Previous Rank",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "previous-unranked",
+          "name": "Unranked"
+        },
+        {
+          "id": "previous-iron",
+          "name": "Iron"
+        },
+        {
+          "id": "previous-bronze",
+          "name": "Bronze"
+        },
+        {
+          "id": "previous-silver",
+          "name": "Silver"
+        },
+        {
+          "id": "previous-gold",
+          "name": "Gold"
+        },
+        {
+          "id": "previous-platinum",
+          "name": "Platinum"
+        },
+        {
+          "id": "previous-emerald",
+          "name": "Emerald"
+        },
+        {
+          "id": "previous-diamond",
+          "name": "Diamond"
+        },
+        {
+          "id": "previous-master",
+          "name": "Master"
+        },
+        {
+          "id": "previous-grandmaster",
+          "name": "Grandmaster"
+        },
+        {
+          "id": "previous-challenger",
+          "name": "Challenger"
+        },
+        {
+          "id": "previous-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "league-of-legends-ranked-ready": {
+      "name": "Ranked Ready",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "ready-yes",
+          "name": "Yes"
+        },
+        {
+          "id": "ready-no",
+          "name": "No"
+        }
+      ]
+    },
+    "league-of-legends-riot-points": {
+      "name": "Riot Points",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "riot-999",
+          "name": "0-999"
+        },
+        {
+          "id": "riot-1399",
+          "name": "1K-3.99K"
+        },
+        {
+          "id": "riot-4999",
+          "name": "4K-9.99K"
+        },
+        {
+          "id": "riot-101999",
+          "name": "10K-19.99K"
+        },
+        {
+          "id": "riot-20plus",
+          "name": "20K+"
+        },
+        {
+          "id": "riot-other",
+          "name": "Other"
+        }
+      ]
+    },
     "lol-blue-essence": {
       "name": "Blue Essence",
       "type": "Select",
@@ -127,28 +259,8 @@
       "required": true,
       "values": [
         {
-          "id": "unranked",
-          "name": "Unranked"
-        },
-        {
-          "id": "iron",
-          "name": "Iron"
-        },
-        {
           "id": "bronze",
           "name": "Bronze"
-        },
-        {
-          "id": "silver",
-          "name": "Silver"
-        },
-        {
-          "id": "gold",
-          "name": "Gold"
-        },
-        {
-          "id": "platinum",
-          "name": "Platinum"
         },
         {
           "id": "diamond",
@@ -159,8 +271,40 @@
           "name": "Emerald"
         },
         {
+          "id": "gold",
+          "name": "Gold"
+        },
+        {
+          "id": "iron",
+          "name": "Iron"
+        },
+        {
+          "id": "platinum",
+          "name": "Platinum"
+        },
+        {
+          "id": "silver",
+          "name": "Silver"
+        },
+        {
+          "id": "unranked",
+          "name": "Unranked"
+        },
+        {
           "id": "other",
           "name": "Other"
+        },
+        {
+          "id": "current-master",
+          "name": "Master"
+        },
+        {
+          "id": "current-grandmaster",
+          "name": "Grandmaster"
+        },
+        {
+          "id": "current-challenger",
+          "name": "Challenger"
         }
       ]
     },
@@ -176,6 +320,26 @@
         {
           "id": "1-9-skins",
           "name": "1-9 Skins"
+        },
+        {
+          "id": "10-24-skins",
+          "name": "10-24 Skins"
+        },
+        {
+          "id": "25-49-skins",
+          "name": "25-49 Skins"
+        },
+        {
+          "id": "50-99-skins",
+          "name": "50-99 Skins"
+        },
+        {
+          "id": "100-199-skins",
+          "name": "100-199 Skins"
+        },
+        {
+          "id": "200-299-skins",
+          "name": "200-299 Skins"
         },
         {
           "id": "300-399-skins",
@@ -204,26 +368,6 @@
         {
           "id": "1400-plus-skins",
           "name": "1400+ Skins"
-        },
-        {
-          "id": "10-24-skins",
-          "name": "10-24 Skins"
-        },
-        {
-          "id": "25-49-skins",
-          "name": "25-49 Skins"
-        },
-        {
-          "id": "50-99-skins",
-          "name": "50-99 Skins"
-        },
-        {
-          "id": "100-199-skins",
-          "name": "100-199 Skins"
-        },
-        {
-          "id": "200-299-skins",
-          "name": "200-299 Skins"
         },
         {
           "id": "other",

@@ -31,17 +31,13 @@
   ],
   "attributes": {
     "fortnite-account-type": {
-      "name": "Account type",
+      "name": "Account Type",
       "type": "Select",
       "required": true,
       "values": [
         {
           "id": "og-account",
           "name": "OG Account"
-        },
-        {
-          "id": "stacked",
-          "name": "Stacked"
         },
         {
           "id": "original-email",
@@ -52,7 +48,135 @@
           "name": "Save the World"
         },
         {
+          "id": "stacked",
+          "name": "Stacked"
+        },
+        {
           "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "fortnite-emotes": {
+      "name": "Emotes",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "emotes-149",
+          "name": "1-49"
+        },
+        {
+          "id": "emotes-5099",
+          "name": "50-99"
+        },
+        {
+          "id": "emotes-100199",
+          "name": "100-199"
+        },
+        {
+          "id": "emotes-200499",
+          "name": "200-499"
+        },
+        {
+          "id": "emotes-500plus",
+          "name": "500+"
+        },
+        {
+          "id": "emotes-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "fortnite-outfits-skins": {
+      "name": "Outfits/Skins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "outfits-149",
+          "name": "1-49"
+        },
+        {
+          "id": "outfits-5099",
+          "name": "50-99"
+        },
+        {
+          "id": "outfits-100199",
+          "name": "100-199"
+        },
+        {
+          "id": "outfits-200499",
+          "name": "200-499"
+        },
+        {
+          "id": "outfits-500plus",
+          "name": "500+"
+        },
+        {
+          "id": "outfits-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "fortnite-pickaxes": {
+      "name": "Pickaxes",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "pickaxes-149",
+          "name": "1-49"
+        },
+        {
+          "id": "pickaxes-5099",
+          "name": "50-99"
+        },
+        {
+          "id": "pickaxes-100199",
+          "name": "100-199"
+        },
+        {
+          "id": "pickaxes-200499",
+          "name": "200-499"
+        },
+        {
+          "id": "pickaxes-500plus",
+          "name": "500+"
+        },
+        {
+          "id": "pickaxes-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "fortnite-vbucks": {
+      "name": "V-Bucks",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "vbucks-1499",
+          "name": "1-499"
+        },
+        {
+          "id": "vbucks-500999",
+          "name": "500-999"
+        },
+        {
+          "id": "vbucks-1199",
+          "name": "1K-1.99K"
+        },
+        {
+          "id": "vbucks-2499",
+          "name": "2K-4.99K"
+        },
+        {
+          "id": "vbucks-5",
+          "name": "5K+"
+        },
+        {
+          "id": "vbucks-other",
           "name": "Other"
         }
       ]

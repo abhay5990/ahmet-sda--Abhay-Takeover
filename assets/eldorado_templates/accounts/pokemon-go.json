@@ -5,6 +5,119 @@
   "category": "Account",
   "tradeEnvironments": [],
   "attributes": {
+    "pokemon-go-hundo-pokemons": {
+      "name": "Hundo Pokemons",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "hundo-024",
+          "name": "0-24"
+        },
+        {
+          "id": "hundo-2549",
+          "name": "25-49"
+        },
+        {
+          "id": "hundo-5074",
+          "name": "50-74"
+        },
+        {
+          "id": "hundo-7599",
+          "name": "75-99"
+        },
+        {
+          "id": "hundo-100149",
+          "name": "100-149"
+        },
+        {
+          "id": "hundo-150199",
+          "name": "150-199"
+        },
+        {
+          "id": "hundo-200plus",
+          "name": "200+"
+        },
+        {
+          "id": "hundo-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "pokemon-go-items": {
+      "name": "Items",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "items-099",
+          "name": "0-99"
+        },
+        {
+          "id": "items-100199",
+          "name": "100-199"
+        },
+        {
+          "id": "items-200299",
+          "name": "200-299"
+        },
+        {
+          "id": "items-300399",
+          "name": "300-399"
+        },
+        {
+          "id": "items-400499",
+          "name": "400-499"
+        },
+        {
+          "id": "items-500plus",
+          "name": "500+"
+        },
+        {
+          "id": "items-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "pokemon-go-legendary-pokemons": {
+      "name": "Legendary Pokemons",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "legendary-024",
+          "name": "0-24"
+        },
+        {
+          "id": "legendary-2549",
+          "name": "25-49"
+        },
+        {
+          "id": "legendary-5074",
+          "name": "50-74"
+        },
+        {
+          "id": "legendary-7599",
+          "name": "75-99"
+        },
+        {
+          "id": "legendary-100149",
+          "name": "100-149"
+        },
+        {
+          "id": "legendary-150199",
+          "name": "150-199"
+        },
+        {
+          "id": "legendary-200plus",
+          "name": "200+"
+        },
+        {
+          "id": "legendary-other",
+          "name": "Other"
+        }
+      ]
+    },
     "pokemon-go-level": {
       "name": "Level",
       "type": "Select",
@@ -35,10 +148,6 @@
           "name": "Level 50-60"
         },
         {
-          "id": "other",
-          "name": "Other"
-        },
-        {
           "id": "level-60-70",
           "name": "Level 60-70"
         },
@@ -49,6 +158,146 @@
         {
           "id": "level-80",
           "name": "Level 80"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "pokemon-go-mythical-pokemons": {
+      "name": "Mythical Pokemons",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "mythical-14",
+          "name": "0-4"
+        },
+        {
+          "id": "mythical-59",
+          "name": "5-9"
+        },
+        {
+          "id": "mythical-1019",
+          "name": "10-19"
+        },
+        {
+          "id": "mythical-2049",
+          "name": "20-49"
+        },
+        {
+          "id": "mythical-50plus",
+          "name": "50+"
+        },
+        {
+          "id": "mythical-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "pokemon-go-pokecoinss": {
+      "name": "PokeCoins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "pokecoins-0999",
+          "name": "0-999"
+        },
+        {
+          "id": "pokecoins-1499",
+          "name": "1K-4.99K"
+        },
+        {
+          "id": "pokecoins-5999",
+          "name": "5K-9.99K"
+        },
+        {
+          "id": "pokecoins-104999",
+          "name": "10K-49.99K"
+        },
+        {
+          "id": "pokecoins-50plus",
+          "name": "50K+"
+        },
+        {
+          "id": "pokecoins-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "pokemon-go-shiny-pokemons": {
+      "name": "Shiny Pokemons",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "shiny-024",
+          "name": "0-24"
+        },
+        {
+          "id": "shiny-2549",
+          "name": "25-49"
+        },
+        {
+          "id": "shiny-5074",
+          "name": "50-74"
+        },
+        {
+          "id": "shiny-7599",
+          "name": "75-99"
+        },
+        {
+          "id": "shiny-100149",
+          "name": "100-149"
+        },
+        {
+          "id": "shiny-150199",
+          "name": "150-199"
+        },
+        {
+          "id": "shiny-200plus",
+          "name": "200+"
+        },
+        {
+          "id": "shiny-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "pokemon-go-stardust": {
+      "name": "Stardust",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "stardust-0499",
+          "name": "0-499K"
+        },
+        {
+          "id": "stardust-500999",
+          "name": "500K-999K"
+        },
+        {
+          "id": "stardust-1499",
+          "name": "1M-4.99M"
+        },
+        {
+          "id": "stardust-5699",
+          "name": "5M-6.99M"
+        },
+        {
+          "id": "stardust-7999",
+          "name": "7M-9.99M"
+        },
+        {
+          "id": "stardust-10plus",
+          "name": "10M+"
+        },
+        {
+          "id": "stardust-other",
+          "name": "Other"
         }
       ]
     },
@@ -58,20 +307,20 @@
       "required": true,
       "values": [
         {
-          "id": "neutral",
-          "name": "Neutral"
+          "id": "instinct",
+          "name": "Instinct"
         },
         {
           "id": "mystic",
           "name": "Mystic"
         },
         {
-          "id": "valor",
-          "name": "Valor"
+          "id": "neutral",
+          "name": "Neutral"
         },
         {
-          "id": "instinct",
-          "name": "Instinct"
+          "id": "valor",
+          "name": "Valor"
         },
         {
           "id": "other",

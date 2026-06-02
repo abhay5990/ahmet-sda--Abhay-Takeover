@@ -4,7 +4,399 @@
   "game_name": "Brawl Stars",
   "category": "Account",
   "tradeEnvironments": [],
-  "attributes": {},
+  "attributes": {
+    "brawl-stars-rank": {
+      "name": "Rank",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "rank-bronze1",
+          "name": "Bronze I"
+        },
+        {
+          "id": "rank-bronze2",
+          "name": "Bronze II"
+        },
+        {
+          "id": "rank-bronze3",
+          "name": "Bronze III"
+        },
+        {
+          "id": "rank-silver1",
+          "name": "Silver I"
+        },
+        {
+          "id": "rank-silver2",
+          "name": "Silver II"
+        },
+        {
+          "id": "rank-silver3",
+          "name": "Silver III"
+        },
+        {
+          "id": "rank-gold1",
+          "name": "Gold I"
+        },
+        {
+          "id": "rank-gold2",
+          "name": "Gold II"
+        },
+        {
+          "id": "rank-gold3",
+          "name": "Gold III"
+        },
+        {
+          "id": "rank-diamond1",
+          "name": "Diamond I"
+        },
+        {
+          "id": "rank-diamond2",
+          "name": "Diamond II"
+        },
+        {
+          "id": "rank-diamond3",
+          "name": "Diamond III"
+        },
+        {
+          "id": "rank-mythic1",
+          "name": "Mythic I"
+        },
+        {
+          "id": "rank-mythic2",
+          "name": "Mythic II"
+        },
+        {
+          "id": "rank-mythic3",
+          "name": "Mythic III"
+        },
+        {
+          "id": "rank-legendary1",
+          "name": "Legendary I"
+        },
+        {
+          "id": "rank-legendary2",
+          "name": "Legendary II"
+        },
+        {
+          "id": "rank-legendary3",
+          "name": "Legendary III"
+        },
+        {
+          "id": "rank-masters1",
+          "name": "Masters I"
+        },
+        {
+          "id": "rank-masters2",
+          "name": "Masters II"
+        },
+        {
+          "id": "rank-masters3",
+          "name": "Masters III"
+        },
+        {
+          "id": "rank-pro",
+          "name": "Pro"
+        },
+        {
+          "id": "rank-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "brawl-stars-trophies": {
+      "name": "Trophies",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "trophies-09k",
+          "name": "0-9K"
+        },
+        {
+          "id": "trophies-1019k",
+          "name": "10K-19K"
+        },
+        {
+          "id": "trophies-2029k",
+          "name": "20K-29K"
+        },
+        {
+          "id": "trophies-3039k",
+          "name": "30K-39K"
+        },
+        {
+          "id": "trophies-4049k",
+          "name": "40K-49K"
+        },
+        {
+          "id": "trophies-5059k",
+          "name": "50K-59K"
+        },
+        {
+          "id": "trophies-6069k",
+          "name": "60K-69K"
+        },
+        {
+          "id": "trophies-7079k",
+          "name": "70K-79K"
+        },
+        {
+          "id": "trophies-8089k",
+          "name": "80K-89K"
+        },
+        {
+          "id": "trophies-9099k",
+          "name": "90K-99K"
+        },
+        {
+          "id": "trophies-100kplus",
+          "name": "100K+"
+        },
+        {
+          "id": "trophies-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "brawl-stars-prestige": {
+      "name": "Prestige",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "prestige-024",
+          "name": "0-24"
+        },
+        {
+          "id": "prestige-2549",
+          "name": "25-49"
+        },
+        {
+          "id": "prestige-5099",
+          "name": "50-99"
+        },
+        {
+          "id": "prestige-100149",
+          "name": "100-149"
+        },
+        {
+          "id": "prestige-150199",
+          "name": "150-199"
+        },
+        {
+          "id": "prestige-200plus",
+          "name": "200+"
+        },
+        {
+          "id": "prestige-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "brawl-stars-brawlers": {
+      "name": "Brawlers",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "brawlers-019",
+          "name": "0-19"
+        },
+        {
+          "id": "brawlers-2039",
+          "name": "20-39"
+        },
+        {
+          "id": "brawlers-4059",
+          "name": "40-59"
+        },
+        {
+          "id": "brawlers-6079",
+          "name": "60-79"
+        },
+        {
+          "id": "brawlers-8099",
+          "name": "80-99"
+        },
+        {
+          "id": "brawlers-100plus",
+          "name": "100+"
+        },
+        {
+          "id": "brawlers-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "brawl-stars-maxed-brawlers": {
+      "name": "Maxed Brawlers",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "maxed-019",
+          "name": "0-19"
+        },
+        {
+          "id": "maxed-2039",
+          "name": "20-39"
+        },
+        {
+          "id": "maxed-4059",
+          "name": "40-59"
+        },
+        {
+          "id": "maxed-6079",
+          "name": "60-79"
+        },
+        {
+          "id": "maxed-8099",
+          "name": "80-99"
+        },
+        {
+          "id": "maxed-100plus",
+          "name": "100+"
+        },
+        {
+          "id": "maxed-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "brawl-stars-skins": {
+      "name": "Skins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "skins-099",
+          "name": "0-99"
+        },
+        {
+          "id": "skins-100199",
+          "name": "100-199"
+        },
+        {
+          "id": "skins-200299",
+          "name": "200-299"
+        },
+        {
+          "id": "skins-300399",
+          "name": "300-399"
+        },
+        {
+          "id": "skins-400499",
+          "name": "400-499"
+        },
+        {
+          "id": "skins-500599",
+          "name": "500-599"
+        },
+        {
+          "id": "skins-600plus",
+          "name": "600+"
+        },
+        {
+          "id": "skins-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "brawl-stars-hypercharge": {
+      "name": "Hypercharge",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "hypercharge-019",
+          "name": "0-19"
+        },
+        {
+          "id": "hypercharge-2039",
+          "name": "20-39"
+        },
+        {
+          "id": "hypercharge-4059",
+          "name": "40-59"
+        },
+        {
+          "id": "hypercharge-6079",
+          "name": "60-79"
+        },
+        {
+          "id": "hypercharge-8099",
+          "name": "80-99"
+        },
+        {
+          "id": "hypercharge-100plus",
+          "name": "100+"
+        },
+        {
+          "id": "hypercharge-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "brawl-stars-buffies": {
+      "name": "Buffies",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "buffies-019",
+          "name": "0-19"
+        },
+        {
+          "id": "buffies-2039",
+          "name": "20-39"
+        },
+        {
+          "id": "buffies-4059",
+          "name": "40-59"
+        },
+        {
+          "id": "buffies-60plus",
+          "name": "60+"
+        },
+        {
+          "id": "buffies-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "brawl-gemss": {
+      "name": "Gems",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "gems-049",
+          "name": "0-49"
+        },
+        {
+          "id": "gems-5099",
+          "name": "50-99"
+        },
+        {
+          "id": "gems-100499",
+          "name": "100-499"
+        },
+        {
+          "id": "gems-500999",
+          "name": "500-999"
+        },
+        {
+          "id": "gems-1000plus",
+          "name": "1000+"
+        },
+        {
+          "id": "gems-other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
   "details": {
     "offerTitle": {
       "type": "string",

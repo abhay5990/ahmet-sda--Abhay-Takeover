@@ -157,48 +157,48 @@
       "required": true,
       "values": [
         {
-          "id": "ranked-ready",
-          "name": "Ranked Ready"
-        },
-        {
-          "id": "unranked",
-          "name": "Unranked"
-        },
-        {
-          "id": "radiant",
-          "name": "Radiant"
-        },
-        {
-          "id": "iron",
-          "name": "Iron"
+          "id": "ascendant",
+          "name": "Ascendant"
         },
         {
           "id": "bronze",
           "name": "Bronze"
         },
         {
-          "id": "silver",
-          "name": "Silver"
+          "id": "diamond",
+          "name": "Diamond"
         },
         {
           "id": "gold",
           "name": "Gold"
         },
         {
+          "id": "immortal",
+          "name": "Immortal"
+        },
+        {
+          "id": "iron",
+          "name": "Iron"
+        },
+        {
           "id": "platinum",
           "name": "Platinum"
         },
         {
-          "id": "diamond",
-          "name": "Diamond"
+          "id": "radiant",
+          "name": "Radiant"
         },
         {
-          "id": "ascendant",
-          "name": "Ascendant"
+          "id": "ranked-ready",
+          "name": "Ranked Ready"
         },
         {
-          "id": "immortal",
-          "name": "Immortal"
+          "id": "silver",
+          "name": "Silver"
+        },
+        {
+          "id": "unranked",
+          "name": "Unranked"
         },
         {
           "id": "other",

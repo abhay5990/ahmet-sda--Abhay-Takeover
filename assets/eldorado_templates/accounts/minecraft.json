@@ -4,7 +4,155 @@
   "game_name": "Minecraft",
   "category": "Account",
   "tradeEnvironments": [],
-  "attributes": {},
+  "attributes": {
+    "minecraft-account-type": {
+      "name": "Account Type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "type-hypixel-skyblock",
+          "name": "Hypixel Skyblock"
+        },
+        {
+          "id": "type-hypixel-bedwars",
+          "name": "Hypixel Bedwars"
+        },
+        {
+          "id": "type-hypixel-duels",
+          "name": "Hypixel Duels"
+        },
+        {
+          "id": "type-hypixel-pit",
+          "name": "Hypixel Pit"
+        },
+        {
+          "id": "type-hypixel-megawalls",
+          "name": "Hypixel Megawalls"
+        },
+        {
+          "id": "type-hypixel-skywars",
+          "name": "Hypixel Skywars"
+        },
+        {
+          "id": "type-hypixel-uhc",
+          "name": "Hypixel UHC"
+        },
+        {
+          "id": "type-rare-cape",
+          "name": "Rare Cape"
+        },
+        {
+          "id": "type-rare-username",
+          "name": "Rare Username"
+        },
+        {
+          "id": "type-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "minecraft-cape-included": {
+      "name": "Cape Included",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "included-yes",
+          "name": "Yes"
+        },
+        {
+          "id": "included-no",
+          "name": "No"
+        },
+        {
+          "id": "included-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "minecraft-game-edition": {
+      "name": "Game Edition",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "edition-bedrock",
+          "name": "Bedrock"
+        },
+        {
+          "id": "edition-java-bedrock",
+          "name": "Java and Bedrock"
+        },
+        {
+          "id": "edition-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "minecraft-hypixel-level": {
+      "name": "Hypixel Level",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "level-019",
+          "name": "0-19"
+        },
+        {
+          "id": "level-2049",
+          "name": "20-49"
+        },
+        {
+          "id": "level-5099",
+          "name": "50-99"
+        },
+        {
+          "id": "level-100199",
+          "name": "100-199"
+        },
+        {
+          "id": "level-200",
+          "name": "200+"
+        },
+        {
+          "id": "level-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "minecraft-hypixel-rank": {
+      "name": "Hypixel Rank",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "rank-mvp2",
+          "name": "MVP++"
+        },
+        {
+          "id": "rank-mvp1",
+          "name": "MVP+"
+        },
+        {
+          "id": "rank-mvp",
+          "name": "MVP"
+        },
+        {
+          "id": "rank-vip1",
+          "name": "VIP+"
+        },
+        {
+          "id": "rank-vip",
+          "name": "VIP"
+        },
+        {
+          "id": "rank-other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
   "details": {
     "offerTitle": {
       "type": "string",

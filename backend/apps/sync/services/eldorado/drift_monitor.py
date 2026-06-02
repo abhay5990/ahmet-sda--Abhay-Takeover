@@ -343,19 +343,22 @@ def _run_mini_sync(
 
     # --- Reconcile ---
 
-    # 1. Find new offers (remote has, DB doesn't)
-    existing_ids = set(
+    # 1. Find offers that are Active on remote but not LISTED in DB.
+    #    This covers both genuinely new offers AND offers that exist in DB
+    #    with a wrong status (paused/deleted/closed) — both need parse_and_apply.
+    listed_ids = set(
         Listing.objects.filter(
             integration_account=store,
             game=game,
             variant=variant_slug,
+            status=ListingStatus.LISTED,
             store_listing_id__in=remote_offer_ids,
         ).values_list('store_listing_id', flat=True)
     )
-    new_offer_ids = remote_offer_ids - existing_ids
+    to_apply_ids = remote_offer_ids - listed_ids
     added = 0
 
-    for offer_id in new_offer_ids:
+    for offer_id in to_apply_ids:
         offer_dict = remote_offers[offer_id]
 
         # Enrich with credentials
@@ -419,7 +422,7 @@ def _run_mini_sync(
             'offers_added': added,
             'offers_deleted': deleted,
             'pages_fetched': pages_fetched,
-            'new_offer_ids_count': len(new_offer_ids),
+            'to_apply_ids_count': len(to_apply_ids),
         },
         integration_account=store,
     )

@@ -23,6 +23,7 @@ from apps.integrations.services.token_broker import (
     TokenBrokerService,
     StoreNotFound,
     UnsupportedMarketplace,
+    CognitoThrottled,
 )
 
 logger = logging.getLogger(__name__)
@@ -148,6 +149,12 @@ def token_view(request):
         return JsonResponse({'error': str(e)}, status=400)
     except StoreNotFound as e:
         return JsonResponse({'error': str(e)}, status=404)
+    except CognitoThrottled as e:
+        logger.warning("Token broker: cooldown active for %s/%s — %s", marketplace, store, e)
+        return JsonResponse(
+            {'error': str(e), 'retry_after': e.remaining_seconds},
+            status=429,
+        )
     except AuthenticationError as e:
         logger.error("Token broker: refresh failed for %s/%s — %s", marketplace, store, e)
         return JsonResponse({'error': f'Token refresh failed: {e}'}, status=502)

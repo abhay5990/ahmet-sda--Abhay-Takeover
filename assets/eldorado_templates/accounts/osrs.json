@@ -47,22 +47,6 @@
       "required": true,
       "values": [
         {
-          "id": "regular",
-          "name": "Regular"
-        },
-        {
-          "id": "ironman",
-          "name": "Ironman"
-        },
-        {
-          "id": "hcim",
-          "name": "HCIM"
-        },
-        {
-          "id": "uim",
-          "name": "UIM"
-        },
-        {
           "id": "gim",
           "name": "GIM"
         },
@@ -71,8 +55,79 @@
           "name": "HCGIM"
         },
         {
+          "id": "hcim",
+          "name": "HCIM"
+        },
+        {
+          "id": "ironman",
+          "name": "Ironman"
+        },
+        {
+          "id": "regular",
+          "name": "Regular"
+        },
+        {
           "id": "ugim",
           "name": "UGIM"
+        },
+        {
+          "id": "uim",
+          "name": "UIM"
+        }
+      ]
+    },
+    "osrs-combat-level": {
+      "name": "Combat Level",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "combat-313",
+          "name": "3-13"
+        },
+        {
+          "id": "combat-1424",
+          "name": "14-24"
+        },
+        {
+          "id": "combat-2535",
+          "name": "25-35"
+        },
+        {
+          "id": "combat-3646",
+          "name": "36-46"
+        },
+        {
+          "id": "combat-4757",
+          "name": "47-57"
+        },
+        {
+          "id": "combat-5868",
+          "name": "58-68"
+        },
+        {
+          "id": "combat-6979",
+          "name": "69-79"
+        },
+        {
+          "id": "combat-8090",
+          "name": "80-90"
+        },
+        {
+          "id": "combat-91101",
+          "name": "91-101"
+        },
+        {
+          "id": "combat-102112",
+          "name": "102-112"
+        },
+        {
+          "id": "combat-113126",
+          "name": "113-126"
+        },
+        {
+          "id": "combat-other",
+          "name": "Other"
         }
       ]
     },
@@ -99,11 +154,93 @@
         }
       ]
     },
+    "osrs-pets": {
+      "name": "Pets",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "pets-1",
+          "name": "1"
+        },
+        {
+          "id": "pets-2",
+          "name": "2"
+        },
+        {
+          "id": "pets-3",
+          "name": "3"
+        },
+        {
+          "id": "pets-4",
+          "name": "4"
+        },
+        {
+          "id": "pets-5",
+          "name": "5"
+        },
+        {
+          "id": "pets-6",
+          "name": "6"
+        },
+        {
+          "id": "pets-7",
+          "name": "7"
+        },
+        {
+          "id": "pets-8",
+          "name": "8"
+        },
+        {
+          "id": "pets-9",
+          "name": "9"
+        },
+        {
+          "id": "pets-10plus",
+          "name": "10+"
+        },
+        {
+          "id": "pets-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "osrs-quest-points": {
+      "name": "Quest Points",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "points-099",
+          "name": "0-99"
+        },
+        {
+          "id": "points-100199",
+          "name": "100-199"
+        },
+        {
+          "id": "points-200299",
+          "name": "200-299"
+        },
+        {
+          "id": "points-300plus",
+          "name": "300+"
+        },
+        {
+          "id": "points-other",
+          "name": "Other"
+        }
+      ]
+    },
     "osrs-total-level": {
       "name": "Total Level",
       "type": "Select",
       "required": true,
       "values": [
+        {
+          "id": "2000",
+          "name": "2000-2376"
+        },
         {
           "id": "32-499",
           "name": "32-499"
@@ -119,10 +256,6 @@
         {
           "id": "1500-1999",
           "name": "1500-1999"
-        },
-        {
-          "id": "2000",
-          "name": "2000"
         }
       ]
     }

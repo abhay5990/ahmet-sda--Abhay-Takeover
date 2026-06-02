@@ -26,6 +26,9 @@ class CS2EldoradoBuilder(BaseEldoradoBuilder):
             attributes={
                 "counter-strike-2-prime-status": "active-prime" if account.is_prime else "non-prime",
                 "counter-strike-2-medals": self._medal_bucket(account.medal_count),
+                "counter-strike-2-coin": self._resolve_coin(account.medals),
+                "counter-strike-2-esea": "esea-other",
+                "counter-strike-2-faceit": "faceit-other",
             },
             ref_key=account.ref_key,
         )
@@ -36,11 +39,16 @@ class CS2EldoradoBuilder(BaseEldoradoBuilder):
             return "0-9-medals"
         if count <= 19:
             return "10-19-medals"
-        if count <= 29:
-            return "20-29-medals"
-        if count <= 39:
-            return "30-39-medals"
-        return "40+-medals"
+        return "20-plus-medals"
+
+    @staticmethod
+    def _resolve_coin(medals: list[str]) -> str:
+        names_lower = [m.lower() for m in medals]
+        if any("10 year" in m or "10year" in m for m in names_lower):
+            return "10year-coin"
+        if any("5 year" in m or "5year" in m for m in names_lower):
+            return "5year-coin"
+        return "other-coin"
 
     def _resolve_trade_environment_id(self, premier_elo: int) -> str:
         if premier_elo <= 0:

@@ -173,7 +173,170 @@
       ]
     }
   ],
-  "attributes": {},
+  "attributes": {
+    "cod-level": {
+      "name": "Level",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "level-119",
+          "name": "1-19"
+        },
+        {
+          "id": "level-2055",
+          "name": "20-55"
+        },
+        {
+          "id": "level-5699",
+          "name": "56-99"
+        },
+        {
+          "id": "level-100plus",
+          "name": "100+"
+        },
+        {
+          "id": "level-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "cod-prestige": {
+      "name": "Prestige",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "prestige-0",
+          "name": "0"
+        },
+        {
+          "id": "prestige-15",
+          "name": "1-5"
+        },
+        {
+          "id": "prestige-69",
+          "name": "6-9"
+        },
+        {
+          "id": "prestige-10plus",
+          "name": "10+"
+        },
+        {
+          "id": "prestige-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "cod-skins": {
+      "name": "Skins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "skins-0",
+          "name": "0"
+        },
+        {
+          "id": "skins-19",
+          "name": "1-9"
+        },
+        {
+          "id": "skins-1049",
+          "name": "10-49"
+        },
+        {
+          "id": "skins-50plus",
+          "name": "50+"
+        },
+        {
+          "id": "skins-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "cod-blueprints": {
+      "name": "Blueprints",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "blueprints-0",
+          "name": "0"
+        },
+        {
+          "id": "blueprints-19",
+          "name": "1-9"
+        },
+        {
+          "id": "blueprints-1049",
+          "name": "10-49"
+        },
+        {
+          "id": "blueprints-50plus",
+          "name": "50+"
+        },
+        {
+          "id": "blueprints-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "cod-camos": {
+      "name": "Camos",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "camos-0",
+          "name": "0"
+        },
+        {
+          "id": "camos-19",
+          "name": "1-9"
+        },
+        {
+          "id": "camos-1032",
+          "name": "10-32"
+        },
+        {
+          "id": "camos-33plus",
+          "name": "33+"
+        },
+        {
+          "id": "camos-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "cod-bundles": {
+      "name": "Bundles",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "bundles-0",
+          "name": "0"
+        },
+        {
+          "id": "bundles-19",
+          "name": "1-9"
+        },
+        {
+          "id": "bundles-1049",
+          "name": "10-49"
+        },
+        {
+          "id": "bundles-50plus",
+          "name": "50+"
+        },
+        {
+          "id": "bundles-other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
   "details": {
     "offerTitle": {
       "type": "string",

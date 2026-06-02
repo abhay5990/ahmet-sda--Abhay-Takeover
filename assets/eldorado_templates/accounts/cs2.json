@@ -51,11 +51,152 @@
     }
   ],
   "attributes": {
+    "counter-strike-2-coin": {
+      "name": "Veteran Coin",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "5year-coin",
+          "name": "5 Year"
+        },
+        {
+          "id": "10year-coin",
+          "name": "10 Year"
+        },
+        {
+          "id": "other-coin",
+          "name": "Other"
+        }
+      ]
+    },
+    "counter-strike-2-esea": {
+      "name": "ESEA Rating",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "esea-d-",
+          "name": "D-"
+        },
+        {
+          "id": "esea-d",
+          "name": "D"
+        },
+        {
+          "id": "esea-dplus",
+          "name": "D+"
+        },
+        {
+          "id": "esea-c-",
+          "name": "C-"
+        },
+        {
+          "id": "esea-c",
+          "name": "C"
+        },
+        {
+          "id": "esea-cplus",
+          "name": "C+"
+        },
+        {
+          "id": "esea-b-",
+          "name": "B-"
+        },
+        {
+          "id": "esea-b",
+          "name": "B"
+        },
+        {
+          "id": "esea-bplus",
+          "name": "B+"
+        },
+        {
+          "id": "esea-a-",
+          "name": "A-"
+        },
+        {
+          "id": "esea-a",
+          "name": "A"
+        },
+        {
+          "id": "esea-aplus",
+          "name": "A+"
+        },
+        {
+          "id": "esea-g",
+          "name": "G"
+        },
+        {
+          "id": "esea-s",
+          "name": "S"
+        },
+        {
+          "id": "esea-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "counter-strike-2-faceit": {
+      "name": "Faceit Level",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "faceit-1",
+          "name": "1"
+        },
+        {
+          "id": "faceit-2",
+          "name": "2"
+        },
+        {
+          "id": "faceit-3",
+          "name": "3"
+        },
+        {
+          "id": "faceit-4",
+          "name": "4"
+        },
+        {
+          "id": "faceit-5",
+          "name": "5"
+        },
+        {
+          "id": "faceit-6",
+          "name": "6"
+        },
+        {
+          "id": "faceit-7",
+          "name": "7"
+        },
+        {
+          "id": "faceit-8",
+          "name": "8"
+        },
+        {
+          "id": "faceit-9",
+          "name": "9"
+        },
+        {
+          "id": "faceit-10",
+          "name": "10"
+        },
+        {
+          "id": "faceit-other",
+          "name": "Other"
+        }
+      ]
+    },
     "counter-strike-2-medals": {
       "name": "Medals",
       "type": "Select",
       "required": true,
       "values": [
+        {
+          "id": "20-plus-medals",
+          "name": "20+ Medals"
+        },
         {
           "id": "0-9-medals",
           "name": "0-9 Medals"
@@ -65,16 +206,8 @@
           "name": "10-19 Medals"
         },
         {
-          "id": "20-29-medals",
-          "name": "20-29 Medals"
-        },
-        {
-          "id": "30-39-medals",
-          "name": "30-39 Medals"
-        },
-        {
-          "id": "40-plus-medals",
-          "name": "40+ Medals"
+          "id": "other-medals",
+          "name": "Other"
         }
       ]
     },

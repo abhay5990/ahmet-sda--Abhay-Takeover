@@ -18,18 +18,181 @@
     }
   ],
   "attributes": {
+    "rainbow-six-game-purchased": {
+      "name": "Game Purchased",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "purchased-yes",
+          "name": "Yes"
+        },
+        {
+          "id": "purchased-no",
+          "name": "No"
+        }
+      ]
+    },
+    "rainbow-six-operators": {
+      "name": "Operators",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "operators-09",
+          "name": "0-9"
+        },
+        {
+          "id": "operators-1014",
+          "name": "10-14"
+        },
+        {
+          "id": "operators-1519",
+          "name": "15-19"
+        },
+        {
+          "id": "operators-2024",
+          "name": "20-24"
+        },
+        {
+          "id": "operators-2529",
+          "name": "25-29"
+        },
+        {
+          "id": "operators-3034",
+          "name": "30-34"
+        },
+        {
+          "id": "operators-3539",
+          "name": "35-39"
+        },
+        {
+          "id": "operators-4044",
+          "name": "40-44"
+        },
+        {
+          "id": "operators-4549",
+          "name": "45-49"
+        },
+        {
+          "id": "operators-50plus",
+          "name": "50+"
+        },
+        {
+          "id": "operators-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "rainbow-six-previous-rank": {
+      "name": "Previous Rank",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "previous-unraked",
+          "name": "Unranked"
+        },
+        {
+          "id": "previous-copper",
+          "name": "Copper"
+        },
+        {
+          "id": "previous-bronze",
+          "name": "Bronze"
+        },
+        {
+          "id": "previous-silver",
+          "name": "Silver"
+        },
+        {
+          "id": "previous-gold",
+          "name": "Gold"
+        },
+        {
+          "id": "previous-platinum",
+          "name": "Platinum"
+        },
+        {
+          "id": "previous-emerald",
+          "name": "Emerald"
+        },
+        {
+          "id": "previous-diamond",
+          "name": "Diamond"
+        },
+        {
+          "id": "previous-champion",
+          "name": "Champion"
+        },
+        {
+          "id": "previous-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "rainbow-six-ranked-unlocked": {
+      "name": "Ranked Unlocked",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "ranked-unlocked-yes",
+          "name": "Yes"
+        },
+        {
+          "id": "ranked-unlocked-no",
+          "name": "No"
+        }
+      ]
+    },
+    "rainbow-six-renown": {
+      "name": "Renown",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "renown-05",
+          "name": "0-5K"
+        },
+        {
+          "id": "renown-619",
+          "name": "6K-19K"
+        },
+        {
+          "id": "renown-2049",
+          "name": "20K-49K"
+        },
+        {
+          "id": "renown-5074",
+          "name": "50K-74K"
+        },
+        {
+          "id": "renown-7599",
+          "name": "75K-99K"
+        },
+        {
+          "id": "renown-100plus",
+          "name": "100K+"
+        },
+        {
+          "id": "renown-other",
+          "name": "Other"
+        }
+      ]
+    },
     "rainbow-six-siege-x-black-ice-skins": {
       "name": "Black Ice Skins",
       "type": "Select",
       "required": true,
       "values": [
         {
-          "id": "0",
-          "name": "0"
+          "id": "50",
+          "name": "50+"
         },
         {
-          "id": "50",
-          "name": "50"
+          "id": "0",
+          "name": "0"
         },
         {
           "id": "1-4",
@@ -63,20 +226,24 @@
       "required": true,
       "values": [
         {
-          "id": "ranked-ready",
-          "name": "Ranked Ready"
-        },
-        {
-          "id": "copper",
-          "name": "Copper"
+          "id": "champions",
+          "name": "Champion"
         },
         {
           "id": "bronze",
           "name": "Bronze"
         },
         {
-          "id": "silver",
-          "name": "Silver"
+          "id": "copper",
+          "name": "Copper"
+        },
+        {
+          "id": "diamond",
+          "name": "Diamond"
+        },
+        {
+          "id": "emerald",
+          "name": "Emerald"
         },
         {
           "id": "gold",
@@ -87,16 +254,12 @@
           "name": "Platinum"
         },
         {
-          "id": "emerald",
-          "name": "Emerald"
+          "id": "ranked-ready",
+          "name": "Ranked Ready"
         },
         {
-          "id": "diamond",
-          "name": "Diamond"
-        },
-        {
-          "id": "champions",
-          "name": "Champions"
+          "id": "silver",
+          "name": "Silver"
         },
         {
           "id": "other",

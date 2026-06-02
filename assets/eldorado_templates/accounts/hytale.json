@@ -1,34 +1,10 @@
 {
-  "game_id": "9",
-  "game": "runescape",
-  "game_name": "RuneScape 3",
+  "game_id": "363",
+  "game": "hytale",
+  "game_name": "Hytale",
   "category": "Account",
   "tradeEnvironments": [],
-  "attributes": {
-    "runescape-3-account-type": {
-      "name": "Account Type",
-      "type": "Select",
-      "required": true,
-      "values": [
-        {
-          "id": "jagex-launcher",
-          "name": "Jagex Launcher"
-        },
-        {
-          "id": "legacy-email-login",
-          "name": "Legacy Email Login"
-        },
-        {
-          "id": "legacy-username-login",
-          "name": "Legacy Username Login"
-        },
-        {
-          "id": "other",
-          "name": "Other"
-        }
-      ]
-    }
-  },
+  "attributes": {},
   "details": {
     "offerTitle": {
       "type": "string",

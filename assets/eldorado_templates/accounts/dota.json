@@ -11,40 +11,40 @@
       "required": true,
       "values": [
         {
-          "id": "uncalibrated",
-          "name": "Uncalibrated"
-        },
-        {
-          "id": "herald",
-          "name": "Herald"
-        },
-        {
-          "id": "guardian",
-          "name": "Guardian"
-        },
-        {
-          "id": "crusader",
-          "name": "Crusader"
+          "id": "ancient",
+          "name": "Ancient"
         },
         {
           "id": "archon",
           "name": "Archon"
         },
         {
-          "id": "legend",
-          "name": "Legend"
-        },
-        {
-          "id": "ancient",
-          "name": "Ancient"
+          "id": "crusader",
+          "name": "Crusader"
         },
         {
           "id": "divine",
           "name": "Divine"
         },
         {
+          "id": "guardian",
+          "name": "Guardian"
+        },
+        {
+          "id": "herald",
+          "name": "Herald"
+        },
+        {
           "id": "immortal",
           "name": "Immortal"
+        },
+        {
+          "id": "legend",
+          "name": "Legend"
+        },
+        {
+          "id": "uncalibrated",
+          "name": "Uncalibrated"
         },
         {
           "id": "other",

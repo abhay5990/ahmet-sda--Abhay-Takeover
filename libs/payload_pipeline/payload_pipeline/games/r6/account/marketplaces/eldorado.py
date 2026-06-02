@@ -43,6 +43,11 @@ class R6EldoradoBuilder(BaseEldoradoBuilder):
             attributes={
                 _ATTR_RANK: self._resolve_rank(account),
                 _ATTR_BLACK_ICE: self._resolve_black_ice(account.black_ice_count),
+                "rainbow-six-game-purchased": "purchased-yes" if account.has_game else "purchased-no",
+                "rainbow-six-operators": self._resolve_operators(account.operator_count),
+                "rainbow-six-previous-rank": "previous-other",
+                "rainbow-six-ranked-unlocked": "ranked-unlocked-yes" if account.ranked_ready else "ranked-unlocked-no",
+                "rainbow-six-renown": self._resolve_renown(account.renown),
             },
             ref_key=account.ref_key,
         )
@@ -82,3 +87,39 @@ class R6EldoradoBuilder(BaseEldoradoBuilder):
         if count <= 39:
             return "30-39"
         return "40-49"
+
+    @staticmethod
+    def _resolve_operators(count: int) -> str:
+        if count <= 9:
+            return "operators-09"
+        if count <= 14:
+            return "operators-1014"
+        if count <= 19:
+            return "operators-1519"
+        if count <= 24:
+            return "operators-2024"
+        if count <= 29:
+            return "operators-2529"
+        if count <= 34:
+            return "operators-3034"
+        if count <= 39:
+            return "operators-3539"
+        if count <= 44:
+            return "operators-4044"
+        if count <= 49:
+            return "operators-4549"
+        return "operators-50plus"
+
+    @staticmethod
+    def _resolve_renown(renown: int) -> str:
+        if renown <= 5000:
+            return "renown-05"
+        if renown <= 19000:
+            return "renown-619"
+        if renown <= 49000:
+            return "renown-2049"
+        if renown <= 74000:
+            return "renown-5074"
+        if renown <= 99000:
+            return "renown-7599"
+        return "renown-100plus"

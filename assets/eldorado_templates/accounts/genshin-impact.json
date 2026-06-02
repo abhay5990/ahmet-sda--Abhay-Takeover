@@ -25,7 +25,190 @@
       "group": "Region"
     }
   ],
-  "attributes": {},
+  "attributes": {
+    "genshin-account-type": {
+      "name": "Account Type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "type-reroll",
+          "name": "Reroll Account"
+        },
+        {
+          "id": "type-rolled",
+          "name": "Rolled Account"
+        },
+        {
+          "id": "type-handleveled",
+          "name": "Handleveled Account"
+        },
+        {
+          "id": "type-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "genshin-adventure-rank": {
+      "name": "Adventure Rank",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "adventure-19",
+          "name": "1-9"
+        },
+        {
+          "id": "adventure-1044",
+          "name": "10-44"
+        },
+        {
+          "id": "adventure-4549",
+          "name": "45-49"
+        },
+        {
+          "id": "adventure-5059",
+          "name": "50-59"
+        },
+        {
+          "id": "adventure-60",
+          "name": "60"
+        },
+        {
+          "id": "adventure-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "genshin-characters": {
+      "name": "Characters",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "characters-139",
+          "name": "1-39"
+        },
+        {
+          "id": "characters-4049",
+          "name": "40-49"
+        },
+        {
+          "id": "characters-5059",
+          "name": "50-59"
+        },
+        {
+          "id": "characters-6069",
+          "name": "60-69"
+        },
+        {
+          "id": "characters-7079",
+          "name": "70-79"
+        },
+        {
+          "id": "characters-8089",
+          "name": "80-89"
+        },
+        {
+          "id": "characters-90plus",
+          "name": "90+"
+        },
+        {
+          "id": "characters-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "genshin-events-count": {
+      "name": "Events Count",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "events-04",
+          "name": "0-4"
+        },
+        {
+          "id": "events-59",
+          "name": "5-9"
+        },
+        {
+          "id": "events-1014",
+          "name": "10-14"
+        },
+        {
+          "id": "events-1519",
+          "name": "15-19"
+        },
+        {
+          "id": "events-20plus",
+          "name": "20+"
+        },
+        {
+          "id": "events-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "genshin-legendary-weapons": {
+      "name": "Legendary Weapons",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "legendary-03",
+          "name": "0-3"
+        },
+        {
+          "id": "legendary-46",
+          "name": "4-6"
+        },
+        {
+          "id": "legendary-79",
+          "name": "7-9"
+        },
+        {
+          "id": "legendary-10plus",
+          "name": "10+"
+        },
+        {
+          "id": "legendary-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "genshin-primogems-count": {
+      "name": "Primogems Count",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "primogems-09k",
+          "name": "0-9K"
+        },
+        {
+          "id": "primogems-1019k",
+          "name": "10K-19K"
+        },
+        {
+          "id": "primogems-2039k",
+          "name": "20k-39k"
+        },
+        {
+          "id": "primogems-4059k",
+          "name": "40k-59k"
+        },
+        {
+          "id": "primogems-60kplus",
+          "name": "60k+"
+        },
+        {
+          "id": "primogems-other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
   "details": {
     "offerTitle": {
       "type": "string",

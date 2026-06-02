@@ -17,7 +17,207 @@
       "name": "Xbox"
     }
   ],
-  "attributes": {},
+  "attributes": {
+    "apex-legends-exotic-shards": {
+      "name": "Exotic Shards",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "exotic-019",
+          "name": "0-19"
+        },
+        {
+          "id": "exotic-2059",
+          "name": "20-59"
+        },
+        {
+          "id": "exotic-60119",
+          "name": "60-119"
+        },
+        {
+          "id": "exotic-120239",
+          "name": "120-239"
+        },
+        {
+          "id": "exotic-240plus",
+          "name": "240+"
+        },
+        {
+          "id": "exotic-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "apex-legends-heirloom": {
+      "name": "Heirloom",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "heirloom-03",
+          "name": "0-3"
+        },
+        {
+          "id": "heirloom-47",
+          "name": "4-7"
+        },
+        {
+          "id": "heirloom-811",
+          "name": "8-11"
+        },
+        {
+          "id": "heirllom-1215",
+          "name": "12-15"
+        },
+        {
+          "id": "heirloom-1620",
+          "name": "16-20"
+        },
+        {
+          "id": "heirloom-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "apex-legends-legendary-skins": {
+      "name": "Legendary Skins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "skins-019",
+          "name": "0-19"
+        },
+        {
+          "id": "skins-2039",
+          "name": "20-39"
+        },
+        {
+          "id": "skins-4079",
+          "name": "40-79"
+        },
+        {
+          "id": "skins-80119",
+          "name": "80-119"
+        },
+        {
+          "id": "skins-120199",
+          "name": "120-199"
+        },
+        {
+          "id": "skins-200449",
+          "name": "200-449"
+        },
+        {
+          "id": "skins-450749",
+          "name": "450-749"
+        },
+        {
+          "id": "skins-750999",
+          "name": "750-999"
+        },
+        {
+          "id": "skins-1000plus",
+          "name": "1000+"
+        },
+        {
+          "id": "skins-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "apex-legends-level": {
+      "name": "Level",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "level-119",
+          "name": "1-19"
+        },
+        {
+          "id": "level-2049",
+          "name": "20-49"
+        },
+        {
+          "id": "level-5099",
+          "name": "50-99"
+        },
+        {
+          "id": "level-100299",
+          "name": "100-299"
+        },
+        {
+          "id": "level-300499",
+          "name": "300-499"
+        },
+        {
+          "id": "level-500999",
+          "name": "500-999"
+        },
+        {
+          "id": "level-10001499",
+          "name": "1000-1499"
+        },
+        {
+          "id": "level-15002000",
+          "name": "1500-2000"
+        },
+        {
+          "id": "level-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "apex-legends-rank": {
+      "name": "Rank",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "rank-unranked",
+          "name": "Unranked"
+        },
+        {
+          "id": "rank-rookie",
+          "name": "Rookie"
+        },
+        {
+          "id": "rank-bronze",
+          "name": "Bronze"
+        },
+        {
+          "id": "rank-silver",
+          "name": "Silver"
+        },
+        {
+          "id": "rank-gold",
+          "name": "Gold"
+        },
+        {
+          "id": "rank-platinum",
+          "name": "Platinum"
+        },
+        {
+          "id": "rank-diamond",
+          "name": "Diamond"
+        },
+        {
+          "id": "rank-master",
+          "name": "Master"
+        },
+        {
+          "id": "rank-predator",
+          "name": "Predator"
+        },
+        {
+          "id": "rank-other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
   "details": {
     "offerTitle": {
       "type": "string",

@@ -18,53 +18,275 @@
     }
   ],
   "attributes": {
-    "overwatch-2-rank": {
-      "name": "Rank",
+    "overwatch-damage-tier": {
+      "name": "Damage Tier",
       "type": "Select",
       "required": true,
       "values": [
         {
-          "id": "ranked-ready",
-          "name": "Ranked Ready"
+          "id": "tier-unranked",
+          "name": "Unranked"
         },
         {
-          "id": "bronze",
+          "id": "tier-bronze",
           "name": "Bronze"
         },
         {
-          "id": "silver",
+          "id": "tier-silver",
           "name": "Silver"
         },
         {
-          "id": "gold",
+          "id": "tier-gold",
           "name": "Gold"
         },
         {
-          "id": "platinum",
+          "id": "tier-platinum",
           "name": "Platinum"
         },
         {
-          "id": "diamond",
+          "id": "tier-diamond",
           "name": "Diamond"
         },
         {
-          "id": "master",
+          "id": "tier-master",
           "name": "Master"
         },
         {
-          "id": "grandmaster",
+          "id": "tier-grandmaster",
           "name": "Grandmaster"
         },
         {
-          "id": "champion",
+          "id": "tier-champion",
           "name": "Champion"
         },
         {
-          "id": "top-500",
+          "id": "tier-top500",
           "name": "Top 500"
         },
         {
-          "id": "other",
+          "id": "tier-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "overwatch-golden-weapons": {
+      "name": "Golden Weapons",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "weapons-019",
+          "name": "0-19"
+        },
+        {
+          "id": "weapons-1024",
+          "name": "10-24"
+        },
+        {
+          "id": "weapons-2549",
+          "name": "25-49"
+        },
+        {
+          "id": "weapons-50plus",
+          "name": "50+"
+        },
+        {
+          "id": "weapons-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "overwatch-legendary-skins": {
+      "name": "Legendary Skins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "skins-099",
+          "name": "0-99"
+        },
+        {
+          "id": "skins-100199",
+          "name": "100-199"
+        },
+        {
+          "id": "skins-200299",
+          "name": "200-299"
+        },
+        {
+          "id": "skins-300399",
+          "name": "300-399"
+        },
+        {
+          "id": "skins-400499",
+          "name": "400-499"
+        },
+        {
+          "id": "skins-500plus",
+          "name": "500+"
+        },
+        {
+          "id": "skins-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "overwatch-level": {
+      "name": "Level",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "level-099",
+          "name": "0-99"
+        },
+        {
+          "id": "level-100599",
+          "name": "100-599"
+        },
+        {
+          "id": "level-600999",
+          "name": "600-999"
+        },
+        {
+          "id": "level-1000plus",
+          "name": "1000+"
+        },
+        {
+          "id": "level-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "overwatch-mythics": {
+      "name": "Mythics",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "mythics-02",
+          "name": "0-2"
+        },
+        {
+          "id": "mythics-35",
+          "name": "3-5"
+        },
+        {
+          "id": "mythics-68",
+          "name": "6-8"
+        },
+        {
+          "id": "mythics-912",
+          "name": "9-12"
+        },
+        {
+          "id": "mythics-13plus",
+          "name": "13+"
+        },
+        {
+          "id": "mythics-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "overwatch-support-tier": {
+      "name": "Support Tier",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "tier-unranked",
+          "name": "Unranked"
+        },
+        {
+          "id": "tier-bronze",
+          "name": "Bronze"
+        },
+        {
+          "id": "tier-silver",
+          "name": "Silver"
+        },
+        {
+          "id": "tier-gold",
+          "name": "Gold"
+        },
+        {
+          "id": "tier-platinum",
+          "name": "Platinum"
+        },
+        {
+          "id": "tier-diamond",
+          "name": "Diamond"
+        },
+        {
+          "id": "tier-master",
+          "name": "Master"
+        },
+        {
+          "id": "tier-grandmaster",
+          "name": "Grandmaster"
+        },
+        {
+          "id": "tier-champion",
+          "name": "Champion"
+        },
+        {
+          "id": "tier-top500",
+          "name": "Top 500"
+        },
+        {
+          "id": "tier-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "overwatch-tank-tier": {
+      "name": "Tank Tier",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "tier-unranked",
+          "name": "Unranked"
+        },
+        {
+          "id": "tier-bronze",
+          "name": "Bronze"
+        },
+        {
+          "id": "tier-silver",
+          "name": "Silver"
+        },
+        {
+          "id": "tier-gold",
+          "name": "Gold"
+        },
+        {
+          "id": "tier-platinum",
+          "name": "Platinum"
+        },
+        {
+          "id": "tier-diamond",
+          "name": "Diamond"
+        },
+        {
+          "id": "tier-master",
+          "name": "Master"
+        },
+        {
+          "id": "tier-grandmaster",
+          "name": "Grandmaster"
+        },
+        {
+          "id": "tier-champion",
+          "name": "Champion"
+        },
+        {
+          "id": "tier-top500",
+          "name": "Top 500"
+        },
+        {
+          "id": "tier-other",
           "name": "Other"
         }
       ]

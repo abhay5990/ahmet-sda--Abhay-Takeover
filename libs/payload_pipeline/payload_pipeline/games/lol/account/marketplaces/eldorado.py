@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from ..models import LolResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....core.variant_mapping import get_external_id
@@ -50,6 +48,10 @@ class LolEldoradoBuilder(BaseEldoradoBuilder):
                 _ATTR_RANK: self._resolve_rank_attribute(account.rank),
                 _ATTR_SKINS: self._resolve_skin_attribute(account.skin_count),
                 _ATTR_BLUE_ESSENCE: self._resolve_blue_essence_attribute(account.blue_essence),
+                "league-of-legends-champion-count": self._resolve_champion_count(account.champion_count),
+                "league-of-legends-previous-rank": "previous-unranked",
+                "league-of-legends-ranked-ready": "ready-yes" if account.level >= 30 else "ready-no",
+                "league-of-legends-riot-points": self._resolve_riot_points(account.riot_points),
             },
             ref_key=account.ref_key,
         )
@@ -108,3 +110,31 @@ class LolEldoradoBuilder(BaseEldoradoBuilder):
         if blue_essence <= 100000:
             return "81-100k-be"
         return "100k-plus-be"
+
+    @staticmethod
+    def _resolve_champion_count(champion_count: int) -> str:
+        if champion_count <= 19:
+            return "champion-119"
+        if champion_count <= 49:
+            return "champion-2049"
+        if champion_count <= 79:
+            return "champion-5079"
+        if champion_count <= 119:
+            return "champion-80119"
+        if champion_count >= 120:
+            return "champion-120plus"
+        return "champion-other"
+
+    @staticmethod
+    def _resolve_riot_points(riot_points: int) -> str:
+        if riot_points <= 0:
+            return "riot-other"
+        if riot_points <= 999:
+            return "riot-999"
+        if riot_points <= 3999:
+            return "riot-1399"
+        if riot_points <= 9999:
+            return "riot-4999"
+        if riot_points <= 19999:
+            return "riot-101999"
+        return "riot-20plus"
