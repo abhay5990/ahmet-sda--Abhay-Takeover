@@ -172,9 +172,9 @@ _FN_RARITY_RANK: dict[str, int] = {
 # list_key → (generic_count_field, shop_count_field, shop_cost_field)
 _FN_COSMETIC_MAP: dict[str, tuple[str | None, str | None, str | None]] = {
     'fortniteSkins':   ('fortnite_skin_count',    'fortnite_shop_skins_count',    'fortnite_shop_skins_cost'),
-    'fortnitePickaxe': (None,                     'fortnite_shop_pickaxes_count', 'fortnite_shop_pickaxes_cost'),
-    'fortniteDance':   (None,                     'fortnite_shop_dances_count',   'fortnite_shop_dances_cost'),
-    'fortniteGliders': (None,                     'fortnite_shop_gliders_count',  'fortnite_shop_gliders_cost'),
+    'fortnitePickaxe': ('fortnite_pickaxe_count',   'fortnite_shop_pickaxes_count', 'fortnite_shop_pickaxes_cost'),
+    'fortniteDance':   ('fortnite_dance_count',    'fortnite_shop_dances_count',   'fortnite_shop_dances_cost'),
+    'fortniteGliders': ('fortnite_glider_count',   'fortnite_shop_gliders_count',  'fortnite_shop_gliders_cost'),
 }
 
 

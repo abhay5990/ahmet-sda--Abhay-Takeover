@@ -25,38 +25,36 @@ class TestFortniteLztSourceAdapter:
         source = adapter.parse(load_fixture("lzt_fn.json"))
 
         assert source is not None
-        assert source.item_id == "550001001"
-        assert source.level == 320
-        assert source.platform == "PC"
-        assert source.skin_count == 150
-        assert source.pickaxe_count == 85
-        assert source.dance_count == 60
-        assert source.glider_count == 40
-        assert source.v_bucks == 2500
-        assert source.lifetime_wins == 1200
-        assert source.battle_pass_level == 100
-        assert source.refund_credits == 3
-        assert source.psn_linkable is True
-        assert source.xbox_linkable is False
-        assert source.has_real_purchases is True
+        assert source.item_id == "180988853"
+        assert source.level == 1324
+        assert source.platform == "EpicPC"
+        assert source.skin_count == 69
+        assert source.pickaxe_count == 86
+        assert source.dance_count == 93
+        assert source.glider_count == 77
+        assert source.v_bucks == 250
+        assert source.lifetime_wins == 110
+        assert source.battle_pass_level == 1
+        assert source.refund_credits == 1
+        assert source.psn_linkable is False
+        assert source.xbox_linkable is True
+        assert source.has_real_purchases is False
 
     def test_parse_extracts_credentials(self, load_fixture):
         adapter = FortniteLztSourceAdapter()
         source = adapter.parse(load_fixture("lzt_fn.json"))
 
-        assert source.credentials.login == "epic_user@example.com"
-        assert source.credentials.password == "EpicPass123"
-        assert source.credentials.email_login == "backup_email@example.com"
-        assert source.credentials.email_password == "EmailPass456"
+        assert source.credentials.login == "novikov.gg7ts@rambler.ru"
+        assert source.credentials.password == "BB=v3Fq/;M`vP6w"
+        assert source.credentials.email_login == "novikov.gg7ts@rambler.ru"
+        assert source.credentials.email_password == "pame64JKtYX8"
 
     def test_parse_extracts_cosmetic_titles(self, load_fixture):
         adapter = FortniteLztSourceAdapter()
         source = adapter.parse(load_fixture("lzt_fn.json"))
 
-        assert "Renegade Raider" in source.cosmetic_titles
-        assert "Black Knight" in source.cosmetic_titles
-        assert "Floss" in source.cosmetic_titles
-        assert "Mako" in source.cosmetic_titles
+        assert "Trilogy" in source.cosmetic_titles
+        assert "Xander" in source.cosmetic_titles
 
 
 # -- resolver tests --------------------------------------------------------
@@ -71,10 +69,10 @@ class TestFortniteResolver:
         )
         account = FortniteResolver().resolve(request)
 
-        assert account.level == 320
-        assert account.platform == "PC"
-        assert account.skin_count == 150
-        assert account.v_bucks == 2500
+        assert account.level == 1324
+        assert account.platform == "EpicPC"
+        assert account.skin_count == 69
+        assert account.v_bucks == 250
         assert account.has_email_access is True
 
     def test_resolver_rejects_missing_source(self):
@@ -114,7 +112,7 @@ class TestFortniteComposer:
         draft = FortniteComposer().compose(account, request, MediaBundle())
 
         assert draft.default.title
-        assert "150 skins" in draft.default.title
+        assert "69 skins" in draft.default.title
         assert "Has Warranty" in draft.default.description
         assert "fortnite" in draft.default.tags
 
@@ -129,7 +127,7 @@ class TestFortniteRegistration:
     def test_fn_has_all_marketplaces(self):
         registry = build_default_registry()
         defn = registry.get_game("fortnite", "account")
-        assert set(defn.marketplaces.keys()) == {"eldorado", "gameboost", "g2g"}
+        assert set(defn.marketplaces.keys()) == {"eldorado", "gameboost", "g2g", "playerauctions"}
 
 
 # -- end-to-end pipeline tests --------------------------------------------
@@ -197,9 +195,9 @@ class TestFortnitePipeline:
         assert result.success
 
         assert result.payload["game"] == "fortnite"
-        assert result.payload["account_data"]["outfits_count"] == 150
-        assert result.payload["account_data"]["v_bucks_count"] == 2500
-        assert result.payload["account_data"]["account_level"] == 320
+        assert result.payload["account_data"]["outfits_count"] == 69
+        assert result.payload["account_data"]["v_bucks_count"] == 250
+        assert result.payload["account_data"]["account_level"] == 1324
         assert result.payload["login"]
 
     def test_g2g_payload_shape(self, load_fixture):
@@ -239,5 +237,5 @@ class TestFortnitePipeline:
         prepared = _prepare_result.prepared
         subject = prepared.subject
 
-        assert subject.skin_count == 150
-        assert subject.level == 320
+        assert subject.skin_count == 69
+        assert subject.level == 1324
