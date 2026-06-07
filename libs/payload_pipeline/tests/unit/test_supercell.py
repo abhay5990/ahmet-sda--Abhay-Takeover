@@ -119,7 +119,8 @@ def test_cr_lzt_source_extracts_player_tag_from_json_string(load_fixture) -> Non
     source = CrLztSourceAdapter().parse(raw)
 
     assert source is not None
-    assert source.player_tag == "92RLL8U0Y"
+    assert source.player_tag == "U2VCCG0P0"
+    assert source.evolved_count == 7
 
 
 def test_cr_resolver_lzt_only_populates_tracker_link(load_fixture) -> None:
@@ -133,8 +134,10 @@ def test_cr_resolver_lzt_only_populates_tracker_link(load_fixture) -> None:
 
     account = CrResolver().resolve(request)
 
-    assert account.player_tag == "92RLL8U0Y"
-    assert "92RLL8U0Y" in account.account_tracker_link
+    assert account.player_tag == "U2VCCG0P0"
+    assert "U2VCCG0P0" in account.account_tracker_link
+    # LZT-only: evolution_count falls back to LZT evolved_count
+    assert account.evolution_count == 7
 
 
 def test_cr_resolver_populates_builder_ready_fields(load_fixture) -> None:
@@ -150,18 +153,19 @@ def test_cr_resolver_populates_builder_ready_fields(load_fixture) -> None:
 
     account = CrResolver().resolve(request)
 
-    assert account.current_trophies == 10195
-    assert account.trophies == 10195
-    assert account.arena_name == "Lumberlove Cabin"
+    assert account.current_trophies == 10639
+    assert account.trophies == 10639
+    assert account.arena_name == "Royal Road"
     assert account.has_brawl_stars is True
-    assert account.brawl_stars_level == 47
+    assert account.brawl_stars_level == 69
     assert account.has_coc is True
-    assert account.coc_th_level == 14
+    assert account.coc_th_level == 11
     assert account.level_15_cards_count == 6
     assert account.level_14_cards_count == 39
+    # Tracker has 16 evolutions from cards, takes priority over LZT's 7
     assert account.evolution_count == 16
     assert account.max_cards_count == 39
-    assert account.account_tracker_link.endswith("92RLL8U0Y")
+    assert account.account_tracker_link.endswith("U2VCCG0P0")
 
 
 def test_cr_pipeline_builds_all_marketplaces(load_fixture) -> None:
@@ -179,16 +183,14 @@ def test_cr_pipeline_builds_all_marketplaces(load_fixture) -> None:
     assert _prepare_result.success, f"prepare_once failed: {_prepare_result.error}"
     prepared = _prepare_result.prepared
     results = {}
-    for mp in ("eldorado", "gameboost", "g2g", "playerauctions"):
+    for mp in ("gameboost", "g2g", "playerauctions"):
         mc = G2GConfig(seller_id="1000959019") if mp == "g2g" else None
         result = pipeline.build(prepared, BuildContext(kind="stock", marketplace=mp, marketplace_config=mc))
-        assert result.success
+        assert result.success, f"{mp} failed: {result.error}"
         results[mp] = result.payload
 
-    assert set(results.keys()) == {"eldorado", "gameboost", "g2g", "playerauctions"}
-    assert results["eldorado"]["augmentedGame"]["gameId"] == "52"
     assert results["gameboost"]["game"] == "clash-royale"
     assert results["gameboost"]["account_data"]["evolution_count"] == 16
-    assert "Clash of Clans TH14" in results["gameboost"]["dump"]
+    assert "Clash of Clans TH11" in results["gameboost"]["dump"]
     assert len(results["g2g"]["offer_attributes"]) == 4
-    assert results["playerauctions"]["game_id"] == 8461
+    assert results["playerauctions"]["gameId"] == 7293

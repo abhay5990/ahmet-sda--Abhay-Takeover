@@ -353,7 +353,9 @@
             <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 shrink-0">
                 <div class="flex items-center gap-2">
                     <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                    <h2 class="text-lg font-semibold text-gray-900">Template Syntax Guide</h2>
+                    <h2 class="text-lg font-semibold text-gray-900">
+                        Template Guide<span x-show="currentGameName" class="text-gray-400 font-normal"> — <span x-text="currentGameName"></span></span>
+                    </h2>
                 </div>
                 <div class="flex items-center gap-2">
                     <button @click="copyGuide()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-medium text-gray-600 hover:bg-gray-50" title="Copy guide for AI prompt">
@@ -739,10 +741,23 @@ function templateEditor() {
         // --- Guide ---
 
         guideCopied: false,
-        get guideHtml() { return GUIDE_HTML; },
+
+        get currentGameName() {
+            if (!this.selectedGame) return '';
+            const game = this.games.find(g => String(g.id) === String(this.selectedGame));
+            return game ? game.name : '';
+        },
+
+        get guideMarkdown() {
+            return buildGuideMarkdown(this.currentGameName, this.metadataFields, this.form.template_type);
+        },
+
+        get guideHtml() {
+            return mdToHtml(this.guideMarkdown);
+        },
 
         copyGuide() {
-            navigator.clipboard.writeText(GUIDE_MARKDOWN).then(() => {
+            navigator.clipboard.writeText(this.guideMarkdown).then(() => {
                 this.guideCopied = true;
                 setTimeout(() => this.guideCopied = false, 2000);
             });
@@ -756,23 +771,20 @@ function templateEditor() {
     };
 }
 
-// --- Guide content (raw markdown for copy, pre-rendered HTML for display) ---
+// --- Guide: static syntax reference (game-independent) ---
 
-const GUIDE_MARKDOWN = `# Content Template Engine — AI Prompt Guide
-
-You are helping a user write listing templates for an e-commerce content builder.
+const GUIDE_SYNTAX_MD = `You are helping a user write listing templates for an e-commerce content builder.
 Templates produce marketplace titles and descriptions by combining static text with dynamic field placeholders.
-
-The engine renders templates, then optionally auto-truncates the output to a character limit by dropping segments from the end while keeping priority segments intact.
+The engine renders templates, then optionally auto-truncates the output to a character limit.
 
 ## Syntax Reference
 
 ### Placeholders
-Insert a field value: \`{field_name}\`
-Example: \`{skin_count} skins\` → \`120 skins\`
+Insert a field value with curly braces: \`{field_name}\`
+Example: \`{level} LVL\` → \`250 LVL\`
 
 ### Modifiers (pipe chain)
-Transform values: \`{field_name | modifier1 | modifier2:arg}\`
+Transform values by chaining modifiers with \`|\`: \`{field_name | modifier1 | modifier2:arg}\`
 
 | Modifier | Arg | What it does | Example |
 |---|---|---|---|
@@ -786,6 +798,8 @@ Transform values: \`{field_name | modifier1 | modifier2:arg}\`
 | number | — | Format with commas | \`{price | number}\` → 2,500 |
 
 ### Join separator aliases
+Use keyword aliases when the literal character would break parsing:
+
 | Keyword | Produces |
 |---|---|
 | join:pipe | \` | \` |
@@ -796,102 +810,173 @@ Transform values: \`{field_name | modifier1 | modifier2:arg}\`
 | join:newline | line break |
 
 ### Conditional blocks
+Show/hide sections based on field values:
 \`{#if field_name}...shown when truthy...{/if}\`
 \`{#if field_name}...if true...{#else}...if false...{/if}\`
 \`{#if field_name >= 500}...shown when condition met...{/if}\`
 Operators: >, >=, <, <=, =, !=, or omit for truthy check.
 Conditionals cannot be nested (one level only).
 
-### Important: separator inside {#if}
-\`{#if vbucks_display >= 500} | {vbucks_display} V-bucks{/if}\`
-This way the " | " disappears when the field is empty.
+### Important: put separators inside {#if}
+\`{#if vbucks >= 500} | {vbucks} V-bucks{/if}\`
+This way the separator disappears when the field is empty — no stray " | " in output.
 
 ## Auto-truncation
-The renderer fits output within a character limit by keeping complete segments left-to-right.
-Use pin_last to protect the last N segments (e.g. V-Bucks always shown at the end).
-
-## Available Fields — Fortnite Account
-
-### Core Fields
-| Field | Type | Description | Example |
-|---|---|---|---|
-| level | int | Account level | 250 |
-| platform | str | Primary platform | PC |
-| skin_count | int | Total skin count | 120 |
-| pickaxe_count | int | Pickaxe count | 45 |
-| dance_count | int | Dance/emote count | 80 |
-| glider_count | int | Glider count | 35 |
-| v_bucks | int | V-Bucks balance | 2500 |
-| lifetime_wins | int | Total lifetime wins | 350 |
-| battle_pass_level | int | Current BP level | 100 |
-| season_num | int | Current season number | 5 |
-| refund_credits | int | Refund credits | 3 |
-| has_real_purchases | bool | Has real-money purchases | Yes |
-| psn_linkable | bool | Can link to PSN | Yes |
-| xbox_linkable | bool | Can link to Xbox | Yes |
-| has_email_access | bool | Has email access | Yes |
-| cosmetic_titles | list | All notable cosmetic names | ["Renegade Raider", ...] |
-| price | float | Listing price | 10.0 |
-
-### Computed Fields
-| Field | Type | Description | Example |
-|---|---|---|---|
-| platform_label | str | Platform tag with brackets | [PC/PSN] |
-| total_cosmetics | int | Skins+pickaxes+dances+gliders | 280 |
-| vbucks_display | int | V-Bucks if eligible, else 0 | 2500 |
-| priority_items | list | Priority cosmetics found | ["Leviathan Axe", "Take The L"] |
-| has_og_stw | bool | Has OG Save the World | No |
-| special_skins | list | Rare/OG skins found | ["Renegade Raider", "Black Knight"] |
-| cheap_items | list | Budget items (price<$25) | ["Mako"] |
-| other_cosmetics | list | Everything else | ["Scenario", "Fishstick"] |
-| psn_linkable_label | str | Yes/No for PSN | Yes |
-| xbox_linkable_label | str | Yes/No for Xbox | Yes |
-| email_access_label | str | Yes/No for email | Yes |
-
-### Cosmetic priority order (each item in only one list)
-1. priority_items — Leviathan Axe, Merry Mint Axe, Raider's Revenge, Floss, Take The L
-2. has_og_stw — true if Rose Team Leader present
-3. special_skins — Renegade Raider, OG Ghoul Trooper, OG Skull Trooper, Aerial Assault Trooper, Wildcat, Wonder, Black Knight, Honor Guard, IKONIK, Travis Scott, Galaxy, Sparkle Specialist, Royale Knight, The Reaper, Elite Agent, Blue Squire, Omega, Lara Croft
-4. cheap_items — Mako, Reaper Axe (only when price < $25)
-5. other_cosmetics — all remaining
+The renderer fits output within a character limit by splitting on separator (default \` | \`) and keeping complete segments left-to-right. Earlier segments have higher priority.
+Use \`pin_last=N\` to protect the last N segments from being dropped (e.g. price always shown at the end).
 
 ## Marketplace Character Limits
-| Marketplace | Title Limit |
-|---|---|
-| Eldorado | 150 |
-| G2G | 120 |
-| Gameboost | 140 |
-| PlayerAuctions | 140 |
+| Marketplace | Title Limit | Description Limit |
+|---|---|---|
+| Eldorado | 150 | 1900 |
+| G2G | 120 | 2000 |
+| Gameboost | 140 | 1900 |
+| PlayerAuctions | 140 | 2000 |`;
 
-## Template Examples
+// --- Guide: field usage hints by type ---
 
-Standard title:
-\`{platform_label} | {skin_count} skins{#if vbucks_display >= 500} | {vbucks_display} V-bucks{/if}{#if priority_items} | {priority_items | join:pipe}{/if}{#if has_og_stw} | OG STW{/if}{#if special_skins} | {special_skins | join:pipe}{/if}{#if other_cosmetics} | {other_cosmetics | join:pipe}{/if}\`
+const FIELD_USAGE_HINTS = {
+    'list': 'Use with `| limit:N | join:pipe` for titles, `| join:comma` for descriptions. Wrap in `{#if field}` to hide when empty.',
+    'bool': 'Use in `{#if field}...{/if}` for conditional sections. For display text, use the `_label` variant if available.',
+    'int': 'Use directly in text: `{field} skins`. For conditional display: `{#if field >= 100}...{/if}`. Use `| number` for comma formatting.',
+    'float': 'Use `| number` for formatting. Wrap in `{#if field}` if it can be zero.',
+    'str': 'Use directly: `{field}`. Use `| upper` or `| lower` to change case. Use `| default:fallback` if it can be empty.',
+};
 
-V-Bucks at end (use pin_last=1):
-\`{platform_label} | {skin_count} skins{#if priority_items} | {priority_items | join:pipe}{/if}{#if special_skins} | {special_skins | join:pipe}{/if}{#if other_cosmetics} | {other_cosmetics | join:pipe}{/if}{#if vbucks_display >= 500} | {vbucks_display} V-bucks{/if}\`
+// --- Guide: build dynamic markdown with game-specific fields ---
 
-Compact:
-\`{platform_label} | {skin_count} skins | {special_skins | limit:3 | join:pipe}{#if other_cosmetics} | {other_cosmetics | limit:2 | join:pipe}{/if}\`
+function buildGuideMarkdown(gameName, fields, templateType) {
+    const gameLabel = gameName || 'Unknown Game';
+    let md = `# Template Engine Guide — ${gameLabel}\n\n`;
+    md += GUIDE_SYNTAX_MD + '\n\n';
 
-Stats-focused:
-\`{platform_label} | Lvl {level} | {skin_count} Skins | {total_cosmetics} Cosmetics{#if vbucks_display >= 500} | {vbucks_display} VB{/if}\`
+    // --- Available fields section ---
+    if (!fields || !fields.length) {
+        md += `## Available Fields\nNo fields loaded. Select a game to see available fields.\n`;
+        return md + '\n' + buildRulesSection();
+    }
 
-## Rules
-1. Start with {platform_label} — buyers need platform info
-2. {skin_count} skins is essential — primary value indicator
-3. Use {#if} for optional sections — no "0 V-bucks"
-4. Put separator inside {#if} — {#if field} | {field}{/if}
-5. Use limit before join on lists — prevents overflow
-6. Use join:pipe for titles, join:comma for descriptions
-7. Template order = priority order — first segments survive truncation
-8. Use pin_last for must-have tail segments
-9. Computed list fields are already deduplicated
-10. Bool fields render as Yes/No — use _label for display, raw for {#if}`;
+    // Group fields by source
+    const coreFields = fields.filter(f => f.source === 'raw' || f.source === 'core');
+    const computedFields = fields.filter(f => f.source === 'computed');
+    const cosmeticListFields = fields.filter(f => f.source === 'cosmetic_list');
 
-const GUIDE_HTML = (() => {
-    // Minimal markdown-to-HTML converter for the guide
-    const md = GUIDE_MARKDOWN;
+    md += `## Available Fields — ${gameLabel}\n\n`;
+
+    if (coreFields.length) {
+        md += `### Core Fields\nThese come directly from the account data.\n\n`;
+        md += buildFieldTable(coreFields);
+    }
+
+    if (computedFields.length) {
+        md += `### Computed Fields\nAuto-generated from core data. Prefer these over raw fields where available.\n\n`;
+        md += buildFieldTable(computedFields);
+    }
+
+    if (cosmeticListFields.length) {
+        md += `### Cosmetic Lists (UI-managed)\nDynamic lists configured in the UI. Each cosmetic appears in only one list (higher-priority lists take precedence).\n\n`;
+        md += buildFieldTable(cosmeticListFields);
+    }
+
+    // --- Type usage hints ---
+    const typesPresent = [...new Set(fields.map(f => f.field_type))];
+    md += `### How to use each field type\n\n`;
+    for (const t of typesPresent) {
+        const hint = FIELD_USAGE_HINTS[t];
+        if (hint) {
+            md += `**${t}** — ${hint}\n`;
+        }
+    }
+    md += '\n';
+
+    // --- Quick-start examples generated from actual fields ---
+    md += buildExamplesSection(fields, templateType);
+
+    // --- Rules ---
+    md += buildRulesSection();
+
+    return md;
+}
+
+function buildFieldTable(fields) {
+    let table = '| Field | Type | Description | Example |\n';
+    table += '|---|---|---|---|\n';
+    for (const f of fields) {
+        const sample = (f.sample || '—').toString().substring(0, 60);
+        table += `| ${f.name} | ${f.field_type || 'str'} | ${f.description || ''} | ${sample} |\n`;
+    }
+    return table + '\n';
+}
+
+function buildExamplesSection(fields, templateType) {
+    const names = new Set(fields.map(f => f.name));
+    const byType = {};
+    for (const f of fields) {
+        if (!byType[f.field_type]) byType[f.field_type] = [];
+        byType[f.field_type].push(f.name);
+    }
+
+    let md = `## Template Examples\n\n`;
+
+    if (templateType === 'description') {
+        md += `### Description template\n`;
+        md += 'Use `join:comma` or `join:newline` for readability. Descriptions have more room so include detail.\n\n';
+        // Build a generic description example from available fields
+        const strFields = (byType['str'] || []).slice(0, 2);
+        const intFields = (byType['int'] || []).slice(0, 2);
+        const listFields = (byType['list'] || []).slice(0, 1);
+        let desc = '';
+        for (const f of strFields) desc += `${f}: {${f}}\n`;
+        for (const f of intFields) desc += `{#if ${f}}${f}: {${f}}{/if}\n`;
+        if (listFields.length) desc += `{#if ${listFields[0]}}${listFields[0]}: {${listFields[0]} | join:comma}{/if}\n`;
+        if (desc) md += '```\n' + desc + '```\n\n';
+    } else {
+        // Title examples
+        const firstStr = (byType['str'] || [])[0];
+        const firstInt = (byType['int'] || [])[0];
+        const firstList = (byType['list'] || [])[0];
+
+        if (firstStr || firstInt || firstList) {
+            md += `### Basic title\n`;
+            let parts = [];
+            if (firstStr) parts.push(`{${firstStr}}`);
+            if (firstInt) parts.push(`{${firstInt}}`);
+            if (firstList) parts.push(`{${firstList} | limit:3 | join:pipe}`);
+            md += '`' + parts.join(' | ') + '`\n\n';
+        }
+
+        if (firstList && firstInt) {
+            md += `### With conditional\n`;
+            md += '`' + `{${firstStr || firstInt}}{#if ${firstList}} | {${firstList} | limit:3 | join:pipe}{/if}` + '`\n\n';
+        }
+
+        // Generic pattern
+        md += `### General pattern for titles\n`;
+        md += 'Put the most important info first (it survives truncation), optional info last.\n';
+        md += '`{key_info} | {stats}{#if optional_list} | {optional_list | limit:3 | join:pipe}{/if}`\n\n';
+    }
+
+    return md;
+}
+
+function buildRulesSection() {
+    return `## Rules for Writing Good Templates
+1. **Most important fields first** — earlier segments survive auto-truncation, later ones get dropped
+2. **Use \`{#if}\` for optional sections** — prevents showing empty values like "0" or blank text
+3. **Put the separator inside \`{#if}\`** — \`{#if field} | {field}{/if}\` not \`| {#if field}{field}{/if}\`
+4. **Use \`limit\` before \`join\` on list fields** — \`{items | limit:3 | join:pipe}\` prevents overflow
+5. **Use \`join:pipe\` for titles, \`join:comma\` for descriptions** — different readability needs
+6. **Use \`pin_last\` for must-have tail segments** — protects the last N segments from truncation
+7. **List fields are already deduplicated** — each item appears in only one cosmetic list
+8. **Bool fields render as Yes/No** — use \`_label\` variants for display text, raw field for \`{#if}\` conditions
+9. **Use \`| number\` for large numbers** — \`{price | number}\` → 2,500
+10. **Use \`| default:text\` for fields that might be empty** — provides a fallback value
+`;
+}
+
+// --- Minimal markdown-to-HTML converter ---
+
+function mdToHtml(md) {
     let html = '';
     let inTable = false;
     let inCode = false;
@@ -900,59 +985,47 @@ const GUIDE_HTML = (() => {
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
 
-        // Code blocks
         if (line.startsWith('```')) {
             if (inCode) { html += '</code></pre>'; inCode = false; }
             else { html += '<pre><code>'; inCode = true; }
             continue;
         }
-        if (inCode) { html += line.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\n'; continue; }
+        if (inCode) { html += _esc(line) + '\n'; continue; }
 
-        // Empty line
         if (!line.trim()) {
             if (inTable) { html += '</tbody></table>'; inTable = false; }
             continue;
         }
 
-        // Headings
-        if (line.startsWith('### ')) { html += `<h3>${esc(line.slice(4))}</h3>`; continue; }
-        if (line.startsWith('## ')) { html += `<h2>${esc(line.slice(3))}</h2>`; continue; }
-        if (line.startsWith('# ')) { html += `<h1>${esc(line.slice(2))}</h1>`; continue; }
-
-        // Horizontal rule
+        if (line.startsWith('### ')) { html += '<h3>' + _esc(line.slice(4)) + '</h3>'; continue; }
+        if (line.startsWith('## ')) { html += '<h2>' + _esc(line.slice(3)) + '</h2>'; continue; }
+        if (line.startsWith('# ')) { html += '<h1>' + _esc(line.slice(2)) + '</h1>'; continue; }
         if (line.startsWith('---')) { html += '<hr>'; continue; }
 
-        // Table
         if (line.startsWith('|')) {
             const cells = line.split('|').slice(1, -1).map(c => c.trim());
-            if (cells.every(c => /^[-:]+$/.test(c))) continue; // separator row
+            if (cells.every(c => /^[-:]+$/.test(c))) continue;
             if (!inTable) {
-                html += '<table><thead><tr>' + cells.map(c => `<th>${inlineFormat(c)}</th>`).join('') + '</tr></thead><tbody>';
+                html += '<table><thead><tr>' + cells.map(c => '<th>' + _inline(c) + '</th>').join('') + '</tr></thead><tbody>';
                 inTable = true;
             } else {
-                html += '<tr>' + cells.map(c => `<td>${inlineFormat(c)}</td>`).join('') + '</tr>';
+                html += '<tr>' + cells.map(c => '<td>' + _inline(c) + '</td>').join('') + '</tr>';
             }
             continue;
         }
 
-        // Numbered list
-        if (/^\d+\.\s/.test(line)) {
-            html += `<p>${inlineFormat(line)}</p>`;
-            continue;
-        }
-
-        // Regular paragraph
-        html += `<p>${inlineFormat(line)}</p>`;
+        if (/^\d+\.\s/.test(line)) { html += '<p>' + _inline(line) + '</p>'; continue; }
+        html += '<p>' + _inline(line) + '</p>';
     }
     if (inTable) html += '</tbody></table>';
-
-    function esc(s) { return s.replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-    function inlineFormat(s) {
-        return esc(s)
-            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-            .replace(/`([^`]+)`/g, '<code>$1</code>');
-    }
     return html;
-})();
+}
+
+function _esc(s) { return s.replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function _inline(s) {
+    return _esc(s)
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
 </script>
 {% endblock %}

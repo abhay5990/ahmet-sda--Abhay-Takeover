@@ -33,6 +33,7 @@ class CrLztSource:
     coc_trophies: int = 0
     brawl_stars_tag: str = ""
     coc_tag: str = ""
+    evolved_count: int = 0
 
 
 class CrLztSourceAdapter:
@@ -90,6 +91,7 @@ class CrLztSourceAdapter:
             coc_trophies=self._to_int(payload.get("supercell_magic_trophies"), default=0),
             brawl_stars_tag=brawl_stars_tag,
             coc_tag=coc_tag,
+            evolved_count=self._to_int(payload.get("supercell_scroll_evolved_count"), default=0),
         )
 
     def _to_int(self, value: Any, default: int) -> int:

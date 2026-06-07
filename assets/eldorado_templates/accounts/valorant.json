@@ -142,12 +142,51 @@
           "name": "16-20 Agents"
         },
         {
-          "id": "20-plus-agents",
-          "name": "20+ Agents"
-        },
-        {
           "id": "other",
           "name": "Other"
+        },
+        {
+          "id": "agents-2125",
+          "name": "21-25"
+        },
+        {
+          "id": "agents-26plus",
+          "name": "26+"
+        }
+      ]
+    },
+    "valorant-knives": {
+      "name": "Knives",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "knives-04",
+          "name": "1-4"
+        },
+        {
+          "id": "knives-59",
+          "name": "5-9"
+        },
+        {
+          "id": "knives-1014",
+          "name": "10-14"
+        },
+        {
+          "id": "knives-1519",
+          "name": "15-19"
+        },
+        {
+          "id": "knives-20plus",
+          "name": "20+"
+        },
+        {
+          "id": "knives-other",
+          "name": "Other"
+        },
+        {
+          "id": "knives-0",
+          "name": "0"
         }
       ]
     },
@@ -202,6 +241,37 @@
         },
         {
           "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "valorant-spent-points": {
+      "name": "Spent Points",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "spent-0499",
+          "name": "0-4.99K"
+        },
+        {
+          "id": "spent-5999",
+          "name": "5K-9.99K"
+        },
+        {
+          "id": "spent-101999",
+          "name": "10K-19.99K"
+        },
+        {
+          "id": "spent-203499",
+          "name": "20K-34.99K"
+        },
+        {
+          "id": "spent-35plus",
+          "name": "35K+"
+        },
+        {
+          "id": "spent-other",
           "name": "Other"
         }
       ]

@@ -24,6 +24,10 @@ class BSLztSource:
     rank_30_plus_count: int = 0
     mythic_count: int = 0
     battle_pass_active: bool = False
+    hypercharge_count: int = 0
+    highest_trophies: int = 0
+    victories: int = 0
+    creation_year: int = 0
     brawler_names: list[str] = field(default_factory=list)
     brawlers: dict[str, Any] = field(default_factory=dict)
 
@@ -83,6 +87,10 @@ class BSLztSourceAdapter:
             rank_30_plus_count=rank_30_count,
             mythic_count=mythic_count,
             battle_pass_active=bool(payload.get("supercell_laser_battle_pass")),
+            hypercharge_count=self._to_int(payload.get("supercell_hypercharge_count"), default=0),
+            highest_trophies=self._to_int(payload.get("supercell_laser_highest_trophies"), default=0),
+            victories=self._to_int(payload.get("supercell_laser_victories"), default=0),
+            creation_year=self._to_int(payload.get("supercell_creation_year"), default=0),
             brawler_names=brawler_names,
             brawlers=brawlers_raw if isinstance(brawlers_raw, dict) else {},
         )

@@ -1,4 +1,6 @@
-# Content Template Engine — AI Prompt Guide
+# Content Template Engine — Reference Guide
+
+> **Note:** The "Copy for AI" button in the template editor generates a **game-specific** version of this guide automatically. It includes only the fields available for the selected game. This file serves as the full reference.
 
 You are helping a user write listing templates for an e-commerce content builder.
 Templates produce marketplace titles and descriptions by combining static text with dynamic field placeholders.

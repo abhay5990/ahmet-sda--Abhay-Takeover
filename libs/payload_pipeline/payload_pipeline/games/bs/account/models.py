@@ -20,6 +20,10 @@ class BSResolvedAccount(ResolvedAccountBase):
     rank_30_plus_count: int = 0
     mythic_count: int = 0
     battle_pass_active: bool = False
+    hypercharge_count: int = 0
+    highest_trophies: int = 0
+    victories: int = 0
+    creation_year: int = 0
     brawler_names: list[str] = field(default_factory=list)
     brawlers: dict[str, Any] = field(default_factory=dict)
     has_email_access: bool = False
@@ -34,6 +38,10 @@ class BSResolvedAccount(ResolvedAccountBase):
         "rank_30_plus_count": FieldMeta("Rank 30+ brawler count.", 5),
         "mythic_count": FieldMeta("Mythic brawler count.", 12),
         "battle_pass_active": FieldMeta("Brawl Pass active.", True),
+        "hypercharge_count": FieldMeta("Hypercharged brawler count.", 40),
+        "highest_trophies": FieldMeta("All-time highest trophy count.", 35000),
+        "victories": FieldMeta("Total victories.", 3370),
+        "creation_year": FieldMeta("Account creation year.", 2023),
         "brawler_names": FieldMeta("Notable brawler names.", ["Spike", "Crow", "Leon"]),
         "has_email_access": FieldMeta("Email access status.", True),
     }

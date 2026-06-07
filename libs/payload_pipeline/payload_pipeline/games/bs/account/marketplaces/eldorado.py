@@ -29,7 +29,7 @@ class BSEldoradoBuilder(BaseEldoradoBuilder):
                 "brawl-stars-brawlers": self._resolve_brawlers(account.brawler_count),
                 "brawl-stars-maxed-brawlers": self._resolve_maxed_brawlers(account.max_level_brawlers_count),
                 "brawl-stars-skins": "skins-other",
-                "brawl-stars-hypercharge": "hypercharge-other",
+                "brawl-stars-hypercharge": self._resolve_hypercharge(account.hypercharge_count),
                 "brawl-stars-buffies": "buffies-other",
                 "brawl-gemss": "gems-other",
             },
@@ -87,3 +87,17 @@ class BSEldoradoBuilder(BaseEldoradoBuilder):
         if count <= 99:
             return "maxed-8099"
         return "maxed-100plus"
+
+    @staticmethod
+    def _resolve_hypercharge(count: int) -> str:
+        if count <= 19:
+            return "hypercharge-019"
+        if count <= 39:
+            return "hypercharge-2039"
+        if count <= 59:
+            return "hypercharge-4059"
+        if count <= 79:
+            return "hypercharge-6079"
+        if count <= 99:
+            return "hypercharge-8099"
+        return "hypercharge-100plus"

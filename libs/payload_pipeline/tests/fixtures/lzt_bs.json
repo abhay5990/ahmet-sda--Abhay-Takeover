@@ -1,68 +1,75 @@
 {
-  "item_id": 220729373,
+  "item_id": 237892725,
   "item_state": "paid",
   "category_id": 15,
-  "published_date": 1772825323,
-  "title": "33 190 Кубков | 96 Бойцов | 11 Лег + Kaze",
-  "description": "",
-  "price": 10.33,
+  "published_date": 1780266993,
+  "title": "BS : 31.8к и 10 лег",
+  "description": "С панельки ЛевогоТипа\n\nБравлеры с гиперзарядом:\nSIRIUS\nKAZE\nSPIKE\nSURGE\nCROW\nMORTIS\nFANG\nBUZZ\nSQUEAK\nMICO\nRUFFS\nCLANCY\nOLLIE\nR-T\nEVE\nLARRY & LAWRIE\nPEARL\nEDGAR\nGRIFF\nBERRY\nBIBI\nBEA\nBO\nMANDY\nSHADE\nBELLE\nANGELO\nTICK\nJESSIE\nDARRYL\nGUS\nJACKY\nBULL\nBROCK\nCOLT\nEL PRIMO\nROSA\nPOCO\nNITA\nSHELLY\n\nЕсли герои не 11 уровня то гиперзаряд может быть не виден в игре",
+  "price": 8.97,
   "update_stat_date": 0,
-  "refreshed_date": 1772825323,
-  "edit_date": 1773172318,
+  "refreshed_date": 1780266993,
+  "edit_date": 1780346601,
   "pending_deletion_date": 0,
-  "login": "rgcflczy@bekommenmail.com",
+  "login": "donaldburks1956@blackfirsta.com",
   "temp_email": "",
-  "view_count": 9,
+  "view_count": 3,
   "is_sticky": 0,
   "information": "",
-  "item_origin": "resale",
+  "item_origin": "phishing",
   "extended_guarantee": 0,
-  "nsb": 0,
-  "email_login_data": "aI0f7MjuEpHMtMelriE6GDYB6lNyiMHmmIFpkuAZyB0itIGX4AKQ+v4OaZJt/5dHVPZ0PheDl2MBF+dBBOETbGhfwasvgCRmvuGiadifYF0QRHkPtXMpD8RcJw83uZzsypoAKqZDYzEcQ2XC8Co0haM111QTEzS4Q0fVV1OXvME=",
-  "allow_ask_discount": 0,
-  "title_en": "33 190 Кубков | 96 Бойцов | 11 Лег + Kaze",
-  "description_en": "",
+  "nsb": 1,
+  "email_login_data": "UXMLwR2QbYBK/c8zxt0gHCt4wUnO14BNgCcSDm6iMwABosoHeIw0B7zOc3IDq3yCsXE+W3v0+D1HxDGMUHhVTtvVv31cWkF/HbArEenY2ij+Y2mkQx/k2i1DKWA0urmfM0x9d2unl6sN2YVANx2H6e1Vnb/9vM/d1CJEON866D4=",
+  "allow_ask_discount": 1,
+  "title_en": "BS: 31.8k and 10 legs",
+  "description_en": "From the Left Type panel",
   "information_en": "",
   "email_type": "autoreg",
   "email_provider": "firstmail",
-  "item_domain": "bekommenmail.com",
-  "resale_item_origin": "resale",
+  "item_domain": "blackfirsta.com",
+  "resale_item_origin": "",
   "auto_bump_period": 0,
+  "guarantee_duration": 0,
   "discount": false,
-  "supercell_item_id": 220729373,
-  "supercell_id": "52-e74551d0-0dd5-4032-8d74-260c9177c5a9",
-  "supercell_arena": "Serenity Peak",
-  "supercell_brawler_count": 96,
-  "supercell_last_activity": 1772967825,
-  "supercell_legendary_brawler_count": 11,
+  "supercell_item_id": 237892725,
+  "supercell_id": "47-90bef3cf-dc3d-4b0d-9dea-d958573c9d33",
+  "supercell_arena": "",
+  "supercell_brawler_count": 86,
+  "supercell_last_activity": 1778144509,
+  "supercell_legendary_brawler_count": 10,
   "supercell_town_hall_level": 0,
   "supercell_builder_hall_level": 0,
   "supercell_builder_hall_cup_count": 0,
-  "supercell_phone": 1,
-  "supercell_laser_level": 138,
-  "supercell_scroll_level": 31,
+  "supercell_phone": 0,
+  "supercell_laser_level": 114,
+  "supercell_scroll_level": 0,
   "supercell_magic_level": 0,
-  "supercell_laser_trophies": 33190,
-  "supercell_scroll_trophies": 4600,
+  "supercell_laser_trophies": 31785,
+  "supercell_scroll_trophies": 0,
   "supercell_magic_trophies": 0,
-  "supercell_laser_victories": 4590,
-  "supercell_scroll_victories": 903,
+  "supercell_laser_victories": 3370,
+  "supercell_scroll_victories": 0,
   "supercell_magic_victories": 0,
   "supercell_laser_battle_pass": 0,
   "supercell_scroll_battle_pass": 0,
   "supercell_magic_battle_pass": 0,
-  "supercell_systems": "{\"scroll\":\"90GGU9V92\",\"laser\":\"2VYRRVYUQ\"}",
-  "supercell_king_level": 11,
+  "supercell_systems": "{\"laser\":\"GVL8R9808\"}",
+  "supercell_king_level": 0,
   "supercell_total_heroes_level": 0,
   "supercell_total_troops_level": 0,
   "supercell_total_spells_level": 0,
   "supercell_total_builder_heroes_level": 0,
   "supercell_total_builder_troops_level": 0,
-  "supercell_creation_year": 0,
-  "feedback_data": "{\"1\":{\"positive\":21,\"negative\":0},\"3\":{\"positive\":6,\"negative\":0},\"4\":{\"positive\":54,\"negative\":1},\"7\":{\"positive\":81,\"negative\":1},\"11\":{\"positive\":20,\"negative\":0},\"12\":{\"positive\":21,\"negative\":0},\"14\":{\"positive\":251,\"negative\":5},\"15\":{\"positive\":87,\"negative\":3},\"16\":{\"positive\":78,\"negative\":1},\"17\":{\"positive\":279,\"negative\":2},\"18\":{\"positive\":13,\"negative\":1},\"24\":{\"positive\":7,\"negative\":0},\"28\":{\"positive\":30,\"negative\":0},\"31\":{\"positive\":48,\"negative\":2}}",
-  "max_discount_percent": 3,
+  "supercell_creation_year": 2023,
+  "supercell_hypercharge_count": 40,
+  "supercell_scroll_evolved_count": 0,
+  "supercell_scroll_champion_count": 0,
+  "supercell_laser_highest_trophies": 31785,
+  "supercell_scroll_league_trophies": 0,
+  "supercell_scroll_league_number": 0,
+  "feedback_data": "{\"15\":{\"positive\":53,\"negative\":5},\"24\":{\"positive\":12,\"negative\":0}}",
+  "max_discount_percent": 30,
   "isIgnored": false,
-  "priceWithSellerFee": 10.02,
+  "priceWithSellerFee": 8.7,
   "category": {
     "category_id": 15,
     "category_title": "Supercell",
@@ -77,9 +84,9 @@
   "canViewItemViews": false,
   "canManagePublicTag": false,
   "loginData": {
-    "raw": "rgcflczy@bekommenmail.com:1",
-    "encodedRaw": "rgcflczy%40bekommenmail.com%3A1",
-    "login": "rgcflczy@bekommenmail.com",
+    "raw": "donaldburks1956@blackfirsta.com:1",
+    "encodedRaw": "donaldburks1956%40blackfirsta.com%3A1",
+    "login": "donaldburks1956@blackfirsta.com",
     "password": "1",
     "encodedPassword": "1",
     "oldPassword": "",
@@ -88,25 +95,25 @@
   },
   "canViewEmailLoginData": true,
   "emailLoginData": {
-    "raw": "rgcflczy@bekommenmail.com:Obry4OssZT",
-    "decrypted": "rgcflczy@bekommenmail.com:Obry4OssZT",
-    "encodedRaw": "rgcflczy%40bekommenmail.com%3AObry4OssZT",
-    "login": "rgcflczy@bekommenmail.com",
-    "password": "Obry4OssZT",
-    "encodedPassword": "Obry4OssZT",
-    "oldPassword": "YGefS3DEpy",
-    "encodedOldPassword": "YGefS3DEpy",
+    "raw": "donaldburks1956@blackfirsta.com:rffldswoA!4773",
+    "decrypted": "donaldburks1956@blackfirsta.com:rffldswoA!4773",
+    "encodedRaw": "donaldburks1956%40blackfirsta.com%3ArffldswoA%214773",
+    "login": "donaldburks1956@blackfirsta.com",
+    "password": "rffldswoA!4773",
+    "encodedPassword": "rffldswoA%214773",
+    "oldPassword": "",
+    "encodedOldPassword": null,
     "newSecretAnswer": "",
     "extraPasswords": "",
     "extraInfo": ""
   },
   "copyFormatData": {
-    "title_link": "https://lzt.market/220729373/ - 33 190 Кубков | 96 Бойцов | 11 Лег + Kaze",
-    "login_data": "rgcflczy@bekommenmail.com:1:rgcflczy@bekommenmail.com:Obry4OssZT",
-    "full": "https://lzt.market/220729373/ - 33 190 Кубков | 96 Бойцов | 11 Лег + Kaze - rgcflczy@bekommenmail.com:1:rgcflczy@bekommenmail.com:Obry4OssZT"
+    "title_link": "https://lzt.market/237892725/ - BS : 31.8к и 10 лег",
+    "login_data": "donaldburks1956@blackfirsta.com:1:donaldburks1956@blackfirsta.com:rffldswoA!4773",
+    "full": "https://lzt.market/237892725/ - BS : 31.8к и 10 лег - donaldburks1956@blackfirsta.com:1:donaldburks1956@blackfirsta.com:rffldswoA!4773"
   },
   "showGetEmailCodeButton": true,
-  "getEmailCodeDisplayLogin": "rgcflczy@bekommenmail.com",
+  "getEmailCodeDisplayLogin": "donaldburks1956@blackfirsta.com",
   "canOpenItem": false,
   "canCloseItem": false,
   "canEditItem": false,
@@ -115,51 +122,68 @@
   "canUnstickItem": false,
   "canBumpItem": false,
   "canNotBumpItemReason": "You do not have permission view page",
+  "canAutoBump": false,
   "buyer": {
     "user_id": 8212367,
-    "operation_date": 1773244286,
+    "operation_date": 1780382305,
     "visitorIsBuyer": true
   },
   "isPersonalAccount": false,
   "canBuyItem": false,
-  "rub_price": 829,
+  "rub_price": 659,
   "price_currency": "usd",
-  "priceWithSellerFeeLabel": "$0.1248",
+  "priceWithSellerFeeLabel": "$0.1184",
   "canValidateAccount": true,
   "canResellItem": true,
-  "isSmallExf": true,
-  "account_last_activity": 1772967825,
+  "isSmallExf": false,
+  "account_last_activity": 1778144509,
   "supercellBrawlers": {
-    "10": {
-      "id": 16000010,
-      "name": "EL PRIMO",
-      "power": 8,
+    "84": {
+      "id": 16000102,
+      "name": "SIRIUS",
+      "power": 11,
       "rank": 3,
-      "trophies": 534,
-      "highestTrophies": 534,
+      "trophies": 662,
+      "highestTrophies": 662,
       "prestigeLevel": 0,
       "currentWinStreak": 1,
-      "maxWinStreak": 4,
+      "maxWinStreak": 12,
       "skin": {
-        "id": 29000630,
-        "name": "EL MAYORDOMO"
+        "id": 29001401,
+        "name": "SIRIUS"
       },
       "gadgets": [
         {
-          "id": 23000264,
-          "name": "SUPLEX SUPPLEMENT"
+          "id": 23001191,
+          "name": "A STARR IS BORN"
         },
         {
-          "id": 23000292,
-          "name": "ASTEROID BELT"
+          "id": 23001192,
+          "name": "MASTER OF SHADOWS"
         }
       ],
-      "gears": [],
-      "starPowers": [],
+      "gears": [
+        {
+          "id": 62000002,
+          "name": "DAMAGE",
+          "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23001190,
+          "name": "THE DARKEST STARR"
+        }
+      ],
       "hyperCharges": [
         {
-          "id": 23000679,
-          "name": "GRAVITY LEAP"
+          "id": 23001231,
+          "name": "UNLIMITED POWER!"
         }
       ],
       "buffies": {
@@ -167,85 +191,24 @@
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "el_primo",
-      "class": ""
+      "path": "sirius",
+      "class": "chromatic"
     },
-    "31": {
-      "id": 16000031,
-      "name": "MR. P",
-      "power": 9,
-      "rank": 2,
-      "trophies": 355,
-      "highestTrophies": 357,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 1,
-      "skin": {
-        "id": 29000473,
-        "name": "MR. FLY"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [
-        {
-          "id": 23000899,
-          "name": "SUPER PORTERS! ASSEMBLE!"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "mr__p",
-      "class": ""
-    },
-    "74": {
-      "id": 16000077,
-      "name": "LARRY & LAWRIE",
-      "power": 7,
-      "rank": 1,
-      "trophies": 110,
-      "highestTrophies": 110,
-      "prestigeLevel": 0,
-      "currentWinStreak": 9,
-      "maxWinStreak": 9,
-      "skin": {
-        "id": 29000759,
-        "name": "LARRY & LAWRIE\nCONTROLLERS"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "larry___lawrie",
-      "class": ""
-    },
-    "89": {
+    "79": {
       "id": 16000094,
       "name": "KAZE",
       "power": 11,
       "rank": 2,
-      "trophies": 435,
-      "highestTrophies": 435,
+      "trophies": 499,
+      "highestTrophies": 499,
       "prestigeLevel": 0,
       "currentWinStreak": 2,
-      "maxWinStreak": 6,
+      "maxWinStreak": 13,
       "skin": {
-        "id": 29001156,
-        "name": "KAZE"
+        "id": 29001208,
+        "name": "FRUITY KAZE"
       },
       "gadgets": [
-        {
-          "id": 23000940,
-          "name": "GRACIOUS HOST"
-        },
         {
           "id": 23000941,
           "name": "HENSOJUTSU"
@@ -256,9 +219,18 @@
           "id": 62000002,
           "name": "DAMAGE",
           "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
         }
       ],
       "starPowers": [
+        {
+          "id": 23000938,
+          "name": "ADVANCED TECHNIQUES"
+        },
         {
           "id": 23000939,
           "name": "GRATUITY INCLUDED"
@@ -278,28 +250,28 @@
       "path": "kaze",
       "class": "chromatic"
     },
-    "23": {
-      "id": 16000023,
-      "name": "LEON",
+    "5": {
+      "id": 16000005,
+      "name": "SPIKE",
       "power": 11,
       "rank": 5,
-      "trophies": 1012,
-      "highestTrophies": 1033,
+      "trophies": 1155,
+      "highestTrophies": 1162,
       "prestigeLevel": 1,
       "currentWinStreak": 0,
-      "maxWinStreak": 12,
+      "maxWinStreak": 9,
       "skin": {
-        "id": 29000727,
-        "name": "WHITE WOLF LEON"
+        "id": 29000502,
+        "name": "PYRO SPIKE"
       },
       "gadgets": [
         {
-          "id": 23000276,
-          "name": "CLONE PROJECTOR"
+          "id": 23000247,
+          "name": "POPPING PINCUSHION"
         },
         {
-          "id": 23000408,
-          "name": "LOLLIPOP DROP"
+          "id": 23000406,
+          "name": "LIFE PLANT"
         }
       ],
       "gears": [
@@ -307,261 +279,26 @@
           "id": 62000002,
           "name": "DAMAGE",
           "level": 3
-        }
-      ],
-      "starPowers": [
-        {
-          "id": 23000119,
-          "name": "SMOKE TRAILS"
         },
         {
-          "id": 23000141,
-          "name": "INVISIHEAL"
-        }
-      ],
-      "hyperCharges": [
-        {
-          "id": 23000651,
-          "name": "LIMBO"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "leon",
-      "class": "legendary"
-    },
-    "73": {
-      "id": 16000076,
-      "name": "KIT",
-      "power": 9,
-      "rank": 5,
-      "trophies": 1010,
-      "highestTrophies": 1013,
-      "prestigeLevel": 1,
-      "currentWinStreak": 0,
-      "maxWinStreak": 11,
-      "skin": {
-        "id": 29000756,
-        "name": "KITBOXER"
-      },
-      "gadgets": [
-        {
-          "id": 23000648,
-          "name": "CARDBOARD BOX"
-        }
-      ],
-      "gears": [
+          "id": 62000001,
+          "name": "HEALTH",
+          "level": 3
+        },
         {
           "id": 62000004,
           "name": "SHIELD",
           "level": 3
         }
       ],
-      "starPowers": [
-        {
-          "id": 23000646,
-          "name": "POWER HUNGRY"
-        },
-        {
-          "id": 23000647,
-          "name": "OVERLY ATTACHED"
-        }
-      ],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "kit",
-      "class": "legendary"
-    },
-    "37": {
-      "id": 16000038,
-      "name": "SURGE",
-      "power": 9,
-      "rank": 3,
-      "trophies": 535,
-      "highestTrophies": 539,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 5,
-      "skin": {
-        "id": 29000947,
-        "name": "SKELETAL SURGE"
-      },
-      "gadgets": [
-        {
-          "id": 23000485,
-          "name": "POWER SHIELD"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000283,
-          "name": "TO THE MAX!"
-        }
-      ],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "surge",
-      "class": "legendary"
-    },
-    "12": {
-      "id": 16000012,
-      "name": "CROW",
-      "power": 8,
-      "rank": 2,
-      "trophies": 485,
-      "highestTrophies": 485,
-      "prestigeLevel": 0,
-      "currentWinStreak": 4,
-      "maxWinStreak": 4,
-      "skin": {
-        "id": 29000020,
-        "name": "WHITE CROW"
-      },
-      "gadgets": [
-        {
-          "id": 23000243,
-          "name": "INSTAPOISON"
-        },
-        {
-          "id": 23000286,
-          "name": "SLOWING TOXIN"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [
-        {
-          "id": 23000650,
-          "name": "UTILITY KNIVES"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "crow",
-      "class": "legendary"
-    },
-    "28": {
-      "id": 16000028,
-      "name": "SANDY",
-      "power": 9,
-      "rank": 2,
-      "trophies": 468,
-      "highestTrophies": 471,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 7,
-      "skin": {
-        "id": 29000113,
-        "name": "SANDY"
-      },
-      "gadgets": [
-        {
-          "id": 23000405,
-          "name": "SWEET DREAMS"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000186,
-          "name": "RUDE SANDS"
-        },
-        {
-          "id": 23000187,
-          "name": "HEALING WINDS"
-        }
-      ],
-      "hyperCharges": [
-        {
-          "id": 23000685,
-          "name": "SWIFT WINDS"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "sandy",
-      "class": "legendary"
-    },
-    "94": {
-      "id": 16000099,
-      "name": "PIERCE",
-      "power": 9,
-      "rank": 2,
-      "trophies": 388,
-      "highestTrophies": 388,
-      "prestigeLevel": 0,
-      "currentWinStreak": 1,
-      "maxWinStreak": 18,
-      "skin": {
-        "id": 29001432,
-        "name": "EDGY PIERCE"
-      },
-      "gadgets": [
-        {
-          "id": 23001063,
-          "name": "YOU ONLY BRAWL TWICE"
-        }
-      ],
-      "gears": [
-        {
-          "id": 62000004,
-          "name": "SHIELD",
-          "level": 3
-        }
-      ],
-      "starPowers": [
-        {
-          "id": 23001061,
-          "name": "SLIP 'N SNIPE"
-        }
-      ],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "pierce",
-      "class": "legendary"
-    },
-    "5": {
-      "id": 16000005,
-      "name": "SPIKE",
-      "power": 9,
-      "rank": 2,
-      "trophies": 300,
-      "highestTrophies": 300,
-      "prestigeLevel": 0,
-      "currentWinStreak": 1,
-      "maxWinStreak": 6,
-      "skin": {
-        "id": 29000208,
-        "name": "MASK SPIKE"
-      },
-      "gadgets": [],
-      "gears": [],
       "starPowers": [
         {
           "id": 23000081,
           "name": "FERTILIZE"
+        },
+        {
+          "id": 23000151,
+          "name": "CURVEBALL"
         }
       ],
       "hyperCharges": [
@@ -578,19 +315,171 @@
       "path": "spike",
       "class": "legendary"
     },
-    "39": {
+    "34": {
+      "id": 16000038,
+      "name": "SURGE",
+      "power": 11,
+      "rank": 5,
+      "trophies": 1025,
+      "highestTrophies": 1025,
+      "prestigeLevel": 1,
+      "currentWinStreak": 1,
+      "maxWinStreak": 7,
+      "skin": {
+        "id": 29000689,
+        "name": "KRAKEN SURGE"
+      },
+      "gadgets": [
+        {
+          "id": 23000285,
+          "name": "POWER SURGE"
+        },
+        {
+          "id": 23000485,
+          "name": "POWER SHIELD"
+        }
+      ],
+      "gears": [
+        {
+          "id": 62000002,
+          "name": "DAMAGE",
+          "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000283,
+          "name": "TO THE MAX!"
+        },
+        {
+          "id": 23000284,
+          "name": "SERVE ICE COLD"
+        }
+      ],
+      "hyperCharges": [
+        {
+          "id": 23000826,
+          "name": "STAGE 5"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "surge",
+      "class": "legendary"
+    },
+    "22": {
+      "id": 16000023,
+      "name": "LEON",
+      "power": 10,
+      "rank": 5,
+      "trophies": 1005,
+      "highestTrophies": 1005,
+      "prestigeLevel": 1,
+      "currentWinStreak": 2,
+      "maxWinStreak": 25,
+      "skin": {
+        "id": 29000557,
+        "name": "TRICK OR TREAT LEON"
+      },
+      "gadgets": [
+        {
+          "id": 23000276,
+          "name": "CLONE PROJECTOR"
+        }
+      ],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000119,
+          "name": "SMOKE TRAILS"
+        },
+        {
+          "id": 23000141,
+          "name": "INVISIHEAL"
+        }
+      ],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": true,
+        "hyperCharge": false
+      },
+      "path": "leon",
+      "class": "legendary"
+    },
+    "55": {
+      "id": 16000063,
+      "name": "CHESTER",
+      "power": 9,
+      "rank": 3,
+      "trophies": 657,
+      "highestTrophies": 657,
+      "prestigeLevel": 0,
+      "currentWinStreak": 2,
+      "maxWinStreak": 4,
+      "skin": {
+        "id": 29000609,
+        "name": "DARK CHESTER"
+      },
+      "gadgets": [
+        {
+          "id": 23000530,
+          "name": "CANDY BEANS"
+        }
+      ],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000527,
+          "name": "SINGLE BELL'O'MANIA"
+        },
+        {
+          "id": 23000528,
+          "name": "SNEAK PEEK"
+        }
+      ],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "chester",
+      "class": "legendary"
+    },
+    "36": {
       "id": 16000040,
       "name": "AMBER",
-      "power": 9,
-      "rank": 1,
-      "trophies": 206,
-      "highestTrophies": 209,
+      "power": 10,
+      "rank": 2,
+      "trophies": 379,
+      "highestTrophies": 379,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 10,
+      "currentWinStreak": 2,
+      "maxWinStreak": 3,
       "skin": {
-        "id": 29000207,
-        "name": "AMBER"
+        "id": 29001128,
+        "name": "FIENDISH AMBER"
       },
       "gadgets": [
         {
@@ -602,8 +491,23 @@
           "name": "DANCING FLAMES"
         }
       ],
-      "gears": [],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        },
+        {
+          "id": 62000013,
+          "name": "STICKY OIL",
+          "level": 3
+        }
+      ],
       "starPowers": [
+        {
+          "id": 23000307,
+          "name": "WILD FLAMES"
+        },
         {
           "id": 23000308,
           "name": "SCORCHIN' SIPHON"
@@ -618,26 +522,102 @@
       "path": "amber",
       "class": "legendary"
     },
-    "67": {
-      "id": 16000070,
-      "name": "CORDELIUS",
-      "power": 8,
-      "rank": 1,
-      "trophies": 189,
-      "highestTrophies": 189,
+    "12": {
+      "id": 16000012,
+      "name": "CROW",
+      "power": 11,
+      "rank": 2,
+      "trophies": 261,
+      "highestTrophies": 261,
       "prestigeLevel": 0,
       "currentWinStreak": 1,
-      "maxWinStreak": 10,
+      "maxWinStreak": 5,
       "skin": {
-        "id": 29000694,
-        "name": "POISON CAP CORDELIUS"
+        "id": 29001486,
+        "name": "DRAGON CROW II"
       },
       "gadgets": [
         {
-          "id": 23000588,
-          "name": "POISON MUSHROOM"
+          "id": 23000243,
+          "name": "INSTAPOISON"
+        },
+        {
+          "id": 23000286,
+          "name": "SLOWING TOXIN"
         }
       ],
+      "gears": [
+        {
+          "id": 62000002,
+          "name": "DAMAGE",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000088,
+          "name": "EXTRA TOXIC"
+        },
+        {
+          "id": 23000143,
+          "name": "CARRION CROW"
+        }
+      ],
+      "hyperCharges": [
+        {
+          "id": 23000650,
+          "name": "UTILITY KNIVES"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": true
+      },
+      "path": "crow",
+      "class": "legendary"
+    },
+    "48": {
+      "id": 16000052,
+      "name": "MEG",
+      "power": 7,
+      "rank": 1,
+      "trophies": 221,
+      "highestTrophies": 222,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 12,
+      "skin": {
+        "id": 29000360,
+        "name": "MEG"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "meg",
+      "class": "legendary"
+    },
+    "62": {
+      "id": 16000070,
+      "name": "CORDELIUS",
+      "power": 1,
+      "rank": 1,
+      "trophies": 0,
+      "highestTrophies": 0,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 0,
+      "skin": {
+        "id": 29000676,
+        "name": "CORDELIUS"
+      },
+      "gadgets": [],
       "gears": [],
       "starPowers": [],
       "hyperCharges": [],
@@ -649,43 +629,33 @@
       "path": "cordelius",
       "class": "legendary"
     },
-    "60": {
-      "id": 16000063,
-      "name": "CHESTER",
-      "power": 9,
+    "69": {
+      "id": 16000080,
+      "name": "DRACO",
+      "power": 1,
       "rank": 1,
-      "trophies": 135,
-      "highestTrophies": 135,
+      "trophies": 0,
+      "highestTrophies": 0,
       "prestigeLevel": 0,
-      "currentWinStreak": 1,
-      "maxWinStreak": 9,
+      "currentWinStreak": 0,
+      "maxWinStreak": 0,
       "skin": {
-        "id": 29000609,
-        "name": "DARK CHESTER"
+        "id": 29000853,
+        "name": "DRACO"
       },
-      "gadgets": [
-        {
-          "id": 23000529,
-          "name": "SPICY DICE"
-        }
-      ],
+      "gadgets": [],
       "gears": [],
       "starPowers": [],
-      "hyperCharges": [
-        {
-          "id": 23000900,
-          "name": "CRUNCHY, CHEWY, GOOEY"
-        }
-      ],
+      "hyperCharges": [],
       "buffies": {
         "gadget": false,
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "chester",
+      "path": "draco",
       "class": "legendary"
     },
-    "81": {
+    "73": {
       "id": 16000085,
       "name": "KENJI",
       "power": 1,
@@ -716,14 +686,14 @@
       "name": "MORTIS",
       "power": 11,
       "rank": 5,
-      "trophies": 1015,
-      "highestTrophies": 1026,
+      "trophies": 1009,
+      "highestTrophies": 1009,
       "prestigeLevel": 1,
-      "currentWinStreak": 0,
-      "maxWinStreak": 8,
+      "currentWinStreak": 3,
+      "maxWinStreak": 6,
       "skin": {
-        "id": 29000173,
-        "name": "ROGUE MORTIS"
+        "id": 29000230,
+        "name": "TRUE SILVER MORTIS"
       },
       "gadgets": [
         {
@@ -751,9 +721,18 @@
         {
           "id": 23000087,
           "name": "CREEPY HARVEST"
+        },
+        {
+          "id": 23000154,
+          "name": "COILED SNAKE"
         }
       ],
-      "hyperCharges": [],
+      "hyperCharges": [
+        {
+          "id": 23000819,
+          "name": "BLOOD BOOMERANG"
+        }
+      ],
       "buffies": {
         "gadget": true,
         "starPower": true,
@@ -762,19 +741,74 @@
       "path": "mortis",
       "class": "mythic"
     },
-    "48": {
-      "id": 16000049,
-      "name": "BUZZ",
-      "power": 11,
+    "50": {
+      "id": 16000054,
+      "name": "FANG",
+      "power": 9,
       "rank": 5,
       "trophies": 1007,
       "highestTrophies": 1007,
       "prestigeLevel": 1,
-      "currentWinStreak": 1,
-      "maxWinStreak": 14,
+      "currentWinStreak": 2,
+      "maxWinStreak": 4,
       "skin": {
-        "id": 29000824,
-        "name": "GODZILLA BUZZ"
+        "id": 29000788,
+        "name": "RED PITCHER FANG"
+      },
+      "gadgets": [
+        {
+          "id": 23000440,
+          "name": "CORN-FU"
+        },
+        {
+          "id": 23000464,
+          "name": "ROUNDHOUSE KICK"
+        }
+      ],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000438,
+          "name": "FRESH KICKS"
+        },
+        {
+          "id": 23000439,
+          "name": "DIVINE SOLES"
+        }
+      ],
+      "hyperCharges": [
+        {
+          "id": 23000653,
+          "name": "DRAGON KICK"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "fang",
+      "class": "mythic"
+    },
+    "45": {
+      "id": 16000049,
+      "name": "BUZZ",
+      "power": 11,
+      "rank": 5,
+      "trophies": 1004,
+      "highestTrophies": 1004,
+      "prestigeLevel": 1,
+      "currentWinStreak": 2,
+      "maxWinStreak": 5,
+      "skin": {
+        "id": 29000953,
+        "name": "BUZZ PATRICK"
       },
       "gadgets": [
         {
@@ -788,8 +822,8 @@
       ],
       "gears": [
         {
-          "id": 62000002,
-          "name": "DAMAGE",
+          "id": 62000001,
+          "name": "HEALTH",
           "level": 3
         },
         {
@@ -799,10 +833,6 @@
         }
       ],
       "starPowers": [
-        {
-          "id": 23000390,
-          "name": "TOUGHER TORPEDO"
-        },
         {
           "id": 23000391,
           "name": "EYES SHARP"
@@ -822,217 +852,19 @@
       "path": "buzz",
       "class": "mythic"
     },
-    "32": {
-      "id": 16000032,
-      "name": "MAX",
-      "power": 11,
-      "rank": 3,
-      "trophies": 550,
-      "highestTrophies": 625,
-      "prestigeLevel": 0,
-      "currentWinStreak": 4,
-      "maxWinStreak": 4,
-      "skin": {
-        "id": 29000202,
-        "name": "STREETWEAR MAX"
-      },
-      "gadgets": [
-        {
-          "id": 23000254,
-          "name": "PHASE SHIFTER"
-        },
-        {
-          "id": 23000311,
-          "name": "SNEAKY SNEAKERS"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000210,
-          "name": "SUPER CHARGED"
-        },
-        {
-          "id": 23000211,
-          "name": "RUN N GUN"
-        }
-      ],
-      "hyperCharges": [
-        {
-          "id": 23000689,
-          "name": "UNLIMITED ENERGY"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "max",
-      "class": "mythic"
-    },
-    "61": {
-      "id": 16000064,
-      "name": "GRAY",
-      "power": 9,
-      "rank": 2,
-      "trophies": 470,
-      "highestTrophies": 476,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 4,
-      "skin": {
-        "id": 29000635,
-        "name": "DETECTIVE GRAY NOIR EDITION"
-      },
-      "gadgets": [
-        {
-          "id": 23000537,
-          "name": "WALKING CANE"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000535,
-          "name": "FAKE INJURY"
-        },
-        {
-          "id": 23000536,
-          "name": "NEW PERSPECTIVE"
-        }
-      ],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "gray",
-      "class": "mythic"
-    },
     "43": {
-      "id": 16000044,
-      "name": "RUFFS",
-      "power": 8,
-      "rank": 2,
-      "trophies": 418,
-      "highestTrophies": 418,
-      "prestigeLevel": 0,
-      "currentWinStreak": 3,
-      "maxWinStreak": 3,
-      "skin": {
-        "id": 29001005,
-        "name": "SOUS CHEF RUFFS"
-      },
-      "gadgets": [
-        {
-          "id": 23000402,
-          "name": "AIR SUPPORT"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "ruffs",
-      "class": "mythic"
-    },
-    "36": {
-      "id": 16000037,
-      "name": "SPROUT",
-      "power": 8,
-      "rank": 2,
-      "trophies": 352,
-      "highestTrophies": 356,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
-      "skin": {
-        "id": 29000382,
-        "name": "RUBY PRINCE SPROUT"
-      },
-      "gadgets": [
-        {
-          "id": 23000244,
-          "name": "GARDEN MULCHER"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "sprout",
-      "class": "mythic"
-    },
-    "52": {
-      "id": 16000054,
-      "name": "FANG",
-      "power": 9,
-      "rank": 2,
-      "trophies": 342,
-      "highestTrophies": 342,
-      "prestigeLevel": 0,
-      "currentWinStreak": 3,
-      "maxWinStreak": 13,
-      "skin": {
-        "id": 29000725,
-        "name": "KABOCHA FANG"
-      },
-      "gadgets": [
-        {
-          "id": 23000464,
-          "name": "ROUNDHOUSE KICK"
-        }
-      ],
-      "gears": [
-        {
-          "id": 62000017,
-          "name": "GADGET COOLDOWN",
-          "level": 3
-        }
-      ],
-      "starPowers": [
-        {
-          "id": 23000438,
-          "name": "FRESH KICKS"
-        }
-      ],
-      "hyperCharges": [
-        {
-          "id": 23000653,
-          "name": "DRAGON KICK"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "fang",
-      "class": "mythic"
-    },
-    "46": {
       "id": 16000047,
       "name": "SQUEAK",
-      "power": 9,
-      "rank": 2,
-      "trophies": 326,
-      "highestTrophies": 326,
-      "prestigeLevel": 0,
-      "currentWinStreak": 2,
-      "maxWinStreak": 3,
+      "power": 10,
+      "rank": 5,
+      "trophies": 1001,
+      "highestTrophies": 1001,
+      "prestigeLevel": 1,
+      "currentWinStreak": 1,
+      "maxWinStreak": 5,
       "skin": {
-        "id": 29000569,
-        "name": "MOON BUNNY SQUEAK"
+        "id": 29000379,
+        "name": "FIRST BLOB SQUEAK"
       },
       "gadgets": [
         {
@@ -1044,14 +876,34 @@
           "name": "RESIDUE"
         }
       ],
-      "gears": [],
+      "gears": [
+        {
+          "id": 62000002,
+          "name": "DAMAGE",
+          "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
       "starPowers": [
         {
           "id": 23000376,
           "name": "CHAIN REACTION"
+        },
+        {
+          "id": 23000377,
+          "name": "SUPER STICKY"
         }
       ],
-      "hyperCharges": [],
+      "hyperCharges": [
+        {
+          "id": 23000823,
+          "name": "BOUNCY BLOB"
+        }
+      ],
       "buffies": {
         "gadget": false,
         "starPower": false,
@@ -1060,52 +912,71 @@
       "path": "squeak",
       "class": "mythic"
     },
-    "17": {
-      "id": 16000017,
-      "name": "TARA",
-      "power": 7,
-      "rank": 2,
-      "trophies": 305,
-      "highestTrophies": 311,
+    "38": {
+      "id": 16000042,
+      "name": "BYRON",
+      "power": 9,
+      "rank": 3,
+      "trophies": 659,
+      "highestTrophies": 659,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 1,
+      "currentWinStreak": 3,
+      "maxWinStreak": 5,
       "skin": {
-        "id": 29000592,
-        "name": "RAGEQUIT TARA"
+        "id": 29000505,
+        "name": "OVERLORD BYRON"
       },
       "gadgets": [
         {
-          "id": 23000266,
-          "name": "PSYCHIC ENHANCER"
+          "id": 23000461,
+          "name": "BOOSTER SHOTS"
         }
       ],
-      "gears": [],
-      "starPowers": [],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000331,
+          "name": "MALAISE"
+        },
+        {
+          "id": 23000332,
+          "name": "INJECTION"
+        }
+      ],
       "hyperCharges": [],
       "buffies": {
         "gadget": false,
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "tara",
+      "path": "byron",
       "class": "mythic"
     },
-    "72": {
+    "65": {
       "id": 16000075,
       "name": "MICO",
-      "power": 9,
-      "rank": 2,
-      "trophies": 292,
-      "highestTrophies": 292,
+      "power": 7,
+      "rank": 3,
+      "trophies": 634,
+      "highestTrophies": 634,
       "prestigeLevel": 0,
-      "currentWinStreak": 5,
+      "currentWinStreak": 6,
       "maxWinStreak": 6,
       "skin": {
         "id": 29000746,
         "name": "MACARON MICO"
       },
       "gadgets": [
+        {
+          "id": 23000639,
+          "name": "CLIPPING SCREAM"
+        },
         {
           "id": 23000640,
           "name": "PRESTO"
@@ -1127,85 +998,116 @@
       "path": "mico",
       "class": "mythic"
     },
-    "41": {
-      "id": 16000042,
-      "name": "BYRON",
-      "power": 7,
-      "rank": 2,
-      "trophies": 270,
-      "highestTrophies": 270,
-      "prestigeLevel": 0,
-      "currentWinStreak": 4,
-      "maxWinStreak": 4,
-      "skin": {
-        "id": 29001279,
-        "name": "FRANK BYRON"
-      },
-      "gadgets": [
-        {
-          "id": 23000461,
-          "name": "BOOSTER SHOTS"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "byron",
-      "class": "mythic"
-    },
     "40": {
-      "id": 16000041,
-      "name": "LOU",
-      "power": 7,
-      "rank": 1,
-      "trophies": 222,
-      "highestTrophies": 232,
+      "id": 16000044,
+      "name": "RUFFS",
+      "power": 9,
+      "rank": 4,
+      "trophies": 619,
+      "highestTrophies": 750,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
+      "currentWinStreak": 1,
+      "maxWinStreak": 2,
       "skin": {
-        "id": 29000231,
-        "name": "LOU"
+        "id": 29001108,
+        "name": "RUFFESSES II"
       },
       "gadgets": [
         {
-          "id": 23000326,
-          "name": "ICE BLOCK"
+          "id": 23000347,
+          "name": "TAKE COVER"
         },
         {
-          "id": 23000400,
-          "name": "CRYO SYRUP"
+          "id": 23000402,
+          "name": "AIR SUPPORT"
         }
       ],
-      "gears": [],
-      "starPowers": [],
+      "gears": [
+        {
+          "id": 62000001,
+          "name": "HEALTH",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000345,
+          "name": "AIR SUPERIORITY"
+        },
+        {
+          "id": 23000346,
+          "name": "FIELD PROMOTION"
+        }
+      ],
+      "hyperCharges": [
+        {
+          "id": 23000860,
+          "name": "THE GOODEST BOY"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "ruffs",
+      "class": "mythic"
+    },
+    "59": {
+      "id": 16000067,
+      "name": "WILLOW",
+      "power": 9,
+      "rank": 2,
+      "trophies": 367,
+      "highestTrophies": 367,
+      "prestigeLevel": 0,
+      "currentWinStreak": 5,
+      "maxWinStreak": 11,
+      "skin": {
+        "id": 29000703,
+        "name": "SCORPION WILLOW"
+      },
+      "gadgets": [
+        {
+          "id": 23000564,
+          "name": "DIVE"
+        }
+      ],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000561,
+          "name": "LOVE IS BLIND"
+        }
+      ],
       "hyperCharges": [],
       "buffies": {
         "gadget": false,
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "lou",
+      "path": "willow",
       "class": "mythic"
     },
-    "80": {
+    "72": {
       "id": 16000084,
       "name": "MOE",
-      "power": 9,
-      "rank": 1,
-      "trophies": 207,
-      "highestTrophies": 209,
+      "power": 11,
+      "rank": 2,
+      "trophies": 342,
+      "highestTrophies": 342,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 7,
+      "currentWinStreak": 1,
+      "maxWinStreak": 5,
       "skin": {
-        "id": 29000941,
-        "name": "MOE"
+        "id": 29000977,
+        "name": "MONTEREY MOE"
       },
       "gadgets": [
         {
@@ -1217,23 +1119,25 @@
           "name": "RAT RACE"
         }
       ],
-      "gears": [],
+      "gears": [
+        {
+          "id": 62000002,
+          "name": "DAMAGE",
+          "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
       "starPowers": [
         {
           "id": 23000804,
           "name": "SKIPPING STONES"
-        },
-        {
-          "id": 23000805,
-          "name": "SPEEDING TICKET"
         }
       ],
-      "hyperCharges": [
-        {
-          "id": 23001002,
-          "name": "THE BIG CHEESE"
-        }
-      ],
+      "hyperCharges": [],
       "buffies": {
         "gadget": false,
         "starPower": false,
@@ -1242,28 +1146,48 @@
       "path": "moe",
       "class": "mythic"
     },
-    "79": {
+    "71": {
       "id": 16000083,
       "name": "CLANCY",
-      "power": 8,
-      "rank": 1,
-      "trophies": 183,
-      "highestTrophies": 184,
+      "power": 11,
+      "rank": 2,
+      "trophies": 335,
+      "highestTrophies": 335,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 2,
+      "currentWinStreak": 1,
+      "maxWinStreak": 16,
       "skin": {
         "id": 29000921,
         "name": "HIGH STAKES CLANCY"
       },
       "gadgets": [
         {
-          "id": 23000774,
-          "name": "SNAPPY SHOOTING"
+          "id": 23000775,
+          "name": "TACTICAL RETREAT"
         }
       ],
-      "gears": [],
-      "starPowers": [],
+      "gears": [
+        {
+          "id": 62000002,
+          "name": "DAMAGE",
+          "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000772,
+          "name": "RECON"
+        },
+        {
+          "id": 23000773,
+          "name": "PUMPING UP"
+        }
+      ],
       "hyperCharges": [
         {
           "id": 23000933,
@@ -1278,35 +1202,71 @@
       "path": "clancy",
       "class": "mythic"
     },
-    "68": {
-      "id": 16000071,
-      "name": "DOUG",
-      "power": 9,
-      "rank": 1,
-      "trophies": 181,
-      "highestTrophies": 181,
+    "17": {
+      "id": 16000017,
+      "name": "TARA",
+      "power": 4,
+      "rank": 2,
+      "trophies": 331,
+      "highestTrophies": 331,
       "prestigeLevel": 0,
-      "currentWinStreak": 5,
-      "maxWinStreak": 5,
+      "currentWinStreak": 1,
+      "maxWinStreak": 1,
       "skin": {
-        "id": 29000808,
-        "name": "TRUE GOLD DOUG"
+        "id": 29001163,
+        "name": "SHUKUTEKI TARA"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "tara",
+      "class": "mythic"
+    },
+    "29": {
+      "id": 16000031,
+      "name": "MR. P",
+      "power": 9,
+      "rank": 2,
+      "trophies": 307,
+      "highestTrophies": 309,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 11,
+      "skin": {
+        "id": 29000506,
+        "name": "DARUMA MR. P"
       },
       "gadgets": [
         {
-          "id": 23000596,
-          "name": "EXTRA MUSTARD"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000593,
-          "name": "FAST FOOD"
+          "id": 23000269,
+          "name": "SERVICE BELL"
         },
         {
-          "id": 23000594,
-          "name": "SELF SERVICE"
+          "id": 23000349,
+          "name": "PORTER REINFORCEMENTS"
+        }
+      ],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000204,
+          "name": "HANDLE WITH CARE"
+        },
+        {
+          "id": 23000205,
+          "name": "REVOLVING DOOR"
         }
       ],
       "hyperCharges": [],
@@ -1315,28 +1275,163 @@
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "doug",
+      "path": "mr__p",
       "class": "mythic"
     },
-    "63": {
-      "id": 16000066,
-      "name": "R-T",
-      "power": 10,
-      "rank": 1,
-      "trophies": 174,
-      "highestTrophies": 174,
+    "30": {
+      "id": 16000032,
+      "name": "MAX",
+      "power": 7,
+      "rank": 2,
+      "trophies": 254,
+      "highestTrophies": 254,
       "prestigeLevel": 0,
-      "currentWinStreak": 4,
-      "maxWinStreak": 4,
+      "currentWinStreak": 0,
+      "maxWinStreak": 7,
       "skin": {
-        "id": 29001283,
-        "name": "GARGOYLE R-T"
+        "id": 29000998,
+        "name": "ANGEL MAX"
       },
       "gadgets": [
         {
-          "id": 23000555,
-          "name": "OUT OF LINE"
+          "id": 23000254,
+          "name": "PHASE SHIFTER"
+        }
+      ],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "max",
+      "class": "mythic"
+    },
+    "80": {
+      "id": 16000095,
+      "name": "ALLI",
+      "power": 9,
+      "rank": 2,
+      "trophies": 250,
+      "highestTrophies": 251,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 8,
+      "skin": {
+        "id": 29001315,
+        "name": "GRAFFITI ALLI"
+      },
+      "gadgets": [
+        {
+          "id": 23000991,
+          "name": "FEED THE GATORS"
+        }
+      ],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000990,
+          "name": "YOU BETTER RUN, YOU BETTER TAKE COVER"
+        }
+      ],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "alli",
+      "class": "mythic"
+    },
+    "76": {
+      "id": 16000090,
+      "name": "OLLIE",
+      "power": 9,
+      "rank": 1,
+      "trophies": 214,
+      "highestTrophies": 214,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 15,
+      "skin": {
+        "id": 29001103,
+        "name": "PHARAOLLIE"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [
+        {
+          "id": 23000883,
+          "name": "KICK, PUSH"
         },
+        {
+          "id": 23000884,
+          "name": "RENEGADE"
+        }
+      ],
+      "hyperCharges": [
+        {
+          "id": 23001033,
+          "name": "AIN'T NO HALF-SUPERING"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "ollie",
+      "class": "mythic"
+    },
+    "83": {
+      "id": 16000101,
+      "name": "GLOWY",
+      "power": 7,
+      "rank": 1,
+      "trophies": 212,
+      "highestTrophies": 212,
+      "prestigeLevel": 0,
+      "currentWinStreak": 10,
+      "maxWinStreak": 10,
+      "skin": {
+        "id": 29001400,
+        "name": "GLOWY"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "glowy",
+      "class": "mythic"
+    },
+    "58": {
+      "id": 16000066,
+      "name": "R-T",
+      "power": 8,
+      "rank": 1,
+      "trophies": 173,
+      "highestTrophies": 173,
+      "prestigeLevel": 0,
+      "currentWinStreak": 6,
+      "maxWinStreak": 6,
+      "skin": {
+        "id": 29000637,
+        "name": "PATROL R-T"
+      },
+      "gadgets": [
         {
           "id": 23000556,
           "name": "HACKS!"
@@ -1358,28 +1453,24 @@
       "path": "r-t",
       "class": "mythic"
     },
-    "54": {
-      "id": 16000057,
-      "name": "JANET",
+    "85": {
+      "id": 16000103,
+      "name": "NAJIA",
       "power": 7,
       "rank": 1,
-      "trophies": 160,
-      "highestTrophies": 161,
+      "trophies": 91,
+      "highestTrophies": 91,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 3,
+      "currentWinStreak": 6,
+      "maxWinStreak": 6,
       "skin": {
-        "id": 29000593,
-        "name": "G-FORCE JANET"
+        "id": 29001510,
+        "name": "NAJIA"
       },
       "gadgets": [
         {
-          "id": 23000472,
-          "name": "DROP THE BASS"
-        },
-        {
-          "id": 23000473,
-          "name": "BACKSTAGE PASS"
+          "id": 23001219,
+          "name": "NAJIA JAR"
         }
       ],
       "gears": [],
@@ -1390,44 +1481,57 @@
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "janet",
+      "path": "najia",
       "class": "mythic"
     },
-    "87": {
+    "51": {
+      "id": 16000056,
+      "name": "EVE",
+      "power": 1,
+      "rank": 1,
+      "trophies": 18,
+      "highestTrophies": 18,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 1,
+      "skin": {
+        "id": 29000460,
+        "name": "EVE"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [
+        {
+          "id": 23000892,
+          "name": "GENERATIONS"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "eve",
+      "class": "mythic"
+    },
+    "78": {
       "id": 16000092,
       "name": "FINX",
       "power": 9,
       "rank": 1,
-      "trophies": 145,
-      "highestTrophies": 146,
+      "trophies": 13,
+      "highestTrophies": 13,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 9,
+      "currentWinStreak": 1,
+      "maxWinStreak": 1,
       "skin": {
-        "id": 29001095,
-        "name": "FINX"
+        "id": 29001134,
+        "name": "JURASSIC FINX"
       },
-      "gadgets": [
-        {
-          "id": 23000917,
-          "name": "BACK TO THE FINXTURE"
-        },
-        {
-          "id": 23000918,
-          "name": "NO ESCAPE"
-        }
-      ],
+      "gadgets": [],
       "gears": [],
-      "starPowers": [
-        {
-          "id": 23000915,
-          "name": "HIEROGLYPH HALT"
-        },
-        {
-          "id": 23000916,
-          "name": "PRIMER"
-        }
-      ],
+      "starPowers": [],
       "hyperCharges": [],
       "buffies": {
         "gadget": false,
@@ -1437,74 +1541,102 @@
       "path": "finx",
       "class": "mythic"
     },
-    "56": {
-      "id": 16000059,
-      "name": "OTIS",
-      "power": 9,
+    "37": {
+      "id": 16000041,
+      "name": "LOU",
+      "power": 1,
       "rank": 1,
-      "trophies": 141,
-      "highestTrophies": 141,
+      "trophies": 0,
+      "highestTrophies": 0,
       "prestigeLevel": 0,
-      "currentWinStreak": 1,
-      "maxWinStreak": 1,
+      "currentWinStreak": 0,
+      "maxWinStreak": 0,
       "skin": {
-        "id": 29000533,
-        "name": "OTIS"
+        "id": 29000231,
+        "name": "LOU"
       },
-      "gadgets": [
-        {
-          "id": 23000498,
-          "name": "PHAT SPLATTER"
-        }
-      ],
+      "gadgets": [],
       "gears": [],
-      "starPowers": [
-        {
-          "id": 23000495,
-          "name": "STENCIL GLUE"
-        },
-        {
-          "id": 23000496,
-          "name": "INK REFILLS"
-        }
-      ],
+      "starPowers": [],
       "hyperCharges": [],
       "buffies": {
         "gadget": false,
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "otis",
+      "path": "lou",
       "class": "mythic"
     },
-    "75": {
-      "id": 16000078,
-      "name": "MELODIE",
-      "power": 8,
+    "56": {
+      "id": 16000064,
+      "name": "GRAY",
+      "power": 1,
       "rank": 1,
-      "trophies": 141,
-      "highestTrophies": 141,
+      "trophies": 0,
+      "highestTrophies": 0,
       "prestigeLevel": 0,
       "currentWinStreak": 0,
-      "maxWinStreak": 6,
+      "maxWinStreak": 0,
+      "skin": {
+        "id": 29001160,
+        "name": "WANDERER GRAY"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "gray",
+      "class": "mythic"
+    },
+    "63": {
+      "id": 16000071,
+      "name": "DOUG",
+      "power": 1,
+      "rank": 1,
+      "trophies": 0,
+      "highestTrophies": 0,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 0,
+      "skin": {
+        "id": 29000677,
+        "name": "DOUG"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "doug",
+      "class": "mythic"
+    },
+    "67": {
+      "id": 16000078,
+      "name": "MELODIE",
+      "power": 1,
+      "rank": 1,
+      "trophies": 0,
+      "highestTrophies": 0,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 0,
       "skin": {
         "id": 29000773,
         "name": "MELODIE"
       },
-      "gadgets": [
-        {
-          "id": 23000670,
-          "name": "INTERLUDE"
-        }
-      ],
+      "gadgets": [],
       "gears": [],
       "starPowers": [],
-      "hyperCharges": [
-        {
-          "id": 23000887,
-          "name": "FLASH MOB"
-        }
-      ],
+      "hyperCharges": [],
       "buffies": {
         "gadget": false,
         "starPower": false,
@@ -1513,28 +1645,49 @@
       "path": "melodie",
       "class": "mythic"
     },
-    "92": {
-      "id": 16000097,
-      "name": "MINA",
-      "power": 9,
+    "77": {
+      "id": 16000091,
+      "name": "LUMI",
+      "power": 1,
       "rank": 1,
-      "trophies": 131,
-      "highestTrophies": 131,
+      "trophies": 0,
+      "highestTrophies": 0,
       "prestigeLevel": 0,
       "currentWinStreak": 0,
-      "maxWinStreak": 10,
+      "maxWinStreak": 0,
       "skin": {
-        "id": 29001317,
-        "name": "BEATCHASER MINA"
+        "id": 29001141,
+        "name": "DARK KNIGHT LUMI"
       },
       "gadgets": [],
       "gears": [],
-      "starPowers": [
-        {
-          "id": 23001040,
-          "name": "BLOWN AWAY"
-        }
-      ],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "lumi",
+      "class": "mythic"
+    },
+    "82": {
+      "id": 16000097,
+      "name": "MINA",
+      "power": 1,
+      "rank": 1,
+      "trophies": 0,
+      "highestTrophies": 0,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 0,
+      "skin": {
+        "id": 29001291,
+        "name": "MINA"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
       "hyperCharges": [],
       "buffies": {
         "gadget": false,
@@ -1544,654 +1697,144 @@
       "path": "mina",
       "class": "mythic"
     },
-    "70": {
-      "id": 16000073,
-      "name": "CHUCK",
-      "power": 4,
-      "rank": 1,
-      "trophies": 123,
-      "highestTrophies": 123,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
-      "skin": {
-        "id": 29000710,
-        "name": "INFERNO CHUCK"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "chuck",
-      "class": "mythic"
-    },
-    "86": {
-      "id": 16000091,
-      "name": "LUMI",
-      "power": 9,
-      "rank": 1,
-      "trophies": 119,
-      "highestTrophies": 119,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 9,
-      "skin": {
-        "id": 29001094,
-        "name": "LUMI"
-      },
-      "gadgets": [
-        {
-          "id": 23000908,
-          "name": "GRIM AND FROSTBITTEN"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000905,
-          "name": "42% BURNT"
-        },
-        {
-          "id": 23000906,
-          "name": "HALF-TIME"
-        }
-      ],
-      "hyperCharges": [
-        {
-          "id": 23000980,
-          "name": "DRUM SOLO"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "lumi",
-      "class": "mythic"
-    },
-    "88": {
-      "id": 16000093,
-      "name": "JAE-YONG",
-      "power": 7,
-      "rank": 1,
-      "trophies": 115,
-      "highestTrophies": 115,
-      "prestigeLevel": 0,
-      "currentWinStreak": 3,
-      "maxWinStreak": 8,
-      "skin": {
-        "id": 29001199,
-        "name": "JAMMIN' JAE"
-      },
-      "gadgets": [
-        {
-          "id": 23000931,
-          "name": "WEEKEND WARRIOR"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "jae-yong",
-      "class": "mythic"
-    },
-    "53": {
-      "id": 16000056,
-      "name": "EVE",
-      "power": 6,
-      "rank": 1,
-      "trophies": 115,
-      "highestTrophies": 116,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
-      "skin": {
-        "id": 29000460,
-        "name": "EVE"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "eve",
-      "class": "mythic"
-    },
-    "77": {
-      "id": 16000081,
-      "name": "LILY",
-      "power": 7,
-      "rank": 1,
-      "trophies": 104,
-      "highestTrophies": 104,
-      "prestigeLevel": 0,
-      "currentWinStreak": 9,
-      "maxWinStreak": 9,
-      "skin": {
-        "id": 29000854,
-        "name": "LILY"
-      },
-      "gadgets": [
-        {
-          "id": 23000754,
-          "name": "VANISH"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "lily",
-      "class": "mythic"
-    },
-    "90": {
-      "id": 16000095,
-      "name": "ALLI",
-      "power": 7,
-      "rank": 1,
-      "trophies": 95,
-      "highestTrophies": 95,
-      "prestigeLevel": 0,
-      "currentWinStreak": 7,
-      "maxWinStreak": 7,
-      "skin": {
-        "id": 29001414,
-        "name": "BADDIE ALLI"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "alli",
-      "class": "mythic"
-    },
-    "64": {
-      "id": 16000067,
-      "name": "WILLOW",
-      "power": 5,
-      "rank": 1,
-      "trophies": 93,
-      "highestTrophies": 93,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
-      "skin": {
-        "id": 29000629,
-        "name": "WILLOW"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "willow",
-      "class": "mythic"
-    },
-    "21": {
-      "id": 16000021,
-      "name": "GENE",
-      "power": 5,
-      "rank": 1,
-      "trophies": 91,
-      "highestTrophies": 92,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
-      "skin": {
-        "id": 29001017,
-        "name": "ANGEL GENE"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [
-        {
-          "id": 23000690,
-          "name": "HYPER HANDS"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "gene",
-      "class": "mythic"
-    },
-    "71": {
-      "id": 16000074,
-      "name": "CHARLIE",
-      "power": 4,
-      "rank": 1,
-      "trophies": 38,
-      "highestTrophies": 38,
-      "prestigeLevel": 0,
-      "currentWinStreak": 4,
-      "maxWinStreak": 4,
-      "skin": {
-        "id": 29000719,
-        "name": "CHARLIE"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [
-        {
-          "id": 23000627,
-          "name": "PESTILENCE"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "charlie",
-      "class": "mythic"
-    },
-    "83": {
-      "id": 16000087,
-      "name": "JUJU",
-      "power": 1,
-      "rank": 1,
-      "trophies": 8,
-      "highestTrophies": 8,
-      "prestigeLevel": 0,
-      "currentWinStreak": 1,
-      "maxWinStreak": 1,
-      "skin": {
-        "id": 29001024,
-        "name": "JUJU"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "juju",
-      "class": "mythic"
-    },
-    "59": {
-      "id": 16000062,
-      "name": "BUSTER",
-      "power": 4,
-      "rank": 1,
-      "trophies": 0,
-      "highestTrophies": 0,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
-      "skin": {
-        "id": 29000586,
-        "name": "BUSTER"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "buster",
-      "class": "mythic"
-    },
-    "93": {
-      "id": 16000098,
-      "name": "ZIGGY",
-      "power": 1,
-      "rank": 1,
-      "trophies": 0,
-      "highestTrophies": 0,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
-      "skin": {
-        "id": 29001292,
-        "name": "ZIGGY"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "ziggy",
-      "class": "mythic"
-    },
-    "85": {
-      "id": 16000090,
-      "name": "OLLIE",
-      "power": 1,
-      "rank": 1,
-      "trophies": 0,
-      "highestTrophies": 0,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
-      "skin": {
-        "id": 29001092,
-        "name": "OLLIE-G"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "ollie",
-      "class": "mythic"
-    },
-    "95": {
-      "id": 16000100,
-      "name": "GIGI",
-      "power": 1,
-      "rank": 1,
-      "trophies": 0,
-      "highestTrophies": 0,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
-      "skin": {
-        "id": 29001341,
-        "name": "GIGI"
-      },
-      "gadgets": [],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [
-        {
-          "id": 23001211,
-          "name": "PAS DE DEUX"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "gigi",
-      "class": "mythic"
-    },
-    "26": {
-      "id": 16000026,
-      "name": "BIBI",
+    "66": {
+      "id": 16000077,
+      "name": "LARRY & LAWRIE",
       "power": 11,
       "rank": 5,
-      "trophies": 1005,
-      "highestTrophies": 1005,
+      "trophies": 1000,
+      "highestTrophies": 1000,
       "prestigeLevel": 1,
       "currentWinStreak": 1,
-      "maxWinStreak": 10,
+      "maxWinStreak": 6,
       "skin": {
-        "id": 29000222,
-        "name": "ZOMBIBI"
+        "id": 29000759,
+        "name": "LARRY & LAWRIE CONTROLLERS"
       },
       "gadgets": [
         {
-          "id": 23000275,
-          "name": "VITAMIN BOOSTER"
+          "id": 23000661,
+          "name": "ORDER: SWAP"
         },
         {
-          "id": 23000458,
-          "name": "EXTRA STICKY"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000134,
-          "name": "HOME RUN"
-        },
-        {
-          "id": 23000146,
-          "name": "BATTING STANCE"
-        }
-      ],
-      "hyperCharges": [
-        {
-          "id": 23000683,
-          "name": "OUT OF BOUNDS"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "bibi",
-      "class": "epic"
-    },
-    "29": {
-      "id": 16000029,
-      "name": "BEA",
-      "power": 11,
-      "rank": 3,
-      "trophies": 585,
-      "highestTrophies": 589,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 4,
-      "skin": {
-        "id": 29001282,
-        "name": "AEB"
-      },
-      "gadgets": [
-        {
-          "id": 23000271,
-          "name": "HONEY MOLASSES"
-        },
-        {
-          "id": 23000312,
-          "name": "RATTLED HIVE"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000192,
-          "name": "INSTA BEALOAD"
-        },
-        {
-          "id": 23000193,
-          "name": "HONEYCOMB"
-        }
-      ],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "bea",
-      "class": "epic"
-    },
-    "30": {
-      "id": 16000030,
-      "name": "EMZ",
-      "power": 8,
-      "rank": 3,
-      "trophies": 564,
-      "highestTrophies": 567,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 4,
-      "skin": {
-        "id": 29001003,
-        "name": "DEMON EMZ"
-      },
-      "gadgets": [
-        {
-          "id": 23000274,
-          "name": "FRIENDZONER"
-        },
-        {
-          "id": 23000459,
-          "name": "ACID SPRAY"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [
-        {
-          "id": 23000778,
-          "name": "OVERHYPED HAZE"
-        }
-      ],
-      "buffies": {
-        "gadget": true,
-        "starPower": true,
-        "hyperCharge": true
-      },
-      "path": "emz",
-      "class": "epic"
-    },
-    "14": {
-      "id": 16000014,
-      "name": "BO",
-      "power": 9,
-      "rank": 3,
-      "trophies": 532,
-      "highestTrophies": 541,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 2,
-      "skin": {
-        "id": 29000441,
-        "name": "HO HO HO BO"
-      },
-      "gadgets": [
-        {
-          "id": 23000263,
-          "name": "SUPER TOTEM"
-        },
-        {
-          "id": 23000289,
-          "name": "TRIPWIRE"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000090,
-          "name": "CIRCLING EAGLE"
-        },
-        {
-          "id": 23000148,
-          "name": "SNARE A BEAR"
-        }
-      ],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "bo",
-      "class": "epic"
-    },
-    "15": {
-      "id": 16000015,
-      "name": "PIPER",
-      "power": 9,
-      "rank": 3,
-      "trophies": 532,
-      "highestTrophies": 538,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 1,
-      "skin": {
-        "id": 29000626,
-        "name": "MARIPOSA PIPER"
-      },
-      "gadgets": [
-        {
-          "id": 23000268,
-          "name": "AUTO AIMER"
-        },
-        {
-          "id": 23000291,
-          "name": "HOMEMADE RECIPE"
+          "id": 23000662,
+          "name": "ORDER: FALL BACK"
         }
       ],
       "gears": [
         {
-          "id": 62000017,
-          "name": "GADGET COOLDOWN",
+          "id": 62000002,
+          "name": "DAMAGE",
+          "level": 3
+        },
+        {
+          "id": 62000001,
+          "name": "HEALTH",
+          "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
           "level": 3
         }
       ],
       "starPowers": [
         {
-          "id": 23000091,
-          "name": "AMBUSH"
+          "id": 23000659,
+          "name": "PROTOCOL: PROTECT"
         },
         {
-          "id": 23000152,
-          "name": "SNAPPY SNIPING"
+          "id": 23000660,
+          "name": "PROTOCOL: ASSIST"
         }
       ],
-      "hyperCharges": [],
+      "hyperCharges": [
+        {
+          "id": 23001053,
+          "name": "THE THREE-BOT PROBLEM"
+        }
+      ],
       "buffies": {
         "gadget": false,
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "piper",
+      "path": "larry___lawrie",
       "class": "epic"
     },
-    "42": {
+    "64": {
+      "id": 16000072,
+      "name": "PEARL",
+      "power": 11,
+      "rank": 4,
+      "trophies": 691,
+      "highestTrophies": 777,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 5,
+      "skin": {
+        "id": 29000709,
+        "name": "VINTAGE PEARL"
+      },
+      "gadgets": [
+        {
+          "id": 23000603,
+          "name": "OVERCOOKED"
+        },
+        {
+          "id": 23000604,
+          "name": "MADE WITH LOVE"
+        }
+      ],
+      "gears": [
+        {
+          "id": 62000002,
+          "name": "DAMAGE",
+          "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000601,
+          "name": "HEAT RETENTION"
+        },
+        {
+          "id": 23000602,
+          "name": "HEAT SHIELD"
+        }
+      ],
+      "hyperCharges": [
+        {
+          "id": 23000618,
+          "name": "PYROLYTIC"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "pearl",
+      "class": "epic"
+    },
+    "39": {
       "id": 16000043,
       "name": "EDGAR",
       "power": 9,
-      "rank": 3,
-      "trophies": 526,
-      "highestTrophies": 556,
+      "rank": 4,
+      "trophies": 601,
+      "highestTrophies": 772,
       "prestigeLevel": 0,
-      "currentWinStreak": 1,
+      "currentWinStreak": 2,
       "maxWinStreak": 2,
       "skin": {
-        "id": 29000281,
-        "name": "QUICKDRAW EDGAR"
+        "id": 29000769,
+        "name": "THIEF EDGAR"
       },
       "gadgets": [
         {
@@ -2199,7 +1842,13 @@
           "name": "HARDCORE"
         }
       ],
-      "gears": [],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
       "starPowers": [
         {
           "id": 23000338,
@@ -2210,186 +1859,46 @@
           "name": "FISTICUFFS"
         }
       ],
-      "hyperCharges": [],
+      "hyperCharges": [
+        {
+          "id": 23000654,
+          "name": "OUTBURST"
+        }
+      ],
       "buffies": {
-        "gadget": false,
+        "gadget": true,
         "starPower": false,
         "hyperCharge": false
       },
       "path": "edgar",
       "class": "epic"
     },
-    "20": {
-      "id": 16000020,
-      "name": "FRANK",
-      "power": 8,
+    "46": {
+      "id": 16000050,
+      "name": "GRIFF",
+      "power": 7,
       "rank": 3,
-      "trophies": 515,
-      "highestTrophies": 516,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 1,
-      "skin": {
-        "id": 29000619,
-        "name": "SPIRIT KNIGHT FRANK"
-      },
-      "gadgets": [
-        {
-          "id": 23000261,
-          "name": "ACTIVE NOISE CANCELING"
-        },
-        {
-          "id": 23000351,
-          "name": "IRRESISTIBLE ATTRACTION"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": true,
-        "starPower": true,
-        "hyperCharge": true
-      },
-      "path": "frank",
-      "class": "epic"
-    },
-    "44": {
-      "id": 16000045,
-      "name": "STU",
-      "power": 9,
-      "rank": 2,
-      "trophies": 470,
-      "highestTrophies": 473,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 2,
-      "skin": {
-        "id": 29000701,
-        "name": "JOCK STU"
-      },
-      "gadgets": [
-        {
-          "id": 23000364,
-          "name": "SPEED ZONE"
-        },
-        {
-          "id": 23000401,
-          "name": "BREAKTHROUGH"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000363,
-          "name": "GASO-HEAL"
-        }
-      ],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "stu",
-      "class": "epic"
-    },
-    "16": {
-      "id": 16000016,
-      "name": "PAM",
-      "power": 8,
-      "rank": 2,
-      "trophies": 466,
-      "highestTrophies": 466,
+      "trophies": 601,
+      "highestTrophies": 601,
       "prestigeLevel": 0,
       "currentWinStreak": 1,
-      "maxWinStreak": 1,
+      "maxWinStreak": 5,
       "skin": {
-        "id": 29000556,
-        "name": "STONKS PAM"
+        "id": 29001211,
+        "name": "JACKPOT GRIFF"
       },
       "gadgets": [
         {
-          "id": 23000257,
-          "name": "PULSE MODULATOR"
-        },
-        {
-          "id": 23000404,
-          "name": "SCRAPSUCKER"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "pam",
-      "class": "epic"
-    },
-    "34": {
-      "id": 16000035,
-      "name": "GALE",
-      "power": 8,
-      "rank": 2,
-      "trophies": 428,
-      "highestTrophies": 431,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 4,
-      "skin": {
-        "id": 29000386,
-        "name": "SQUEAKBUSTER GALE"
-      },
-      "gadgets": [
-        {
-          "id": 23000277,
-          "name": "SPRING EJECTOR"
-        },
-        {
-          "id": 23000407,
-          "name": "TWISTER"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "gale",
-      "class": "epic"
-    },
-    "35": {
-      "id": 16000036,
-      "name": "NANI",
-      "power": 8,
-      "rank": 2,
-      "trophies": 383,
-      "highestTrophies": 383,
-      "prestigeLevel": 0,
-      "currentWinStreak": 2,
-      "maxWinStreak": 2,
-      "skin": {
-        "id": 29000949,
-        "name": "KNIGHTMARE NANI"
-      },
-      "gadgets": [
-        {
-          "id": 23000353,
-          "name": "RETURN TO SENDER"
+          "id": 23000487,
+          "name": "COIN SHOWER"
         }
       ],
       "gears": [],
       "starPowers": [],
       "hyperCharges": [
         {
-          "id": 23000825,
-          "name": "BIG PEEP"
+          "id": 23000971,
+          "name": "TAX REBATE"
         }
       ],
       "buffies": {
@@ -2397,110 +1906,101 @@
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "nani",
+      "path": "griff",
       "class": "epic"
     },
-    "84": {
-      "id": 16000089,
-      "name": "MEEPLE",
-      "power": 9,
-      "rank": 2,
-      "trophies": 372,
-      "highestTrophies": 372,
+    "70": {
+      "id": 16000082,
+      "name": "BERRY",
+      "power": 10,
+      "rank": 3,
+      "trophies": 525,
+      "highestTrophies": 526,
       "prestigeLevel": 0,
       "currentWinStreak": 0,
-      "maxWinStreak": 22,
+      "maxWinStreak": 3,
       "skin": {
-        "id": 29001106,
-        "name": "MYSTIC MEEPLE"
+        "id": 29000922,
+        "name": "DARK HORSE BERRY"
       },
       "gadgets": [
         {
-          "id": 23000878,
-          "name": "RAGEQUIT"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000875,
-          "name": "DO NOT PASS GO"
+          "id": 23000766,
+          "name": "FRIENDSHIP IS GREAT"
         },
         {
-          "id": 23000876,
-          "name": "RULE BENDING"
+          "id": 23000767,
+          "name": "HEALTHY ADDITIVES"
         }
       ],
-      "hyperCharges": [],
+      "gears": [
+        {
+          "id": 62000002,
+          "name": "DAMAGE",
+          "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000764,
+          "name": "FLOOR IS FINE"
+        },
+        {
+          "id": 23000765,
+          "name": "MAKING A MESS"
+        }
+      ],
+      "hyperCharges": [
+        {
+          "id": 23000891,
+          "name": "DOUBLE SCOOPS"
+        }
+      ],
       "buffies": {
         "gadget": false,
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "meeple",
+      "path": "berry",
       "class": "epic"
     },
-    "45": {
-      "id": 16000046,
-      "name": "BELLE",
-      "power": 9,
-      "rank": 2,
-      "trophies": 361,
-      "highestTrophies": 369,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 4,
-      "skin": {
-        "id": 29000483,
-        "name": "IVY BELLE"
-      },
-      "gadgets": [
-        {
-          "id": 23000463,
-          "name": "REVERSE POLARITY"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000369,
-          "name": "POSITIVE FEEDBACK"
-        },
-        {
-          "id": 23000370,
-          "name": "GROUNDED"
-        }
-      ],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "belle",
-      "class": "epic"
-    },
-    "38": {
+    "35": {
       "id": 16000039,
       "name": "COLETTE",
-      "power": 9,
+      "power": 10,
       "rank": 2,
-      "trophies": 352,
-      "highestTrophies": 352,
+      "trophies": 407,
+      "highestTrophies": 407,
       "prestigeLevel": 0,
       "currentWinStreak": 1,
-      "maxWinStreak": 2,
+      "maxWinStreak": 8,
       "skin": {
-        "id": 29001008,
-        "name": "IMPIE COLETTE"
+        "id": 29000389,
+        "name": "GLADIATOR COLETTE"
       },
       "gadgets": [
         {
-          "id": 23000457,
-          "name": "GOTCHA!"
+          "id": 23000302,
+          "name": "NA-AH!"
         }
       ],
-      "gears": [],
+      "gears": [
+        {
+          "id": 62000002,
+          "name": "DAMAGE",
+          "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
       "starPowers": [
         {
           "id": 23000300,
@@ -2520,144 +2020,54 @@
       "path": "colette",
       "class": "epic"
     },
-    "76": {
-      "id": 16000079,
-      "name": "ANGELO",
-      "power": 9,
+    "28": {
+      "id": 16000030,
+      "name": "EMZ",
+      "power": 8,
       "rank": 2,
-      "trophies": 295,
-      "highestTrophies": 295,
-      "prestigeLevel": 0,
-      "currentWinStreak": 4,
-      "maxWinStreak": 7,
-      "skin": {
-        "id": 29000897,
-        "name": "DIONYSUS ANGELO"
-      },
-      "gadgets": [
-        {
-          "id": 23000677,
-          "name": "STINGING FLIGHT"
-        },
-        {
-          "id": 23000678,
-          "name": "MASTER FLETCHER"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000675,
-          "name": "EMPOWER"
-        },
-        {
-          "id": 23000676,
-          "name": "FLOW"
-        }
-      ],
-      "hyperCharges": [
-        {
-          "id": 23000759,
-          "name": "IN MY ELEMENT"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "angelo",
-      "class": "epic"
-    },
-    "55": {
-      "id": 16000058,
-      "name": "BONNIE",
-      "power": 9,
-      "rank": 2,
-      "trophies": 259,
-      "highestTrophies": 259,
+      "trophies": 336,
+      "highestTrophies": 336,
       "prestigeLevel": 0,
       "currentWinStreak": 1,
       "maxWinStreak": 1,
       "skin": {
-        "id": 29000691,
-        "name": "FOOTBONNIE"
+        "id": 29000657,
+        "name": "HARAJUKU EMZ"
       },
       "gadgets": [
         {
-          "id": 23000480,
-          "name": "SUGAR RUSH"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000478,
-          "name": "BLACK POWDER"
+          "id": 23000274,
+          "name": "FRIENDZONER"
         },
         {
-          "id": 23000479,
-          "name": "WISDOM TOOTH"
-        }
-      ],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "bonnie",
-      "class": "epic"
-    },
-    "62": {
-      "id": 16000065,
-      "name": "MANDY",
-      "power": 9,
-      "rank": 1,
-      "trophies": 221,
-      "highestTrophies": 223,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 7,
-      "skin": {
-        "id": 29000945,
-        "name": "MALICIOUS MANDY"
-      },
-      "gadgets": [
-        {
-          "id": 23000546,
-          "name": "COOKIE CRUMBS"
+          "id": 23000459,
+          "name": "ACID SPRAY"
         }
       ],
       "gears": [],
-      "starPowers": [
-        {
-          "id": 23000543,
-          "name": "IN MY SIGHTS"
-        }
-      ],
+      "starPowers": [],
       "hyperCharges": [],
       "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
+        "gadget": true,
+        "starPower": true,
+        "hyperCharge": true
       },
-      "path": "mandy",
+      "path": "emz",
       "class": "epic"
     },
-    "47": {
-      "id": 16000048,
-      "name": "GROM",
+    "33": {
+      "id": 16000036,
+      "name": "NANI",
       "power": 6,
-      "rank": 1,
-      "trophies": 147,
-      "highestTrophies": 147,
+      "rank": 2,
+      "trophies": 335,
+      "highestTrophies": 336,
       "prestigeLevel": 0,
       "currentWinStreak": 0,
-      "maxWinStreak": 0,
+      "maxWinStreak": 6,
       "skin": {
-        "id": 29000278,
-        "name": "GROM"
+        "id": 29000949,
+        "name": "KNIGHTMARE NANI"
       },
       "gadgets": [],
       "gears": [],
@@ -2668,92 +2078,68 @@
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "grom",
+      "path": "nani",
+      "class": "epic"
+    },
+    "41": {
+      "id": 16000045,
+      "name": "STU",
+      "power": 9,
+      "rank": 2,
+      "trophies": 327,
+      "highestTrophies": 327,
+      "prestigeLevel": 0,
+      "currentWinStreak": 1,
+      "maxWinStreak": 1,
+      "skin": {
+        "id": 29000345,
+        "name": "WICKED STU"
+      },
+      "gadgets": [
+        {
+          "id": 23000364,
+          "name": "SPEED ZONE"
+        },
+        {
+          "id": 23000401,
+          "name": "BREAKTHROUGH"
+        }
+      ],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000362,
+          "name": "ZERO DRAG"
+        }
+      ],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "stu",
       "class": "epic"
     },
     "49": {
-      "id": 16000050,
-      "name": "GRIFF",
-      "power": 9,
-      "rank": 1,
-      "trophies": 139,
-      "highestTrophies": 139,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 2,
-      "skin": {
-        "id": 29000453,
-        "name": "SLEIGHER GRIFF"
-      },
-      "gadgets": [
-        {
-          "id": 23000399,
-          "name": "PIGGY BANK"
-        },
-        {
-          "id": 23000487,
-          "name": "COIN SHOWER"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "griff",
-      "class": "epic"
-    },
-    "91": {
-      "id": 16000096,
-      "name": "TRUNK",
-      "power": 8,
-      "rank": 1,
-      "trophies": 135,
-      "highestTrophies": 135,
+      "id": 16000053,
+      "name": "LOLA",
+      "power": 5,
+      "rank": 2,
+      "trophies": 327,
+      "highestTrophies": 327,
       "prestigeLevel": 0,
       "currentWinStreak": 1,
-      "maxWinStreak": 5,
+      "maxWinStreak": 1,
       "skin": {
-        "id": 29001249,
-        "name": "TRUNK"
-      },
-      "gadgets": [
-        {
-          "id": 23001000,
-          "name": "FOR THE QUEEN!"
-        },
-        {
-          "id": 23001001,
-          "name": "WORKER ANTS"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "trunk",
-      "class": "epic"
-    },
-    "82": {
-      "id": 16000086,
-      "name": "SHADE",
-      "power": 7,
-      "rank": 1,
-      "trophies": 134,
-      "highestTrophies": 134,
-      "prestigeLevel": 0,
-      "currentWinStreak": 2,
-      "maxWinStreak": 8,
-      "skin": {
-        "id": 29001036,
-        "name": "CINEMA SHADE"
+        "id": 29000620,
+        "name": "KITSUNE LOLA"
       },
       "gadgets": [],
       "gears": [],
@@ -2764,53 +2150,115 @@
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "shade",
+      "path": "lola",
       "class": "epic"
     },
-    "78": {
-      "id": 16000082,
-      "name": "BERRY",
+    "25": {
+      "id": 16000026,
+      "name": "BIBI",
       "power": 7,
-      "rank": 1,
-      "trophies": 133,
-      "highestTrophies": 134,
+      "rank": 2,
+      "trophies": 320,
+      "highestTrophies": 320,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 2,
+      "currentWinStreak": 1,
+      "maxWinStreak": 1,
       "skin": {
-        "id": 29000922,
-        "name": "DARK HORSE BERRY"
+        "id": 29000222,
+        "name": "ZOMBIBI"
       },
       "gadgets": [
         {
-          "id": 23000766,
-          "name": "FRIENDSHIP IS GREAT"
+          "id": 23000458,
+          "name": "EXTRA STICKY"
         }
       ],
       "gears": [],
       "starPowers": [],
+      "hyperCharges": [
+        {
+          "id": 23000683,
+          "name": "OUT OF BOUNDS"
+        }
+      ],
+      "buffies": {
+        "gadget": true,
+        "starPower": true,
+        "hyperCharge": true
+      },
+      "path": "bibi",
+      "class": "epic"
+    },
+    "20": {
+      "id": 16000020,
+      "name": "FRANK",
+      "power": 6,
+      "rank": 2,
+      "trophies": 317,
+      "highestTrophies": 317,
+      "prestigeLevel": 0,
+      "currentWinStreak": 1,
+      "maxWinStreak": 1,
+      "skin": {
+        "id": 29000896,
+        "name": "PREHISTORIC FRANK"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
       "hyperCharges": [],
+      "buffies": {
+        "gadget": true,
+        "starPower": true,
+        "hyperCharge": true
+      },
+      "path": "frank",
+      "class": "epic"
+    },
+    "27": {
+      "id": 16000029,
+      "name": "BEA",
+      "power": 4,
+      "rank": 2,
+      "trophies": 313,
+      "highestTrophies": 313,
+      "prestigeLevel": 0,
+      "currentWinStreak": 1,
+      "maxWinStreak": 4,
+      "skin": {
+        "id": 29000828,
+        "name": "BEA BYTE"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [
+        {
+          "id": 23000895,
+          "name": "PROTECT THE QUEEN"
+        }
+      ],
       "buffies": {
         "gadget": false,
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "berry",
+      "path": "bea",
       "class": "epic"
     },
-    "50": {
+    "47": {
       "id": 16000051,
       "name": "ASH",
-      "power": 8,
-      "rank": 1,
-      "trophies": 126,
-      "highestTrophies": 126,
+      "power": 7,
+      "rank": 2,
+      "trophies": 310,
+      "highestTrophies": 310,
       "prestigeLevel": 0,
-      "currentWinStreak": 1,
-      "maxWinStreak": 1,
+      "currentWinStreak": 3,
+      "maxWinStreak": 4,
       "skin": {
-        "id": 29000603,
-        "name": "KRAMPUS ASH"
+        "id": 29000994,
+        "name": "ASH BOY"
       },
       "gadgets": [
         {
@@ -2833,50 +2281,111 @@
       "path": "ash",
       "class": "epic"
     },
-    "51": {
-      "id": 16000053,
-      "name": "LOLA",
-      "power": 7,
-      "rank": 1,
-      "trophies": 125,
-      "highestTrophies": 126,
+    "44": {
+      "id": 16000048,
+      "name": "GROM",
+      "power": 9,
+      "rank": 2,
+      "trophies": 303,
+      "highestTrophies": 303,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 10,
+      "currentWinStreak": 4,
+      "maxWinStreak": 5,
       "skin": {
-        "id": 29001048,
-        "name": "LOOPY LOLA"
+        "id": 29001101,
+        "name": "PROTECTOR GROM"
       },
       "gadgets": [
         {
-          "id": 23000456,
-          "name": "STUNT DOUBLE"
+          "id": 23000385,
+          "name": "WATCHTOWER"
+        },
+        {
+          "id": 23000460,
+          "name": "RADIO CHECK"
         }
       ],
-      "gears": [],
-      "starPowers": [],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000383,
+          "name": "FOOT PATROL"
+        },
+        {
+          "id": 23000384,
+          "name": "X-FACTOR"
+        }
+      ],
       "hyperCharges": [],
       "buffies": {
         "gadget": false,
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "lola",
+      "path": "grom",
       "class": "epic"
     },
-    "57": {
-      "id": 16000060,
-      "name": "SAM",
-      "power": 6,
-      "rank": 1,
-      "trophies": 102,
-      "highestTrophies": 102,
+    "32": {
+      "id": 16000035,
+      "name": "GALE",
+      "power": 9,
+      "rank": 2,
+      "trophies": 270,
+      "highestTrophies": 270,
       "prestigeLevel": 0,
-      "currentWinStreak": 3,
-      "maxWinStreak": 3,
+      "currentWinStreak": 6,
+      "maxWinStreak": 9,
       "skin": {
-        "id": 29000618,
-        "name": "SAM THE TEDDY"
+        "id": 29001068,
+        "name": "GALACTIC GALE"
+      },
+      "gadgets": [
+        {
+          "id": 23000407,
+          "name": "TWISTER"
+        }
+      ],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000228,
+          "name": "BLUSTERY BLOW"
+        }
+      ],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "gale",
+      "class": "epic"
+    },
+    "16": {
+      "id": 16000016,
+      "name": "PAM",
+      "power": 5,
+      "rank": 2,
+      "trophies": 254,
+      "highestTrophies": 254,
+      "prestigeLevel": 0,
+      "currentWinStreak": 1,
+      "maxWinStreak": 1,
+      "skin": {
+        "id": 29000556,
+        "name": "STONKS PAM"
       },
       "gadgets": [],
       "gears": [],
@@ -2887,58 +2396,58 @@
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "sam",
+      "path": "pam",
       "class": "epic"
     },
-    "65": {
-      "id": 16000068,
-      "name": "MAISIE",
+    "14": {
+      "id": 16000014,
+      "name": "BO",
       "power": 7,
-      "rank": 1,
-      "trophies": 88,
-      "highestTrophies": 88,
+      "rank": 2,
+      "trophies": 253,
+      "highestTrophies": 253,
       "prestigeLevel": 0,
       "currentWinStreak": 0,
-      "maxWinStreak": 0,
+      "maxWinStreak": 3,
       "skin": {
-        "id": 29000673,
-        "name": "TECH MAISIE"
+        "id": 29000216,
+        "name": "UNDERWORLD BO"
       },
       "gadgets": [
         {
-          "id": 23000572,
-          "name": "FINISH THEM!"
+          "id": 23000263,
+          "name": "SUPER TOTEM"
         }
       ],
       "gears": [],
       "starPowers": [],
       "hyperCharges": [
         {
-          "id": 23000629,
-          "name": "AFTERMATH"
+          "id": 23000896,
+          "name": "CATCH A BEAR"
         }
       ],
       "buffies": {
         "gadget": false,
-        "starPower": false,
+        "starPower": true,
         "hyperCharge": false
       },
-      "path": "maisie",
+      "path": "bo",
       "class": "epic"
     },
-    "69": {
-      "id": 16000072,
-      "name": "PEARL",
+    "52": {
+      "id": 16000058,
+      "name": "BONNIE",
       "power": 6,
       "rank": 1,
-      "trophies": 88,
-      "highestTrophies": 88,
+      "trophies": 247,
+      "highestTrophies": 247,
       "prestigeLevel": 0,
-      "currentWinStreak": 3,
-      "maxWinStreak": 3,
+      "currentWinStreak": 0,
+      "maxWinStreak": 14,
       "skin": {
-        "id": 29000709,
-        "name": "VINTAGE PEARL"
+        "id": 29000892,
+        "name": "TENTACLE BONNIE"
       },
       "gadgets": [],
       "gears": [],
@@ -2949,22 +2458,166 @@
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "pearl",
+      "path": "bonnie",
       "class": "epic"
     },
-    "66": {
-      "id": 16000069,
-      "name": "HANK",
+    "57": {
+      "id": 16000065,
+      "name": "MANDY",
       "power": 6,
       "rank": 1,
-      "trophies": 80,
-      "highestTrophies": 80,
+      "trophies": 246,
+      "highestTrophies": 246,
       "prestigeLevel": 0,
       "currentWinStreak": 0,
-      "maxWinStreak": 0,
+      "maxWinStreak": 2,
       "skin": {
-        "id": 29000952,
-        "name": "MOON GUARDIAN HANK"
+        "id": 29000945,
+        "name": "MALICIOUS MANDY"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [
+        {
+          "id": 23000894,
+          "name": "SUGAR FOR ALL!"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "mandy",
+      "class": "epic"
+    },
+    "74": {
+      "id": 16000086,
+      "name": "SHADE",
+      "power": 8,
+      "rank": 1,
+      "trophies": 238,
+      "highestTrophies": 239,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 14,
+      "skin": {
+        "id": 29001036,
+        "name": "CINEMA SHADE"
+      },
+      "gadgets": [
+        {
+          "id": 23000834,
+          "name": "LONGARMS"
+        },
+        {
+          "id": 23000835,
+          "name": "JUMP SCARE"
+        }
+      ],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [
+        {
+          "id": 23000979,
+          "name": "THE FRIGHTENER"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "shade",
+      "class": "epic"
+    },
+    "42": {
+      "id": 16000046,
+      "name": "BELLE",
+      "power": 8,
+      "rank": 1,
+      "trophies": 215,
+      "highestTrophies": 216,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 14,
+      "skin": {
+        "id": 29000483,
+        "name": "IVY BELLE"
+      },
+      "gadgets": [
+        {
+          "id": 23000463,
+          "name": "REVERSE POLARITY"
+        }
+      ],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [],
+      "hyperCharges": [
+        {
+          "id": 23000682,
+          "name": "MAGNETIC"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "belle",
+      "class": "epic"
+    },
+    "68": {
+      "id": 16000079,
+      "name": "ANGELO",
+      "power": 5,
+      "rank": 1,
+      "trophies": 205,
+      "highestTrophies": 206,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 3,
+      "skin": {
+        "id": 29000897,
+        "name": "DIONYSUS ANGELO"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [
+        {
+          "id": 23000759,
+          "name": "IN MY ELEMENT"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "angelo",
+      "class": "epic"
+    },
+    "61": {
+      "id": 16000069,
+      "name": "HANK",
+      "power": 5,
+      "rank": 1,
+      "trophies": 180,
+      "highestTrophies": 180,
+      "prestigeLevel": 0,
+      "currentWinStreak": 1,
+      "maxWinStreak": 2,
+      "skin": {
+        "id": 29000674,
+        "name": "SHARK TANK HANK"
       },
       "gadgets": [],
       "gears": [],
@@ -2978,69 +2631,149 @@
       "path": "hank",
       "class": "epic"
     },
-    "4": {
-      "id": 16000004,
-      "name": "RICO",
-      "power": 10,
-      "rank": 4,
-      "trophies": 777,
-      "highestTrophies": 782,
+    "15": {
+      "id": 16000015,
+      "name": "PIPER",
+      "power": 6,
+      "rank": 1,
+      "trophies": 142,
+      "highestTrophies": 142,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
+      "currentWinStreak": 2,
       "maxWinStreak": 9,
       "skin": {
-        "id": 29000130,
-        "name": "RICOCHET"
+        "id": 29000381,
+        "name": "LUNAR PIPER"
       },
-      "gadgets": [
-        {
-          "id": 23000246,
-          "name": "MULTIBALL LAUNCHER"
-        },
-        {
-          "id": 23000409,
-          "name": "BOUNCY CASTLE"
-        }
-      ],
-      "gears": [
-        {
-          "id": 62000005,
-          "name": "RELOAD SPEED",
-          "level": 3
-        }
-      ],
-      "starPowers": [
-        {
-          "id": 23000080,
-          "name": "SUPER BOUNCY"
-        },
-        {
-          "id": 23000156,
-          "name": "ROBO RETREAT"
-        }
-      ],
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
       "hyperCharges": [],
       "buffies": {
         "gadget": false,
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "rico",
-      "class": "superrare"
+      "path": "piper",
+      "class": "epic"
+    },
+    "53": {
+      "id": 16000060,
+      "name": "SAM",
+      "power": 1,
+      "rank": 1,
+      "trophies": 0,
+      "highestTrophies": 0,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 0,
+      "skin": {
+        "id": 29000559,
+        "name": "SAM"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "sam",
+      "class": "epic"
+    },
+    "60": {
+      "id": 16000068,
+      "name": "MAISIE",
+      "power": 1,
+      "rank": 1,
+      "trophies": 0,
+      "highestTrophies": 0,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 0,
+      "skin": {
+        "id": 29000675,
+        "name": "JUNGLE QUEEN MAISIE"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "maisie",
+      "class": "epic"
+    },
+    "75": {
+      "id": 16000089,
+      "name": "MEEPLE",
+      "power": 1,
+      "rank": 1,
+      "trophies": 0,
+      "highestTrophies": 0,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 0,
+      "skin": {
+        "id": 29001106,
+        "name": "MYSTIC MEEPLE"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "meeple",
+      "class": "epic"
+    },
+    "81": {
+      "id": 16000096,
+      "name": "TRUNK",
+      "power": 1,
+      "rank": 1,
+      "trophies": 0,
+      "highestTrophies": 0,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 0,
+      "skin": {
+        "id": 29001249,
+        "name": "TRUNK"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "trunk",
+      "class": "epic"
     },
     "9": {
       "id": 16000009,
       "name": "DYNAMIKE",
-      "power": 9,
-      "rank": 3,
-      "trophies": 661,
-      "highestTrophies": 665,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 5,
+      "power": 10,
+      "rank": 5,
+      "trophies": 1011,
+      "highestTrophies": 1011,
+      "prestigeLevel": 1,
+      "currentWinStreak": 15,
+      "maxWinStreak": 34,
       "skin": {
-        "id": 29000056,
-        "name": "SANTA MIKE"
+        "id": 29000961,
+        "name": "DECAYING DYNAMIKE"
       },
       "gadgets": [
         {
@@ -3052,7 +2785,18 @@
           "name": "SATCHEL CHARGE"
         }
       ],
-      "gears": [],
+      "gears": [
+        {
+          "id": 62000001,
+          "name": "HEALTH",
+          "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
       "starPowers": [
         {
           "id": 23000085,
@@ -3063,12 +2807,7 @@
           "name": "DEMOLITION"
         }
       ],
-      "hyperCharges": [
-        {
-          "id": 23000652,
-          "name": "BOOMER"
-        }
-      ],
+      "hyperCharges": [],
       "buffies": {
         "gadget": false,
         "starPower": false,
@@ -3077,99 +2816,19 @@
       "path": "dynamike",
       "class": "superrare"
     },
-    "25": {
-      "id": 16000025,
-      "name": "CARL",
-      "power": 9,
-      "rank": 3,
-      "trophies": 624,
-      "highestTrophies": 624,
-      "prestigeLevel": 0,
-      "currentWinStreak": 2,
-      "maxWinStreak": 4,
-      "skin": {
-        "id": 29001289,
-        "name": "CRAZY CLOWN CARL"
-      },
-      "gadgets": [
-        {
-          "id": 23000262,
-          "name": "HEAT EJECTOR"
-        },
-        {
-          "id": 23000317,
-          "name": "FLYING HOOK"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000129,
-          "name": "POWER THROW"
-        },
-        {
-          "id": 23000145,
-          "name": "PROTECTIVE PIROUETTE"
-        }
-      ],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "carl",
-      "class": "superrare"
-    },
-    "22": {
-      "id": 16000022,
-      "name": "TICK",
-      "power": 9,
-      "rank": 3,
-      "trophies": 622,
-      "highestTrophies": 622,
-      "prestigeLevel": 0,
-      "currentWinStreak": 1,
-      "maxWinStreak": 8,
-      "skin": {
-        "id": 29000086,
-        "name": "TICK"
-      },
-      "gadgets": [
-        {
-          "id": 23000355,
-          "name": "LAST HURRAH"
-        }
-      ],
-      "gears": [],
-      "starPowers": [
-        {
-          "id": 23000114,
-          "name": "WELL OILED"
-        }
-      ],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "tick",
-      "class": "superrare"
-    },
     "19": {
       "id": 16000019,
       "name": "PENNY",
       "power": 11,
-      "rank": 3,
-      "trophies": 605,
-      "highestTrophies": 610,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
+      "rank": 5,
+      "trophies": 1007,
+      "highestTrophies": 1007,
+      "prestigeLevel": 1,
+      "currentWinStreak": 3,
       "maxWinStreak": 5,
       "skin": {
-        "id": 29001295,
-        "name": "TRUANT PENNY"
+        "id": 29000088,
+        "name": "BUNNY PENNY"
       },
       "gadgets": [
         {
@@ -3183,8 +2842,18 @@
       ],
       "gears": [
         {
-          "id": 62000001,
-          "name": "HEALTH",
+          "id": 62000002,
+          "name": "DAMAGE",
+          "level": 3
+        },
+        {
+          "id": 62000000,
+          "name": "SPEED",
+          "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
           "level": 3
         }
       ],
@@ -3192,14 +2861,13 @@
         {
           "id": 23000099,
           "name": "HEAVY COFFERS"
-        }
-      ],
-      "hyperCharges": [
+        },
         {
-          "id": 23000861,
-          "name": "NEW LOBBER"
+          "id": 23000142,
+          "name": "MASTER BLASTER"
         }
       ],
+      "hyperCharges": [],
       "buffies": {
         "gadget": false,
         "starPower": false,
@@ -3208,28 +2876,66 @@
       "path": "penny",
       "class": "superrare"
     },
-    "18": {
-      "id": 16000018,
-      "name": "DARRYL",
-      "power": 7,
+    "21": {
+      "id": 16000022,
+      "name": "TICK",
+      "power": 8,
       "rank": 3,
-      "trophies": 503,
-      "highestTrophies": 575,
+      "trophies": 613,
+      "highestTrophies": 615,
       "prestigeLevel": 0,
-      "currentWinStreak": 1,
-      "maxWinStreak": 1,
+      "currentWinStreak": 0,
+      "maxWinStreak": 3,
       "skin": {
-        "id": 29000350,
-        "name": "MEGA BOX DARRYL"
+        "id": 29000190,
+        "name": "KING CRAB TICK"
       },
       "gadgets": [
         {
-          "id": 23000260,
-          "name": "RECOILING ROTATOR"
-        },
+          "id": 23000355,
+          "name": "LAST HURRAH"
+        }
+      ],
+      "gears": [
         {
-          "id": 23000313,
-          "name": "TAR BARREL"
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [],
+      "hyperCharges": [
+        {
+          "id": 23000687,
+          "name": "HEADSTRONG"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "tick",
+      "class": "superrare"
+    },
+    "4": {
+      "id": 16000004,
+      "name": "RICO",
+      "power": 7,
+      "rank": 3,
+      "trophies": 607,
+      "highestTrophies": 610,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 6,
+      "skin": {
+        "id": 29001281,
+        "name": "GHOST DIVER RICO"
+      },
+      "gadgets": [
+        {
+          "id": 23000246,
+          "name": "MULTIBALL LAUNCHER"
         }
       ],
       "gears": [],
@@ -3240,76 +2946,32 @@
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "darryl",
-      "class": "superrare"
-    },
-    "27": {
-      "id": 16000027,
-      "name": "8-BIT",
-      "power": 9,
-      "rank": 3,
-      "trophies": 500,
-      "highestTrophies": 508,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
-      "skin": {
-        "id": 29000106,
-        "name": "8-BIT"
-      },
-      "gadgets": [
-        {
-          "id": 23000259,
-          "name": "CHEAT CARTRIDGE"
-        },
-        {
-          "id": 23000318,
-          "name": "EXTRA CREDITS"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [
-        {
-          "id": 23000854,
-          "name": "AIMBOT"
-        }
-      ],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "8-bit",
+      "path": "rico",
       "class": "superrare"
     },
     "7": {
       "id": 16000007,
       "name": "JESSIE",
-      "power": 8,
-      "rank": 3,
-      "trophies": 500,
-      "highestTrophies": 504,
+      "power": 6,
+      "rank": 2,
+      "trophies": 349,
+      "highestTrophies": 349,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
+      "currentWinStreak": 1,
+      "maxWinStreak": 2,
       "skin": {
-        "id": 29000174,
-        "name": "RED DRAGON JESSIE"
+        "id": 29001392,
+        "name": "SHINING MECHA JESSIE"
       },
-      "gadgets": [
-        {
-          "id": 23000251,
-          "name": "SPARK PLUG"
-        },
-        {
-          "id": 23000295,
-          "name": "RECOIL SPRING"
-        }
-      ],
+      "gadgets": [],
       "gears": [],
       "starPowers": [],
-      "hyperCharges": [],
+      "hyperCharges": [
+        {
+          "id": 23000630,
+          "name": "SCRAPPY 2.0"
+        }
+      ],
       "buffies": {
         "gadget": false,
         "starPower": false,
@@ -3318,19 +2980,143 @@
       "path": "jessie",
       "class": "superrare"
     },
-    "33": {
-      "id": 16000034,
-      "name": "JACKY",
-      "power": 8,
+    "26": {
+      "id": 16000027,
+      "name": "8-BIT",
+      "power": 6,
       "rank": 2,
-      "trophies": 462,
-      "highestTrophies": 467,
+      "trophies": 344,
+      "highestTrophies": 344,
+      "prestigeLevel": 0,
+      "currentWinStreak": 1,
+      "maxWinStreak": 1,
+      "skin": {
+        "id": 29000764,
+        "name": "ANTIVIRUS 8-BIT"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "8-bit",
+      "class": "superrare"
+    },
+    "24": {
+      "id": 16000025,
+      "name": "CARL",
+      "power": 6,
+      "rank": 2,
+      "trophies": 316,
+      "highestTrophies": 316,
+      "prestigeLevel": 0,
+      "currentWinStreak": 2,
+      "maxWinStreak": 2,
+      "skin": {
+        "id": 29001096,
+        "name": "INSECTOR CARL"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "carl",
+      "class": "superrare"
+    },
+    "18": {
+      "id": 16000018,
+      "name": "DARRYL",
+      "power": 9,
+      "rank": 1,
+      "trophies": 247,
+      "highestTrophies": 247,
       "prestigeLevel": 0,
       "currentWinStreak": 0,
-      "maxWinStreak": 0,
+      "maxWinStreak": 5,
       "skin": {
-        "id": 29000916,
-        "name": "CUTTLEFISH JACKY"
+        "id": 29000158,
+        "name": "MASCOT DARRYL"
+      },
+      "gadgets": [
+        {
+          "id": 23000313,
+          "name": "TAR BARREL"
+        }
+      ],
+      "gears": [],
+      "starPowers": [
+        {
+          "id": 23000094,
+          "name": "STEEL HOOPS"
+        }
+      ],
+      "hyperCharges": [
+        {
+          "id": 23000859,
+          "name": "BARREL O' BULLETS"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "darryl",
+      "class": "superrare"
+    },
+    "54": {
+      "id": 16000061,
+      "name": "GUS",
+      "power": 5,
+      "rank": 1,
+      "trophies": 214,
+      "highestTrophies": 214,
+      "prestigeLevel": 0,
+      "currentWinStreak": 2,
+      "maxWinStreak": 2,
+      "skin": {
+        "id": 29000730,
+        "name": "BOY SCOUT GUS"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [
+        {
+          "id": 23000919,
+          "name": "SPOOKY POP"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "gus",
+      "class": "superrare"
+    },
+    "31": {
+      "id": 16000034,
+      "name": "JACKY",
+      "power": 7,
+      "rank": 1,
+      "trophies": 190,
+      "highestTrophies": 190,
+      "prestigeLevel": 0,
+      "currentWinStreak": 1,
+      "maxWinStreak": 1,
+      "skin": {
+        "id": 29000176,
+        "name": "CONSTRUCTOR JACKY"
       },
       "gadgets": [
         {
@@ -3358,69 +3144,45 @@
       "path": "jacky",
       "class": "superrare"
     },
-    "58": {
-      "id": 16000061,
-      "name": "GUS",
-      "power": 7,
-      "rank": 1,
-      "trophies": 119,
-      "highestTrophies": 119,
-      "prestigeLevel": 0,
-      "currentWinStreak": 1,
-      "maxWinStreak": 1,
-      "skin": {
-        "id": 29000730,
-        "name": "BOY SCOUT GUS"
-      },
-      "gadgets": [
-        {
-          "id": 23000513,
-          "name": "KOOKY POPPER"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "gus",
-      "class": "superrare"
-    },
     "2": {
       "id": 16000002,
       "name": "BULL",
       "power": 9,
-      "rank": 4,
-      "trophies": 796,
-      "highestTrophies": 804,
+      "rank": 2,
+      "trophies": 441,
+      "highestTrophies": 443,
       "prestigeLevel": 0,
       "currentWinStreak": 0,
-      "maxWinStreak": 7,
+      "maxWinStreak": 5,
       "skin": {
-        "id": 29000178,
-        "name": "BARBARIAN KING BULL"
+        "id": 29000901,
+        "name": "NORSE RAIDER BULL"
       },
       "gadgets": [
-        {
-          "id": 23000272,
-          "name": "T-BONE MISSILE"
-        },
         {
           "id": 23000310,
           "name": "STOMPER"
         }
       ],
-      "gears": [],
+      "gears": [
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
       "starPowers": [
         {
           "id": 23000078,
           "name": "BERSERKER"
         }
       ],
-      "hyperCharges": [],
+      "hyperCharges": [
+        {
+          "id": 23000616,
+          "name": "JAWS OF STEEL"
+        }
+      ],
       "buffies": {
         "gadget": false,
         "starPower": false,
@@ -3432,35 +3194,26 @@
     "3": {
       "id": 16000003,
       "name": "BROCK",
-      "power": 9,
-      "rank": 3,
-      "trophies": 563,
-      "highestTrophies": 563,
+      "power": 6,
+      "rank": 2,
+      "trophies": 430,
+      "highestTrophies": 434,
       "prestigeLevel": 0,
-      "currentWinStreak": 2,
-      "maxWinStreak": 2,
+      "currentWinStreak": 0,
+      "maxWinStreak": 4,
       "skin": {
-        "id": 29000005,
-        "name": "BEACH BROCK"
+        "id": 29000838,
+        "name": "SUPER RANGER BROCK BLUE"
       },
-      "gadgets": [
-        {
-          "id": 23000245,
-          "name": "ROCKET LACES"
-        },
-        {
-          "id": 23000316,
-          "name": "ROCKET FUEL"
-        }
-      ],
+      "gadgets": [],
       "gears": [],
-      "starPowers": [
+      "starPowers": [],
+      "hyperCharges": [
         {
-          "id": 23000079,
-          "name": "MORE ROCKETS!"
+          "id": 23000688,
+          "name": "ROCKET BARRAGE"
         }
       ],
-      "hyperCharges": [],
       "buffies": {
         "gadget": false,
         "starPower": false,
@@ -3469,73 +3222,32 @@
       "path": "brock",
       "class": "rare"
     },
-    "13": {
-      "id": 16000013,
-      "name": "POCO",
-      "power": 7,
-      "rank": 3,
-      "trophies": 496,
-      "highestTrophies": 532,
-      "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
-      "skin": {
-        "id": 29001307,
-        "name": "DJ POCO"
-      },
-      "gadgets": [
-        {
-          "id": 23000267,
-          "name": "TUNING FORK"
-        },
-        {
-          "id": 23000350,
-          "name": "PROTECTIVE TUNES"
-        }
-      ],
-      "gears": [],
-      "starPowers": [],
-      "hyperCharges": [],
-      "buffies": {
-        "gadget": false,
-        "starPower": false,
-        "hyperCharge": false
-      },
-      "path": "poco",
-      "class": "rare"
-    },
     "1": {
       "id": 16000001,
       "name": "COLT",
       "power": 9,
       "rank": 2,
-      "trophies": 468,
-      "highestTrophies": 468,
+      "trophies": 382,
+      "highestTrophies": 382,
       "prestigeLevel": 0,
       "currentWinStreak": 1,
-      "maxWinStreak": 1,
+      "maxWinStreak": 3,
       "skin": {
-        "id": 29000669,
-        "name": "BANANAS COLT"
+        "id": 29001117,
+        "name": "ASTRAL COLT II"
       },
       "gadgets": [
         {
           "id": 23000273,
           "name": "SPEEDLOADER"
-        },
-        {
-          "id": 23000319,
-          "name": "SILVER BULLET"
         }
       ],
-      "gears": [
-        {
-          "id": 62000017,
-          "name": "GADGET COOLDOWN",
-          "level": 3
-        }
-      ],
+      "gears": [],
       "starPowers": [
+        {
+          "id": 23000077,
+          "name": "SLICK BOOTS"
+        },
         {
           "id": 23000138,
           "name": "MAGNUM SPECIAL"
@@ -3555,33 +3267,81 @@
       "path": "colt",
       "class": "rare"
     },
-    "24": {
+    "10": {
+      "id": 16000010,
+      "name": "EL PRIMO",
+      "power": 10,
+      "rank": 2,
+      "trophies": 343,
+      "highestTrophies": 343,
+      "prestigeLevel": 0,
+      "currentWinStreak": 2,
+      "maxWinStreak": 2,
+      "skin": {
+        "id": 29000028,
+        "name": "EL RUDO PRIMO"
+      },
+      "gadgets": [
+        {
+          "id": 23000292,
+          "name": "ASTEROID BELT"
+        }
+      ],
+      "gears": [
+        {
+          "id": 62000001,
+          "name": "HEALTH",
+          "level": 3
+        },
+        {
+          "id": 62000004,
+          "name": "SHIELD",
+          "level": 3
+        }
+      ],
+      "starPowers": [
+        {
+          "id": 23000140,
+          "name": "METEOR RUSH"
+        }
+      ],
+      "hyperCharges": [
+        {
+          "id": 23000679,
+          "name": "GRAVITY LEAP"
+        }
+      ],
+      "buffies": {
+        "gadget": false,
+        "starPower": false,
+        "hyperCharge": false
+      },
+      "path": "el_primo",
+      "class": "rare"
+    },
+    "23": {
       "id": 16000024,
       "name": "ROSA",
-      "power": 8,
+      "power": 5,
       "rank": 2,
-      "trophies": 467,
-      "highestTrophies": 467,
+      "trophies": 326,
+      "highestTrophies": 326,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
+      "currentWinStreak": 1,
+      "maxWinStreak": 1,
       "skin": {
         "id": 29000077,
         "name": "ROSA"
       },
-      "gadgets": [
-        {
-          "id": 23000242,
-          "name": "GROW LIGHT"
-        },
-        {
-          "id": 23000348,
-          "name": "UNFRIENDLY BUSHES"
-        }
-      ],
+      "gadgets": [],
       "gears": [],
       "starPowers": [],
-      "hyperCharges": [],
+      "hyperCharges": [
+        {
+          "id": 23000628,
+          "name": "GRASPING ROOTS"
+        }
+      ],
       "buffies": {
         "gadget": false,
         "starPower": false,
@@ -3590,72 +3350,63 @@
       "path": "rosa",
       "class": "rare"
     },
-    "8": {
-      "id": 16000008,
-      "name": "NITA",
+    "13": {
+      "id": 16000013,
+      "name": "POCO",
       "power": 7,
       "rank": 2,
-      "trophies": 398,
-      "highestTrophies": 400,
+      "trophies": 318,
+      "highestTrophies": 318,
       "prestigeLevel": 0,
-      "currentWinStreak": 0,
-      "maxWinStreak": 0,
+      "currentWinStreak": 1,
+      "maxWinStreak": 1,
       "skin": {
-        "id": 29000014,
-        "name": "NITA"
+        "id": 29001336,
+        "name": "SCRATCHER POCO"
       },
       "gadgets": [
         {
-          "id": 23000249,
-          "name": "BEAR PAWS"
+          "id": 23000267,
+          "name": "TUNING FORK"
         },
         {
-          "id": 23000314,
-          "name": "FAUX FUR"
+          "id": 23000350,
+          "name": "PROTECTIVE TUNES"
         }
       ],
       "gears": [],
       "starPowers": [],
-      "hyperCharges": [],
+      "hyperCharges": [
+        {
+          "id": 23000822,
+          "name": "MEDIC'S MELODY"
+        }
+      ],
       "buffies": {
         "gadget": false,
         "starPower": false,
         "hyperCharge": false
       },
-      "path": "nita",
+      "path": "poco",
       "class": "rare"
     },
     "6": {
       "id": 16000006,
       "name": "BARLEY",
-      "power": 9,
+      "power": 5,
       "rank": 2,
-      "trophies": 361,
-      "highestTrophies": 361,
+      "trophies": 316,
+      "highestTrophies": 316,
       "prestigeLevel": 0,
-      "currentWinStreak": 2,
-      "maxWinStreak": 2,
+      "currentWinStreak": 1,
+      "maxWinStreak": 1,
       "skin": {
         "id": 29000356,
         "name": "UNICORN KNIGHT BARLEY"
       },
-      "gadgets": [
-        {
-          "id": 23000250,
-          "name": "STICKY SYRUP MIXER"
-        },
-        {
-          "id": 23000293,
-          "name": "HERBAL TONIC"
-        }
-      ],
+      "gadgets": [],
       "gears": [],
-      "starPowers": [
-        {
-          "id": 23000082,
-          "name": "MEDICAL USE"
-        }
-      ],
+      "starPowers": [],
       "hyperCharges": [],
       "buffies": {
         "gadget": false,
@@ -3665,19 +3416,50 @@
       "path": "barley",
       "class": "rare"
     },
+    "8": {
+      "id": 16000008,
+      "name": "NITA",
+      "power": 6,
+      "rank": 2,
+      "trophies": 308,
+      "highestTrophies": 308,
+      "prestigeLevel": 0,
+      "currentWinStreak": 1,
+      "maxWinStreak": 1,
+      "skin": {
+        "id": 29000346,
+        "name": "WHALE WATCH NITA"
+      },
+      "gadgets": [],
+      "gears": [],
+      "starPowers": [],
+      "hyperCharges": [
+        {
+          "id": 23000686,
+          "name": "HYPERBEARING"
+        }
+      ],
+      "buffies": {
+        "gadget": true,
+        "starPower": false,
+        "hyperCharge": true
+      },
+      "path": "nita",
+      "class": "rare"
+    },
     "0": {
       "id": 16000000,
       "name": "SHELLY",
-      "power": 9,
-      "rank": 5,
-      "trophies": 1010,
-      "highestTrophies": 1031,
-      "prestigeLevel": 1,
-      "currentWinStreak": 5,
-      "maxWinStreak": 7,
+      "power": 7,
+      "rank": 2,
+      "trophies": 356,
+      "highestTrophies": 356,
+      "prestigeLevel": 0,
+      "currentWinStreak": 0,
+      "maxWinStreak": 2,
       "skin": {
-        "id": 29000844,
-        "name": "SQUAD BUSTER\nSHELLY"
+        "id": 29000159,
+        "name": "PSG SHELLY"
       },
       "gadgets": [
         {
@@ -3690,12 +3472,7 @@
         }
       ],
       "gears": [],
-      "starPowers": [
-        {
-          "id": 23000135,
-          "name": "BAND-AID"
-        }
-      ],
+      "starPowers": [],
       "hyperCharges": [
         {
           "id": 23000613,
@@ -3714,38 +3491,31 @@
   "canViewAccountLink": true,
   "accountLinks": [
     {
-      "link": "https://brawltime.ninja/profile/2VYRRVYUQ",
-      "text": "Brawl Stars: 2VYRRVYUQ",
+      "link": "https://brawltime.ninja/profile/GVL8R9808",
+      "text": "Brawl Stars: GVL8R9808",
       "iconClass": "brawl-stars"
-    },
-    {
-      "link": "https://statsroyale.com/profile/90GGU9V92",
-      "text": "Clash Royale: 90GGU9V92",
-      "iconClass": "clash-royale"
     }
   ],
-  "accountLink": "https://brawltime.ninja/profile/2VYRRVYUQ",
+  "accountLink": "https://brawltime.ninja/profile/GVL8R9808",
   "imagePreviewLinks": {
     "download": {
-      "brawlers": "https://prod-api.lzt.market/220729373/image?type=brawlers",
-      "stats-brawl": "https://prod-api.lzt.market/220729373/image?type=stats-brawl",
-      "stats-coc": "https://prod-api.lzt.market/220729373/image?type=stats-coc",
-      "stats-cr": "https://prod-api.lzt.market/220729373/image?type=stats-cr"
+      "brawlers": "https://prod-api.lzt.market/237892725/image?type=brawlers",
+      "stats-brawl": "https://prod-api.lzt.market/237892725/image?type=stats-brawl",
+      "stats-coc": "https://prod-api.lzt.market/237892725/image?type=stats-coc",
+      "stats-cr": "https://prod-api.lzt.market/237892725/image?type=stats-cr"
     },
     "direct": {
-      "brawlers": "https://prod-api.lzt.market/220729373/image/show?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJzdWIiOjIyMDcyOTM3MywiaXNzIjoibHp0IiwiZXhwIjoxNzczNjE5MTk5LCJpYXQiOjE3NzMzNjAwMDAsImp0aSI6IjIyMDcyOTM3MzpicmF3bGVycyJ9.U1eq-5DvgUVCr74DGiaZcGrV2sSZXHSouiIJaRbE78dG7sN1mKNc9eLCZtHWYB5MGBIFlGX7DAvv9RXfN_lRp0VEV4O3GCmzc979xbnkz-5Dcpxyb_A7PAzc42r2cjm0dsILeaYU7KNx7JCv7yQF1TkMaEtCWAEEGrZauVRHFPc",
-      "stats-brawl": "https://prod-api.lzt.market/220729373/image/show?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJzdWIiOjIyMDcyOTM3MywiaXNzIjoibHp0IiwiZXhwIjoxNzczNjE5MTk5LCJpYXQiOjE3NzMzNjAwMDAsImp0aSI6IjIyMDcyOTM3MzpzdGF0cy1icmF3bCJ9.CTL_4W3_34GSAxSofMFFy043DufzU4PDRBBelUp3MJauVTAGBhL7dkLCtA8KoEsxpnkkQv_4ZkqMSlKbMqo4JTFT5rSaMEXQ2LeupEsXFWP354cqkaKdOGwaPDpADNP-vRVGzUvDAY8iBlFCYqkeJ0TwE4dceZhS-B1xegi0ELM",
-      "stats-coc": "https://prod-api.lzt.market/220729373/image/show?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJzdWIiOjIyMDcyOTM3MywiaXNzIjoibHp0IiwiZXhwIjoxNzczNjE5MTk5LCJpYXQiOjE3NzMzNjAwMDAsImp0aSI6IjIyMDcyOTM3MzpzdGF0cy1jb2MifQ.cAKeVNYYG1i-4LFGhpWosG-8V47kKOt0SWinv-GFajHeL_fE09XbWYhSk83zWMQxLXKuxCYrnEFKL7s0XEnB9oewKpFWRxpLCQnq6iz1p3la5mjm4p55ZbIU2Ug1Cwta9ItEz2JR9Xifry2mnsToIKJ3qqacosRK8qosB-zKivI",
-      "stats-cr": "https://prod-api.lzt.market/220729373/image/show?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJzdWIiOjIyMDcyOTM3MywiaXNzIjoibHp0IiwiZXhwIjoxNzczNjE5MTk5LCJpYXQiOjE3NzMzNjAwMDAsImp0aSI6IjIyMDcyOTM3MzpzdGF0cy1jciJ9.hlqzfK3sY99C3OmCxQTBdtmxP_Uw951pvzbt6giKn5I33eLa16JXHHcvG2bEpyICXgq70GuoTQ7uZKkaf6sMVyy3a325euCu4-5Z7hft4fc3AHOxxzCMLaJ6BWGbJmVXAKhmiPeye9aC8bcm5uNIB7zaWzrfUgU0o_Zs_ikokvQ"
+      "brawlers": "https://prod-api.lzt.market/237892725/image/show?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJzdWIiOjIzNzg5MjcyNSwiaXNzIjoibHp0IiwiZXhwIjoxNzgwOTYzMTk5LCJpYXQiOjE3ODA3MDQwMDAsImp0aSI6IjIzNzg5MjcyNTpicmF3bGVycyJ9.mMpqzsPPpwYRszUhQVEnq1bO26YBIlheODIOaw5yXehkW7LKY6cN1GIOpNpV0kwHtLXDCo4NGl5GJFn_9iirGGDnrZ2NZsoESZs3JgAo5u95xjbkxO0Q8KLWvKTSiaa7UiPyMNYweVnRphf44C2e5Lw6xZBYrlSMIs8RWIlM1Rs",
+      "stats-brawl": "https://prod-api.lzt.market/237892725/image/show?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJzdWIiOjIzNzg5MjcyNSwiaXNzIjoibHp0IiwiZXhwIjoxNzgwOTYzMTk5LCJpYXQiOjE3ODA3MDQwMDAsImp0aSI6IjIzNzg5MjcyNTpzdGF0cy1icmF3bCJ9.h-wQI_i5T_NjC9WEP4Xc34BMPvFq9hVoFL5Zr9Kd3kDAY6Iolw2kE6Fedjrx_aCtpjhDa9k8Gqzer9UlBSYaljQH9Hw8tM5jiGXXyHQ0EOREqzR7Sdhgi9Htul9Dy1vRqmjNCnkHPzQvTLgJSLAixRZ1touU2uEfs7GekczfUEE",
+      "stats-coc": "https://prod-api.lzt.market/237892725/image/show?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJzdWIiOjIzNzg5MjcyNSwiaXNzIjoibHp0IiwiZXhwIjoxNzgwOTYzMTk5LCJpYXQiOjE3ODA3MDQwMDAsImp0aSI6IjIzNzg5MjcyNTpzdGF0cy1jb2MifQ.WKCPVhY7lWMdTfuUNiyf5vhZzhU566x6YNHBYUpk3Y6D7OVVI3jXa7bWU9J19WeixmYshN-4z2pnl1_7a5G3QTxgecxbero0BBKD3uj4Q2US6Mdc1cTMOpaUYRfA3gkam5dnzP3wKGOhuBkAFecqZTBHSmQ3H7kj4_6MC9R4_vA",
+      "stats-cr": "https://prod-api.lzt.market/237892725/image/show?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJzdWIiOjIzNzg5MjcyNSwiaXNzIjoibHp0IiwiZXhwIjoxNzgwOTYzMTk5LCJpYXQiOjE3ODA3MDQwMDAsImp0aSI6IjIzNzg5MjcyNTpzdGF0cy1jciJ9.n97p-Bb2vsJatxPpMTdpggnY9l_NDe8lh4M-GzaEz_fo4xxCH899CYQtZkELKcHeywBgY8bgiQ2BUyiqWoFSjAu6DFlJ6zQeERpuBX9XSVnDHxVh6Sc-AdkhJe2oF_qJmN7BWA6GZG-QmaTjJio8vbfzMETRez4jT0q-nb64R14"
     }
   },
   "emailLoginUrl": "https://firstmail.ltd/webmail",
   "canChangePassword": false,
-  "canChangeEmailPassword": false,
+  "canChangeEmailPassword": true,
   "uniqueKeyExists": true,
-  "itemOriginPhrase": "Resale (Resale)",
-  "sold_items_category_count": 1670,
-  "restore_items_category_count": 11,
+  "itemOriginPhrase": "Phishing",
   "tags": {
     "1": {
       "tag_id": 1,
@@ -3757,19 +3527,19 @@
   },
   "public_tag": null,
   "note_text": null,
-  "descriptionHtml": "",
-  "descriptionEnHtml": "",
-  "descriptionPlain": "",
-  "descriptionEnPlain": "",
+  "descriptionHtml": "С панельки ЛевогоТипа<br />\n<br />\nБравлеры с гиперзарядом:<br />\nSIRIUS<br />\nKAZE<br />\nSPIKE<br />\nSURGE<br />\nCROW<br />\nMORTIS<br />\nFANG<br />\nBUZZ<br />\nSQUEAK<br />\nMICO<br />\nRUFFS<br />\nCLANCY<br />\nOLLIE<br />\nR-T<br />\nEVE<br />\nLARRY &amp; LAWRIE<br />\nPEARL<br />\nEDGAR<br />\nGRIFF<br />\nBERRY<br />\nBIBI<br />\nBEA<br />\nBO<br />\nMANDY<br />\nSHADE<br />\nBELLE<br />\nANGELO<br />\nTICK<br />\nJESSIE<br />\nDARRYL<br />\nGUS<br />\nJACKY<br />\nBULL<br />\nBROCK<br />\nCOLT<br />\nEL PRIMO<br />\nROSA<br />\nPOCO<br />\nNITA<br />\nSHELLY<br />\n<br />\nЕсли герои не 11 уровня то гиперзаряд может быть не виден в игре",
+  "descriptionEnHtml": "From the Left Type panel",
+  "descriptionPlain": "С панельки ЛевогоТипа\n\nБравлеры с гиперзарядом:\nSIRIUS\nKAZE\nSPIKE\nSURGE\nCROW\nMORTIS\nFANG\nBUZZ\nSQUEAK\nMICO\nRUFFS\nCLANCY\nOLLIE\nR-T\nEVE\nLARRY & LAWRIE\nPEARL\nEDGAR\nGRIFF\nBERRY\nBIBI\nBEA\nBO\nMANDY\nSHADE\nBELLE\nANGELO\nTICK\nJESSIE\nDARRYL\nGUS\nJACKY\nBULL\nBROCK\nCOLT\nEL PRIMO\nROSA\nPOCO\nNITA\nSHELLY\n\nЕсли герои не 11 уровня то гиперзаряд может быть не виден в игре",
+  "descriptionEnPlain": "From the Left Type panel",
   "seller": {
-    "user_id": 7930463,
-    "sold_items_count": 6327,
+    "user_id": 8956383,
+    "sold_items_count": 204,
     "active_items_count": 0,
-    "restore_data": "{\"15\":11,\"17\":5,\"16\":9,\"14\":3,\"11\":3,\"12\":3,\"28\":5,\"7\":1,\"1\":1}",
-    "username": "Mayo",
-    "avatar_date": 1771895204,
+    "restore_data": "{}",
+    "username": "marlborogold",
+    "avatar_date": 1735505603,
     "is_banned": 0,
-    "display_style_group_id": 265,
-    "restore_percents": 0
+    "display_style_group_id": 2,
+    "restore_percents": null
   }
 }

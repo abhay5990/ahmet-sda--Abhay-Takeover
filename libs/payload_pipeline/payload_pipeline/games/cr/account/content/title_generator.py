@@ -49,6 +49,8 @@ class CrTitleGenerator:
             parts.append(f"CoC TH{account.coc_th_level}")
 
         # Card info
+        if account.evolution_count > 0:
+            parts.append(f"{account.evolution_count} Evolutions")
         if account.level_15_cards_count > 0:
             parts.append(f"{account.level_15_cards_count} Elite")
         if account.level_14_cards_count > 0:

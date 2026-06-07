@@ -62,7 +62,9 @@ class CrResolver:
         level_15_cards_count = self._count_cards_with_level(cards_data, 15)
         level_14_cards_count = self._count_cards_with_level(cards_data, 14)
         elite_cards = self._elite_card_names(cards_data)
-        evolution_count = self._count_evolutions(cards_data)
+        tracker_evolution_count = self._count_evolutions(cards_data)
+        lzt_evolution_count = lzt.evolved_count if lzt else 0
+        evolution_count = tracker_evolution_count if tracker_evolution_count > 0 else lzt_evolution_count
         total_cards = len(cards_data)
         player_tag = lzt.player_tag if lzt else ""
         brawl_stars_tag = lzt.brawl_stars_tag if lzt else ""

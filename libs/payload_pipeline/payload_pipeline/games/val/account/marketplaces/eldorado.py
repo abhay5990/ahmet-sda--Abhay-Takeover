@@ -11,6 +11,8 @@ from .....marketplaces.eldorado import BaseEldoradoBuilder
 _ATTR_RANK = "valorant-rank"
 _ATTR_AGENTS = "valorant-agents"
 _ATTR_SKINS = "valorant-weapon-skins"
+_ATTR_KNIVES = "valorant-knives"
+_ATTR_SPENT = "valorant-spent-points"
 
 _RANK_IDS: dict[str, str] = {
     "iron": "iron",
@@ -47,6 +49,8 @@ class ValorantEldoradoBuilder(BaseEldoradoBuilder):
                 _ATTR_RANK: self._resolve_rank(account),
                 _ATTR_AGENTS: self._resolve_agents(account.agent_count),
                 _ATTR_SKINS: self._resolve_skins(account.skin_count),
+                _ATTR_KNIVES: self._resolve_knives(account.knife_count),
+                _ATTR_SPENT: self._resolve_spent_points(account.inventory_value),
             },
             ref_key=account.ref_key,
         )
@@ -88,7 +92,9 @@ class ValorantEldoradoBuilder(BaseEldoradoBuilder):
             return "11-15-agents"
         if agent_count <= 20:
             return "16-20-agents"
-        return "20-plus-agents"
+        if agent_count <= 25:
+            return "agents-2125"
+        return "agents-26plus"
 
     @staticmethod
     def _resolve_skins(skin_count: int) -> str:
@@ -105,3 +111,29 @@ class ValorantEldoradoBuilder(BaseEldoradoBuilder):
         if skin_count <= 99:
             return "70-99-skins"
         return "100-plus-skins"
+
+    @staticmethod
+    def _resolve_knives(knife_count: int) -> str:
+        if knife_count == 0:
+            return "knives-0"
+        if knife_count <= 4:
+            return "knives-04"
+        if knife_count <= 9:
+            return "knives-59"
+        if knife_count <= 14:
+            return "knives-1014"
+        if knife_count <= 19:
+            return "knives-1519"
+        return "knives-20plus"
+
+    @staticmethod
+    def _resolve_spent_points(inventory_value: int) -> str:
+        if inventory_value < 5000:
+            return "spent-0499"
+        if inventory_value < 10000:
+            return "spent-5999"
+        if inventory_value < 20000:
+            return "spent-101999"
+        if inventory_value < 35000:
+            return "spent-203499"
+        return "spent-35plus"
