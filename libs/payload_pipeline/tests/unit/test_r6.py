@@ -9,20 +9,19 @@ from payload_pipeline.games.r6.account import (
 )
 
 
-def test_lzt_source_normalization_ignores_gold_dust_rank_noise(load_fixture) -> None:
+def test_lzt_source_normalization_parses_rank_and_skins(load_fixture) -> None:
     source = R6LztSourceAdapter().parse(load_fixture("lzt_r6.json"))
 
     assert source is not None
-    # Title "...Solar Raid Diamond..." → Diamond extracted, Gold Dust filtered
-    assert source.title_rank_hint == "Diamond"
-    assert source.title_rank_count_hint == 1
-    # lzt_rank from uplayR6Rank="Copper 4", lzt_title from "Solar Raid Diamond"
+    # Title has no rank mentions (only cosmetic keywords like "Black Ices", "Pro league")
+    assert source.title_rank_hint == ""
+    assert source.title_rank_count_hint == 0
+    # lzt_rank from uplayR6Rank="Copper 5", no title rank signals
     assert [(signal.rank, signal.count, signal.season) for signal in source.rank_signals] == [
         ("Copper", 1, ""),
-        ("Diamond", 1, "Solar Raid"),
     ]
-    assert source.skin_count == 1168
-    assert len(source.weapon_skins) == 1168
+    assert source.skin_count == 275
+    assert len(source.weapon_skins) == 275
 
 
 def test_tracker_source_normalization_builds_weapon_skin_records_and_rank_history(load_fixture) -> None:
@@ -63,13 +62,13 @@ def test_r6_resolver_and_composer_use_normalized_contract(load_fixture) -> None:
     assert account.peak_rank == "Diamond"
     assert account.peak_rank_count == 1
     assert account.peak_rank_source == "tracker_charm"
-    assert account.skin_count == 1168
+    assert account.skin_count == 275
     assert account.black_ice_count == 49
     assert account.operator_count == 74
 
     assert "Diamond" in listing.default.title
-    assert "1168 Skins" in listing.default.title
-    assert "Skin Count: 1168" in listing.default.description
+    assert "275 Skins" in listing.default.title
+    assert "Skin Count: 275" in listing.default.description
 
 
 # ---------------------------------------------------------------------------

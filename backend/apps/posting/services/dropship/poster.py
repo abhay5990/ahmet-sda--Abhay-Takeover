@@ -88,6 +88,11 @@ class _MaxOfferError(Exception):
         self.variant_slug = variant_slug
 
 
+class _StoreFullError(Exception):
+    """Marketplace store hit its active-offer cap (e.g. PA 200). Capacity
+    condition, NOT a payload problem — pause this cycle, do not disable."""
+
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -304,6 +309,21 @@ def _process_target_url(
                     _item_id, config.game.slug, config.store.name,
                 )
 
+        except _StoreFullError as e:
+            _item_id = source_provider.extract_item_id(item)
+            logger.info(
+                "Store full for %s/%s (%s) — stopping posts this cycle",
+                config.game.slug, config.store.name, e,
+            )
+            PostingLog.objects.create(
+                task_name='dropship_poster',
+                level=PostingLogLevel.WARNING,
+                message=f"Store full — posting paused this cycle: {config.store.name}",
+                detail={'config_id': config.id, 'item_id': _item_id, 'error': str(e)},
+                integration_account=config.store,
+            )
+            break  # exit items loop; cycle retries next interval
+
         except _RateLimitError:
             tracker.on_rate_limit()  # backoff or PauseRequired
 
@@ -493,10 +513,14 @@ def _attempt_post(
 
     if not api_result.ok:
         # Check max offer error before generic classification
-        if is_max_offer_error(api_result) and game.slug in PLATFORM_PRIORITY:
+        if is_max_offer_error(api_result):
             err = api_result.error
             msg = f"Max offer limit: {err.message}" if err else "Max offer limit reached"
-            raise _MaxOfferError(msg, variant_slug=variant_slug or '')
+            if game.slug in PLATFORM_PRIORITY:
+                # Variant platform (Eldorado): try the next variant slot
+                raise _MaxOfferError(msg, variant_slug=variant_slug or '')
+            # Non-variant platform (e.g. PlayerAuctions): whole store is full
+            raise _StoreFullError(msg)
 
         error_type = classify_api_error(api_result)
         err = api_result.error

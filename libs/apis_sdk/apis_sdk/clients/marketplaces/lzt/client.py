@@ -565,10 +565,18 @@ class LztClient:
                     message = error_text or message
                     details["errors"] = errors
 
-                    # LZT-specific: detect maintenance mode (503)
-                    # LZT returns: "Технические работы // Technical works."
+                    # LZT-specific: detect maintenance mode (503).
+                    # LZT has used several phrasings over time:
+                    #   "Технические работы // Technical works."
+                    #   "Engineering works. The market is temporarily unavailable."
                     _lower = error_text.lower()
-                    if "technical works" in _lower or "технические работы" in _lower:
+                    _MAINTENANCE_PHRASES = (
+                        "technical works",
+                        "технические работы",
+                        "engineering works",
+                        "the market is temporarily unavailable",
+                    )
+                    if any(phrase in _lower for phrase in _MAINTENANCE_PHRASES):
                         details["maintenance"] = True
                         return ApiResult.from_error(
                             ErrorCategory.SERVER_ERROR,

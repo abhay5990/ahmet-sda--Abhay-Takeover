@@ -22,6 +22,17 @@ _RANK_IDS: dict[str, str] = {
     "champions": "champions",
 }
 
+_PREVIOUS_RANK_IDS: dict[str, str] = {
+    "copper": "previous-copper",
+    "bronze": "previous-bronze",
+    "silver": "previous-silver",
+    "gold": "previous-gold",
+    "platinum": "previous-platinum",
+    "emerald": "previous-emerald",
+    "diamond": "previous-diamond",
+    "champion": "previous-champion",
+}
+
 
 class R6EldoradoBuilder(BaseEldoradoBuilder):
     """Foundation Eldorado builder for the R6 slice."""
@@ -45,7 +56,7 @@ class R6EldoradoBuilder(BaseEldoradoBuilder):
                 _ATTR_BLACK_ICE: self._resolve_black_ice(account.black_ice_count),
                 "rainbow-six-game-purchased": "purchased-yes" if account.has_game else "purchased-no",
                 "rainbow-six-operators": self._resolve_operators(account.operator_count),
-                "rainbow-six-previous-rank": "previous-other",
+                "rainbow-six-previous-rank": self._resolve_previous_rank(account),
                 "rainbow-six-ranked-unlocked": "ranked-unlocked-yes" if account.ranked_ready else "ranked-unlocked-no",
                 "rainbow-six-renown": self._resolve_renown(account.renown),
             },
@@ -63,6 +74,12 @@ class R6EldoradoBuilder(BaseEldoradoBuilder):
         return get_external_id(
             ctx.variant_context, "platform", account.primary_linkable_platform,
         ) or "0"
+
+    def _resolve_previous_rank(self, account: R6ResolvedAccount) -> str:
+        rank = account.peak_rank.strip().lower()
+        if not rank or rank in ("unranked", "no rank"):
+            return "previous-other"
+        return _PREVIOUS_RANK_IDS.get(rank, "previous-other")
 
     def _resolve_rank(self, account: R6ResolvedAccount) -> str:
         rank = account.current_rank.strip().lower()

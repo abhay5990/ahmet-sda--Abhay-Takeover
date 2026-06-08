@@ -100,15 +100,16 @@ def cleaner_loop(cleaner_config: CleanerConfig, stop_event: Event) -> None:
             .values_list('id', flat=True)
         )
 
-        for dp_id in listed_ids:
+        for idx, dp_id in enumerate(listed_ids):
             if stop_event.is_set():
                 break
 
-            # DB stop check before each product
-            cleaner_config.refresh_from_db(fields=['enabled'])
-            if not cleaner_config.enabled:
-                stop_event.set()
-                break
+            # DB stop check throttled: every 50 items instead of every item
+            if idx % 50 == 0:
+                cleaner_config.refresh_from_db(fields=['enabled'])
+                if not cleaner_config.enabled:
+                    stop_event.set()
+                    break
 
             try:
                 dp = DropshipProduct.objects.select_related(
