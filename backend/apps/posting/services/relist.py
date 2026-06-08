@@ -33,7 +33,11 @@ class RelistResult(NamedTuple):
     error: str = ''
 
 
-def relist_listing(listing: Listing) -> RelistResult:
+def relist_listing(
+    listing: Listing,
+    *,
+    augmented_game_override: dict | None = None,
+) -> RelistResult:
     """Delete *listing* from its marketplace and re-create it.
 
     Steps:
@@ -42,6 +46,13 @@ def relist_listing(listing: Listing) -> RelistResult:
         3. Create a new offer with the same payload.
         4. Atomically update the DB: old listing → DELETED, new listing created,
            OwnedProduct links + OfferPool transferred.
+
+    ``augmented_game_override`` (Eldorado only): when provided, replaces the
+    payload's ``augmentedGame`` block before recreating.  Used to push freshly
+    rebuilt offer attributes onto a listing while preserving its price, title,
+    images and credentials.  Eldorado offers are immutable after creation
+    (the update endpoint rejects PUT/PATCH/POST with 405), so attribute changes
+    must go through delete + recreate.
 
     Returns a ``RelistResult`` with the new ``Listing`` on success.
     """
@@ -70,6 +81,10 @@ def relist_listing(listing: Listing) -> RelistResult:
     )
     if payload is None:
         return RelistResult(ok=False, error='Cannot extract payload from raw_data')
+
+    # Override attributes (Eldorado): swap in the freshly rebuilt augmentedGame.
+    if augmented_game_override is not None and marketplace == 'eldorado':
+        payload['augmentedGame'] = augmented_game_override
 
     # Eldorado requires credential data — fetch from API if missing in raw_data
     if marketplace == 'eldorado':
