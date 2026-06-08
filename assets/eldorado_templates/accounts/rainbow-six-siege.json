@@ -137,12 +137,12 @@
       "required": true,
       "values": [
         {
-          "id": "ranked-unlocked-yes",
-          "name": "Yes"
-        },
-        {
           "id": "ranked-unlocked-no",
           "name": "No"
+        },
+        {
+          "id": "ranked-unlocked-yes",
+          "name": "Yes"
         }
       ]
     },
