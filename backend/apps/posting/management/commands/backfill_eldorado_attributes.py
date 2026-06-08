@@ -146,12 +146,15 @@ class Command(BaseCommand):
             else:
                 if result == "ok":
                     ok += 1
-                elif result == "skip":
+                elif result in ("skip", "uptodate"):
                     skip += 1
                 else:
                     fail += 1
-            # Throttle between listings to stay under Eldorado's rate limit.
-            if sleep_s and idx < last:
+            # Throttle between listings to stay under Eldorado's rate limit — but
+            # only when we actually hit the marketplace. Already-up-to-date
+            # listings short-circuit before any Eldorado call, so don't waste the
+            # sleep on them.
+            if sleep_s and idx < last and result != "uptodate":
                 time.sleep(sleep_s)
 
         self.stdout.write(self.style.SUCCESS(f"Done. ok={ok} fail={fail} skip={skip}"))
@@ -183,7 +186,8 @@ class Command(BaseCommand):
             self.stdout.write(
                 f"#{lst.id} offer={lst.store_listing_id}: attributes already up to date — skip"
             )
-            return "skip"
+            # No marketplace call was made — signal the caller to skip the throttle.
+            return "uptodate"
 
         # Ghost guard: probe the marketplace BEFORE we ever delete+recreate.
         # An offer that is LISTED in our DB may already be gone on Eldorado;
