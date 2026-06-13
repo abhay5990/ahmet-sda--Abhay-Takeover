@@ -1,8 +1,11 @@
 from django.contrib import admin
+from django.http import JsonResponse
+from django.urls import path
 
 from .models import (
     CleanerConfig,
     ContentTemplate,
+    CredentialSpec,
     GameVariant,
     GameVariantLimit,
     GameVariantMapping,
@@ -136,6 +139,59 @@ class SchedulerHeartbeatAdmin(admin.ModelAdmin):
     readonly_fields = ['service_name', 'last_seen', 'pid', 'started_at']
 
 
+# ── Credential Spec ──────────────────────────────────────────────
+
+
+@admin.register(CredentialSpec)
+class CredentialSpecAdmin(admin.ModelAdmin):
+    list_display = ['name', 'game', 'variant', 'is_active', 'updated_at']
+    list_filter = ['is_active', 'game']
+    search_fields = ['name', 'game__name']
+    readonly_fields = ['name', 'created_at', 'updated_at']
+
+    def get_fields(self, request, obj=None):
+        return ['game', 'variant', 'name', 'fields', 'format_templates', 'is_active', 'created_at', 'updated_at']
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom = [
+            path(
+                'variants-for-game/<int:game_id>/',
+                self.admin_site.admin_view(self._variants_for_game),
+                name='credentialspec_variants_for_game',
+            ),
+        ]
+        return custom + urls
+
+    def _variants_for_game(self, request, game_id):
+        variants = GameVariant.objects.filter(game_id=game_id).order_by('type', 'sort_order')
+        data = [{'id': v.id, 'label': f"{v.get_type_display()}: {v.label} ({v.slug})"} for v in variants]
+        return JsonResponse({'variants': data})
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'variant':
+            obj_id = request.resolver_match.kwargs.get('object_id')
+            if obj_id:
+                # Edit mode: show only variants for this spec's game
+                try:
+                    spec = CredentialSpec.objects.get(pk=obj_id)
+                    kwargs['queryset'] = GameVariant.objects.filter(game=spec.game)
+                except CredentialSpec.DoesNotExist:
+                    kwargs['queryset'] = GameVariant.objects.none()
+            else:
+                # Create mode: start empty, JS will populate on game change
+                kwargs['queryset'] = GameVariant.objects.none()
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def save_model(self, request, obj, form, change):
+        # Force re-generate name from game + variant (name is readonly in admin)
+        obj.name = ''
+        super().save_model(request, obj, form, change)
+
+    class Media:
+        js = ('admin/js/credential_spec_variant_filter.js',)
+
+
 # ── Offer Pool (Auto Restock) ────────────────────────────────────
 
 
@@ -149,9 +205,9 @@ class OfferPoolItemInline(admin.TabularInline):
 
 @admin.register(OfferPool)
 class OfferPoolAdmin(admin.ModelAdmin):
-    list_display = ['id', 'listing', 'game', 'store', 'strategy', 'status', 'threshold', 'target_count', 'current_remote_count', 'last_checked_at']
+    list_display = ['id', 'listing', 'game', 'store', 'strategy', 'status', 'credential_spec', 'threshold', 'target_count', 'current_remote_count', 'last_checked_at']
     list_filter = ['status', 'strategy', 'game']
-    raw_id_fields = ['listing', 'store']
+    raw_id_fields = ['listing', 'store', 'credential_spec']
     readonly_fields = ['current_remote_count', 'last_checked_at', 'last_replenished_at', 'created_at', 'updated_at']
     inlines = [OfferPoolItemInline]
 

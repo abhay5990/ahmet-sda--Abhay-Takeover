@@ -147,8 +147,21 @@ class VariantRouter:
         if not found (passthrough).
         """
         type_ctx = self._ctx.get(variant_type, {})
-        entry = type_ctx.get(source_key, {})
-        return entry.get('slug', source_key)
+
+        # 1. Exact match on source_key
+        entry = type_ctx.get(source_key)
+        if entry is not None:
+            return entry.get('slug', source_key)
+
+        # 2. Case-insensitive fallback (key or slug)
+        key_lower = source_key.lower()
+        for k, v in type_ctx.items():
+            if k.lower() == key_lower:
+                return v.get('slug', source_key)
+            if str(v.get('slug') or '').lower() == key_lower:
+                return v.get('slug', source_key)
+
+        return source_key
 
     def record_post(self, variant_type: str, slug: str) -> None:
         """Increment in-memory counter after a successful post."""

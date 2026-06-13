@@ -50,7 +50,8 @@ class GtavComposer:
         lines = [line for line in lines if line]
 
         if media.album_url:
-            lines.append(f"\nAlbum: {media.album_url}")
+            clean_url = media.album_url.removeprefix("https://").removeprefix("http://")
+            lines.append(f"\nAlbum: {clean_url}")
 
         description = "\n".join(lines)
 

@@ -86,7 +86,10 @@ class EldoradoMapper:
                 "category": category,
                 "tradeEnvironmentId": trade_environment_id,
                 "attributeIdsCsv": attribute_ids_csv,
-                "attributes": attributes or {},
+                "offerAttributes": [
+                    {"id": attr_id, "type": "Select", "value": attr_value}
+                    for attr_id, attr_value in (attributes or {}).items()
+                ],
             },
             "accountSecretDetails": account_secret_details,
         }

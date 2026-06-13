@@ -4,11 +4,11 @@ PlayerAuctions authentication provider with reactive token refresh.
 Implements a reactive-only model:
 - Tokens start with effectively infinite expiry (no proactive refresh)
 - Refresh is triggered only via the retry path (401 → strategy → runtime)
-- Refresh calls a local Puppeteer-based microservice (PA Token Service)
-  that handles browser-based login and returns a fresh JWT
+- Refresh calls the PA Token Service on VDS to perform browser-based
+  login and return a fresh JWT
 
 Safety:
-- If refresh fails (microservice down, bad credentials, etc.),
+- If refresh fails (service down, bad credentials, etc.),
   ``_refresh_failed`` flag is set to prevent infinite retry loops.
 - Flag resets only when tokens are externally updated via set_tokens().
 """
@@ -36,7 +36,7 @@ class PlayerAuctionsAuth(BaseAuthProvider):
 
     Tokens start with infinite expiry — no proactive refresh.
     Refresh is triggered externally via the retry/runtime path
-    when a 401 is encountered. Uses a local Puppeteer microservice
+    when a 401 is encountered. Uses the PA Token Service on VDS
     to obtain fresh tokens via browser-based login.
 
     Proxy for token refresh is acquired dynamically from the shared
@@ -52,7 +52,8 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         access_token: str = "",
         proxy_pool: ProxyPool | None = None,
         proxy_group: str | None = None,
-        token_service_url: str = "http://localhost:8976",
+        token_service_url: str = "http://31.57.156.36:8976",
+        token_service_api_key: str = "pa-s4g-Xk9mT2vL7nQp4wR8jY3bF6hA",
         logger: SdkLogger | None = None,
     ) -> None:
         super().__init__()
@@ -67,7 +68,10 @@ class PlayerAuctionsAuth(BaseAuthProvider):
 
         # Build token service client (reuses the same transport)
         self._token_service = PaTokenServiceClient(
-            config=PaTokenServiceConfig(base_url=token_service_url),
+            config=PaTokenServiceConfig(
+                base_url=token_service_url,
+                api_key=token_service_api_key,
+            ),
             transport=transport,
             logger=logger,
         )
@@ -96,7 +100,7 @@ class PlayerAuctionsAuth(BaseAuthProvider):
 
     def _do_refresh(self) -> bool:
         """
-        Refresh PlayerAuctions token via the local Puppeteer microservice.
+        Refresh PlayerAuctions token via the PA Token Service on VDS.
 
         Sends username/password to PA Token Service which performs a
         browser-based login and returns a fresh JWT. On failure, sets

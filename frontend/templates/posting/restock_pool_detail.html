@@ -39,7 +39,7 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-5 gap-4 mb-6">
+    <div class="grid grid-cols-6 gap-4 mb-6">
         <div class="bg-white rounded-lg shadow p-4">
             <div class="text-xs text-gray-500 uppercase">Remote Count</div>
             <div class="text-2xl font-bold {% if pool.current_remote_count is not None and pool.current_remote_count < pool.threshold %}text-red-600{% else %}text-gray-800{% endif %}">
@@ -59,6 +59,10 @@
             <div class="text-2xl font-bold text-blue-600">{{ pool.pending_count }}</div>
         </div>
         <div class="bg-white rounded-lg shadow p-4">
+            <div class="text-xs text-gray-500 uppercase">Consumed</div>
+            <div class="text-2xl font-bold text-orange-500">{{ consumed_count }}</div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
             <div class="text-xs text-gray-500 uppercase">Strategy</div>
             <div class="text-2xl font-bold text-gray-800">{{ pool.get_strategy_display }}</div>
         </div>
@@ -74,8 +78,8 @@
         <div class="flex gap-2 mb-3">
             <textarea x-model="pasteText" rows="2"
                       @paste.debounce.100ms="$nextTick(() => parsePaste())"
-                      :placeholder="CREDENTIAL_SPEC
-                          ? 'Paste tab-separated: ' + CREDENTIAL_COLUMNS.map(c => c.label).join(' \t ')
+                      :placeholder="credentialSpec
+                          ? 'Paste tab-separated: ' + credentialColumns.map(c => c.label).join(' \t ')
                           : 'Paste credentials (tab-separated: login \t password \t email \t ...)'"
                       class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:ring-indigo-500 focus:border-indigo-500"></textarea>
             <div class="flex flex-col gap-1.5">
@@ -105,7 +109,7 @@
                     </thead>
                     <tbody>
                         <template x-for="(cred, idx) in parsedCredentials" :key="idx">
-                            <tr class="border-b hover:bg-gray-50" :class="{'bg-red-50': !cred[credentialColumns[0].key] || !cred[credentialColumns[1].key]}">
+                            <tr class="border-b hover:bg-gray-50" :class="{'bg-red-50': !cred[credentialPrimaryKeys.login] || !cred[credentialPrimaryKeys.password]}">
                                 <td class="px-2 py-1 text-gray-400" x-text="idx + 1"></td>
                                 <template x-for="(col, colIdx) in credentialColumns" :key="col.key">
                                     <td class="px-1 py-1">
@@ -129,7 +133,7 @@
             </div>
             <button @click="addByPaste()"
                     class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
-                Add <span x-text="parsedCredentials.filter(c => c[credentialColumns[0].key] && c[credentialColumns[1].key]).length"></span> to Pool
+                Add <span x-text="parsedCredentials.filter(c => c[credentialPrimaryKeys.login] && c[credentialPrimaryKeys.password]).length"></span> to Pool
             </button>
         </div>
     </div>
@@ -206,6 +210,7 @@
                         <span class="inline-flex px-2 py-0.5 text-xs rounded-full
                             {% if item.status == 'pending' %}bg-blue-100 text-blue-700
                             {% elif item.status == 'pushed' %}bg-emerald-100 text-emerald-700
+                            {% elif item.status == 'consumed' %}bg-orange-100 text-orange-700
                             {% elif item.status == 'failed' %}bg-red-100 text-red-700
                             {% else %}bg-gray-100 text-gray-700{% endif %}">
                             {{ item.get_status_display }}
@@ -297,126 +302,106 @@
 </div>
 
 <script>
-// ── Platform-aware credential column specs ──
-const _EMAIL_CHAIN = [
-    { key: 'email', label: 'Email' },
-    { key: 'email_password', label: 'Email Pass' },
+// ── Validation reason labels ──
+const _REASON_LABELS = {
+    'already_in_pool': 'Already in this pool',
+    'linked_to_listing': 'Already linked to this offer',
+    'in_pool_same_marketplace': 'In another pool on same marketplace',
+    'in_pool_other_marketplace': 'In a pool on another marketplace',
+    'sold': 'Previously sold (not refunded/cancelled)',
+};
+
+// ── Fallback credential columns ──
+const _DEFAULT_CREDENTIAL_COLUMNS = [
+    { key: 'login', label: 'Login *' }, { key: 'password', label: 'Password *' },
+    { key: 'email', label: 'Email' }, { key: 'email_password', label: 'Email Pass' },
     { key: 'email_login_link', label: 'Email Link' },
-];
-const _SEC_EMAIL_CHAIN = [
     { key: 'security_email', label: 'Sec. Email' },
     { key: 'security_email_password', label: 'Sec. Email Pass' },
     { key: 'security_email_login_link', label: 'Sec. Email Link' },
-];
-
-const _PSN_SPEC = [
-    { key: 'psn_id', label: 'PSN ID' }, { key: 'psn_pass', label: 'PSN Pass' },
-    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
-    { key: 'dob', label: 'DoB' },
-];
-const _XBOX_SPEC = [
-    { key: 'xbox_id', label: 'Xbox ID' }, { key: 'xbox_pass', label: 'Xbox Pass' },
-    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
-];
-const _PC_SPEC = [
-    { key: 'steam_id', label: 'Steam ID' }, { key: 'steam_pass', label: 'Steam Pass' },
-    { key: 'rock_id', label: 'Rock ID' }, { key: 'rock_pass', label: 'Rock Pass' },
-    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
-];
-
-const _GTA_SPEC_BY_VARIANT = {
-    'ps4': _PSN_SPEC,
-    'ps5': _PSN_SPEC,
-    'xbox-one': _XBOX_SPEC,
-    'xbox-series': _XBOX_SPEC,
-    'pc-legacy': _PC_SPEC,
-    'pc-enhanced': _PC_SPEC,
-};
-
-const _DEFAULT_CREDENTIAL_SPEC = [
-    { key: 'login', label: 'Login *' }, { key: 'password', label: 'Password *' },
-    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
     { key: 'birthday', label: 'Birthday' },
 ];
+const _DEFAULT_PRIMARY_KEYS = { login: 'login', password: 'password' };
 
-// Resolve credential spec for this pool
-const _POOL_GAME_SLUG = '{{ pool.game.slug|default:"" }}';
-const _POOL_VARIANT = '{{ pool.listing.variant|default:"" }}';
-const _IS_GTA = _POOL_GAME_SLUG.startsWith('grand-theft-auto');
-const CREDENTIAL_SPEC = (_IS_GTA && _GTA_SPEC_BY_VARIANT[_POOL_VARIANT]) || null;
-const CREDENTIAL_COLUMNS = CREDENTIAL_SPEC || _DEFAULT_CREDENTIAL_SPEC;
-
-// Shared helpers
 const _DATE_RE = /^\d{1,4}[\/.\\-]\d{1,2}[\/.\\-]\d{1,4}$/;
 const _LINK_RE = /^(https?:\/\/)?[a-z0-9.-]+\.[a-z]{2,}/i;
 
-function _emptyCredential() {
-    if (CREDENTIAL_SPEC) {
-        const cred = {};
-        for (const col of CREDENTIAL_SPEC) cred[col.key] = '';
-        return cred;
-    }
-    return {
-        login: '', password: '', email: '', email_password: '', email_login_link: '',
-        security_email: '', security_email_password: '', birthday: '',
-    };
+function _specFieldsToColumns(fields) {
+    return fields.map(f => ({ key: f.key, label: f.label + (f.required ? ' *' : '') }));
 }
 
-function _detectColumns(cells) {
-    // Platform-specific: positional parsing + date fix
-    if (CREDENTIAL_SPEC) {
-        const cred = _emptyCredential();
-        for (let i = 0; i < Math.min(cells.length, CREDENTIAL_SPEC.length); i++) {
-            cred[CREDENTIAL_SPEC[i].key] = cells[i].trim();
-        }
-        const dobCol = CREDENTIAL_SPEC.find(c => c.key === 'dob');
-        if (dobCol && !cred.dob) {
-            for (const col of CREDENTIAL_SPEC) {
-                if (col.key === 'dob') continue;
-                if (cred[col.key] && _DATE_RE.test(cred[col.key])) {
-                    cred.dob = cred[col.key];
-                    cred[col.key] = '';
-                    break;
-                }
+function _emptyCredentialForColumns(columns) {
+    const cred = {};
+    for (const col of columns) cred[col.key] = '';
+    return cred;
+}
+
+function _parseByColumns(cells, columns) {
+    const cred = _emptyCredentialForColumns(columns);
+    for (let i = 0; i < Math.min(cells.length, columns.length); i++) {
+        cred[columns[i].key] = cells[i].trim();
+    }
+    const dobCol = columns.find(c => c.key === 'dob' || c.key === 'birthday');
+    if (dobCol && !cred[dobCol.key]) {
+        for (const col of columns) {
+            if (col.key === dobCol.key) continue;
+            if (cred[col.key] && _DATE_RE.test(cred[col.key])) {
+                cred[dobCol.key] = cred[col.key];
+                cred[col.key] = '';
+                break;
             }
         }
-        return cred;
     }
-    // Default: auto-detect
-    const cred = _emptyCredential();
+    return cred;
+}
+
+function _detectColumnsForDetail(cells, columns) {
+    if (columns && columns.length > 0) return _parseByColumns(cells, columns);
+    const cred = _emptyCredentialForColumns(_DEFAULT_CREDENTIAL_COLUMNS);
     if (cells.length >= 1) cred.login = cells[0].trim();
     if (cells.length >= 2) cred.password = cells[1].trim();
-
     let emailSeen = false, emailPassSeen = false, emailLinkSeen = false;
     for (let i = 2; i < cells.length; i++) {
         const val = cells[i].trim();
         if (!val) continue;
-        if (_DATE_RE.test(val)) {
-            cred.birthday = val;
-        } else if (val.includes('@')) {
-            if (!emailSeen) { cred.email = val; emailSeen = true; }
-            else { cred.security_email = val; }
-        } else if (_LINK_RE.test(val)) {
-            if (!emailLinkSeen) { cred.email_login_link = val; emailLinkSeen = true; }
-        } else {
-            if (!emailPassSeen) { cred.email_password = val; emailPassSeen = true; }
-            else { cred.security_email_password = val; }
-        }
+        if (_DATE_RE.test(val)) { cred.birthday = val; }
+        else if (val.includes('@')) { if (!emailSeen) { cred.email = val; emailSeen = true; } else { cred.security_email = val; } }
+        else if (_LINK_RE.test(val)) { if (!emailLinkSeen) { cred.email_login_link = val; emailLinkSeen = true; } }
+        else { if (!emailPassSeen) { cred.email_password = val; emailPassSeen = true; } else { cred.security_email_password = val; } }
     }
     return cred;
 }
 
 function poolDetail() {
     const poolId = {{ pool.id }};
-    const gameId = {{ pool.game_id }};
 
     return {
         pasteText: '',
         parsedCredentials: [],
-        credentialColumns: CREDENTIAL_COLUMNS,
+        credentialColumns: _DEFAULT_CREDENTIAL_COLUMNS,
+        credentialPrimaryKeys: { ..._DEFAULT_PRIMARY_KEYS },
+        credentialSpec: null,
+        specLoaded: false,
         replenishing: false,
 
-        async init() {},
+        async init() {
+            await this._loadSpec();
+        },
+
+        async _loadSpec() {
+            try {
+                const resp = await fetch(`/posting/api/credential-specs/for-pool/${poolId}/`);
+                const data = await resp.json();
+                if (data.spec && data.spec.fields) {
+                    this.credentialSpec = data.spec;
+                    this.credentialColumns = _specFieldsToColumns(data.spec.fields);
+                    this.credentialPrimaryKeys = data.spec.primary_keys || { ..._DEFAULT_PRIMARY_KEYS };
+                }
+            } catch (e) {
+                console.warn('Failed to load credential spec for pool:', e);
+            }
+            this.specLoaded = true;
+        },
 
         getCSRF() {
             return document.querySelector('[name=csrfmiddlewaretoken]')?.value
@@ -429,9 +414,8 @@ function poolDetail() {
             const lines = text.trim().split('\n');
             if (lines.length === 0) return;
 
-            const headerKeys = CREDENTIAL_SPEC
-                ? CREDENTIAL_SPEC.map(c => c.label.toLowerCase())
-                : ['login', 'password', 'email', 'birthday'];
+            const cols = this.credentialColumns;
+            const headerKeys = cols.map(c => c.label.toLowerCase().replace(' *', ''));
             const firstCells = lines[0].split('\t');
             const isHeader = firstCells.some(c => headerKeys.includes(c.trim().toLowerCase()));
             const dataLines = isHeader ? lines.slice(1) : lines;
@@ -439,13 +423,13 @@ function poolDetail() {
             for (const line of dataLines) {
                 if (!line.trim()) continue;
                 const cells = line.split('\t');
-                this.parsedCredentials.push(_detectColumns(cells));
+                this.parsedCredentials.push(_detectColumnsForDetail(cells, cols));
             }
             this.pasteText = '';
         },
 
         addEmptyRow() {
-            this.parsedCredentials.push(_emptyCredential());
+            this.parsedCredentials.push(_emptyCredentialForColumns(this.credentialColumns));
         },
 
         handleCellPaste(event, rowIdx, colIdx) {
@@ -465,7 +449,7 @@ function poolDetail() {
                 const targetRow = rowIdx + r;
 
                 while (targetRow >= this.parsedCredentials.length) {
-                    this.parsedCredentials.push(_emptyCredential());
+                    this.parsedCredentials.push(_emptyCredentialForColumns(cols));
                 }
 
                 for (let c = 0; c < cells.length; c++) {
@@ -475,39 +459,83 @@ function poolDetail() {
                     }
                 }
 
-                if (CREDENTIAL_SPEC) {
-                    const cred = this.parsedCredentials[targetRow];
-                    const dobCol = CREDENTIAL_SPEC.find(s => s.key === 'dob');
-                    if (dobCol && !cred.dob) {
-                        for (const col of CREDENTIAL_SPEC) {
-                            if (col.key === 'dob') continue;
-                            if (cred[col.key] && _DATE_RE.test(cred[col.key])) {
-                                cred.dob = cred[col.key];
-                                cred[col.key] = '';
-                                break;
-                            }
+                const cred = this.parsedCredentials[targetRow];
+                const dobCol = cols.find(s => s.key === 'dob' || s.key === 'birthday');
+                if (dobCol && !cred[dobCol.key]) {
+                    for (const col of cols) {
+                        if (col.key === dobCol.key) continue;
+                        if (cred[col.key] && _DATE_RE.test(cred[col.key])) {
+                            cred[dobCol.key] = cred[col.key];
+                            cred[col.key] = '';
+                            break;
                         }
                     }
                 }
             }
         },
 
-        async addByPaste() {
-            const k0 = CREDENTIAL_COLUMNS[0].key, k1 = CREDENTIAL_COLUMNS[1].key;
-            const creds = this.parsedCredentials.filter(c => c[k0] && c[k1]);
+        async addByPaste(force = false) {
+            const loginKey = this.credentialPrimaryKeys.login;
+            const passwordKey = this.credentialPrimaryKeys.password;
+            const creds = this.parsedCredentials.filter(c => c[loginKey] && c[passwordKey]);
             if (!creds.length) return alert('No valid credentials found');
 
             const resp = await fetch(`/posting/api/pools/${poolId}/items/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCSRF() },
-                body: JSON.stringify({ credentials: creds }),
+                body: JSON.stringify({ credentials: creds, force }),
             });
             const data = await resp.json();
-            if (resp.ok) {
-                alert(`Added ${data.added} items — ${data.total_pending} pending. Use "Replenish Now" to push.`);
+            if (!resp.ok) return alert(data.error || 'Failed');
+
+            // Build result summary
+            const lines = [];
+            if (data.added > 0) lines.push(`✓ Added ${data.added} items`);
+
+            // Show skipped (blocked) items
+            if (data.skipped && data.skipped.length > 0) {
+                lines.push('');
+                lines.push(`✗ Skipped ${data.skipped.length}:`);
+                for (const s of data.skipped) {
+                    const label = _REASON_LABELS[s.reason] || s.reason;
+                    lines.push(`  • ${s.login} — ${label}${s.detail ? ' (' + s.detail + ')' : ''}`);
+                }
+            }
+
+            // Show warnings (added with warning, or needs confirmation)
+            if (data.warnings && data.warnings.length > 0 && !data.needs_confirmation?.length) {
+                lines.push('');
+                lines.push(`⚠ Warnings (added anyway):`);
+                for (const w of data.warnings) {
+                    const label = _REASON_LABELS[w.reason] || w.reason;
+                    lines.push(`  • ${w.login} — ${label}${w.detail ? ' (' + w.detail + ')' : ''}`);
+                }
+            }
+
+            // Needs confirmation — ask user
+            if (data.needs_confirmation && data.needs_confirmation.length > 0) {
+                lines.push('');
+                lines.push(`⚠ ${data.needs_confirmation.length} item(s) need confirmation:`);
+                for (const w of data.warnings.filter(w => data.needs_confirmation.includes(w.login))) {
+                    const label = _REASON_LABELS[w.reason] || w.reason;
+                    lines.push(`  • ${w.login} — ${label}${w.detail ? ' (' + w.detail + ')' : ''}`);
+                }
+                lines.push('');
+                lines.push('Add these items anyway?');
+
+                if (confirm(lines.join('\n'))) {
+                    return this.addByPaste(true);
+                }
+                // User declined — reload to show what was already added
+                if (data.added > 0) location.reload();
+                return;
+            }
+
+            if (lines.length > 0) {
+                alert(lines.join('\n'));
+            }
+            if (data.added > 0 || (data.skipped && data.skipped.length > 0)) {
                 location.reload();
-            } else {
-                alert(data.error || 'Failed');
             }
         },
 

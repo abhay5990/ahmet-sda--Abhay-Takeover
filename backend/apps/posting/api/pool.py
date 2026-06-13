@@ -12,7 +12,8 @@ from django.views.decorators.http import require_POST, require_GET, require_http
 
 from apps.integrations.models import IntegrationAccount
 from apps.inventory.models import Game, OwnedProduct
-from apps.listings.models import Listing
+from apps.listings.models import Listing, ListingOwnedProduct
+from apps.orders.enums import OrderStatus
 from apps.posting.models import (
     OfferPool,
     OfferPoolActiveOffer,
@@ -122,18 +123,20 @@ def create_pool(request):
 
     # Add initial credentials if provided
     credentials = body.get('credentials', [])
-    added = 0
+    create_result = {'added': 0, 'skipped': [], 'warnings': [], 'needs_confirmation': []}
     if credentials:
-        added = _add_credentials_to_pool(pool, credentials, game, listing=listing)
+        _add_credentials_to_pool(pool, credentials, game, listing=listing,
+                                 force=True, result=create_result)
 
     # Activate pool if items were added
-    if added > 0 and pool.status == OfferPoolStatus.DEPLETED:
+    if create_result['added'] > 0 and pool.status == OfferPoolStatus.DEPLETED:
         pool.status = OfferPoolStatus.ACTIVE
         pool.save(update_fields=['status', 'updated_at'])
 
     pool.refresh_from_db()
     return JsonResponse({
         'pool': _pool_to_dict(pool),
+        **create_result,
     }, status=201)
 
 
@@ -231,15 +234,22 @@ def delete_pool(request, pool_id):
 @login_required
 @require_POST
 def add_pool_items(request, pool_id):
-    """Add credentials to a pool.
+    """Add credentials to a pool with validation.
 
     POST body (JSON):
         credentials: list[dict]  — [{login, password, email?, ...}]
-    OR:
         owned_product_ids: list[int] — existing OwnedProduct IDs to add
+        force: bool              — skip warnings (sold accounts) and add anyway
+
+    Response:
+        added: int
+        total_pending: int
+        skipped: [{login, reason, detail?}]   — blocked, not added
+        warnings: [{login, reason, detail?}]  — added despite warning (or needs confirm)
+        needs_confirmation: [login, ...]       — re-submit with force=true to add these
     """
     try:
-        pool = OfferPool.objects.select_related('game', 'listing').get(id=pool_id)
+        pool = OfferPool.objects.select_related('game', 'listing', 'store').get(id=pool_id)
     except OfferPool.DoesNotExist:
         return JsonResponse({'error': 'Pool not found'}, status=404)
 
@@ -248,12 +258,14 @@ def add_pool_items(request, pool_id):
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
-    added = 0
+    force = bool(body.get('force', False))
+    result = {'added': 0, 'skipped': [], 'warnings': [], 'needs_confirmation': []}
 
     # Mode 1: raw credentials → create OwnedProducts + add to pool
     credentials = body.get('credentials', [])
     if credentials:
-        added = _add_credentials_to_pool(pool, credentials, pool.game, listing=pool.listing)
+        _add_credentials_to_pool(pool, credentials, pool.game, listing=pool.listing,
+                                 force=force, result=result)
 
     # Mode 2: existing OwnedProduct IDs
     owned_product_ids = body.get('owned_product_ids', [])
@@ -261,21 +273,33 @@ def add_pool_items(request, pool_id):
         products = OwnedProduct.objects.filter(id__in=owned_product_ids)
         max_order = pool.items.count()
         for i, product in enumerate(products):
+            check = _validate_pool_candidate(product, pool)
+            if check['block']:
+                result['skipped'].append({
+                    'login': product.login,
+                    'reason': check['block_reason'],
+                    'detail': check['block_detail'],
+                })
+                continue
+            if not _process_warnings(check, product.login, force, result):
+                continue
+
             _, created = OfferPoolItem.objects.get_or_create(
                 pool=pool,
                 owned_product=product,
                 defaults={'order': max_order + i},
             )
             if created:
-                added += 1
+                result['added'] += 1
 
     # Re-activate pool if it was depleted and we added items
-    if added > 0 and pool.status == OfferPoolStatus.DEPLETED:
+    if result['added'] > 0 and pool.status == OfferPoolStatus.DEPLETED:
         pool.status = OfferPoolStatus.ACTIVE
         pool.save(update_fields=['status', 'updated_at'])
 
     pool.refresh_from_db()
-    return JsonResponse({'added': added, 'total_pending': pool.pending_count})
+    result['total_pending'] = pool.pending_count
+    return JsonResponse(result)
 
 
 @login_required
@@ -325,6 +349,57 @@ def trigger_replenish(request, pool_id):
     return JsonResponse({
         'pushed': pushed,
         'pool': _pool_to_dict(pool),
+    })
+
+
+# ── Sweep Settings ───────────────────────────────────────────────
+
+
+@login_required
+@require_GET
+def sweep_settings(request):
+    """Get current pool sweep settings."""
+    from apps.sync.services.shared.feature_flags import SyncFlag, get_sync_setting, is_sync_feature_enabled
+
+    return JsonResponse({
+        'enabled': is_sync_feature_enabled(SyncFlag.POOL_SWEEP),
+        'interval_minutes': get_sync_setting(SyncFlag.POOL_SWEEP, 'interval_minutes', default=30),
+    })
+
+
+@login_required
+@require_POST
+def update_sweep_settings(request):
+    """Update pool sweep interval and enabled state."""
+    from apps.sync.models import SyncFeatureFlag
+    from apps.sync.services.shared.feature_flags import SyncFlag
+
+    try:
+        body = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    flag, _ = SyncFeatureFlag.objects.get_or_create(
+        key=SyncFlag.POOL_SWEEP,
+        defaults={'description': 'Offer pool auto-restock sweep'},
+    )
+
+    if 'enabled' in body:
+        flag.is_enabled = bool(body['enabled'])
+
+    if 'interval_minutes' in body:
+        interval = int(body['interval_minutes'])
+        if interval < 1:
+            return JsonResponse({'error': 'interval_minutes must be >= 1'}, status=400)
+        value = flag.value or {}
+        value['interval_minutes'] = interval
+        flag.value = value
+
+    flag.save()
+
+    return JsonResponse({
+        'enabled': flag.is_enabled,
+        'interval_minutes': (flag.value or {}).get('interval_minutes', 30),
     })
 
 
@@ -441,6 +516,7 @@ def _pool_to_dict(pool: OfferPool) -> dict:
     pending = pool.items.filter(status=OfferPoolItemStatus.PENDING).count()
     pushed = pool.items.filter(status=OfferPoolItemStatus.PUSHED).count()
     failed = pool.items.filter(status=OfferPoolItemStatus.FAILED).count()
+    consumed = pool.items.filter(status=OfferPoolItemStatus.CONSUMED).count()
 
     return {
         'id': pool.id,
@@ -463,7 +539,8 @@ def _pool_to_dict(pool: OfferPool) -> dict:
         'items_pending': pending,
         'items_pushed': pushed,
         'items_failed': failed,
-        'items_total': pending + pushed + failed,
+        'items_consumed': consumed,
+        'items_total': pending + pushed + failed + consumed,
         'created_at': pool.created_at.isoformat(),
     }
 
@@ -495,7 +572,7 @@ def _active_offer_to_dict(ao: OfferPoolActiveOffer) -> dict:
 # ── Internal helpers ─────────────────────────────────────────────
 
 
-# Platform-specific credential key mappings (same as stock.py)
+# Legacy platform-specific credential key mappings (GTA fallback)
 _PLATFORM_CREDENTIAL_MAP: dict[str, tuple[str, str, tuple[str, ...]]] = {
     'PlayStation 4':   ('psn_id',   'psn_pass',   ('psn_id', 'psn_pass', 'dob')),
     'PlayStation 5':   ('psn_id',   'psn_pass',   ('psn_id', 'psn_pass', 'dob')),
@@ -506,23 +583,200 @@ _PLATFORM_CREDENTIAL_MAP: dict[str, tuple[str, str, tuple[str, ...]]] = {
 }
 
 
+def _validate_pool_candidate(
+    owned: OwnedProduct,
+    pool: OfferPool,
+) -> dict:
+    """Check if an OwnedProduct can be added to a pool.
+
+    Returns:
+        {block: bool, block_reason, block_detail,
+         warnings: [{reason, detail, needs_confirm}]}
+    """
+    result: dict = {
+        'block': False, 'block_reason': '', 'block_detail': '',
+        'warnings': [],
+    }
+
+    # 1. Already in this pool
+    if OfferPoolItem.objects.filter(pool=pool, owned_product=owned).exists():
+        result['block'] = True
+        result['block_reason'] = 'already_in_pool'
+        result['block_detail'] = f'Already in Pool #{pool.pk}'
+        return result
+
+    # 2. Already linked to this pool's listing (ListingOwnedProduct)
+    if pool.listing_id and ListingOwnedProduct.objects.filter(
+        listing_id=pool.listing_id,
+        owned_product=owned,
+    ).exists():
+        result['block'] = True
+        result['block_reason'] = 'linked_to_listing'
+        result['block_detail'] = 'Already linked to this offer'
+        return result
+
+    # 3. In another pool on the SAME marketplace → block
+    pool_marketplace = pool.store.provider if pool.store else ''
+    other_pool_item = (
+        OfferPoolItem.objects
+        .filter(
+            owned_product=owned,
+            status__in=(OfferPoolItemStatus.PENDING, OfferPoolItemStatus.PUSHED),
+        )
+        .exclude(pool=pool)
+        .select_related('pool__store')
+        .first()
+    )
+    if other_pool_item:
+        other_mp = other_pool_item.pool.store.provider if other_pool_item.pool.store else ''
+        other_pool = other_pool_item.pool
+        if other_mp == pool_marketplace:
+            result['block'] = True
+            result['block_reason'] = 'in_pool_same_marketplace'
+            result['block_detail'] = (
+                f'Already in Pool #{other_pool.pk} '
+                f'({other_pool.store.name if other_pool.store else other_mp})'
+            )
+            return result
+        # Different marketplace → info warning (no confirmation needed)
+        result['warnings'].append({
+            'reason': 'in_pool_other_marketplace',
+            'detail': (
+                f'Also in Pool #{other_pool.pk} '
+                f'({other_pool.store.name if other_pool.store else other_mp})'
+            ),
+            'needs_confirm': False,
+        })
+
+    # 4. Sold (has active sold order, not cancelled/refunded) → needs confirmation
+    _SOLD_STATUSES = (OrderStatus.PENDING, OrderStatus.DELIVERED, OrderStatus.COMPLETED)
+    sold_order = owned.orders.filter(status__in=_SOLD_STATUSES).first()
+    if sold_order:
+        sold_date = sold_order.created_at.strftime('%Y-%m-%d') if sold_order.created_at else '?'
+        result['warnings'].append({
+            'reason': 'sold',
+            'detail': f'Sold on {sold_date}, not refunded/cancelled',
+            'needs_confirm': True,
+        })
+
+    return result
+
+
+def _process_warnings(
+    check: dict,
+    login: str,
+    force: bool,
+    result: dict,
+) -> bool:
+    """Process validation warnings. Returns True if item should be added, False to skip.
+
+    Adds entries to result['warnings'] and result['needs_confirmation'] as needed.
+    """
+    warnings = check.get('warnings', [])
+    if not warnings:
+        return True
+
+    needs_confirm = any(w['needs_confirm'] for w in warnings)
+
+    for w in warnings:
+        result['warnings'].append({
+            'login': login,
+            'reason': w['reason'],
+            'detail': w['detail'],
+        })
+
+    if needs_confirm and not force:
+        result['needs_confirmation'].append(login)
+        return False
+
+    return True
+
+
+def _get_or_create_owned_product(
+    game: Game,
+    login: str,
+    password: str,
+    *,
+    ref_price=None,
+    extra_fields: dict | None = None,
+    raw_data: dict | None = None,
+) -> tuple[OwnedProduct, bool]:
+    """Get or create an OwnedProduct. On update, only touch credential fields — never status.
+
+    Returns (owned_product, created).
+    """
+    try:
+        owned = OwnedProduct.objects.get(category=game.category, login=login)
+        # Existing product: update only credential fields, PRESERVE status/price
+        owned.password = password
+        owned.password_hash = hashlib.sha256(password.encode()).hexdigest()
+        owned.game = game
+        update_fields = ['password', 'password_hash', 'game', 'updated_at']
+
+        if extra_fields:
+            for field, value in extra_fields.items():
+                setattr(owned, field, value)
+                update_fields.append(field)
+
+        if raw_data is not None:
+            owned.raw_data = raw_data
+            update_fields.append('raw_data')
+
+        owned.save(update_fields=update_fields)
+        return owned, False
+
+    except OwnedProduct.DoesNotExist:
+        create_kwargs = {
+            'category': game.category,
+            'login': login,
+            'password': password,
+            'password_hash': hashlib.sha256(password.encode()).hexdigest(),
+            'game': game,
+            'status': 'draft',
+            'price': ref_price,
+            'raw_data': raw_data or {},
+        }
+        if extra_fields:
+            create_kwargs.update(extra_fields)
+        owned = OwnedProduct.objects.create(**create_kwargs)
+        return owned, True
+
+
 def _add_credentials_to_pool(
     pool: OfferPool,
     credentials: list[dict],
     game: Game,
     listing: Listing | None = None,
+    *,
+    force: bool = False,
+    result: dict | None = None,
 ) -> int:
-    """Create OwnedProducts from raw credentials and add as OfferPoolItems."""
-    added = 0
-    max_order = pool.items.count()
+    """Create OwnedProducts from raw credentials and add as OfferPoolItems.
 
-    # Resolve platform from listing's variant slug
+    Spec-driven: uses CredentialSpec field roles to map incoming keys to
+    OwnedProduct fixed columns. Falls back to legacy _PLATFORM_CREDENTIAL_MAP
+    if no spec is resolved.
+
+    Args:
+        force: If True, skip warnings (sold accounts) and add anyway.
+        result: Mutable dict to collect skipped/warnings/needs_confirmation.
+    """
+    from apps.posting.services.pool.spec_resolver import (
+        build_field_role_map,
+        build_reverse_role_map,
+        resolve_spec,
+    )
+    from apps.posting.services.pool.presets import ROLE_TO_OWNED_PRODUCT_FIELD
+
+    if result is None:
+        result = {'added': 0, 'skipped': [], 'warnings': [], 'needs_confirmation': []}
+
+    max_order = pool.items.count()
     platform = (listing.variant or '') if listing else ''
 
     # Get reference price from listing's existing owned products
     ref_price = None
     if listing:
-        from apps.listings.models import ListingOwnedProduct
         ref_lop = (
             ListingOwnedProduct.objects
             .filter(listing=listing, owned_product__price__isnull=False)
@@ -532,10 +786,89 @@ def _add_credentials_to_pool(
         if ref_lop:
             ref_price = ref_lop.owned_product.price
 
+    # Try spec-driven ingestion (DB spec or code-level preset)
+    spec = resolve_spec(pool)
+
+    # If no DB spec, try code-level preset as structured fallback
+    spec_fields = None
+    spec_id = None
+    if spec:
+        spec_fields = spec.fields
+        spec_id = spec.id
+    else:
+        from apps.posting.services.pool.spec_resolver import resolve_game_variant
+        from apps.posting.services.pool.presets import get_preset
+        game_slug = game.slug if game else ''
+        variant_obj = resolve_game_variant(game, platform) if platform and game else None
+        variant_slug = variant_obj.slug if variant_obj else None
+        preset = get_preset(game_slug, variant_slug)
+        if preset:
+            spec_fields = preset[1]  # fields list
+
+    if spec_fields:
+        role_map = build_field_role_map(spec_fields)
+        reverse_map = build_reverse_role_map(spec_fields)
+        login_key = role_map.get('login', 'login')
+        password_key = role_map.get('password', 'password')
+
+        for i, cred in enumerate(credentials):
+            login = str(cred.get(login_key, '')).strip().lower()
+            password = str(cred.get(password_key, '')).strip()
+
+            if not login or not password:
+                continue
+
+            raw_data = {
+                'source': 'manual',
+                'main_platform': platform,
+                'credential_spec_id': spec_id,
+                'credential_values': cred,
+                'loginData': {'login': login, 'password': password},
+                'item_id': f'manual-{uuid.uuid4().hex[:12]}',
+            }
+
+            extra_fields: dict = {}
+            for field_key, role in reverse_map.items():
+                value = str(cred.get(field_key, '')).strip()
+                owned_field = ROLE_TO_OWNED_PRODUCT_FIELD.get(role)
+                if owned_field:
+                    extra_fields[owned_field] = value
+                elif role == 'extra' and value:
+                    raw_data[field_key] = value
+
+            owned, _ = _get_or_create_owned_product(
+                game, login, password,
+                ref_price=ref_price,
+                extra_fields=extra_fields,
+                raw_data=raw_data,
+            )
+
+            # Validate before adding to pool
+            check = _validate_pool_candidate(owned, pool)
+            if check['block']:
+                result['skipped'].append({
+                    'login': login,
+                    'reason': check['block_reason'],
+                    'detail': check['block_detail'],
+                })
+                continue
+            if not _process_warnings(check, login, force, result):
+                continue
+
+            _, created = OfferPoolItem.objects.get_or_create(
+                pool=pool,
+                owned_product=owned,
+                defaults={'order': max_order + i},
+            )
+            if created:
+                result['added'] += 1
+
+        return result['added']
+
+    # Legacy fallback: no spec and no preset found, use platform credential map
     mapping = _PLATFORM_CREDENTIAL_MAP.get(platform)
 
     for i, cred in enumerate(credentials):
-        # Extract login/password using platform mapping
         if mapping:
             login_key, pass_key, extra_keys = mapping
             login = cred.get(login_key, '').strip().lower()
@@ -553,7 +886,6 @@ def _add_credentials_to_pool(
         if not login or not password:
             continue
 
-        # Build raw_data (LZT-compatible format)
         raw_data = {
             'source': 'manual',
             'main_platform': platform,
@@ -570,27 +902,35 @@ def _add_credentials_to_pool(
             'item_id': f'manual-{uuid.uuid4().hex[:12]}',
         }
 
-        # Store platform-specific extras in raw_data
         if credential_extras:
             raw_data.update(credential_extras)
 
-        owned, _ = OwnedProduct.objects.update_or_create(
-            category=game.category,
-            login=login,
-            defaults={
-                'password': password,
-                'password_hash': hashlib.sha256(password.encode()).hexdigest(),
-                'email': cred.get('email', '').strip(),
-                'email_password': cred.get('email_password', '').strip(),
-                'email_login_link': cred.get('email_login_link', '').strip(),
-                'security_email': cred.get('security_email', '').strip(),
-                'security_email_password': cred.get('security_email_password', '').strip(),
-                'game': game,
-                'price': ref_price,
-                'status': 'draft',
-                'raw_data': raw_data,
-            },
+        extra_fields = {
+            'email': cred.get('email', '').strip(),
+            'email_password': cred.get('email_password', '').strip(),
+            'email_login_link': cred.get('email_login_link', '').strip(),
+            'security_email': cred.get('security_email', '').strip(),
+            'security_email_password': cred.get('security_email_password', '').strip(),
+        }
+
+        owned, _ = _get_or_create_owned_product(
+            game, login, password,
+            ref_price=ref_price,
+            extra_fields=extra_fields,
+            raw_data=raw_data,
         )
+
+        # Validate before adding to pool
+        check = _validate_pool_candidate(owned, pool)
+        if check['block']:
+            result['skipped'].append({
+                'login': login,
+                'reason': check['block_reason'],
+                'detail': check['block_detail'],
+            })
+            continue
+        if not _process_warnings(check, login, force, result):
+            continue
 
         _, created = OfferPoolItem.objects.get_or_create(
             pool=pool,
@@ -598,6 +938,6 @@ def _add_credentials_to_pool(
             defaults={'order': max_order + i},
         )
         if created:
-            added += 1
+            result['added'] += 1
 
-    return added
+    return result['added']

@@ -415,10 +415,14 @@ def restock_pool_detail_page(request, pool_id):
         detail__pool_id=pool.pk,
     ).order_by('-created_at')[:50]
 
+    from apps.posting.models import OfferPoolItemStatus
+    consumed_count = pool.items.filter(status=OfferPoolItemStatus.CONSUMED).count()
+
     return render(request, 'posting/restock_pool_detail.html', {
         'pool': pool,
         'items': items,
         'active_offers': active_offers,
         'linked_accounts': linked_accounts,
         'logs': logs,
+        'consumed_count': consumed_count,
     })

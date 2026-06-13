@@ -14,8 +14,8 @@
         </button>
     </div>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-3 gap-4 mb-6">
+    <!-- Stats + Sweep Settings -->
+    <div class="grid grid-cols-4 gap-4 mb-6">
         <div class="bg-white rounded-lg shadow p-4">
             <div class="text-sm text-gray-500">Active Pools</div>
             <div class="text-2xl font-bold text-emerald-600" x-text="pools.filter(p => p.status === 'active').length">0</div>
@@ -25,8 +25,30 @@
             <div class="text-2xl font-bold text-blue-600" x-text="pools.reduce((s, p) => s + p.items_pending, 0)">0</div>
         </div>
         <div class="bg-white rounded-lg shadow p-4">
-            <div class="text-sm text-gray-500">Total Pushed</div>
-            <div class="text-2xl font-bold text-gray-600" x-text="pools.reduce((s, p) => s + p.items_pushed, 0)">0</div>
+            <div class="text-sm text-gray-500">Pushed / Consumed</div>
+            <div class="text-2xl font-bold">
+                <span class="text-gray-600" x-text="pools.reduce((s, p) => s + p.items_pushed, 0)">0</span>
+                <span class="text-gray-400 mx-1">/</span>
+                <span class="text-orange-500" x-text="pools.reduce((s, p) => s + (p.items_consumed || 0), 0)">0</span>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="text-sm text-gray-500 mb-1">Sweep Interval</div>
+            <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1">
+                    <button @click="sweepEnabled = !sweepEnabled; saveSweepSettings()"
+                            class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors"
+                            :class="sweepEnabled ? 'bg-emerald-500' : 'bg-gray-300'">
+                        <span class="inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform"
+                              :class="sweepEnabled ? 'translate-x-4' : 'translate-x-0.5'"></span>
+                    </button>
+                </div>
+                <input type="number" x-model.number="sweepInterval" min="1" max="1440"
+                       @change="saveSweepSettings()"
+                       class="w-16 text-lg font-bold text-center border rounded px-1 py-0.5"
+                       :class="sweepEnabled ? 'text-gray-800 border-gray-300' : 'text-gray-400 border-gray-200'">
+                <span class="text-xs text-gray-400">min</span>
+            </div>
         </div>
     </div>
 
@@ -246,7 +268,7 @@
                         </thead>
                         <tbody>
                             <template x-for="(cred, idx) in credentials" :key="idx">
-                                <tr class="border-b hover:bg-gray-50" :class="{'bg-red-50': !cred[credentialColumns[0].key] || !cred[credentialColumns[1].key]}">
+                                <tr class="border-b hover:bg-gray-50" :class="{'bg-red-50': !cred[credentialPrimaryKeys.login] || !cred[credentialPrimaryKeys.password]}">
                                     <td class="px-2 py-1 text-gray-400" x-text="idx + 1"></td>
                                     <template x-for="(col, colIdx) in credentialColumns" :key="col.key">
                                         <td class="px-1 py-1">
@@ -288,88 +310,40 @@
 </div>
 
 <script>
-// ── Platform-aware credential column specs ──
-const _EMAIL_CHAIN = [
-    { key: 'email', label: 'Email' },
-    { key: 'email_password', label: 'Email Pass' },
+// ── Fallback credential spec (used when no API spec resolved) ──
+const _DEFAULT_CREDENTIAL_SPEC = [
+    { key: 'login', label: 'Login *' }, { key: 'password', label: 'Password *' },
+    { key: 'email', label: 'Email' }, { key: 'email_password', label: 'Email Pass' },
     { key: 'email_login_link', label: 'Email Link' },
-];
-const _SEC_EMAIL_CHAIN = [
     { key: 'security_email', label: 'Sec. Email' },
     { key: 'security_email_password', label: 'Sec. Email Pass' },
     { key: 'security_email_login_link', label: 'Sec. Email Link' },
-];
-
-const _PSN_SPEC = [
-    { key: 'psn_id', label: 'PSN ID' }, { key: 'psn_pass', label: 'PSN Pass' },
-    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
-    { key: 'dob', label: 'DoB' },
-];
-const _XBOX_SPEC = [
-    { key: 'xbox_id', label: 'Xbox ID' }, { key: 'xbox_pass', label: 'Xbox Pass' },
-    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
-];
-const _PC_SPEC = [
-    { key: 'steam_id', label: 'Steam ID' }, { key: 'steam_pass', label: 'Steam Pass' },
-    { key: 'rock_id', label: 'Rock ID' }, { key: 'rock_pass', label: 'Rock Pass' },
-    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
-];
-
-const _GTA_SPEC_BY_VARIANT = {
-    'ps4': _PSN_SPEC,
-    'ps5': _PSN_SPEC,
-    'xbox-one': _XBOX_SPEC,
-    'xbox-series': _XBOX_SPEC,
-    'pc-legacy': _PC_SPEC,
-    'pc-enhanced': _PC_SPEC,
-};
-
-const _DEFAULT_CREDENTIAL_SPEC = [
-    { key: 'login', label: 'Login *' }, { key: 'password', label: 'Password *' },
-    ..._EMAIL_CHAIN, ..._SEC_EMAIL_CHAIN,
     { key: 'birthday', label: 'Birthday' },
 ];
-
-// Game slug lookup (from Django context)
-const _GAME_SLUGS = {
-    {% for game in games %}'{{ game.id }}': '{{ game.slug }}',{% endfor %}
-};
-
-function _getCredentialSpec(gameSlug, variant) {
-    const isGta = (gameSlug || '').startsWith('grand-theft-auto');
-    if (isGta && variant) {
-        return _GTA_SPEC_BY_VARIANT[variant] || null;
-    }
-    return null;
-}
+const _DEFAULT_PRIMARY_KEYS = { login: 'login', password: 'password' };
 
 // Date/URL patterns
 const DATE_RE = /^\d{1,4}[\/.\\-]\d{1,2}[\/.\\-]\d{1,4}$/;
 const LINK_RE = /^(https?:\/\/)?[a-z0-9.-]+\.[a-z]{2,}/i;
 
-function _emptyCredentialForSpec(spec) {
-    if (spec) {
-        const cred = {};
-        for (const col of spec) cred[col.key] = '';
-        return cred;
-    }
-    return {
-        login: '', password: '', email: '', email_password: '', email_login_link: '',
-        security_email: '', security_email_password: '', birthday: '',
-    };
+function _emptyCredentialForColumns(columns) {
+    const cred = {};
+    for (const col of columns) cred[col.key] = '';
+    return cred;
 }
 
-function _parseBySpec(cells, spec) {
-    const cred = _emptyCredentialForSpec(spec);
-    for (let i = 0; i < Math.min(cells.length, spec.length); i++) {
-        cred[spec[i].key] = cells[i].trim();
+function _parseByColumns(cells, columns) {
+    const cred = _emptyCredentialForColumns(columns);
+    for (let i = 0; i < Math.min(cells.length, columns.length); i++) {
+        cred[columns[i].key] = cells[i].trim();
     }
-    const dobCol = spec.find(c => c.key === 'dob');
-    if (dobCol && !cred.dob) {
-        for (const col of spec) {
-            if (col.key === 'dob') continue;
+    // Date auto-detection for DoB fields
+    const dobCol = columns.find(c => c.key === 'dob' || c.key === 'birthday');
+    if (dobCol && !cred[dobCol.key]) {
+        for (const col of columns) {
+            if (col.key === dobCol.key) continue;
             if (cred[col.key] && DATE_RE.test(cred[col.key])) {
-                cred.dob = cred[col.key];
+                cred[dobCol.key] = cred[col.key];
                 cred[col.key] = '';
                 break;
             }
@@ -378,12 +352,12 @@ function _parseBySpec(cells, spec) {
     return cred;
 }
 
-function _detectColumns(cells, spec) {
-    // Platform-specific: positional parsing
-    if (spec) return _parseBySpec(cells, spec);
+function _detectColumns(cells, columns) {
+    // Always use positional parsing when columns are defined from spec
+    if (columns && columns.length > 0) return _parseByColumns(cells, columns);
 
-    // Default: auto-detect
-    const cred = _emptyCredentialForSpec(null);
+    // Fallback auto-detect
+    const cred = _emptyCredentialForColumns(_DEFAULT_CREDENTIAL_SPEC);
     if (cells.length >= 1) cred.login = cells[0].trim();
     if (cells.length >= 2) cred.password = cells[1].trim();
 
@@ -406,20 +380,27 @@ function _detectColumns(cells, spec) {
     return cred;
 }
 
+function _specFieldsToColumns(fields) {
+    return fields.map(f => ({ key: f.key, label: f.label + (f.required ? ' *' : '') }));
+}
+
 function restockManager() {
     return {
         pools: [],
+        sweepEnabled: true,
+        sweepInterval: 30,
         showCreateModal: false,
         creating: false,
         listingResults: [],
         credentials: [],
         credentialSpec: null,
         credentialColumns: _DEFAULT_CREDENTIAL_SPEC,
+        credentialPrimaryKeys: { ..._DEFAULT_PRIMARY_KEYS },
         createForm: {
             listing_id: null,
             selectedTitle: '',
             selectedMeta: '',
-            selectedGameSlug: '',
+            selectedGameId: '',
             selectedVariant: '',
             gameFilter: '',
             storeFilter: '',
@@ -431,7 +412,7 @@ function restockManager() {
         },
 
         async init() {
-            await this.loadPools();
+            await Promise.all([this.loadPools(), this.loadSweepSettings()]);
         },
 
         getCSRF() {
@@ -443,6 +424,21 @@ function restockManager() {
             const resp = await fetch('/posting/api/pools/');
             const data = await resp.json();
             this.pools = data.pools || [];
+        },
+
+        async loadSweepSettings() {
+            const resp = await fetch('/posting/api/pools/sweep-settings/');
+            const data = await resp.json();
+            this.sweepEnabled = data.enabled;
+            this.sweepInterval = data.interval_minutes;
+        },
+
+        async saveSweepSettings() {
+            await fetch('/posting/api/pools/sweep-settings/update/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCSRF() },
+                body: JSON.stringify({ enabled: this.sweepEnabled, interval_minutes: this.sweepInterval }),
+            });
         },
 
         async searchListings() {
@@ -457,27 +453,56 @@ function restockManager() {
             this.listingResults = data.listings || [];
         },
 
-        selectListing(lst) {
+        async selectListing(lst) {
             this.createForm.listing_id = lst.id;
             this.createForm.selectedTitle = lst.title;
             this.createForm.selectedMeta = `${lst.store} · ${lst.marketplace} · $${lst.price}`;
-            this.createForm.selectedGameSlug = _GAME_SLUGS[lst.game_id] || '';
+            this.createForm.selectedGameId = lst.game_id || '';
             this.createForm.selectedVariant = lst.variant || '';
             this.listingResults = [];
-            // Update credential spec based on selected listing
-            this.credentialSpec = _getCredentialSpec(this.createForm.selectedGameSlug, this.createForm.selectedVariant);
-            this.credentialColumns = this.credentialSpec || _DEFAULT_CREDENTIAL_SPEC;
-            this.credentials = [];  // Reset credentials when listing changes
+            this.credentials = [];
+
+            // Resolve credential spec from API
+            await this._resolveCredentialSpec(lst.game_id, lst.variant);
+        },
+
+        async _resolveCredentialSpec(gameId, variant) {
+            if (!gameId) {
+                this._resetSpec();
+                return;
+            }
+            try {
+                const params = new URLSearchParams({ game_id: gameId });
+                if (variant) params.set('variant', variant);
+                const resp = await fetch('/posting/api/credential-specs/resolve/?' + params);
+                const data = await resp.json();
+
+                if (data.spec && data.spec.fields) {
+                    this.credentialSpec = data.spec;
+                    this.credentialColumns = _specFieldsToColumns(data.spec.fields);
+                    this.credentialPrimaryKeys = data.spec.primary_keys || { ..._DEFAULT_PRIMARY_KEYS };
+                } else {
+                    this._resetSpec();
+                }
+            } catch (e) {
+                console.warn('Failed to resolve credential spec:', e);
+                this._resetSpec();
+            }
+        },
+
+        _resetSpec() {
+            this.credentialSpec = null;
+            this.credentialColumns = _DEFAULT_CREDENTIAL_SPEC;
+            this.credentialPrimaryKeys = { ..._DEFAULT_PRIMARY_KEYS };
         },
 
         clearListing() {
             this.createForm.listing_id = null;
             this.createForm.selectedTitle = '';
             this.createForm.selectedMeta = '';
-            this.createForm.selectedGameSlug = '';
+            this.createForm.selectedGameId = '';
             this.createForm.selectedVariant = '';
-            this.credentialSpec = null;
-            this.credentialColumns = _DEFAULT_CREDENTIAL_SPEC;
+            this._resetSpec();
             this.credentials = [];
         },
 
@@ -487,10 +512,8 @@ function restockManager() {
             const lines = text.trim().split('\n');
             if (lines.length === 0) return;
 
-            const spec = this.credentialSpec;
-            const headerKeys = spec
-                ? spec.map(c => c.label.toLowerCase())
-                : ['login', 'password', 'email', 'birthday'];
+            const cols = this.credentialColumns;
+            const headerKeys = cols.map(c => c.label.toLowerCase().replace(' *', ''));
             const firstCells = lines[0].split('\t');
             const isHeader = firstCells.some(c => headerKeys.includes(c.trim().toLowerCase()));
             const dataLines = isHeader ? lines.slice(1) : lines;
@@ -498,13 +521,13 @@ function restockManager() {
             for (const line of dataLines) {
                 if (!line.trim()) continue;
                 const cells = line.split('\t');
-                this.credentials.push(_detectColumns(cells, spec));
+                this.credentials.push(_detectColumns(cells, cols));
             }
             this.createForm.pasteData = '';
         },
 
         addEmptyRow() {
-            this.credentials.push(_emptyCredentialForSpec(this.credentialSpec));
+            this.credentials.push(_emptyCredentialForColumns(this.credentialColumns));
         },
 
         handleCellPaste(event, rowIdx, colIdx) {
@@ -512,7 +535,6 @@ function restockManager() {
             if (!text) return;
 
             const cols = this.credentialColumns;
-            const spec = this.credentialSpec;
             const lines = text.split('\n').filter(l => l.trim());
 
             if (lines.length === 1 && !lines[0].includes('\t')) {
@@ -525,7 +547,7 @@ function restockManager() {
                 const targetRow = rowIdx + r;
 
                 while (targetRow >= this.credentials.length) {
-                    this.credentials.push(_emptyCredentialForSpec(spec));
+                    this.credentials.push(_emptyCredentialForColumns(cols));
                 }
 
                 for (let c = 0; c < cells.length; c++) {
@@ -535,17 +557,16 @@ function restockManager() {
                     }
                 }
 
-                if (spec) {
-                    const cred = this.credentials[targetRow];
-                    const dobCol = spec.find(s => s.key === 'dob');
-                    if (dobCol && !cred.dob) {
-                        for (const col of spec) {
-                            if (col.key === 'dob') continue;
-                            if (cred[col.key] && DATE_RE.test(cred[col.key])) {
-                                cred.dob = cred[col.key];
-                                cred[col.key] = '';
-                                break;
-                            }
+                // Date auto-detection for DoB/birthday columns
+                const cred = this.credentials[targetRow];
+                const dobCol = cols.find(s => s.key === 'dob' || s.key === 'birthday');
+                if (dobCol && !cred[dobCol.key]) {
+                    for (const col of cols) {
+                        if (col.key === dobCol.key) continue;
+                        if (cred[col.key] && DATE_RE.test(cred[col.key])) {
+                            cred[dobCol.key] = cred[col.key];
+                            cred[col.key] = '';
+                            break;
                         }
                     }
                 }
@@ -555,7 +576,9 @@ function restockManager() {
         async submitCreate() {
             this.creating = true;
             try {
-                const validCreds = this.credentials.filter(c => c.login && c.password);
+                const loginKey = this.credentialPrimaryKeys.login;
+                const passwordKey = this.credentialPrimaryKeys.password;
+                const validCreds = this.credentials.filter(c => c[loginKey] && c[passwordKey]);
                 const body = {
                     listing_id: this.createForm.listing_id,
                     threshold: this.createForm.threshold,
@@ -589,14 +612,13 @@ function restockManager() {
         resetCreateForm() {
             this.createForm = {
                 listing_id: null, selectedTitle: '', selectedMeta: '',
-                selectedGameSlug: '', selectedVariant: '',
+                selectedGameId: '', selectedVariant: '',
                 gameFilter: '', storeFilter: '',
                 listingSearch: '', threshold: 10, target_count: 50, max_concurrent: 1,
                 pasteData: '',
             };
             this.credentials = [];
-            this.credentialSpec = null;
-            this.credentialColumns = _DEFAULT_CREDENTIAL_SPEC;
+            this._resetSpec();
             this.listingResults = [];
         },
 

@@ -26,6 +26,9 @@ logger = logging.getLogger(__name__)
 # Auto-delete old job execution logs after 7 days
 MAX_EXECUTION_AGE_DAYS = 7
 
+# Module-level scheduler reference for dynamic rescheduling
+_scheduler: BlockingScheduler | None = None
+
 
 @apscheduler_util.close_old_connections
 def run_sync_chain_job():
@@ -58,14 +61,55 @@ def run_order_status_refresh_job():
     run_order_status_refresh()
 
 
+POOL_SWEEP_DEFAULT_INTERVAL = 30  # minutes
+
+
 @apscheduler_util.close_old_connections
 def run_pool_sweep_job():
-    """APScheduler wrapper — checks all active offer pools and replenishes if needed."""
-    from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled
+    """APScheduler wrapper — checks all active offer pools and replenishes if needed.
+
+    Reads interval_minutes from SyncFeatureFlag.value on every run and
+    reschedules itself if the configured interval has changed.
+    """
+    from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled, get_sync_setting
     if not is_sync_feature_enabled(SyncFlag.POOL_SWEEP):
         return
+
     from apps.posting.services.pool.checker import sweep_all_pools
     sweep_all_pools()
+
+    # Dynamic interval: reschedule if DB value differs from current trigger
+    _maybe_reschedule_pool_sweep()
+
+
+def _maybe_reschedule_pool_sweep() -> None:
+    """Reschedule pool sweep job if DB interval differs from current trigger."""
+    global _scheduler
+    if _scheduler is None:
+        return
+
+    from apps.sync.services.shared.feature_flags import SyncFlag, get_sync_setting
+    db_interval = get_sync_setting(SyncFlag.POOL_SWEEP, 'interval_minutes', default=POOL_SWEEP_DEFAULT_INTERVAL)
+    try:
+        db_interval = max(1, int(db_interval))
+    except (TypeError, ValueError):
+        return
+
+    job = _scheduler.get_job('offer_pool_sweep')
+    if job is None:
+        return
+
+    current_interval = getattr(job.trigger, 'interval', None)
+    if current_interval is None:
+        return
+
+    current_minutes = int(current_interval.total_seconds() / 60)
+    if current_minutes != db_interval:
+        _scheduler.reschedule_job(
+            'offer_pool_sweep',
+            trigger=IntervalTrigger(minutes=db_interval),
+        )
+        logger.info('pool_sweep: rescheduled interval %d → %d minutes', current_minutes, db_interval)
 
 
 @apscheduler_util.close_old_connections
@@ -99,9 +143,12 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        global _scheduler
+
         scheduler = BlockingScheduler(
             timezone=getattr(settings, 'TIME_ZONE', 'UTC'),
         )
+        _scheduler = scheduler
         scheduler.add_jobstore(DjangoJobStore(), 'default')
 
         interval = options['interval'] or getattr(settings, 'SCHEDULER_DEFAULT_INTERVAL', 5)
@@ -139,10 +186,19 @@ class Command(BaseCommand):
             next_run_time=datetime.now(),
         )
 
-        # Offer pool sweep — runs every 30 minutes
+        # Offer pool sweep — interval configurable via admin (SyncFeatureFlag value)
+        from apps.sync.services.shared.feature_flags import SyncFlag, get_sync_setting
+        pool_sweep_interval = get_sync_setting(
+            SyncFlag.POOL_SWEEP, 'interval_minutes', default=POOL_SWEEP_DEFAULT_INTERVAL,
+        )
+        try:
+            pool_sweep_interval = max(1, int(pool_sweep_interval))
+        except (TypeError, ValueError):
+            pool_sweep_interval = POOL_SWEEP_DEFAULT_INTERVAL
+
         scheduler.add_job(
             run_pool_sweep_job,
-            trigger=IntervalTrigger(minutes=30),
+            trigger=IntervalTrigger(minutes=pool_sweep_interval),
             id='offer_pool_sweep',
             name='Offer Pool Auto-Restock Sweep',
             max_instances=1,

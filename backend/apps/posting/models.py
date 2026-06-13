@@ -783,6 +783,95 @@ class CleanerConfig(models.Model):
         return f"Cleaner: {self.source_account.name} ({'ON' if self.enabled else 'OFF'})"
 
 
+# ── Credential Spec ──────────────────────────────────────────────
+
+
+class CredentialSpec(models.Model):
+    """Configurable credential field definition + marketplace format templates.
+
+    Each spec defines which credential fields are collected (login, password,
+    email, platform-specific extras) and how they are formatted for each
+    marketplace when pushing to offers.
+
+    Resolution priority:
+    1. Explicit pool.credential_spec
+    2. Variant-level spec (via pool.listing.variant)
+    3. Game-level default spec (variant=NULL)
+    4. Code-level preset fallback
+    """
+
+    game = models.ForeignKey(
+        'inventory.Game',
+        on_delete=models.CASCADE,
+        related_name='credential_specs',
+    )
+    variant = models.ForeignKey(
+        'posting.GameVariant',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name='credential_specs',
+        help_text='If set, this spec applies to a specific variant. NULL = game default.',
+    )
+    name = models.CharField(max_length=100, blank=True)
+
+    fields = models.JSONField(
+        help_text='List of CredentialFieldSchema dicts: [{key, label, required, role}, ...]',
+    )
+    format_templates = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text='Marketplace-keyed format templates: {eldorado: "...", gameboost: "...", playerauctions: {...}}',
+    )
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'credential_specs'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['game'],
+                condition=models.Q(variant__isnull=True),
+                name='unique_game_default_spec',
+            ),
+            models.UniqueConstraint(
+                fields=['variant'],
+                condition=models.Q(variant__isnull=False),
+                name='unique_variant_spec',
+            ),
+        ]
+        ordering = ['game', 'name']
+
+    def save(self, **kwargs):
+        if not self.name:
+            game_name = self.game.name if self.game_id else '?'
+            if self.variant_id:
+                self.name = f"{game_name} — {self.variant.label}"
+            else:
+                self.name = f"{game_name} (default)"
+        super().save(**kwargs)
+
+    def __str__(self):
+        variant_str = f" / {self.variant.label}" if self.variant else " (default)"
+        return f"{self.name} — {self.game}{variant_str}"
+
+    def clean(self):
+        super().clean()
+        from apps.posting.services.pool.presets import (
+            validate_credential_fields,
+            validate_format_templates,
+        )
+        validate_credential_fields(self.fields)
+        validate_format_templates(self.format_templates, self.fields)
+
+        if self.variant_id and self.variant.game_id != self.game_id:
+            raise ValidationError(
+                "CredentialSpec.variant must belong to CredentialSpec.game"
+            )
+
+
 # ── Auto Restock (Offer Pool) ────────────────────────────────────
 
 
@@ -797,6 +886,7 @@ class OfferPoolItemStatus(models.TextChoices):
     QUEUED = 'queued', 'Queued'
     PUSHED = 'pushed', 'Pushed'
     FAILED = 'failed', 'Failed'
+    CONSUMED = 'consumed', 'Consumed'
 
 
 class OfferPoolActiveOfferStatus(models.TextChoices):
@@ -834,6 +924,14 @@ class OfferPool(models.Model):
         on_delete=models.CASCADE,
         related_name='offer_pools',
         help_text='Marketplace account where the offer lives',
+    )
+    credential_spec = models.ForeignKey(
+        'posting.CredentialSpec',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='pools',
+        help_text='Credential field definition + format templates. NULL = use resolver chain.',
     )
     strategy = models.CharField(
         max_length=10,

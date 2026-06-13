@@ -5,6 +5,7 @@ from .api import stock as stock_api
 from .api import dropship as dropship_api
 from .api import image_presets as image_presets_api
 from .api import pool as pool_api
+from .api import credential_specs as credential_spec_api
 from .api import content_templates as content_template_api
 from .api import cosmetic_lists as cosmetic_list_api
 from .api import manual as manual_api
@@ -101,6 +102,16 @@ urlpatterns = [
     path('api/manual/fortnite/sheet/', manual_api.open_sheet, name='api_manual_fortnite_sheet'),
     path('api/manual/fortnite/accounts/', manual_api.fetch_accounts, name='api_manual_fortnite_accounts'),
 
+    # API — credential specs
+    path('api/credential-specs/', credential_spec_api.list_specs, name='api_list_credential_specs'),
+    path('api/credential-specs/presets/', credential_spec_api.list_presets, name='api_credential_spec_presets'),
+    path('api/credential-specs/resolve/', credential_spec_api.resolve_by_query, name='api_resolve_credential_spec'),
+    path('api/credential-specs/create/', credential_spec_api.create_spec, name='api_create_credential_spec'),
+    path('api/credential-specs/<int:spec_id>/', credential_spec_api.spec_detail, name='api_credential_spec_detail'),
+    path('api/credential-specs/<int:spec_id>/update/', credential_spec_api.update_spec, name='api_update_credential_spec'),
+    path('api/credential-specs/<int:spec_id>/delete/', credential_spec_api.delete_spec, name='api_delete_credential_spec'),
+    path('api/credential-specs/for-pool/<int:pool_id>/', credential_spec_api.resolve_for_pool, name='api_credential_spec_for_pool'),
+
     # API — offer pools (auto restock)
     path('api/pools/', pool_api.list_pools, name='api_list_pools'),
     path('api/pools/create/', pool_api.create_pool, name='api_create_pool'),
@@ -112,4 +123,6 @@ urlpatterns = [
     path('api/pools/<int:pool_id>/replenish/', pool_api.trigger_replenish, name='api_trigger_replenish'),
     path('api/pools/accounts/', pool_api.available_accounts, name='api_pool_accounts'),
     path('api/pools/listings/', pool_api.available_listings, name='api_pool_listings'),
+    path('api/pools/sweep-settings/', pool_api.sweep_settings, name='api_sweep_settings'),
+    path('api/pools/sweep-settings/update/', pool_api.update_sweep_settings, name='api_update_sweep_settings'),
 ]

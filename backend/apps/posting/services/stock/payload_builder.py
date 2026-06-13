@@ -83,18 +83,24 @@ def build_item_payload(
 
         if router is not None:
             allowed = get_eligible_variants(job.game.slug, prepared.subject)
-            variant_slug = router.select(
-                'platform',
-                allowed=allowed,
-                game_slug=job.game.slug,
-                manual=manual_variant,
-            )
-            if variant_slug is None:
-                return {
-                    'ok': False, 'stage': stage,
-                    'error': 'No available variant slots',
-                    'error_category': 'capacity',
-                }
+            if _is_fixed_variant_game(job.game.slug, allowed):
+                # Fixed-variant game (GTA V, etc.): platform is inherent to the
+                # account, not capacity-selectable.  Resolve to slug directly.
+                main_platform = getattr(prepared.subject, 'main_platform', '') or ''
+                variant_slug = router.select_fixed('platform', main_platform) if main_platform else ''
+            else:
+                variant_slug = router.select(
+                    'platform',
+                    allowed=allowed,
+                    game_slug=job.game.slug,
+                    manual=manual_variant,
+                )
+                if variant_slug is None:
+                    return {
+                        'ok': False, 'stage': stage,
+                        'error': 'No available variant slots',
+                        'error_category': 'capacity',
+                    }
         else:
             # Fallback for callers that don't provide a router (e.g. relist)
             variant_slug = manual_variant or getattr(prepared.subject, 'main_platform', '') or ''
@@ -202,6 +208,18 @@ def build_item_payload(
             'error': str(exc),
             'error_category': 'unexpected',
         }
+
+
+def _is_fixed_variant_game(game_slug: str, allowed: set[str] | None) -> bool:
+    """Return True when the game has a fixed (account-inherent) platform.
+
+    Fixed-variant games (GTA V, etc.) have no per-account eligibility
+    constraints (``allowed is None``) AND no priority-tier auto-selection
+    rules.  Their platform is determined by the account data, not by
+    capacity-based selection.
+    """
+    from apps.posting.services.variant_routing import PLATFORM_PRIORITY
+    return allowed is None and game_slug not in PLATFORM_PRIORITY
 
 
 def _listing_variant_slug(subject, variant_ctx: dict | None, platform_slug: str) -> str:

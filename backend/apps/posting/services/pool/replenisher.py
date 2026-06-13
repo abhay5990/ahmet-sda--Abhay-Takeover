@@ -32,7 +32,13 @@ from apps.posting.services.shared.utils import extract_listing_id
 from core.marketplace.normalizers import normalize_offer_response
 from core.marketplace.payload_extractor import extract_create_payload
 
-from .formatter import build_credential_bundle, format_credential_for_marketplace
+from .formatter import (
+    build_credential_bundle,
+    build_credential_render_context,
+    format_credential_by_spec,
+    format_credential_for_marketplace,
+    render_template,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -152,10 +158,12 @@ def _push_eldorado(
         existing_creds = [entry.secretDetails for entry in resp.accountsDetails if entry.secretDetails]
 
     new_creds: list[str] = []
+    valid_items: list[OfferPoolItem] = []
     for item in items:
         try:
-            cred_str = format_credential_for_marketplace(item.owned_product, 'eldorado')
+            cred_str = format_credential_for_marketplace(item.owned_product, 'eldorado', pool=pool)
             new_creds.append(cred_str)
+            valid_items.append(item)
         except Exception as exc:
             item.status = OfferPoolItemStatus.FAILED
             item.error_message = str(exc)[:500]
@@ -171,7 +179,7 @@ def _push_eldorado(
     result = client.update_offer(offer_id, update_payload, proxy_group=proxy_group)
 
     if result.ok:
-        return _mark_items_pushed(items[:len(new_creds)], offer_id, listing=pool.listing)
+        return _mark_items_pushed(valid_items, offer_id, listing=pool.listing)
 
     # Update failed — fallback to delete + recreate strategy
     error_str = str(result.error) if result.error else ''
@@ -182,7 +190,7 @@ def _push_eldorado(
         account=pool.store,
         detail={'pool_id': pool.pk, 'old_offer_id': offer_id, 'error': error_str[:500]},
     )
-    return _recreate_eldorado_offer(pool, client, all_creds, items[:len(new_creds)], proxy_group)
+    return _recreate_eldorado_offer(pool, client, all_creds, valid_items, proxy_group)
 
 
 def _recreate_eldorado_offer(
@@ -217,7 +225,24 @@ def _recreate_eldorado_offer(
         )
         return 0
 
-    # Create new offer with all credentials
+    return _create_eldorado_offer(pool, client, original_payload, all_creds, new_items, proxy_group)
+
+
+def _create_eldorado_offer(
+    pool: OfferPool,
+    client: Any,
+    original_payload: dict[str, Any],
+    all_creds: list[str],
+    new_items: list[OfferPoolItem],
+    proxy_group: str | None,
+) -> int:
+    """Create a new Eldorado offer from original payload with given credentials.
+
+    Used by both recreate (after delete) and recover (offer gone from remote).
+    """
+    listing = pool.listing
+    old_offer_id = listing.store_listing_id
+
     create_payload = dict(original_payload)
     create_payload['accountSecretDetails'] = all_creds
     create_payload.setdefault('details', {}).setdefault('pricing', {})['quantity'] = len(all_creds)
@@ -291,7 +316,7 @@ def _push_gameboost(
 
     for item in items:
         try:
-            cred_str = format_credential_for_marketplace(item.owned_product, 'gameboost')
+            cred_str = format_credential_for_marketplace(item.owned_product, 'gameboost', pool=pool)
             cred_strings.append(cred_str)
             valid_items.append(item)
         except Exception as exc:
@@ -512,7 +537,7 @@ def _clone_pa_offer(
 
     # Replace credentials with platform-aware format
     product = item.owned_product
-    _apply_pa_auto_delivery_credentials(payload, product)
+    _apply_pa_auto_delivery_credentials(payload, product, pool=pool)
 
     result = client.create_offer(payload, proxy_group=proxy_group)
     if not result.ok:
@@ -574,24 +599,74 @@ def _clone_pa_offer(
     return 1
 
 
-def _apply_pa_auto_delivery_credentials(payload: dict, product: Any) -> None:
-    bundle = build_credential_bundle(product)
-    auto_delivery = dict(payload.get('autoDelivery') or {})
-    auto_delivery.update({
-        'loginName': bundle.login,
-        'retypeLoginName': bundle.login,
-        'password': bundle.password,
-        'retypePassword': bundle.password,
-        'instruction': format_credential_for_marketplace(product, 'playerauctions'),
-    })
+def _apply_pa_auto_delivery_credentials(
+    payload: dict,
+    product: Any,
+    pool: OfferPool | None = None,
+) -> None:
+    """Apply PA autoDelivery credentials — spec-driven with legacy fallback."""
+    from .spec_resolver import resolve_spec
 
-    if bundle.email_login:
-        for owner_key in ('original', 'current'):
-            owner = auto_delivery.get(owner_key)
-            if isinstance(owner, dict):
-                owner = dict(owner)
-                owner['email'] = bundle.email_login
-                auto_delivery[owner_key] = owner
+    spec = resolve_spec(pool) if pool else None
+    auto_delivery = dict(payload.get('autoDelivery') or {})
+
+    if spec:
+        # Spec-driven: render PA dict template
+        pa_template = (spec.format_templates or {}).get('playerauctions')
+        if isinstance(pa_template, dict):
+            context = build_credential_render_context(product, spec)
+            rendered = render_template(pa_template, context)
+
+            auto_delivery['loginName'] = rendered.get('loginName', '')
+            auto_delivery['password'] = rendered.get('password', '')
+            auto_delivery['instruction'] = rendered.get('instruction', '')
+
+            # Always overwrite retype from final values
+            auto_delivery['retypeLoginName'] = auto_delivery['loginName']
+            auto_delivery['retypePassword'] = auto_delivery['password']
+
+            owner_email = rendered.get('ownerEmail', '')
+            if owner_email:
+                for owner_key in ('original', 'current'):
+                    owner = auto_delivery.get(owner_key)
+                    if isinstance(owner, dict):
+                        owner = dict(owner)
+                        owner['email'] = owner_email
+                        auto_delivery[owner_key] = owner
+        else:
+            # Spec exists but no PA template — use instruction from string render
+            instruction = format_credential_by_spec(product, spec, 'playerauctions')
+            if isinstance(instruction, dict):
+                instruction = instruction.get('instruction', '')
+            from .spec_resolver import build_field_role_map
+            role_map = build_field_role_map(spec)
+            context = build_credential_render_context(product, spec)
+            login_val = context.get(role_map.get('login', 'login'), '')
+            pass_val = context.get(role_map.get('password', 'password'), '')
+
+            auto_delivery['loginName'] = login_val
+            auto_delivery['password'] = pass_val
+            auto_delivery['retypeLoginName'] = login_val
+            auto_delivery['retypePassword'] = pass_val
+            auto_delivery['instruction'] = instruction
+    else:
+        # Legacy fallback
+        bundle = build_credential_bundle(product)
+        auto_delivery.update({
+            'loginName': bundle.login,
+            'retypeLoginName': bundle.login,
+            'password': bundle.password,
+            'retypePassword': bundle.password,
+            'instruction': format_credential_for_marketplace(product, 'playerauctions'),
+        })
+
+        if bundle.email_login:
+            for owner_key in ('original', 'current'):
+                owner = auto_delivery.get(owner_key)
+                if isinstance(owner, dict):
+                    owner = dict(owner)
+                    owner['email'] = bundle.email_login
+                    auto_delivery[owner_key] = owner
 
     payload['autoDelivery'] = auto_delivery
 
@@ -647,6 +722,75 @@ def _extract_legacy_gameboost_credential(payload: dict) -> str | None:
     return "\n".join(parts)
 
 
+def _reconcile_pushed_items(
+    pool: OfferPool,
+    remote_creds: list[str],
+) -> int:
+    """Compare PUSHED pool items against remote credentials and mark missing as CONSUMED.
+
+    For each PUSHED item, re-format its credential string and check if it
+    exists in the remote credential list. If not found → CONSUMED + unlink
+    from listing.
+
+    Returns the number of items marked as CONSUMED.
+    """
+    pushed_items = list(
+        pool.items.filter(status=OfferPoolItemStatus.PUSHED)
+        .select_related('owned_product')
+    )
+    if not pushed_items:
+        return 0
+
+    marketplace = pool.store.provider
+    consumed = 0
+
+    for item in pushed_items:
+        try:
+            expected_cred = format_credential_for_marketplace(
+                item.owned_product, marketplace, pool=pool,
+            )
+        except Exception:
+            continue
+
+        if isinstance(expected_cred, dict):
+            # PA dict format — not applicable here
+            continue
+
+        # Normalize whitespace for comparison
+        expected_norm = expected_cred.strip()
+        found = any(
+            rc.strip() == expected_norm for rc in remote_creds
+        )
+
+        if not found:
+            item.status = OfferPoolItemStatus.CONSUMED
+            item.error_message = 'Removed from remote offer'
+            item.save(update_fields=['status', 'error_message', 'updated_at'])
+
+            # Unlink from listing and revert OwnedProduct status
+            if pool.listing_id and item.owned_product_id:
+                ListingOwnedProduct.objects.filter(
+                    listing_id=pool.listing_id,
+                    owned_product_id=item.owned_product_id,
+                ).delete()
+                owned = item.owned_product
+                if owned.status == 'listed':
+                    owned.status = 'draft'
+                    owned.save(update_fields=['status', 'updated_at'])
+
+            consumed += 1
+
+    if consumed > 0:
+        _log(
+            PostingLogLevel.INFO,
+            f"Pool #{pool.pk}: reconciled {consumed} item(s) as CONSUMED (no longer on remote)",
+            account=pool.store,
+            detail={'pool_id': pool.pk, 'consumed': consumed},
+        )
+
+    return consumed
+
+
 def _mark_items_pushed(items: list[OfferPoolItem], offer_id: str, listing: Listing | None = None) -> int:
     """Mark items as PUSHED, record target offer ID, and link OwnedProducts to Listing."""
     now = timezone.now()
@@ -661,10 +805,16 @@ def _mark_items_pushed(items: list[OfferPoolItem], offer_id: str, listing: Listi
 
         # Create m2m link → triggers signal: OwnedProduct draft → listed
         if listing and item.owned_product_id:
-            ListingOwnedProduct.objects.get_or_create(
+            _, created = ListingOwnedProduct.objects.get_or_create(
                 listing=listing,
                 owned_product=item.owned_product,
             )
+            # If link already existed, signal didn't fire — fix status manually
+            if not created:
+                owned = item.owned_product
+                if owned.status == 'draft':
+                    owned.status = 'listed'
+                    owned.save(update_fields=['status', 'updated_at'])
 
         count += 1
     return count

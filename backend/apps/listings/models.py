@@ -72,6 +72,8 @@ class Listing(models.Model):
             models.Index(fields=['status']),
             models.Index(fields=['store_listing_id']),
             models.Index(fields=['-created_at']),
+            models.Index(fields=['-listed_at']),
+            models.Index(fields=['-removed_at']),
             models.Index(fields=['integration_account', '-created_at']),
             models.Index(
                 fields=['integration_account', 'game', 'status', 'variant'],

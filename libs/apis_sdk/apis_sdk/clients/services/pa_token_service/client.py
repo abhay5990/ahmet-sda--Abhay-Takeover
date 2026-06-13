@@ -1,9 +1,9 @@
 """
 Low-level PA Token Service client.
 
-Communicates with the local Puppeteer-based microservice that handles
-PlayerAuctions browser-based authentication. The microservice manages
-AdsPower browser profiles and session caching internally.
+Communicates with the PA Token Service running on VDS that handles
+PlayerAuctions browser-based authentication. The service manages
+browser sessions and caching internally.
 
 API:
     POST /authenticate  {username, password, proxy?}
@@ -11,6 +11,8 @@ API:
 
     GET /health
     → {ok, uptime, version}
+
+All endpoints require X-API-Key header for authentication.
 """
 
 from __future__ import annotations
@@ -88,7 +90,10 @@ class PaTokenServiceClient:
                 HttpMethod.POST,
                 url,
                 json_body=payload,
-                headers={"Content-Type": "application/json"},
+                headers={
+                    "Content-Type": "application/json",
+                    "X-API-Key": self._config.api_key,
+                },
                 timeout=self._config.timeout,
             )
         except Exception as exc:
@@ -150,6 +155,7 @@ class PaTokenServiceClient:
             response = self._transport.request(
                 HttpMethod.GET,
                 url,
+                headers={"X-API-Key": self._config.api_key},
                 timeout=5.0,
             )
         except Exception as exc:

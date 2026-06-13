@@ -12,6 +12,7 @@ Usage::
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -48,4 +49,23 @@ def is_sync_feature_enabled(key: str, *, default: bool = True) -> bool:
     except Exception:
         # DB not ready (migration pending, etc.) — fail open
         logger.debug('SyncFeatureFlag lookup failed for %s, using default=%s', key, default)
+        return default
+
+
+def get_sync_setting(key: str, setting: str, *, default: Any = None) -> Any:
+    """Read a config value from a SyncFeatureFlag's ``value`` JSON field.
+
+    Example::
+
+        interval = get_sync_setting(SyncFlag.POOL_SWEEP, 'interval_minutes', default=30)
+    """
+    from apps.sync.models import SyncFeatureFlag
+
+    try:
+        flag = SyncFeatureFlag.objects.filter(key=key).only('value').first()
+        if flag is None or not flag.value:
+            return default
+        return flag.value.get(setting, default)
+    except Exception:
+        logger.debug('get_sync_setting failed for %s.%s, using default=%s', key, setting, default)
         return default

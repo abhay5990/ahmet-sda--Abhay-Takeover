@@ -5,11 +5,11 @@ Creates configured PlayerAuctions marketplace client instances.
 
 Auth:
     Uses PlayerAuctionsAuth with reactive token refresh. When a 401 is
-    encountered, the retry path triggers _do_refresh() which calls a
-    local Puppeteer-based microservice (PA Token Service) to perform
-    browser-based login and obtain a fresh JWT.
+    encountered, the retry path triggers _do_refresh() which calls the
+    PA Token Service on VDS to perform browser-based login and obtain
+    a fresh JWT.
 
-    If refresh fails (microservice down, bad credentials, etc.), a
+    If refresh fails (service down, bad credentials, etc.), a
     _refresh_failed flag prevents infinite retry loops. Call
     auth.set_tokens() with a new token to reset.
 """
@@ -39,7 +39,8 @@ class PlayerAuctionsFactory:
         transport: BaseHttpTransport,
         offer_base_url: str = "https://offer-api.playerauctions.com",
         order_base_url: str = "https://order-api.playerauctions.com",
-        token_service_url: str = "http://localhost:8976",
+        token_service_url: str = "http://31.57.156.36:8976",
+        token_service_api_key: str = "pa-s4g-Xk9mT2vL7nQp4wR8jY3bF6hA",
         timeout: float = 30.0,
         rate_limit_delay: float = 1.0,
         proxy_pool: ProxyPool | None = None,
@@ -59,7 +60,8 @@ class PlayerAuctionsFactory:
             transport: HTTP transport for API calls.
             offer_base_url: Base URL for offer/game endpoints.
             order_base_url: Base URL for order endpoints.
-            token_service_url: PA Token Service microservice URL.
+            token_service_url: PA Token Service URL (VDS).
+            token_service_api_key: API key for PA Token Service auth.
             timeout: Request timeout in seconds.
             rate_limit_delay: Minimum delay between requests (seconds).
             proxy_pool: Optional proxy pool for request and token refresh routing.
@@ -87,6 +89,7 @@ class PlayerAuctionsFactory:
             proxy_pool=proxy_pool,
             proxy_group=proxy_group,
             token_service_url=token_service_url,
+            token_service_api_key=token_service_api_key,
             logger=logger,
         )
 

@@ -354,6 +354,10 @@ class SyncFeatureFlag(models.Model):
         blank=True,
         help_text='Human-readable description of what this flag controls',
     )
+    value = models.JSONField(
+        null=True, blank=True,
+        help_text='Optional config value (e.g. {"interval_minutes": 30})',
+    )
 
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -3,6 +3,7 @@ import logging
 
 from django.core.paginator import Paginator
 from django.db.models import Count, Prefetch, Q
+from django.db.models.functions import Coalesce, Greatest
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
@@ -37,7 +38,14 @@ def listing_list(request):
         'game', 'integration_account', 'dropship_product',
     ).prefetch_related(
         _lop_prefetch,
-    ).defer('raw_data').order_by('-created_at')
+    ).defer('raw_data').annotate(
+        last_action_at=Coalesce(
+            Greatest('listed_at', 'removed_at'),
+            'listed_at',
+            'removed_at',
+            'created_at',
+        ),
+    ).order_by('-last_action_at')
 
     # Filters
     status = request.GET.get('status')
