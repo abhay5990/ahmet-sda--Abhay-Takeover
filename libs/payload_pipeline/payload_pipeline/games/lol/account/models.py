@@ -25,6 +25,7 @@ class LolResolvedAccount(ResolvedAccountBase):
     riot_points: int = 0
     champion_ids: list[int] = field(default_factory=list)
     skin_ids: list[int] = field(default_factory=list)
+    skin_names: list[str] = field(default_factory=list)
     has_email_access: bool = False
 
     FIELD_META: ClassVar[dict[str, FieldMeta]] = {
@@ -40,9 +41,23 @@ class LolResolvedAccount(ResolvedAccountBase):
         "orange_essence": FieldMeta("Orange Essence balance.", 3200),
         "mythic_essence": FieldMeta("Mythic Essence balance.", 50),
         "riot_points": FieldMeta("Riot Points balance.", 1200),
+        "skin_names": FieldMeta("Resolved skin names from inventory.", ["Dark Cosmic Jhin", "Elementalist Lux"]),
         "has_email_access": FieldMeta("Email access status.", True),
     }
 
     COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {
         **ResolvedAccountBase.COMPUTED_FIELDS,
+        "region_label": FieldMeta("Cleaned region display name.", "EUW"),
+        "rank_label": FieldMeta("Rank or 'Unranked' fallback.", "Gold II"),
+        "champion_label": FieldMeta("Champion count display text.", "All Champs"),
+        "email_access_label": FieldMeta("Email access as Yes/No.", "Yes"),
+        "be_display": FieldMeta("Blue Essence (0 if below threshold).", 15000),
+        "oe_display": FieldMeta("Orange Essence (0 if below threshold).", 3200),
+        "rp_display": FieldMeta("Riot Points (0 if below threshold).", 1200),
+        "me_display": FieldMeta("Mythic Essence (0 if below threshold).", 50),
+        "total_essence": FieldMeta("Blue + Orange Essence combined.", 18200),
+        "notable_skins": FieldMeta("Priority skins found in account.", ["Dark Cosmic Jhin", "PAX Twisted Fate"]),
+        "other_skins": FieldMeta("Non-priority skins.", ["Annie-Versary", "Forecast Janna"]),
+        "album_url": FieldMeta("Image album URL.", "imgur.com/a/xxxxx"),
+        "is_stock": FieldMeta("Whether listing is stock (not dropship).", True),
     }

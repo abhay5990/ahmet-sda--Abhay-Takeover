@@ -23,12 +23,18 @@ class GameSlug(str, Enum):
     COC = "clash-of-clans"
     CR = "clash-royale"
     FN = "fortnite"
+    FH5 = "forza-horizon-5"
+    FH6 = "forza-horizon-6"
     GI = "genshin-impact"
     GTAV = "grand-theft-auto-5"
     LOL = "league-of-legends"
+    NW = "new-world"
+    PSN = "playstation"
     ROBLOX = "roblox"
+    RUST = "rust"
     STEAM = "steam"
     UBISOFT_CONNECT = "ubisoft-connect"
+    XBOX = "xbox"
 
 
 class Marketplace(str, Enum):

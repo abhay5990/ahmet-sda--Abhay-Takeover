@@ -30,6 +30,7 @@ from apps.posting.models import (
     PostingLogLevel,
 )
 from apps.posting.services.shared import persist_success
+from apps.posting.services.shared.listing_writer import persist_multi_cred_success
 from apps.posting.services.shared.max_offer_error import is_max_offer_error
 from apps.posting.services.shared.utils import extract_listing_id
 from apps.posting.services.variant_context import build_variant_context
@@ -81,22 +82,47 @@ class StockConsumer:
         queue: Queue,
         job: PostingJob,
     ) -> None:
-        """Consumer thread: pull items from queue, build + POST one by one."""
+        """Consumer thread: pull items from queue, build + POST one by one.
+
+        For GTA manual jobs targeting Eldorado or GameBoost, items are
+        accumulated and posted as a single multi-credential offer instead
+        of one offer per credential.
+        """
         try:
             close_old_connections()
 
-            # Lazily initialised once from the first item
-            variant_ctx: dict | None = None
-            router: VariantRouter | None = None
-            _routing_init = False
-
+            # Drain queue into a list so we can decide single vs multi-cred.
+            entries: list[tuple[PostingJobItem, dict]] = []
             while True:
                 entry = queue.get()
                 if entry is self._sentinel:
                     break
+                entries.append(entry)
 
-                item, prepared_data = entry
+            if not entries:
+                return
 
+            first_item = entries[0][0]
+            marketplace = first_item.marketplace
+
+            # Multi-cred: GTA manual job with >1 credentials on a
+            # marketplace that supports it (Eldorado / GameBoost).
+            use_multi_cred = (
+                self._is_multi_cred_job(job)
+                and marketplace in ('eldorado', 'gameboost')
+                and len(entries) > 1
+            )
+
+            if use_multi_cred:
+                self._process_multi_cred_batch(entries, job)
+                return
+
+            # ── Standard one-by-one path ──
+            variant_ctx: dict | None = None
+            router: VariantRouter | None = None
+            _routing_init = False
+
+            for item, prepared_data in entries:
                 if self._is_cancelled(job):
                     item.status = PostingJobItemStatus.SKIPPED
                     item.error_message = 'Job cancelled'
@@ -113,7 +139,6 @@ class StockConsumer:
                     ])
                     continue
 
-                # Build variant routing once per store thread
                 if not _routing_init:
                     variant_ctx = build_variant_context(
                         store=item.store, game=job.game,
@@ -240,6 +265,183 @@ class StockConsumer:
             )
 
         item.save(update_fields=['status', 'error_message', 'listing', 'updated_at'])
+
+    # ------------------------------------------------------------------
+    # Multi-credential batch (GTA manual → single offer)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _is_multi_cred_job(job: PostingJob) -> bool:
+        """Return True for GTA manual jobs that should use multi-cred posting."""
+        manual = job.settings.get('_manual', {})
+        if not isinstance(manual, dict):
+            return False
+        return manual.get('source_type') == 'manual'
+
+    def _process_multi_cred_batch(
+        self,
+        entries: list[tuple[PostingJobItem, dict]],
+        job: PostingJob,
+    ) -> None:
+        """Build one payload from all credentials and POST a single multi-cred offer.
+
+        Steps:
+        1. Build individual payloads for each item (to extract credential strings).
+        2. Merge all credential strings into the first payload.
+        3. POST once → create one Listing → link all items to it.
+        """
+        first_item = entries[0][0]
+        marketplace = first_item.marketplace
+
+        # Variant context — same for all items in this store thread
+        variant_ctx = build_variant_context(
+            store=first_item.store, game=job.game,
+            marketplace=marketplace,
+        )
+        router = VariantRouter(variant_ctx, mode='stock')
+
+        # Build payload for each entry and collect results
+        build_results: list[tuple[PostingJobItem, dict, dict]] = []
+        for item, prepared_data in entries:
+            if self._is_cancelled(job):
+                item.status = PostingJobItemStatus.SKIPPED
+                item.error_message = 'Job cancelled'
+                item.save(update_fields=['status', 'error_message', 'updated_at'])
+                continue
+
+            result = build_item_payload(
+                item, prepared_data, job,
+                variant_ctx=variant_ctx, router=router,
+            )
+            if not result['ok']:
+                item.status = PostingJobItemStatus.FAILED
+                item.error_message = f"[{result['stage']}] {result['error']}"
+                item.save(update_fields=['status', 'error_message', 'updated_at'])
+                PostingLog.objects.create(
+                    task_name='stock_post',
+                    level=PostingLogLevel.ERROR,
+                    message=f"Multi-cred build failed: {item.login}",
+                    detail={
+                        'item_id': item.id, 'job_id': job.id,
+                        'stage': result['stage'], 'error': result['error'],
+                    },
+                    integration_account=item.store,
+                )
+                continue
+
+            build_results.append((item, prepared_data, result))
+
+        if not build_results:
+            return
+
+        # Use first successful build as base payload
+        base_item, base_prepared, base_result = build_results[0]
+        base_payload = base_result['data']['payload']
+        final_price = base_result['data']['final_price']
+        variant_slug = base_result['data']['variant_slug']
+        listing_variant_slug = base_result['data'].get(
+            'listing_variant_slug', variant_slug,
+        )
+
+        # Merge credentials into single payload
+        if marketplace == 'eldorado':
+            all_creds: list[str] = []
+            for _, _, r in build_results:
+                creds = r['data']['payload'].get('accountSecretDetails', [])
+                all_creds.extend(creds)
+            base_payload['accountSecretDetails'] = all_creds
+            base_payload['details']['pricing']['quantity'] = len(all_creds)
+
+        elif marketplace == 'gameboost':
+            # Collect delivery_instructions from each payload as credential strings
+            all_creds = []
+            for _, _, r in build_results:
+                cred_text = r['data']['payload'].get('delivery_instructions', '')
+                if cred_text:
+                    all_creds.append(cred_text)
+            # Convert from legacy single-cred to multi-cred format
+            for field in ('login', 'password', 'email_login', 'email_password', 'mail_provider'):
+                base_payload.pop(field, None)
+            base_payload.pop('delivery_instructions', None)
+            base_payload['credentials'] = all_creds
+
+        # Mark all items as PROCESSING
+        all_items = [item for item, _, _ in build_results]
+        for item in all_items:
+            item.status = PostingJobItemStatus.PROCESSING
+            item.save(update_fields=['status', 'updated_at'])
+
+        logger.info(
+            "Multi-cred POST: %d credentials → %s (job=%d, store=%s)",
+            len(build_results), marketplace, job.id, base_item.store.name,
+        )
+
+        try:
+            api_result = self._post_with_backoff(base_item, base_payload)
+
+            if not api_result.ok:
+                err = api_result.error
+                api_messages: list[str] = []
+                if isinstance(err.details, dict):
+                    msgs = err.details.get('messages')
+                    if isinstance(msgs, list):
+                        api_messages = [str(m) for m in msgs if m]
+                detail_text = "; ".join(api_messages) if api_messages else err.message
+                raise RuntimeError(
+                    f"API error: {detail_text} (category={err.category})"
+                )
+
+            store_listing_id = extract_listing_id(api_result.data)
+
+            if marketplace == 'gameboost':
+                self._list_gameboost_offer(base_item, store_listing_id)
+
+            normalized_raw = self._normalize_raw_data(
+                base_item, api_result.data, payload=base_payload,
+            )
+
+            # Persist: create ONE listing, link ALL owned_products
+            owned_products = [pd['owned_product'] for _, pd, _ in build_results]
+            listing = persist_multi_cred_success(
+                items=all_items,
+                job=job,
+                owned_products=owned_products,
+                store_listing_id=store_listing_id,
+                variant_slug=listing_variant_slug,
+                final_price=final_price,
+                payload=base_payload,
+                response_data=api_result.data,
+                raw_data_override=normalized_raw,
+            )
+
+            if router is not None and variant_slug:
+                router.record_post('platform', variant_slug)
+
+            logger.info(
+                "Multi-cred success: listing #%d with %d credentials (offer=%s)",
+                listing.id, len(all_items), store_listing_id,
+            )
+
+        except Exception as e:
+            logger.exception(
+                "Multi-cred POST failed (job=%d, store=%s): %s",
+                job.id, base_item.store.name, e,
+            )
+            for item in all_items:
+                item.status = PostingJobItemStatus.FAILED
+                item.error_message = str(e)
+                item.save(update_fields=['status', 'error_message', 'updated_at'])
+            PostingLog.objects.create(
+                task_name='stock_post',
+                level=PostingLogLevel.ERROR,
+                message=f"Multi-cred POST failed → {base_item.store.name}",
+                detail={
+                    'job_id': job.id,
+                    'credential_count': len(all_items),
+                    'error': str(e),
+                },
+                integration_account=base_item.store,
+            )
 
     def _retry_with_variant_fallback(
         self,

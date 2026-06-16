@@ -260,3 +260,90 @@ def r6_playerauctions() -> dict[str, Any]:
             "xbox": _entry("xbox", "7776", "Xbox"),
         },
     }
+
+
+# ── Forza Horizon 5 ───────────────────────────────────────────────
+
+def fh5_eldorado() -> dict[str, Any]:
+    """Platform → tradeEnvironmentId (0=PC, 1=Xbox, 2=PS5)."""
+    return {
+        "platform": {
+            "PC": _entry("pc", "0"),
+            "Xbox": _entry("xbox", "1"),
+            "PS5": _entry("ps5", "2"),
+        },
+    }
+
+
+def fh5_playerauctions() -> dict[str, Any]:
+    """Platform → PA server ID (10636=PC, 10637=Xbox, 14295=PS)."""
+    return {
+        "platform": {
+            "PC": _entry("pc", "10636", "PC"),
+            "Xbox": _entry("xbox", "10637", "Xbox"),
+            "PS5": _entry("ps5", "14295", "PS"),
+        },
+    }
+
+
+def fh5_gameboost() -> dict[str, Any]:
+    """Platform → GB platform string."""
+    return {
+        "platform": {
+            "PC": _entry("pc", "PC", ""),
+            "Xbox": _entry("xbox", "Xbox", ""),
+            "PS5": _entry("ps5", "PS5", ""),
+        },
+    }
+
+
+# ── New World ─────────────────────────────────────────────────────
+
+def nw_eldorado() -> dict[str, Any]:
+    """Region → tradeEnvironmentId (0=US-East … 4=EU-Central)."""
+    return {
+        "region": {
+            "US-East": _entry("us-east", "0"),
+            "US-West": _entry("us-west", "1"),
+            "AP Southeast": _entry("ap-southeast", "2"),
+            "SA East": _entry("sa-east", "3"),
+            "EU-Central": _entry("eu-central", "4"),
+        },
+    }
+
+
+def nw_playerauctions() -> dict[str, Any]:
+    """Region → PA server ID."""
+    return {
+        "region": {
+            "US-East": _entry("us-east", "9920", "US East"),
+            "US-West": _entry("us-west", "9916", "US West"),
+            "AP Southeast": _entry("ap-southeast", "9917", "AP Southeast"),
+            "SA East": _entry("sa-east", "9918", "SA East"),
+            "EU-Central": _entry("eu-central", "9919", "EU Central"),
+        },
+    }
+
+
+# ── Rust ──────────────────────────────────────────────────────────
+
+def rust_eldorado() -> dict[str, Any]:
+    """Platform → tradeEnvironmentId (0=PC, 1=PlayStation, 2=Xbox)."""
+    return {
+        "platform": {
+            "PC": _entry("pc", "0"),
+            "PlayStation": _entry("playstation", "1"),
+            "Xbox": _entry("xbox", "2"),
+        },
+    }
+
+
+def rust_gameboost() -> dict[str, Any]:
+    """Platform → GB platform string."""
+    return {
+        "platform": {
+            "PC": _entry("pc", "PC", ""),
+            "PlayStation": _entry("playstation", "PlayStation", ""),
+            "Xbox": _entry("xbox", "Xbox", ""),
+        },
+    }

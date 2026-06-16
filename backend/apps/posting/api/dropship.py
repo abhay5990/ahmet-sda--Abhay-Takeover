@@ -73,19 +73,33 @@ def _check_config_ready(config: DropshippingJobConfig) -> str | None:
     Guards:
     1. At least one enabled target URL must exist.
     2. If the game has platform variants, at least one GameVariantLimit must be configured.
+    3. If the game has region variants (and no platform variants), at least one
+       GameVariantLimit must be configured (otherwise dropship capacity = 0 by default).
     """
     has_urls = DropshipTargetURL.objects.filter(config=config, enabled=True).exists()
     if not has_urls:
         return 'Cannot enable: add at least one enabled target URL first'
 
-    if GameVariant.objects.filter(game=config.game, type='platform').exists():
+    has_platform = GameVariant.objects.filter(game=config.game, type='platform').exists()
+    has_region = GameVariant.objects.filter(game=config.game, type='region').exists()
+
+    if has_platform:
         has_limits = GameVariantLimit.objects.filter(
-            store=config.store, variant__game=config.game,
+            store=config.store, variant__game=config.game, variant__type='platform',
         ).exists()
         if not has_limits:
             return (
                 'Cannot enable: configure variant limits first '
                 f'(game "{config.game.name}" requires variant selection)'
+            )
+    elif has_region:
+        has_limits = GameVariantLimit.objects.filter(
+            store=config.store, variant__game=config.game, variant__type='region',
+        ).exists()
+        if not has_limits:
+            return (
+                'Cannot enable: configure region limits first '
+                f'(game "{config.game.name}" requires at least one region to be configured)'
             )
 
     return None
@@ -102,16 +116,16 @@ def dropship_configs(request):
         .order_by('-created_at')
     )
 
-    # Pre-fetch platform variants + limits + active counts for all (store, game) pairs
+    # Pre-fetch all variants + limits + active counts for all (store, game) pairs
     # to avoid N+1 queries inside the config loop.
     _all_game_ids = {c.game_id for c in configs}
-    _platform_variants = list(
+    _all_variants = list(
         GameVariant.objects
-        .filter(game_id__in=_all_game_ids, type='platform')
-        .order_by('game_id', 'sort_order')
+        .filter(game_id__in=_all_game_ids)
+        .order_by('game_id', 'type', 'sort_order')
     )
     variants_by_game: dict[int, list[GameVariant]] = {}
-    for v in _platform_variants:
+    for v in _all_variants:
         variants_by_game.setdefault(v.game_id, []).append(v)
 
     variant_limits_map: dict[tuple[int, int], list[GameVariantLimit]] = {}
@@ -122,7 +136,7 @@ def dropship_configs(request):
         if key not in variant_limits_map and c.game_id in variants_by_game:
             variant_limits_map[key] = list(
                 GameVariantLimit.objects
-                .filter(store_id=c.store_id, variant__game_id=c.game_id, variant__type='platform')
+                .filter(store_id=c.store_id, variant__game_id=c.game_id)
                 .select_related('variant')
             )
             active_counts_map[key] = dict(
@@ -150,6 +164,7 @@ def dropship_configs(request):
                 {
                     'variant': v.slug,
                     'label': v.label,
+                    'type': v.type,
                     'max_offers': limits_by_slug[v.slug].max_offers if v.slug in limits_by_slug else None,
                     'stock_reserve': limits_by_slug[v.slug].stock_reserve if v.slug in limits_by_slug else None,
                     'active': counts.get(v.slug, 0),
@@ -678,11 +693,11 @@ def variant_limits(request):
         return JsonResponse({'error': 'Store or game not found'}, status=404)
 
     game_variants = list(
-        GameVariant.objects.filter(game=game, type='platform').order_by('sort_order')
+        GameVariant.objects.filter(game=game).order_by('type', 'sort_order')
     )
     limits = list(
         GameVariantLimit.objects
-        .filter(store=store, variant__game=game, variant__type='platform')
+        .filter(store=store, variant__game=game)
         .select_related('variant')
     )
     counts: dict[str, int] = {}
@@ -705,6 +720,7 @@ def variant_limits(request):
                 'id': limits_by_slug[v.slug].id if v.slug in limits_by_slug else None,
                 'variant': v.slug,
                 'label': v.label,
+                'type': v.type,
                 'max_offers': limits_by_slug[v.slug].max_offers if v.slug in limits_by_slug else None,
                 'stock_reserve': limits_by_slug[v.slug].stock_reserve if v.slug in limits_by_slug else None,
             }
@@ -743,7 +759,7 @@ def save_variant_limits(request):
 
     game_variants = {
         v.slug: v
-        for v in GameVariant.objects.filter(game=game, type='platform')
+        for v in GameVariant.objects.filter(game=game)
     }
     if not game_variants:
         return JsonResponse({'error': 'This game does not support variants'}, status=400)
@@ -777,7 +793,7 @@ def save_variant_limits(request):
 
     # Delete limits for variants not in the request
     GameVariantLimit.objects.filter(
-        store=store, variant__game=game, variant__type='platform',
+        store=store, variant__game=game,
     ).exclude(variant__slug__in=seen).delete()
 
     # Upsert each limit

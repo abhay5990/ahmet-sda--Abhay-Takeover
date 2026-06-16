@@ -6,8 +6,11 @@ and saves the raw results to tmp/gameboost/accounts/{slug}.json.
 
 Usage (from project root):
     python scripts/fetch_gameboost_templates.py
+    python scripts/fetch_gameboost_templates.py --force              # re-fetch all
+    python scripts/fetch_gameboost_templates.py --slug fortnite      # single game
 """
 
+import argparse
 import json
 import os
 import sys
@@ -41,9 +44,18 @@ if not api_key:
 
 print(f'API key loaded: {api_key[:8]}...')
 
+# ── Parse arguments ────────────────────────────────────────────────
+parser = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+parser.add_argument('--force', action='store_true',
+                    help='Re-fetch even if files already exist')
+parser.add_argument('--slug', type=str, default=None,
+                    help='Fetch single game slug only (e.g. "fortnite")')
+args = parser.parse_args()
+
 # ── Load game slugs ────────────────────────────────────────────────
 services_path = os.path.join(PROJECT_ROOT, '_data_samples', 'gameboost', 'services.json')
-with open(services_path) as f:
+with open(services_path, encoding='utf-8') as f:
     data = json.load(f)
 
 games = data['props']['games']
@@ -52,6 +64,12 @@ for g in games:
     cats = [c.get('slug', '') for c in g.get('categories', g.get('services', []))]
     if 'accounts' in cats:
         account_slugs.append(g['slug'])
+
+if args.slug:
+    if args.slug not in account_slugs:
+        print(f'ERROR: Slug "{args.slug}" not found in account games')
+        sys.exit(1)
+    account_slugs = [args.slug]
 
 print(f'Found {len(account_slugs)} account games')
 
@@ -67,7 +85,7 @@ for i, slug in enumerate(account_slugs, 1):
     out_path = os.path.join(OUTPUT_DIR, f'{slug}.json')
 
     # Skip if already fetched
-    if os.path.exists(out_path):
+    if not args.force and os.path.exists(out_path):
         skipped += 1
         continue
 

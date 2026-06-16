@@ -238,7 +238,7 @@
                             <table class="w-full text-sm">
                                 <thead>
                                     <tr class="text-xs text-gray-500 border-b border-gray-100">
-                                        <th class="text-left py-1.5 pr-3 font-medium">Platform</th>
+                                        <th class="text-left py-1.5 pr-3 font-medium">Variant</th>
                                         <th class="text-left py-1.5 px-3 font-medium">Max Offers</th>
                                         <th class="text-left py-1.5 px-3 font-medium">Stock Reserve</th>
                                         <th class="text-left py-1.5 pl-3 font-medium">Active</th>
@@ -249,6 +249,9 @@
                                         <tr class="border-b border-gray-50">
                                             <td class="py-1.5 pr-3">
                                                 <span class="font-medium text-gray-700" x-text="sp.label || sp.variant.toUpperCase()"></span>
+                                                <span class="ml-1.5 text-xs px-1.5 py-0.5 rounded font-medium"
+                                                      :class="sp.type === 'region' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-500'"
+                                                      x-text="sp.type === 'region' ? 'Region' : 'Platform'"></span>
                                             </td>
                                             <td class="py-1.5 px-3">
                                                 <input type="number" min="0" step="1"

@@ -89,7 +89,9 @@ def test_lol_composer_produces_listing_draft(load_fixture) -> None:
     listing = LolComposer().compose(account, request, MediaBundle())
 
     assert "EUN" in listing.default.title
-    assert "Handmade" in listing.default.title
+    assert "Handmade" not in listing.default.title
+    assert "Full Access" not in listing.default.title
+    assert "Instant Delivery" not in listing.default.title
     assert "S4G" not in listing.default.title
     assert "Level: 15" in listing.default.description
     assert "Has Warranty" in listing.default.description

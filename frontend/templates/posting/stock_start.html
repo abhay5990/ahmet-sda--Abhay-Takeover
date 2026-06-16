@@ -528,14 +528,18 @@
             <label class="block text-sm font-medium text-gray-700 mb-3">Stores</label>
             <div class="space-y-2">
                 {% for store in stores %}
-                <div class="border rounded-md">
+                <div class="border rounded-md"
+                     :class="!isStoreSupported('{{ store.provider }}') ? 'opacity-50' : ''">
                     <div class="flex items-center justify-between p-3">
-                        <label class="flex items-center space-x-3 cursor-pointer">
+                        <label class="flex items-center space-x-3"
+                               :class="isStoreSupported('{{ store.provider }}') ? 'cursor-pointer' : 'cursor-not-allowed'">
                             <input type="checkbox" value="{{ store.id }}"
                                    x-model="selectedStores"
                                    @change="onStoreToggle('{{ store.slug }}')"
-                                   class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                            <span class="text-sm font-medium text-gray-700">{{ store.name }}</span>
+                                   :disabled="!isStoreSupported('{{ store.provider }}')"
+                                   class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 disabled:opacity-50">
+                            <span class="text-sm font-medium"
+                                  :class="isStoreSupported('{{ store.provider }}') ? 'text-gray-700' : 'text-gray-400'">{{ store.name }}</span>
                             <span class="text-xs px-2 py-0.5 rounded-full
                                 {% if store.provider == 'gameboost' %}bg-blue-100 text-blue-700
                                 {% elif store.provider == 'eldorado' %}bg-yellow-100 text-yellow-700
@@ -543,6 +547,8 @@
                                 {% else %}bg-gray-100 text-gray-700{% endif %}">
                                 {{ store.get_provider_display }}
                             </span>
+                            <span x-show="selectedGame && !isStoreSupported('{{ store.provider }}')"
+                                  class="text-xs text-red-400">Not supported</span>
                         </label>
                         <button @click="toggleSettings('{{ store.slug }}')"
                                 x-show="selectedStores.includes('{{ store.id }}')"
@@ -696,6 +702,9 @@
 <script>
 // Game slug -> supported variants (mirrors backend GameVariant registry)
 const GAME_VARIANTS = {{ game_variants_json|safe }};
+
+// Game ID -> supported marketplace providers (from GamePlatformMapping)
+const GAME_PROVIDERS = {{ game_providers_json|safe }};
 
 // Game ID -> slug lookup
 const GAME_SLUGS = {
@@ -958,6 +967,17 @@ function stockStart() {
             return true;
         },
 
+        get supportedProviders() {
+            if (!this.selectedGame) return null;  // null = no filter, show all
+            return GAME_PROVIDERS[this.selectedGame] || [];
+        },
+
+        isStoreSupported(provider) {
+            const providers = this.supportedProviders;
+            if (providers === null) return true;  // no game selected, all enabled
+            return providers.includes(provider);
+        },
+
         get gameVariants() {
             const slug = GAME_SLUGS[this.selectedGame] || '';
             return GAME_VARIANTS[slug] || [];
@@ -1062,6 +1082,15 @@ function stockStart() {
         },
 
         async onGameChange() {
+            // Deselect stores that don't support the newly selected game
+            if (this.selectedGame && this.supportedProviders !== null) {
+                const STORE_PROVIDERS = {
+                    {% for store in stores %}'{{ store.id }}': '{{ store.provider }}',{% endfor %}
+                };
+                this.selectedStores = this.selectedStores.filter(
+                    id => this.isStoreSupported(STORE_PROVIDERS[id])
+                );
+            }
             // Reset sheet mode if switching away from Fortnite
             if (this.sourceType === 'sheet' && !this.isFortniteGame) {
                 this.sourceType = 'account';

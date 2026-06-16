@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from .catalog import skin_titles
 from .models import LolResolvedAccount
 from .sources import LolLztSourceAdapter
 from ....core.contracts import PipelineRequest
@@ -41,5 +42,6 @@ class LolResolver:
             riot_points=lzt.riot_points,
             champion_ids=lzt.champion_ids,
             skin_ids=lzt.skin_ids,
+            skin_names=skin_titles(lzt.skin_ids),
             has_email_access=not lzt.credentials.is_empty and bool(lzt.credentials.email_login),
         )

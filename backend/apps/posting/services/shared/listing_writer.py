@@ -102,3 +102,84 @@ def persist_success(
     item.listing = listing
     item.status = PostingJobItemStatus.SUCCESS
     return listing
+
+
+def persist_multi_cred_success(
+    *,
+    items: list[PostingJobItem],
+    job: PostingJob,
+    owned_products: list,
+    store_listing_id: str,
+    variant_slug: str,
+    final_price: Decimal,
+    payload: dict | None = None,
+    response_data: Any = None,
+    raw_data_override: dict | None = None,
+) -> Listing:
+    """Create ONE Listing and link ALL owned_products for a multi-cred offer.
+
+    Similar to ``persist_success`` but creates a single listing for
+    multiple credentials (accounts) that were posted as one marketplace
+    offer.  Each item is marked SUCCESS and points to the same listing.
+
+    Args:
+        items: All PostingJobItems in the multi-cred batch.
+        job: Parent PostingJob.
+        owned_products: OwnedProduct instances, one per item (same order).
+        store_listing_id: Marketplace-side offer identifier.
+        variant_slug: Resolved variant slug.
+        final_price: Final USD price.
+        payload: The merged marketplace payload.
+        response_data: Raw API response.
+        raw_data_override: Normalized raw_data.
+
+    Returns:
+        The newly-created Listing instance.
+    """
+    first_item = items[0]
+    marketplace = first_item.marketplace
+
+    title = extract_title_from_response(response_data, marketplace)
+    if not title and payload:
+        title = extract_title_from_payload(payload, marketplace)
+    if not title:
+        title = f"{job.game.name} — {len(items)} accounts"
+
+    confirmed_price = extract_price_from_response(response_data, marketplace)
+    price = confirmed_price if confirmed_price is not None else final_price
+
+    currency = extract_currency_from_payload(payload, marketplace) if payload else 'USD'
+
+    if raw_data_override is not None:
+        raw_data = raw_data_override
+    else:
+        raw_data: dict = {}
+        if payload:
+            raw_data['payload'] = payload
+        if response_data is not None:
+            raw_data['response'] = serialize_response(response_data)
+
+    listing = Listing.objects.create(
+        is_instant=True,
+        integration_account=first_item.store,
+        game=job.game,
+        store_listing_id=store_listing_id,
+        variant=variant_slug,
+        status=ListingStatus.LISTED,
+        title=title,
+        price=price,
+        currency=currency,
+        listed_at=timezone.now(),
+        raw_data=raw_data,
+    )
+
+    for item, owned_product in zip(items, owned_products):
+        ListingOwnedProduct.objects.create(
+            listing=listing,
+            owned_product=owned_product,
+        )
+        item.listing = listing
+        item.status = PostingJobItemStatus.SUCCESS
+        item.save(update_fields=['status', 'listing', 'error_message', 'updated_at'])
+
+    return listing

@@ -17,6 +17,11 @@
                 </p>
             </div>
             <div class="flex items-center gap-2">
+                <button @click="openEditModal()"
+                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    Edit {% if pool.strategy == 'clone' %}All Offers{% else %}Offer{% endif %}
+                </button>
                 <button @click="triggerReplenish()"
                         :disabled="replenishing || '{{ pool.status }}' !== 'active'"
                         class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium disabled:opacity-50 flex items-center gap-2">
@@ -299,6 +304,83 @@
         </div>
     </div>
     {% endif %}
+
+    <!-- Edit Offers Modal -->
+    <div x-show="editModal.open" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center"
+         @keydown.escape.window="editModal.open = false">
+        <div class="fixed inset-0 bg-black/40" @click="editModal.open = false"></div>
+        <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4" @click.stop>
+            <div class="px-6 py-4 bg-gray-50 border-b rounded-t-xl flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Edit {% if pool.strategy == 'clone' %}All Offers{% else %}Offer{% endif %}</h3>
+                    <p class="text-xs text-gray-500 mt-0.5">
+                        {% if pool.strategy == 'clone' %}
+                        Updates {{ active_offers|length }} active offer(s) on {{ pool.store.provider }}
+                        {% else %}
+                        Updates the offer on {{ pool.store.provider }}
+                        {% endif %}
+                    </p>
+                </div>
+                <button @click="editModal.open = false" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="px-6 py-5 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <input type="text" x-model="editModal.title"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea x-model="editModal.description" rows="5"
+                              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                              placeholder="Leave empty to keep current description"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                    <input type="number" step="0.01" min="0" x-model="editModal.price"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                {% if pool.strategy == 'clone' %}
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    <p class="text-xs text-amber-700">
+                        <strong>PA Clone:</strong> All {{ active_offers|length }} active offer(s) will be cancelled and recreated via bulk upload. If any recreate fails, those credentials return to pending for the next replenish cycle.
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="px-6 py-4 bg-gray-50 border-t rounded-b-xl flex items-center justify-end gap-3">
+                <button @click="editModal.open = false"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                    Cancel
+                </button>
+                <button @click="submitPoolEdit()"
+                        :disabled="editModal.saving"
+                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2">
+                    <svg x-show="editModal.saving" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    <span x-text="editModal.saving ? 'Updating...' : 'Update {% if pool.strategy == 'clone' %}All Offers{% else %}Offer{% endif %}'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div x-show="toast.show" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-2"
+         class="fixed bottom-6 right-6 z-50 max-w-md px-5 py-3 rounded-lg shadow-lg text-sm font-medium"
+         :class="toast.ok ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'"
+         x-text="toast.msg">
+    </div>
 </div>
 
 <script>
@@ -374,6 +456,7 @@ function _detectColumnsForDetail(cells, columns) {
 
 function poolDetail() {
     const poolId = {{ pool.id }};
+    const poolListingId = {{ pool.listing.id }};
 
     return {
         pasteText: '',
@@ -383,6 +466,8 @@ function poolDetail() {
         credentialSpec: null,
         specLoaded: false,
         replenishing: false,
+        editModal: { open: false, title: '', description: '', price: '', saving: false },
+        toast: { show: false, ok: true, msg: '' },
 
         async init() {
             await this._loadSpec();
@@ -536,6 +621,60 @@ function poolDetail() {
             }
             if (data.added > 0 || (data.skipped && data.skipped.length > 0)) {
                 location.reload();
+            }
+        },
+
+        showToast(ok, msg, duration = 4000) {
+            this.toast = { show: true, ok, msg };
+            setTimeout(() => { this.toast.show = false; }, duration);
+        },
+
+        async openEditModal() {
+            const res = await fetch(`/listings/api/${poolListingId}/edit/`);
+            const data = await res.json().catch(() => ({}));
+            this.editModal = {
+                open: true,
+                title: data.title || '',
+                description: data.description || '',
+                price: data.price || '',
+                saving: false,
+            };
+        },
+
+        async submitPoolEdit() {
+            const m = this.editModal;
+            if (!m.title && !m.description && !m.price) {
+                this.showToast(false, 'Enter at least one field to update');
+                return;
+            }
+            m.saving = true;
+            const body = {};
+            if (m.title) body.title = m.title;
+            if (m.description) body.description = m.description;
+            if (m.price) body.price = parseFloat(m.price);
+            try {
+                const res = await fetch(`/posting/api/pools/${poolId}/edit-offers/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCSRF() },
+                    body: JSON.stringify(body),
+                });
+                const data = await res.json().catch(() => ({}));
+                m.saving = false;
+                if (res.status === 207) {
+                    m.open = false;
+                    const msg = `${data.succeeded}/${data.total} updated, ${data.failed} failed`;
+                    this.showToast(false, msg, 8000);
+                    setTimeout(() => location.reload(), 3000);
+                } else if (res.ok) {
+                    m.open = false;
+                    this.showToast(true, `Updated ${data.succeeded}/${data.total} offer(s)`);
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    this.showToast(false, 'Edit failed: ' + (data.error || 'Unknown error'), 6000);
+                }
+            } catch (e) {
+                m.saving = false;
+                this.showToast(false, 'Request failed: ' + e.message, 6000);
             }
         },
 

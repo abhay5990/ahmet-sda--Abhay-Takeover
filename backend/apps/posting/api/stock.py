@@ -234,8 +234,6 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
     distribution = body.get('distribution', {})
     purchased_price = body.get('purchased_price', 0)
 
-    if not platform:
-        return JsonResponse({'error': 'platform is required for manual mode'}, status=400)
     if not credentials or not isinstance(credentials, list):
         return JsonResponse({'error': 'credentials list is required'}, status=400)
 
@@ -274,6 +272,9 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
     is_gta = _is_gtav_game(game)
     selected_image_preset = None
     selected_image_path = ''
+
+    if is_gta and not platform:
+        return JsonResponse({'error': 'platform is required for GTA V manual mode'}, status=400)
 
     if is_gta:
         selected_image_preset_id = body.get('selected_image_preset_id')

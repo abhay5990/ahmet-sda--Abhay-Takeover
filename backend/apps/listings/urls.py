@@ -9,6 +9,7 @@ urlpatterns = [
     path('<int:listing_id>/', views.listing_detail, name='detail'),
 
     # API
+    path('api/<int:listing_id>/edit/', views.listing_edit, name='api_edit'),
     path('api/<int:listing_id>/delete/', views.listing_delete, name='api_delete'),
     path('api/<int:listing_id>/relist/', views.listing_relist, name='api_relist'),
     path('api/bulk-delete/', views.listing_bulk_delete, name='api_bulk_delete'),

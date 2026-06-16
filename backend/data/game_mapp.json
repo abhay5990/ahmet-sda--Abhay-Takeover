@@ -144,6 +144,25 @@
       "aliases": []
     },
     {
+      "id": 142,
+      "name": "Forza Horizon 6",
+      "slug": "forza-horizon-6",
+      "acronym": "FH6",
+      "platforms": {
+        "eldorado": {
+          "gameId": "414",
+          "name": "Forza Horizon 6"
+        },
+        "gameboost": null,
+        "playerauctions": null
+      },
+      "lztCategory": {
+        "id": 1,
+        "name": "Steam"
+      },
+      "aliases": []
+    },
+    {
       "id": 7,
       "name": "Epic Games",
       "slug": "epic-games",

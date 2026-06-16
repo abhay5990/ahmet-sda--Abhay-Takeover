@@ -9,7 +9,7 @@ from django.db.models import Count, Prefetch, Q
 from apps.accounts.decorators import role_required
 from apps.integrations.models import IntegrationAccount
 from apps.inventory.enums import DropshipProductStatus
-from apps.inventory.models import DropshipProduct, Game
+from apps.inventory.models import DropshipProduct, Game, GamePlatformMapping
 from apps.listings.models import Listing
 from apps.posting.models import (
     ContentTemplate,
@@ -19,6 +19,16 @@ from apps.posting.models import GameVariant
 from payload_pipeline.core.enums import GameSlug
 
 SUPPORTED_GAME_SLUGS = {gs.value for gs in GameSlug}
+
+
+def _get_game_providers() -> dict[str, list[str]]:
+    """Return {game_id: [provider, ...]} from GamePlatformMapping."""
+    result: dict[str, list[str]] = {}
+    for m in GamePlatformMapping.objects.select_related('game').filter(
+        game__is_active=True, game__slug__in=SUPPORTED_GAME_SLUGS,
+    ):
+        result.setdefault(str(m.game_id), []).append(m.platform)
+    return result
 
 
 def _get_game_variants() -> dict[str, list[str]]:
@@ -47,6 +57,7 @@ def stock_start_page(request):
         'stores': stores,
         'source_accounts': source_accounts,
         'game_variants_json': json.dumps(_get_game_variants()),
+        'game_providers_json': json.dumps(_get_game_providers()),
     })
 
 

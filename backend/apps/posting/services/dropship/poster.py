@@ -197,6 +197,28 @@ def _process_target_url(
     lzt_image_fetcher=None,
 ) -> None:
     """Fetch items from a source filter URL and post new ones."""
+    marketplace = config.store.provider
+
+    # === Capacity pre-check (before fetch) ===
+    # Build variant context once here; reused in Phase 2 so no duplicate DB queries.
+    variant_ctx = build_variant_context(
+        store=config.store, game=config.game, marketplace=marketplace,
+    )
+    variant_router = VariantRouter(variant_ctx, mode='dropship')
+
+    if variant_router.select('platform', game_slug=config.game.slug) is None:
+        logger.info(
+            "All slots full for %s/%s — skipping fetch this cycle",
+            config.game.slug, config.store.name,
+        )
+        PostingLog.objects.create(
+            task_name='dropship_poster',
+            level=PostingLogLevel.INFO,
+            message=f"Cycle skipped: all slots full ({config.store.name})",
+            detail={'config_id': config.id, 'game': config.game.slug},
+            integration_account=config.store,
+        )
+        return
 
     # === Phase 1: Fetch + filter ===
     new_items: list[dict] = []
@@ -216,11 +238,6 @@ def _process_target_url(
 
     # === Phase 2: Post new items (with stop checks + backoff) ===
     pricing = build_pricing_rule(PricingDefaults.from_model(target_url))
-    marketplace = config.store.provider
-    variant_ctx = build_variant_context(
-        store=config.store, game=config.game, marketplace=marketplace,
-    )
-    variant_router = VariantRouter(variant_ctx, mode='dropship')
     posted_count = 0
 
     for item in new_items:
@@ -305,9 +322,10 @@ def _process_target_url(
 
             if not fallback_posted:
                 logger.warning(
-                    "All variants exhausted for item %s (%s/%s)",
+                    "All variants exhausted for item %s (%s/%s) — stopping posts this cycle",
                     _item_id, config.game.slug, config.store.name,
                 )
+                break  # API confirmed all slots full; no point trying remaining items
 
         except _StoreFullError as e:
             _item_id = source_provider.extract_item_id(item)
@@ -435,13 +453,11 @@ def _attempt_post(
         final_price = (final_price * Decimal(str(target_url.exchange_rate))).quantize(Decimal('0.01'))
     raw_price = Decimal(str(raw_price_float))
 
-    # Early slot check — skip before expensive prepare() if all slots are full
+    # Early slot check — all platform slots full → stop the items loop
     if variant_router.select('platform', game_slug=game.slug) is None:
-        logger.info(
-            "No available variant slots for %s/%s, skipping item %s",
-            config.store.name, game.name, item.get('item_id'),
+        raise _StoreFullError(
+            f"All platform slots full for {game.slug}/{config.store.name}"
         )
-        return False
 
     # Prepare + build via pipeline
     sources: dict = {source_type: item}
@@ -475,6 +491,21 @@ def _attempt_post(
             config.store.name, game.name, item.get('item_id'),
         )
         return False
+
+    # Region capacity check — for games with region variants (e.g. LoL) where the
+    # account's region is fixed. Verifies the account's region has remaining dropship
+    # capacity before posting.
+    region_slug = ''
+    if variant_ctx and 'region' in variant_ctx:
+        region_phrase = getattr(prepare_result.prepared.subject, 'region_phrase', '')
+        if region_phrase:
+            region_slug = variant_router.select_fixed('region', region_phrase)
+            if region_slug and variant_router.select('region', allowed={region_slug}) is None:
+                logger.info(
+                    "Region '%s' capacity exhausted for %s/%s, skipping item %s",
+                    region_slug, config.store.name, game.name, item.get('item_id'),
+                )
+                return False
 
     pipeline_result = adapter.build(
         prepared=prepare_result.prepared,
@@ -620,6 +651,8 @@ def _attempt_post(
         )
 
     variant_router.record_post('platform', variant_slug)
+    if region_slug:
+        variant_router.record_post('region', region_slug)
     return True
 
 

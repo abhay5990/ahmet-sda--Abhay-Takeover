@@ -47,7 +47,7 @@ class GameboostProvider(AbstractProvider):
         return client.create_offer(payload=payload, proxy_group=proxy_group)
 
     def update_listing(self, client: Any, external_id: str, product_data: dict) -> Any:
-        return client.update_offer(offer_id=external_id, **product_data)
+        return client.update_offer(account_id=external_id, payload=product_data)
 
     def delete_listing(self, client: Any, external_id: str) -> Any:
         return client.delete_offer(account_id=external_id)

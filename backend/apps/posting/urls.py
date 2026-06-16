@@ -121,6 +121,7 @@ urlpatterns = [
     path('api/pools/<int:pool_id>/items/', pool_api.add_pool_items, name='api_add_pool_items'),
     path('api/pools/<int:pool_id>/items/<int:item_id>/remove/', pool_api.remove_pool_item, name='api_remove_pool_item'),
     path('api/pools/<int:pool_id>/replenish/', pool_api.trigger_replenish, name='api_trigger_replenish'),
+    path('api/pools/<int:pool_id>/edit-offers/', pool_api.edit_pool_offers, name='api_edit_pool_offers'),
     path('api/pools/accounts/', pool_api.available_accounts, name='api_pool_accounts'),
     path('api/pools/listings/', pool_api.available_listings, name='api_pool_listings'),
     path('api/pools/sweep-settings/', pool_api.sweep_settings, name='api_sweep_settings'),

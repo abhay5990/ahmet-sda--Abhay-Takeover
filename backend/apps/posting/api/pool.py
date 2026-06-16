@@ -352,6 +352,59 @@ def trigger_replenish(request, pool_id):
     })
 
 
+# ── Pool Offer Edit ──────────────────────────────────────────────
+
+
+@login_required
+@require_POST
+def edit_pool_offers(request, pool_id):
+    """Edit title/description/price of all offers in a pool."""
+    try:
+        body = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    try:
+        pool = (
+            OfferPool.objects
+            .select_related('listing', 'store', 'store__credential', 'game')
+            .get(id=pool_id)
+        )
+    except OfferPool.DoesNotExist:
+        return JsonResponse({'error': 'Pool not found'}, status=404)
+
+    changes = {}
+    if 'title' in body and body['title']:
+        changes['title'] = str(body['title']).strip()
+    if 'description' in body and body['description']:
+        changes['description'] = str(body['description']).strip()
+    if 'price' in body and body['price'] is not None:
+        try:
+            changes['price'] = round(float(body['price']), 2)
+        except (ValueError, TypeError):
+            return JsonResponse({'error': 'Invalid price'}, status=400)
+
+    if not changes:
+        return JsonResponse({'error': 'No changes provided'}, status=400)
+
+    from apps.posting.services.offer_editor import edit_pool_offers as _edit_pool_offers
+
+    try:
+        result = _edit_pool_offers(pool, changes)
+    except Exception as exc:
+        logger.exception('pool API: edit_pool_offers failed for pool %d', pool_id)
+        return JsonResponse({'error': str(exc)[:500]}, status=500)
+
+    status_code = 200 if result.failed == 0 else 207
+    return JsonResponse({
+        'ok': result.failed == 0,
+        'total': result.total,
+        'succeeded': result.succeeded,
+        'failed': result.failed,
+        'errors': result.errors,
+    }, status=status_code)
+
+
 # ── Sweep Settings ───────────────────────────────────────────────
 
 

@@ -140,6 +140,10 @@
                                      x-transition:leave-start="opacity-100 scale-100"
                                      x-transition:leave-end="opacity-0 scale-95"
                                      class="absolute right-0 z-30 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                                    <button @click="openEdit({ id: {{ listing.id }}, title: '{{ listing.title|escapejs }}', price: '{{ listing.price }}', provider: '{{ listing.integration_account.provider|default:"" }}' }); open = false"
+                                            class="w-full text-left px-3 py-1.5 text-sm text-emerald-700 hover:bg-emerald-50 transition-colors">
+                                        Edit offer
+                                    </button>
                                     <button @click="relistSingle({{ listing.id }}); open = false"
                                             class="w-full text-left px-3 py-1.5 text-sm text-indigo-600 hover:bg-indigo-50 transition-colors">
                                         Relist (fresh expiry)
@@ -184,6 +188,59 @@
 
     {% include "includes/_pagination.html" %}
 
+    <!-- Edit Modal -->
+    <div x-show="editModal.open" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center"
+         @keydown.escape.window="editModal.open = false">
+        <div class="fixed inset-0 bg-black/40" @click="editModal.open = false"></div>
+        <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4" @click.stop>
+            <div class="px-6 py-4 bg-gray-50 border-b rounded-t-xl flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Edit Offer</h3>
+                <button @click="editModal.open = false" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="px-6 py-5 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <input type="text" x-model="editModal.title"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea x-model="editModal.description" rows="5"
+                              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                              placeholder="Leave empty to keep current description"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                    <input type="number" step="0.01" min="0" x-model="editModal.price"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div x-show="editModal.provider === 'playerauctions'" class="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    <p class="text-xs text-amber-700">
+                        <strong>PA Note:</strong> Editing will cancel and recreate the offer. The offer ID will change.
+                    </p>
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 border-t rounded-b-xl flex items-center justify-end gap-3">
+                <button @click="editModal.open = false"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                    Cancel
+                </button>
+                <button @click="submitEdit()"
+                        :disabled="editModal.saving"
+                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2">
+                    <svg x-show="editModal.saving" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    <span x-text="editModal.saving ? 'Saving...' : 'Save & Push'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast notification -->
     <div x-show="toast.show" x-cloak
          x-transition:enter="transition ease-out duration-300"
@@ -205,6 +262,7 @@ function listingsBrowser() {
         loading: false,
         loadingMsg: '',
         toast: { show: false, ok: true, msg: '' },
+        editModal: { open: false, id: null, title: '', description: '', price: '', provider: '', saving: false },
 
         init() {},
 
@@ -226,6 +284,52 @@ function listingsBrowser() {
 
         csrfToken() {
             return document.cookie.split('; ').find(r => r.startsWith('csrftoken='))?.split('=')[1] || '';
+        },
+
+        async openEdit(info) {
+            const res = await fetch(`/listings/api/${info.id}/edit/`);
+            const data = await res.json().catch(() => ({}));
+            this.editModal = {
+                open: true,
+                id: info.id,
+                title: data.title || '',
+                description: data.description || '',
+                price: data.price || '',
+                provider: info.provider || '',
+                saving: false,
+            };
+        },
+
+        async submitEdit() {
+            const m = this.editModal;
+            if (!m.title && !m.description && !m.price) {
+                this.showToast(false, 'Enter at least one field to update');
+                return;
+            }
+            m.saving = true;
+            const body = {};
+            if (m.title) body.title = m.title;
+            if (m.description) body.description = m.description;
+            if (m.price) body.price = parseFloat(m.price);
+            try {
+                const res = await fetch(`/listings/api/${m.id}/edit/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.csrfToken() },
+                    body: JSON.stringify(body),
+                });
+                const data = await res.json().catch(() => ({}));
+                m.saving = false;
+                if (res.ok) {
+                    m.open = false;
+                    this.showToast(true, 'Offer updated successfully');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    this.showToast(false, 'Edit failed: ' + (data.error || 'Unknown error'), 6000);
+                }
+            } catch (e) {
+                m.saving = false;
+                this.showToast(false, 'Request failed: ' + e.message, 6000);
+            }
         },
 
         async relistSingle(id) {

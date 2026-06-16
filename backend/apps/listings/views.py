@@ -165,6 +165,63 @@ def listing_detail(request, listing_id):
 
 
 @role_required('admin', 'user')
+def listing_edit(request, listing_id):
+    """GET: return current title/description/price. POST: edit on marketplace."""
+    try:
+        listing = Listing.objects.select_related(
+            'integration_account', 'integration_account__credential',
+        ).get(id=listing_id)
+    except Listing.DoesNotExist:
+        return JsonResponse({'error': 'Listing not found'}, status=404)
+
+    if request.method == 'GET':
+        raw = listing.raw_data or {}
+        return JsonResponse({
+            'title': listing.title or '',
+            'description': raw.get('description', ''),
+            'price': str(listing.price) if listing.price is not None else '',
+        })
+
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+    try:
+        body = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    if listing.status not in {'listed', 'paused'}:
+        return JsonResponse(
+            {'error': f'Cannot edit a listing with status "{listing.status}"'},
+            status=422,
+        )
+
+    changes = {}
+    if 'title' in body and body['title']:
+        changes['title'] = str(body['title']).strip()
+    if 'description' in body and body['description']:
+        changes['description'] = str(body['description']).strip()
+    if 'price' in body and body['price'] is not None:
+        try:
+            changes['price'] = round(float(body['price']), 2)
+        except (ValueError, TypeError):
+            return JsonResponse({'error': 'Invalid price'}, status=400)
+
+    if not changes:
+        return JsonResponse({'error': 'No changes provided'}, status=400)
+
+    from apps.posting.services.offer_editor import edit_offer
+    result = edit_offer(listing, changes)
+
+    if result.ok:
+        return JsonResponse({
+            'ok': True,
+            'new_offer_id': result.new_offer_id or listing.store_listing_id,
+        })
+    return JsonResponse({'error': result.error}, status=422)
+
+
+@role_required('admin', 'user')
 def listing_delete(request, listing_id):
     """DELETE a single listing from the marketplace and mark it DELETED locally."""
     if request.method != 'DELETE':

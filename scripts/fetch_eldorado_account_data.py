@@ -14,6 +14,7 @@ Usage (from project root):
     python scripts/fetch_eldorado_account_data.py --account eldorado-store4gamers
     python scripts/fetch_eldorado_account_data.py --force          # re-fetch all
     python scripts/fetch_eldorado_account_data.py --game-id 32     # single game
+    python scripts/fetch_eldorado_account_data.py --refresh-services  # update services.json first
 """
 
 import argparse
@@ -125,6 +126,8 @@ def main():
                         help='Re-fetch even if files already exist')
     parser.add_argument('--game-id', type=str, default=None,
                         help='Fetch single game ID only (e.g. "32" for Valorant)')
+    parser.add_argument('--refresh-services', action='store_true',
+                        help='Re-fetch services.json from /api/library before processing')
     args = parser.parse_args()
 
     # ── 1. Build SDK client ────────────────────────────────────────
@@ -136,6 +139,19 @@ def main():
 
     facade = get_or_build_client('eldorado', account.credential)
     print(f"SDK client ready ({account.slug})")
+
+    # ── 1b. Refresh services.json if requested ───────────────────
+    if args.refresh_services:
+        print('Refreshing services.json from /api/library ...')
+        library_data, status = fetch_url(facade, f'{BASE_URL}', params={'locale': 'en-US'})
+        if library_data is not None:
+            os.makedirs(os.path.dirname(SERVICES_PATH), exist_ok=True)
+            with open(SERVICES_PATH, 'w', encoding='utf-8') as f:
+                json.dump(library_data, f, indent=2, ensure_ascii=False)
+            print(f'  OK: saved {len(library_data)} services to {SERVICES_PATH}')
+        else:
+            print(f'  FAIL: could not fetch library ({status})')
+            sys.exit(1)
 
     # ── 2. Load game list ──────────────────────────────────────────
     games = load_account_games()
