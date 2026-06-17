@@ -13,6 +13,7 @@ from django.views.decorators.http import require_POST, require_GET, require_http
 from apps.integrations.models import IntegrationAccount
 from apps.inventory.models import Game, OwnedProduct
 from apps.listings.models import Listing, ListingOwnedProduct
+from apps.listings.utils import parse_price
 from apps.orders.enums import OrderStatus
 from apps.posting.models import (
     OfferPool,
@@ -374,15 +375,21 @@ def edit_pool_offers(request, pool_id):
         return JsonResponse({'error': 'Pool not found'}, status=404)
 
     changes = {}
-    if 'title' in body and body['title']:
-        changes['title'] = str(body['title']).strip()
-    if 'description' in body and body['description']:
-        changes['description'] = str(body['description']).strip()
+    if 'title' in body:
+        title = str(body['title']).strip() if body['title'] else ''
+        if not title:
+            return JsonResponse({'error': 'title cannot be empty'}, status=400)
+        changes['title'] = title
+    if 'description' in body:
+        description = str(body['description']).strip() if body['description'] else ''
+        if not description:
+            return JsonResponse({'error': 'description cannot be empty'}, status=400)
+        changes['description'] = description
     if 'price' in body and body['price'] is not None:
         try:
-            changes['price'] = round(float(body['price']), 2)
-        except (ValueError, TypeError):
-            return JsonResponse({'error': 'Invalid price'}, status=400)
+            changes['price'] = parse_price(body['price'])
+        except ValueError as exc:
+            return JsonResponse({'error': str(exc)}, status=400)
 
     if not changes:
         return JsonResponse({'error': 'No changes provided'}, status=400)

@@ -10,6 +10,7 @@ from __future__ import annotations
 import copy
 import logging
 from dataclasses import dataclass, field
+from decimal import Decimal
 from typing import Any
 
 from django.db import transaction
@@ -18,6 +19,7 @@ from django.utils import timezone
 from apps.integrations.models import IntegrationAccount
 from apps.integrations.providers.registry import get_or_build_client, get_provider
 from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
+from apps.listings.enums import ListingStatus
 from apps.listings.models import Listing, ListingOwnedProduct
 from apps.posting.models import (
     OfferPool,
@@ -202,11 +204,40 @@ def _edit_gameboost(listing: Listing, changes: dict[str, Any], store: Integratio
 # ── PlayerAuctions — single listing ──────────────────────────────
 
 def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: IntegrationAccount) -> EditResult:
-    """Edit a single PA listing: cancel + create with updated payload."""
+    """Edit a single PA listing: validate, cancel, then recreate."""
     proxy_pool = build_proxy_pool()
     proxy_group = get_group_name(store)
     client = get_or_build_client('playerauctions', store.credential, proxy_pool=proxy_pool, proxy_group=proxy_group)
     provider = get_provider('playerauctions')
+
+    from core.marketplace.payload_extractor import extract_create_payload
+    from apps.posting.services.pool.replenisher import _apply_pa_auto_delivery_credentials
+
+    raw = listing.raw_data or {}
+    original_payload = extract_create_payload(raw, 'playerauctions', client=client, proxy_group=proxy_group)
+    if not original_payload:
+        _log(
+            PostingLogLevel.ERROR,
+            f'PA edit: no original payload for #{listing.pk}',
+            account=store,
+        )
+        return EditResult(ok=False, error='No original payload found - listing has no raw_data')
+
+    lop = listing.listing_owned_products.select_related('owned_product').first()
+    if not lop:
+        _log(
+            PostingLogLevel.ERROR,
+            f'PA edit: no linked credential for #{listing.pk}',
+            account=store,
+            detail={'listing_id': listing.pk, 'offer_id': listing.store_listing_id},
+        )
+        return EditResult(ok=False, error='No linked credential found - cannot rebuild PA listing')
+
+    _apply_pa_changes(original_payload, changes)
+    pool = OfferPool.objects.filter(listing=listing).first()
+    active_offer = OfferPoolActiveOffer.objects.filter(listing=listing).select_related('pool').first()
+    effective_pool = pool or (active_offer.pool if active_offer else None)
+    _apply_pa_auto_delivery_credentials(original_payload, lop.owned_product, pool=effective_pool)
 
     # Step 1: Cancel existing offer
     try:
@@ -224,27 +255,19 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
              account=store)
         return EditResult(ok=False, error=f'Cancel failed: {exc}')
 
-    # Step 2: Rebuild payload with changes
-    raw = listing.raw_data or {}
-    from core.marketplace.payload_extractor import extract_create_payload
-    original_payload = extract_create_payload(raw, 'playerauctions', client=client, proxy_group=proxy_group)
-    if not original_payload:
-        _log(PostingLogLevel.ERROR,
-             f'PA edit: no original payload for #{listing.pk}',
-             account=store)
-        return EditResult(ok=False, error='No original payload found — listing has no raw_data')
+    old_offer_id = listing.store_listing_id
 
-    _apply_pa_changes(original_payload, changes)
-
-    # Step 3: Re-apply credentials from the linked OwnedProduct
-    lop = listing.listing_owned_products.select_related('owned_product').first()
-    if lop:
-        from apps.posting.services.pool.replenisher import _apply_pa_auto_delivery_credentials
-        # Find pool if this listing belongs to one
-        pool = OfferPool.objects.filter(listing=listing).first()
-        active_offer = OfferPoolActiveOffer.objects.filter(listing=listing).select_related('pool').first()
-        effective_pool = pool or (active_offer.pool if active_offer else None)
-        _apply_pa_auto_delivery_credentials(original_payload, lop.owned_product, pool=effective_pool)
+    def _mark_listing_orphaned(error_message: str) -> None:
+        listing.status = ListingStatus.DELETED
+        listing.removed_at = timezone.now()
+        listing.raw_data = {
+            **(listing.raw_data or {}),
+            'edit_recreate_failed': error_message,
+        }
+        listing.save(update_fields=['status', 'removed_at', 'raw_data', 'updated_at'])
+        if active_offer:
+            active_offer.status = OfferPoolActiveOfferStatus.FAILED
+            active_offer.save(update_fields=['status', 'updated_at'])
 
     # Step 4: Create new offer
     try:
@@ -257,6 +280,7 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
              f'PA recreate failed for #{listing.pk}: {exc}',
              account=store,
              detail={'listing_id': listing.pk, 'old_offer_id': listing.store_listing_id})
+        _mark_listing_orphaned(str(exc))
         return EditResult(ok=False, error=f'Recreate failed (offer was cancelled): {exc}')
 
     if not (create_result and getattr(create_result, 'ok', True)):
@@ -265,6 +289,7 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
              f'PA recreate failed for #{listing.pk}: {error_msg}',
              account=store,
              detail={'listing_id': listing.pk, 'old_offer_id': listing.store_listing_id})
+        _mark_listing_orphaned(error_msg)
         return EditResult(ok=False, error=f'Recreate failed (offer was cancelled): {error_msg}')
 
     from apps.posting.services.shared.utils import extract_listing_id
@@ -273,6 +298,7 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
         _log(PostingLogLevel.WARNING,
              f'PA recreate: no offer ID in response for #{listing.pk}',
              account=store)
+        _mark_listing_orphaned('Recreate succeeded but no offer ID returned')
         return EditResult(ok=False, error='Recreate succeeded but no offer ID returned')
 
     # Step 5: Update DB
@@ -281,9 +307,14 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
     _update_listing_db(listing, changes, extra_fields=['store_listing_id'])
 
     # Update OfferPoolActiveOffer if exists
-    OfferPoolActiveOffer.objects.filter(
-        store_listing_id=old_offer_id,
-    ).update(store_listing_id=new_offer_id)
+    if active_offer:
+        active_offer.store_listing_id = new_offer_id
+        active_offer.save(update_fields=['store_listing_id', 'updated_at'])
+    else:
+        OfferPoolActiveOffer.objects.filter(
+            pool__store=store,
+            store_listing_id=old_offer_id,
+        ).update(store_listing_id=new_offer_id)
 
     _log(PostingLogLevel.SUCCESS,
          f'PA listing #{listing.pk} edited: {old_offer_id} → {new_offer_id}',
@@ -296,10 +327,10 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
 # ── PlayerAuctions — pool bulk edit ──────────────────────────────
 
 def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResult:
-    """Edit all active PA clone offers: bulk cancel → bulk upload."""
-    from apps.posting.services.stock.pa_bulk_uploader import PABulkUploader
-    from apps.posting.pipeline.playerauctions.common import _fake_personal_info
+    """Edit active PA clone offers without leaving stale local listings."""
     from apps.posting.services.pool.replenisher import _apply_pa_auto_delivery_credentials
+    from apps.posting.services.stock.pa_bulk_uploader import PABulkUploader
+    from core.marketplace.payload_extractor import extract_create_payload
 
     store = pool.store
     result = BulkEditResult()
@@ -317,132 +348,167 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
 
     proxy_pool_inst = build_proxy_pool()
     proxy_group = get_group_name(store)
-    client = get_or_build_client('playerauctions', store.credential,
-                                 proxy_pool=proxy_pool_inst, proxy_group=proxy_group)
-    provider = get_provider('playerauctions')
-
-    # ── Step 1: Bulk cancel ──
-    offer_ids = [int(ao.store_listing_id) for ao in active_offers]
-    try:
-        from apis_sdk.clients.marketplaces.playerauctions.models import PlayerAuctionsCancelRequest
-        cancel_result = client.cancel_offers(PlayerAuctionsCancelRequest(offerIds=offer_ids))
-        if cancel_result and hasattr(cancel_result, 'ok') and not cancel_result.ok:
-            error_msg = str(getattr(cancel_result, 'error', 'Cancel failed'))
-            _log(PostingLogLevel.ERROR,
-                 f'Pool #{pool.pk}: bulk cancel failed — {error_msg}',
-                 account=store,
-                 detail={'pool_id': pool.pk, 'offer_count': len(offer_ids)})
-            result.failed = result.total
-            result.errors.append(f'Bulk cancel failed: {error_msg}')
-            return result
-    except Exception as exc:
-        _log(PostingLogLevel.ERROR,
-             f'Pool #{pool.pk}: bulk cancel exception — {exc}',
-             account=store,
-             detail={'pool_id': pool.pk})
-        result.failed = result.total
-        result.errors.append(f'Bulk cancel failed: {exc}')
-        return result
-
-    _log(PostingLogLevel.INFO,
-         f'Pool #{pool.pk}: cancelled {len(offer_ids)} offers for edit',
-         account=store,
-         detail={'pool_id': pool.pk, 'cancelled_ids': [str(i) for i in offer_ids]})
-
-    # ── Step 2: Build Excel rows ──
-    raw = pool.listing.raw_data or {}
-    from core.marketplace.payload_extractor import extract_create_payload
-    original_payload = extract_create_payload(raw, 'playerauctions', client=client, proxy_group=proxy_group)
-
-    if not original_payload:
-        # Can't recreate — return all credentials to pending
-        _rollback_active_offers_to_pending(active_offers)
-        _log(PostingLogLevel.ERROR,
-             f'Pool #{pool.pk}: no original payload, {len(active_offers)} credentials returned to pending',
-             account=store,
-             detail={'pool_id': pool.pk})
-        result.failed = result.total
-        result.errors.append('No original payload — all credentials returned to pending')
-        return result
-
-    _apply_pa_changes(original_payload, changes)
-
-    # Build one Excel row per active offer (each has its own credential)
-    excel_rows = []
-    ao_mapping: list[OfferPoolActiveOffer] = []
-
-    for ao in active_offers:
-        if not ao.pool_item or not ao.pool_item.owned_product:
-            result.failed += 1
-            result.errors.append(f'Offer {ao.store_listing_id}: no linked credential')
-            continue
-
-        row_payload = copy.deepcopy(original_payload)
-        _apply_pa_auto_delivery_credentials(row_payload, ao.pool_item.owned_product, pool=pool)
-
-        excel_row = _pa_payload_to_excel_row(row_payload)
-        excel_rows.append(excel_row)
-        ao_mapping.append(ao)
-
-    if not excel_rows:
-        _log(PostingLogLevel.WARNING,
-             f'Pool #{pool.pk}: no valid rows to upload after edit',
-             account=store)
-        result.failed = result.total
-        return result
-
-    # ── Step 3: Bulk upload ──
-    from apis_sdk.factories.playerauctions_factory import PlayerAuctionsFactory
-
-    # Build facade for bulk upload
-    creds = store.credential.credentials
-    from apis_sdk.factories.transport_factory import TransportFactory
-    transport = TransportFactory.create_requests_transport(timeout=60.0)
-    facade = PlayerAuctionsFactory.create(
-        username=creds.get('username', ''),
-        password=creds.get('password', ''),
-        access_token=creds.get('access_token', '') or creds.get('bearer_token', ''),
-        transport=transport,
+    client = get_or_build_client(
+        'playerauctions',
+        store.credential,
         proxy_pool=proxy_pool_inst,
         proxy_group=proxy_group,
     )
 
-    uploader = PABulkUploader()
-    batch_result = uploader.upload_batch(facade, excel_rows, proxy_group=proxy_group)
+    raw = pool.listing.raw_data or {}
+    original_payload = extract_create_payload(raw, 'playerauctions', client=client, proxy_group=proxy_group)
+    if not original_payload:
+        _log(
+            PostingLogLevel.ERROR,
+            f'Pool #{pool.pk}: no original payload - aborting before cancel',
+            account=store,
+            detail={'pool_id': pool.pk},
+        )
+        result.failed = result.total
+        result.errors.append('No original payload - no remote changes made')
+        return result
 
-    # ── Step 4: Reconcile ──
+    _apply_pa_changes(original_payload, changes)
+
+    excel_rows: list[dict[str, Any]] = []
+    ao_mapping: list[OfferPoolActiveOffer] = []
+    invalid_offer_ids: list[str] = []
+
+    for ao in active_offers:
+        if not ao.pool_item or not ao.pool_item.owned_product:
+            invalid_offer_ids.append(str(ao.store_listing_id))
+            continue
+
+        row_payload = copy.deepcopy(original_payload)
+        _apply_pa_auto_delivery_credentials(row_payload, ao.pool_item.owned_product, pool=pool)
+        excel_rows.append(_pa_payload_to_excel_row(row_payload))
+        ao_mapping.append(ao)
+
+    if invalid_offer_ids:
+        _log(
+            PostingLogLevel.ERROR,
+            f'Pool #{pool.pk}: aborting edit because active offers lack credentials',
+            account=store,
+            detail={'pool_id': pool.pk, 'offer_ids': invalid_offer_ids},
+        )
+        result.failed = result.total
+        result.errors.append(
+            'Active offer(s) missing linked credential: ' + ', '.join(invalid_offer_ids)
+        )
+        return result
+
+    if not excel_rows:
+        _log(
+            PostingLogLevel.WARNING,
+            f'Pool #{pool.pk}: no valid rows to upload before edit',
+            account=store,
+            detail={'pool_id': pool.pk},
+        )
+        result.failed = result.total
+        result.errors.append('No valid credential rows to upload')
+        return result
+
+    try:
+        offer_ids = [int(ao.store_listing_id) for ao in ao_mapping]
+    except (TypeError, ValueError) as exc:
+        _log(
+            PostingLogLevel.ERROR,
+            f'Pool #{pool.pk}: invalid PA offer ID before cancel - {exc}',
+            account=store,
+            detail={'pool_id': pool.pk},
+        )
+        result.failed = result.total
+        result.errors.append(f'Invalid PlayerAuctions offer ID: {exc}')
+        return result
+
+    try:
+        from apis_sdk.clients.marketplaces.playerauctions.models import PlayerAuctionsCancelRequest
+
+        cancel_result = client.cancel_offers(PlayerAuctionsCancelRequest(offerIds=offer_ids))
+        if cancel_result and hasattr(cancel_result, 'ok') and not cancel_result.ok:
+            error_msg = str(getattr(cancel_result, 'error', 'Cancel failed'))
+            _log(
+                PostingLogLevel.ERROR,
+                f'Pool #{pool.pk}: bulk cancel failed - {error_msg}',
+                account=store,
+                detail={'pool_id': pool.pk, 'offer_count': len(offer_ids)},
+            )
+            result.failed = result.total
+            result.errors.append(f'Bulk cancel failed: {error_msg}')
+            return result
+    except Exception as exc:
+        _log(
+            PostingLogLevel.ERROR,
+            f'Pool #{pool.pk}: bulk cancel exception - {exc}',
+            account=store,
+            detail={'pool_id': pool.pk},
+        )
+        result.failed = result.total
+        result.errors.append(f'Bulk cancel failed: {exc}')
+        return result
+
+    _log(
+        PostingLogLevel.INFO,
+        f'Pool #{pool.pk}: cancelled {len(offer_ids)} offers for edit',
+        account=store,
+        detail={'pool_id': pool.pk, 'cancelled_ids': [str(i) for i in offer_ids]},
+    )
+
+    old_listing_ids = _mark_old_active_offer_listings_deleted(ao_mapping, pool)
+
+    try:
+        from apis_sdk.factories.playerauctions_factory import PlayerAuctionsFactory
+        from apis_sdk.factories.transport_factory import TransportFactory
+
+        creds = store.credential.credentials
+        transport = TransportFactory.create_requests_transport(timeout=60.0)
+        facade = PlayerAuctionsFactory.create(
+            username=creds.get('username', ''),
+            password=creds.get('password', ''),
+            access_token=creds.get('access_token', '') or creds.get('bearer_token', ''),
+            transport=transport,
+            proxy_pool=proxy_pool_inst,
+            proxy_group=proxy_group,
+        )
+
+        uploader = PABulkUploader()
+        batch_result = uploader.upload_batch(facade, excel_rows, proxy_group=proxy_group)
+    except Exception as exc:
+        with transaction.atomic():
+            for ao in ao_mapping:
+                _return_ao_to_pending(ao, f'Edit recreate failed after cancel: {str(exc)[:200]}')
+        _log(
+            PostingLogLevel.ERROR,
+            f'Pool #{pool.pk}: bulk upload exception after cancel - {exc}',
+            account=store,
+            detail={'pool_id': pool.pk, 'deactivated_listing_ids': old_listing_ids},
+        )
+        result.failed = result.total
+        result.errors.append(f'Bulk upload failed after cancel: {exc}')
+        return result
+
     with transaction.atomic():
         for idx, ao in enumerate(ao_mapping):
             if idx in batch_result.successful:
                 new_offer_id = batch_result.successful[idx]
                 if not new_offer_id:
-                    # PA returned success but no offer ID — treat as failure
-                    if ao.pool_item:
-                        ao.pool_item.status = OfferPoolItemStatus.PENDING
-                        ao.pool_item.error_message = 'Edit recreate: no offer ID returned by PA'
-                        ao.pool_item.target_offer_id = ''
-                        ao.pool_item.pushed_at = None
-                        ao.pool_item.save(update_fields=[
-                            'status', 'error_message', 'target_offer_id', 'pushed_at', 'updated_at',
-                        ])
-                    ao.status = OfferPoolActiveOfferStatus.FAILED
-                    ao.save(update_fields=['status', 'updated_at'])
+                    _return_ao_to_pending(ao, 'Edit recreate: no offer ID returned by PA')
                     result.failed += 1
-                    result.errors.append(
-                        f'{ao.pool_item.owned_product.login if ao.pool_item else "?"}: no offer ID in PA response'
-                    )
+                    result.errors.append(f'{_ao_login(ao)}: no offer ID in PA response')
                     continue
-                # Create new listing for the clone
+
                 new_listing = Listing.objects.create(
                     is_instant=True,
                     integration_account=store,
                     game=pool.game,
                     store_listing_id=new_offer_id,
+                    product_category=pool.listing.product_category,
                     variant=pool.listing.variant,
                     title=changes.get('title', pool.listing.title),
                     price=changes.get('price', pool.listing.price),
                     currency=pool.listing.currency,
-                    raw_data=pool.listing.raw_data,
+                    listed_at=timezone.now(),
+                    raw_data=_raw_data_with_changes(pool.listing.raw_data, changes),
                 )
 
                 if ao.pool_item and ao.pool_item.owned_product:
@@ -451,7 +517,6 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
                         owned_product=ao.pool_item.owned_product,
                     )
 
-                # Update active offer to point to new listing
                 ao.store_listing_id = new_offer_id
                 ao.listing = new_listing
                 ao.save(update_fields=['store_listing_id', 'listing', 'updated_at'])
@@ -463,21 +528,14 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
                 result.succeeded += 1
             elif idx in batch_result.failed:
                 error_msg = batch_result.failed[idx]
-                # Return credential to pending
-                if ao.pool_item:
-                    ao.pool_item.status = OfferPoolItemStatus.PENDING
-                    ao.pool_item.error_message = f'Edit recreate failed: {error_msg[:200]}'
-                    ao.pool_item.target_offer_id = ''
-                    ao.pool_item.pushed_at = None
-                    ao.pool_item.save(update_fields=[
-                        'status', 'error_message', 'target_offer_id', 'pushed_at', 'updated_at',
-                    ])
-                ao.status = OfferPoolActiveOfferStatus.FAILED
-                ao.save(update_fields=['status', 'updated_at'])
+                _return_ao_to_pending(ao, f'Edit recreate failed: {error_msg[:200]}')
                 result.failed += 1
-                result.errors.append(f'{ao.pool_item.owned_product.login if ao.pool_item else "?"}: {error_msg}')
+                result.errors.append(f'{_ao_login(ao)}: {error_msg}')
+            else:
+                _return_ao_to_pending(ao, 'Edit recreate failed: no PA result returned')
+                result.failed += 1
+                result.errors.append(f'{_ao_login(ao)}: no PA result returned')
 
-    # Update pool listing template with new content
     _update_listing_db(pool.listing, changes)
 
     _log(
@@ -491,6 +549,7 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
             'succeeded': result.succeeded,
             'failed': result.failed,
             'changes': list(changes.keys()),
+            'deactivated_listing_ids': old_listing_ids,
         },
     )
     return result
@@ -515,7 +574,7 @@ def _update_listing_db(listing: Listing, changes: dict[str, Any], extra_fields: 
     raw = dict(listing.raw_data)
     for key in ('title', 'description', 'price'):
         if key in changes:
-            raw[key] = changes[key]
+            raw[key] = _json_safe_change_value(changes[key])
     listing.raw_data = raw
     if 'raw_data' not in update_fields:
         update_fields.append('raw_data')
@@ -577,16 +636,54 @@ def _pa_payload_to_excel_row(payload: dict) -> dict[str, Any]:
     }
 
 
-def _rollback_active_offers_to_pending(active_offers: list[OfferPoolActiveOffer]) -> None:
-    """Return all active offer credentials back to pending status."""
-    for ao in active_offers:
-        ao.status = OfferPoolActiveOfferStatus.FAILED
-        ao.save(update_fields=['status', 'updated_at'])
-        if ao.pool_item:
-            ao.pool_item.status = OfferPoolItemStatus.PENDING
-            ao.pool_item.error_message = 'Edit cancelled — returned to pending'
-            ao.pool_item.target_offer_id = ''
-            ao.pool_item.pushed_at = None
-            ao.pool_item.save(update_fields=[
-                'status', 'error_message', 'target_offer_id', 'pushed_at', 'updated_at',
-            ])
+def _mark_old_active_offer_listings_deleted(
+    active_offers: list[OfferPoolActiveOffer],
+    pool: OfferPool,
+) -> list[int]:
+    """Mark clone listings deleted after their remote PA offers are cancelled."""
+    old_listing_ids: list[int] = []
+    with transaction.atomic():
+        for ao in active_offers:
+            old_listing = ao.listing
+            if not old_listing or old_listing.pk == pool.listing_id:
+                continue
+            old_listing.status = ListingStatus.DELETED
+            old_listing.removed_at = timezone.now()
+            old_listing.save(update_fields=['status', 'removed_at', 'updated_at'])
+            ListingOwnedProduct.objects.filter(listing=old_listing).delete()
+            old_listing_ids.append(old_listing.pk)
+    return old_listing_ids
+
+
+def _return_ao_to_pending(ao: OfferPoolActiveOffer, error_message: str) -> None:
+    """Mark an active offer failed and return its credential to the pool."""
+    ao.status = OfferPoolActiveOfferStatus.FAILED
+    ao.save(update_fields=['status', 'updated_at'])
+    if ao.pool_item:
+        ao.pool_item.status = OfferPoolItemStatus.PENDING
+        ao.pool_item.error_message = error_message
+        ao.pool_item.target_offer_id = ''
+        ao.pool_item.pushed_at = None
+        ao.pool_item.save(update_fields=[
+            'status', 'error_message', 'target_offer_id', 'pushed_at', 'updated_at',
+        ])
+
+
+def _ao_login(ao: OfferPoolActiveOffer) -> str:
+    if ao.pool_item and ao.pool_item.owned_product:
+        return ao.pool_item.owned_product.login
+    return '?'
+
+
+def _raw_data_with_changes(raw_data: dict | None, changes: dict[str, Any]) -> dict:
+    raw = dict(raw_data or {})
+    for key in ('title', 'description', 'price'):
+        if key in changes:
+            raw[key] = _json_safe_change_value(changes[key])
+    return raw
+
+
+def _json_safe_change_value(value: Any) -> Any:
+    if isinstance(value, Decimal):
+        return str(value)
+    return value

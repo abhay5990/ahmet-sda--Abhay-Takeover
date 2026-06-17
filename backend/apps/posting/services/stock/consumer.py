@@ -43,6 +43,7 @@ logger = logging.getLogger(__name__)
 
 # PA batch size — flush the accumulator once it reaches this count.
 _PA_BATCH_SIZE = 10
+_MULTI_CRED_GAMES: frozenset[str] = frozenset({'grand-theft-auto-5'})
 
 
 class StockConsumer:
@@ -84,9 +85,9 @@ class StockConsumer:
     ) -> None:
         """Consumer thread: pull items from queue, build + POST one by one.
 
-        For GTA manual jobs targeting Eldorado or GameBoost, items are
-        accumulated and posted as a single multi-credential offer instead
-        of one offer per credential.
+        For GTA V manual jobs targeting Eldorado or GameBoost, items are
+        accumulated and posted as a single multi-credential offer. For all
+        other games, each credential gets its own offer.
         """
         try:
             close_old_connections()
@@ -272,11 +273,13 @@ class StockConsumer:
 
     @staticmethod
     def _is_multi_cred_job(job: PostingJob) -> bool:
-        """Return True for GTA manual jobs that should use multi-cred posting."""
+        """Return True when all credentials should be merged into one offer."""
         manual = job.settings.get('_manual', {})
-        if not isinstance(manual, dict):
-            return False
-        return manual.get('source_type') == 'manual'
+        return (
+            isinstance(manual, dict)
+            and manual.get('source_type') == 'manual'
+            and job.game.slug in _MULTI_CRED_GAMES
+        )
 
     def _process_multi_cred_batch(
         self,
