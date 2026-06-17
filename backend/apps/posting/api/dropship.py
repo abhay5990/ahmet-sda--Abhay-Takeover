@@ -27,8 +27,29 @@ from apps.posting.models import (
     PostingLog,
     SchedulerHeartbeat,
 )
+from apps.posting.services.variant_slug import variant_value_contains_slug
 
 logger = logging.getLogger(__name__)
+
+
+def _resolve_variant_counts(
+    raw: dict[str, int],
+    variants: list[GameVariant],
+) -> dict[str, int]:
+    """Convert composite variant counts to component-slug counts.
+
+    DB stores composite values like 'eu-pc', 'na-psn'. This maps them back
+    to the component slug used for capacity management (e.g. 'pc', 'psn').
+    Single-dimension games (variant == slug directly) also work correctly.
+    """
+    known_slugs = {v.slug.lower() for v in variants}
+    result: dict[str, int] = {v.slug: 0 for v in variants}
+    for composite, count in raw.items():
+        for v in variants:
+            if variant_value_contains_slug(composite, v.slug, known_slugs=known_slugs):
+                result[v.slug] += count
+    return result
+
 
 # ---------------------------------------------------------------------------
 # Validation limits
@@ -160,7 +181,7 @@ def dropship_configs(request):
 
         key = (config.store_id, config.game_id)
         limits = variant_limits_map.get(key, [])
-        counts = active_counts_map.get(key, {})
+        counts = _resolve_variant_counts(active_counts_map.get(key, {}), game_variants)
         limits_by_slug = {lim.variant.slug: lim for lim in limits}
 
         return {
@@ -711,13 +732,14 @@ def variant_limits(request):
     )
     counts: dict[str, int] = {}
     if game_variants:
-        counts = dict(
+        raw_counts = dict(
             Listing.objects
             .filter(integration_account=store, game=game, status=ListingStatus.LISTED)
             .values('variant')
             .annotate(count=Count('id'))
             .values_list('variant', 'count')
         )
+        counts = _resolve_variant_counts(raw_counts, game_variants)
 
     limits_by_slug = {lim.variant.slug: lim for lim in limits}
 
