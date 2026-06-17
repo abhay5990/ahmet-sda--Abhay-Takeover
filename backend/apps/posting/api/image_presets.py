@@ -23,11 +23,6 @@ _ALLOWED_IMAGE_FORMATS = {
 }
 
 
-def _is_gtav_game(game: Game) -> bool:
-    slug = (game.slug or '').lower()
-    return slug.startswith('gta') or slug.startswith('grand-theft-auto')
-
-
 def _serialize_preset(preset: PostingImagePreset) -> dict:
     return {
         'id': preset.id,
@@ -41,12 +36,11 @@ def _serialize_preset(preset: PostingImagePreset) -> dict:
     }
 
 
-def _get_gtav_game(game_id) -> Game | None:
+def _get_game(game_id) -> Game | None:
     try:
-        game = Game.objects.get(id=game_id, is_active=True)
+        return Game.objects.get(id=game_id, is_active=True)
     except (Game.DoesNotExist, ValueError, TypeError):
         return None
-    return game if _is_gtav_game(game) else None
 
 
 def _read_and_validate_image(uploaded) -> tuple[bytes, str, str, int, int, str | None]:
@@ -80,9 +74,9 @@ def _read_and_validate_image(uploaded) -> tuple[bytes, str, str, int, int, str |
 @login_required
 @require_GET
 def list_image_presets(request):
-    game = _get_gtav_game(request.GET.get('game_id'))
+    game = _get_game(request.GET.get('game_id'))
     if game is None:
-        return JsonResponse({'error': 'GTAV game_id is required'}, status=400)
+        return JsonResponse({'error': 'game_id is required'}, status=400)
 
     presets = PostingImagePreset.objects.filter(
         user=request.user,
@@ -95,9 +89,9 @@ def list_image_presets(request):
 @login_required
 @require_POST
 def upload_image_preset(request):
-    game = _get_gtav_game(request.POST.get('game_id'))
+    game = _get_game(request.POST.get('game_id'))
     if game is None:
-        return JsonResponse({'error': 'GTAV game_id is required'}, status=400)
+        return JsonResponse({'error': 'game_id is required'}, status=400)
 
     uploaded = request.FILES.get('image')
     data, digest, mime_type, width, height, error = _read_and_validate_image(uploaded)

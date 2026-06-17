@@ -10,7 +10,7 @@ class EldoradoEndpoints:
 
     # Offers
     CREATE_OFFER = "/api/flexibleOffers/account"
-    UPDATE_OFFER = "/api/flexibleOffers/{offer_id}"
+    UPDATE_OFFER = "/api/flexibleOffers/account/{offer_id}/details"
     DELETE_OFFER = "/api/flexibleOffersUser/me/{offer_id}"
     SEARCH_MY_OFFERS = "/api/flexibleOffers/me/search"
     GET_OFFER = "/api/flexibleOffers/{offer_id}"

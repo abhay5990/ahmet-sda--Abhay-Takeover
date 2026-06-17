@@ -124,46 +124,87 @@ def edit_pool_offers(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResult
 # ── Eldorado ──────────────────────────────────────────────────────
 
 def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: IntegrationAccount) -> EditResult:
+    """Edit an Eldorado listing via PUT /api/flexibleOffers/account/{id}/details."""
     proxy_pool = build_proxy_pool()
     proxy_group = get_group_name(store)
     client = get_or_build_client('eldorado', store.credential, proxy_pool=proxy_pool, proxy_group=proxy_group)
 
-    # Build update payload from raw_data
+    offer_id = listing.store_listing_id
     raw = listing.raw_data or {}
-    payload = {}
 
-    if 'title' in changes:
-        payload['offerTitle'] = changes['title']
-    if 'description' in changes:
-        payload['description'] = changes['description']
-    if 'price' in changes:
-        # Eldorado pricing structure
-        pricing = raw.get('details', {}).get('pricing', {})
-        price_per_unit = pricing.get('pricePerUnit', {})
-        payload['pricing'] = {
+    # Fetch live account details to include them in the update payload
+    account_details: list[dict] = []
+    creds_result = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
+    if creds_result.ok and creds_result.data:
+        resp = creds_result.data
+        src = resp.accountsDetails or resp.secretDetails or []
+        account_details = [
+            {'id': e.id, 'secretDetails': e.secretDetails}
+            for e in src if e.secretDetails
+        ]
+    if not account_details:
+        # Fallback: use stored credential entries
+        account_details = [
+            {'id': e.get('id', ''), 'secretDetails': e['secretDetails']}
+            for e in (raw.get('_credential_entries') or [])
+            if e.get('secretDetails')
+        ]
+
+    # Build details block — apply changes on top of raw_data values
+    raw_price = raw.get('pricePerUnit') or {}
+    details: dict[str, Any] = {
+        'pricing': {
+            'quantity': len(account_details) or raw.get('quantity', 1),
             'pricePerUnit': {
-                'amount': float(changes['price']),
-                'currency': price_per_unit.get('currency', 'USD'),
+                'amount': float(changes['price']) if 'price' in changes else float(raw_price.get('amount', 0)),
+                'currency': raw_price.get('currency', 'USD'),
             },
-        }
+            'volumeDiscounts': raw.get('volumeDiscounts') or None,
+        },
+        'offerTitle': changes.get('title', raw.get('offerTitle', '')),
+        'description': changes.get('description', raw.get('description', '')),
+        'guaranteedDeliveryTime': raw.get('guaranteedDeliveryTime', 'Instant'),
+        'hasOriginalEmail': raw.get('hasOriginalEmail') or False,
+    }
+
+    # Build augmentedGame block from flat raw_data
+    trade_envs = raw.get('tradeEnvironmentValues') or []
+    trade_env_id = str(trade_envs[0]['id']) if trade_envs else '0'
+    raw_attrs = raw.get('attributes') or []
+    offer_attributes = [
+        {'id': a.get('id', ''), 'type': 'Select', 'value': (a.get('value') or {}).get('id', '')}
+        for a in raw_attrs
+    ]
+    augmented_game: dict[str, Any] = {
+        'gameId': str(raw.get('gameId', '')),
+        'category': raw.get('category', 'Account'),
+        'tradeEnvironmentId': trade_env_id,
+        'offerAttributes': offer_attributes,
+        'attributeIdsCsv': None,
+    }
+
+    payload: dict[str, Any] = {
+        'details': details,
+        'augmentedGame': augmented_game,
+        'accountDetails': account_details,
+    }
 
     provider = get_provider('eldorado')
-    result = provider.update_listing(client, listing.store_listing_id, payload)
+    result = provider.update_listing(client, offer_id, payload)
 
     if not (result and getattr(result, 'ok', True)):
         error_msg = str(getattr(result, 'error', 'Unknown error'))
         _log(PostingLogLevel.ERROR,
              f'Eldorado edit failed for #{listing.pk}: {error_msg}',
              account=store,
-             detail={'listing_id': listing.pk, 'offer_id': listing.store_listing_id})
+             detail={'listing_id': listing.pk, 'offer_id': offer_id})
         return EditResult(ok=False, error=error_msg)
 
-    # Update local DB
     _update_listing_db(listing, changes)
     _log(PostingLogLevel.SUCCESS,
          f'Listing #{listing.pk} edited on Eldorado',
          account=store,
-         detail={'listing_id': listing.pk, 'offer_id': listing.store_listing_id, 'changes': list(changes.keys())})
+         detail={'listing_id': listing.pk, 'offer_id': offer_id, 'changes': list(changes.keys())})
     return EditResult(ok=True)
 
 

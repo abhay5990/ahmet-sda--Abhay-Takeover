@@ -276,30 +276,29 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
     if is_gta and not platform:
         return JsonResponse({'error': 'platform is required for GTA V manual mode'}, status=400)
 
-    if is_gta:
-        selected_image_preset_id = body.get('selected_image_preset_id')
-        if selected_image_preset_id not in (None, '', 'auto'):
-            try:
-                selected_image_preset_id = int(selected_image_preset_id)
-            except (TypeError, ValueError):
-                return JsonResponse({'error': 'selected_image_preset_id must be a number'}, status=400)
+    selected_image_preset_id = body.get('selected_image_preset_id')
+    if selected_image_preset_id not in (None, '', 'auto'):
+        try:
+            selected_image_preset_id = int(selected_image_preset_id)
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'selected_image_preset_id must be a number'}, status=400)
 
-            selected_image_preset = PostingImagePreset.objects.filter(
-                id=selected_image_preset_id,
-                user=user,
-                game=game,
-                is_active=True,
-            ).first()
-            if selected_image_preset is None:
-                return JsonResponse({'error': 'Selected image preset not found'}, status=404)
+        selected_image_preset = PostingImagePreset.objects.filter(
+            id=selected_image_preset_id,
+            user=user,
+            game=game,
+            is_active=True,
+        ).first()
+        if selected_image_preset is None:
+            return JsonResponse({'error': 'Selected image preset not found'}, status=404)
 
-            try:
-                selected_image_path = selected_image_preset.image.path
-            except (ValueError, NotImplementedError):
-                return JsonResponse({'error': 'Selected image preset has no local file'}, status=400)
+        try:
+            selected_image_path = selected_image_preset.image.path
+        except (ValueError, NotImplementedError):
+            return JsonResponse({'error': 'Selected image preset has no local file'}, status=400)
 
-            if not Path(selected_image_path).is_file():
-                return JsonResponse({'error': 'Selected image preset file is missing'}, status=400)
+        if not Path(selected_image_path).is_file():
+            return JsonResponse({'error': 'Selected image preset file is missing'}, status=400)
 
     # GTA-specific fields only accepted for GTA games
     if is_gta:
