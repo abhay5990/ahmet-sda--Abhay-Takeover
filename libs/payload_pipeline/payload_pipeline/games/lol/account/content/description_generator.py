@@ -55,16 +55,19 @@ class LolDescriptionGenerator:
         if account.mythic_essence >= 10:
             lines.append(f"Mythic Essence: {account.mythic_essence}")
 
-        # Notable skins section — fill remaining space
+        # Skins section — priority skins first, then the rest, fill remaining space
         notable = match_notable_skins(account.skin_names)
-        if notable:
+        notable_set = {s.lower() for s in notable}
+        other_skins = [s for s in account.skin_names if s.lower() not in notable_set]
+        all_skins = notable + other_skins
+        if all_skins:
             lines.append("")
-            lines.append("Notable Skins:")
+            lines.append("Some Skins:")
             # Build the fixed part first to know how much space we have
             fixed_text = "\n".join(lines)
             warning = _warning_block()
             remaining = _MAX_DESCRIPTION_LENGTH - len(fixed_text) - len(warning) - 20
-            lines.extend(_format_skin_list(notable, max_chars=remaining))
+            lines.extend(_format_skin_list(all_skins, max_chars=remaining))
 
         # Warning
         lines.extend([
@@ -115,7 +118,7 @@ def _warning_block() -> str:
 
 def _format_skin_list(skins: list[str], *, max_chars: int) -> list[str]:
     """Format skins into lines of bullet-separated names that fit within max_chars."""
-    separator = " | "
+    separator = ", "
     lines: list[str] = []
     current_line: list[str] = []
     current_len = 0

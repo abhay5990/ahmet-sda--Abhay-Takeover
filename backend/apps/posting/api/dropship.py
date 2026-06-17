@@ -153,6 +153,11 @@ def dropship_configs(request):
         if not game_variants:
             return {'has_variants': False}
 
+        # When a game has platform variants, only expose platform for capacity management.
+        # Region is auto-determined from account data — no user-configured limits needed.
+        if any(v.type == 'platform' for v in game_variants):
+            game_variants = [v for v in game_variants if v.type == 'platform']
+
         key = (config.store_id, config.game_id)
         limits = variant_limits_map.get(key, [])
         counts = active_counts_map.get(key, {})
@@ -695,6 +700,10 @@ def variant_limits(request):
     game_variants = list(
         GameVariant.objects.filter(game=game).order_by('type', 'sort_order')
     )
+    # When a game has platform variants, only expose platform for capacity management.
+    # Region is auto-determined from account data — no user-configured limits needed.
+    if any(v.type == 'platform' for v in game_variants):
+        game_variants = [v for v in game_variants if v.type == 'platform']
     limits = list(
         GameVariantLimit.objects
         .filter(store=store, variant__game=game)
