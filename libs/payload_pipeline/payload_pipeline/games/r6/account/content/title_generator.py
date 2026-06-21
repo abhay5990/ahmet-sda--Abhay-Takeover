@@ -63,7 +63,6 @@ class R6ResolvedTitleGenerator:
         parts.append("Full Access")
         if account.kind != "dropshipping":
             parts.append("Instant Delivery")
-        parts.append("Mail Changeable")
 
         return parts
 
@@ -129,7 +128,6 @@ class R6ResolvedTitleGenerator:
         parts.append("Full Access")
         if account.kind != "dropshipping":
             parts.append("Instant Delivery")
-        parts.append("Mail Changeable")
 
         return parts
 

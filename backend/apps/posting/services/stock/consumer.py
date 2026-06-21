@@ -85,45 +85,38 @@ class StockConsumer:
     ) -> None:
         """Consumer thread: pull items from queue, build + POST one by one.
 
-        For GTA V manual jobs targeting Eldorado or GameBoost, items are
-        accumulated and posted as a single multi-credential offer. For all
-        other games, each credential gets its own offer.
+        For GTA V manual jobs (source_type='manual'), all items are drained
+        first and posted as a single multi-credential offer. For all other
+        jobs, items are processed one by one as they arrive (streaming).
         """
         try:
             close_old_connections()
 
-            # Drain queue into a list so we can decide single vs multi-cred.
-            entries: list[tuple[PostingJobItem, dict]] = []
-            while True:
-                entry = queue.get()
-                if entry is self._sentinel:
-                    break
-                entries.append(entry)
-
-            if not entries:
+            # Multi-cred intent is known upfront from job settings — no need
+            # to drain the queue first for non-GTA-manual jobs.
+            if self._is_multi_cred_job(job):
+                entries: list[tuple[PostingJobItem, dict]] = []
+                while True:
+                    entry = queue.get()
+                    if entry is self._sentinel:
+                        break
+                    entries.append(entry)
+                if entries:
+                    self._process_multi_cred_batch(entries, job)
                 return
 
-            first_item = entries[0][0]
-            marketplace = first_item.marketplace
-
-            # Multi-cred: GTA manual job with >1 credentials on a
-            # marketplace that supports it (Eldorado / GameBoost).
-            use_multi_cred = (
-                self._is_multi_cred_job(job)
-                and marketplace in ('eldorado', 'gameboost')
-                and len(entries) > 1
-            )
-
-            if use_multi_cred:
-                self._process_multi_cred_batch(entries, job)
-                return
-
-            # ── Standard one-by-one path ──
+            # ── Standard streaming path — process each item as it arrives ──
             variant_ctx: dict | None = None
             router: VariantRouter | None = None
             _routing_init = False
 
-            for item, prepared_data in entries:
+            while True:
+                entry = queue.get()
+                if entry is self._sentinel:
+                    break
+
+                item, prepared_data = entry
+
                 if self._is_cancelled(job):
                     item.status = PostingJobItemStatus.SKIPPED
                     item.error_message = 'Job cancelled'

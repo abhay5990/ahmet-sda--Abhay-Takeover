@@ -71,7 +71,16 @@ class StockResolver:
             .first()
         )
 
-        needs_fallback = owned is None or not owned.raw_data
+        _source_provider = (
+            owned.source_account.provider
+            if owned and owned.source_account
+            else None
+        )
+        needs_fallback = (
+            owned is None
+            or not owned.raw_data
+            or (_source_provider is not None and _source_provider != 'lzt')
+        )
 
         if needs_fallback and self._lzt_facade and self._lzt_account:
             owned = self._lzt_fallback(normalized, game, existing=owned)

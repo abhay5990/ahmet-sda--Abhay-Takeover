@@ -165,6 +165,8 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
         'description': changes.get('description', raw.get('description', '')),
         'guaranteedDeliveryTime': raw.get('guaranteedDeliveryTime', 'Instant'),
         'hasOriginalEmail': raw.get('hasOriginalEmail') or False,
+        'mainOfferImage': raw.get('mainOfferImage') or {},
+        'offerImages': raw.get('offerImages') or [],
     }
 
     # Build augmentedGame block from flat raw_data
