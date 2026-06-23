@@ -24,6 +24,7 @@ from threading import Event
 from django.db import DatabaseError, OperationalError
 
 from apps.integrations.providers import registry
+from apps.inventory.models import OwnedProduct
 from apps.posting.models import (
     PostingDefault,
     PostingJob,
@@ -187,7 +188,10 @@ class StockOrchestrator:
         items = list(
             job.items.filter(
                 status=PostingJobItemStatus.PENDING,
-            ).select_related('owned_product', 'store', 'store__credential')
+            ).select_related(
+                'owned_product', 'owned_product__source_account',
+                'store', 'store__credential',
+            )
         )
 
         if not items:
@@ -264,9 +268,11 @@ class StockOrchestrator:
                 self._skip_items(items, "Job cancelled")
                 continue
 
-            # Resolve owned_product if not yet resolved
+            # Resolve owned_product if not yet resolved, or refresh from LZT
+            # when the existing product's source is not LZT (e.g. GB-sourced).
             first_item = items[0]
-            if first_item.owned_product is None:
+            owned_product = first_item.owned_product
+            if owned_product is None or self._needs_lzt_enrich(owned_product):
                 self._resolve_items(items, job)
                 # If still unresolved after fallback, items are already marked FAILED
                 if first_item.owned_product is None:
@@ -308,6 +314,27 @@ class StockOrchestrator:
 
         for q in store_queues.values():
             q.put(_SENTINEL)
+
+    @staticmethod
+    def _needs_lzt_enrich(owned: OwnedProduct) -> bool:
+        """Return True when the owned product should be refreshed from LZT.
+
+        Triggers LZT lookup when:
+        - raw_data is empty/missing
+        - source_account is set and its provider is not 'lzt' (e.g. GB-sourced)
+
+        Manual entries (raw_data['source'] == 'manual') are excluded because they
+        are not expected to exist on LZT.
+        """
+        raw = owned.raw_data
+        if not raw:
+            return True
+        if isinstance(raw, dict) and raw.get('source') == 'manual':
+            return False
+        source_account = owned.source_account
+        if source_account and source_account.provider != 'lzt':
+            return True
+        return False
 
     def _resolve_items(
         self,
