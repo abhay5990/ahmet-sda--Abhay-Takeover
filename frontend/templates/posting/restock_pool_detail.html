@@ -10,17 +10,17 @@
         <a href="{% url 'posting:restock_pools' %}" class="text-sm text-indigo-600 hover:text-indigo-800">&larr; Back to Pools</a>
         <div class="flex items-center justify-between mt-2">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">{{ pool.listing.title|default:pool.listing.store_listing_id }}</h1>
+                <h1 class="text-2xl font-bold text-gray-900">{{ pool.name }}</h1>
                 <p class="text-sm text-gray-500">
-                    {{ pool.store.name }} ({{ pool.store.provider }}) &middot; {{ pool.game.name }} &middot;
-                    <span class="font-mono text-xs">{{ pool.listing.store_listing_id }}</span>
+                    {{ pool.game.name }} &middot; {{ pool_offers|length }} linked offer(s)
                 </p>
             </div>
             <div class="flex items-center gap-2">
                 <button @click="openEditModal()"
+                        {% if not primary_offer %}disabled{% endif %}
                         class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                    Edit {% if pool.strategy == 'clone' %}All Offers{% else %}Offer{% endif %}
+                    Edit Linked Offers
                 </button>
                 <button @click="triggerReplenish()"
                         :disabled="replenishing || '{{ pool.status }}' !== 'active'"
@@ -47,17 +47,17 @@
     <div class="grid grid-cols-6 gap-4 mb-6">
         <div class="bg-white rounded-lg shadow p-4">
             <div class="text-xs text-gray-500 uppercase">Remote Count</div>
-            <div class="text-2xl font-bold {% if pool.current_remote_count is not None and pool.current_remote_count < pool.threshold %}text-red-600{% else %}text-gray-800{% endif %}">
-                {{ pool.current_remote_count|default:"—" }}
+            <div class="text-2xl font-bold {% if primary_offer and primary_offer.current_remote_count is not None and primary_offer.current_remote_count < primary_offer.threshold %}text-red-600{% else %}text-gray-800{% endif %}">
+                {% if primary_offer %}{{ primary_offer.current_remote_count|default:"—" }}{% else %}—{% endif %}
             </div>
         </div>
         <div class="bg-white rounded-lg shadow p-4">
             <div class="text-xs text-gray-500 uppercase">Threshold</div>
-            <div class="text-2xl font-bold text-gray-800">{{ pool.threshold }}</div>
+            <div class="text-2xl font-bold text-gray-800">{% if primary_offer %}{{ primary_offer.threshold }}{% else %}—{% endif %}</div>
         </div>
         <div class="bg-white rounded-lg shadow p-4">
             <div class="text-xs text-gray-500 uppercase">Target</div>
-            <div class="text-2xl font-bold text-gray-800">{{ pool.target_count }}</div>
+            <div class="text-2xl font-bold text-gray-800">{% if primary_offer %}{{ primary_offer.target_count }}{% else %}—{% endif %}</div>
         </div>
         <div class="bg-white rounded-lg shadow p-4">
             <div class="text-xs text-gray-500 uppercase">Pending</div>
@@ -69,8 +69,48 @@
         </div>
         <div class="bg-white rounded-lg shadow p-4">
             <div class="text-xs text-gray-500 uppercase">Strategy</div>
-            <div class="text-2xl font-bold text-gray-800">{{ pool.get_strategy_display }}</div>
+            <div class="text-2xl font-bold text-gray-800">{{ pool_offers|length }}</div>
         </div>
+    </div>
+
+    <!-- Linked Offers -->
+    <div class="bg-white rounded-lg shadow mb-6 overflow-hidden">
+        <div class="px-6 py-4 border-b flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-gray-800">Linked Offers</h2>
+            <button @click="openLinkModal()" type="button"
+                    class="px-3 py-1.5 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700">
+                + Link Offer
+            </button>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50"><tr>
+                <th class="px-4 py-2 text-left text-xs text-gray-500">Marketplace / Store</th>
+                <th class="px-4 py-2 text-left text-xs text-gray-500">Offer</th>
+                <th class="px-4 py-2 text-center text-xs text-gray-500">Remote</th>
+                <th class="px-4 py-2 text-center text-xs text-gray-500">Threshold / Target</th>
+                <th class="px-4 py-2 text-center text-xs text-gray-500">Status</th>
+                <th class="px-4 py-2 text-right text-xs text-gray-500">Actions</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-100">
+            {% for offer in pool_offers %}
+                <tr>
+                    <td class="px-4 py-3 text-sm">{{ offer.store.name }} <span class="text-gray-400">({{ offer.marketplace }})</span></td>
+                    <td class="px-4 py-3 text-sm"><a class="text-indigo-600" href="{% url 'listings:detail' offer.listing_id %}">{{ offer.listing.title|default:offer.listing.store_listing_id }}</a></td>
+                    <td class="px-4 py-3 text-center text-sm">{{ offer.current_remote_count|default:"—" }}</td>
+                    <td class="px-4 py-3 text-center text-sm">{{ offer.threshold }} / {{ offer.target_count }}</td>
+                    <td class="px-4 py-3 text-center text-sm">{{ offer.get_status_display }}</td>
+                    <td class="px-4 py-3 text-right text-xs space-x-1">
+                        {% if offer.status != 'detached' %}
+                        <button @click="unlinkOffer({{ offer.id }}, 'leave_remote')" class="px-2 py-1 bg-gray-100 rounded">Detach</button>
+                        <button @click="unlinkOffer({{ offer.id }}, 'remove_remote')" class="px-2 py-1 bg-red-100 text-red-700 rounded">Remove Remote</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="6" class="px-4 py-6 text-center text-gray-400">No linked offers yet</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 
     <!-- Add Accounts -->
@@ -305,6 +345,50 @@
     </div>
     {% endif %}
 
+    <!-- Link Offer Modal -->
+    <div x-show="linkModal.open" x-cloak
+         class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+         @keydown.escape.window="linkModal.open = false">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 p-6"
+             @click.outside="linkModal.open = false">
+            <h3 class="text-lg font-semibold mb-4">Link Marketplace Offer</h3>
+            <input x-model="linkModal.query" @input.debounce.300ms="searchLinkListings()"
+                   placeholder="Search eligible listings..."
+                   class="w-full border rounded-lg px-3 py-2 text-sm mb-2">
+            <div class="border rounded-lg max-h-48 overflow-y-auto mb-4" x-show="!linkModal.listing_id">
+                <template x-for="listing in linkModal.results" :key="listing.id">
+                    <button type="button" @click="selectLinkListing(listing)"
+                            class="block w-full text-left px-3 py-2 border-b hover:bg-indigo-50">
+                        <div class="text-sm font-medium" x-text="listing.title"></div>
+                        <div class="text-xs text-gray-400" x-text="listing.store + ' · ' + listing.marketplace"></div>
+                    </button>
+                </template>
+            </div>
+            <div x-show="linkModal.listing_id" class="bg-indigo-50 rounded-lg px-3 py-2 mb-4">
+                <span class="text-sm font-medium" x-text="linkModal.selectedTitle"></span>
+                <button type="button" @click="linkModal.listing_id = null" class="float-right text-indigo-600">Change</button>
+            </div>
+            <div class="grid grid-cols-3 gap-3 mb-5">
+                <label class="text-xs text-gray-600">Threshold
+                    <input type="number" min="1" x-model.number="linkModal.threshold" class="mt-1 w-full border rounded px-2 py-1.5 text-sm">
+                </label>
+                <label class="text-xs text-gray-600">Target
+                    <input type="number" min="1" x-model.number="linkModal.target_count" class="mt-1 w-full border rounded px-2 py-1.5 text-sm">
+                </label>
+                <label class="text-xs text-gray-600">PA Hard Max
+                    <input type="number" min="1" max="10" x-model.number="linkModal.max_concurrent" class="mt-1 w-full border rounded px-2 py-1.5 text-sm">
+                </label>
+            </div>
+            <div class="flex justify-end gap-2">
+                <button @click="linkModal.open = false" class="px-4 py-2 text-sm border rounded-lg">Cancel</button>
+                <button @click="submitLinkOffer()" :disabled="!linkModal.listing_id || linkModal.saving"
+                        class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg disabled:opacity-50">
+                    <span x-text="linkModal.saving ? 'Linking...' : 'Link Offer'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Offers Modal -->
     <div x-show="editModal.open" x-cloak
          class="fixed inset-0 z-50 flex items-center justify-center"
@@ -313,13 +397,9 @@
         <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4" @click.stop>
             <div class="px-6 py-4 bg-gray-50 border-b rounded-t-xl flex items-center justify-between">
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Edit {% if pool.strategy == 'clone' %}All Offers{% else %}Offer{% endif %}</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">Edit Linked Offers</h3>
                     <p class="text-xs text-gray-500 mt-0.5">
-                        {% if pool.strategy == 'clone' %}
-                        Updates {{ active_offers|length }} active offer(s) on {{ pool.store.provider }}
-                        {% else %}
-                        Updates the offer on {{ pool.store.provider }}
-                        {% endif %}
+                        Updates all {{ pool_offers|length }} linked offer group(s).
                     </p>
                 </div>
                 <button @click="editModal.open = false" class="text-gray-400 hover:text-gray-600">
@@ -343,7 +423,7 @@
                     <input type="number" step="0.01" min="0" x-model="editModal.price"
                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
-                {% if pool.strategy == 'clone' %}
+                {% if primary_offer and primary_offer.strategy == 'clone' %}
                 <div class="bg-amber-50 border border-amber-200 rounded-lg p-3">
                     <p class="text-xs text-amber-700">
                         <strong>PA Clone:</strong> All {{ active_offers|length }} active offer(s) will be cancelled and recreated via bulk upload. If any recreate fails, those credentials return to pending for the next replenish cycle.
@@ -363,7 +443,7 @@
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
-                    <span x-text="editModal.saving ? 'Updating...' : 'Update {% if pool.strategy == 'clone' %}All Offers{% else %}Offer{% endif %}'"></span>
+                    <span x-text="editModal.saving ? 'Updating...' : 'Update Linked Offers'"></span>
                 </button>
             </div>
         </div>
@@ -456,7 +536,8 @@ function _detectColumnsForDetail(cells, columns) {
 
 function poolDetail() {
     const poolId = {{ pool.id }};
-    const poolListingId = {{ pool.listing.id }};
+    const poolGameId = {{ pool.game_id }};
+    const poolListingId = {% if primary_offer %}{{ primary_offer.listing.id }}{% else %}null{% endif %};
 
     return {
         pasteText: '',
@@ -466,6 +547,11 @@ function poolDetail() {
         credentialSpec: null,
         specLoaded: false,
         replenishing: false,
+        linkModal: {
+            open: false, query: '', results: [], listing_id: null,
+            selectedTitle: '', threshold: 2, target_count: 5,
+            max_concurrent: 10, saving: false,
+        },
         editModal: { open: false, title: '', description: '', price: '', saving: false },
         toast: { show: false, ok: true, msg: '' },
 
@@ -627,6 +713,82 @@ function poolDetail() {
         showToast(ok, msg, duration = 4000) {
             this.toast = { show: true, ok, msg };
             setTimeout(() => { this.toast.show = false; }, duration);
+        },
+
+        async openLinkModal() {
+            this.linkModal = {
+                open: true, query: '', results: [], listing_id: null,
+                selectedTitle: '', threshold: 2, target_count: 5,
+                max_concurrent: 10, saving: false,
+            };
+            await this.searchLinkListings();
+        },
+
+        async searchLinkListings() {
+            const params = new URLSearchParams({ game_id: poolGameId, pool_id: poolId, limit: 30 });
+            if (this.linkModal.query) params.set('q', this.linkModal.query);
+            const response = await fetch('/posting/api/pools/listings/?' + params);
+            const data = await response.json();
+            this.linkModal.results = data.listings || [];
+        },
+
+        selectLinkListing(listing) {
+            this.linkModal.listing_id = listing.id;
+            this.linkModal.selectedTitle = `${listing.title} (${listing.marketplace})`;
+            this.linkModal.results = [];
+        },
+
+        async submitLinkOffer() {
+            this.linkModal.saving = true;
+            try {
+                const response = await fetch(`/posting/api/pools/${poolId}/offers/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCSRF(),
+                    },
+                    body: JSON.stringify({
+                        listing_id: this.linkModal.listing_id,
+                        threshold: this.linkModal.threshold,
+                        target_count: this.linkModal.target_count,
+                        max_concurrent: this.linkModal.max_concurrent,
+                    }),
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    const message = typeof data.error === 'string'
+                        ? data.error : JSON.stringify(data.error || data);
+                    this.showToast(false, 'Link failed: ' + message, 7000);
+                    return;
+                }
+                this.linkModal.open = false;
+                this.showToast(true, 'Offer linked');
+                setTimeout(() => location.reload(), 700);
+            } finally {
+                this.linkModal.saving = false;
+            }
+        },
+
+        async unlinkOffer(offerId, mode) {
+            const message = mode === 'remove_remote'
+                ? 'Remove managed credentials from the remote offer and return them to pending stock?'
+                : 'Detach monitoring while leaving remote credentials untouched?';
+            if (!confirm(message)) return;
+            const response = await fetch(`/posting/api/pools/${poolId}/offers/${offerId}/unlink/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.getCSRF(),
+                },
+                body: JSON.stringify({ mode }),
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                this.showToast(false, (data.errors || [data.error || 'Detach failed']).join('; '), 8000);
+                return;
+            }
+            this.showToast(true, `Offer detached; ${data.released || 0} item(s) returned to pool`);
+            setTimeout(() => location.reload(), 900);
         },
 
         async openEditModal() {

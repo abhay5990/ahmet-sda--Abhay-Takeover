@@ -20,7 +20,7 @@ from apps.integrations.providers import registry
 from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
 from apps.listings.enums import ListingStatus
 from apps.listings.models import Listing, ListingOwnedProduct
-from apps.posting.models import OfferPool
+from apps.posting.models import OfferPool, PoolOffer, PoolOfferStatus
 from core.marketplace.normalizers import normalize_offer_response
 from core.marketplace.payload_extractor import extract_create_payload
 
@@ -330,7 +330,10 @@ def _replace_in_db(
             .filter(listing=old_listing)
             .values_list('owned_product_id', flat=True)
         )
-        offer_pools = list(OfferPool.objects.filter(listing=old_listing))
+        legacy_pools = list(OfferPool.objects.filter(listing=old_listing))
+        pool_offers = list(
+            PoolOffer.objects.select_for_update().filter(listing=old_listing)
+        )
 
         # Mark old listing DELETED
         old_listing.status = ListingStatus.DELETED
@@ -370,9 +373,18 @@ def _replace_in_db(
                 for op_id in owned_products
             ])
 
-        # Transfer OfferPools to new listing
-        for pool in offer_pools:
+        # Transitional dual-write for the legacy relation.
+        for pool in legacy_pools:
             pool.listing = new_listing
             pool.save(update_fields=['listing', 'updated_at'])
+
+        # Move the operational link and clear the temporary signal error.
+        for pool_offer in pool_offers:
+            pool_offer.listing = new_listing
+            pool_offer.status = PoolOfferStatus.ACTIVE
+            pool_offer.last_error = ''
+            pool_offer.save(update_fields=[
+                'listing', 'status', 'last_error', 'updated_at',
+            ])
 
     return new_listing

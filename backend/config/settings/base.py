@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'apps.settings',
     'apps.posting',
     'apps.email_checker',
+    'apps.tools',
 ]
 
 # APScheduler

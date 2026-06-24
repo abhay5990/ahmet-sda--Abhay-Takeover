@@ -270,28 +270,28 @@
             </div>
             <div>
                 <div class="text-xs text-gray-500 uppercase">Remote count</div>
-                <div class="text-lg font-semibold {% if offer_pool.current_remote_count is not None and offer_pool.current_remote_count < offer_pool.threshold %}text-red-600{% else %}text-gray-800{% endif %}">
-                    {{ offer_pool.current_remote_count|default:"—" }}
+                <div class="text-lg font-semibold {% if pool_offer.current_remote_count is not None and pool_offer.current_remote_count < pool_offer.threshold %}text-red-600{% else %}text-gray-800{% endif %}">
+                    {{ pool_offer.current_remote_count|default:"—" }}
                 </div>
             </div>
             <div>
                 <div class="text-xs text-gray-500 uppercase">Threshold / Target</div>
-                <div class="text-lg font-semibold text-gray-800">{{ offer_pool.threshold }} / {{ offer_pool.target_count }}</div>
+                <div class="text-lg font-semibold text-gray-800">{{ pool_offer.threshold }} / {{ pool_offer.target_count }}</div>
             </div>
             <div>
                 <div class="text-xs text-gray-500 uppercase">Pending</div>
                 <div class="text-lg font-semibold text-blue-600">{{ offer_pool.pending_count }}</div>
             </div>
         </div>
-        {% if offer_pool.last_replenished_at or offer_pool.last_checked_at %}
+        {% if pool_offer.last_replenished_at or pool_offer.last_checked_at %}
         <div class="mt-4 pt-4 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-500">
             <div>
                 Last checked:
-                {% if offer_pool.last_checked_at %}<span data-utc="{{ offer_pool.last_checked_at|date:'c' }}">{{ offer_pool.last_checked_at|date:"M-d-Y g:i A" }}</span>{% else %}never{% endif %}
+                {% if pool_offer.last_checked_at %}<span data-utc="{{ pool_offer.last_checked_at|date:'c' }}">{{ pool_offer.last_checked_at|date:"M-d-Y g:i A" }}</span>{% else %}never{% endif %}
             </div>
             <div>
                 Last replenished:
-                {% if offer_pool.last_replenished_at %}<span data-utc="{{ offer_pool.last_replenished_at|date:'c' }}">{{ offer_pool.last_replenished_at|date:"M-d-Y g:i A" }}</span>{% else %}never{% endif %}
+                {% if pool_offer.last_replenished_at %}<span data-utc="{{ pool_offer.last_replenished_at|date:'c' }}">{{ pool_offer.last_replenished_at|date:"M-d-Y g:i A" }}</span>{% else %}never{% endif %}
             </div>
         </div>
         {% endif %}

@@ -123,6 +123,13 @@ def run_pause_expiring_listings_job():
 
 
 @apscheduler_util.close_old_connections
+def run_robuxcrate_batch_processor_job():
+    """APScheduler wrapper — processes pending RobuxCrate order batches."""
+    from apps.tools.services.robuxcrate import process_pending_batches
+    process_pending_batches()
+
+
+@apscheduler_util.close_old_connections
 def delete_old_job_executions(max_age_days=MAX_EXECUTION_AGE_DAYS):
     """Cleanup old APScheduler execution records."""
     DjangoJobExecution.objects.delete_old_job_executions(max_age_days)
@@ -211,6 +218,16 @@ class Command(BaseCommand):
             trigger=IntervalTrigger(hours=3),
             id='pause_expiring_listings',
             name='Pause Expiring Listings (Eldorado/PA)',
+            max_instances=1,
+            replace_existing=True,
+        )
+
+        # RobuxCrate batch processor — runs every 30 seconds
+        scheduler.add_job(
+            run_robuxcrate_batch_processor_job,
+            trigger=IntervalTrigger(seconds=30),
+            id='robuxcrate_batch_processor',
+            name='RobuxCrate Batch Order Processor',
             max_instances=1,
             replace_existing=True,
         )

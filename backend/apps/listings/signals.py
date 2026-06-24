@@ -64,19 +64,33 @@ def owned_product_maybe_unlisted(sender, instance, **kwargs):
 @receiver(post_save, sender=Listing)
 def listing_deactivated(sender, instance, **kwargs):
     """When a Listing is closed/deleted, revert its OwnedProducts to draft
-    if they have no other active listings. Also delete associated pools."""
+    if they have no other active listings. Preserve pool audit state."""
     if instance.status not in (ListingStatus.CLOSED, ListingStatus.DELETED):
         return
 
-    # Delete associated offer pools — offer no longer exists on marketplace
-    from apps.posting.models import OfferPool
+    from apps.posting.models import (
+        OfferPoolActiveOffer,
+        OfferPoolActiveOfferStatus,
+        PoolOffer,
+        PoolOfferStatus,
+    )
 
-    deleted_pools = OfferPool.objects.filter(listing=instance).delete()
-    if deleted_pools[0] > 0:
+    # A local listing lifecycle event must never cascade-delete the independent
+    # stock pool. Relist/recovery can attach a replacement listing later.
+    affected = PoolOffer.objects.filter(listing=instance).update(
+        status=PoolOfferStatus.ERROR,
+        last_error=f'Listing status changed to {instance.status}',
+    )
+    if affected:
         logger.info(
-            "Deleted %d pool(s) for Listing #%d (status → %s)",
-            deleted_pools[0], instance.pk, instance.status,
+            "Marked %d PoolOffer(s) ERROR for Listing #%d (status → %s)",
+            affected, instance.pk, instance.status,
         )
+
+    OfferPoolActiveOffer.objects.filter(
+        listing=instance,
+        status=OfferPoolActiveOfferStatus.ACTIVE,
+    ).update(status=OfferPoolActiveOfferStatus.DELISTED)
 
     owned_products = [
         lop.owned_product

@@ -1,0 +1,340 @@
+from decimal import Decimal
+from datetime import timedelta
+from unittest.mock import patch
+
+from django.db import IntegrityError, transaction
+from django.contrib.auth import get_user_model
+from django.test import TestCase
+from django.utils import timezone
+
+from apps.integrations.models import IntegrationAccount, IntegrationCredential
+from apps.inventory.models import Category, Game, OwnedProduct
+from apps.listings.models import Listing, ListingOwnedProduct
+from apps.posting.api.pool import _adopt_pa_source_listing
+from apps.posting.models import (
+    OfferPool,
+    OfferPoolActiveOffer,
+    OfferPoolItem,
+    OfferPoolItemStatus,
+    OfferPoolStatus,
+    PoolOffer,
+    PoolOfferStrategy,
+    PoolSaleEvent,
+)
+from apps.posting.services.pool.allocation import (
+    claim_pending_items,
+    quarantine_stale_claims,
+)
+from apps.posting.services.pool.checker import notify_sale
+from apps.posting.services.pool.lifecycle import detach_pool_offer
+
+
+class UnifiedPoolTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.category = Category.objects.create(
+            name='test-accounts',
+            title='Test Accounts',
+        )
+        cls.game = Game.objects.create(
+            name='Test Game',
+            slug='test-game',
+            category=cls.category,
+        )
+        cls.eldorado = IntegrationAccount.objects.create(
+            name='Eldorado Test',
+            slug='eldorado-test',
+            provider='eldorado',
+            role='sell',
+        )
+        cls.playerauctions = IntegrationAccount.objects.create(
+            name='PA Test',
+            slug='pa-test',
+            provider='playerauctions',
+            role='sell',
+        )
+        IntegrationCredential.objects.create(
+            account=cls.eldorado,
+            credentials={'test': 'credential'},
+        )
+        IntegrationCredential.objects.create(
+            account=cls.playerauctions,
+            credentials={'test': 'credential'},
+        )
+
+    def make_pool(self, name='Pool'):
+        return OfferPool.objects.create(
+            name=name,
+            game=self.game,
+            status=OfferPoolStatus.ACTIVE,
+        )
+
+    def make_listing(self, account=None, remote_id='offer-1'):
+        return Listing.objects.create(
+            is_instant=True,
+            integration_account=account or self.eldorado,
+            game=self.game,
+            store_listing_id=remote_id,
+            status='listed',
+            title=remote_id,
+            price=Decimal('10.00'),
+            currency='USD',
+        )
+
+    def make_owned(self, login):
+        return OwnedProduct.objects.create(
+            category=self.category,
+            game=self.game,
+            login=login,
+            password='secret',
+        )
+
+    def make_pool_offer(self, pool, listing=None, **overrides):
+        values = {
+            'pool': pool,
+            'listing': listing or self.make_listing(),
+            'strategy': PoolOfferStrategy.APPEND,
+            'target_count': 5,
+            'threshold': 2,
+            'max_concurrent': None,
+        }
+        values.update(overrides)
+        return PoolOffer.objects.create(**values)
+
+    def test_depleted_is_health_not_user_intent(self):
+        pool = self.make_pool()
+        self.make_pool_offer(pool)
+
+        self.assertEqual(pool.status, OfferPoolStatus.ACTIVE)
+        self.assertTrue(pool.is_depleted)
+        self.assertEqual(pool.health, 'depleted')
+
+    def test_owned_product_is_globally_exclusive(self):
+        owned = self.make_owned('exclusive@example.test')
+        first = self.make_pool('First')
+        second = self.make_pool('Second')
+        OfferPoolItem.objects.create(pool=first, owned_product=owned)
+
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            OfferPoolItem.objects.create(pool=second, owned_product=owned)
+
+    def test_claim_prevents_second_offer_from_taking_same_item(self):
+        pool = self.make_pool()
+        first_offer = self.make_pool_offer(pool)
+        second_offer = self.make_pool_offer(
+            pool,
+            listing=self.make_listing(remote_id='offer-2'),
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=self.make_owned('claim@example.test'),
+        )
+
+        first_claim = claim_pending_items(first_offer, 1)
+        second_claim = claim_pending_items(second_offer, 1)
+
+        self.assertEqual([claimed.pk for claimed in first_claim], [item.pk])
+        self.assertEqual(second_claim, [])
+        item.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.QUEUED)
+        self.assertEqual(item.pool_offer_id, first_offer.pk)
+        self.assertIsNotNone(item.claim_token)
+        self.assertEqual(item.dispatch_attempts.count(), 1)
+
+    def test_stale_claim_is_quarantined_not_requeued(self):
+        pool = self.make_pool()
+        pool_offer = self.make_pool_offer(pool)
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=self.make_owned('stale@example.test'),
+        )
+        claim_pending_items(pool_offer, 1)
+        OfferPoolItem.objects.filter(pk=item.pk).update(
+            claimed_at=timezone.now() - timedelta(hours=1),
+        )
+
+        quarantined = quarantine_stale_claims(timedelta(minutes=15))
+
+        item.refresh_from_db()
+        self.assertEqual(quarantined, 1)
+        self.assertEqual(item.status, OfferPoolItemStatus.FAILED)
+        self.assertEqual(item.remote_state, 'unknown')
+        self.assertEqual(item.pool_offer_id, pool_offer.pk)
+        self.assertEqual(item.dispatch_attempts.get().status, 'unknown')
+
+    def test_one_listing_cannot_be_linked_to_two_pools(self):
+        listing = self.make_listing()
+        self.make_pool_offer(self.make_pool('First'), listing=listing)
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            self.make_pool_offer(self.make_pool('Second'), listing=listing)
+
+    def test_sale_event_is_idempotent(self):
+        pool = self.make_pool()
+        pool_offer = self.make_pool_offer(pool)
+        pool_offer.current_remote_count = 5
+        pool_offer.save(update_fields=['current_remote_count', 'updated_at'])
+
+        notify_sale(
+            pool_offer.listing_id,
+            event_key='eldorado:store:order-1',
+            order_id=123,
+        )
+        notify_sale(
+            pool_offer.listing_id,
+            event_key='eldorado:store:order-1',
+            order_id=123,
+        )
+
+        pool_offer.refresh_from_db()
+        self.assertEqual(pool_offer.current_remote_count, 4)
+        self.assertEqual(PoolSaleEvent.objects.count(), 1)
+
+    def test_pa_source_listing_is_adopted_as_first_active_offer(self):
+        pool = self.make_pool()
+        listing = self.make_listing(
+            account=self.playerauctions,
+            remote_id='pa-source-1',
+        )
+        owned = self.make_owned('pa-source@example.test')
+        ListingOwnedProduct.objects.create(listing=listing, owned_product=owned)
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=5,
+            threshold=2,
+            max_concurrent=10,
+        )
+
+        _adopt_pa_source_listing(pool_offer)
+
+        item = OfferPoolItem.objects.get(owned_product=owned)
+        self.assertEqual(item.pool_offer_id, pool_offer.pk)
+        self.assertEqual(item.status, OfferPoolItemStatus.PUSHED)
+        self.assertTrue(
+            OfferPoolActiveOffer.objects.filter(
+                pool_offer=pool_offer,
+                pool_item=item,
+                listing=listing,
+                status='active',
+            ).exists()
+        )
+        pool_offer.refresh_from_db()
+        self.assertEqual(pool_offer.current_remote_count, 1)
+
+    def test_api_creates_independent_pool_then_links_offer(self):
+        user = get_user_model().objects.create_user(
+            username='pool-admin',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        listing = self.make_listing(remote_id='api-offer')
+
+        create_response = self.client.post(
+            '/posting/api/pools/',
+            data={
+                'name': 'API Unified Pool',
+                'game_id': self.game.pk,
+            },
+            content_type='application/json',
+        )
+        self.assertEqual(create_response.status_code, 201)
+        pool_id = create_response.json()['pool']['id']
+        pool = OfferPool.objects.get(pk=pool_id)
+        self.assertIsNone(pool.listing_id)
+        self.assertEqual(pool.pool_offers.count(), 0)
+
+        link_response = self.client.post(
+            f'/posting/api/pools/{pool_id}/offers/',
+            data={
+                'listing_id': listing.pk,
+                'target_count': 5,
+                'threshold': 2,
+                'max_concurrent': 10,  # ignored for append providers
+            },
+            content_type='application/json',
+        )
+        self.assertEqual(link_response.status_code, 201, link_response.content)
+        linked = PoolOffer.objects.get(pool=pool)
+        self.assertEqual(linked.listing_id, listing.pk)
+        self.assertEqual(linked.strategy, PoolOfferStrategy.APPEND)
+        self.assertIsNone(linked.max_concurrent)
+
+    def test_leave_remote_detach_preserves_assignment(self):
+        user = get_user_model().objects.create_user(
+            username='pool-operator',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool()
+        pool_offer = self.make_pool_offer(pool)
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('detached@example.test'),
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+        )
+
+        response = self.client.post(
+            f'/posting/api/pools/{pool.pk}/offers/{pool_offer.pk}/unlink/',
+            data={'mode': 'leave_remote'},
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 200)
+        pool_offer.refresh_from_db()
+        item.refresh_from_db()
+        self.assertEqual(pool_offer.status, 'detached')
+        self.assertEqual(item.status, OfferPoolItemStatus.PUSHED)
+        self.assertEqual(item.pool_offer_id, pool_offer.pk)
+
+    def test_remove_remote_releases_only_after_provider_success(self):
+        pool = self.make_pool()
+        pool_offer = self.make_pool_offer(pool)
+        owned = self.make_owned('cleanup@example.test')
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=owned,
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+            target_offer_id=pool_offer.listing.store_listing_id,
+        )
+        ListingOwnedProduct.objects.create(
+            listing=pool_offer.listing,
+            owned_product=owned,
+        )
+
+        with patch(
+            'apps.posting.services.pool.lifecycle._remove_eldorado',
+            side_effect=lambda _offer, items: ({entry.pk for entry in items}, []),
+        ):
+            result = detach_pool_offer(pool_offer, 'remove_remote')
+
+        self.assertTrue(result.ok)
+        self.assertEqual(result.released, 1)
+        pool_offer.refresh_from_db()
+        item.refresh_from_db()
+        self.assertEqual(pool_offer.status, 'detached')
+        self.assertEqual(item.status, OfferPoolItemStatus.PENDING)
+        self.assertIsNone(item.pool_offer_id)
+        self.assertEqual(item.remote_state, 'absent')
+        self.assertEqual(item.dispatch_attempts.get().status, 'succeeded')
+
+    def test_restock_pages_render_with_unified_relations(self):
+        user = get_user_model().objects.create_user(
+            username='pool-page-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Rendered Pool')
+        self.make_pool_offer(pool)
+
+        list_response = self.client.get('/posting/restock/pools/')
+        detail_response = self.client.get(f'/posting/restock/pools/{pool.pk}/')
+
+        self.assertEqual(list_response.status_code, 200)
+        self.assertEqual(detail_response.status_code, 200)
+        self.assertContains(detail_response, 'Rendered Pool')
+        self.assertContains(detail_response, 'Linked Offers')

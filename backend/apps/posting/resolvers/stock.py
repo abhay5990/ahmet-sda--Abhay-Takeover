@@ -173,6 +173,31 @@ class StockResolver:
             .select_related('source_account')
             .first()
         )
+
+        # Promote to LZT source — the shared upsert helper uses
+        # "first-writer-wins" so it won't overwrite source_account or
+        # raw_data on an existing record.  When the fallback successfully
+        # fetches fresh data from LZT we need to force these fields so
+        # the pipeline recognises the product as LZT-sourced.
+        if owned:
+            update_fields: list[str] = []
+            if owned.source_account != self._lzt_account:
+                owned.source_account = self._lzt_account
+                update_fields.append('source_account')
+            if owned.raw_data != item:
+                owned.raw_data = item
+                update_fields.append('raw_data')
+            remote_int = int(remote_id)
+            if owned.source_product_id != remote_int:
+                owned.source_product_id = remote_int
+                update_fields.append('source_product_id')
+            if update_fields:
+                owned.save(update_fields=update_fields + ['updated_at'])
+                logger.info(
+                    "LZT fallback: promoted OwnedProduct #%s to LZT source (%s)",
+                    owned.pk, ', '.join(update_fields),
+                )
+
         return owned
 
     def _fetch_from_lzt(self, login: str) -> dict | None:

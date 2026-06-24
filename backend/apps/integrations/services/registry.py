@@ -46,5 +46,5 @@ def _ensure_loaded():
     global _fully_loaded
     if _fully_loaded:
         return
-    from . import dropbox, firstmail, google_sheets, imageshack, imgur, proxyline, robuxcrate, telegram  # noqa: F401 — trigger registration
+    from . import dropbox, firstmail, google_sheets, imageshack, imgur, proxyline, roblox, robuxcrate, telegram  # noqa: F401 — trigger registration
     _fully_loaded = True

@@ -2,7 +2,7 @@ from pathlib import Path
 import uuid
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 
 
@@ -795,7 +795,7 @@ class CredentialSpec(models.Model):
 
     Resolution priority:
     1. Explicit pool.credential_spec
-    2. Variant-level spec (via pool.listing.variant)
+    2. Variant-level spec (via pool.variant)
     3. Game-level default spec (variant=NULL)
     4. Code-level preset fallback
     """
@@ -878,7 +878,21 @@ class CredentialSpec(models.Model):
 class OfferPoolStatus(models.TextChoices):
     ACTIVE = 'active', 'Active'
     PAUSED = 'paused', 'Paused'
-    DEPLETED = 'depleted', 'Depleted'
+    ARCHIVED = 'archived', 'Archived'
+    # Transitional legacy value. Depletion is computed health in new code.
+    DEPLETED = 'depleted', 'Depleted (Legacy)'
+
+
+class PoolOfferStatus(models.TextChoices):
+    ACTIVE = 'active', 'Active'
+    PAUSED = 'paused', 'Paused'
+    DETACHED = 'detached', 'Detached'
+    ERROR = 'error', 'Error'
+
+
+class PoolOfferStrategy(models.TextChoices):
+    APPEND = 'append', 'Append Credentials'
+    CLONE = 'clone', 'Clone Offer'
 
 
 class OfferPoolItemStatus(models.TextChoices):
@@ -897,46 +911,58 @@ class OfferPoolActiveOfferStatus(models.TextChoices):
 
 
 class OfferPool(models.Model):
-    """Auto-restock pool: monitors a listing and replenishes credentials when below threshold.
+    """Marketplace-independent stock pool.
 
-    Supports two strategies:
-    - append: Add credentials to existing offer (Eldorado, Gameboost)
-    - clone:  Create duplicate offers with new credentials (PlayerAuctions)
+    Legacy listing/store/config fields remain nullable during the expand and
+    cutover releases. New code uses PoolOffer for all remote configuration.
     """
 
-    class Strategy(models.TextChoices):
-        APPEND = 'append', 'Append Credentials'
-        CLONE = 'clone', 'Clone Offer'
+    Strategy = PoolOfferStrategy
+
+    name = models.CharField(max_length=255, null=True, blank=True)
 
     listing = models.ForeignKey(
         'listings.Listing',
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
         related_name='offer_pools',
-        help_text='The offer to restock',
+        help_text='Deprecated: use pool_offers instead',
     )
     game = models.ForeignKey(
         'inventory.Game',
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
+        related_name='offer_pools',
+    )
+    variant = models.ForeignKey(
+        'posting.GameVariant',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
         related_name='offer_pools',
     )
     store = models.ForeignKey(
         'integrations.IntegrationAccount',
-        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
         related_name='offer_pools',
-        help_text='Marketplace account where the offer lives',
+        help_text='Deprecated: derive store from PoolOffer.listing',
     )
     credential_spec = models.ForeignKey(
         'posting.CredentialSpec',
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         related_name='pools',
         help_text='Credential field definition + format templates. NULL = use resolver chain.',
     )
     strategy = models.CharField(
         max_length=10,
-        choices=Strategy.choices,
-        help_text='append (Eldorado/Gameboost) or clone (PlayerAuctions)',
+        choices=PoolOfferStrategy.choices,
+        null=True,
+        blank=True,
+        help_text='Deprecated: strategy is configured per PoolOffer',
     )
     status = models.CharField(
         max_length=10,
@@ -986,17 +1012,179 @@ class OfferPool(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"Pool #{self.pk} — {self.listing.title or self.listing.store_listing_id} ({self.status})"
+        return f"{self.name or f'Pool #{self.pk}'} ({self.status})"
 
     @property
     def pending_count(self) -> int:
-        return self.items.filter(status=OfferPoolItemStatus.PENDING).count()
+        return self.items.filter(
+            status=OfferPoolItemStatus.PENDING,
+            pool_offer__isnull=True,
+        ).count()
+
+    @property
+    def is_depleted(self) -> bool:
+        return self.pending_count == 0
+
+    @property
+    def health(self) -> str:
+        if self.status == OfferPoolStatus.ARCHIVED:
+            return 'archived'
+        if self.status == OfferPoolStatus.PAUSED:
+            return 'paused'
+        if not self.pool_offers.exclude(status=PoolOfferStatus.DETACHED).exists():
+            return 'no_offers'
+        if self.pool_offers.filter(status=PoolOfferStatus.ERROR).exists():
+            return 'attention_required'
+        return 'depleted' if self.is_depleted else 'healthy'
+
+    def clean(self):
+        super().clean()
+        if not (self.name or '').strip():
+            raise ValidationError({'name': 'Pool name is required.'})
+        if self.variant_id and self.variant.game_id != self.game_id:
+            raise ValidationError({'variant': 'Pool variant must belong to pool game.'})
+        if self.credential_spec_id:
+            if self.credential_spec.game_id != self.game_id:
+                raise ValidationError({'credential_spec': 'Credential spec must belong to pool game.'})
+            if (
+                self.variant_id
+                and self.credential_spec.variant_id
+                and self.credential_spec.variant_id != self.variant_id
+            ):
+                raise ValidationError({'credential_spec': 'Credential spec variant must match pool variant.'})
+
+
+class PoolOffer(models.Model):
+    """One marketplace offer served by a stock pool."""
+
+    pool = models.ForeignKey(
+        OfferPool,
+        on_delete=models.PROTECT,
+        related_name='pool_offers',
+    )
+    listing = models.OneToOneField(
+        'listings.Listing',
+        on_delete=models.PROTECT,
+        related_name='pool_offer',
+    )
+    strategy = models.CharField(max_length=10, choices=PoolOfferStrategy.choices)
+    target_count = models.PositiveIntegerField(default=5)
+    threshold = models.PositiveIntegerField(default=2)
+    max_concurrent = models.PositiveIntegerField(null=True, blank=True)
+    current_remote_count = models.PositiveIntegerField(null=True, blank=True)
+    last_checked_at = models.DateTimeField(null=True, blank=True)
+    last_replenished_at = models.DateTimeField(null=True, blank=True)
+    last_error = models.TextField(blank=True)
+    status = models.CharField(
+        max_length=10,
+        choices=PoolOfferStatus.choices,
+        default=PoolOfferStatus.ACTIVE,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'pool_offers'
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(threshold__lte=models.F('target_count')),
+                name='pool_offer_threshold_lte_target',
+            ),
+            models.CheckConstraint(
+                condition=models.Q(threshold__gte=1, target_count__gte=1),
+                name='pool_offer_positive_threshold_target',
+            ),
+            models.CheckConstraint(
+                condition=(
+                    models.Q(
+                        strategy=PoolOfferStrategy.APPEND,
+                        max_concurrent__isnull=True,
+                    )
+                    | models.Q(
+                        strategy=PoolOfferStrategy.CLONE,
+                        max_concurrent__isnull=False,
+                        max_concurrent__lte=10,
+                        target_count__lte=models.F('max_concurrent'),
+                    )
+                ),
+                name='pool_offer_strategy_capacity_valid',
+            ),
+        ]
+        indexes = [
+            models.Index(fields=['status', 'pool'], name='pool_offer_status_pool_idx'),
+            models.Index(fields=['last_checked_at'], name='pool_offer_checked_idx'),
+        ]
+
+    def __str__(self):
+        return f"{self.pool} -> {self.listing}"
+
+    @property
+    def store(self):
+        return self.listing.integration_account
+
+    @property
+    def marketplace(self) -> str:
+        return self.store.provider if self.store else ''
+
+    @property
+    def can_replenish(self) -> bool:
+        return (
+            self.pool.status == OfferPoolStatus.ACTIVE
+            and self.status == PoolOfferStatus.ACTIVE
+        )
 
     @property
     def needs_replenish(self) -> bool:
-        if self.current_remote_count is None:
-            return True
-        return self.current_remote_count < self.threshold
+        if not self.can_replenish:
+            return False
+        return (
+            self.current_remote_count is None
+            or self.current_remote_count < self.threshold
+        )
+
+    @classmethod
+    def strategy_for_provider(cls, provider: str) -> str:
+        if provider == 'playerauctions':
+            return PoolOfferStrategy.CLONE
+        if provider in {'eldorado', 'gameboost'}:
+            return PoolOfferStrategy.APPEND
+        raise ValidationError(f'Unsupported pool marketplace: {provider}')
+
+    def clean(self):
+        super().clean()
+        listing = self.listing
+        if listing.status != 'listed' or not listing.is_instant:
+            raise ValidationError({'listing': 'Listing must be an active instant listing.'})
+        if not listing.integration_account_id:
+            raise ValidationError({'listing': 'Listing must have an integration account.'})
+        if not listing.integration_account.is_active:
+            raise ValidationError({'listing': 'Listing integration account must be active.'})
+        try:
+            credential = listing.integration_account.credential
+        except ObjectDoesNotExist:
+            credential = None
+        if not credential or not credential.is_active:
+            raise ValidationError({'listing': 'Listing integration account needs active credentials.'})
+        if not listing.game_id or listing.game_id != self.pool.game_id:
+            raise ValidationError({'listing': 'Listing game must match pool game.'})
+        if self.pool.variant_id:
+            from apps.posting.services.pool.spec_resolver import variant_value_contains_slug
+            if not variant_value_contains_slug(listing.variant, self.pool.variant.slug):
+                raise ValidationError({'listing': 'Listing variant must match pool variant.'})
+        expected_strategy = self.strategy_for_provider(listing.integration_account.provider)
+        if self.strategy != expected_strategy:
+            raise ValidationError({'strategy': f'Strategy must be {expected_strategy} for this provider.'})
+        if self.threshold < 1 or self.target_count < 1 or self.threshold > self.target_count:
+            raise ValidationError({'threshold': 'Threshold must be between 1 and target_count.'})
+        if self.strategy == PoolOfferStrategy.CLONE:
+            if self.max_concurrent is None or not (
+                self.target_count <= self.max_concurrent <= 10
+            ):
+                raise ValidationError({
+                    'max_concurrent': 'Clone max must satisfy target_count <= max <= 10.',
+                })
+        elif self.max_concurrent is not None:
+            raise ValidationError({'max_concurrent': 'Append offers must not set max_concurrent.'})
 
 
 class OfferPoolItem(models.Model):
@@ -1004,13 +1192,20 @@ class OfferPoolItem(models.Model):
 
     pool = models.ForeignKey(
         OfferPool,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name='items',
     )
     owned_product = models.ForeignKey(
         'inventory.OwnedProduct',
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name='pool_items',
+    )
+    pool_offer = models.ForeignKey(
+        PoolOffer,
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name='items',
     )
     status = models.CharField(
         max_length=10,
@@ -1018,6 +1213,7 @@ class OfferPoolItem(models.Model):
         default=OfferPoolItemStatus.PENDING,
     )
     pushed_at = models.DateTimeField(null=True, blank=True)
+    consumed_at = models.DateTimeField(null=True, blank=True)
     error_message = models.TextField(blank=True)
     target_offer_id = models.CharField(
         max_length=255, blank=True,
@@ -1027,6 +1223,11 @@ class OfferPoolItem(models.Model):
         default=0,
         help_text='Push priority (lower = pushed first)',
     )
+    remote_credential_id = models.CharField(max_length=255, blank=True)
+    claim_token = models.UUIDField(null=True, blank=True, unique=True)
+    claimed_at = models.DateTimeField(null=True, blank=True)
+    failure_stage = models.CharField(max_length=30, blank=True)
+    remote_state = models.CharField(max_length=20, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -1039,9 +1240,46 @@ class OfferPoolItem(models.Model):
                 fields=['pool', 'owned_product'],
                 name='unique_pool_owned_product',
             ),
+            models.UniqueConstraint(
+                fields=['owned_product'],
+                name='unique_owned_product_across_pools',
+            ),
+            models.CheckConstraint(
+                condition=(
+                    ~models.Q(status=OfferPoolItemStatus.PENDING)
+                    | models.Q(pool_offer__isnull=True)
+                ),
+                name='pending_pool_item_unassigned',
+            ),
+            models.CheckConstraint(
+                condition=(
+                    ~models.Q(status__in=[
+                        OfferPoolItemStatus.QUEUED,
+                        OfferPoolItemStatus.PUSHED,
+                        OfferPoolItemStatus.CONSUMED,
+                    ])
+                    | models.Q(pool_offer__isnull=False)
+                ),
+                name='assigned_pool_item_has_offer',
+            ),
+            models.CheckConstraint(
+                condition=(
+                    ~models.Q(status=OfferPoolItemStatus.QUEUED)
+                    | models.Q(claim_token__isnull=False)
+                ),
+                name='queued_pool_item_has_claim',
+            ),
         ]
         indexes = [
             models.Index(fields=['pool', 'status']),
+            models.Index(
+                fields=['pool', 'status', 'pool_offer', 'order'],
+                name='pool_item_claim_idx',
+            ),
+            models.Index(
+                fields=['pool_offer', 'status'],
+                name='pool_item_offer_status_idx',
+            ),
         ]
 
     def __str__(self):
@@ -1053,7 +1291,15 @@ class OfferPoolActiveOffer(models.Model):
 
     pool = models.ForeignKey(
         OfferPool,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
+        related_name='active_offers',
+        help_text='Deprecated: derive through pool_offer.pool',
+    )
+    pool_offer = models.ForeignKey(
+        PoolOffer,
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
         related_name='active_offers',
     )
     store_listing_id = models.CharField(
@@ -1062,13 +1308,13 @@ class OfferPoolActiveOffer(models.Model):
     )
     listing = models.ForeignKey(
         'listings.Listing',
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         null=True, blank=True,
         related_name='pool_active_offers',
     )
     pool_item = models.ForeignKey(
         OfferPoolItem,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         null=True, blank=True,
         related_name='active_offers',
         help_text='Which pool item (credential) was used for this offer',
@@ -1086,7 +1332,116 @@ class OfferPoolActiveOffer(models.Model):
         db_table = 'offer_pool_active_offers'
         indexes = [
             models.Index(fields=['pool', 'status']),
+            models.Index(
+                fields=['pool_offer', 'status'],
+                name='pool_active_offer_status_idx',
+            ),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['pool_offer', 'store_listing_id'],
+                name='unique_pool_offer_remote_clone',
+            ),
+            models.CheckConstraint(
+                condition=(
+                    ~models.Q(status=OfferPoolActiveOfferStatus.ACTIVE)
+                    | (
+                        models.Q(listing__isnull=False)
+                        & models.Q(pool_item__isnull=False)
+                    )
+                ),
+                name='active_clone_requires_listing_item',
+            ),
         ]
 
     def __str__(self):
         return f"ActiveOffer #{self.pk} — {self.store_listing_id} ({self.status})"
+
+
+class PoolDispatchOperation(models.TextChoices):
+    PUSH = 'push', 'Push'
+    REMOVE = 'remove', 'Remove'
+    RECONCILE = 'reconcile', 'Reconcile'
+
+
+class PoolDispatchStatus(models.TextChoices):
+    PENDING = 'pending', 'Pending'
+    IN_PROGRESS = 'in_progress', 'In Progress'
+    SUCCEEDED = 'succeeded', 'Succeeded'
+    FAILED = 'failed', 'Failed'
+    UNKNOWN = 'unknown', 'Unknown Remote Outcome'
+    ROLLED_BACK = 'rolled_back', 'Rolled Back'
+
+
+class PoolDispatchAttempt(models.Model):
+    """Durable record for an idempotent remote pool mutation."""
+
+    idempotency_key = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    item = models.ForeignKey(
+        OfferPoolItem,
+        on_delete=models.PROTECT,
+        related_name='dispatch_attempts',
+    )
+    pool_offer = models.ForeignKey(
+        PoolOffer,
+        on_delete=models.PROTECT,
+        related_name='dispatch_attempts',
+    )
+    operation = models.CharField(max_length=16, choices=PoolDispatchOperation.choices)
+    status = models.CharField(
+        max_length=16,
+        choices=PoolDispatchStatus.choices,
+        default=PoolDispatchStatus.PENDING,
+    )
+    remote_offer_id = models.CharField(max_length=255, blank=True)
+    remote_credential_id = models.CharField(max_length=255, blank=True)
+    request_fingerprint = models.CharField(max_length=64)
+    error_code = models.CharField(max_length=64, blank=True)
+    error_message = models.TextField(blank=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'pool_dispatch_attempts'
+        indexes = [
+            models.Index(
+                fields=['pool_offer', 'status'],
+                name='pool_attempt_offer_status_idx',
+            ),
+            models.Index(
+                fields=['item', '-created_at'],
+                name='pool_attempt_item_created_idx',
+            ),
+        ]
+
+
+class PoolSaleEvent(models.Model):
+    """Deduplicates sale notifications before local counters are changed."""
+
+    event_key = models.CharField(max_length=255, unique=True)
+    listing = models.ForeignKey(
+        'listings.Listing',
+        on_delete=models.PROTECT,
+        related_name='pool_sale_events',
+    )
+    pool_offer = models.ForeignKey(
+        PoolOffer,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='sale_events',
+    )
+    order_id = models.BigIntegerField(null=True, blank=True)
+    processed_at = models.DateTimeField(null=True, blank=True)
+    outcome = models.CharField(max_length=30, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'pool_sale_events'
+        indexes = [
+            models.Index(
+                fields=['pool_offer', '-created_at'],
+                name='pool_sale_offer_created_idx',
+            ),
+        ]

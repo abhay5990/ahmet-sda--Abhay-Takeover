@@ -15,6 +15,7 @@ urlpatterns = [
     path('orders/', include('apps.orders.urls')),
     path('settings/', include('apps.settings.urls')),
     path('posting/', include('apps.posting.urls')),
+    path('tools/', include('apps.tools.urls')),
 ]
 
 # Serve static and media files in development

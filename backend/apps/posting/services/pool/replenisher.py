@@ -24,6 +24,7 @@ from apps.posting.models import (
     OfferPoolItem,
     OfferPoolItemStatus,
     OfferPoolStatus,
+    PoolOffer,
     PostingLog,
     PostingLogLevel,
 )
@@ -39,10 +40,64 @@ from .formatter import (
     format_credential_for_marketplace,
     render_template,
 )
+from .allocation import (
+    claim_pending_items,
+    mark_item_failed,
+    mark_items_pushed as finalize_items_pushed,
+    release_claims_as_pending,
+)
 
 logger = logging.getLogger(__name__)
 
 TASK_NAME = 'pool_replenish'
+
+
+class _PoolOfferContext:
+    """Temporary compatibility facade for provider-specific legacy helpers.
+
+    It keeps the large, battle-tested marketplace payload code intact while
+    routing listing/config/monitoring access through PoolOffer.
+    """
+
+    _offer_fields = {
+        'strategy', 'target_count', 'threshold', 'max_concurrent',
+        'current_remote_count', 'last_checked_at', 'last_replenished_at',
+        'last_error',
+    }
+
+    def __init__(self, pool_offer: PoolOffer):
+        object.__setattr__(self, 'pool_offer', pool_offer)
+        object.__setattr__(self, 'aggregate', pool_offer.pool)
+
+    def __getattr__(self, name):
+        if name in self._offer_fields:
+            return getattr(self.pool_offer, name)
+        if name == 'store':
+            return self.pool_offer.store
+        if name == 'store_id':
+            return self.pool_offer.listing.integration_account_id
+        if name == 'listing':
+            return self.pool_offer.listing
+        if name == 'listing_id':
+            return self.pool_offer.listing_id
+        if name == 'active_offers':
+            return self.pool_offer.active_offers
+        return getattr(self.aggregate, name)
+
+    def __setattr__(self, name, value):
+        if name in self._offer_fields:
+            setattr(self.pool_offer, name, value)
+        else:
+            setattr(self.aggregate, name, value)
+
+    def save(self, *, update_fields=None, **kwargs):
+        requested = set(update_fields or [])
+        offer_fields = requested & (self._offer_fields | {'updated_at'})
+        aggregate_fields = requested - self._offer_fields
+        if offer_fields:
+            self.pool_offer.save(update_fields=list(offer_fields), **kwargs)
+        if aggregate_fields - {'updated_at'}:
+            self.aggregate.save(update_fields=list(aggregate_fields), **kwargs)
 
 
 def _log(
@@ -60,15 +115,18 @@ def _log(
     )
 
 
-def replenish_pool(pool: OfferPool) -> int:
-    """Push pending credentials from pool to the marketplace offer.
-
-    Returns the number of credentials successfully pushed.
-    """
-    if pool.status != OfferPoolStatus.ACTIVE:
+def replenish_pool_offer(pool_offer: PoolOffer) -> int:
+    """Push claimed credentials to one linked marketplace offer."""
+    pool_offer = PoolOffer.objects.select_related(
+        'pool', 'pool__game', 'pool__credential_spec',
+        'listing', 'listing__integration_account',
+        'listing__integration_account__credential',
+    ).get(pk=pool_offer.pk)
+    if not pool_offer.can_replenish:
         return 0
 
-    marketplace = pool.store.provider
+    pool = _PoolOfferContext(pool_offer)
+    marketplace = pool_offer.marketplace
     if marketplace == 'playerauctions':
         return _replenish_pa(pool)
     elif marketplace in ('eldorado', 'gameboost'):
@@ -78,20 +136,21 @@ def replenish_pool(pool: OfferPool) -> int:
         return 0
 
 
+def replenish_pool(pool: OfferPool) -> int:
+    """Compatibility wrapper: replenish all active linked offers for a pool."""
+    if pool.status != OfferPoolStatus.ACTIVE:
+        return 0
+    return sum(
+        replenish_pool_offer(pool_offer)
+        for pool_offer in pool.pool_offers.all().order_by('pk')
+    )
+
+
 def _replenish_append(pool: OfferPool, marketplace: str) -> int:
     """Append credentials to existing offer (Eldorado / Gameboost)."""
     current_count = pool.current_remote_count or 0
     need = pool.target_count - current_count
     if need <= 0:
-        return 0
-
-    pending_items = list(
-        pool.items.filter(status=OfferPoolItemStatus.PENDING)
-        .select_related('owned_product')
-        .order_by('order', 'created_at')[:need]
-    )
-    if not pending_items:
-        _check_depleted(pool)
         return 0
 
     store = pool.store
@@ -104,13 +163,30 @@ def _replenish_append(pool: OfferPool, marketplace: str) -> int:
         proxy_group=proxy_group,
     )
 
+    pending_items = claim_pending_items(pool.pool_offer, need)
+    if not pending_items:
+        _check_depleted(pool)
+        return 0
+
     offer_id = pool.listing.store_listing_id
     pushed = 0
 
-    if marketplace == 'eldorado':
-        pushed = _push_eldorado(pool, client, offer_id, pending_items, proxy_group)
-    elif marketplace == 'gameboost':
-        pushed = _push_gameboost(pool, client, offer_id, pending_items, proxy_group)
+    try:
+        if marketplace == 'eldorado':
+            pushed = _push_eldorado(pool, client, offer_id, pending_items, proxy_group)
+        elif marketplace == 'gameboost':
+            pushed = _push_gameboost(pool, client, offer_id, pending_items, proxy_group)
+    except Exception as exc:
+        for item in pending_items:
+            item.refresh_from_db(fields=['status'])
+            if item.status == OfferPoolItemStatus.QUEUED:
+                mark_item_failed(
+                    item,
+                    error_message=str(exc),
+                    failure_stage='remote_push',
+                    remote_state='unknown',
+                )
+        raise
 
     pool.last_replenished_at = timezone.now()
     pool.current_remote_count = (pool.current_remote_count or 0) + pushed
@@ -147,6 +223,7 @@ def _push_eldorado(
             account=pool.store,
             detail={'pool_id': pool.pk, 'offer_id': offer_id, 'error': str(details_result.error)},
         )
+        release_claims_as_pending(items, 'Could not fetch Eldorado offer credentials')
         return 0
 
     # Build existing + new credential list
@@ -165,9 +242,12 @@ def _push_eldorado(
             new_creds.append(cred_str)
             valid_items.append(item)
         except Exception as exc:
-            item.status = OfferPoolItemStatus.FAILED
-            item.error_message = str(exc)[:500]
-            item.save(update_fields=['status', 'error_message', 'updated_at'])
+            mark_item_failed(
+                item,
+                error_message=str(exc),
+                failure_stage='format',
+                remote_state='absent',
+            )
 
     if not new_creds:
         return 0
@@ -200,7 +280,7 @@ def _recreate_eldorado_offer(
     new_items: list[OfferPoolItem],
     proxy_group: str | None,
 ) -> int:
-    """Delete old offer and create new one with full credential set."""
+    """Create the replacement first, then best-effort delete the old offer."""
     listing = pool.listing
     old_offer_id = listing.store_listing_id
 
@@ -213,19 +293,36 @@ def _recreate_eldorado_offer(
             f"Pool #{pool.pk}: cannot recreate — no original payload in listing.raw_data",
             account=pool.store,
         )
+        for item in new_items:
+            mark_item_failed(
+                item,
+                error_message='Eldorado source listing has no create payload',
+                failure_stage='template',
+                remote_state='absent',
+            )
         return 0
 
-    # Delete old offer
+    pushed = _create_eldorado_offer(
+        pool, client, original_payload, all_creds, new_items, proxy_group,
+    )
+    if pushed <= 0:
+        return 0
+
     delete_result = client.delete_offer(old_offer_id, proxy_group=proxy_group)
     if not delete_result.ok:
         _log(
-            PostingLogLevel.ERROR,
-            f"Pool #{pool.pk}: failed to delete old offer {old_offer_id}: {delete_result.error}",
+            PostingLogLevel.WARNING,
+            f"Pool #{pool.pk}: replacement created but old Eldorado offer "
+            f"{old_offer_id} could not be deleted",
             account=pool.store,
+            detail={
+                'pool_id': pool.pk,
+                'pool_offer_id': pool.pool_offer.pk,
+                'old_offer_id': old_offer_id,
+                'error': str(delete_result.error)[:500],
+            },
         )
-        return 0
-
-    return _create_eldorado_offer(pool, client, original_payload, all_creds, new_items, proxy_group)
+    return pushed
 
 
 def _create_eldorado_offer(
@@ -255,6 +352,7 @@ def _create_eldorado_offer(
             account=pool.store,
             detail={'pool_id': pool.pk, 'old_offer_id': old_offer_id},
         )
+        release_claims_as_pending(new_items, 'Eldorado replacement create failed')
         return 0
 
     # Update listing with new offer ID
@@ -266,6 +364,13 @@ def _create_eldorado_offer(
             account=pool.store,
             detail={'pool_id': pool.pk, 'response': str(create_result.data)[:500]},
         )
+        for item in new_items:
+            mark_item_failed(
+                item,
+                error_message='Eldorado create succeeded but returned no offer ID',
+                failure_stage='response_parse',
+                remote_state='unknown',
+            )
         return 0
 
     with transaction.atomic():
@@ -279,7 +384,7 @@ def _create_eldorado_offer(
 
         # Update pool's active offers if any
         OfferPoolActiveOffer.objects.filter(
-            pool=pool,
+            pool_offer=pool.pool_offer,
             store_listing_id=old_offer_id,
         ).update(store_listing_id=new_offer_id)
 
@@ -320,9 +425,12 @@ def _push_gameboost(
             cred_strings.append(cred_str)
             valid_items.append(item)
         except Exception as exc:
-            item.status = OfferPoolItemStatus.FAILED
-            item.error_message = str(exc)[:500]
-            item.save(update_fields=['status', 'error_message', 'updated_at'])
+            mark_item_failed(
+                item,
+                error_message=str(exc),
+                failure_stage='format',
+                remote_state='absent',
+            )
 
     if not cred_strings:
         return 0
@@ -356,14 +464,54 @@ def _gameboost_add_credentials(
             detail={'pool_id': pool.pk, 'offer_id': offer_id, 'error': error_str[:500]},
         )
         for item in valid_items:
-            item.status = OfferPoolItemStatus.FAILED
-            item.error_message = f"API error: {error_str[:200]}"
-            item.save(update_fields=['status', 'error_message', 'updated_at'])
+            mark_item_failed(
+                item,
+                error_message=f"API error: {error_str[:200]}",
+                failure_stage='remote_push',
+                remote_state='absent',
+                retryable=True,
+            )
         return 0
 
-    resp = result.data
-    created = getattr(resp, 'created_count', len(valid_items))
-    return _mark_items_pushed(valid_items[:created], offer_id, listing=pool.listing)
+    # Fetch the authoritative credential list after add. This correctly handles
+    # duplicate_count responses and records remote credential IDs without
+    # assuming the API response order matches the request order.
+    listed = client.list_offer_credentials(offer_id, proxy_group=proxy_group)
+    if not listed.ok:
+        for item in valid_items:
+            mark_item_failed(
+                item,
+                error_message='GameBoost add returned success but credentials could not be reconciled',
+                failure_stage='post_push_reconcile',
+                remote_state='unknown',
+            )
+        return 0
+    remote_by_text = {
+        str(getattr(entry, 'credentials', '')).strip(): str(getattr(entry, 'id', ''))
+        for entry in list(listed.data or [])
+    }
+    created_items: list[OfferPoolItem] = []
+    missing_items: list[OfferPoolItem] = []
+    remote_ids: dict[int, str] = {}
+    for item, rendered in zip(valid_items, cred_strings):
+        remote_id = remote_by_text.get(rendered.strip())
+        if remote_id:
+            created_items.append(item)
+            remote_ids[item.pk] = remote_id
+        else:
+            missing_items.append(item)
+    pushed = _mark_items_pushed(
+        created_items,
+        offer_id,
+        listing=pool.listing,
+        remote_credential_ids=remote_ids,
+    )
+    if missing_items:
+        release_claims_as_pending(
+            missing_items,
+            'GameBoost did not create these credentials',
+        )
+    return pushed
 
 
 def _gameboost_recreate(
@@ -374,7 +522,7 @@ def _gameboost_recreate(
     valid_items: list[OfferPoolItem],
     proxy_group: str | None,
 ) -> int:
-    """Old format: delete offer → create new one with /account-offers/create.
+    """Old format: create replacement first, then remove the legacy offer.
 
     Converts a single-credential offer to multi-credential format.
     """
@@ -387,20 +535,17 @@ def _gameboost_recreate(
             f"Pool #{pool.pk}: cannot recreate Gameboost offer — no original payload in listing.raw_data",
             account=pool.store,
         )
+        for item in valid_items:
+            mark_item_failed(
+                item,
+                error_message='GameBoost source listing has no create payload',
+                failure_stage='template',
+                remote_state='absent',
+            )
         return 0
 
     # Extract existing credential from old offer before deleting
     existing_creds = _extract_existing_gameboost_credentials(original_payload)
-
-    # Delete old offer
-    delete_result = client.delete_offer(old_offer_id, proxy_group=proxy_group)
-    if not delete_result.ok:
-        _log(
-            PostingLogLevel.ERROR,
-            f"Pool #{pool.pk}: failed to delete old Gameboost offer {old_offer_id}: {delete_result.error}",
-            account=pool.store,
-        )
-        return 0
 
     # Build new payload: remove old single-credential fields, add credentials list
     # Preserve existing credential + append new ones
@@ -419,6 +564,7 @@ def _gameboost_recreate(
             account=pool.store,
             detail={'pool_id': pool.pk, 'old_offer_id': old_offer_id},
         )
+        release_claims_as_pending(valid_items, 'GameBoost replacement create failed')
         return 0
 
     # Extract new offer ID
@@ -430,7 +576,29 @@ def _gameboost_recreate(
             account=pool.store,
             detail={'pool_id': pool.pk, 'old_offer_id': old_offer_id, 'response': str(create_result.data)[:500]},
         )
+        for item in valid_items:
+            mark_item_failed(
+                item,
+                error_message='GameBoost create succeeded but returned no offer ID',
+                failure_stage='response_parse',
+                remote_state='unknown',
+            )
         return 0
+
+    delete_result = client.delete_offer(old_offer_id, proxy_group=proxy_group)
+    if not delete_result.ok:
+        _log(
+            PostingLogLevel.WARNING,
+            f"Pool #{pool.pk}: replacement created but old GameBoost offer "
+            f"{old_offer_id} could not be deleted",
+            account=pool.store,
+            detail={
+                'pool_id': pool.pk,
+                'pool_offer_id': pool.pool_offer.pk,
+                'old_offer_id': old_offer_id,
+                'error': str(delete_result.error)[:500],
+            },
+        )
 
     with transaction.atomic():
         listing.store_listing_id = new_offer_id
@@ -457,22 +625,14 @@ def _gameboost_recreate(
 
 
 def _replenish_pa(pool: OfferPool) -> int:
-    """PlayerAuctions: clone offers to maintain max_concurrent active offers."""
+    """PlayerAuctions: fill to target_count without exceeding max_concurrent."""
     active_count = pool.active_offers.filter(
         status=OfferPoolActiveOfferStatus.ACTIVE,
     ).count()
 
-    need = pool.max_concurrent - active_count
+    desired = min(pool.target_count, pool.max_concurrent)
+    need = desired - active_count
     if need <= 0:
-        return 0
-
-    pending_items = list(
-        pool.items.filter(status=OfferPoolItemStatus.PENDING)
-        .select_related('owned_product')
-        .order_by('order', 'created_at')[:need]
-    )
-    if not pending_items:
-        _check_depleted(pool)
         return 0
 
     store = pool.store
@@ -501,18 +661,29 @@ def _replenish_pa(pool: OfferPool) -> int:
         )
         return 0
 
+    pending_items = claim_pending_items(pool.pool_offer, need)
+    if not pending_items:
+        _check_depleted(pool)
+        return 0
+
     pushed = 0
     for item in pending_items:
         try:
             pushed += _clone_pa_offer(pool, client, original_payload, item, proxy_group)
         except Exception as exc:
             logger.exception('pool_replenish: PA clone failed for item %d', item.pk)
-            item.status = OfferPoolItemStatus.FAILED
-            item.error_message = str(exc)[:500]
-            item.save(update_fields=['status', 'error_message', 'updated_at'])
+            mark_item_failed(
+                item,
+                error_message=str(exc),
+                failure_stage='remote_push',
+                remote_state='unknown',
+            )
 
     pool.last_replenished_at = timezone.now()
-    pool.save(update_fields=['last_replenished_at', 'updated_at'])
+    pool.current_remote_count = active_count + pushed
+    pool.save(update_fields=[
+        'last_replenished_at', 'current_remote_count', 'updated_at',
+    ])
 
     _log(
         PostingLogLevel.SUCCESS if pushed > 0 else PostingLogLevel.WARNING,
@@ -542,17 +713,24 @@ def _clone_pa_offer(
     result = client.create_offer(payload, proxy_group=proxy_group)
     if not result.ok:
         error_str = str(result.error) if result.error else 'Unknown error'
-        item.status = OfferPoolItemStatus.FAILED
-        item.error_message = f"PA create failed: {error_str[:200]}"
-        item.save(update_fields=['status', 'error_message', 'updated_at'])
+        mark_item_failed(
+            item,
+            error_message=f"PA create failed: {error_str[:200]}",
+            failure_stage='remote_push',
+            remote_state='absent',
+            retryable=True,
+        )
         return 0
 
     # Extract offer ID from response
     new_offer_id = extract_listing_id(result.data)
     if not new_offer_id:
-        item.status = OfferPoolItemStatus.FAILED
-        item.error_message = "PA create succeeded but no offer ID in response"
-        item.save(update_fields=['status', 'error_message', 'updated_at'])
+        mark_item_failed(
+            item,
+            error_message='PA create succeeded but no offer ID in response',
+            failure_stage='response_parse',
+            remote_state='unknown',
+        )
         return 0
 
     raw_data = normalize_offer_response(
@@ -584,17 +762,19 @@ def _clone_pa_offer(
 
         # Track active offer
         OfferPoolActiveOffer.objects.create(
-            pool=pool,
+            pool=pool.aggregate,
+            pool_offer=pool.pool_offer,
             store_listing_id=new_offer_id,
             listing=new_listing,
             pool_item=item,
             status=OfferPoolActiveOfferStatus.ACTIVE,
         )
 
-        item.status = OfferPoolItemStatus.PUSHED
-        item.pushed_at = timezone.now()
-        item.target_offer_id = new_offer_id
-        item.save(update_fields=['status', 'pushed_at', 'target_offer_id', 'updated_at'])
+        finalize_items_pushed(
+            [item],
+            pool_offer=pool.pool_offer,
+            remote_offer_id=new_offer_id,
+        )
 
     return 1
 
@@ -735,7 +915,10 @@ def _reconcile_pushed_items(
     Returns the number of items marked as CONSUMED.
     """
     pushed_items = list(
-        pool.items.filter(status=OfferPoolItemStatus.PUSHED)
+        pool.items.filter(
+            status=OfferPoolItemStatus.PUSHED,
+            pool_offer=pool.pool_offer,
+        )
         .select_related('owned_product')
     )
     if not pushed_items:
@@ -764,8 +947,12 @@ def _reconcile_pushed_items(
 
         if not found:
             item.status = OfferPoolItemStatus.CONSUMED
+            item.consumed_at = timezone.now()
+            item.remote_state = 'absent'
             item.error_message = 'Removed from remote offer'
-            item.save(update_fields=['status', 'error_message', 'updated_at'])
+            item.save(update_fields=[
+                'status', 'consumed_at', 'remote_state', 'error_message', 'updated_at',
+            ])
 
             # Unlink from listing and revert OwnedProduct status
             if pool.listing_id and item.owned_product_id:
@@ -791,18 +978,36 @@ def _reconcile_pushed_items(
     return consumed
 
 
-def _mark_items_pushed(items: list[OfferPoolItem], offer_id: str, listing: Listing | None = None) -> int:
+def _mark_items_pushed(
+    items: list[OfferPoolItem],
+    offer_id: str,
+    listing: Listing | None = None,
+    remote_credential_ids: dict[int, str] | None = None,
+) -> int:
     """Mark items as PUSHED, record target offer ID, and link OwnedProducts to Listing."""
-    now = timezone.now()
-    count = 0
-    for item in items:
-        if item.status == OfferPoolItemStatus.FAILED:
-            continue
-        item.status = OfferPoolItemStatus.PUSHED
-        item.pushed_at = now
-        item.target_offer_id = offer_id
-        item.save(update_fields=['status', 'pushed_at', 'target_offer_id', 'updated_at'])
+    if not items:
+        return 0
+    pool_offer = items[0].pool_offer
+    if pool_offer is None:
+        raise ValueError('Cannot finalize unassigned pool items')
+    queued_items = [
+        item for item in items if item.status == OfferPoolItemStatus.QUEUED
+    ]
+    already_pushed = [
+        item for item in items if item.status == OfferPoolItemStatus.PUSHED
+    ]
+    count = finalize_items_pushed(
+        queued_items,
+        pool_offer=pool_offer,
+        remote_offer_id=offer_id,
+        remote_credential_ids=remote_credential_ids,
+    )
+    count += len(already_pushed)
 
+    for item in items:
+        item.refresh_from_db(fields=['status'])
+        if item.status != OfferPoolItemStatus.PUSHED:
+            continue
         # Create m2m link → triggers signal: OwnedProduct draft → listed
         if listing and item.owned_product_id:
             _, created = ListingOwnedProduct.objects.get_or_create(
@@ -816,19 +1021,9 @@ def _mark_items_pushed(items: list[OfferPoolItem], offer_id: str, listing: Listi
                     owned.status = 'listed'
                     owned.save(update_fields=['status', 'updated_at'])
 
-        count += 1
     return count
 
 
 def _check_depleted(pool: OfferPool) -> None:
-    """If no pending items remain, mark pool as DEPLETED."""
-    remaining = pool.items.filter(status=OfferPoolItemStatus.PENDING).count()
-    if remaining == 0 and pool.status == OfferPoolStatus.ACTIVE:
-        pool.status = OfferPoolStatus.DEPLETED
-        pool.save(update_fields=['status', 'updated_at'])
-        _log(
-            PostingLogLevel.WARNING,
-            f"Pool #{pool.pk} depleted — no pending items remain",
-            account=pool.store,
-            detail={'pool_id': pool.pk},
-        )
+    """Depletion is computed health; never overwrite user intent state."""
+    return None

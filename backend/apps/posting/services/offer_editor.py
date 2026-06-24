@@ -27,6 +27,7 @@ from apps.posting.models import (
     OfferPoolActiveOfferStatus,
     OfferPoolItem,
     OfferPoolItemStatus,
+    PoolOffer,
     PostingLog,
     PostingLogLevel,
 )
@@ -103,22 +104,29 @@ def edit_offer(listing: Listing, changes: dict[str, Any]) -> EditResult:
 
 
 def edit_pool_offers(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResult:
-    """Edit all offers in a pool.
+    """Compatibility bulk edit across every linked offer in the pool."""
+    from apps.posting.services.pool.replenisher import _PoolOfferContext
 
-    - Append strategy (Eldorado/GB): edit the single pool listing
-    - Clone strategy (PA): cancel all active offers + bulk recreate
-    """
-    if pool.strategy == OfferPool.Strategy.CLONE:
-        return _edit_pa_pool_bulk(pool, changes)
-    else:
-        result = edit_offer(pool.listing, changes)
-        bulk = BulkEditResult(total=1)
-        if result.ok:
-            bulk.succeeded = 1
+    aggregate = BulkEditResult()
+    pool_offers = pool.pool_offers.select_related(
+        'pool', 'listing', 'listing__integration_account',
+    ).order_by('pk')
+    for pool_offer in pool_offers:
+        if pool_offer.strategy == OfferPool.Strategy.CLONE:
+            result = _edit_pa_pool_bulk(_PoolOfferContext(pool_offer), changes)
         else:
-            bulk.failed = 1
-            bulk.errors.append(result.error)
-        return bulk
+            edited = edit_offer(pool_offer.listing, changes)
+            result = BulkEditResult(total=1)
+            if edited.ok:
+                result.succeeded = 1
+            else:
+                result.failed = 1
+                result.errors.append(edited.error)
+        aggregate.total += result.total
+        aggregate.succeeded += result.succeeded
+        aggregate.failed += result.failed
+        aggregate.errors.extend(result.errors)
+    return aggregate
 
 
 # ── Eldorado ──────────────────────────────────────────────────────
@@ -277,9 +285,22 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
         return EditResult(ok=False, error='No linked credential found - cannot rebuild PA listing')
 
     _apply_pa_changes(original_payload, changes)
-    pool = OfferPool.objects.filter(listing=listing).first()
-    active_offer = OfferPoolActiveOffer.objects.filter(listing=listing).select_related('pool').first()
-    effective_pool = pool or (active_offer.pool if active_offer else None)
+    pool_offer = PoolOffer.objects.filter(listing=listing).select_related('pool').first()
+    active_offer = (
+        OfferPoolActiveOffer.objects.filter(listing=listing)
+        .select_related('pool', 'pool_offer__pool')
+        .first()
+    )
+    legacy_pool = OfferPool.objects.filter(listing=listing).first()
+    effective_pool = (
+        pool_offer.pool
+        if pool_offer
+        else (
+            active_offer.pool_offer.pool
+            if active_offer and active_offer.pool_offer_id
+            else (active_offer.pool if active_offer else legacy_pool)
+        )
+    )
     _apply_pa_auto_delivery_credentials(original_payload, lop.owned_product, pool=effective_pool)
 
     # Step 1: Cancel existing offer
@@ -355,7 +376,7 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
         active_offer.save(update_fields=['store_listing_id', 'updated_at'])
     else:
         OfferPoolActiveOffer.objects.filter(
-            pool__store=store,
+            pool_offer__listing__integration_account=store,
             store_listing_id=old_offer_id,
         ).update(store_listing_id=new_offer_id)
 
@@ -562,7 +583,10 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
 
                 ao.store_listing_id = new_offer_id
                 ao.listing = new_listing
-                ao.save(update_fields=['store_listing_id', 'listing', 'updated_at'])
+                ao.status = OfferPoolActiveOfferStatus.ACTIVE
+                ao.save(update_fields=[
+                    'store_listing_id', 'listing', 'status', 'updated_at',
+                ])
 
                 if ao.pool_item:
                     ao.pool_item.target_offer_id = new_offer_id
@@ -704,11 +728,15 @@ def _return_ao_to_pending(ao: OfferPoolActiveOffer, error_message: str) -> None:
     ao.save(update_fields=['status', 'updated_at'])
     if ao.pool_item:
         ao.pool_item.status = OfferPoolItemStatus.PENDING
+        ao.pool_item.pool_offer = None
         ao.pool_item.error_message = error_message
         ao.pool_item.target_offer_id = ''
+        ao.pool_item.remote_credential_id = ''
+        ao.pool_item.remote_state = 'absent'
         ao.pool_item.pushed_at = None
         ao.pool_item.save(update_fields=[
-            'status', 'error_message', 'target_offer_id', 'pushed_at', 'updated_at',
+            'status', 'pool_offer', 'error_message', 'target_offer_id',
+            'remote_credential_id', 'remote_state', 'pushed_at', 'updated_at',
         ])
 
 

@@ -21,6 +21,7 @@
     restockOpen: false,
     inventoryOpen: false,
     ordersOpen: false,
+    toolsOpen: false,
     marketplacesOpen: false,
     settingsOpen: false,
     toggle() { this.open = !this.open; localStorage.setItem('sidebar', this.open ? 'open' : 'closed'); }
@@ -30,6 +31,7 @@
     restockOpen = window.location.pathname.startsWith('/posting/restock');
     inventoryOpen = window.location.pathname.startsWith('/inventory') || window.location.pathname.startsWith('/listings');
     ordersOpen = window.location.pathname.startsWith('/orders');
+    toolsOpen = window.location.pathname.startsWith('/tools');
     marketplacesOpen = window.location.pathname.startsWith('/integrations');
     settingsOpen = window.location.pathname.startsWith('/settings');
 " class="flex h-screen">
@@ -236,6 +238,33 @@
                        class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
                               {% if request.resolver_match.url_name == 'restock_pools' %}text-emerald-400{% endif %}">
                         Pools
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Tools (expandable) — admin, user -->
+            {% if user_role == 'admin' or user_role == 'user' %}
+            <div>
+                <button @click="toolsOpen = !toolsOpen"
+                        class="flex items-center w-full px-4 py-2.5 text-sm hover:bg-gray-800 hover:text-white transition-colors text-left
+                               {% if request.resolver_match.app_name == 'tools' %}bg-gray-800/50 text-white{% endif %}">
+                    <span class="w-8 flex-shrink-0 flex justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75a4.5 4.5 0 01-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 11-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 016.336-4.486l-3.276 3.276a3.004 3.004 0 002.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008z"/>
+                        </svg>
+                    </span>
+                    <span x-show="open || mobileOpen" x-cloak class="ml-2 truncate flex-1">Tools</span>
+                    <svg x-show="open || mobileOpen" x-cloak class="w-4 h-4 transition-transform flex-shrink-0" :class="toolsOpen && 'rotate-90'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+                <div x-show="(open || mobileOpen) && toolsOpen" x-cloak x-collapse class="bg-gray-950/50">
+                    <a href="{% url 'tools:robuxcrate' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.url_name == 'robuxcrate' %}text-emerald-400{% endif %}">
+                        RobuxCrate
                     </a>
                 </div>
             </div>

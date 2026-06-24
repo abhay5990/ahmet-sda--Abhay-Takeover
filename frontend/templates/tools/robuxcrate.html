@@ -1,0 +1,643 @@
+{% extends "base.html" %}
+
+{% block title %}RobuxCrate Order Tool{% endblock %}
+
+{% block content %}
+<div x-data="robuxcrateTool()" x-init="loadOrders()">
+
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">RobuxCrate Order Tool</h1>
+        <p class="text-sm text-gray-500 mt-1">Create and track Robux gamepass orders</p>
+    </div>
+
+    <!-- CSRF token (read by JS) -->
+    <form id="csrf-form" style="display:none">{% csrf_token %}</form>
+
+    <!-- ═══ New Order Card ═══ -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <h2 class="text-base font-semibold text-gray-800 mb-5 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            New Order
+        </h2>
+
+        <form @submit.prevent="createOrder()">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+
+                <!-- Username -->
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Roblox Username</label>
+                    <div class="relative">
+                        <input type="text"
+                               x-model="form.username"
+                               @input="onUsernameChange()"
+                               @keydown.enter.prevent="lookupUser()"
+                               @blur="form.username.trim() && !lookupDone ? lookupUser() : null"
+                               placeholder="Enter username..."
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                               :disabled="submitting">
+                        <button type="button"
+                                @click="lookupUser()"
+                                :disabled="!form.username.trim() || lookingUp || submitting"
+                                class="absolute right-1.5 top-1.5 px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 rounded-md text-gray-600 disabled:opacity-40 transition-colors">
+                            <span x-show="!lookingUp">Search</span>
+                            <span x-show="lookingUp" x-cloak>
+                                <svg class="animate-spin h-3 w-3 inline" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                            </span>
+                        </button>
+                    </div>
+                    <p x-show="lookupError" x-cloak class="text-xs text-red-600 mt-1.5" x-text="lookupError"></p>
+                    <p x-show="lookupDone && !lookupError && form.userId" x-cloak class="text-xs text-emerald-600 mt-1.5 flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span x-text="form.resolvedUsername"></span> <span class="text-gray-400">(ID: <span x-text="form.userId"></span>)</span>
+                    </p>
+                    <p x-show="lookupWarning" x-cloak class="text-xs text-amber-600 mt-1.5" x-text="lookupWarning"></p>
+                </div>
+
+                <!-- Place ID -->
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Place ID</label>
+
+                    <!-- Multi-place warning -->
+                    <div x-show="places.length > 1" x-cloak
+                         class="bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 mb-1.5">
+                        <p class="text-xs text-amber-700">Multiple places found — select one</p>
+                    </div>
+
+                    <!-- Dropdown (multiple places) -->
+                    <select x-show="places.length > 1" x-cloak
+                            x-model="form.placeId"
+                            @change="form.placeName = places.find(p => String(p.place_id) === String(form.placeId))?.name || ''"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-amber-50/30 transition-colors"
+                            :disabled="submitting">
+                        <option value="">— Select place —</option>
+                        <template x-for="p in places" :key="p.place_id">
+                            <option :value="p.place_id" x-text="p.name + '  (ID: ' + p.place_id + ')'"></option>
+                        </template>
+                    </select>
+
+                    <!-- Single place (auto-filled) -->
+                    <input x-show="places.length === 1"
+                           type="text"
+                           :value="form.placeName ? form.placeName + ' (' + form.placeId + ')' : form.placeId"
+                           readonly
+                           class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-gray-50 text-gray-500">
+
+                    <!-- No places or lookup not done -->
+                    <input x-show="places.length === 0"
+                           type="text"
+                           disabled
+                           :placeholder="lookupDone ? 'No places found' : 'Search username first...'"
+                           class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-gray-50 text-gray-400">
+
+                    <p x-show="lookupDone && places.length === 0 && !lookupError" x-cloak
+                       class="text-xs text-red-600 mt-1.5">No public games found for this user</p>
+                </div>
+
+                <!-- Robux Amount -->
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Robux Amount</label>
+                    <input type="number"
+                           x-model.number="form.robuxAmount"
+                           placeholder="e.g. 2000"
+                           min="1"
+                           max="1000000"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                           :disabled="submitting">
+                </div>
+
+                <!-- Quantity -->
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Quantity</label>
+                    <input type="number"
+                           x-model.number="form.quantity"
+                           placeholder="1"
+                           min="1"
+                           max="20"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                           :disabled="submitting">
+                    <p x-show="form.robuxAmount > 0 && form.quantity > 1" x-cloak
+                       class="text-xs text-gray-500 mt-1.5">
+                        Total: <span class="font-semibold text-gray-700" x-text="(form.robuxAmount * form.quantity).toLocaleString() + ' R$'"></span>
+                        (<span x-text="form.quantity"></span> × <span x-text="form.robuxAmount.toLocaleString()"></span>)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Confirmation summary -->
+            <div x-show="canSubmit" x-cloak class="mt-5 bg-emerald-50 border border-emerald-100 rounded-lg px-4 py-3 text-sm text-gray-700">
+                Creating <span class="font-semibold" x-text="form.quantity"></span> order(s) ×
+                <span class="font-semibold" x-text="form.robuxAmount?.toLocaleString()"></span> R$
+                = <span class="font-bold text-emerald-700" x-text="(form.robuxAmount * form.quantity).toLocaleString() + ' R$'"></span>
+                for <span class="font-semibold" x-text="form.resolvedUsername"></span>
+            </div>
+
+            <!-- Submit -->
+            <div class="mt-5 flex items-center gap-4">
+                <button type="submit"
+                        :disabled="!canSubmit || submitting"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-sm">
+                    <span x-show="!submitting">
+                        <svg class="w-4 h-4 inline -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                        Create Order
+                    </span>
+                    <span x-show="submitting" x-cloak class="flex items-center gap-2">
+                        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        Creating...
+                    </span>
+                </button>
+
+                <div x-show="orderResult" x-cloak>
+                    <p :class="orderResult?.ok ? 'text-emerald-600' : 'text-red-600'" class="text-sm font-medium">
+                        <span x-text="orderResult?.message"></span>
+                    </p>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- ═══ Active Batch Progress ═══ -->
+    <div x-show="activeBatch" x-cloak class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-semibold text-gray-800 flex items-center gap-2">
+                <svg class="w-5 h-5 text-blue-500 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Batch Progress
+            </h2>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                  :class="batchStatusClass(activeBatch?.batch_status)"
+                  x-text="activeBatch?.batch_status"></span>
+        </div>
+        <div class="grid grid-cols-4 gap-4">
+            <div class="bg-gray-50 rounded-lg p-3 text-center">
+                <div class="text-2xl font-bold text-gray-900" x-text="activeBatch?.created_count || 0"></div>
+                <div class="text-xs text-gray-500 mt-0.5">Total</div>
+            </div>
+            <div class="bg-emerald-50 rounded-lg p-3 text-center">
+                <div class="text-2xl font-bold text-emerald-600" x-text="activeBatch?.successful_count || 0"></div>
+                <div class="text-xs text-gray-500 mt-0.5">Completed</div>
+            </div>
+            <div class="bg-red-50 rounded-lg p-3 text-center">
+                <div class="text-2xl font-bold text-red-600" x-text="activeBatch?.failed_count || 0"></div>
+                <div class="text-xs text-gray-500 mt-0.5">Failed</div>
+            </div>
+            <div class="bg-blue-50 rounded-lg p-3 text-center">
+                <div class="text-2xl font-bold text-blue-600" x-text="activeBatch?.pending_count || 0"></div>
+                <div class="text-xs text-gray-500 mt-0.5">Pending</div>
+            </div>
+        </div>
+        <!-- Individual order chips -->
+        <div x-show="activeBatch?.orders?.length" class="mt-4 flex flex-wrap gap-1.5">
+            <template x-for="o in (activeBatch?.orders || [])" :key="o.id">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-mono"
+                      :class="statusClass(o.status)"
+                      :title="o.error_message || o.id"
+                      x-text="o.id.substring(0, 8) + ' ' + statusLabel(o.status)"></span>
+            </template>
+        </div>
+    </div>
+
+    <!-- ═══ Order History ═══ -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <h2 class="text-base font-semibold text-gray-800">Order History</h2>
+            <div class="flex items-center gap-3">
+                <select x-model="filters.status" @change="loadOrders()" class="text-xs border border-gray-300 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                    <option value="">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="queued">Queued</option>
+                    <option value="progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="error">Error</option>
+                    <option value="unknown">Unknown</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <input type="text" x-model="filters.username" @input.debounce.500ms="loadOrders()"
+                       placeholder="Search username..." class="text-xs border border-gray-300 rounded-lg px-2.5 py-1.5 w-36 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                <button @click="loadOrders()"
+                        :disabled="loadingOrders"
+                        class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-emerald-600 disabled:opacity-40 transition-colors">
+                    <svg class="w-4 h-4" :class="loadingOrders && 'animate-spin'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Error -->
+        <div x-show="listError" x-cloak class="px-6 py-3 bg-red-50 text-sm text-red-700" x-text="listError"></div>
+
+        <!-- Loading -->
+        <div x-show="loadingOrders && orders.length === 0" x-cloak class="px-6 py-16 text-center text-gray-400">
+            <svg class="animate-spin h-6 w-6 mx-auto mb-2" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+            Loading orders...
+        </div>
+
+        <!-- Empty -->
+        <div x-show="!loadingOrders && orders.length === 0 && !listError" x-cloak class="px-6 py-16 text-center">
+            <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <p class="text-gray-400">No orders yet</p>
+        </div>
+
+        <!-- Table -->
+        <div x-show="orders.length > 0" x-cloak class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50/80">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Date</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Username</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Place</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wide">Amount</th>
+                        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wide">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Created By</th>
+                        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wide w-16"></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <template x-for="o in orders" :key="o.id">
+                        <tr class="hover:bg-gray-50/50 transition-colors">
+                            <td class="px-4 py-3 text-gray-500 whitespace-nowrap text-xs" x-text="fmtDate(o.created_at)"></td>
+                            <td class="px-4 py-3 font-medium text-gray-900" x-text="o.roblox_username"></td>
+                            <td class="px-4 py-3 text-gray-600">
+                                <span class="font-mono text-xs" x-text="o.place_id"></span>
+                                <span x-show="o.place_name" class="text-gray-400 text-xs ml-1" x-text="'(' + o.place_name + ')'"></span>
+                            </td>
+                            <td class="px-4 py-3 text-right font-mono font-medium text-gray-900" x-text="o.robux_amount.toLocaleString() + ' R$'"></td>
+                            <td class="px-4 py-3 text-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                      :class="statusClass(o.status)"
+                                      x-text="statusLabel(o.status)"></span>
+                                <p x-show="o.error_message" class="text-xs text-red-500 mt-0.5 max-w-[180px] truncate" x-text="o.error_message" :title="o.error_message"></p>
+                            </td>
+                            <td class="px-4 py-3 text-gray-500 text-xs" x-text="o.created_by || '—'"></td>
+                            <td class="px-4 py-3 text-center">
+                                <button @click="refreshStatus(o.id)"
+                                        :disabled="o._refreshing"
+                                        class="p-1 text-gray-400 hover:text-emerald-600 rounded-md hover:bg-emerald-50 disabled:opacity-40 transition-colors"
+                                        title="Refresh status">
+                                    <svg class="w-4 h-4" :class="o._refreshing && 'animate-spin'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                    </svg>
+                                </button>
+                                <span x-show="o._refreshError" x-cloak class="text-xs text-red-500 block" x-text="o._refreshError"></span>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div x-show="totalPages > 1" x-cloak class="flex items-center justify-between px-6 py-3 border-t border-gray-100">
+            <p class="text-xs text-gray-500">
+                <span x-text="totalCount"></span> orders — Page <span x-text="currentPage"></span> of <span x-text="totalPages"></span>
+            </p>
+            <div class="flex gap-1">
+                <button @click="goToPage(currentPage - 1)" :disabled="currentPage <= 1"
+                        class="px-3 py-1 text-xs font-medium border border-gray-300 rounded-md disabled:opacity-30 hover:bg-gray-50 transition-colors">Previous</button>
+                <button @click="goToPage(currentPage + 1)" :disabled="currentPage >= totalPages"
+                        class="px-3 py-1 text-xs font-medium border border-gray-300 rounded-md disabled:opacity-30 hover:bg-gray-50 transition-colors">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function robuxcrateTool() {
+
+    const REFRESH_URL_TEMPLATE = '{% url "tools:rbx_refresh_status" "00000000-0000-0000-0000-000000000000" %}'.replace(
+        '00000000-0000-0000-0000-000000000000', '{ORDER_ID}'
+    );
+    const BATCH_URL_TEMPLATE = '{% url "tools:rbx_batch_status" "00000000-0000-0000-0000-000000000000" %}'.replace(
+        '00000000-0000-0000-0000-000000000000', '{BATCH_ID}'
+    );
+
+    return {
+        // Form
+        form: {
+            username: '',
+            userId: null,
+            resolvedUsername: '',
+            placeId: '',
+            placeName: '',
+            robuxAmount: null,
+            quantity: 1,
+        },
+        places: [],
+        lookupToken: '',
+        lookingUp: false,
+        lookupDone: false,
+        lookupError: '',
+        lookupWarning: '',
+        submitting: false,
+        orderResult: null,
+
+        // Active batch polling
+        activeBatch: null,
+        _batchPollTimer: null,
+
+        // Orders table
+        orders: [],
+        loadingOrders: false,
+        listError: '',
+        currentPage: 1,
+        totalPages: 1,
+        totalCount: 0,
+        filters: { status: '', username: '' },
+
+        get canSubmit() {
+            return this.lookupDone
+                && !this.lookupError
+                && this.lookupToken
+                && this.form.placeId
+                && this.form.robuxAmount > 0
+                && this.form.quantity >= 1
+                && this.form.quantity <= 20
+                && !this.submitting;
+        },
+
+        // ── Username change: clear lookup state ──
+
+        onUsernameChange() {
+            this.resetLookup();
+        },
+
+        resetLookup() {
+            this.lookupDone = false;
+            this.lookupError = '';
+            this.lookupWarning = '';
+            this.lookupToken = '';
+            this.places = [];
+            this.form.userId = null;
+            this.form.resolvedUsername = '';
+            this.form.placeId = '';
+            this.form.placeName = '';
+        },
+
+        resetForm() {
+            this.form.username = '';
+            this.form.robuxAmount = null;
+            this.form.quantity = 1;
+            this.resetLookup();
+        },
+
+        // ── Lookup ──
+
+        async lookupUser() {
+            const username = this.form.username.trim();
+            if (!username) return;
+
+            this.lookingUp = true;
+            this.resetLookup();
+
+            try {
+                const resp = await this._fetch('{% url "tools:rbx_lookup_user" %}', {
+                    method: 'POST',
+                    body: JSON.stringify({ username }),
+                });
+                if (!resp) return;
+                const data = await resp.json();
+
+                if (!data.ok) {
+                    this.lookupError = data.error || 'Unknown error';
+                    return;
+                }
+
+                this.form.userId = data.user_id;
+                this.form.resolvedUsername = data.username;
+                this.places = data.places || [];
+                this.lookupToken = data.lookup_token || '';
+
+                if (data.warning) {
+                    this.lookupWarning = data.warning;
+                }
+
+                if (this.places.length === 1) {
+                    this.form.placeId = this.places[0].place_id;
+                    this.form.placeName = this.places[0].name;
+                }
+            } catch (err) {
+                this.lookupError = 'Connection error';
+            } finally {
+                this.lookingUp = false;
+                this.lookupDone = true;
+            }
+        },
+
+        // ── Create order ──
+
+        async createOrder() {
+            if (!this.canSubmit) return;
+
+            this.submitting = true;
+            this.orderResult = null;
+
+            const clientRequestId = crypto.randomUUID();
+
+            try {
+                const resp = await this._fetch('{% url "tools:rbx_create_order" %}', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        lookup_token: this.lookupToken,
+                        client_request_id: clientRequestId,
+                        place_id: this.form.placeId,
+                        place_name: this.form.placeName,
+                        robux_amount: this.form.robuxAmount,
+                        quantity: this.form.quantity || 1,
+                    }),
+                });
+                if (!resp) return;
+                const data = await resp.json();
+
+                if (data.ok) {
+                    this.orderResult = {
+                        ok: true,
+                        message: `Batch created — ${data.quantity}× ${data.robux_amount.toLocaleString()} R$ processing in background...`,
+                    };
+                    this.activeBatch = data;
+                    this._startBatchPolling(data.batch_id);
+                    this.resetForm();
+                    this.loadOrders();
+                } else {
+                    this.orderResult = {
+                        ok: false,
+                        message: data.error || 'Failed to create order',
+                    };
+                }
+            } catch (err) {
+                this.orderResult = { ok: false, message: 'Connection error' };
+            } finally {
+                this.submitting = false;
+            }
+        },
+
+        // ── Batch polling ──
+
+        _startBatchPolling(batchId) {
+            this._stopBatchPolling();
+            const url = BATCH_URL_TEMPLATE.replace('{BATCH_ID}', batchId);
+            this._batchPollTimer = setInterval(async () => {
+                try {
+                    const resp = await this._fetch(url, { method: 'GET' }, true);
+                    if (!resp) return;
+                    const data = await resp.json();
+                    if (data.ok) {
+                        this.activeBatch = data;
+                        this.loadOrders();
+                        const done = ['completed', 'partial', 'failed'];
+                        if (done.includes(data.batch_status)) {
+                            this._stopBatchPolling();
+                        }
+                    }
+                } catch {}
+            }, 3000);
+        },
+
+        _stopBatchPolling() {
+            if (this._batchPollTimer) {
+                clearInterval(this._batchPollTimer);
+                this._batchPollTimer = null;
+            }
+        },
+
+        // ── Load orders ──
+
+        async loadOrders() {
+            this.loadingOrders = true;
+            this.listError = '';
+            try {
+                const params = new URLSearchParams({ page: this.currentPage });
+                if (this.filters.status) params.set('status', this.filters.status);
+                if (this.filters.username) params.set('username', this.filters.username);
+
+                const resp = await this._fetch(
+                    '{% url "tools:rbx_list_orders" %}?' + params.toString(),
+                    { method: 'GET' }, true
+                );
+                if (!resp) return;
+                const data = await resp.json();
+                if (data.ok) {
+                    this.orders = data.orders.map(o => ({ ...o, _refreshing: false, _refreshError: '' }));
+                    this.currentPage = data.page;
+                    this.totalPages = data.total_pages;
+                    this.totalCount = data.total_count;
+                } else {
+                    this.listError = data.error || 'Failed to load orders';
+                }
+            } catch (err) {
+                this.listError = 'Connection error — could not load orders';
+            } finally {
+                this.loadingOrders = false;
+            }
+        },
+
+        goToPage(n) {
+            if (n < 1 || n > this.totalPages) return;
+            this.currentPage = n;
+            this.loadOrders();
+        },
+
+        // ── Refresh single order ──
+
+        async refreshStatus(orderId) {
+            const order = this.orders.find(o => o.id === orderId);
+            if (!order) return;
+            order._refreshing = true;
+            order._refreshError = '';
+
+            try {
+                const url = REFRESH_URL_TEMPLATE.replace('{ORDER_ID}', orderId);
+                const resp = await this._fetch(url, { method: 'POST' });
+                if (!resp) { order._refreshing = false; return; }
+                const data = await resp.json();
+                if (data.ok) {
+                    order.status = data.status;
+                    order.error_message = data.error_message || '';
+                } else {
+                    order._refreshError = data.error || 'Refresh failed';
+                }
+            } catch (err) {
+                order._refreshError = 'Connection error';
+            } finally {
+                order._refreshing = false;
+            }
+        },
+
+        // ── Helpers ──
+
+        statusClass(status) {
+            const map = {
+                pending: 'bg-gray-100 text-gray-700',
+                queued: 'bg-blue-100 text-blue-700',
+                progress: 'bg-yellow-100 text-yellow-800',
+                completed: 'bg-emerald-100 text-emerald-700',
+                error: 'bg-red-100 text-red-700',
+                cancelled: 'bg-gray-100 text-gray-500',
+                unknown: 'bg-orange-100 text-orange-700',
+            };
+            return map[status] || 'bg-gray-100 text-gray-700';
+        },
+
+        batchStatusClass(status) {
+            const map = {
+                pending: 'bg-gray-100 text-gray-700',
+                processing: 'bg-blue-100 text-blue-700',
+                completed: 'bg-emerald-100 text-emerald-700',
+                partial: 'bg-amber-100 text-amber-700',
+                failed: 'bg-red-100 text-red-700',
+            };
+            return map[status] || 'bg-gray-100 text-gray-700';
+        },
+
+        statusLabel(status) {
+            const map = {
+                pending: 'Pending',
+                queued: 'Queued',
+                progress: 'In Progress',
+                completed: 'Completed',
+                error: 'Error',
+                cancelled: 'Cancelled',
+                unknown: 'Unknown',
+            };
+            return map[status] || status;
+        },
+
+        fmtDate(iso) {
+            if (!iso) return '—';
+            const d = new Date(iso);
+            if (isNaN(d)) return '—';
+            const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const dd = String(d.getDate()).padStart(2, '0');
+            const hh = String(d.getHours()).padStart(2, '0');
+            const mm = String(d.getMinutes()).padStart(2, '0');
+            return `${mo[d.getMonth()]} ${dd}, ${hh}:${mm}`;
+        },
+
+        _csrf() {
+            const input = document.querySelector('#csrf-form input[name=csrfmiddlewaretoken]');
+            return input ? input.value : '';
+        },
+
+        async _fetch(url, opts = {}, silent = false) {
+            const headers = { ...opts.headers };
+            if (opts.method === 'POST') {
+                headers['Content-Type'] = 'application/json';
+                headers['X-CSRFToken'] = this._csrf();
+            }
+            const resp = await fetch(url, { ...opts, headers });
+
+            const ct = resp.headers.get('content-type') || '';
+            if (!ct.includes('application/json')) {
+                if (!silent) {
+                    this.orderResult = { ok: false, message: 'Session expired — please refresh the page' };
+                }
+                return null;
+            }
+            return resp;
+        },
+    };
+}
+</script>
+{% endblock %}

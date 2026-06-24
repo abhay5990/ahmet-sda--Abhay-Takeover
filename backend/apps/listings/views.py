@@ -151,17 +151,19 @@ def listing_detail(request, listing_id):
         ).select_related('game', 'category').order_by('login')
     )
 
-    offer_pool = (
-        listing.offer_pools
-        .select_related('store', 'game')
-        .prefetch_related('items')
+    from apps.posting.models import PoolOffer
+    pool_offer = (
+        PoolOffer.objects.filter(listing=listing)
+        .select_related('pool', 'pool__game', 'listing__integration_account')
         .first()
     )
+    offer_pool = pool_offer.pool if pool_offer else None
 
     return render(request, 'listings/listing_detail.html', {
         'listing': listing,
         'owned_products': owned_products,
         'offer_pool': offer_pool,
+        'pool_offer': pool_offer,
     })
 
 

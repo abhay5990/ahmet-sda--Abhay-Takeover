@@ -246,7 +246,7 @@ def resolve_for_pool(request, pool_id):
     try:
         pool = (
             OfferPool.objects
-            .select_related("game", "listing", "credential_spec")
+            .select_related("game", "variant", "credential_spec")
             .get(id=pool_id)
         )
     except OfferPool.DoesNotExist:
@@ -261,7 +261,7 @@ def resolve_for_pool(request, pool_id):
 
     # No DB spec — return code-level preset
     game_slug = pool.game.slug if pool.game else ""
-    variant_value = getattr(pool.listing, "variant", None) if pool.listing else None
+    variant_value = pool.variant.slug if pool.variant_id else None
     preset = get_preset(game_slug, _variant_slug_from_value(pool.game, variant_value))
     if preset:
         return JsonResponse({

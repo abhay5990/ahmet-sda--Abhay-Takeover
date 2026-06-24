@@ -683,7 +683,16 @@ class BaseSyncService:
             ).only('id').first()
             if listing:
                 from apps.posting.services.pool.checker import notify_sale
-                notify_sale(listing.id)
+                provider = getattr(order.integration_account, 'provider', '')
+                event_key = (
+                    f'{provider}:{order.integration_account_id}:'
+                    f'{order.store_order_id}'
+                )
+                notify_sale(
+                    listing.id,
+                    event_key=event_key,
+                    order_id=getattr(order, 'pk', None),
+                )
         except Exception:
             logger.debug('pool notify_sale skipped (error or not configured)')
 

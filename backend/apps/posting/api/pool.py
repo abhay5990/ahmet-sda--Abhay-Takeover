@@ -7,6 +7,9 @@ import logging
 import uuid
 
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import IntegrityError, transaction
+from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET, require_http_methods
 
@@ -21,6 +24,11 @@ from apps.posting.models import (
     OfferPoolItem,
     OfferPoolItemStatus,
     OfferPoolStatus,
+    CredentialSpec,
+    GameVariant,
+    PoolOffer,
+    PoolOfferStatus,
+    PoolOfferStrategy,
 )
 
 logger = logging.getLogger(__name__)
@@ -30,12 +38,22 @@ logger = logging.getLogger(__name__)
 
 
 @login_required
-@require_GET
+@require_http_methods(['GET', 'POST'])
 def list_pools(request):
     """List all offer pools with summary stats."""
+    if request.method == 'POST':
+        return create_pool(request)
     pools = (
         OfferPool.objects
-        .select_related('listing', 'game', 'store')
+        .select_related('game', 'variant', 'credential_spec')
+        .prefetch_related('pool_offers__listing__integration_account')
+        .annotate(
+            _items_pending=Count('items', filter=Q(items__status=OfferPoolItemStatus.PENDING)),
+            _items_queued=Count('items', filter=Q(items__status=OfferPoolItemStatus.QUEUED)),
+            _items_pushed=Count('items', filter=Q(items__status=OfferPoolItemStatus.PUSHED)),
+            _items_failed=Count('items', filter=Q(items__status=OfferPoolItemStatus.FAILED)),
+            _items_consumed=Count('items', filter=Q(items__status=OfferPoolItemStatus.CONSUMED)),
+        )
         .order_by('-created_at')
     )
 
@@ -58,42 +76,16 @@ def list_pools(request):
 @login_required
 @require_POST
 def create_pool(request):
-    """Create a new offer pool.
-
-    POST body (JSON):
-        listing_id: int          — existing Listing to restock
-        threshold: int           — trigger when below (default 10)
-        target_count: int        — fill up to (default 50)
-        max_concurrent: int      — PA only: simultaneous offers (default 1)
-        credentials: list[dict]  — optional initial credentials to add
-        game_id: int             — game for the pool
-
-    After creation, if credentials are provided and pool is below threshold,
-    an immediate replenish is triggered.
-    """
+    """Create an offer-independent stock pool."""
     try:
         body = json.loads(request.body)
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
-    listing_id = body.get('listing_id')
-    if not listing_id:
-        return JsonResponse({'error': 'listing_id is required'}, status=400)
-
-    try:
-        listing = Listing.objects.select_related('integration_account', 'game').get(id=listing_id)
-    except Listing.DoesNotExist:
-        return JsonResponse({'error': 'Listing not found'}, status=404)
-
-    # Check if pool already exists for this listing
-    if OfferPool.objects.filter(listing=listing).exists():
-        return JsonResponse({'error': 'Pool already exists for this listing'}, status=409)
-
-    store = listing.integration_account
-    if not store:
-        return JsonResponse({'error': 'Listing has no associated store'}, status=400)
-
-    game_id = body.get('game_id') or (listing.game_id if listing.game else None)
+    name = str(body.get('name') or '').strip()
+    if not name:
+        return JsonResponse({'error': 'name is required', 'error_code': 'name_required'}, status=400)
+    game_id = body.get('game_id')
     if not game_id:
         return JsonResponse({'error': 'game_id is required'}, status=400)
 
@@ -102,37 +94,43 @@ def create_pool(request):
     except Game.DoesNotExist:
         return JsonResponse({'error': 'Game not found'}, status=404)
 
-    # Determine strategy based on marketplace
-    marketplace = store.provider
-    if marketplace == 'playerauctions':
-        strategy = OfferPool.Strategy.CLONE
-    elif marketplace in ('eldorado', 'gameboost'):
-        strategy = OfferPool.Strategy.APPEND
-    else:
-        return JsonResponse({'error': f'Unsupported marketplace: {marketplace}'}, status=400)
+    variant = None
+    variant_id = body.get('variant_id')
+    if variant_id:
+        try:
+            variant = GameVariant.objects.get(pk=variant_id, game=game)
+        except GameVariant.DoesNotExist:
+            return JsonResponse({'error': 'Variant not found for this game'}, status=400)
 
-    pool = OfferPool.objects.create(
-        listing=listing,
+    credential_spec = None
+    credential_spec_id = body.get('credential_spec_id')
+    if credential_spec_id:
+        try:
+            credential_spec = CredentialSpec.objects.get(pk=credential_spec_id, game=game)
+        except CredentialSpec.DoesNotExist:
+            return JsonResponse({'error': 'Credential spec not found for this game'}, status=400)
+
+    pool = OfferPool(
+        name=name[:255],
         game=game,
-        store=store,
-        strategy=strategy,
-        status=OfferPoolStatus.DEPLETED,  # Start depleted, activate when items added
-        threshold=body.get('threshold', 10),
-        target_count=body.get('target_count', 50),
-        max_concurrent=body.get('max_concurrent', 1),
+        variant=variant,
+        credential_spec=credential_spec,
+        status=OfferPoolStatus.ACTIVE,
     )
+    try:
+        pool.full_clean()
+        pool.save()
+    except ValidationError as exc:
+        return JsonResponse({'error': exc.message_dict}, status=400)
 
     # Add initial credentials if provided
     credentials = body.get('credentials', [])
     create_result = {'added': 0, 'skipped': [], 'warnings': [], 'needs_confirmation': []}
     if credentials:
-        _add_credentials_to_pool(pool, credentials, game, listing=listing,
-                                 force=True, result=create_result)
-
-    # Activate pool if items were added
-    if create_result['added'] > 0 and pool.status == OfferPoolStatus.DEPLETED:
-        pool.status = OfferPoolStatus.ACTIVE
-        pool.save(update_fields=['status', 'updated_at'])
+        _add_credentials_to_pool(
+            pool, credentials, game, listing=None,
+            force=True, result=create_result,
+        )
 
     pool.refresh_from_db()
     return JsonResponse({
@@ -142,13 +140,18 @@ def create_pool(request):
 
 
 @login_required
-@require_GET
+@require_http_methods(['GET', 'PATCH', 'DELETE'])
 def pool_detail(request, pool_id):
     """Get pool detail with all items."""
+    if request.method == 'PATCH':
+        return update_pool(request, pool_id)
+    if request.method == 'DELETE':
+        return delete_pool(request, pool_id)
     try:
         pool = (
             OfferPool.objects
-            .select_related('listing', 'game', 'store')
+            .select_related('game', 'variant', 'credential_spec')
+            .prefetch_related('pool_offers__listing__integration_account')
             .get(id=pool_id)
         )
     except OfferPool.DoesNotExist:
@@ -156,18 +159,24 @@ def pool_detail(request, pool_id):
 
     items = list(
         pool.items
-        .select_related('owned_product')
+        .select_related('owned_product', 'pool_offer')
         .order_by('order', 'created_at')
     )
 
     active_offers = list(
-        pool.active_offers
-        .select_related('listing', 'pool_item')
+        OfferPoolActiveOffer.objects.filter(pool_offer__pool=pool)
+        .select_related('listing', 'pool_item', 'pool_offer')
         .order_by('-created_at')
+    )
+
+    pool_offers = list(
+        pool.pool_offers.select_related('listing', 'listing__integration_account')
+        .order_by('created_at')
     )
 
     return JsonResponse({
         'pool': _pool_to_dict(pool),
+        'pool_offers': [_pool_offer_to_dict(po) for po in pool_offers],
         'items': [_item_to_dict(item) for item in items],
         'active_offers': [_active_offer_to_dict(ao) for ao in active_offers],
     })
@@ -176,7 +185,7 @@ def pool_detail(request, pool_id):
 @login_required
 @require_http_methods(['PATCH'])
 def update_pool(request, pool_id):
-    """Update pool settings (threshold, target, enabled/paused, max_concurrent)."""
+    """Update pool identity and user-controlled intent."""
     try:
         pool = OfferPool.objects.get(id=pool_id)
     except OfferPool.DoesNotExist:
@@ -189,44 +198,273 @@ def update_pool(request, pool_id):
 
     update_fields = ['updated_at']
 
-    if 'threshold' in body:
-        pool.threshold = int(body['threshold'])
-        update_fields.append('threshold')
-
-    if 'target_count' in body:
-        pool.target_count = int(body['target_count'])
-        update_fields.append('target_count')
-
-    if 'max_concurrent' in body:
-        pool.max_concurrent = int(body['max_concurrent'])
-        update_fields.append('max_concurrent')
+    if 'name' in body:
+        name = str(body['name'] or '').strip()
+        if not name:
+            return JsonResponse({'error': 'name cannot be empty'}, status=400)
+        pool.name = name[:255]
+        update_fields.append('name')
 
     if 'status' in body:
         new_status = body['status']
-        if new_status in OfferPoolStatus.values:
-            # Don't allow activating a pool with no pending items
-            if new_status == OfferPoolStatus.ACTIVE:
-                has_pending = pool.items.filter(status=OfferPoolItemStatus.PENDING).exists()
-                if not has_pending:
-                    return JsonResponse({'error': 'Cannot activate pool with no pending items'}, status=400)
+        if new_status in {
+            OfferPoolStatus.ACTIVE,
+            OfferPoolStatus.PAUSED,
+            OfferPoolStatus.ARCHIVED,
+        }:
             pool.status = new_status
             update_fields.append('status')
 
-    pool.save(update_fields=update_fields)
+    if 'variant_id' in body:
+        variant_id = body.get('variant_id')
+        if variant_id:
+            try:
+                pool.variant = GameVariant.objects.get(pk=variant_id, game=pool.game)
+            except GameVariant.DoesNotExist:
+                return JsonResponse({'error': 'Variant not found for this game'}, status=400)
+        else:
+            pool.variant = None
+        update_fields.append('variant')
+
+    if 'credential_spec_id' in body:
+        spec_id = body.get('credential_spec_id')
+        if spec_id:
+            try:
+                pool.credential_spec = CredentialSpec.objects.get(pk=spec_id, game=pool.game)
+            except CredentialSpec.DoesNotExist:
+                return JsonResponse({'error': 'Credential spec not found for this game'}, status=400)
+        else:
+            pool.credential_spec = None
+        update_fields.append('credential_spec')
+
+    try:
+        pool.full_clean()
+        pool.save(update_fields=update_fields)
+    except ValidationError as exc:
+        return JsonResponse({'error': exc.message_dict}, status=400)
     return JsonResponse({'pool': _pool_to_dict(pool)})
 
 
 @login_required
-@require_POST
+@require_http_methods(['POST', 'DELETE'])
 def delete_pool(request, pool_id):
-    """Delete a pool and all its items."""
+    """Archive by default; hard-delete only a never-used empty aggregate."""
     try:
         pool = OfferPool.objects.get(id=pool_id)
     except OfferPool.DoesNotExist:
         return JsonResponse({'error': 'Pool not found'}, status=404)
 
-    pool.delete()
-    return JsonResponse({'ok': True})
+    try:
+        body = json.loads(request.body or b'{}')
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    if body.get('hard'):
+        has_history = (
+            pool.items.exists()
+            or pool.pool_offers.exists()
+        )
+        if has_history:
+            return JsonResponse({
+                'error': 'Pool has operational history and cannot be hard-deleted',
+                'error_code': 'cleanup_required',
+            }, status=409)
+        pool.delete()
+        return JsonResponse({'ok': True, 'deleted': True})
+
+    pool.status = OfferPoolStatus.ARCHIVED
+    pool.save(update_fields=['status', 'updated_at'])
+    return JsonResponse({'ok': True, 'archived': True})
+
+
+# ── Linked Offer Management ─────────────────────────────────────
+
+
+@login_required
+@require_POST
+def add_pool_offer(request, pool_id):
+    """Link one eligible listing to a pool and derive strategy server-side."""
+    try:
+        pool = OfferPool.objects.select_related('game', 'variant').get(pk=pool_id)
+    except OfferPool.DoesNotExist:
+        return JsonResponse({'error': 'Pool not found'}, status=404)
+    try:
+        body = json.loads(request.body)
+        listing_id = int(body['listing_id'])
+        target_count = int(body.get('target_count', 5))
+        threshold = int(body.get('threshold', 2))
+    except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+        return JsonResponse({'error': 'Invalid listing/config payload'}, status=400)
+
+    try:
+        listing = Listing.objects.select_related(
+            'integration_account', 'integration_account__credential', 'game',
+        ).get(pk=listing_id)
+    except Listing.DoesNotExist:
+        return JsonResponse({'error': 'Listing not found'}, status=404)
+
+    if listing.status != 'listed' or not listing.is_instant:
+        return JsonResponse({'error': 'Listing must be an active instant listing'}, status=400)
+    if listing.pool_active_offers.exists():
+        return JsonResponse({
+            'error': 'Listing is already managed as a PlayerAuctions active offer',
+            'error_code': 'listing_already_managed',
+        }, status=409)
+    if not listing.integration_account_id:
+        return JsonResponse({'error': 'Listing has no integration account'}, status=400)
+    try:
+        credential = listing.integration_account.credential
+    except ObjectDoesNotExist:
+        credential = None
+    if not credential or not credential.is_active:
+        return JsonResponse({'error': 'Listing store has no active credential'}, status=400)
+    if listing.game_id != pool.game_id:
+        return JsonResponse({'error': 'Listing game does not match pool game'}, status=400)
+    if pool.variant_id:
+        from apps.posting.services.pool.spec_resolver import variant_value_contains_slug
+        if not variant_value_contains_slug(listing.variant, pool.variant.slug):
+            return JsonResponse({'error': 'Listing variant does not match pool variant'}, status=400)
+
+    try:
+        strategy = PoolOffer.strategy_for_provider(listing.integration_account.provider)
+    except ValidationError as exc:
+        return JsonResponse({'error': str(exc)}, status=400)
+    max_concurrent = None
+    if strategy == PoolOfferStrategy.CLONE:
+        try:
+            max_concurrent = int(body.get('max_concurrent', 10))
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'max_concurrent must be an integer'}, status=400)
+
+    pool_offer = PoolOffer(
+        pool=pool,
+        listing=listing,
+        strategy=strategy,
+        target_count=target_count,
+        threshold=threshold,
+        max_concurrent=max_concurrent,
+    )
+    try:
+        with transaction.atomic():
+            pool_offer.full_clean()
+            pool_offer.save()
+            if strategy == PoolOfferStrategy.CLONE:
+                _adopt_pa_source_listing(pool_offer)
+    except ValidationError as exc:
+        return JsonResponse({'error': exc.message_dict}, status=400)
+    except IntegrityError:
+        return JsonResponse({
+            'error': 'Listing is already linked to a pool',
+            'error_code': 'listing_already_linked',
+        }, status=409)
+
+    return JsonResponse({'pool_offer': _pool_offer_to_dict(pool_offer)}, status=201)
+
+
+def _adopt_pa_source_listing(pool_offer: PoolOffer) -> None:
+    """Count an existing credential-bearing PA source listing as offer #1."""
+    listing = pool_offer.listing
+    links = list(
+        listing.listing_owned_products.select_related('owned_product')[:2]
+    )
+    if not links:
+        return  # template-only source
+    if len(links) > 1:
+        raise ValidationError({'listing': 'PA source listing must contain at most one credential.'})
+
+    owned_product = links[0].owned_product
+    item, created = OfferPoolItem.objects.get_or_create(
+        owned_product=owned_product,
+        defaults={
+            'pool': pool_offer.pool,
+            'pool_offer': pool_offer,
+            'status': OfferPoolItemStatus.PUSHED,
+            'target_offer_id': listing.store_listing_id,
+            'remote_state': 'present',
+            'pushed_at': listing.listed_at or listing.created_at,
+            'order': pool_offer.pool.items.count(),
+        },
+    )
+    if not created:
+        if item.pool_id != pool_offer.pool_id:
+            raise ValidationError({'listing': 'Credential is managed by another pool.'})
+        if item.pool_offer_id and item.pool_offer_id != pool_offer.pk:
+            raise ValidationError({'listing': 'Credential is assigned to another offer.'})
+        item.pool_offer = pool_offer
+        item.status = OfferPoolItemStatus.PUSHED
+        item.target_offer_id = listing.store_listing_id
+        item.remote_state = 'present'
+        item.pushed_at = item.pushed_at or listing.listed_at or listing.created_at
+        item.save(update_fields=[
+            'pool_offer', 'status', 'target_offer_id', 'remote_state',
+            'pushed_at', 'updated_at',
+        ])
+
+    OfferPoolActiveOffer.objects.create(
+        pool=pool_offer.pool,
+        pool_offer=pool_offer,
+        listing=listing,
+        pool_item=item,
+        store_listing_id=listing.store_listing_id,
+    )
+    pool_offer.current_remote_count = 1
+    pool_offer.save(update_fields=['current_remote_count', 'updated_at'])
+
+
+@login_required
+@require_http_methods(['PATCH'])
+def update_pool_offer(request, pool_id, offer_id):
+    try:
+        pool_offer = PoolOffer.objects.select_related(
+            'pool', 'listing', 'listing__integration_account',
+        ).get(pk=offer_id, pool_id=pool_id)
+    except PoolOffer.DoesNotExist:
+        return JsonResponse({'error': 'Pool offer not found'}, status=404)
+    try:
+        body = json.loads(request.body)
+        if 'target_count' in body:
+            pool_offer.target_count = int(body['target_count'])
+        if 'threshold' in body:
+            pool_offer.threshold = int(body['threshold'])
+        if 'max_concurrent' in body:
+            value = body['max_concurrent']
+            pool_offer.max_concurrent = int(value) if value is not None else None
+        if 'status' in body:
+            if body['status'] not in PoolOfferStatus.values:
+                return JsonResponse({'error': 'Invalid PoolOffer status'}, status=400)
+            pool_offer.status = body['status']
+        pool_offer.full_clean()
+        pool_offer.save()
+    except (json.JSONDecodeError, TypeError, ValueError):
+        return JsonResponse({'error': 'Invalid config payload'}, status=400)
+    except ValidationError as exc:
+        return JsonResponse({'error': exc.message_dict}, status=400)
+    return JsonResponse({'pool_offer': _pool_offer_to_dict(pool_offer)})
+
+
+@login_required
+@require_http_methods(['DELETE', 'POST'])
+def unlink_pool_offer(request, pool_id, offer_id):
+    try:
+        pool_offer = PoolOffer.objects.get(pk=offer_id, pool_id=pool_id)
+    except PoolOffer.DoesNotExist:
+        return JsonResponse({'error': 'Pool offer not found'}, status=404)
+    try:
+        body = json.loads(request.body or b'{}')
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    mode = body.get('mode')
+    if mode not in {'leave_remote', 'remove_remote'}:
+        return JsonResponse({'error': 'mode must be leave_remote or remove_remote'}, status=400)
+
+    from apps.posting.services.pool.lifecycle import detach_pool_offer
+    result = detach_pool_offer(pool_offer, mode)
+    return JsonResponse({
+        'ok': result.ok,
+        'detached': result.detached,
+        'released': result.released,
+        'errors': result.errors,
+    }, status=200 if result.ok else 409)
 
 
 # ── Pool Item Management ─────────────────────────────────────────
@@ -250,7 +488,7 @@ def add_pool_items(request, pool_id):
         needs_confirmation: [login, ...]       — re-submit with force=true to add these
     """
     try:
-        pool = OfferPool.objects.select_related('game', 'listing', 'store').get(id=pool_id)
+        pool = OfferPool.objects.select_related('game', 'variant').get(id=pool_id)
     except OfferPool.DoesNotExist:
         return JsonResponse({'error': 'Pool not found'}, status=404)
 
@@ -265,7 +503,10 @@ def add_pool_items(request, pool_id):
     # Mode 1: raw credentials → create OwnedProducts + add to pool
     credentials = body.get('credentials', [])
     if credentials:
-        _add_credentials_to_pool(pool, credentials, pool.game, listing=pool.listing,
+        reference_listing = pool.pool_offers.select_related('listing').first()
+        _add_credentials_to_pool(
+            pool, credentials, pool.game,
+            listing=reference_listing.listing if reference_listing else None,
                                  force=force, result=result)
 
     # Mode 2: existing OwnedProduct IDs
@@ -293,11 +534,6 @@ def add_pool_items(request, pool_id):
             if created:
                 result['added'] += 1
 
-    # Re-activate pool if it was depleted and we added items
-    if result['added'] > 0 and pool.status == OfferPoolStatus.DEPLETED:
-        pool.status = OfferPoolStatus.ACTIVE
-        pool.save(update_fields=['status', 'updated_at'])
-
     pool.refresh_from_db()
     result['total_pending'] = pool.pending_count
     return JsonResponse(result)
@@ -312,11 +548,43 @@ def remove_pool_item(request, pool_id, item_id):
     except OfferPoolItem.DoesNotExist:
         return JsonResponse({'error': 'Item not found'}, status=404)
 
-    if item.status != OfferPoolItemStatus.PENDING:
+    if item.status != OfferPoolItemStatus.PENDING or item.pool_offer_id is not None:
         return JsonResponse({'error': f'Cannot remove item with status {item.status}'}, status=400)
 
     item.delete()
     return JsonResponse({'ok': True})
+
+
+@login_required
+@require_POST
+def retry_pool_item(request, pool_id, item_id):
+    """Retry only failures whose remote absence is known."""
+    try:
+        with transaction.atomic():
+            item = OfferPoolItem.objects.select_for_update().get(
+                pk=item_id,
+                pool_id=pool_id,
+            )
+            if item.status != OfferPoolItemStatus.FAILED:
+                return JsonResponse({'error': 'Only FAILED items can be retried'}, status=400)
+            if item.remote_state != 'absent':
+                return JsonResponse({
+                    'error': 'Remote outcome must be reconciled before retry',
+                    'error_code': 'reconcile_required',
+                }, status=409)
+            item.status = OfferPoolItemStatus.PENDING
+            item.pool_offer = None
+            item.failure_stage = ''
+            item.error_message = ''
+            item.remote_credential_id = ''
+            item.target_offer_id = ''
+            item.save(update_fields=[
+                'status', 'pool_offer', 'failure_stage', 'error_message',
+                'remote_credential_id', 'target_offer_id', 'updated_at',
+            ])
+    except OfferPoolItem.DoesNotExist:
+        return JsonResponse({'error': 'Item not found'}, status=404)
+    return JsonResponse({'ok': True, 'item': _item_to_dict(item)})
 
 
 # ── Pool Actions ─────────────────────────────────────────────────
@@ -331,7 +599,8 @@ def trigger_replenish(request, pool_id):
     try:
         pool = (
             OfferPool.objects
-            .select_related('listing', 'store', 'store__credential', 'game')
+            .select_related('game')
+            .prefetch_related('pool_offers')
             .get(id=pool_id)
         )
     except OfferPool.DoesNotExist:
@@ -340,15 +609,40 @@ def trigger_replenish(request, pool_id):
     if pool.status != OfferPoolStatus.ACTIVE:
         return JsonResponse({'error': f'Pool is {pool.status}, not active'}, status=400)
 
-    try:
-        pushed = _check_and_replenish(pool, force=True)
-    except Exception as exc:
-        logger.exception('pool API: manual replenish failed for pool %d', pool_id)
-        return JsonResponse({'error': str(exc)[:500]}, status=500)
+    results = []
+    pool_offers = list(
+        pool.pool_offers.exclude(status=PoolOfferStatus.DETACHED)
+    )
+    pool_offers.sort(key=lambda offer: (
+        -1 if offer.current_remote_count is None else (
+            offer.current_remote_count / max(offer.target_count, 1)
+        ),
+        offer.pk,
+    ))
+    for pool_offer in pool_offers:
+        try:
+            pushed = _check_and_replenish(pool_offer, force=True)
+            results.append({
+                'pool_offer_id': pool_offer.pk,
+                'pushed': pushed,
+                'status': 'succeeded',
+            })
+        except Exception as exc:
+            logger.exception(
+                'pool API: manual replenish failed for pool_offer %d',
+                pool_offer.pk,
+            )
+            results.append({
+                'pool_offer_id': pool_offer.pk,
+                'pushed': 0,
+                'status': 'failed',
+                'error': str(exc)[:500],
+            })
 
     pool.refresh_from_db()
     return JsonResponse({
-        'pushed': pushed,
+        'pushed': sum(item['pushed'] for item in results),
+        'results': results,
         'pool': _pool_to_dict(pool),
     })
 
@@ -368,7 +662,10 @@ def edit_pool_offers(request, pool_id):
     try:
         pool = (
             OfferPool.objects
-            .select_related('listing', 'store', 'store__credential', 'game')
+            .select_related('game')
+            .prefetch_related(
+                'pool_offers__listing__integration_account__credential',
+            )
             .get(id=pool_id)
         )
     except OfferPool.DoesNotExist:
@@ -527,15 +824,32 @@ def available_listings(request):
     """
     qs = (
         Listing.objects
-        .filter(status='listed')
+        .filter(
+            status='listed',
+            is_instant=True,
+            integration_account__provider__in=['eldorado', 'gameboost', 'playerauctions'],
+            integration_account__is_active=True,
+            integration_account__credential__is_active=True,
+        )
         .select_related('integration_account', 'game')
-        .exclude(offer_pools__isnull=False)
+        .filter(pool_offer__isnull=True, pool_active_offers__isnull=True)
+        .distinct()
         .order_by('-created_at')
     )
 
     game_id = request.GET.get('game_id')
     if game_id:
         qs = qs.filter(game_id=game_id)
+
+    pool_id = request.GET.get('pool_id')
+    if pool_id:
+        try:
+            target_pool = OfferPool.objects.select_related('variant').get(pk=pool_id)
+        except OfferPool.DoesNotExist:
+            return JsonResponse({'error': 'Pool not found'}, status=404)
+        qs = qs.filter(game_id=target_pool.game_id)
+        if target_pool.variant_id:
+            qs = qs.filter(variant__icontains=target_pool.variant.slug)
 
     store_id = request.GET.get('store_id')
     if store_id:
@@ -552,7 +866,13 @@ def available_listings(request):
     listings = qs[offset:offset + limit]
 
     data = []
+    from apps.posting.services.pool.spec_resolver import resolve_game_variant
     for lst in listings:
+        resolved_variant = (
+            resolve_game_variant(lst.game, lst.variant)
+            if lst.game_id and lst.variant
+            else None
+        )
         data.append({
             'id': lst.id,
             'title': lst.title or lst.store_listing_id,
@@ -563,6 +883,7 @@ def available_listings(request):
             'game_id': lst.game_id,
             'price': str(lst.price),
             'variant': lst.variant,
+            'variant_id': resolved_variant.pk if resolved_variant else None,
             'created_at': lst.created_at.isoformat(),
         })
 
@@ -573,34 +894,71 @@ def available_listings(request):
 
 
 def _pool_to_dict(pool: OfferPool) -> dict:
-    pending = pool.items.filter(status=OfferPoolItemStatus.PENDING).count()
-    pushed = pool.items.filter(status=OfferPoolItemStatus.PUSHED).count()
-    failed = pool.items.filter(status=OfferPoolItemStatus.FAILED).count()
-    consumed = pool.items.filter(status=OfferPoolItemStatus.CONSUMED).count()
+    pending = getattr(pool, '_items_pending', None)
+    queued = getattr(pool, '_items_queued', None)
+    pushed = getattr(pool, '_items_pushed', None)
+    failed = getattr(pool, '_items_failed', None)
+    consumed = getattr(pool, '_items_consumed', None)
+    if pending is None:
+        counts = dict(
+            pool.items.values_list('status').annotate(total=Count('id'))
+        )
+        pending = counts.get(OfferPoolItemStatus.PENDING, 0)
+        queued = counts.get(OfferPoolItemStatus.QUEUED, 0)
+        pushed = counts.get(OfferPoolItemStatus.PUSHED, 0)
+        failed = counts.get(OfferPoolItemStatus.FAILED, 0)
+        consumed = counts.get(OfferPoolItemStatus.CONSUMED, 0)
+
+    linked_offers = [
+        offer for offer in pool.pool_offers.all()
+        if offer.status != PoolOfferStatus.DETACHED
+    ]
+    linked_offers.sort(key=lambda offer: (offer.created_at, offer.pk))
+    first_offer = linked_offers[0] if linked_offers else None
+    listing = first_offer.listing if first_offer else None
+    store = first_offer.store if first_offer else None
+    if pool.status == OfferPoolStatus.ARCHIVED:
+        health = 'archived'
+    elif pool.status == OfferPoolStatus.PAUSED:
+        health = 'paused'
+    elif not linked_offers:
+        health = 'no_offers'
+    elif any(offer.status == PoolOfferStatus.ERROR for offer in linked_offers):
+        health = 'attention_required'
+    else:
+        health = 'depleted' if pending == 0 else 'healthy'
 
     return {
         'id': pool.id,
-        'listing_id': pool.listing_id,
-        'listing_title': pool.listing.title or pool.listing.store_listing_id,
-        'offer_id': pool.listing.store_listing_id,
+        'name': pool.name or f'Pool #{pool.pk}',
+        'health': health,
+        'variant_id': pool.variant_id,
+        'variant': pool.variant.slug if pool.variant_id else '',
+        'credential_spec_id': pool.credential_spec_id,
+        'linked_offer_count': len(linked_offers),
+        # Compatibility fields for the existing UI during cutover.
+        'listing_id': listing.pk if listing else None,
+        'listing_title': (listing.title or listing.store_listing_id) if listing else '',
+        'offer_id': listing.store_listing_id if listing else '',
         'game': pool.game.name if pool.game else '',
         'game_id': pool.game_id,
-        'store': pool.store.name if pool.store else '',
-        'store_id': pool.store_id,
-        'marketplace': pool.store.provider if pool.store else '',
-        'strategy': pool.strategy,
+        'store': store.name if store else '',
+        'store_id': store.pk if store else None,
+        'marketplace': store.provider if store else '',
+        'strategy': first_offer.strategy if first_offer else '',
         'status': pool.status,
-        'threshold': pool.threshold,
-        'target_count': pool.target_count,
-        'max_concurrent': pool.max_concurrent,
-        'current_remote_count': pool.current_remote_count,
-        'last_checked_at': pool.last_checked_at.isoformat() if pool.last_checked_at else None,
-        'last_replenished_at': pool.last_replenished_at.isoformat() if pool.last_replenished_at else None,
+        'threshold': first_offer.threshold if first_offer else None,
+        'target_count': first_offer.target_count if first_offer else None,
+        'max_concurrent': first_offer.max_concurrent if first_offer else None,
+        'current_remote_count': first_offer.current_remote_count if first_offer else None,
+        'last_checked_at': first_offer.last_checked_at.isoformat() if first_offer and first_offer.last_checked_at else None,
+        'last_replenished_at': first_offer.last_replenished_at.isoformat() if first_offer and first_offer.last_replenished_at else None,
         'items_pending': pending,
+        'items_queued': queued,
         'items_pushed': pushed,
         'items_failed': failed,
         'items_consumed': consumed,
-        'items_total': pending + pushed + failed + consumed,
+        'items_total': pending + queued + pushed + failed + consumed,
         'created_at': pool.created_at.isoformat(),
     }
 
@@ -612,9 +970,13 @@ def _item_to_dict(item: OfferPoolItem) -> dict:
         'login': item.owned_product.login if item.owned_product else '',
         'email': item.owned_product.email if item.owned_product else '',
         'status': item.status,
+        'pool_offer_id': item.pool_offer_id,
         'order': item.order,
         'pushed_at': item.pushed_at.isoformat() if item.pushed_at else None,
         'target_offer_id': item.target_offer_id,
+        'remote_credential_id': item.remote_credential_id,
+        'remote_state': item.remote_state,
+        'failure_stage': item.failure_stage,
         'error_message': item.error_message,
     }
 
@@ -624,8 +986,33 @@ def _active_offer_to_dict(ao: OfferPoolActiveOffer) -> dict:
         'id': ao.id,
         'store_listing_id': ao.store_listing_id,
         'status': ao.status,
+        'pool_offer_id': ao.pool_offer_id,
         'pool_item_login': ao.pool_item.owned_product.login if ao.pool_item and ao.pool_item.owned_product else '',
         'created_at': ao.created_at.isoformat(),
+    }
+
+
+def _pool_offer_to_dict(pool_offer: PoolOffer) -> dict:
+    listing = pool_offer.listing
+    store = pool_offer.store
+    return {
+        'id': pool_offer.pk,
+        'pool_id': pool_offer.pool_id,
+        'listing_id': listing.pk,
+        'listing_title': listing.title or listing.store_listing_id,
+        'offer_id': listing.store_listing_id,
+        'store_id': store.pk if store else None,
+        'store': store.name if store else '',
+        'marketplace': store.provider if store else '',
+        'strategy': pool_offer.strategy,
+        'status': pool_offer.status,
+        'target_count': pool_offer.target_count,
+        'threshold': pool_offer.threshold,
+        'max_concurrent': pool_offer.max_concurrent,
+        'current_remote_count': pool_offer.current_remote_count,
+        'last_checked_at': pool_offer.last_checked_at.isoformat() if pool_offer.last_checked_at else None,
+        'last_replenished_at': pool_offer.last_replenished_at.isoformat() if pool_offer.last_replenished_at else None,
+        'last_error': pool_offer.last_error,
     }
 
 
@@ -658,57 +1045,31 @@ def _validate_pool_candidate(
         'warnings': [],
     }
 
-    # 1. Already in this pool
-    if OfferPoolItem.objects.filter(pool=pool, owned_product=owned).exists():
-        result['block'] = True
-        result['block_reason'] = 'already_in_pool'
-        result['block_detail'] = f'Already in Pool #{pool.pk}'
-        return result
-
-    # 2. Already linked to this pool's listing (ListingOwnedProduct)
-    if pool.listing_id and ListingOwnedProduct.objects.filter(
-        listing_id=pool.listing_id,
-        owned_product=owned,
-    ).exists():
-        result['block'] = True
-        result['block_reason'] = 'linked_to_listing'
-        result['block_detail'] = 'Already linked to this offer'
-        return result
-
-    # 3. In another pool on the SAME marketplace → block
-    pool_marketplace = pool.store.provider if pool.store else ''
-    other_pool_item = (
-        OfferPoolItem.objects
-        .filter(
-            owned_product=owned,
-            status__in=(OfferPoolItemStatus.PENDING, OfferPoolItemStatus.PUSHED),
-        )
-        .exclude(pool=pool)
-        .select_related('pool__store')
+    # Global exclusivity: one credential has one durable pool item for life.
+    existing_item = (
+        OfferPoolItem.objects.filter(owned_product=owned)
+        .select_related('pool')
         .first()
     )
-    if other_pool_item:
-        other_mp = other_pool_item.pool.store.provider if other_pool_item.pool.store else ''
-        other_pool = other_pool_item.pool
-        if other_mp == pool_marketplace:
-            result['block'] = True
-            result['block_reason'] = 'in_pool_same_marketplace'
-            result['block_detail'] = (
-                f'Already in Pool #{other_pool.pk} '
-                f'({other_pool.store.name if other_pool.store else other_mp})'
-            )
-            return result
-        # Different marketplace → info warning (no confirmation needed)
-        result['warnings'].append({
-            'reason': 'in_pool_other_marketplace',
-            'detail': (
-                f'Also in Pool #{other_pool.pk} '
-                f'({other_pool.store.name if other_pool.store else other_mp})'
-            ),
-            'needs_confirm': False,
-        })
+    if existing_item:
+        result['block'] = True
+        result['block_reason'] = (
+            'already_in_pool'
+            if existing_item.pool_id == pool.pk
+            else 'in_another_pool'
+        )
+        result['block_detail'] = (
+            f'Already managed by {existing_item.pool.name or f"Pool #{existing_item.pool_id}"}'
+        )
+        return result
 
-    # 4. Sold (has active sold order, not cancelled/refunded) → needs confirmation
+    if owned.game_id and owned.game_id != pool.game_id:
+        result['block'] = True
+        result['block_reason'] = 'game_mismatch'
+        result['block_detail'] = 'Credential game does not match pool game'
+        return result
+
+    # Sold (has active sold order, not cancelled/refunded) → needs confirmation
     _SOLD_STATUSES = (OrderStatus.PENDING, OrderStatus.DELIVERED, OrderStatus.COMPLETED)
     sold_order = owned.orders.filter(status__in=_SOLD_STATUSES).first()
     if sold_order:
@@ -832,7 +1193,11 @@ def _add_credentials_to_pool(
         result = {'added': 0, 'skipped': [], 'warnings': [], 'needs_confirmation': []}
 
     max_order = pool.items.count()
-    platform = (listing.variant or '') if listing else ''
+    platform = (
+        (pool.variant.label or pool.variant.slug)
+        if pool.variant_id
+        else ((listing.variant or '') if listing else '')
+    )
 
     # Get reference price from listing's existing owned products
     ref_price = None

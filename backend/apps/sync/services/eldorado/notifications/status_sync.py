@@ -234,17 +234,26 @@ class EldoradoNotificationStatusSync:
         if not store_listing_ids:
             return
 
-        listing_ids = list(
+        listing_map = dict(
             Listing.objects.filter(
                 store_listing_id__in=store_listing_ids,
                 integration_account=account,
-            ).values_list('id', flat=True)
+            ).values_list('store_listing_id', 'id')
         )
 
-        if listing_ids:
+        if listing_map:
             try:
                 from apps.posting.services.pool.checker import notify_sale
-                for lid in listing_ids:
-                    notify_sale(lid)
+                for order in orders:
+                    listing_id = listing_map.get(order.store_listing_id)
+                    if not listing_id:
+                        continue
+                    notify_sale(
+                        listing_id,
+                        event_key=(
+                            f'eldorado:{account.pk}:{order.store_order_id}'
+                        ),
+                        order_id=getattr(order, 'pk', None),
+                    )
             except Exception:
                 logger.exception('eldorado_notif_sync: pool notify_sale failed')

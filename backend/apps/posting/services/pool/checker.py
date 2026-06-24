@@ -6,8 +6,10 @@
 from __future__ import annotations
 
 import logging
+import hashlib
 from typing import Any
 
+from django.db import transaction
 from django.utils import timezone
 
 from apps.integrations.providers.registry import get_or_build_client
@@ -16,7 +18,9 @@ from apps.posting.models import (
     OfferPool,
     OfferPoolActiveOffer,
     OfferPoolActiveOfferStatus,
-    OfferPoolStatus,
+    PoolOffer,
+    PoolOfferStatus,
+    PoolSaleEvent,
     PostingLog,
     PostingLogLevel,
 )
@@ -25,9 +29,11 @@ from .replenisher import (
     _create_eldorado_offer,
     _is_gameboost_legacy_payload,
     _mark_items_pushed,
+    _PoolOfferContext,
     _reconcile_pushed_items,
-    replenish_pool,
+    replenish_pool_offer,
 )
+from .allocation import quarantine_stale_claims
 from apps.posting.services.shared.utils import extract_listing_id
 from core.marketplace.payload_extractor import extract_create_payload
 
@@ -42,113 +48,179 @@ _OFFER_NOT_FOUND = -1
 # ── Reactive trigger (called from order sync) ────────────────────
 
 
-def notify_sale(listing_id: int) -> None:
+def notify_sale(
+    listing_id: int,
+    *,
+    event_key: str | None = None,
+    order_id: int | None = None,
+) -> None:
     """Called when an order is detected for a listing.
 
     Reactive path — triggered by order sync services.
     Optimistic local decrement: no API call needed to decide whether to replenish.
     """
-    # Eldorado / Gameboost pools linked directly to this listing
-    pools = OfferPool.objects.filter(
-        listing_id=listing_id,
-        status=OfferPoolStatus.ACTIVE,
-    ).select_related('listing', 'store', 'store__credential', 'game')
+    base_event_key = event_key or f'legacy-listing:{listing_id}:{timezone.now().timestamp()}'
 
-    for pool in pools:
+    # Append offers and the PA source/template listing.
+    pool_offers = PoolOffer.objects.filter(
+        listing_id=listing_id,
+        strategy='append',
+    ).exclude(status=PoolOfferStatus.DETACHED).select_related(
+        'pool', 'pool__game', 'listing', 'listing__integration_account',
+        'listing__integration_account__credential',
+    )
+
+    for pool_offer in pool_offers:
         try:
-            _on_sale_detected(pool)
+            should_replenish = _record_sale_event(
+                pool_offer,
+                listing_id=listing_id,
+                event_key=f'{base_event_key}:offer:{pool_offer.pk}',
+                order_id=order_id,
+            )
+            if should_replenish:
+                replenish_pool_offer(pool_offer)
         except Exception:
-            logger.exception('pool_checker: reactive check failed for pool %d', pool.pk)
+            logger.exception(
+                'pool_checker: reactive check failed for pool_offer %d',
+                pool_offer.pk,
+            )
 
     # PA clone pools where the listing is an active offer
     active_offers = OfferPoolActiveOffer.objects.filter(
         listing_id=listing_id,
         status=OfferPoolActiveOfferStatus.ACTIVE,
-    ).select_related('pool', 'pool__listing', 'pool__store', 'pool__store__credential', 'pool__game')
+        pool_offer__isnull=False,
+    ).select_related(
+        'pool_offer', 'pool_offer__pool', 'pool_offer__listing',
+        'pool_offer__listing__integration_account',
+    )
 
     for ao in active_offers:
         try:
-            ao.status = OfferPoolActiveOfferStatus.SOLD
-            ao.save(update_fields=['status', 'updated_at'])
-            _on_sale_detected(ao.pool)
+            should_replenish = _record_sale_event(
+                ao.pool_offer,
+                listing_id=listing_id,
+                event_key=f'{base_event_key}:active-offer:{ao.pk}',
+                order_id=order_id,
+                active_offer=ao,
+            )
+            if should_replenish:
+                replenish_pool_offer(ao.pool_offer)
         except Exception:
             logger.exception('pool_checker: reactive PA check failed for active_offer %d', ao.pk)
 
 
-def _on_sale_detected(pool: OfferPool) -> int:
-    """Optimistic decrement + threshold check — no API call needed.
+def _record_sale_event(
+    pool_offer: PoolOffer,
+    *,
+    listing_id: int,
+    event_key: str,
+    order_id: int | None,
+    active_offer: OfferPoolActiveOffer | None = None,
+) -> bool | None:
+    """Persist sale deduplication and the PA SOLD transition atomically."""
+    if len(event_key) > 255:
+        digest = hashlib.sha256(event_key.encode()).hexdigest()
+        event_key = f'{event_key[:180]}:{digest}'
+    with transaction.atomic():
+        event, created = PoolSaleEvent.objects.get_or_create(
+            event_key=event_key,
+            defaults={
+                'listing_id': listing_id,
+                'pool_offer': pool_offer,
+                'order_id': order_id,
+                'outcome': 'processing',
+            },
+        )
+        if not created:
+            return None
+        if active_offer is not None:
+            locked = OfferPoolActiveOffer.objects.select_for_update().get(
+                pk=active_offer.pk,
+            )
+            if locked.status != OfferPoolActiveOfferStatus.ACTIVE:
+                event.outcome = 'already_processed'
+                event.processed_at = timezone.now()
+                event.save(update_fields=['outcome', 'processed_at'])
+                return None
+            locked.status = OfferPoolActiveOfferStatus.SOLD
+            locked.save(update_fields=['status', 'updated_at'])
+        locked_offer = (
+            PoolOffer.objects.select_for_update()
+            .select_related('pool', 'listing', 'listing__integration_account')
+            .get(pk=pool_offer.pk)
+        )
+        now = timezone.now()
+        if locked_offer.marketplace == 'playerauctions':
+            remote_count = locked_offer.active_offers.filter(
+                status=OfferPoolActiveOfferStatus.ACTIVE,
+            ).count()
+        else:
+            remote_count = locked_offer.current_remote_count
+            if remote_count is None:
+                remote_count = 0
+            elif remote_count > 0:
+                remote_count -= 1
 
-    For append pools (Eldorado/Gameboost): decrement current_remote_count by 1.
-    For clone pools (PA): recount active offers from DB.
-    If below threshold → trigger replenish immediately.
-    """
-    marketplace = pool.store.provider
-    now = timezone.now()
-
-    if marketplace == 'playerauctions':
-        # PA: count active offers from DB (already accurate after SOLD update)
-        remote_count = pool.active_offers.filter(
-            status=OfferPoolActiveOfferStatus.ACTIVE,
-        ).count()
-        pool.current_remote_count = remote_count
-        pool.last_checked_at = now
-        pool.save(update_fields=['current_remote_count', 'last_checked_at', 'updated_at'])
-
-        if remote_count < pool.max_concurrent:
-            return replenish_pool(pool)
-        return 0
-
-    # Eldorado / Gameboost: optimistic decrement
-    if pool.current_remote_count is not None and pool.current_remote_count > 0:
-        pool.current_remote_count -= 1
-    elif pool.current_remote_count is None:
-        # First sale but never checked — set to 0, replenish will fetch real count
-        pool.current_remote_count = 0
-
-    pool.last_checked_at = now
-    pool.save(update_fields=['current_remote_count', 'last_checked_at', 'updated_at'])
+        locked_offer.current_remote_count = remote_count
+        locked_offer.last_checked_at = now
+        locked_offer.save(update_fields=[
+            'current_remote_count', 'last_checked_at', 'updated_at',
+        ])
+        event.outcome = 'processed'
+        event.processed_at = now
+        event.pool_offer = locked_offer
+        event.save(update_fields=['outcome', 'processed_at', 'pool_offer'])
+        should_replenish = (
+            remote_count < locked_offer.threshold
+            and locked_offer.can_replenish
+        )
 
     logger.info(
-        'pool_checker: sale detected for pool %d, remote_count decremented to %s (threshold=%d)',
-        pool.pk, pool.current_remote_count, pool.threshold,
+        'pool_checker: sale event %s processed for pool_offer %d, count=%s',
+        event.event_key, locked_offer.pk, remote_count,
     )
-
-    if pool.current_remote_count is not None and pool.current_remote_count < pool.threshold:
-        PostingLog.objects.create(
-            task_name=TASK_NAME,
-            level=PostingLogLevel.INFO,
-            message=f"Pool #{pool.pk}: sale detected, count={pool.current_remote_count} < threshold={pool.threshold}, triggering replenish",
-            detail={'pool_id': pool.pk, 'remote_count': pool.current_remote_count, 'threshold': pool.threshold},
-        )
-        return replenish_pool(pool)
-
-    return 0
+    return should_replenish
 
 
 # ── Proactive sweep (called by scheduler every 30 min) ───────────
 
 
 def sweep_all_pools() -> dict[str, int]:
-    """Check all active pools and replenish where needed.
+    """Monitor all managed offers and replenish only active ones.
 
     Returns summary stats: {checked, replenished, errors}.
     """
-    pools = list(
-        OfferPool.objects.filter(
-            status=OfferPoolStatus.ACTIVE,
-        ).select_related('listing', 'store', 'store__credential', 'game')
+    quarantine_stale_claims()
+    pool_offers = list(
+        PoolOffer.objects.exclude(status=PoolOfferStatus.DETACHED).select_related(
+            'pool', 'pool__game', 'pool__credential_spec',
+            'listing', 'listing__integration_account',
+            'listing__integration_account__credential',
+        )
     )
+    pool_offers.sort(key=lambda offer: (
+        offer.pool_id,
+        -1 if offer.current_remote_count is None else (
+            offer.current_remote_count / max(offer.target_count, 1)
+        ),
+        offer.last_replenished_at.timestamp() if offer.last_replenished_at else 0,
+        offer.pk,
+    ))
 
     stats = {'checked': 0, 'replenished': 0, 'errors': 0}
 
-    for pool in pools:
+    for pool_offer in pool_offers:
         try:
             stats['checked'] += 1
-            pushed = _check_and_replenish(pool)
+            pushed = _check_and_replenish(pool_offer)
             if pushed > 0:
                 stats['replenished'] += 1
         except Exception:
-            logger.exception('pool_checker: sweep failed for pool %d', pool.pk)
+            logger.exception(
+                'pool_checker: sweep failed for pool_offer %d', pool_offer.pk,
+            )
             stats['errors'] += 1
 
     if stats['checked'] > 0:
@@ -165,14 +237,20 @@ def sweep_all_pools() -> dict[str, int]:
 # ── Internal ─────────────────────────────────────────────────────
 
 
-def _check_and_replenish(pool: OfferPool, *, force: bool = False) -> int:
+def _check_and_replenish(pool_offer: PoolOffer, *, force: bool = False) -> int:
     """Fetch remote credential count, reconcile stale items, then replenish if needed.
 
     Args:
         force: If True, replenish even when remote count >= threshold.
                Used for manual "Replenish Now" triggers.
     """
-    marketplace = pool.store.provider
+    pool_offer = PoolOffer.objects.select_related(
+        'pool', 'pool__game', 'pool__credential_spec',
+        'listing', 'listing__integration_account',
+        'listing__integration_account__credential',
+    ).get(pk=pool_offer.pk)
+    pool = _PoolOfferContext(pool_offer)
+    marketplace = pool_offer.marketplace
 
     if marketplace == 'playerauctions':
         remote_count = _get_pa_active_count(pool)
@@ -195,8 +273,17 @@ def _check_and_replenish(pool: OfferPool, *, force: bool = False) -> int:
     if remote_creds is not None:
         _reconcile_pushed_items(pool, remote_creds)
 
-    if remote_count is not None and remote_count < pool.threshold:
-        return replenish_pool(pool)
+    # A failed/unknown monitor result must not be interpreted as zero stock;
+    # doing so could duplicate every credential on the remote offer.
+    if remote_count is None:
+        logger.warning(
+            'pool_checker: remote count unavailable for pool_offer %d; replenish skipped',
+            pool_offer.pk,
+        )
+        return 0
+
+    if remote_count < pool.threshold:
+        return replenish_pool_offer(pool_offer)
 
     # Force mode: replenish regardless of threshold (manual trigger)
     if force:
@@ -204,7 +291,7 @@ def _check_and_replenish(pool: OfferPool, *, force: bool = False) -> int:
             logger.info('pool_checker: force replenish for pool %d (remote count unavailable)', pool.pk)
         else:
             logger.info('pool_checker: force replenish for pool %d (remote=%d, threshold=%d)', pool.pk, remote_count, pool.threshold)
-        return replenish_pool(pool)
+        return replenish_pool_offer(pool_offer)
 
     return 0
 
@@ -319,8 +406,57 @@ def _fetch_gameboost(
     return 0, []
 
 
-def _get_pa_active_count(pool: OfferPool) -> int:
-    """PA: count active clone offers from our DB (no API call needed)."""
+def _get_pa_active_count(pool: OfferPool) -> int | None:
+    """Reconcile local PA ActiveOffers against remote offer existence."""
+    active_offers = list(
+        pool.active_offers.filter(status=OfferPoolActiveOfferStatus.ACTIVE)
+        .select_related('pool_item')
+    )
+    if not active_offers:
+        return 0
+
+    store = pool.store
+    proxy_pool = build_proxy_pool()
+    proxy_group = get_group_name(store)
+    client = get_or_build_client(
+        'playerauctions',
+        store.credential,
+        proxy_pool=proxy_pool,
+        proxy_group=proxy_group,
+    )
+    for active_offer in active_offers:
+        result = client.get_offer_details(
+            active_offer.store_listing_id,
+            proxy_group=proxy_group,
+        )
+        if result.ok:
+            continue
+        status_code = getattr(result.error, 'status_code', None)
+        if status_code != 404:
+            logger.warning(
+                'pool_checker: PA offer %s could not be verified: %s',
+                active_offer.store_listing_id,
+                result.error,
+            )
+            return None
+        with transaction.atomic():
+            locked = OfferPoolActiveOffer.objects.select_for_update().get(
+                pk=active_offer.pk,
+            )
+            if locked.status != OfferPoolActiveOfferStatus.ACTIVE:
+                continue
+            locked.status = OfferPoolActiveOfferStatus.DELISTED
+            locked.save(update_fields=['status', 'updated_at'])
+            if locked.pool_item_id:
+                from apps.posting.models import OfferPoolItemStatus
+                locked.pool_item.status = OfferPoolItemStatus.FAILED
+                locked.pool_item.failure_stage = 'pa_remote_missing'
+                locked.pool_item.remote_state = 'absent'
+                locked.pool_item.error_message = 'PA offer missing during reconciliation'
+                locked.pool_item.save(update_fields=[
+                    'status', 'failure_stage', 'remote_state',
+                    'error_message', 'updated_at',
+                ])
     return pool.active_offers.filter(
         status=OfferPoolActiveOfferStatus.ACTIVE,
     ).count()
@@ -363,7 +499,10 @@ def _recover_missing_offer(pool: OfferPool, marketplace: str) -> int:
     from apps.posting.models import OfferPoolItem, OfferPoolItemStatus
 
     pushed_items = list(
-        pool.items.filter(status=OfferPoolItemStatus.PUSHED)
+        pool.items.filter(
+            status=OfferPoolItemStatus.PUSHED,
+            pool_offer=pool.pool_offer,
+        )
         .select_related('owned_product')
     )
 
@@ -417,6 +556,6 @@ def _recover_missing_offer(pool: OfferPool, marketplace: str) -> int:
 
     if pushed > 0:
         # Trigger normal replenish to fill up to target
-        replenish_pool(pool)
+        replenish_pool_offer(pool.pool_offer)
 
     return pushed

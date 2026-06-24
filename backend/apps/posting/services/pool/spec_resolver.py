@@ -94,7 +94,7 @@ def resolve_spec(pool: OfferPool) -> CredentialSpec | None:
 
     1. pool.credential_spec (if active)
     2. pool.credential_spec inactive → log warning, don't use
-    3. Variant-level spec from pool.listing.variant
+    3. Variant-level spec from pool.variant
     4. Game-level default spec
     5. Code-level preset (returns None; caller uses preset directly)
     """
@@ -111,7 +111,8 @@ def resolve_spec(pool: OfferPool) -> CredentialSpec | None:
 
     # 3-4: Resolve from game + variant
     game = pool.game
-    variant_value = getattr(pool.listing, "variant", None) if pool.listing else None
+    variant = getattr(pool, 'variant', None)
+    variant_value = variant.slug if variant else None
     return resolve_spec_for_game_variant(game, variant_value)
 
 
@@ -160,8 +161,7 @@ def resolve_fields(pool: OfferPool) -> list[dict]:
         return spec.fields
 
     game_slug = pool.game.slug if pool.game else ""
-    variant_value = getattr(pool.listing, "variant", None) if pool.listing else None
-    variant_obj = resolve_game_variant(pool.game, variant_value) if variant_value and pool.game else None
+    variant_obj = getattr(pool, 'variant', None)
     variant_slug = variant_obj.slug if variant_obj else None
 
     preset = get_preset(game_slug, variant_slug)
@@ -186,8 +186,7 @@ def resolve_format_template(
         return spec.format_templates.get(marketplace)
 
     game_slug = pool.game.slug if pool.game else ""
-    variant_value = getattr(pool.listing, "variant", None) if pool.listing else None
-    variant_obj = resolve_game_variant(pool.game, variant_value) if variant_value and pool.game else None
+    variant_obj = getattr(pool, 'variant', None)
     variant_slug = variant_obj.slug if variant_obj else None
 
     preset = get_preset(game_slug, variant_slug)

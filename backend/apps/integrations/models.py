@@ -123,6 +123,7 @@ class ServiceType(models.TextChoices):
     IMAGESHACK    = 'imageshack',    'ImageShack'
     DROPBOX       = 'dropbox',       'Dropbox'
     ROBUXCRATE    = 'robuxcrate',    'RobuxCrate'
+    ROBLOX        = 'roblox',        'Roblox API'
     TELEGRAM      = 'telegram',      'Telegram'
     FIRSTMAIL     = 'firstmail',     'FirstMail'
     GOOGLE_SHEETS = 'google-sheets', 'Google Sheets'

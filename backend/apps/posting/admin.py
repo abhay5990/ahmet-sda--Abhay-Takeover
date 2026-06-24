@@ -12,6 +12,9 @@ from .models import (
     OfferPool,
     OfferPoolActiveOffer,
     OfferPoolItem,
+    PoolDispatchAttempt,
+    PoolOffer,
+    PoolSaleEvent,
     PostingJob,
     PostingJobItem,
     PostingImagePreset,
@@ -198,31 +201,80 @@ class CredentialSpecAdmin(admin.ModelAdmin):
 class OfferPoolItemInline(admin.TabularInline):
     model = OfferPoolItem
     extra = 0
-    fields = ['owned_product', 'status', 'order', 'pushed_at', 'target_offer_id', 'error_message']
+    fields = [
+        'owned_product', 'pool_offer', 'status', 'order', 'pushed_at',
+        'remote_credential_id', 'error_message',
+    ]
     readonly_fields = ['pushed_at']
     raw_id_fields = ['owned_product']
 
 
+class PoolOfferInline(admin.TabularInline):
+    model = PoolOffer
+    extra = 0
+    fields = [
+        'listing', 'strategy', 'status', 'threshold', 'target_count',
+        'max_concurrent', 'current_remote_count', 'last_checked_at',
+    ]
+    readonly_fields = ['current_remote_count', 'last_checked_at']
+    raw_id_fields = ['listing']
+
+
 @admin.register(OfferPool)
 class OfferPoolAdmin(admin.ModelAdmin):
-    list_display = ['id', 'listing', 'game', 'store', 'strategy', 'status', 'credential_spec', 'threshold', 'target_count', 'current_remote_count', 'last_checked_at']
-    list_filter = ['status', 'strategy', 'game']
-    raw_id_fields = ['listing', 'store', 'credential_spec']
-    readonly_fields = ['current_remote_count', 'last_checked_at', 'last_replenished_at', 'created_at', 'updated_at']
-    inlines = [OfferPoolItemInline]
+    list_display = ['id', 'name', 'game', 'variant', 'status', 'credential_spec', 'created_at']
+    list_filter = ['status', 'game', 'variant']
+    raw_id_fields = ['variant', 'credential_spec']
+    readonly_fields = ['created_at', 'updated_at']
+    inlines = [PoolOfferInline, OfferPoolItemInline]
+
+
+@admin.register(PoolOffer)
+class PoolOfferAdmin(admin.ModelAdmin):
+    list_display = [
+        'id', 'pool', 'listing', 'strategy', 'status', 'current_remote_count',
+        'threshold', 'target_count', 'last_checked_at',
+    ]
+    list_filter = ['strategy', 'status']
+    raw_id_fields = ['pool', 'listing']
+    readonly_fields = [
+        'current_remote_count', 'last_checked_at', 'last_replenished_at',
+        'created_at', 'updated_at',
+    ]
 
 
 @admin.register(OfferPoolItem)
 class OfferPoolItemAdmin(admin.ModelAdmin):
-    list_display = ['id', 'pool', 'owned_product', 'status', 'order', 'pushed_at', 'target_offer_id']
+    list_display = [
+        'id', 'pool', 'pool_offer', 'owned_product', 'status', 'order',
+        'pushed_at', 'remote_credential_id',
+    ]
     list_filter = ['status']
-    raw_id_fields = ['pool', 'owned_product']
+    raw_id_fields = ['pool', 'pool_offer', 'owned_product']
     readonly_fields = ['pushed_at', 'created_at', 'updated_at']
 
 
 @admin.register(OfferPoolActiveOffer)
 class OfferPoolActiveOfferAdmin(admin.ModelAdmin):
-    list_display = ['id', 'pool', 'store_listing_id', 'status', 'created_at']
+    list_display = ['id', 'pool_offer', 'store_listing_id', 'status', 'created_at']
     list_filter = ['status']
-    raw_id_fields = ['pool', 'listing', 'pool_item']
+    raw_id_fields = ['pool', 'pool_offer', 'listing', 'pool_item']
     readonly_fields = ['created_at', 'updated_at']
+
+
+@admin.register(PoolDispatchAttempt)
+class PoolDispatchAttemptAdmin(admin.ModelAdmin):
+    list_display = [
+        'id', 'pool_offer', 'item', 'operation', 'status', 'started_at',
+        'finished_at',
+    ]
+    list_filter = ['operation', 'status']
+    raw_id_fields = ['pool_offer', 'item']
+    readonly_fields = [field.name for field in PoolDispatchAttempt._meta.fields]
+
+
+@admin.register(PoolSaleEvent)
+class PoolSaleEventAdmin(admin.ModelAdmin):
+    list_display = ['event_key', 'pool_offer', 'listing', 'order_id', 'outcome', 'processed_at']
+    raw_id_fields = ['pool_offer', 'listing']
+    readonly_fields = [field.name for field in PoolSaleEvent._meta.fields]

@@ -12,8 +12,8 @@ from apps.inventory.enums import DropshipProductStatus
 from apps.inventory.models import DropshipProduct, Game, GamePlatformMapping
 from apps.listings.models import Listing
 from apps.posting.models import (
-    ContentTemplate,
-    DropshippingJobConfig, OfferPool, PostingJob, PostingLog,
+    ContentTemplate, DropshippingJobConfig, OfferPool,
+    OfferPoolActiveOffer, PoolOffer, PostingJob, PostingLog,
 )
 from apps.posting.models import GameVariant
 from payload_pipeline.core.enums import GameSlug
@@ -387,7 +387,8 @@ def restock_pools_page(request):
     """Offer pool list + creation form."""
     pools = (
         OfferPool.objects
-        .select_related('listing', 'game', 'store')
+        .select_related('game', 'variant')
+        .prefetch_related('pool_offers__listing__integration_account')
         .order_by('-created_at')
     )
     games = Game.objects.filter(is_active=True).order_by('name')
@@ -406,18 +407,29 @@ def restock_pools_page(request):
 def restock_pool_detail_page(request, pool_id):
     """Pool detail — items, active offers, logs."""
     pool = get_object_or_404(
-        OfferPool.objects.select_related('listing', 'game', 'store'),
+        OfferPool.objects.select_related('game', 'variant', 'credential_spec'),
         id=pool_id,
     )
-    items = pool.items.select_related('owned_product').order_by('order', 'created_at')
-    active_offers = pool.active_offers.select_related('listing', 'pool_item').order_by('-created_at')
+    pool_offers = list(
+        pool.pool_offers.select_related('listing', 'listing__integration_account')
+        .order_by('created_at')
+    )
+    items = pool.items.select_related(
+        'owned_product', 'pool_offer',
+    ).order_by('order', 'created_at')
+    active_offers = (
+        OfferPoolActiveOffer.objects.filter(pool_offer__pool=pool)
+        .select_related('listing', 'pool_item', 'pool_offer')
+        .order_by('-created_at')
+    )
 
     # Linked OwnedProducts via ListingOwnedProduct M2M
     from apps.listings.models import ListingOwnedProduct
     linked_accounts = (
         ListingOwnedProduct.objects
-        .filter(listing=pool.listing)
+        .filter(listing__pool_offer__pool=pool)
         .select_related('owned_product')
+        .distinct()
         .order_by('created_at')
     )
 
@@ -431,6 +443,8 @@ def restock_pool_detail_page(request, pool_id):
 
     return render(request, 'posting/restock_pool_detail.html', {
         'pool': pool,
+        'pool_offers': pool_offers,
+        'primary_offer': pool_offers[0] if pool_offers else None,
         'items': items,
         'active_offers': active_offers,
         'linked_accounts': linked_accounts,
