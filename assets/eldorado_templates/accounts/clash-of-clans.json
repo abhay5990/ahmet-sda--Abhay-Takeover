@@ -4,7 +4,168 @@
   "game_name": "Clash of Clans",
   "category": "Account",
   "tradeEnvironments": [],
-  "attributes": {},
+  "attributes": {
+    "clash-of-clans-current-rank": {
+      "name": "Current Rank",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "rank-unranked",
+          "name": "Unranked"
+        },
+        {
+          "id": "rank-skeleton",
+          "name": "Skeleton"
+        },
+        {
+          "id": "rank-barbarian",
+          "name": "Barbarian"
+        },
+        {
+          "id": "rank-archer",
+          "name": "Archer"
+        },
+        {
+          "id": "rank-wizard",
+          "name": "Wizard"
+        },
+        {
+          "id": "rank-valkyrie",
+          "name": "Valkyrie"
+        },
+        {
+          "id": "rank-witch",
+          "name": "Witch"
+        },
+        {
+          "id": "rank-golem",
+          "name": "Golem"
+        },
+        {
+          "id": "rank-pekka",
+          "name": "P.E.K.K.A"
+        },
+        {
+          "id": "rank-titan",
+          "name": "Titan"
+        },
+        {
+          "id": "rank-dragon",
+          "name": "Dragon"
+        },
+        {
+          "id": "rank-electro",
+          "name": "Electro"
+        },
+        {
+          "id": "rank-legend",
+          "name": "Legend"
+        },
+        {
+          "id": "rank-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "clash-of-clans-maxed-account": {
+      "name": "Maxed Account",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "maxed-yes",
+          "name": "Yes"
+        },
+        {
+          "id": "maxed-no",
+          "name": "No"
+        },
+        {
+          "id": "maxed-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "clash-of-clans-town-hall": {
+      "name": "Town Hall",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "hall-13",
+          "name": "1-3"
+        },
+        {
+          "id": "hall-46",
+          "name": "4-6"
+        },
+        {
+          "id": "hall-79",
+          "name": "7-9"
+        },
+        {
+          "id": "hall-1012",
+          "name": "10-12"
+        },
+        {
+          "id": "hall-1315",
+          "name": "13-15"
+        },
+        {
+          "id": "hall-1617",
+          "name": "16-17"
+        },
+        {
+          "id": "hall-18",
+          "name": "18"
+        },
+        {
+          "id": "hall-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "coc-gems": {
+      "name": "Gems",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "gems-0499",
+          "name": "0-499"
+        },
+        {
+          "id": "gems-500999",
+          "name": "500-999"
+        },
+        {
+          "id": "gems-1249",
+          "name": "1k-2.49k"
+        },
+        {
+          "id": "gems-25499",
+          "name": "2.5K-4.99K"
+        },
+        {
+          "id": "gems-5999",
+          "name": "5K-9.99K"
+        },
+        {
+          "id": "gems-102499",
+          "name": "10K-24.99K"
+        },
+        {
+          "id": "gems-25plus",
+          "name": "25K+"
+        },
+        {
+          "id": "gems-other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
   "details": {
     "offerTitle": {
       "type": "string",

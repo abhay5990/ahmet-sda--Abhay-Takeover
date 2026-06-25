@@ -10,6 +10,7 @@ from typing import Any
 _R6SKINS_LOCKER_RE = re.compile(
     r'r6skins\.locker/(profile|masked)/([a-f0-9-]+)', re.IGNORECASE
 )
+_NZTCDN_PLACEHOLDER_RE = re.compile(r'nztcdn\.com/files/', re.IGNORECASE)
 
 from .. import skin_lookup
 from ..rank_parsing import (
@@ -282,7 +283,8 @@ class R6LztSourceAdapter:
                 continue
             skin_id = str(item.get("item_id") or "").strip()
             name = str(item.get("name") or "").strip()
-            image_url = str(item.get("image") or "").strip()
+            raw_image = str(item.get("image") or "").strip()
+            image_url = "" if _NZTCDN_PLACEHOLDER_RE.search(raw_image) else raw_image
             rarity = str(item.get("rarity") or "").strip()
 
             if not skin_id and not name:

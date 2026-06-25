@@ -120,6 +120,15 @@ class EldoradoApiClient(Protocol):
     ) -> ApiResult[list[str]]:
         ...
 
+    def deliver_order(
+        self,
+        order_id: str,
+        *,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[None]:
+        ...
+
     def get_offer_state_counts(
         self,
         *,
@@ -337,6 +346,26 @@ class EldoradoFacade:
         return self._exec.execute_with_retry(
             lambda proxy_url: self._client.upload_image(
                 file_path,
+                auth_headers=self._exec.get_auth_headers(),
+                proxy_url=proxy_url,
+            ),
+            proxy_group=proxy_group,
+        )
+
+    # ---------------------------------------------------------------------------
+    # Order delivery
+    # ---------------------------------------------------------------------------
+
+    def deliver_order(
+        self,
+        order_id: str,
+        *,
+        proxy_group: str | None = None,
+    ) -> ApiResult[None]:
+        """Mark an order as delivered on Eldorado."""
+        return self._exec.execute_with_retry(
+            lambda proxy_url: self._client.deliver_order(
+                order_id,
                 auth_headers=self._exec.get_auth_headers(),
                 proxy_url=proxy_url,
             ),

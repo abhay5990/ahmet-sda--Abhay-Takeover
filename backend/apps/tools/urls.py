@@ -14,5 +14,8 @@ urlpatterns = [
     path('api/robuxcrate/create-order/', api.create_order, name='rbx_create_order'),
     path('api/robuxcrate/batch-status/<uuid:batch_id>/', api.batch_status, name='rbx_batch_status'),
     path('api/robuxcrate/refresh-status/<uuid:order_id>/', api.refresh_order_status_view, name='rbx_refresh_status'),
+    path('api/robuxcrate/cancel-order/<uuid:order_id>/', api.cancel_order_view, name='rbx_cancel_order'),
     path('api/robuxcrate/orders/', api.list_orders, name='rbx_list_orders'),
+    path('api/robuxcrate/stores/', api.list_marketplace_stores, name='rbx_list_stores'),
+    path('api/robuxcrate/merchants/', api.list_merchants, name='rbx_list_merchants'),
 ]

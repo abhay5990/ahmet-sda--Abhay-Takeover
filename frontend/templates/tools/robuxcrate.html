@@ -3,18 +3,18 @@
 {% block title %}RobuxCrate Order Tool{% endblock %}
 
 {% block content %}
-<div x-data="robuxcrateTool()" x-init="loadOrders()">
+<div x-data="robuxcrateTool()" x-init="init()">
 
     <!-- Header -->
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-900">RobuxCrate Order Tool</h1>
-        <p class="text-sm text-gray-500 mt-1">Create and track Robux gamepass orders</p>
+        <p class="text-sm text-gray-500 mt-1">Create and track Robux gamepass orders with marketplace delivery</p>
     </div>
 
     <!-- CSRF token (read by JS) -->
     <form id="csrf-form" style="display:none">{% csrf_token %}</form>
 
-    <!-- ═══ New Order Card ═══ -->
+    <!-- New Order Card -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
         <h2 class="text-base font-semibold text-gray-800 mb-5 flex items-center gap-2">
             <svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -22,6 +22,66 @@
         </h2>
 
         <form @submit.prevent="createOrder()">
+            <!-- Row 1: Marketplace + Store + Merchant -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+
+                <!-- Marketplace -->
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Marketplace</label>
+                    <select x-model="form.marketplace"
+                            @change="onMarketplaceChange()"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                            :disabled="submitting">
+                        <option value="">-- Select --</option>
+                        <option value="eldorado">Eldorado</option>
+                        <option value="gameboost">GameBoost</option>
+                    </select>
+                </div>
+
+                <!-- Marketplace Store -->
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Store / Account</label>
+                    <select x-model="form.marketplaceStoreId"
+                            :disabled="!form.marketplace || submitting || stores.length === 0"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors">
+                        <option value="">-- Select store --</option>
+                        <template x-for="s in stores" :key="s.id">
+                            <option :value="s.id" x-text="s.name + ' (' + s.slug + ')'"></option>
+                        </template>
+                    </select>
+                    <p x-show="form.marketplace && stores.length === 0 && !loadingStores" x-cloak
+                       class="text-xs text-red-600 mt-1.5">No active stores found for this marketplace</p>
+                </div>
+
+                <!-- RbxCrate Merchant -->
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">RbxCrate Merchant</label>
+                    <select x-model="form.merchantId"
+                            :disabled="submitting || merchants.length === 0"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors">
+                        <option value="">-- Select merchant --</option>
+                        <template x-for="m in merchants" :key="m.id">
+                            <option :value="m.id" x-text="m.name"></option>
+                        </template>
+                    </select>
+                    <p x-show="merchants.length === 0 && !loadingMerchants" x-cloak
+                       class="text-xs text-red-600 mt-1.5">No active RbxCrate merchants found</p>
+                </div>
+            </div>
+
+            <!-- Row 2: Marketplace Order ID -->
+            <div class="mb-5">
+                <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Marketplace Order ID or Link</label>
+                <input type="text"
+                       x-model="form.marketplaceOrderId"
+                       @input="form.marketplaceOrderId = parseOrderInput(form.marketplaceOrderId)"
+                       placeholder="Paste order link or ID (e.g. https://www.eldorado.gg/order/abc-123 or abc-123)"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                       :disabled="submitting">
+                <p class="text-xs text-gray-400 mt-1">Supports direct ID or full order URL</p>
+            </div>
+
+            <!-- Row 3: Username + Place + Amount + Quantity -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
 
                 <!-- Username -->
@@ -58,32 +118,28 @@
                 <div>
                     <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Place ID</label>
 
-                    <!-- Multi-place warning -->
                     <div x-show="places.length > 1" x-cloak
                          class="bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 mb-1.5">
-                        <p class="text-xs text-amber-700">Multiple places found — select one</p>
+                        <p class="text-xs text-amber-700">Multiple places found</p>
                     </div>
 
-                    <!-- Dropdown (multiple places) -->
                     <select x-show="places.length > 1" x-cloak
                             x-model="form.placeId"
                             @change="form.placeName = places.find(p => String(p.place_id) === String(form.placeId))?.name || ''"
                             class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-amber-50/30 transition-colors"
                             :disabled="submitting">
-                        <option value="">— Select place —</option>
+                        <option value="">-- Select place --</option>
                         <template x-for="p in places" :key="p.place_id">
                             <option :value="p.place_id" x-text="p.name + '  (ID: ' + p.place_id + ')'"></option>
                         </template>
                     </select>
 
-                    <!-- Single place (auto-filled) -->
                     <input x-show="places.length === 1"
                            type="text"
                            :value="form.placeName ? form.placeName + ' (' + form.placeId + ')' : form.placeId"
                            readonly
                            class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-gray-50 text-gray-500">
 
-                    <!-- No places or lookup not done -->
                     <input x-show="places.length === 0"
                            type="text"
                            disabled
@@ -119,14 +175,17 @@
                     <p x-show="form.robuxAmount > 0 && form.quantity > 1" x-cloak
                        class="text-xs text-gray-500 mt-1.5">
                         Total: <span class="font-semibold text-gray-700" x-text="(form.robuxAmount * form.quantity).toLocaleString() + ' R$'"></span>
-                        (<span x-text="form.quantity"></span> × <span x-text="form.robuxAmount.toLocaleString()"></span>)
+                        (<span x-text="form.quantity"></span> &times; <span x-text="form.robuxAmount.toLocaleString()"></span>)
                     </p>
                 </div>
             </div>
 
             <!-- Confirmation summary -->
             <div x-show="canSubmit" x-cloak class="mt-5 bg-emerald-50 border border-emerald-100 rounded-lg px-4 py-3 text-sm text-gray-700">
-                Creating <span class="font-semibold" x-text="form.quantity"></span> order(s) ×
+                <span class="font-semibold capitalize" x-text="form.marketplace"></span>
+                order <span class="font-mono text-xs bg-white px-1.5 py-0.5 rounded" x-text="form.marketplaceOrderId"></span>
+                &mdash;
+                <span class="font-semibold" x-text="form.quantity"></span> order(s) &times;
                 <span class="font-semibold" x-text="form.robuxAmount?.toLocaleString()"></span> R$
                 = <span class="font-bold text-emerald-700" x-text="(form.robuxAmount * form.quantity).toLocaleString() + ' R$'"></span>
                 for <span class="font-semibold" x-text="form.resolvedUsername"></span>
@@ -156,17 +215,25 @@
         </form>
     </div>
 
-    <!-- ═══ Active Batch Progress ═══ -->
+    <!-- Active Batch Progress -->
     <div x-show="activeBatch" x-cloak class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-semibold text-gray-800 flex items-center gap-2">
                 <svg class="w-5 h-5 text-blue-500 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                 Batch Progress
+                <span class="text-xs font-normal text-gray-400" x-text="'(' + (activeBatch?.marketplace || '').toUpperCase() + ' #' + (activeBatch?.marketplace_order_id || '') + ')'"></span>
             </h2>
             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
                   :class="batchStatusClass(activeBatch?.batch_status)"
-                  x-text="activeBatch?.batch_status"></span>
+                  x-text="statusLabel(activeBatch?.batch_status)"></span>
         </div>
+
+        <!-- Delivery error alert -->
+        <div x-show="activeBatch?.delivery_error" x-cloak
+             class="bg-red-50 border border-red-200 rounded-lg px-4 py-2 mb-4 text-sm text-red-700">
+            <span class="font-medium">Delivery failed:</span> <span x-text="activeBatch?.delivery_error"></span>
+        </div>
+
         <div class="grid grid-cols-4 gap-4">
             <div class="bg-gray-50 rounded-lg p-3 text-center">
                 <div class="text-2xl font-bold text-gray-900" x-text="activeBatch?.created_count || 0"></div>
@@ -185,6 +252,7 @@
                 <div class="text-xs text-gray-500 mt-0.5">Pending</div>
             </div>
         </div>
+
         <!-- Individual order chips -->
         <div x-show="activeBatch?.orders?.length" class="mt-4 flex flex-wrap gap-1.5">
             <template x-for="o in (activeBatch?.orders || [])" :key="o.id">
@@ -196,7 +264,7 @@
         </div>
     </div>
 
-    <!-- ═══ Order History ═══ -->
+    <!-- Order History -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <h2 class="text-base font-semibold text-gray-800">Order History</h2>
@@ -205,7 +273,6 @@
                     <option value="">All Statuses</option>
                     <option value="pending">Pending</option>
                     <option value="queued">Queued</option>
-                    <option value="progress">In Progress</option>
                     <option value="completed">Completed</option>
                     <option value="error">Error</option>
                     <option value="unknown">Unknown</option>
@@ -245,10 +312,12 @@
                 <thead class="bg-gray-50/80">
                     <tr>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Date</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Marketplace</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Username</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Place</th>
                         <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wide">Amount</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wide">Status</th>
+                        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wide">Order Status</th>
+                        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wide">Delivery</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">Created By</th>
                         <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wide w-16"></th>
                     </tr>
@@ -257,6 +326,10 @@
                     <template x-for="o in orders" :key="o.id">
                         <tr class="hover:bg-gray-50/50 transition-colors">
                             <td class="px-4 py-3 text-gray-500 whitespace-nowrap text-xs" x-text="fmtDate(o.created_at)"></td>
+                            <td class="px-4 py-3">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700 capitalize" x-text="o.marketplace"></span>
+                                <span class="text-xs text-gray-400 font-mono ml-1" x-text="'#' + (o.marketplace_order_id || '').substring(0, 12)"></span>
+                            </td>
                             <td class="px-4 py-3 font-medium text-gray-900" x-text="o.roblox_username"></td>
                             <td class="px-4 py-3 text-gray-600">
                                 <span class="font-mono text-xs" x-text="o.place_id"></span>
@@ -269,17 +342,36 @@
                                       x-text="statusLabel(o.status)"></span>
                                 <p x-show="o.error_message" class="text-xs text-red-500 mt-0.5 max-w-[180px] truncate" x-text="o.error_message" :title="o.error_message"></p>
                             </td>
+                            <td class="px-4 py-3 text-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                      :class="batchStatusClass(o.batch_status)"
+                                      x-text="statusLabel(o.batch_status)"></span>
+                                <p x-show="o.delivery_error" class="text-xs text-red-500 mt-0.5 max-w-[180px] truncate" x-text="o.delivery_error" :title="o.delivery_error"></p>
+                            </td>
                             <td class="px-4 py-3 text-gray-500 text-xs" x-text="o.created_by || '—'"></td>
                             <td class="px-4 py-3 text-center">
-                                <button @click="refreshStatus(o.id)"
-                                        :disabled="o._refreshing"
-                                        class="p-1 text-gray-400 hover:text-emerald-600 rounded-md hover:bg-emerald-50 disabled:opacity-40 transition-colors"
-                                        title="Refresh status">
-                                    <svg class="w-4 h-4" :class="o._refreshing && 'animate-spin'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                    </svg>
-                                </button>
+                                <div class="flex items-center justify-center gap-1">
+                                    <button @click="refreshStatus(o.id)"
+                                            :disabled="o._refreshing || o._cancelling"
+                                            class="p-1 text-gray-400 hover:text-emerald-600 rounded-md hover:bg-emerald-50 disabled:opacity-40 transition-colors"
+                                            title="Refresh status">
+                                        <svg class="w-4 h-4" :class="o._refreshing && 'animate-spin'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                        </svg>
+                                    </button>
+                                    <button x-show="!['completed','error','cancelled'].includes(o.status)"
+                                            x-cloak
+                                            @click="cancelOrder(o.id)"
+                                            :disabled="o._cancelling || o._refreshing"
+                                            class="p-1 text-gray-400 hover:text-red-600 rounded-md hover:bg-red-50 disabled:opacity-40 transition-colors"
+                                            title="Cancel order">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+                                </div>
                                 <span x-show="o._refreshError" x-cloak class="text-xs text-red-500 block" x-text="o._refreshError"></span>
+                                <span x-show="o._cancelError" x-cloak class="text-xs text-red-500 block" x-text="o._cancelError"></span>
                             </td>
                         </tr>
                     </template>
@@ -290,7 +382,7 @@
         <!-- Pagination -->
         <div x-show="totalPages > 1" x-cloak class="flex items-center justify-between px-6 py-3 border-t border-gray-100">
             <p class="text-xs text-gray-500">
-                <span x-text="totalCount"></span> orders — Page <span x-text="currentPage"></span> of <span x-text="totalPages"></span>
+                <span x-text="totalCount"></span> orders &mdash; Page <span x-text="currentPage"></span> of <span x-text="totalPages"></span>
             </p>
             <div class="flex gap-1">
                 <button @click="goToPage(currentPage - 1)" :disabled="currentPage <= 1"
@@ -310,6 +402,9 @@ function robuxcrateTool() {
     const REFRESH_URL_TEMPLATE = '{% url "tools:rbx_refresh_status" "00000000-0000-0000-0000-000000000000" %}'.replace(
         '00000000-0000-0000-0000-000000000000', '{ORDER_ID}'
     );
+    const CANCEL_URL_TEMPLATE = '{% url "tools:rbx_cancel_order" "00000000-0000-0000-0000-000000000000" %}'.replace(
+        '00000000-0000-0000-0000-000000000000', '{ORDER_ID}'
+    );
     const BATCH_URL_TEMPLATE = '{% url "tools:rbx_batch_status" "00000000-0000-0000-0000-000000000000" %}'.replace(
         '00000000-0000-0000-0000-000000000000', '{BATCH_ID}'
     );
@@ -317,6 +412,10 @@ function robuxcrateTool() {
     return {
         // Form
         form: {
+            marketplace: '',
+            marketplaceStoreId: '',
+            merchantId: '',
+            marketplaceOrderId: '',
             username: '',
             userId: null,
             resolvedUsername: '',
@@ -325,6 +424,10 @@ function robuxcrateTool() {
             robuxAmount: null,
             quantity: 1,
         },
+        stores: [],
+        merchants: [],
+        loadingStores: false,
+        loadingMerchants: false,
         places: [],
         lookupToken: '',
         lookingUp: false,
@@ -348,7 +451,11 @@ function robuxcrateTool() {
         filters: { status: '', username: '' },
 
         get canSubmit() {
-            return this.lookupDone
+            return this.form.marketplace
+                && this.form.marketplaceStoreId
+                && this.form.merchantId
+                && this.form.marketplaceOrderId.trim()
+                && this.lookupDone
                 && !this.lookupError
                 && this.lookupToken
                 && this.form.placeId
@@ -356,6 +463,66 @@ function robuxcrateTool() {
                 && this.form.quantity >= 1
                 && this.form.quantity <= 20
                 && !this.submitting;
+        },
+
+        // ── Init ──
+
+        async init() {
+            await Promise.all([this.loadMerchants(), this.loadOrders()]);
+        },
+
+        // ── Marketplace change: reload stores ──
+
+        async onMarketplaceChange() {
+            this.form.marketplaceStoreId = '';
+            this.stores = [];
+            if (!this.form.marketplace) return;
+            await this.loadStores();
+        },
+
+        async loadStores() {
+            this.loadingStores = true;
+            try {
+                const params = new URLSearchParams({ marketplace: this.form.marketplace });
+                const resp = await this._fetch(
+                    '{% url "tools:rbx_list_stores" %}?' + params.toString(),
+                    { method: 'GET' }, true
+                );
+                if (!resp) return;
+                const data = await resp.json();
+                if (data.ok) {
+                    this.stores = data.stores;
+                    if (this.stores.length === 1) {
+                        this.form.marketplaceStoreId = this.stores[0].id;
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to load stores', err);
+            } finally {
+                this.loadingStores = false;
+            }
+        },
+
+        async loadMerchants() {
+            this.loadingMerchants = true;
+            try {
+                const resp = await this._fetch(
+                    '{% url "tools:rbx_list_merchants" %}',
+                    { method: 'GET' }, true
+                );
+                if (!resp) return;
+                const data = await resp.json();
+                if (data.ok) {
+                    this.merchants = data.merchants;
+                    if (this.merchants.length === 1) {
+                        this.form.merchantId = this.merchants[0].id;
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to load merchants', err);
+            } finally {
+                this.loadingMerchants = false;
+            }
         },
 
         // ── Username change: clear lookup state ──
@@ -377,6 +544,7 @@ function robuxcrateTool() {
         },
 
         resetForm() {
+            this.form.marketplaceOrderId = '';
             this.form.username = '';
             this.form.robuxAmount = null;
             this.form.quantity = 1;
@@ -442,6 +610,10 @@ function robuxcrateTool() {
                     body: JSON.stringify({
                         lookup_token: this.lookupToken,
                         client_request_id: clientRequestId,
+                        marketplace: this.form.marketplace,
+                        marketplace_order_id: this.form.marketplaceOrderId.trim(),
+                        marketplace_store_id: this.form.marketplaceStoreId,
+                        merchant_id: this.form.merchantId,
                         place_id: this.form.placeId,
                         place_name: this.form.placeName,
                         robux_amount: this.form.robuxAmount,
@@ -486,7 +658,7 @@ function robuxcrateTool() {
                     if (data.ok) {
                         this.activeBatch = data;
                         this.loadOrders();
-                        const done = ['completed', 'partial', 'failed'];
+                        const done = ['completed', 'error', 'cancelled'];
                         if (done.includes(data.batch_status)) {
                             this._stopBatchPolling();
                         }
@@ -519,7 +691,7 @@ function robuxcrateTool() {
                 if (!resp) return;
                 const data = await resp.json();
                 if (data.ok) {
-                    this.orders = data.orders.map(o => ({ ...o, _refreshing: false, _refreshError: '' }));
+                    this.orders = data.orders.map(o => ({ ...o, _refreshing: false, _refreshError: '', _cancelling: false, _cancelError: '' }));
                     this.currentPage = data.page;
                     this.totalPages = data.total_pages;
                     this.totalCount = data.total_count;
@@ -565,13 +737,53 @@ function robuxcrateTool() {
             }
         },
 
+        // ── Cancel single order ──
+
+        async cancelOrder(orderId) {
+            const order = this.orders.find(o => o.id === orderId);
+            if (!order) return;
+            if (!confirm('Cancel this order?')) return;
+
+            order._cancelling = true;
+            order._cancelError = '';
+
+            try {
+                const url = CANCEL_URL_TEMPLATE.replace('{ORDER_ID}', orderId);
+                const resp = await this._fetch(url, { method: 'POST' });
+                if (!resp) { order._cancelling = false; return; }
+                const data = await resp.json();
+                if (data.ok) {
+                    order.status = data.status;
+                    order.error_message = '';
+                } else {
+                    order._cancelError = data.error || 'Cancel failed';
+                }
+            } catch (err) {
+                order._cancelError = 'Connection error';
+            } finally {
+                order._cancelling = false;
+            }
+        },
+
         // ── Helpers ──
+
+        parseOrderInput(value) {
+            if (!value) return '';
+            const trimmed = value.trim();
+            // Eldorado: https://www.eldorado.gg/order/{uuid}
+            const eldoradoMatch = trimmed.match(/eldorado\.gg\/order\/([a-f0-9-]+)/i);
+            if (eldoradoMatch) return eldoradoMatch[1];
+            // GameBoost or other URL with /order/ or /orders/ pattern
+            const genericMatch = trimmed.match(/\/orders?\/([a-f0-9-]+)/i);
+            if (genericMatch) return genericMatch[1];
+            // Already a plain ID
+            return trimmed;
+        },
 
         statusClass(status) {
             const map = {
                 pending: 'bg-gray-100 text-gray-700',
                 queued: 'bg-blue-100 text-blue-700',
-                progress: 'bg-yellow-100 text-yellow-800',
                 completed: 'bg-emerald-100 text-emerald-700',
                 error: 'bg-red-100 text-red-700',
                 cancelled: 'bg-gray-100 text-gray-500',
@@ -583,10 +795,11 @@ function robuxcrateTool() {
         batchStatusClass(status) {
             const map = {
                 pending: 'bg-gray-100 text-gray-700',
+                queued: 'bg-blue-100 text-blue-700',
                 processing: 'bg-blue-100 text-blue-700',
                 completed: 'bg-emerald-100 text-emerald-700',
-                partial: 'bg-amber-100 text-amber-700',
-                failed: 'bg-red-100 text-red-700',
+                error: 'bg-red-100 text-red-700',
+                cancelled: 'bg-gray-100 text-gray-500',
             };
             return map[status] || 'bg-gray-100 text-gray-700';
         },
@@ -595,7 +808,7 @@ function robuxcrateTool() {
             const map = {
                 pending: 'Pending',
                 queued: 'Queued',
-                progress: 'In Progress',
+                processing: 'Processing',
                 completed: 'Completed',
                 error: 'Error',
                 cancelled: 'Cancelled',

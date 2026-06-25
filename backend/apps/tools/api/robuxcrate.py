@@ -1,4 +1,4 @@
-"""RobuxCrate API endpoints — lookup, create-order, refresh, list, batch-status."""
+"""RobuxCrate API endpoints — lookup, create-order, refresh, list, batch-status, config."""
 from __future__ import annotations
 
 import logging
@@ -9,7 +9,11 @@ from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 
-from apps.integrations.models import ServiceCredential
+from apps.integrations.models import (
+    IntegrationAccount,
+    IntegrationCredential,
+    ServiceCredential,
+)
 from apps.integrations.services.roblox import RobloxService
 from apps.tools.helpers import (
     api_role_required,
@@ -18,7 +22,7 @@ from apps.tools.helpers import (
     verify_lookup_token,
 )
 from apps.tools.models import RobuxCrateBatch, RobuxCrateOrder
-from apps.tools.services.robuxcrate import refresh_order_status
+from apps.tools.services.robuxcrate import cancel_order, refresh_order_status
 
 logger = logging.getLogger(__name__)
 
@@ -120,6 +124,49 @@ def create_order(request):
     except (ValueError, TypeError, AttributeError):
         return JsonResponse({'error': 'client_request_id must be a valid UUID'}, status=400)
 
+    # -- Validate marketplace --
+    marketplace = (body.get('marketplace') or '').strip()
+    if marketplace not in RobuxCrateBatch.Marketplace.values:
+        return JsonResponse(
+            {'error': f'marketplace must be one of: {", ".join(RobuxCrateBatch.Marketplace.values)}'},
+            status=400,
+        )
+
+    # -- Validate marketplace_order_id --
+    marketplace_order_id = (body.get('marketplace_order_id') or '').strip()
+    if not marketplace_order_id:
+        return JsonResponse({'error': 'marketplace_order_id is required'}, status=400)
+
+    # -- Validate marketplace_store --
+    try:
+        store_id = int(body.get('marketplace_store_id', 0))
+    except (ValueError, TypeError):
+        return JsonResponse({'error': 'marketplace_store_id must be an integer'}, status=400)
+    if store_id <= 0:
+        return JsonResponse({'error': 'marketplace_store_id is required'}, status=400)
+
+    try:
+        store_cred = IntegrationCredential.objects.select_related('account').get(
+            id=store_id, is_active=True,
+        )
+    except IntegrationCredential.DoesNotExist:
+        return JsonResponse({'error': 'Marketplace store not found or inactive'}, status=400)
+
+    # -- Validate merchant --
+    try:
+        merchant_id = int(body.get('merchant_id', 0))
+    except (ValueError, TypeError):
+        return JsonResponse({'error': 'merchant_id must be an integer'}, status=400)
+    if merchant_id <= 0:
+        return JsonResponse({'error': 'merchant_id is required'}, status=400)
+
+    try:
+        merchant = ServiceCredential.objects.get(
+            id=merchant_id, service_type='robuxcrate', is_active=True,
+        )
+    except ServiceCredential.DoesNotExist:
+        return JsonResponse({'error': 'RbxCrate merchant not found or inactive'}, status=400)
+
     # -- Validate place_id against token --
     try:
         place_id = int(body.get('place_id', 0))
@@ -180,6 +227,10 @@ def create_order(request):
             batch = RobuxCrateBatch.objects.create(
                 client_request_id=client_request_id,
                 created_by=request.user,
+                marketplace=marketplace,
+                marketplace_order_id=marketplace_order_id,
+                marketplace_store=store_cred,
+                merchant=merchant,
                 roblox_username=roblox_username,
                 roblox_user_id=roblox_user_id,
                 place_id=place_id,
@@ -187,7 +238,7 @@ def create_order(request):
                 robux_amount=robux_amount,
                 quantity=quantity,
             )
-            orders = RobuxCrateOrder.objects.bulk_create([
+            RobuxCrateOrder.objects.bulk_create([
                 RobuxCrateOrder(
                     batch=batch,
                     created_by=request.user,
@@ -195,7 +246,6 @@ def create_order(request):
                 for _ in range(quantity)
             ])
     except IntegrityError:
-        # Race condition: another request inserted with same client_request_id
         existing = RobuxCrateBatch.objects.get(client_request_id=client_request_id)
         return _batch_response(existing)
 
@@ -211,17 +261,20 @@ def _batch_response(batch: RobuxCrateBatch, status_code: int = 200) -> JsonRespo
         'ok': True,
         'batch_id': str(batch.id),
         'client_request_id': str(batch.client_request_id),
+        'marketplace': batch.marketplace,
+        'marketplace_order_id': batch.marketplace_order_id,
         'roblox_username': batch.roblox_username,
         'place_id': batch.place_id,
         'robux_amount': batch.robux_amount,
         'quantity': batch.quantity,
         'batch_status': batch.status,
+        'delivery_error': batch.delivery_error,
         'created_count': len(statuses),
         'successful_count': sum(1 for s in statuses if s == RobuxCrateOrder.Status.COMPLETED),
         'failed_count': sum(1 for s in statuses if s in {RobuxCrateOrder.Status.ERROR, RobuxCrateOrder.Status.CANCELLED}),
         'pending_count': sum(1 for s in statuses if s in {
             RobuxCrateOrder.Status.PENDING, RobuxCrateOrder.Status.QUEUED,
-            RobuxCrateOrder.Status.PROGRESS, RobuxCrateOrder.Status.UNKNOWN,
+            RobuxCrateOrder.Status.UNKNOWN,
         }),
         'orders': [
             {
@@ -245,7 +298,6 @@ def batch_status(request, batch_id):
     except RobuxCrateBatch.DoesNotExist:
         return JsonResponse({'error': 'Batch not found'}, status=404)
 
-    # Ownership check: users can only see their own batches
     if not request.user.is_superuser and request.user.role != 'admin':
         if batch.created_by_id != request.user.id:
             return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -264,7 +316,6 @@ def refresh_order_status_view(request, order_id):
     except RobuxCrateOrder.DoesNotExist:
         return JsonResponse({'error': 'Order not found'}, status=404)
 
-    # Ownership check
     if not request.user.is_superuser and request.user.role != 'admin':
         if order.created_by_id != request.user.id:
             return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -280,30 +331,47 @@ def refresh_order_status_view(request, order_id):
     })
 
 
+# ── 4b) Cancel single order ────────────────────────────────────────
+
+@api_role_required('admin', 'user')
+@require_POST
+def cancel_order_view(request, order_id):
+    """Cancel a single order via RbxCrate API."""
+    try:
+        order = RobuxCrateOrder.objects.select_related('batch__merchant').get(id=order_id)
+    except RobuxCrateOrder.DoesNotExist:
+        return JsonResponse({'error': 'Order not found'}, status=404)
+
+    if not request.user.is_superuser and request.user.role != 'admin':
+        if order.created_by_id != request.user.id:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
+
+    ok, error_msg = cancel_order(order)
+    if not ok:
+        return JsonResponse({'ok': False, 'error': error_msg}, status=400)
+
+    return JsonResponse({
+        'ok': True,
+        'order_id': str(order.id),
+        'status': order.status,
+    })
+
+
 # ── 5) List orders (paginated, filtered, scoped) ─────────────────
 
 @api_role_required('admin', 'user')
 @require_GET
 def list_orders(request):
-    """Paginated order list with optional filters.
-
-    Query params:
-        page     — page number (default 1)
-        per_page — items per page (default 50, max 100)
-        status   — filter by status
-        username — filter by roblox_username (icontains)
-    """
+    """Paginated order list with optional filters."""
     qs = (
         RobuxCrateOrder.objects
         .select_related('batch', 'created_by')
         .order_by('-created_at')
     )
 
-    # Scope: users see only their own orders
     if not request.user.is_superuser and request.user.role != 'admin':
         qs = qs.filter(created_by=request.user)
 
-    # Filters
     status_filter = request.GET.get('status', '').strip()
     if status_filter and status_filter in RobuxCrateOrder.Status.values:
         qs = qs.filter(status=status_filter)
@@ -312,7 +380,6 @@ def list_orders(request):
     if username_filter:
         qs = qs.filter(batch__roblox_username__icontains=username_filter)
 
-    # Pagination
     try:
         per_page = min(100, max(1, int(request.GET.get('per_page', 50))))
     except (ValueError, TypeError):
@@ -331,6 +398,8 @@ def list_orders(request):
         orders.append({
             'id': str(o.id),
             'batch_id': str(o.batch_id),
+            'marketplace': o.batch.marketplace,
+            'marketplace_order_id': o.batch.marketplace_order_id,
             'roblox_username': o.batch.roblox_username,
             'roblox_user_id': o.batch.roblox_user_id,
             'place_id': o.batch.place_id,
@@ -338,6 +407,8 @@ def list_orders(request):
             'robux_amount': o.batch.robux_amount,
             'status': o.status,
             'error_message': o.error_message,
+            'batch_status': o.batch.status,
+            'delivery_error': o.batch.delivery_error,
             'created_by': o.created_by.username if o.created_by else None,
             'created_at': o.created_at.isoformat(),
             'updated_at': o.updated_at.isoformat(),
@@ -350,3 +421,49 @@ def list_orders(request):
         'total_pages': paginator.num_pages,
         'total_count': paginator.count,
     })
+
+
+# ── 6) Config endpoints (marketplace stores + merchants) ─────────
+
+@api_role_required('admin', 'user')
+@require_GET
+def list_marketplace_stores(request):
+    """Return active marketplace stores for dropdown selection."""
+    marketplace = request.GET.get('marketplace', '').strip()
+
+    qs = IntegrationCredential.objects.filter(
+        is_active=True,
+    ).select_related('account')
+
+    if marketplace:
+        qs = qs.filter(account__provider=marketplace)
+
+    stores = [
+        {
+            'id': cred.id,
+            'name': cred.account.name,
+            'provider': cred.account.provider,
+            'slug': cred.account.slug,
+        }
+        for cred in qs
+    ]
+
+    return JsonResponse({'ok': True, 'stores': stores})
+
+
+@api_role_required('admin', 'user')
+@require_GET
+def list_merchants(request):
+    """Return active RbxCrate merchants for dropdown selection."""
+    merchants = [
+        {
+            'id': cred.id,
+            'name': cred.name,
+            'slug': cred.slug,
+        }
+        for cred in ServiceCredential.objects.filter(
+            service_type='robuxcrate', is_active=True,
+        )
+    ]
+
+    return JsonResponse({'ok': True, 'merchants': merchants})

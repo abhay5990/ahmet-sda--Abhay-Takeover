@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from ..models import CS2ResolvedAccount
+from .....core.contracts import BuildContext, ListingDraft
 from .....marketplaces.gameboost import BaseGameBoostBuilder
 
 
@@ -18,6 +19,20 @@ class CS2GameBoostBuilder(BaseGameBoostBuilder):
     @property
     def _platform_name(self) -> str:
         return "Steam Account"
+
+    def build_payload(
+        self,
+        subject: Any,
+        listing: ListingDraft,
+        ctx: BuildContext,
+    ) -> dict[str, Any]:
+        payload = super().build_payload(subject, listing, ctx)
+        if not payload.get("image_urls"):
+            raise ValueError(
+                "CS2 requires at least one image. "
+                "Grid generation failed or no override image was provided."
+            )
+        return payload
 
     def _build_account_data(self, account: CS2ResolvedAccount, ctx=None) -> dict[str, Any]:
         return {

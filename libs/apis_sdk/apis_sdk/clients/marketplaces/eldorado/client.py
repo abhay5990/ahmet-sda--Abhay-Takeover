@@ -177,6 +177,23 @@ class EldoradoClient:
             response_type=EldoradoOrder,
         )
 
+    def deliver_order(
+        self,
+        order_id: str,
+        *,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[None]:
+        """Mark an order as delivered. PUT with empty JSON body."""
+        return self._request(
+            HttpMethod.PUT,
+            EldoradoEndpoints.deliver_order(order_id),
+            json_body={},
+            auth_headers=auth_headers,
+            proxy_url=proxy_url,
+            response_type=None,
+        )
+
     def get_offer_state_counts(
         self,
         *,

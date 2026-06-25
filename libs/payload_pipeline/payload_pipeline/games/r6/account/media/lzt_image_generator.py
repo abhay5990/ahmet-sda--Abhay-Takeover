@@ -90,34 +90,35 @@ class R6LztImageGenerator(R6ImageRenderer):
             if not skin_id:
                 continue
 
-            # Prefer the skin's own image_url from rich data (r6Skins)
+            cache_key = f"skin:{skin_id}"
+            if cache_key in seen:
+                continue
+
+            # Build multi-source URL list (best first)
+            urls: list[str] = []
+
+            # 1. Rich data image (already placeholder-filtered in parser)
             if image_url:
-                cache_key = f"skin:{skin_id}"
-                if cache_key in seen:
-                    continue
-                seen.add(cache_key)
-                entries.append(
-                    R6ImageRenderEntry(
-                        cache_key=cache_key,
-                        title=skin_name or skin_id,
-                        image_urls=[image_url],
-                    )
-                )
+                urls.append(image_url)
+
+            # 2. Catalog fallback by ID then by name
+            catalog_entry = catalog_by_id.get(skin_id)
+            if catalog_entry is None:
+                catalog_entry = catalog_by_name.get(self._normalize_name(skin_name or skin_id))
+            if catalog_entry is not None:
+                urls.extend(catalog_entry.image_urls)
+
+            deduped_urls = list(dict.fromkeys(url for url in urls if url))
+            if not deduped_urls:
                 continue
 
-            # Fallback to catalog lookup (legacy ID-only format)
-            entry = catalog_by_id.get(skin_id)
-            if entry is None:
-                entry = catalog_by_name.get(self._normalize_name(skin_name or skin_id))
-            if entry is None or entry.cache_key in seen:
-                continue
-
-            seen.add(entry.cache_key)
+            seen.add(cache_key)
+            title = skin_name or (catalog_entry.title if catalog_entry else skin_id)
             entries.append(
                 R6ImageRenderEntry(
-                    cache_key=entry.cache_key,
-                    title=entry.title,
-                    image_urls=list(entry.image_urls),
+                    cache_key=cache_key,
+                    title=title,
+                    image_urls=deduped_urls,
                 )
             )
 

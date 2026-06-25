@@ -22,5 +22,59 @@ class CocEldoradoBuilder(BaseEldoradoBuilder):
             ctx=ctx,
             price=account.price,
             credentials=account.credentials,
+            attributes={
+                "clash-of-clans-current-rank": self._resolve_rank(account.trophies),
+                "clash-of-clans-maxed-account": "maxed-yes" if account.town_hall_level >= 18 else "maxed-no",
+                "clash-of-clans-town-hall": self._resolve_town_hall(account.town_hall_level),
+                "coc-gems": "gems-other",
+            },
             ref_key=account.ref_key,
         )
+
+    # ── attribute resolvers ──────────────────────────────────────
+
+    @staticmethod
+    def _resolve_rank(trophies: int) -> str:
+        if trophies <= 0:
+            return "rank-unranked"
+        if trophies < 500:
+            return "rank-skeleton"
+        if trophies < 1000:
+            return "rank-barbarian"
+        if trophies < 1500:
+            return "rank-archer"
+        if trophies < 2000:
+            return "rank-wizard"
+        if trophies < 2500:
+            return "rank-valkyrie"
+        if trophies < 3000:
+            return "rank-witch"
+        if trophies < 3500:
+            return "rank-golem"
+        if trophies < 4000:
+            return "rank-pekka"
+        if trophies < 4500:
+            return "rank-titan"
+        if trophies < 5000:
+            return "rank-dragon"
+        if trophies < 5500:
+            return "rank-electro"
+        return "rank-legend"
+
+    @staticmethod
+    def _resolve_town_hall(level: int) -> str:
+        if level <= 3:
+            return "hall-13"
+        if level <= 6:
+            return "hall-46"
+        if level <= 9:
+            return "hall-79"
+        if level <= 12:
+            return "hall-1012"
+        if level <= 15:
+            return "hall-1315"
+        if level <= 17:
+            return "hall-1617"
+        if level >= 18:
+            return "hall-18"
+        return "hall-other"

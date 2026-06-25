@@ -11,10 +11,15 @@ class RobuxCrateBatch(models.Model):
 
     class Status(models.TextChoices):
         PENDING = 'pending', 'Pending'
+        QUEUED = 'queued', 'Queued'
         PROCESSING = 'processing', 'Processing'
         COMPLETED = 'completed', 'Completed'
-        PARTIAL = 'partial', 'Partial Success'
-        FAILED = 'failed', 'Failed'
+        ERROR = 'error', 'Error'
+        CANCELLED = 'cancelled', 'Cancelled'
+
+    class Marketplace(models.TextChoices):
+        ELDORADO = 'eldorado', 'Eldorado'
+        GAMEBOOST = 'gameboost', 'GameBoost'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     client_request_id = models.UUIDField(unique=True, help_text='Idempotency key from client')
@@ -24,6 +29,28 @@ class RobuxCrateBatch(models.Model):
         null=True,
         related_name='robuxcrate_batches',
     )
+
+    # Marketplace integration
+    marketplace = models.CharField(max_length=20, choices=Marketplace.choices)
+    marketplace_order_id = models.CharField(max_length=100, help_text='Order ID on the marketplace (e.g. Eldorado order ID)')
+    marketplace_store = models.ForeignKey(
+        'integrations.IntegrationCredential',
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='robuxcrate_batches',
+        help_text='Which marketplace store/account to use for delivery',
+    )
+
+    # RbxCrate merchant
+    merchant = models.ForeignKey(
+        'integrations.ServiceCredential',
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='robuxcrate_batches',
+        help_text='Which RbxCrate merchant (API key) to use',
+    )
+
+    # Roblox / order details
     roblox_username = models.CharField(max_length=50)
     roblox_user_id = models.BigIntegerField(null=True, blank=True)
     place_id = models.BigIntegerField()
@@ -35,6 +62,11 @@ class RobuxCrateBatch(models.Model):
         choices=Status.choices,
         default=Status.PENDING,
     )
+
+    # Delivery tracking
+    delivery_attempted_at = models.DateTimeField(null=True, blank=True)
+    delivery_error = models.TextField(blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -50,7 +82,6 @@ class RobuxCrateOrder(models.Model):
     class Status(models.TextChoices):
         PENDING = 'pending', 'Pending'
         QUEUED = 'queued', 'Queued'
-        PROGRESS = 'progress', 'In Progress'
         COMPLETED = 'completed', 'Completed'
         ERROR = 'error', 'Error'
         CANCELLED = 'cancelled', 'Cancelled'

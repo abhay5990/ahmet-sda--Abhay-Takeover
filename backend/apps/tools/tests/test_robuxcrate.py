@@ -785,8 +785,8 @@ class StatusMappingTests(TestCase):
 
     def test_known_statuses(self):
         self.assertEqual(map_provider_status('queued'), RobuxCrateOrder.Status.QUEUED)
-        self.assertEqual(map_provider_status('in_progress'), RobuxCrateOrder.Status.PROGRESS)
-        self.assertEqual(map_provider_status('inprogress'), RobuxCrateOrder.Status.PROGRESS)
+        self.assertEqual(map_provider_status('in_progress'), RobuxCrateOrder.Status.QUEUED)
+        self.assertEqual(map_provider_status('inprogress'), RobuxCrateOrder.Status.QUEUED)
         self.assertEqual(map_provider_status('completed'), RobuxCrateOrder.Status.COMPLETED)
         self.assertEqual(map_provider_status('done'), RobuxCrateOrder.Status.COMPLETED)
         self.assertEqual(map_provider_status('error'), RobuxCrateOrder.Status.ERROR)
@@ -827,20 +827,24 @@ class BatchStatusAggregationTests(_BaseTestCase):
             RobuxCrateOrder.objects.create(batch=batch, created_by=self.user, status=s)
         return batch
 
-    def test_all_completed(self):
+    def test_all_completed_without_store(self):
+        """All completed but no marketplace store → delivery fails → PROCESSING."""
         batch = self._make_batch_with_orders(['completed', 'completed'])
         _update_batch_status(batch)
-        self.assertEqual(batch.status, RobuxCrateBatch.Status.COMPLETED)
+        # Without marketplace store, delivery fails → stays PROCESSING
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.PROCESSING)
 
     def test_all_error(self):
         batch = self._make_batch_with_orders(['error', 'error'])
         _update_batch_status(batch)
-        self.assertEqual(batch.status, RobuxCrateBatch.Status.FAILED)
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.ERROR)
 
-    def test_mixed_completed_and_error(self):
+    def test_mixed_completed_and_error_triggers_delivery(self):
+        """At least 1 completed → delivery attempted, stays PROCESSING on fail."""
         batch = self._make_batch_with_orders(['completed', 'error'])
         _update_batch_status(batch)
-        self.assertEqual(batch.status, RobuxCrateBatch.Status.PARTIAL)
+        # Without marketplace store, delivery fails → stays PROCESSING
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.PROCESSING)
 
     def test_has_pending(self):
         batch = self._make_batch_with_orders(['completed', 'pending'])

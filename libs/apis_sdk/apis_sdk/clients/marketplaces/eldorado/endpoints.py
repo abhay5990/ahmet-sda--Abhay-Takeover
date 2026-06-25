@@ -25,6 +25,7 @@ class EldoradoEndpoints:
     # Orders
     MY_SELLER_ORDERS = "/api/orders/me/seller/orders/"
     GET_ORDER_BY_ID = "/api/orders/me/{order_id}"
+    DELIVER_ORDER = "/api/orders/me/{order_id}/deliver"
     ORDER_STATES_COUNT = "/api/orders/me/statesCount"
 
     # Reviews
@@ -55,3 +56,7 @@ class EldoradoEndpoints:
     @classmethod
     def order_by_id(cls, order_id: str) -> str:
         return cls.GET_ORDER_BY_ID.format(order_id=order_id)
+
+    @classmethod
+    def deliver_order(cls, order_id: str) -> str:
+        return cls.DELIVER_ORDER.format(order_id=order_id)

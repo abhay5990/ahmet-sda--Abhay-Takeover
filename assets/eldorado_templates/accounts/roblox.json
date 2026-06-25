@@ -4,7 +4,426 @@
   "game_name": "Roblox",
   "category": "Account",
   "tradeEnvironments": [],
-  "attributes": {},
+  "attributes": {
+    "roblox-account-type": {
+      "name": "Account Type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "type-4-letter",
+          "name": "4 Letter"
+        },
+        {
+          "id": "type-inventory",
+          "name": "Big Inventory Value"
+        },
+        {
+          "id": "type-offsale",
+          "name": "Offsales Account"
+        },
+        {
+          "id": "type-old-account",
+          "name": "Old Account"
+        },
+        {
+          "id": "type-rare-username",
+          "name": "Rare Username"
+        },
+        {
+          "id": "type-robux-account",
+          "name": "Robux Account"
+        },
+        {
+          "id": "type-limiteds",
+          "name": "Limiteds Account"
+        },
+        {
+          "id": "type-korblox",
+          "name": "Korblox Account"
+        },
+        {
+          "id": "type-headless",
+          "name": "Headless Account"
+        },
+        {
+          "id": "type-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "roblox-game": {
+      "name": "Game",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "game-adopt-me",
+          "name": "Adopt Me"
+        },
+        {
+          "id": "game-grow-a-garden",
+          "name": "Grow a Garden"
+        },
+        {
+          "id": "game-blox-fruits",
+          "name": "Blox Fruits"
+        },
+        {
+          "id": "game-blockspin",
+          "name": "BlockSpin"
+        },
+        {
+          "id": "game-bee-swarm-simulator",
+          "name": "Bee Swarm Simulator"
+        },
+        {
+          "id": "game-anime-vanguards",
+          "name": "Anime Vanguards"
+        },
+        {
+          "id": "game-volleyball-legends",
+          "name": "Volleyball Legends"
+        },
+        {
+          "id": "game-fisch",
+          "name": "Fisch"
+        },
+        {
+          "id": "game-aotr",
+          "name": "Attack on Titan Revolution"
+        },
+        {
+          "id": "game-rivals",
+          "name": "Rivals"
+        },
+        {
+          "id": "game-bridger-western",
+          "name": "bridger: Western"
+        },
+        {
+          "id": "game-jailbreak",
+          "name": "Jailbreak"
+        },
+        {
+          "id": "game-99-nights",
+          "name": "99 Nights in the Forest"
+        },
+        {
+          "id": "game-platsvsbrainrots",
+          "name": "Plants vs Brainrots"
+        },
+        {
+          "id": "game-bloodlines",
+          "name": "Bloodlines"
+        },
+        {
+          "id": "game-astw",
+          "name": "All Star Tower Defense X"
+        },
+        {
+          "id": "game-dead-rails",
+          "name": "Dead Rails"
+        },
+        {
+          "id": "game-king-legacy",
+          "name": "King Legacy"
+        },
+        {
+          "id": "game-bloxburg",
+          "name": "Welcome to Bloxburg"
+        },
+        {
+          "id": "game-driving-empire",
+          "name": "Driving Empire"
+        },
+        {
+          "id": "game-other",
+          "name": "Other"
+        },
+        {
+          "id": "game-basketball-zero",
+          "name": "Basketball: Zero"
+        },
+        {
+          "id": "blue-lock-rivals",
+          "name": "Blue Lock: Rivals"
+        },
+        {
+          "id": "game-tower-defense-simulator",
+          "name": "Tower Defense Simulator"
+        },
+        {
+          "id": "game-arsenal",
+          "name": "Arsenal"
+        },
+        {
+          "id": "game-counter-blox",
+          "name": "Counter Blox"
+        },
+        {
+          "id": "game-sailor-piece",
+          "name": "Sailor Piece"
+        },
+        {
+          "id": "game-ink-game",
+          "name": "Ink Game"
+        },
+        {
+          "id": "game-steal-a-brainrot",
+          "name": "Steal a Brainrot"
+        },
+        {
+          "id": "game-evade",
+          "name": "Evade"
+        },
+        {
+          "id": "game-pet-simulator-99",
+          "name": "Pet Simulator 99"
+        },
+        {
+          "id": "game-pet-simulator-x",
+          "name": "Pet Simulator X"
+        },
+        {
+          "id": "game-royale-high",
+          "name": "Royale High"
+        },
+        {
+          "id": "game-dress-to-impress",
+          "name": "Dress to Impress"
+        },
+        {
+          "id": "game-brookhaven-rp",
+          "name": "Brookhaven RP"
+        },
+        {
+          "id": "game-the-strongest-battlegrounds",
+          "name": "The Strongest Battlegrounds"
+        },
+        {
+          "id": "game-bubble-gum-simulator",
+          "name": "Bubble Gum Simulator"
+        },
+        {
+          "id": "game-grand-piece-online",
+          "name": "Grand Piece Online"
+        },
+        {
+          "id": "game-bedwars",
+          "name": "BedWars"
+        },
+        {
+          "id": "game-war-tycoon",
+          "name": "War Tycoon"
+        },
+        {
+          "id": "game-untitled-boxing-game",
+          "name": "Untitled Boxing Game"
+        },
+        {
+          "id": "game-fight-in-a-school",
+          "name": "Fight in a School"
+        },
+        {
+          "id": "game-da-hood",
+          "name": "Da Hood"
+        },
+        {
+          "id": "game-shinobi-life-2",
+          "name": "Shinobi Life 2"
+        },
+        {
+          "id": "game-blade-ball",
+          "name": "Blade Ball"
+        },
+        {
+          "id": "game-murder-mystery-2",
+          "name": "Murder Mystery 2"
+        },
+        {
+          "id": "game-death-ball",
+          "name": "Death Ball"
+        },
+        {
+          "id": "game-your-bizarre-adventure",
+          "name": "Your Bizarre Adventure"
+        },
+        {
+          "id": "game-fish-it",
+          "name": "Fish It!"
+        },
+        {
+          "id": "game-spongebob-tower-defense",
+          "name": "SpongeBob Tower Defense"
+        },
+        {
+          "id": "game-the-forge",
+          "name": "The Forge"
+        },
+        {
+          "id": "game-taxi-boss",
+          "name": "Taxi Boss"
+        },
+        {
+          "id": "game-doors",
+          "name": "Doors"
+        }
+      ]
+    },
+    "roblox-inventory-value": {
+      "name": "Inventory Value",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "value-0999",
+          "name": "0-999"
+        },
+        {
+          "id": "value-1199",
+          "name": "1K-1.99K"
+        },
+        {
+          "id": "value-2499",
+          "name": "2K-4.99K"
+        },
+        {
+          "id": "value-5999",
+          "name": "5K-9.99K"
+        },
+        {
+          "id": "value-101499",
+          "name": "10K-14.99K"
+        },
+        {
+          "id": "value-151999",
+          "name": "15K-19.99K"
+        },
+        {
+          "id": "value-202999",
+          "name": "20K-29.99K"
+        },
+        {
+          "id": "value-304999",
+          "name": "30K-49.99K"
+        },
+        {
+          "id": "value-50999",
+          "name": "50K-99.9K"
+        },
+        {
+          "id": "value-100plus",
+          "name": "100K+"
+        },
+        {
+          "id": "value-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "roblox-offsale-items": {
+      "name": "Offsale Items",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "offsale-09",
+          "name": "0-9"
+        },
+        {
+          "id": "offsale-1049",
+          "name": "10-49"
+        },
+        {
+          "id": "offsale-5099",
+          "name": "50-99"
+        },
+        {
+          "id": "offsale-100199",
+          "name": "100-199"
+        },
+        {
+          "id": "offsale-200plus",
+          "name": "200+"
+        },
+        {
+          "id": "offsale-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "roblox-robux-value": {
+      "name": "Robux Balance",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "robux-0999",
+          "name": "0-999"
+        },
+        {
+          "id": "robux-1199",
+          "name": "1K-1.99K"
+        },
+        {
+          "id": "robux-2499",
+          "name": "2K-4.99K"
+        },
+        {
+          "id": "robux-5999",
+          "name": "5K-9.99K"
+        },
+        {
+          "id": "robux-101499",
+          "name": "10K-14.99K"
+        },
+        {
+          "id": "robux-151999",
+          "name": "15K-19.99K"
+        },
+        {
+          "id": "robux-202999",
+          "name": "20K-29.99K"
+        },
+        {
+          "id": "robux-304999",
+          "name": "30K-49.99K"
+        },
+        {
+          "id": "robux-5099",
+          "name": "50K-99.99K"
+        },
+        {
+          "id": "robux-100plus",
+          "name": "100K+"
+        },
+        {
+          "id": "robux-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "roblox-verified": {
+      "name": "Age Verified",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "verified-yes",
+          "name": "Yes"
+        },
+        {
+          "id": "verified-no",
+          "name": "No"
+        },
+        {
+          "id": "verified-other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
   "details": {
     "offerTitle": {
       "type": "string",
