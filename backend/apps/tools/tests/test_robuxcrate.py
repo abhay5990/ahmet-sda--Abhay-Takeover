@@ -197,7 +197,7 @@ class OwnershipTests(_BaseTestCase):
 
     def test_admin_can_refresh_any_order(self):
         self.client.login(username='admin_user', password='testpass')
-        with patch('apps.tools.services.robuxcrate.refresh_order_status', return_value=True):
+        with patch('apps.tools.services.robuxcrate.refresh_order_status', return_value=(True, '')):
             resp = self.client.post(
                 reverse('tools:rbx_refresh_status', args=[self.user_order.id]),
                 content_type='application/json',
@@ -908,10 +908,10 @@ class PaginationFilterTests(_BaseTestCase):
         data = resp.json()
         self.assertTrue(all(o['status'] == 'error' for o in data['orders']))
 
-    def test_username_filter(self):
+    def test_search_filter(self):
         resp = self.client.get(
             reverse('tools:rbx_list_orders'),
-            {'username': 'player0'},
+            {'q': 'player0'},
         )
         data = resp.json()
         self.assertTrue(all(o['roblox_username'] == 'player0' for o in data['orders']))
@@ -943,7 +943,7 @@ class RefreshStatusTests(_BaseTestCase):
 
     def test_refresh_success(self):
         self.client.login(username='normal_user', password='testpass')
-        with patch('apps.tools.api.robuxcrate.refresh_order_status', return_value=True):
+        with patch('apps.tools.api.robuxcrate.refresh_order_status', return_value=(True, '')):
             resp = self.client.post(
                 reverse('tools:rbx_refresh_status', args=[self.order.id]),
                 content_type='application/json',

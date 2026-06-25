@@ -6,6 +6,7 @@ import uuid
 
 from django.core.paginator import Paginator
 from django.db import IntegrityError, transaction
+from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 
@@ -320,7 +321,7 @@ def refresh_order_status_view(request, order_id):
         if order.created_by_id != request.user.id:
             return JsonResponse({'error': 'Permission denied'}, status=403)
 
-    ok = refresh_order_status(order)
+    ok, error_msg = refresh_order_status(order)
     order.refresh_from_db()
 
     return JsonResponse({
@@ -328,6 +329,7 @@ def refresh_order_status_view(request, order_id):
         'order_id': str(order.id),
         'status': order.status,
         'error_message': order.error_message,
+        'error': error_msg,
     })
 
 
@@ -365,7 +367,7 @@ def list_orders(request):
     """Paginated order list with optional filters."""
     qs = (
         RobuxCrateOrder.objects
-        .select_related('batch', 'created_by')
+        .select_related('batch', 'batch__marketplace_store__account', 'created_by')
         .order_by('-created_at')
     )
 
@@ -376,9 +378,19 @@ def list_orders(request):
     if status_filter and status_filter in RobuxCrateOrder.Status.values:
         qs = qs.filter(status=status_filter)
 
-    username_filter = request.GET.get('username', '').strip()
-    if username_filter:
-        qs = qs.filter(batch__roblox_username__icontains=username_filter)
+    q = request.GET.get('q', '').strip()
+    if q:
+        text_q = (
+            Q(batch__roblox_username__icontains=q)
+            | Q(batch__marketplace_order_id__icontains=q)
+            | Q(batch__place_id__icontains=q)
+        )
+        try:
+            order_uuid = uuid.UUID(q)
+            text_q = text_q | Q(id=order_uuid)
+        except ValueError:
+            pass
+        qs = qs.filter(text_q)
 
     try:
         per_page = min(100, max(1, int(request.GET.get('per_page', 50))))
@@ -395,11 +407,13 @@ def list_orders(request):
 
     orders = []
     for o in page:
+        store = o.batch.marketplace_store
         orders.append({
             'id': str(o.id),
             'batch_id': str(o.batch_id),
             'marketplace': o.batch.marketplace,
             'marketplace_order_id': o.batch.marketplace_order_id,
+            'store_name': store.account.name if store and store.account else None,
             'roblox_username': o.batch.roblox_username,
             'roblox_user_id': o.batch.roblox_user_id,
             'place_id': o.batch.place_id,

@@ -377,22 +377,22 @@ def cancel_order(order: RobuxCrateOrder) -> tuple[bool, str]:
 
 # ── Single order refresh (for manual refresh button) ─────────────
 
-def refresh_order_status(order: RobuxCrateOrder) -> bool:
+def refresh_order_status(order: RobuxCrateOrder) -> tuple[bool, str]:
     """Refresh a single order's status from RbxCrate.
 
-    Uses the batch's merchant credential. Returns True on success.
+    Uses the batch's merchant credential. Returns (success, error_message).
     """
     batch = order.batch
     if not batch.merchant_id:
-        return False
+        return False, 'No merchant assigned to batch'
 
     cred = batch.merchant
     if not cred.is_active:
-        return False
+        return False, 'Merchant credential is inactive'
 
     creds = cred.credentials or {}
     if not creds.get('api_key'):
-        return False
+        return False, 'Merchant has no API key'
 
     client = RobuxCrateService.build_client(cred)
 
@@ -400,7 +400,7 @@ def refresh_order_status(order: RobuxCrateOrder) -> bool:
         result = client.get_order_info(str(order.id))
     except Exception:
         logger.warning('refresh_order_status failed for %s', order.id)
-        return False
+        return False, 'Unexpected error calling status API'
 
     now = timezone.now()
     if result.ok:
@@ -422,4 +422,4 @@ def refresh_order_status(order: RobuxCrateOrder) -> bool:
 
     # Update parent batch status (may trigger delivery)
     _update_batch_status(order.batch)
-    return result.ok
+    return result.ok, ('' if result.ok else (order.error_message or 'Refresh failed'))
