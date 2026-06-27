@@ -59,18 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Money",
-        "Elytra",
-        "Skeleton Spawner",
-        "Iron Golem Spawner",
-        "Farm",
-        "Netherite",
-        "Amethyst",
-        "Bases & Stashes",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

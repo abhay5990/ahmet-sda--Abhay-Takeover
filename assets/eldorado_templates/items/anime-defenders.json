@@ -1,0 +1,159 @@
+{
+  "game_id": "200",
+  "game": "anime-defenders",
+  "game_name": "Anime Defenders",
+  "category": "CustomItem",
+  "tradeEnvironments": [],
+  "attributes": {
+    "anime-defenders-item-type": {
+      "name": "Item Type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "spins",
+          "name": "Spins"
+        },
+        {
+          "id": "traits",
+          "name": "Traits"
+        },
+        {
+          "id": "units",
+          "name": "Units"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "anime-defenders-rarity": {
+      "name": "Rarity",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "epic",
+          "name": "Epic"
+        },
+        {
+          "id": "exclusive",
+          "name": "Exclusive"
+        },
+        {
+          "id": "legendary",
+          "name": "Legendary"
+        },
+        {
+          "id": "mythic",
+          "name": "Mythic"
+        },
+        {
+          "id": "rare",
+          "name": "Rare"
+        },
+        {
+          "id": "secret",
+          "name": "Secret"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "anime-defenders-upgrade": {
+      "name": "Upgrade",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "evolved",
+          "name": "Evolved"
+        },
+        {
+          "id": "normal",
+          "name": "Normal"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

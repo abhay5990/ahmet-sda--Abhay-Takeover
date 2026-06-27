@@ -1,0 +1,125 @@
+{
+  "game_id": "183",
+  "game": "efootball-2026",
+  "game_name": "eFootball 2026",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "efootball-2026-coins": {
+      "name": "Coins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "130-coins",
+          "name": "130 Coins"
+        },
+        {
+          "id": "300-coins",
+          "name": "300 Coins"
+        },
+        {
+          "id": "1040-coins",
+          "name": "1040 Coins"
+        },
+        {
+          "id": "2130-coins",
+          "name": "2130 Coins"
+        },
+        {
+          "id": "3250-coins",
+          "name": "3250 Coins"
+        },
+        {
+          "id": "5700-coins",
+          "name": "5700 Coins"
+        },
+        {
+          "id": "12800-coins",
+          "name": "12800 Coins"
+        },
+        {
+          "id": "25600-coins",
+          "name": "25600 Coins"
+        },
+        {
+          "id": "38400-coins",
+          "name": "38400 Coins"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "game_id": 7908,
+  "game": "dauntless",
+  "game_name": "Dauntless",
+  "seo_name": "Dauntless",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1054,
+      "name": "Bundle",
+      "seoName": "Bundle",
+      "subCategories": [
+        {
+          "id": 5077,
+          "name": "Bundle",
+          "seoName": "Bundle"
+        }
+      ]
+    },
+    {
+      "id": 1055,
+      "name": "Skin",
+      "seoName": "Skin",
+      "subCategories": [
+        {
+          "id": 5078,
+          "name": "Skin",
+          "seoName": "Skin"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7909,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "game_id": "275",
+  "game": "apple",
+  "game_name": "Apple",
+  "category": "GiftCard",
+  "tradeEnvironments": [
+    {
+      "id": "6",
+      "name": "United States",
+      "group": "Region",
+      "children": [
+        {
+          "id": "6-0",
+          "name": "5 USD"
+        },
+        {
+          "id": "6-1",
+          "name": "10 USD"
+        },
+        {
+          "id": "6-2",
+          "name": "20 USD"
+        },
+        {
+          "id": "6-3",
+          "name": "25 USD"
+        },
+        {
+          "id": "6-4",
+          "name": "30 USD"
+        },
+        {
+          "id": "6-5",
+          "name": "50 USD"
+        },
+        {
+          "id": "6-6",
+          "name": "75 USD"
+        },
+        {
+          "id": "6-7",
+          "name": "100 USD"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "United Kingdom",
+      "group": "Region",
+      "children": [
+        {
+          "id": "7-0",
+          "name": "5 GBP"
+        },
+        {
+          "id": "7-1",
+          "name": "10 GBP"
+        },
+        {
+          "id": "7-2",
+          "name": "20 GBP"
+        },
+        {
+          "id": "7-3",
+          "name": "25 GBP"
+        },
+        {
+          "id": "7-4",
+          "name": "30 GBP"
+        },
+        {
+          "id": "7-5",
+          "name": "50 GBP"
+        },
+        {
+          "id": "7-6",
+          "name": "75 GBP"
+        },
+        {
+          "id": "7-7",
+          "name": "100 GBP"
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "name": "Germany",
+      "group": "Region",
+      "children": [
+        {
+          "id": "8-0",
+          "name": "5 EUR"
+        },
+        {
+          "id": "8-1",
+          "name": "10 EUR"
+        },
+        {
+          "id": "8-2",
+          "name": "20 EUR"
+        },
+        {
+          "id": "8-3",
+          "name": "25 EUR"
+        },
+        {
+          "id": "8-4",
+          "name": "30 EUR"
+        },
+        {
+          "id": "8-5",
+          "name": "50 EUR"
+        },
+        {
+          "id": "8-6",
+          "name": "75 EUR"
+        },
+        {
+          "id": "8-7",
+          "name": "100 EUR"
+        },
+        {
+          "id": "8-8",
+          "name": "2000 EUR"
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "name": "France",
+      "group": "Region",
+      "children": [
+        {
+          "id": "9-0",
+          "name": "5 EUR"
+        },
+        {
+          "id": "9-1",
+          "name": "10 EUR"
+        },
+        {
+          "id": "9-2",
+          "name": "20 EUR"
+        },
+        {
+          "id": "9-3",
+          "name": "25 EUR"
+        },
+        {
+          "id": "9-4",
+          "name": "30 EUR"
+        },
+        {
+          "id": "9-5",
+          "name": "50 EUR"
+        },
+        {
+          "id": "9-6",
+          "name": "75 EUR"
+        },
+        {
+          "id": "9-7",
+          "name": "100 EUR"
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "name": "Poland",
+      "group": "Region",
+      "children": [
+        {
+          "id": "10-0",
+          "name": "20 PLN"
+        },
+        {
+          "id": "10-1",
+          "name": "25 PLN"
+        },
+        {
+          "id": "10-2",
+          "name": "50 PLN"
+        },
+        {
+          "id": "10-3",
+          "name": "100 PLN"
+        },
+        {
+          "id": "10-4",
+          "name": "150 PLN"
+        },
+        {
+          "id": "10-5",
+          "name": "200 PLN"
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "name": "Turkey",
+      "group": "Region",
+      "children": [
+        {
+          "id": "11-0",
+          "name": "75 TRY"
+        },
+        {
+          "id": "11-1",
+          "name": "150 TRY"
+        },
+        {
+          "id": "11-10",
+          "name": "800 TRY"
+        },
+        {
+          "id": "11-11",
+          "name": "900 TRY"
+        },
+        {
+          "id": "11-12",
+          "name": "100 TRY"
+        },
+        {
+          "id": "11-2",
+          "name": "1000 TRY"
+        },
+        {
+          "id": "11-3",
+          "name": "1500 TRY"
+        },
+        {
+          "id": "11-4",
+          "name": "250 TRY"
+        },
+        {
+          "id": "11-5",
+          "name": "300 TRY"
+        },
+        {
+          "id": "11-6",
+          "name": "400 TRY"
+        },
+        {
+          "id": "11-7",
+          "name": "500 TRY"
+        },
+        {
+          "id": "11-8",
+          "name": "600 TRY"
+        },
+        {
+          "id": "11-9",
+          "name": "700 TRY"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

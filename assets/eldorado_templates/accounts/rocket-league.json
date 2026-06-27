@@ -17,7 +17,152 @@
       "name": "Xbox"
     }
   ],
-  "attributes": {},
+  "attributes": {
+    "rl-credits": {
+      "name": "Credits",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "credits-0299",
+          "name": "0-299"
+        },
+        {
+          "id": "credits-300999",
+          "name": "300-999"
+        },
+        {
+          "id": "credits-1000plus",
+          "name": "1000+"
+        },
+        {
+          "id": "credits-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "rocket-league-current-rank": {
+      "name": "Current Rank",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "rank-unranked",
+          "name": "Unranked"
+        },
+        {
+          "id": "rank-bronze",
+          "name": "Bronze"
+        },
+        {
+          "id": "rank-silver",
+          "name": "Silver"
+        },
+        {
+          "id": "rank-gold",
+          "name": "Gold"
+        },
+        {
+          "id": "rank-platinum",
+          "name": "Platinum"
+        },
+        {
+          "id": "rank-diamond",
+          "name": "Diamond"
+        },
+        {
+          "id": "rank-champion",
+          "name": "Champion"
+        },
+        {
+          "id": "rank-grand-champion",
+          "name": "Grand Champion"
+        },
+        {
+          "id": "rank-supersonic-legend",
+          "name": "Supersonic Legend"
+        },
+        {
+          "id": "rank-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "rocket-league-level": {
+      "name": "Level",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "level-09",
+          "name": "0-9"
+        },
+        {
+          "id": "level-1049",
+          "name": "10-49"
+        },
+        {
+          "id": "level-5099",
+          "name": "50-99"
+        },
+        {
+          "id": "level-100499",
+          "name": "100-499"
+        },
+        {
+          "id": "level-5001000",
+          "name": "500-1000"
+        },
+        {
+          "id": "level-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "rocket-league-tags-titles": {
+      "name": "Tags/Titles",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "tag-red-glow",
+          "name": "Red Glow"
+        },
+        {
+          "id": "tag-white-glow",
+          "name": "White Glow"
+        },
+        {
+          "id": "tag-golden-glow",
+          "name": "Golden Glow"
+        },
+        {
+          "id": "tag-green-glow",
+          "name": "Green Glow"
+        },
+        {
+          "id": "tag-blue-glow",
+          "name": "Blue Glow"
+        },
+        {
+          "id": "tag-cyan-glow",
+          "name": "Cyan Glow"
+        },
+        {
+          "id": "tag-purple-glow",
+          "name": "Purple Glow"
+        },
+        {
+          "id": "tag-pink-glow",
+          "name": "Pink Glow"
+        },
+        {
+          "id": "tag-other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
   "details": {
     "offerTitle": {
       "type": "string",

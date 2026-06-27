@@ -1,0 +1,139 @@
+{
+  "game_id": "242",
+  "game": "nintendo",
+  "game_name": "Nintendo",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "NA",
+      "group": "Region"
+    },
+    {
+      "id": "1",
+      "name": "EU",
+      "group": "Region"
+    },
+    {
+      "id": "2",
+      "name": "Japan",
+      "group": "Region"
+    },
+    {
+      "id": "3",
+      "name": "Canada",
+      "group": "Region"
+    },
+    {
+      "id": "4",
+      "name": "UK",
+      "group": "Region"
+    }
+  ],
+  "attributes": {
+    "nintendo-switch-online": {
+      "name": "Nintendo Subscription",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "nintendo-switch-online-family-12-months",
+          "name": "Nintendo Switch Online - Family - 12 Months"
+        },
+        {
+          "id": "nintendo-switch-online-family-and-expansion-pack-12-months",
+          "name": "Nintendo Switch Online - Family + Expansion Pack - 12 Months"
+        },
+        {
+          "id": "nintendo-switch-online-individual-1-month",
+          "name": "Nintendo Switch Online - Individual - 1 Month"
+        },
+        {
+          "id": "nintendo-switch-online-individual-3-months",
+          "name": "Nintendo Switch Online - Individual - 3 Months"
+        },
+        {
+          "id": "nintendo-switch-online-individual-12-months",
+          "name": "Nintendo Switch Online - Individual - 12 Months"
+        },
+        {
+          "id": "nintendo-switch-online-individual-and-expansion-pack-12-months",
+          "name": "Nintendo Switch Online - Individual + Expansion Pack - 12 Months"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

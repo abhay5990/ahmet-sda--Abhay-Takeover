@@ -1,0 +1,1954 @@
+{
+  "game_id": 8581,
+  "game": "wow-classic",
+  "game_name": "World of Warcraft Classic Era / TBC Anniversary / SoD / Hardcore",
+  "seo_name": "WoW-Classic",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 874,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 3732,
+          "name": "Armor Set: Demon Hunter",
+          "seoName": "Armor Set: Demon Hunter"
+        },
+        {
+          "id": 3733,
+          "name": "Armor Sets: Death Knight",
+          "seoName": "Armor Sets: Death Knight"
+        },
+        {
+          "id": 3734,
+          "name": "Armor Sets: Druid",
+          "seoName": "Armor Sets: Druid"
+        },
+        {
+          "id": 3735,
+          "name": "Armor Sets: Hunter",
+          "seoName": "Armor Sets: Hunter"
+        },
+        {
+          "id": 3736,
+          "name": "Armor Sets: Mage",
+          "seoName": "Armor Sets: Mage"
+        },
+        {
+          "id": 3737,
+          "name": "Armor Sets: Monk",
+          "seoName": "Armor Sets: Monk"
+        },
+        {
+          "id": 3738,
+          "name": "Armor Sets: Paladin",
+          "seoName": "Armor Sets: Paladin"
+        },
+        {
+          "id": 3739,
+          "name": "Armor Sets: Priest",
+          "seoName": "Armor Sets: Priest"
+        },
+        {
+          "id": 3740,
+          "name": "Armor Sets: Rogue",
+          "seoName": "Armor Sets: Rogue"
+        },
+        {
+          "id": 3741,
+          "name": "Armor Sets: Shaman",
+          "seoName": "Armor Sets: Shaman"
+        },
+        {
+          "id": 3742,
+          "name": "Armor Sets: Warlock",
+          "seoName": "Armor Sets: Warlock"
+        },
+        {
+          "id": 3743,
+          "name": "Armor Sets: Warrior",
+          "seoName": "Armor Sets: Warrior"
+        },
+        {
+          "id": 3744,
+          "name": "Cloth: Back",
+          "seoName": "Cloth: Back"
+        },
+        {
+          "id": 3745,
+          "name": "Cloth: Chest",
+          "seoName": "Cloth: Chest"
+        },
+        {
+          "id": 3746,
+          "name": "Cloth: Feet",
+          "seoName": "Cloth: Feet"
+        },
+        {
+          "id": 3747,
+          "name": "Cloth: Hands",
+          "seoName": "Cloth: Hands"
+        },
+        {
+          "id": 3748,
+          "name": "Cloth: Head",
+          "seoName": "Cloth: Head"
+        },
+        {
+          "id": 3749,
+          "name": "Cloth: Legs",
+          "seoName": "Cloth: Legs"
+        },
+        {
+          "id": 3750,
+          "name": "Cloth: Shoulder",
+          "seoName": "Cloth: Shoulder"
+        },
+        {
+          "id": 3751,
+          "name": "Cloth: Waist",
+          "seoName": "Cloth: Waist"
+        },
+        {
+          "id": 3752,
+          "name": "Cloth: Wrist",
+          "seoName": "Cloth: Wrist"
+        },
+        {
+          "id": 3753,
+          "name": "Cosmetic",
+          "seoName": "Cosmetic"
+        },
+        {
+          "id": 3754,
+          "name": "Leather: Back",
+          "seoName": "Leather: Back"
+        },
+        {
+          "id": 3755,
+          "name": "Leather: Chest",
+          "seoName": "Leather: Chest"
+        },
+        {
+          "id": 3756,
+          "name": "Leather: Feet",
+          "seoName": "Leather: Feet"
+        },
+        {
+          "id": 3757,
+          "name": "Leather: Hands",
+          "seoName": "Leather: Hands"
+        },
+        {
+          "id": 3758,
+          "name": "Leather: Head",
+          "seoName": "Leather: Head"
+        },
+        {
+          "id": 3759,
+          "name": "Leather: Legs",
+          "seoName": "Leather: Legs"
+        },
+        {
+          "id": 3760,
+          "name": "Leather: Shoulder",
+          "seoName": "Leather: Shoulder"
+        },
+        {
+          "id": 3761,
+          "name": "Leather: Waist",
+          "seoName": "Leather: Waist"
+        },
+        {
+          "id": 3762,
+          "name": "Leather: Wrist",
+          "seoName": "Leather: Wrist"
+        },
+        {
+          "id": 3763,
+          "name": "Mail: Back",
+          "seoName": "Mail: Back"
+        },
+        {
+          "id": 3764,
+          "name": "Mail: Chest",
+          "seoName": "Mail: Chest"
+        },
+        {
+          "id": 3765,
+          "name": "Mail: Feet",
+          "seoName": "Mail: Feet"
+        },
+        {
+          "id": 3766,
+          "name": "Mail: Hands",
+          "seoName": "Mail: Hands"
+        },
+        {
+          "id": 3767,
+          "name": "Mail: Head",
+          "seoName": "Mail: Head"
+        },
+        {
+          "id": 3768,
+          "name": "Mail: Legs",
+          "seoName": "Mail: Legs"
+        },
+        {
+          "id": 3769,
+          "name": "Mail: Shoulder",
+          "seoName": "Mail: Shoulder"
+        },
+        {
+          "id": 3770,
+          "name": "Mail: Waist",
+          "seoName": "Mail: Waist"
+        },
+        {
+          "id": 3771,
+          "name": "Mail: Wrist",
+          "seoName": "Mail: Wrist"
+        },
+        {
+          "id": 3772,
+          "name": "Miscellaneous: Finger",
+          "seoName": "Miscellaneous: Finger"
+        },
+        {
+          "id": 3773,
+          "name": "Miscellaneous: Head",
+          "seoName": "Miscellaneous: Head"
+        },
+        {
+          "id": 3774,
+          "name": "Miscellaneous: Held in off-hand",
+          "seoName": "Miscellaneous: Held in off-hand"
+        },
+        {
+          "id": 3775,
+          "name": "Miscellaneous: Neck",
+          "seoName": "Miscellaneous: Neck"
+        },
+        {
+          "id": 3776,
+          "name": "Miscellaneous: Shirt",
+          "seoName": "Miscellaneous: Shirt"
+        },
+        {
+          "id": 3777,
+          "name": "Miscellaneous: Trinket",
+          "seoName": "Miscellaneous: Trinket"
+        },
+        {
+          "id": 3778,
+          "name": "Plate: Back",
+          "seoName": "Plate: Back"
+        },
+        {
+          "id": 3779,
+          "name": "Plate: Chest",
+          "seoName": "Plate: Chest"
+        },
+        {
+          "id": 3780,
+          "name": "Plate: Feet",
+          "seoName": "Plate: Feet"
+        },
+        {
+          "id": 3781,
+          "name": "Plate: Hands",
+          "seoName": "Plate: Hands"
+        },
+        {
+          "id": 3782,
+          "name": "Plate: Head",
+          "seoName": "Plate: Head"
+        },
+        {
+          "id": 3783,
+          "name": "Plate: Legs",
+          "seoName": "Plate: Legs"
+        },
+        {
+          "id": 3784,
+          "name": "Plate: Shoulder",
+          "seoName": "Plate: Shoulder"
+        },
+        {
+          "id": 3785,
+          "name": "Plate: Waist",
+          "seoName": "Plate: Waist"
+        },
+        {
+          "id": 3786,
+          "name": "Plate: Wrist",
+          "seoName": "Plate: Wrist"
+        },
+        {
+          "id": 3787,
+          "name": "Shields",
+          "seoName": "Shields"
+        }
+      ]
+    },
+    {
+      "id": 875,
+      "name": "Battle Pets",
+      "seoName": "Battle Pets",
+      "subCategories": [
+        {
+          "id": 3788,
+          "name": "Aquatic",
+          "seoName": "Aquatic"
+        },
+        {
+          "id": 3789,
+          "name": "Beast",
+          "seoName": "Beast"
+        },
+        {
+          "id": 3790,
+          "name": "Critter",
+          "seoName": "Critter"
+        },
+        {
+          "id": 3791,
+          "name": "Dragonkin",
+          "seoName": "Dragonkin"
+        },
+        {
+          "id": 3792,
+          "name": "Elemental",
+          "seoName": "Elemental"
+        },
+        {
+          "id": 3793,
+          "name": "Flying",
+          "seoName": "Flying"
+        },
+        {
+          "id": 3794,
+          "name": "Humanoid",
+          "seoName": "Humanoid"
+        },
+        {
+          "id": 3795,
+          "name": "Magic",
+          "seoName": "Magic"
+        },
+        {
+          "id": 3796,
+          "name": "Mechanical",
+          "seoName": "Mechanical"
+        },
+        {
+          "id": 3797,
+          "name": "Undead",
+          "seoName": "Undead"
+        }
+      ]
+    },
+    {
+      "id": 876,
+      "name": "Consumable",
+      "seoName": "Consumable",
+      "subCategories": [
+        {
+          "id": 3798,
+          "name": "Bandage",
+          "seoName": "Bandage"
+        },
+        {
+          "id": 3799,
+          "name": "Elixir",
+          "seoName": "Elixir"
+        },
+        {
+          "id": 3800,
+          "name": "Flask",
+          "seoName": "Flask"
+        },
+        {
+          "id": 3801,
+          "name": "Food & Drink",
+          "seoName": "Food & Drink"
+        },
+        {
+          "id": 3802,
+          "name": "Item Enhancement",
+          "seoName": "Item Enhancement"
+        },
+        {
+          "id": 3803,
+          "name": "Other",
+          "seoName": "Other"
+        },
+        {
+          "id": 3804,
+          "name": "Potion",
+          "seoName": "Potion"
+        },
+        {
+          "id": 3805,
+          "name": "Scroll",
+          "seoName": "Scroll"
+        }
+      ]
+    },
+    {
+      "id": 877,
+      "name": "Container",
+      "seoName": "Container",
+      "subCategories": [
+        {
+          "id": 3806,
+          "name": "Bag",
+          "seoName": "Bag"
+        },
+        {
+          "id": 3807,
+          "name": "Cooking Bag",
+          "seoName": "Cooking Bag"
+        },
+        {
+          "id": 3808,
+          "name": "Enchanting Bag",
+          "seoName": "Enchanting Bag"
+        },
+        {
+          "id": 3809,
+          "name": "Engineering Bag",
+          "seoName": "Engineering Bag"
+        },
+        {
+          "id": 3810,
+          "name": "Gem Bag",
+          "seoName": "Gem Bag"
+        },
+        {
+          "id": 3811,
+          "name": "Herb Bag",
+          "seoName": "Herb Bag"
+        },
+        {
+          "id": 3812,
+          "name": "Inscription Bag",
+          "seoName": "Inscription Bag"
+        },
+        {
+          "id": 3813,
+          "name": "Leatherworking Bag",
+          "seoName": "Leatherworking Bag"
+        },
+        {
+          "id": 3814,
+          "name": "Mining Bag",
+          "seoName": "Mining Bag"
+        },
+        {
+          "id": 3815,
+          "name": "Tackle Box",
+          "seoName": "Tackle Box"
+        }
+      ]
+    },
+    {
+      "id": 878,
+      "name": "Gem",
+      "seoName": "Gem",
+      "subCategories": [
+        {
+          "id": 3816,
+          "name": "Blue",
+          "seoName": "Blue"
+        },
+        {
+          "id": 3817,
+          "name": "Cogwheel",
+          "seoName": "Cogwheel"
+        },
+        {
+          "id": 3818,
+          "name": "Green",
+          "seoName": "Green"
+        },
+        {
+          "id": 3819,
+          "name": "Meta",
+          "seoName": "Meta"
+        },
+        {
+          "id": 3820,
+          "name": "Orange",
+          "seoName": "Orange"
+        },
+        {
+          "id": 3821,
+          "name": "Prismatic",
+          "seoName": "Prismatic"
+        },
+        {
+          "id": 3822,
+          "name": "Purple",
+          "seoName": "Purple"
+        },
+        {
+          "id": 3823,
+          "name": "Red",
+          "seoName": "Red"
+        },
+        {
+          "id": 3824,
+          "name": "Simple",
+          "seoName": "Simple"
+        },
+        {
+          "id": 3825,
+          "name": "Yellow",
+          "seoName": "Yellow"
+        }
+      ]
+    },
+    {
+      "id": 879,
+      "name": "Glyph",
+      "seoName": "Glyph",
+      "subCategories": [
+        {
+          "id": 3826,
+          "name": "Death Knight",
+          "seoName": "Death Knight"
+        },
+        {
+          "id": 3827,
+          "name": "Demon Hunter",
+          "seoName": "Demon Hunter"
+        },
+        {
+          "id": 3828,
+          "name": "Druid",
+          "seoName": "Druid"
+        },
+        {
+          "id": 3829,
+          "name": "Hunter",
+          "seoName": "Hunter"
+        },
+        {
+          "id": 3830,
+          "name": "Mage",
+          "seoName": "Mage"
+        },
+        {
+          "id": 3831,
+          "name": "Monk",
+          "seoName": "Monk"
+        },
+        {
+          "id": 3832,
+          "name": "Paladin",
+          "seoName": "Paladin"
+        },
+        {
+          "id": 3833,
+          "name": "Priest",
+          "seoName": "Priest"
+        },
+        {
+          "id": 3834,
+          "name": "Rogue",
+          "seoName": "Rogue"
+        },
+        {
+          "id": 3835,
+          "name": "Shaman",
+          "seoName": "Shaman"
+        },
+        {
+          "id": 3836,
+          "name": "Warlock",
+          "seoName": "Warlock"
+        },
+        {
+          "id": 3837,
+          "name": "Warrior",
+          "seoName": "Warrior"
+        }
+      ]
+    },
+    {
+      "id": 880,
+      "name": "Miscellaneous",
+      "seoName": "Miscellaneous",
+      "subCategories": [
+        {
+          "id": 3838,
+          "name": "Companion Pets",
+          "seoName": "Companion Pets"
+        },
+        {
+          "id": 3839,
+          "name": "Holiday",
+          "seoName": "Holiday"
+        },
+        {
+          "id": 3840,
+          "name": "Junk",
+          "seoName": "Junk"
+        },
+        {
+          "id": 3841,
+          "name": "Other Miscellaneous",
+          "seoName": "Other Miscellaneous"
+        },
+        {
+          "id": 3842,
+          "name": "Reagent",
+          "seoName": "Reagent"
+        }
+      ]
+    },
+    {
+      "id": 881,
+      "name": "Mounts",
+      "seoName": "Mounts",
+      "subCategories": [
+        {
+          "id": 3730,
+          "name": "All",
+          "seoName": "All"
+        }
+      ]
+    },
+    {
+      "id": 882,
+      "name": "Quest",
+      "seoName": "Quest",
+      "subCategories": [
+        {
+          "id": 3731,
+          "name": "Quest",
+          "seoName": "Quest"
+        }
+      ]
+    },
+    {
+      "id": 883,
+      "name": "Recipe",
+      "seoName": "Recipe",
+      "subCategories": [
+        {
+          "id": 3843,
+          "name": "Alchemy",
+          "seoName": "Alchemy"
+        },
+        {
+          "id": 3844,
+          "name": "Blacksmithing",
+          "seoName": "Blacksmithing"
+        },
+        {
+          "id": 3845,
+          "name": "Book",
+          "seoName": "Book"
+        },
+        {
+          "id": 3846,
+          "name": "Cooking",
+          "seoName": "Cooking"
+        },
+        {
+          "id": 3847,
+          "name": "Enchanting",
+          "seoName": "Enchanting"
+        },
+        {
+          "id": 3848,
+          "name": "Engineering",
+          "seoName": "Engineering"
+        },
+        {
+          "id": 3849,
+          "name": "First Aid",
+          "seoName": "First Aid"
+        },
+        {
+          "id": 3850,
+          "name": "Fishing",
+          "seoName": "Fishing"
+        },
+        {
+          "id": 3851,
+          "name": "Inscription",
+          "seoName": "Inscription"
+        },
+        {
+          "id": 3852,
+          "name": "Jewelcrafting",
+          "seoName": "Jewelcrafting"
+        },
+        {
+          "id": 3853,
+          "name": "Leatherworking",
+          "seoName": "Leatherworking"
+        },
+        {
+          "id": 3854,
+          "name": "Tailoring",
+          "seoName": "Tailoring"
+        }
+      ]
+    },
+    {
+      "id": 884,
+      "name": "Weapon",
+      "seoName": "Weapon",
+      "subCategories": [
+        {
+          "id": 3855,
+          "name": "Bows",
+          "seoName": "Bows"
+        },
+        {
+          "id": 3856,
+          "name": "Crossbows",
+          "seoName": "Crossbows"
+        },
+        {
+          "id": 3857,
+          "name": "Daggers",
+          "seoName": "Daggers"
+        },
+        {
+          "id": 3858,
+          "name": "Fishing Poles",
+          "seoName": "Fishing Poles"
+        },
+        {
+          "id": 3859,
+          "name": "Fist Weapons",
+          "seoName": "Fist Weapons"
+        },
+        {
+          "id": 3860,
+          "name": "Guns",
+          "seoName": "Guns"
+        },
+        {
+          "id": 3861,
+          "name": "Miscellaneous",
+          "seoName": "Miscellaneous"
+        },
+        {
+          "id": 3862,
+          "name": "One-Handed Axes",
+          "seoName": "One-Handed Axes"
+        },
+        {
+          "id": 3863,
+          "name": "One-Handed Maces",
+          "seoName": "One-Handed Maces"
+        },
+        {
+          "id": 3864,
+          "name": "One-Handed Swords",
+          "seoName": "One-Handed Swords"
+        },
+        {
+          "id": 3865,
+          "name": "Staves",
+          "seoName": "Staves"
+        },
+        {
+          "id": 3866,
+          "name": "Thrown",
+          "seoName": "Thrown"
+        },
+        {
+          "id": 3867,
+          "name": "Two-Handed Axes",
+          "seoName": "Two-Handed Axes"
+        },
+        {
+          "id": 3868,
+          "name": "Two-Handed Maces",
+          "seoName": "Two-Handed Maces"
+        },
+        {
+          "id": 3869,
+          "name": "Two-Handed Swords",
+          "seoName": "Two-Handed Swords"
+        },
+        {
+          "id": 3870,
+          "name": "Wands",
+          "seoName": "Wands"
+        }
+      ]
+    },
+    {
+      "id": 2057,
+      "name": "Key",
+      "seoName": "Key",
+      "subCategories": [
+        {
+          "id": 10322,
+          "name": "Key",
+          "seoName": "Key"
+        }
+      ]
+    },
+    {
+      "id": 2110,
+      "name": "Profession Leveling Kits",
+      "seoName": "Profession Leveling Kits",
+      "subCategories": [
+        {
+          "id": 10535,
+          "name": "Alchemy",
+          "seoName": "Alchemy"
+        },
+        {
+          "id": 10536,
+          "name": "Blacksmithing",
+          "seoName": "Blacksmithing"
+        },
+        {
+          "id": 10537,
+          "name": "Enchanting",
+          "seoName": "Enchanting"
+        },
+        {
+          "id": 10538,
+          "name": "Engineering",
+          "seoName": "Engineering"
+        },
+        {
+          "id": 10539,
+          "name": "Jewelcrafting",
+          "seoName": "Jewelcrafting"
+        },
+        {
+          "id": 10540,
+          "name": "Leatherworking",
+          "seoName": "Leatherworking"
+        },
+        {
+          "id": 10541,
+          "name": "Tailoring",
+          "seoName": "Tailoring"
+        },
+        {
+          "id": 10542,
+          "name": "Herbalism",
+          "seoName": "Herbalism"
+        },
+        {
+          "id": 10543,
+          "name": "Mining",
+          "seoName": "Mining"
+        },
+        {
+          "id": 10544,
+          "name": "Skinning",
+          "seoName": "Skinning"
+        },
+        {
+          "id": 10545,
+          "name": "Cooking",
+          "seoName": "Cooking"
+        },
+        {
+          "id": 10546,
+          "name": "First Aid",
+          "seoName": "First Aid"
+        },
+        {
+          "id": 10547,
+          "name": "Fishing",
+          "seoName": "Fishing"
+        }
+      ]
+    },
+    {
+      "id": 2179,
+      "name": "Trade Goods",
+      "seoName": "Trade Goods",
+      "subCategories": [
+        {
+          "id": 11249,
+          "name": "Elementals and Primals",
+          "seoName": "Elementals and Primals"
+        },
+        {
+          "id": 11250,
+          "name": "Herbs and Alchemy Reagents",
+          "seoName": "Herbs and Alchemy Reagents"
+        },
+        {
+          "id": 11251,
+          "name": "Bags and Containers",
+          "seoName": "Bags and Containers"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14149,
+      "name": "US 20th Anniversary Edition",
+      "subCategories": [
+        {
+          "id": 14154,
+          "name": "Doomhowl - Alliance"
+        },
+        {
+          "id": 14155,
+          "name": "Doomhowl - Horde"
+        },
+        {
+          "id": 14150,
+          "name": "Dreamscythe - Alliance"
+        },
+        {
+          "id": 14151,
+          "name": "Dreamscythe - Horde"
+        },
+        {
+          "id": 14152,
+          "name": "Nightslayer - Alliance"
+        },
+        {
+          "id": 14153,
+          "name": "Nightslayer - Horde"
+        }
+      ]
+    },
+    {
+      "id": 14156,
+      "name": "EU 20th Anniversary Edition",
+      "subCategories": [
+        {
+          "id": 14161,
+          "name": "Soulseeker - Alliance"
+        },
+        {
+          "id": 14162,
+          "name": "Soulseeker - Horde"
+        },
+        {
+          "id": 14159,
+          "name": "Spineshatter - Alliance"
+        },
+        {
+          "id": 14160,
+          "name": "Spineshatter - Horde"
+        },
+        {
+          "id": 14157,
+          "name": "Thunderstrike - Alliance"
+        },
+        {
+          "id": 14158,
+          "name": "Thunderstrike - Horde"
+        }
+      ]
+    },
+    {
+      "id": 14163,
+      "name": "AU 20th Anniversary Edition",
+      "subCategories": [
+        {
+          "id": 14164,
+          "name": "Maladath - Alliance"
+        },
+        {
+          "id": 14165,
+          "name": "Maladath - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13551,
+      "name": "US Season of Discovery",
+      "subCategories": [
+        {
+          "id": 13595,
+          "name": "Chaos Bolt - Alliance"
+        },
+        {
+          "id": 13596,
+          "name": "Chaos Bolt - Horde"
+        },
+        {
+          "id": 13563,
+          "name": "Crusader Strike - Alliance"
+        },
+        {
+          "id": 13574,
+          "name": "Crusader Strike - Horde"
+        },
+        {
+          "id": 13562,
+          "name": "Lava Lash - Alliance"
+        },
+        {
+          "id": 13575,
+          "name": "Lava Lash - Horde"
+        },
+        {
+          "id": 13559,
+          "name": "Living Flame - Alliance"
+        },
+        {
+          "id": 13576,
+          "name": "Living Flame - Horde"
+        },
+        {
+          "id": 13561,
+          "name": "Lone Wolf - Alliance"
+        },
+        {
+          "id": 13577,
+          "name": "Lone Wolf - Horde"
+        },
+        {
+          "id": 13558,
+          "name": "Penance - AU - Alliance"
+        },
+        {
+          "id": 13578,
+          "name": "Penance - AU - Horde"
+        },
+        {
+          "id": 13560,
+          "name": "Shadow Strike - AU - Alliance"
+        },
+        {
+          "id": 13579,
+          "name": "Shadowstrike - AU - Horde"
+        },
+        {
+          "id": 13557,
+          "name": "Wild Growth - Alliance"
+        },
+        {
+          "id": 13580,
+          "name": "Wild Growth - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13553,
+      "name": "EU Season Of Discovery",
+      "subCategories": [
+        {
+          "id": 13597,
+          "name": "Chaos Bolt - Alliance"
+        },
+        {
+          "id": 13598,
+          "name": "Chaos Bolt - Horde"
+        },
+        {
+          "id": 13569,
+          "name": "Crusader Strike - Alliance"
+        },
+        {
+          "id": 13568,
+          "name": "Crusader Strike - Horde"
+        },
+        {
+          "id": 13570,
+          "name": "Lava Lash - Alliance"
+        },
+        {
+          "id": 13567,
+          "name": "Lava Lash - Horde"
+        },
+        {
+          "id": 13571,
+          "name": "Living Flame - Alliance"
+        },
+        {
+          "id": 13565,
+          "name": "Living Flame - Horde"
+        },
+        {
+          "id": 13572,
+          "name": "Lone Wolf - Alliance"
+        },
+        {
+          "id": 13566,
+          "name": "Lone Wolf - Horde"
+        },
+        {
+          "id": 13573,
+          "name": "Wild Growth - Alliance"
+        },
+        {
+          "id": 13564,
+          "name": "Wild Growth - Horde"
+        }
+      ]
+    },
+    {
+      "id": 8582,
+      "name": "US Classic Era",
+      "subCategories": [
+        {
+          "id": 8920,
+          "name": "Anathema - Alliance"
+        },
+        {
+          "id": 8921,
+          "name": "Anathema - Horde"
+        },
+        {
+          "id": 8935,
+          "name": "Arcanite Reaper - Alliance"
+        },
+        {
+          "id": 8936,
+          "name": "Arcanite Reaper- Horde"
+        },
+        {
+          "id": 8763,
+          "name": "Arugal - Alliance"
+        },
+        {
+          "id": 8764,
+          "name": "Arugal - Horde"
+        },
+        {
+          "id": 8859,
+          "name": "Ashkandi - Alliance"
+        },
+        {
+          "id": 8860,
+          "name": "Ashkandi - Horde"
+        },
+        {
+          "id": 8741,
+          "name": "Atiesh - Alliance"
+        },
+        {
+          "id": 8742,
+          "name": "Atiesh - Horde"
+        },
+        {
+          "id": 8882,
+          "name": "Azuresong - Alliance"
+        },
+        {
+          "id": 8883,
+          "name": "Azuresong - Horde"
+        },
+        {
+          "id": 8884,
+          "name": "Benediction - Alliance"
+        },
+        {
+          "id": 8885,
+          "name": "Benediction - Horde"
+        },
+        {
+          "id": 8825,
+          "name": "Bigglesworth - Alliance"
+        },
+        {
+          "id": 8826,
+          "name": "Bigglesworth - Horde"
+        },
+        {
+          "id": 8827,
+          "name": "Blaumeux - Alliance"
+        },
+        {
+          "id": 8828,
+          "name": "Blaumeux - Horde"
+        },
+        {
+          "id": 8759,
+          "name": "Bloodsail Buccaneers - Alliance"
+        },
+        {
+          "id": 8760,
+          "name": "Bloodsail Buccaneers - Horde"
+        },
+        {
+          "id": 8861,
+          "name": "Deviate Delight - Alliance"
+        },
+        {
+          "id": 8862,
+          "name": "Deviate Delight - Horde"
+        },
+        {
+          "id": 8939,
+          "name": "Earthfury - Alliance"
+        },
+        {
+          "id": 8940,
+          "name": "Earthfury - Horde"
+        },
+        {
+          "id": 8749,
+          "name": "Faerlina - Alliance"
+        },
+        {
+          "id": 8750,
+          "name": "Faerlina - Horde"
+        },
+        {
+          "id": 8751,
+          "name": "Fairbanks - Alliance"
+        },
+        {
+          "id": 8752,
+          "name": "Fairbanks - Horde"
+        },
+        {
+          "id": 8863,
+          "name": "Felstriker - Alliance"
+        },
+        {
+          "id": 8864,
+          "name": "Felstriker - Horde"
+        },
+        {
+          "id": 8761,
+          "name": "Grobbulus - Alliance"
+        },
+        {
+          "id": 8762,
+          "name": "Grobbulus - Horde"
+        },
+        {
+          "id": 8937,
+          "name": "Heartseeker - Alliance"
+        },
+        {
+          "id": 8938,
+          "name": "Heartseeker - Horde"
+        },
+        {
+          "id": 8753,
+          "name": "Herod - Alliance"
+        },
+        {
+          "id": 8754,
+          "name": "Herod - Horde"
+        },
+        {
+          "id": 8829,
+          "name": "Incendius - Alliance"
+        },
+        {
+          "id": 8830,
+          "name": "Incendius - Horde"
+        },
+        {
+          "id": 8886,
+          "name": "Kirtonos - Alliance"
+        },
+        {
+          "id": 8887,
+          "name": "Kirtonos - Horde"
+        },
+        {
+          "id": 8865,
+          "name": "Kromcrush - Alliance"
+        },
+        {
+          "id": 8866,
+          "name": "Kromcrush - Horde"
+        },
+        {
+          "id": 8867,
+          "name": "Kurinnaxx - Alliance"
+        },
+        {
+          "id": 8868,
+          "name": "Kurinnaxx - Horde"
+        },
+        {
+          "id": 9014,
+          "name": "Loatheb - Alliance"
+        },
+        {
+          "id": 9057,
+          "name": "Loatheb - Horde"
+        },
+        {
+          "id": 8743,
+          "name": "Mankrik - Alliance"
+        },
+        {
+          "id": 8744,
+          "name": "Mankrik - Horde"
+        },
+        {
+          "id": 8745,
+          "name": "Myzrael - Alliance"
+        },
+        {
+          "id": 8746,
+          "name": "Myzrael - Horde"
+        },
+        {
+          "id": 8922,
+          "name": "Netherwind - Alliance"
+        },
+        {
+          "id": 8927,
+          "name": "Netherwind - Horde"
+        },
+        {
+          "id": 8831,
+          "name": "Old Blanchy - Alliance"
+        },
+        {
+          "id": 8832,
+          "name": "Old Blanchy - Horde"
+        },
+        {
+          "id": 8747,
+          "name": "Pagle - Alliance"
+        },
+        {
+          "id": 8748,
+          "name": "Pagle - Horde"
+        },
+        {
+          "id": 8869,
+          "name": "Rattlegore - Alliance"
+        },
+        {
+          "id": 8870,
+          "name": "Rattlegore - Horde"
+        },
+        {
+          "id": 8765,
+          "name": "Remulos - Alliance"
+        },
+        {
+          "id": 8766,
+          "name": "Remulos - Horde"
+        },
+        {
+          "id": 8833,
+          "name": "Skeram - Alliance"
+        },
+        {
+          "id": 8834,
+          "name": "Skeram - Horde"
+        },
+        {
+          "id": 8871,
+          "name": "Smolderweb - Alliance"
+        },
+        {
+          "id": 8872,
+          "name": "Smolderweb - Horde"
+        },
+        {
+          "id": 8835,
+          "name": "Stalagg - Alliance"
+        },
+        {
+          "id": 8836,
+          "name": "Stalagg - Horde"
+        },
+        {
+          "id": 9051,
+          "name": "Sul'thraze - Alliance"
+        },
+        {
+          "id": 9052,
+          "name": "Sul'thraze - Horde"
+        },
+        {
+          "id": 8873,
+          "name": "Sulfuras - Alliance"
+        },
+        {
+          "id": 8874,
+          "name": "Sulfuras - Horde"
+        },
+        {
+          "id": 8755,
+          "name": "Thalnos - Alliance"
+        },
+        {
+          "id": 8756,
+          "name": "Thalnos - Horde"
+        },
+        {
+          "id": 8888,
+          "name": "Thunderfury - Alliance"
+        },
+        {
+          "id": 8889,
+          "name": "Thunderfury - Horde"
+        },
+        {
+          "id": 8837,
+          "name": "Westfall - Alliance"
+        },
+        {
+          "id": 8838,
+          "name": "Westfall - Horde"
+        },
+        {
+          "id": 8757,
+          "name": "Whitemane - Alliance"
+        },
+        {
+          "id": 8758,
+          "name": "Whitemane - Horde"
+        },
+        {
+          "id": 8890,
+          "name": "Windseeker - Alliance"
+        },
+        {
+          "id": 8891,
+          "name": "Windseeker - Horde"
+        },
+        {
+          "id": 8875,
+          "name": "Yojamba - Alliance"
+        },
+        {
+          "id": 8876,
+          "name": "Yojamba - Horde"
+        }
+      ]
+    },
+    {
+      "id": 8583,
+      "name": "EU Classic Era",
+      "subCategories": [
+        {
+          "id": 8894,
+          "name": "Amnennar - Alliance"
+        },
+        {
+          "id": 8895,
+          "name": "Amnennar - Horde"
+        },
+        {
+          "id": 8892,
+          "name": "Ashbringer - Alliance"
+        },
+        {
+          "id": 8893,
+          "name": "Ashbringer - Horde"
+        },
+        {
+          "id": 8807,
+          "name": "Auberdine - Alliance"
+        },
+        {
+          "id": 8808,
+          "name": "Auberdine - Horde"
+        },
+        {
+          "id": 8896,
+          "name": "Bloodfang - Alliance"
+        },
+        {
+          "id": 8897,
+          "name": "Bloodfang - Horde"
+        },
+        {
+          "id": 9059,
+          "name": "Celebras – Alliance"
+        },
+        {
+          "id": 9060,
+          "name": "Celebras – Horde"
+        },
+        {
+          "id": 8815,
+          "name": "Chromie - Alliance"
+        },
+        {
+          "id": 8816,
+          "name": "Chromie - Horde"
+        },
+        {
+          "id": 8898,
+          "name": "Dragon's Call - Alliance"
+        },
+        {
+          "id": 8899,
+          "name": "Dragon's Call - Horde"
+        },
+        {
+          "id": 9003,
+          "name": "Dragonfang - Alliance"
+        },
+        {
+          "id": 9002,
+          "name": "Dragonfang - Horde"
+        },
+        {
+          "id": 8900,
+          "name": "Dreadmist - Alliance"
+        },
+        {
+          "id": 8901,
+          "name": "Dreadmist - Horde"
+        },
+        {
+          "id": 9005,
+          "name": "Earthshaker - Alliance"
+        },
+        {
+          "id": 9004,
+          "name": "Earthshaker - Horde"
+        },
+        {
+          "id": 8811,
+          "name": "Everlook - Alliance"
+        },
+        {
+          "id": 8812,
+          "name": "Everlook - Horde"
+        },
+        {
+          "id": 8902,
+          "name": "Finkle - Alliance"
+        },
+        {
+          "id": 8903,
+          "name": "Finkle - Horde"
+        },
+        {
+          "id": 8839,
+          "name": "Firemaw - Alliance"
+        },
+        {
+          "id": 8840,
+          "name": "Firemaw - Horde"
+        },
+        {
+          "id": 8817,
+          "name": "Flamegor - Alliance"
+        },
+        {
+          "id": 8818,
+          "name": "Flamegor - Horde"
+        },
+        {
+          "id": 8841,
+          "name": "Flamelash - Alliance"
+        },
+        {
+          "id": 8842,
+          "name": "Flamelash - Horde"
+        },
+        {
+          "id": 8843,
+          "name": "Gandling - Alliance"
+        },
+        {
+          "id": 8844,
+          "name": "Gandling - Horde"
+        },
+        {
+          "id": 8793,
+          "name": "Gehennas - Alliance"
+        },
+        {
+          "id": 8794,
+          "name": "Gehennas - Horde"
+        },
+        {
+          "id": 8795,
+          "name": "Golemagg - Alliance"
+        },
+        {
+          "id": 8796,
+          "name": "Golemagg - Horde"
+        },
+        {
+          "id": 9007,
+          "name": "Harbringer of Doom - Alliance"
+        },
+        {
+          "id": 9006,
+          "name": "Harbringer of Doom - Horde"
+        },
+        {
+          "id": 9009,
+          "name": "Heartstriker - Alliance"
+        },
+        {
+          "id": 9008,
+          "name": "Heartstriker - Horde"
+        },
+        {
+          "id": 8797,
+          "name": "Hydraxian Waterlords - Alliance"
+        },
+        {
+          "id": 8798,
+          "name": "Hydraxian Waterlords - Horde"
+        },
+        {
+          "id": 8904,
+          "name": "Judgement - Alliance"
+        },
+        {
+          "id": 8905,
+          "name": "Judgement - Horde"
+        },
+        {
+          "id": 8906,
+          "name": "Lakeshire - Alliance"
+        },
+        {
+          "id": 8907,
+          "name": "Lakeshire - Horde"
+        },
+        {
+          "id": 8813,
+          "name": "Lucifron - Alliance"
+        },
+        {
+          "id": 8814,
+          "name": "Lucifron - Horde"
+        },
+        {
+          "id": 9011,
+          "name": "Mandokir - Alliance"
+        },
+        {
+          "id": 9010,
+          "name": "Mandokir - Horde"
+        },
+        {
+          "id": 8799,
+          "name": "Mirage Raceway - Alliance"
+        },
+        {
+          "id": 8800,
+          "name": "Mirage Raceway - Horde"
+        },
+        {
+          "id": 8847,
+          "name": "Mograine - Alliance"
+        },
+        {
+          "id": 8848,
+          "name": "Mograine - Horde"
+        },
+        {
+          "id": 8849,
+          "name": "Nethergarde Keep - Alliance"
+        },
+        {
+          "id": 8850,
+          "name": "Nethergarde Keep - Horde"
+        },
+        {
+          "id": 8908,
+          "name": "Noggenfogger - Alliance"
+        },
+        {
+          "id": 8909,
+          "name": "Noggenfogger - Horde"
+        },
+        {
+          "id": 8910,
+          "name": "Patchwerk - Alliance"
+        },
+        {
+          "id": 8911,
+          "name": "Patchwerk - Horde"
+        },
+        {
+          "id": 8801,
+          "name": "Pyrewood Village - Alliance"
+        },
+        {
+          "id": 8802,
+          "name": "Pyrewood Village - Horde"
+        },
+        {
+          "id": 8851,
+          "name": "Razorfen - Alliance"
+        },
+        {
+          "id": 8852,
+          "name": "Razorfen - Horde"
+        },
+        {
+          "id": 8853,
+          "name": "Razorgore - Alliance"
+        },
+        {
+          "id": 8854,
+          "name": "Razorgore - Horde"
+        },
+        {
+          "id": 8925,
+          "name": "Rhok'delar - Alliance"
+        },
+        {
+          "id": 8926,
+          "name": "Rhok'delar - Horde"
+        },
+        {
+          "id": 8803,
+          "name": "Shazzrah - Alliance"
+        },
+        {
+          "id": 8804,
+          "name": "Shazzrah - Horde"
+        },
+        {
+          "id": 8912,
+          "name": "Skullflame - Alliance"
+        },
+        {
+          "id": 8913,
+          "name": "Skullflame - Horde"
+        },
+        {
+          "id": 8857,
+          "name": "Stonespine - Alliance"
+        },
+        {
+          "id": 8858,
+          "name": "Stonespine - Horde"
+        },
+        {
+          "id": 8809,
+          "name": "Sulfuron - Alliance"
+        },
+        {
+          "id": 8810,
+          "name": "Sulfuron - Horde"
+        },
+        {
+          "id": 8914,
+          "name": "Ten Storms - Alliance"
+        },
+        {
+          "id": 8915,
+          "name": "Ten Storms - Horde"
+        },
+        {
+          "id": 8916,
+          "name": "Transcendence - Alliance"
+        },
+        {
+          "id": 8917,
+          "name": "Transcendence - Horde"
+        },
+        {
+          "id": 8855,
+          "name": "Venoxis - Alliance"
+        },
+        {
+          "id": 8856,
+          "name": "Venoxis - Horde"
+        },
+        {
+          "id": 8923,
+          "name": "Wyrmthalak - Alliance"
+        },
+        {
+          "id": 8924,
+          "name": "Wyrmthalak - Horde"
+        },
+        {
+          "id": 8805,
+          "name": "Zandalar Tribe - Alliance"
+        },
+        {
+          "id": 8806,
+          "name": "Zandalar Tribe - Horde"
+        }
+      ]
+    },
+    {
+      "id": 8993,
+      "name": "OC Classic Era",
+      "subCategories": [
+        {
+          "id": 8995,
+          "name": "Arugal - Alliance"
+        },
+        {
+          "id": 8994,
+          "name": "Arugal - Horde"
+        },
+        {
+          "id": 8997,
+          "name": "Felstriker - Alliance"
+        },
+        {
+          "id": 8996,
+          "name": "Felstriker - Horde"
+        },
+        {
+          "id": 9001,
+          "name": "Remulos - Alliance"
+        },
+        {
+          "id": 9000,
+          "name": "Remulos - Horde"
+        },
+        {
+          "id": 8999,
+          "name": "Yojamba - Alliance"
+        },
+        {
+          "id": 8998,
+          "name": "Yojamba - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13457,
+      "name": "US Hardcore",
+      "subCategories": [
+        {
+          "id": 13458,
+          "name": "Defias Pillager - Alliance"
+        },
+        {
+          "id": 13459,
+          "name": "Defias Pillager - Horde"
+        },
+        {
+          "id": 13460,
+          "name": "Skull Rock - Alliance"
+        },
+        {
+          "id": 13461,
+          "name": "Skull Rock - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13462,
+      "name": "EU Hardcore",
+      "subCategories": [
+        {
+          "id": 13463,
+          "name": "NekRosh - Alliance"
+        },
+        {
+          "id": 13464,
+          "name": "NekRosh - Horde"
+        },
+        {
+          "id": 13465,
+          "name": "Stitches - Alliance"
+        },
+        {
+          "id": 13466,
+          "name": "Stitches - Horde"
+        }
+      ]
+    },
+    {
+      "id": 14986,
+      "name": "CN Titan Reforged",
+      "subCategories": [
+        {
+          "id": 14987,
+          "name": "Time I - Alliance"
+        },
+        {
+          "id": 14988,
+          "name": "Time I - Horde"
+        },
+        {
+          "id": 14989,
+          "name": "Time II - Alliance"
+        },
+        {
+          "id": 14990,
+          "name": "Time II - Horde"
+        },
+        {
+          "id": 14991,
+          "name": "Time III - Alliance"
+        },
+        {
+          "id": 14992,
+          "name": "Time III - Horde"
+        },
+        {
+          "id": 14993,
+          "name": "Time IV - Alliance"
+        },
+        {
+          "id": 14994,
+          "name": "Time IV - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13443,
+      "name": "OC Hardcore"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

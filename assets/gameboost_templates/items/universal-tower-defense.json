@@ -59,15 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "VIP",
-        "Battlepass",
-        "Gems",
-        "Rerolls",
-        "Shiny Hunter",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

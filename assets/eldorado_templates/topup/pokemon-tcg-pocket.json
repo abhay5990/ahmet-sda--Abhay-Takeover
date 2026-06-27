@@ -1,0 +1,113 @@
+{
+  "game_id": "226",
+  "game": "pokemon-tcg-pocket",
+  "game_name": "Pokemon TCG Pocket",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "pokemon-tcg-pocket-poke-gold": {
+      "name": "Poke Gold",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "5-poke-gold",
+          "name": "5 Poke Gold"
+        },
+        {
+          "id": "25-poke-gold",
+          "name": "25 Poke Gold"
+        },
+        {
+          "id": "50-poke-gold",
+          "name": "50 Poke Gold"
+        },
+        {
+          "id": "100-poke-gold",
+          "name": "100 Poke Gold"
+        },
+        {
+          "id": "200-poke-gold",
+          "name": "200 Poke Gold"
+        },
+        {
+          "id": "500-poke-gold",
+          "name": "500 Poke Gold"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

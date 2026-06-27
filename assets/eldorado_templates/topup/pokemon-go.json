@@ -1,0 +1,185 @@
+{
+  "game_id": "57",
+  "game": "pokemon-go",
+  "game_name": "Pokemon Go",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "pokemon-go-pokecoins": {
+      "name": "PokeCoins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "go-pass-deluxe-event",
+          "name": "GO Pass Deluxe: Flying Taxi"
+        },
+        {
+          "id": "go-pass-deluxe-event-1",
+          "name": "GO Pass Deluxe: Flying Taxi + 6 Ranks"
+        },
+        {
+          "id": "go-pass-deluxe-event-2",
+          "name": "GO Pass Deluxe: Flying Taxi Ultra Box"
+        },
+        {
+          "id": "100-pokecoins",
+          "name": "100 PokeCoins"
+        },
+        {
+          "id": "550-pokecoins",
+          "name": "550 PokeCoins"
+        },
+        {
+          "id": "1200-pokecoins",
+          "name": "1200 PokeCoins"
+        },
+        {
+          "id": "2500-pokecoins",
+          "name": "2500 PokeCoins"
+        },
+        {
+          "id": "5200-pokecoins",
+          "name": "5200 PokeCoins"
+        },
+        {
+          "id": "14500-pokecoins",
+          "name": "14500 PokeCoins"
+        },
+        {
+          "id": "15500-pokecoins",
+          "name": "15500 PokeCoins"
+        },
+        {
+          "id": "29000-pokecoins",
+          "name": "29000 PokeCoins"
+        },
+        {
+          "id": "31000-pokecoins",
+          "name": "31000 PokeCoins"
+        },
+        {
+          "id": "43500-pokecoins",
+          "name": "43500 PokeCoins"
+        },
+        {
+          "id": "46500-pokecoins",
+          "name": "46500 PokeCoins"
+        },
+        {
+          "id": "58000-pokecoins",
+          "name": "58000 PokeCoins"
+        },
+        {
+          "id": "pokemon-go-tour-2026-ultra-ticket-box",
+          "name": "Pokemon GO Tour 2026 Ultra Ticket Box"
+        },
+        {
+          "id": "pokmon-storage-x25",
+          "name": "Pokémon Storage x25"
+        },
+        {
+          "id": "premium-battle-pass-x-30",
+          "name": "Premium Battle Pass x 30"
+        },
+        {
+          "id": "premium-battle-pass-x-185",
+          "name": "Premium Battle Pass x 185"
+        },
+        {
+          "id": "remote-raid-pass-x-2",
+          "name": "Remote Raid Pass x 2"
+        },
+        {
+          "id": "go-pass-deluxe-june",
+          "name": "Go Pass Deluxe: June"
+        },
+        {
+          "id": "go-pass-deluxe-june-and-10-ranks",
+          "name": "Go Pass Deluxe: June + 10 Ranks"
+        },
+        {
+          "id": "go-pass-deluxe-june-ultra-box",
+          "name": "Go Pass Deluxe: June Ultra Box"
+        },
+        {
+          "id": "go-pass-deluxe-event-3",
+          "name": "Skarmory Super Mega Raid Day Ultra Ticket Box"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

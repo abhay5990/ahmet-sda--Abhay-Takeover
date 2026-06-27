@@ -1,0 +1,910 @@
+{
+  "game_id": 5655,
+  "game": "warframe",
+  "game_name": "Warframe",
+  "seo_name": "Warframe",
+  "currencyName": "Platinum",
+  "categories": [
+    {
+      "id": 842,
+      "name": "Credits",
+      "seoName": "Credits",
+      "subCategories": [
+        {
+          "id": 2739,
+          "name": "Credits",
+          "seoName": "Credits"
+        }
+      ]
+    },
+    {
+      "id": 843,
+      "name": "Mods",
+      "seoName": "Mods",
+      "subCategories": [
+        {
+          "id": 2743,
+          "name": "Constitution",
+          "seoName": "Constitution"
+        },
+        {
+          "id": 2744,
+          "name": "Blind Rage",
+          "seoName": "Blind Rage"
+        },
+        {
+          "id": 2745,
+          "name": "Fleeting Expertise",
+          "seoName": "Fleeting Expertise"
+        },
+        {
+          "id": 2746,
+          "name": "Stretch",
+          "seoName": "Stretch"
+        },
+        {
+          "id": 2747,
+          "name": "Rush",
+          "seoName": "Rush"
+        },
+        {
+          "id": 2748,
+          "name": "Fortitude",
+          "seoName": "Fortitude"
+        },
+        {
+          "id": 2749,
+          "name": "Flow",
+          "seoName": "Flow"
+        },
+        {
+          "id": 2750,
+          "name": "Narrow Minded",
+          "seoName": "Narrow Minded"
+        },
+        {
+          "id": 2751,
+          "name": "Intensify",
+          "seoName": "Intensify"
+        },
+        {
+          "id": 2752,
+          "name": "Streamline",
+          "seoName": "Streamline"
+        },
+        {
+          "id": 2753,
+          "name": "Overextended",
+          "seoName": "Overextended"
+        },
+        {
+          "id": 2754,
+          "name": "Rage",
+          "seoName": "Rage"
+        },
+        {
+          "id": 2755,
+          "name": "Continuity",
+          "seoName": "Continuity"
+        },
+        {
+          "id": 2756,
+          "name": "Transient Fortitude",
+          "seoName": "Transient Fortitude"
+        },
+        {
+          "id": 2757,
+          "name": "Primed Flow",
+          "seoName": "Primed Flow"
+        },
+        {
+          "id": 2758,
+          "name": "Primed Continuity",
+          "seoName": "Primed Continuity"
+        },
+        {
+          "id": 2759,
+          "name": "Primed Vigor",
+          "seoName": "Primed Vigor"
+        },
+        {
+          "id": 2760,
+          "name": "Augur Message",
+          "seoName": "Augur Message"
+        },
+        {
+          "id": 2761,
+          "name": "Redirection",
+          "seoName": "Redirection"
+        },
+        {
+          "id": 2762,
+          "name": "Steel Fiber",
+          "seoName": "Steel Fiber"
+        },
+        {
+          "id": 2763,
+          "name": "Maiming Strike",
+          "seoName": "Maiming Strike"
+        },
+        {
+          "id": 2764,
+          "name": "Rifle Riven",
+          "seoName": "Rifle Riven"
+        },
+        {
+          "id": 2765,
+          "name": "Mods Bundle",
+          "seoName": "Mods Bundle"
+        },
+        {
+          "id": 5950,
+          "name": "Other Mods",
+          "seoName": "Other Mods"
+        }
+      ]
+    },
+    {
+      "id": 844,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 2740,
+          "name": "Primary",
+          "seoName": "Primary"
+        },
+        {
+          "id": 2741,
+          "name": "Secondary",
+          "seoName": "Secondary"
+        },
+        {
+          "id": 2742,
+          "name": "Melee",
+          "seoName": "Melee"
+        },
+        {
+          "id": 6413,
+          "name": "Evolving Weapons",
+          "seoName": "Evolving Weapons"
+        }
+      ]
+    },
+    {
+      "id": 851,
+      "name": "Skins",
+      "seoName": "Skins",
+      "subCategories": [
+        {
+          "id": 2839,
+          "name": "Ash Koga",
+          "seoName": "Ash Koga"
+        },
+        {
+          "id": 2840,
+          "name": "Banshee Soprana",
+          "seoName": "Banshee Soprana"
+        },
+        {
+          "id": 2841,
+          "name": "Frost Harka",
+          "seoName": "Frost Harka"
+        },
+        {
+          "id": 2842,
+          "name": "Loki Knave",
+          "seoName": "Loki Knave"
+        },
+        {
+          "id": 2843,
+          "name": "Oberon Feyarch",
+          "seoName": "Oberon Feyarch"
+        },
+        {
+          "id": 2844,
+          "name": "Saryn Orphid",
+          "seoName": "Saryn Orphid"
+        },
+        {
+          "id": 2845,
+          "name": "Excalibur Proto-Armor",
+          "seoName": "Excalibur Proto-Armor"
+        },
+        {
+          "id": 2846,
+          "name": "Nova Asuri",
+          "seoName": "Nova Asuri"
+        },
+        {
+          "id": 2847,
+          "name": "Nyx Nemesis",
+          "seoName": "Nyx Nemesis"
+        },
+        {
+          "id": 2848,
+          "name": "Rhino Palatine",
+          "seoName": "Rhino Palatine"
+        },
+        {
+          "id": 2849,
+          "name": "Trinity Strega",
+          "seoName": "Trinity Strega"
+        },
+        {
+          "id": 2850,
+          "name": "Valkyr Gersemi",
+          "seoName": "Valkyr Gersemi"
+        },
+        {
+          "id": 2851,
+          "name": "Mag Pneuma",
+          "seoName": "Mag Pneuma"
+        },
+        {
+          "id": 2852,
+          "name": "Chroma Dynasty",
+          "seoName": "Chroma Dynasty"
+        },
+        {
+          "id": 2853,
+          "name": "Ember Vermillion",
+          "seoName": "Ember Vermillion"
+        },
+        {
+          "id": 5944,
+          "name": "Mesa Projectilyst",
+          "seoName": "Mesa Projectilyst"
+        },
+        {
+          "id": 5945,
+          "name": "Volt Electrolyst",
+          "seoName": "Volt Electrolyst"
+        },
+        {
+          "id": 5946,
+          "name": "Kerulyst Sentinel",
+          "seoName": "Kerulyst Sentinel"
+        },
+        {
+          "id": 5947,
+          "name": "Narmer Shawzin",
+          "seoName": "Narmer Shawzin"
+        },
+        {
+          "id": 5948,
+          "name": "Other Skins",
+          "seoName": "Other Skins"
+        }
+      ]
+    },
+    {
+      "id": 873,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 3610,
+          "name": "Alloy Plate",
+          "seoName": "Alloy Plate"
+        },
+        {
+          "id": 3611,
+          "name": "Argon Crystal",
+          "seoName": "Argon Crystal"
+        },
+        {
+          "id": 3612,
+          "name": "Circuits",
+          "seoName": "Circuits"
+        },
+        {
+          "id": 3613,
+          "name": "Control Module",
+          "seoName": "Control Module"
+        },
+        {
+          "id": 3614,
+          "name": "Cryotic",
+          "seoName": "Cryotic"
+        },
+        {
+          "id": 3615,
+          "name": "Detonite Ampule",
+          "seoName": "Detonite Ampule"
+        },
+        {
+          "id": 3616,
+          "name": "Endo",
+          "seoName": "Endo"
+        },
+        {
+          "id": 3617,
+          "name": "Exilus Adapter",
+          "seoName": "Exilus Adapter"
+        },
+        {
+          "id": 3618,
+          "name": "Ferrite",
+          "seoName": "Ferrite"
+        },
+        {
+          "id": 3619,
+          "name": "Fieldron Sample",
+          "seoName": "Fieldron Sample"
+        },
+        {
+          "id": 3620,
+          "name": "Gallium",
+          "seoName": "Gallium"
+        },
+        {
+          "id": 3621,
+          "name": "Morphics",
+          "seoName": "Morphics"
+        },
+        {
+          "id": 3622,
+          "name": "Mutagen Sample",
+          "seoName": "Mutagen Sample"
+        },
+        {
+          "id": 3623,
+          "name": "Nano Spores",
+          "seoName": "Nano Spores"
+        },
+        {
+          "id": 3624,
+          "name": "Neural Sensors",
+          "seoName": "Neural Sensors"
+        },
+        {
+          "id": 3625,
+          "name": "Neurodes",
+          "seoName": "Neurodes"
+        },
+        {
+          "id": 3626,
+          "name": "Orokin catalyst",
+          "seoName": "Orokin catalyst"
+        },
+        {
+          "id": 3627,
+          "name": "Orokin Cell",
+          "seoName": "Orokin Cell"
+        },
+        {
+          "id": 3628,
+          "name": "Orokin reactor",
+          "seoName": "Orokin reactor"
+        },
+        {
+          "id": 3629,
+          "name": "Oxium",
+          "seoName": "Oxium"
+        },
+        {
+          "id": 3630,
+          "name": "Pigment",
+          "seoName": "Pigment"
+        },
+        {
+          "id": 3631,
+          "name": "Plastids",
+          "seoName": "Plastids"
+        },
+        {
+          "id": 3632,
+          "name": "Polymer Bundle",
+          "seoName": "Polymer Bundle"
+        },
+        {
+          "id": 3633,
+          "name": "Rubedo",
+          "seoName": "Rubedo"
+        },
+        {
+          "id": 3634,
+          "name": "Salvage",
+          "seoName": "Salvage"
+        },
+        {
+          "id": 3635,
+          "name": "Tellurium",
+          "seoName": "Tellurium"
+        },
+        {
+          "id": 5951,
+          "name": "Other Resources",
+          "seoName": "Other Resources"
+        }
+      ]
+    },
+    {
+      "id": 1128,
+      "name": "Prime Warframes",
+      "seoName": "Prime Warframes",
+      "subCategories": [
+        {
+          "id": 2766,
+          "name": "Ash Prime",
+          "seoName": "Ash Prime"
+        },
+        {
+          "id": 2767,
+          "name": "Banshee Prime",
+          "seoName": "Banshee Prime"
+        },
+        {
+          "id": 2768,
+          "name": "Ember Prime",
+          "seoName": "Ember Prime"
+        },
+        {
+          "id": 2769,
+          "name": "Excalibur Prime",
+          "seoName": "Excalibur Prime"
+        },
+        {
+          "id": 2770,
+          "name": "Frost Prime",
+          "seoName": "Frost Prime"
+        },
+        {
+          "id": 2771,
+          "name": "Hydroid Prime",
+          "seoName": "Hydroid Prime"
+        },
+        {
+          "id": 2772,
+          "name": "Loki Prime",
+          "seoName": "Loki Prime"
+        },
+        {
+          "id": 2773,
+          "name": "Mag Prime",
+          "seoName": "Mag Prime"
+        },
+        {
+          "id": 2775,
+          "name": "Nekros Prime",
+          "seoName": "Nekros Prime"
+        },
+        {
+          "id": 2776,
+          "name": "Nova Prime",
+          "seoName": "Nova Prime"
+        },
+        {
+          "id": 2777,
+          "name": "Nyx Prime",
+          "seoName": "Nyx Prime"
+        },
+        {
+          "id": 2778,
+          "name": "Oberon Prime",
+          "seoName": "Oberon Prime"
+        },
+        {
+          "id": 2779,
+          "name": "Rhino Prime",
+          "seoName": "Rhino Prime"
+        },
+        {
+          "id": 2780,
+          "name": "Saryn Prime",
+          "seoName": "Saryn Prime"
+        },
+        {
+          "id": 2781,
+          "name": "Trinity Prime",
+          "seoName": "Trinity Prime"
+        },
+        {
+          "id": 2782,
+          "name": "Valkyr Prime",
+          "seoName": "Valkyr Prime"
+        },
+        {
+          "id": 2783,
+          "name": "Vauban Prime",
+          "seoName": "Vauban Prime"
+        },
+        {
+          "id": 2784,
+          "name": "Volt Prime",
+          "seoName": "Volt Prime"
+        },
+        {
+          "id": 2785,
+          "name": "Zephyr Prime",
+          "seoName": "Zephyr Prime"
+        },
+        {
+          "id": 2787,
+          "name": "Boltor Prime",
+          "seoName": "Boltor Prime"
+        },
+        {
+          "id": 2802,
+          "name": "Ballistica Prime",
+          "seoName": "Ballistica Prime"
+        },
+        {
+          "id": 2805,
+          "name": "Hikou Prime",
+          "seoName": "Hikou Prime"
+        },
+        {
+          "id": 2819,
+          "name": "Kogake Prime",
+          "seoName": "Kogake Prime"
+        },
+        {
+          "id": 2820,
+          "name": "Kronen Prime",
+          "seoName": "Kronen Prime"
+        },
+        {
+          "id": 2829,
+          "name": "Carrier Prime",
+          "seoName": "Carrier Prime"
+        },
+        {
+          "id": 2836,
+          "name": "Odonata Prime",
+          "seoName": "Odonata Prime"
+        },
+        {
+          "id": 4483,
+          "name": "Atlas Prime",
+          "seoName": "Atlas Prime"
+        },
+        {
+          "id": 4484,
+          "name": "Chroma Prime",
+          "seoName": "Chroma Prime"
+        },
+        {
+          "id": 4485,
+          "name": "Equinox Prime",
+          "seoName": "Equinox Prime"
+        },
+        {
+          "id": 4486,
+          "name": "Ivara Prime",
+          "seoName": "Ivara Prime"
+        },
+        {
+          "id": 4487,
+          "name": "Limbo Prime",
+          "seoName": "Limbo Prime"
+        },
+        {
+          "id": 4488,
+          "name": "Mesa Prime",
+          "seoName": "Mesa Prime"
+        },
+        {
+          "id": 4489,
+          "name": "Wukong Prime",
+          "seoName": "Wukong Prime"
+        },
+        {
+          "id": 4490,
+          "name": "Titania Prime",
+          "seoName": "Titania Prime"
+        },
+        {
+          "id": 5264,
+          "name": "Inaros Prime",
+          "seoName": "Inaros Prime"
+        },
+        {
+          "id": 5265,
+          "name": "Nezha Prime",
+          "seoName": "Nezha Prime"
+        },
+        {
+          "id": 5266,
+          "name": "Octavia Prime",
+          "seoName": "Octavia Prime"
+        },
+        {
+          "id": 5800,
+          "name": "Gara Prime",
+          "seoName": "Gara Prime"
+        },
+        {
+          "id": 5939,
+          "name": "Harrow Prime",
+          "seoName": "Harrow Prime"
+        },
+        {
+          "id": 5940,
+          "name": "Scourge Prime",
+          "seoName": "Scourge Prime"
+        },
+        {
+          "id": 5941,
+          "name": "Knell Prime",
+          "seoName": "Knell Prime"
+        },
+        {
+          "id": 5942,
+          "name": "Nave Prime",
+          "seoName": "Nave Prime"
+        },
+        {
+          "id": 5943,
+          "name": "Templar Prime",
+          "seoName": "Templar Prime"
+        },
+        {
+          "id": 5949,
+          "name": "Other Primes",
+          "seoName": "Other Primes"
+        },
+        {
+          "id": 5952,
+          "name": "Fulmination Prime",
+          "seoName": "Fulmination Prime"
+        },
+        {
+          "id": 5953,
+          "name": "Augur Reach",
+          "seoName": "Augur Reach"
+        },
+        {
+          "id": 5954,
+          "name": "Legendary Core",
+          "seoName": "Legendary Core"
+        },
+        {
+          "id": 5955,
+          "name": "Augur Seeker",
+          "seoName": "Augur Seeker"
+        },
+        {
+          "id": 5956,
+          "name": "Vulcan Blitz",
+          "seoName": "Vulcan Blitz"
+        },
+        {
+          "id": 5957,
+          "name": "Augur Secrets",
+          "seoName": "Augur Secrets"
+        },
+        {
+          "id": 5958,
+          "name": "Aksomati Prime",
+          "seoName": "Aksomati Prime"
+        },
+        {
+          "id": 5959,
+          "name": "Hunter Munitions",
+          "seoName": "Hunter Munitions"
+        },
+        {
+          "id": 5960,
+          "name": "Rime Rounds",
+          "seoName": "Rime Rounds"
+        },
+        {
+          "id": 5961,
+          "name": "Karyst Prime",
+          "seoName": "Karyst Prime"
+        },
+        {
+          "id": 6066,
+          "name": "Garuda Prime",
+          "seoName": "Garuda Prime"
+        },
+        {
+          "id": 7372,
+          "name": "Khora Prime",
+          "seoName": "Khora Prime"
+        },
+        {
+          "id": 7373,
+          "name": "Mirage Prime",
+          "seoName": "Mirage Prime"
+        },
+        {
+          "id": 7374,
+          "name": "Nidus Prime",
+          "seoName": "Nidus Prime"
+        },
+        {
+          "id": 8135,
+          "name": "Revenant Prime",
+          "seoName": "Revenant Prime"
+        },
+        {
+          "id": 8642,
+          "name": "Baruuk Prime",
+          "seoName": "Baruuk Prime"
+        },
+        {
+          "id": 8643,
+          "name": "Hildryn Prime",
+          "seoName": "Hildryn Prime"
+        },
+        {
+          "id": 8644,
+          "name": "Wisp Prime",
+          "seoName": "Wisp Prime"
+        },
+        {
+          "id": 8645,
+          "name": "Grendel Prime",
+          "seoName": "Grendel Prime"
+        },
+        {
+          "id": 8646,
+          "name": "Gauss Prime",
+          "seoName": "Gauss Prime"
+        },
+        {
+          "id": 8696,
+          "name": "Protea Prime",
+          "seoName": "Protea Prime"
+        },
+        {
+          "id": 10224,
+          "name": "Sevagoth Prime",
+          "seoName": "Sevagoth Prime"
+        },
+        {
+          "id": 10225,
+          "name": "Lavos Prime",
+          "seoName": "Lavos Prime"
+        },
+        {
+          "id": 10339,
+          "name": "Yareli Prime",
+          "seoName": "Yareli Prime"
+        },
+        {
+          "id": 10343,
+          "name": "Caliban Prime",
+          "seoName": "Caliban Prime"
+        },
+        {
+          "id": 10470,
+          "name": "Gyre Prime",
+          "seoName": "Gyre Prime"
+        }
+      ]
+    },
+    {
+      "id": 1344,
+      "name": "Housing and Furniture",
+      "seoName": "Housing and Furniture",
+      "subCategories": [
+        {
+          "id": 6069,
+          "name": "Housing and Furniture",
+          "seoName": "Housing and Furniture"
+        }
+      ]
+    },
+    {
+      "id": 1831,
+      "name": "Tauforged Archon Shard",
+      "seoName": "Tauforged Archon Shard",
+      "subCategories": [
+        {
+          "id": 8647,
+          "name": "Tauforged Crimson Archon Shard",
+          "seoName": "Tauforged Crimson Archon Shard"
+        },
+        {
+          "id": 8648,
+          "name": "Tauforged Amber Archon Shard",
+          "seoName": "Tauforged Amber Archon Shard"
+        },
+        {
+          "id": 8649,
+          "name": "Tauforged Azure Archon Shard",
+          "seoName": "Tauforged Azure Archon Shard"
+        },
+        {
+          "id": 8650,
+          "name": "Tauforged Topaz Archon Shard",
+          "seoName": "Tauforged Topaz Archon Shard"
+        },
+        {
+          "id": 8651,
+          "name": "Tauforged Violet Archon Shard",
+          "seoName": "Tauforged Violet Archon Shard"
+        },
+        {
+          "id": 8652,
+          "name": "Tauforged Emerald Archon Shard",
+          "seoName": "Tauforged Emerald Archon Shard"
+        },
+        {
+          "id": 8653,
+          "name": "All Tauforged Archon Shards",
+          "seoName": "All Tauforged Archon Shards"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 5658,
+      "name": "PC"
+    },
+    {
+      "id": 7533,
+      "name": "PS"
+    },
+    {
+      "id": 9878,
+      "name": "Android"
+    },
+    {
+      "id": 13659,
+      "name": "iOS"
+    },
+    {
+      "id": 8508,
+      "name": "Switch"
+    },
+    {
+      "id": 7534,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

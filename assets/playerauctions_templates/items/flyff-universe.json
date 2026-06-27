@@ -1,0 +1,156 @@
+{
+  "game_id": 12556,
+  "game": "flyff-universe",
+  "game_name": "FlyFF Universe",
+  "seo_name": "FlyFF-Universe",
+  "currencyName": "Penya",
+  "categories": [
+    {
+      "id": 1547,
+      "name": "Equipment",
+      "seoName": "Equipment",
+      "subCategories": [
+        {
+          "id": 7597,
+          "name": "Equipment",
+          "seoName": "Equipment"
+        }
+      ]
+    },
+    {
+      "id": 1548,
+      "name": "Weapon",
+      "seoName": "Weapon",
+      "subCategories": [
+        {
+          "id": 7598,
+          "name": "Weapon",
+          "seoName": "Weapon"
+        }
+      ]
+    },
+    {
+      "id": 1549,
+      "name": "Buffs",
+      "seoName": "Buffs",
+      "subCategories": [
+        {
+          "id": 7599,
+          "name": "Buffs",
+          "seoName": "Buffs"
+        }
+      ]
+    },
+    {
+      "id": 1550,
+      "name": "Premium",
+      "seoName": "Premium",
+      "subCategories": [
+        {
+          "id": 7600,
+          "name": "Premium",
+          "seoName": "Premium"
+        }
+      ]
+    },
+    {
+      "id": 1551,
+      "name": "Transportation",
+      "seoName": "Transportation",
+      "subCategories": [
+        {
+          "id": 7601,
+          "name": "Transportation",
+          "seoName": "Transportation"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14325,
+      "name": "FWC"
+    },
+    {
+      "id": 13672,
+      "name": "Rhisis"
+    },
+    {
+      "id": 12744,
+      "name": "Burudeng"
+    },
+    {
+      "id": 12746,
+      "name": "Flarine"
+    },
+    {
+      "id": 12559,
+      "name": "Glaphan"
+    },
+    {
+      "id": 12561,
+      "name": "Lawolf"
+    },
+    {
+      "id": 12562,
+      "name": "Mia"
+    },
+    {
+      "id": 12745,
+      "name": "Mushpoie"
+    },
+    {
+      "id": 12742,
+      "name": "Totemia"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

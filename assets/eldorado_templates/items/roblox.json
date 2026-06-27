@@ -1,0 +1,272 @@
+{
+  "game_id": "70",
+  "game": "roblox",
+  "game_name": "Roblox",
+  "category": "CustomItem",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Steal a Brainrot",
+      "group": "Game"
+    },
+    {
+      "id": "1",
+      "name": "Grand Piece Online",
+      "group": "Game"
+    },
+    {
+      "id": "2",
+      "name": "Murder Mystery 2",
+      "group": "Game"
+    },
+    {
+      "id": "3",
+      "name": "Blox Fruits",
+      "group": "Game"
+    },
+    {
+      "id": "4",
+      "name": "Rivals",
+      "group": "Game"
+    },
+    {
+      "id": "5",
+      "name": "Tap Simulator",
+      "group": "Game"
+    },
+    {
+      "id": "6",
+      "name": "Fight in a School",
+      "group": "Game"
+    },
+    {
+      "id": "7",
+      "name": "Jailbreak",
+      "group": "Game"
+    },
+    {
+      "id": "8",
+      "name": "Adopt Me",
+      "group": "Game"
+    },
+    {
+      "id": "9",
+      "name": "Da Hood",
+      "group": "Game"
+    },
+    {
+      "id": "10",
+      "name": "Break a Lucky Block",
+      "group": "Game"
+    },
+    {
+      "id": "11",
+      "name": "Fish It!",
+      "group": "Game"
+    },
+    {
+      "id": "12",
+      "name": "Sniper Duels",
+      "group": "Game"
+    },
+    {
+      "id": "13",
+      "name": "SpongeBob Tower Defense",
+      "group": "Game"
+    },
+    {
+      "id": "14",
+      "name": "Catch And Tame!",
+      "group": "Game"
+    },
+    {
+      "id": "15",
+      "name": "Case Paradise",
+      "group": "Game"
+    },
+    {
+      "id": "17",
+      "name": "BlockSpin",
+      "group": "Game"
+    },
+    {
+      "id": "18",
+      "name": "Spin a Baddie",
+      "group": "Game"
+    },
+    {
+      "id": "19",
+      "name": "Other",
+      "group": "Game"
+    },
+    {
+      "id": "20",
+      "name": "Your Bizarre Adventure",
+      "group": "Game"
+    },
+    {
+      "id": "21",
+      "name": "Jump for Brainrots",
+      "group": "Game"
+    },
+    {
+      "id": "22",
+      "name": "Flee the Facility",
+      "group": "Game"
+    },
+    {
+      "id": "23",
+      "name": "Jump to Steal Brainrots",
+      "group": "Game"
+    },
+    {
+      "id": "24",
+      "name": "Dress to Impress",
+      "group": "Game"
+    },
+    {
+      "id": "25",
+      "name": "LifeTogether",
+      "group": "Game"
+    },
+    {
+      "id": "26",
+      "name": "Steal From Brainrots",
+      "group": "Game"
+    },
+    {
+      "id": "27",
+      "name": "BedWars",
+      "group": "Game"
+    },
+    {
+      "id": "28",
+      "name": "Driving Empire",
+      "group": "Game"
+    },
+    {
+      "id": "29",
+      "name": "+1 Speed Escape for Brainrots",
+      "group": "Game"
+    },
+    {
+      "id": "30",
+      "name": "Dead Rails",
+      "group": "Game"
+    },
+    {
+      "id": "31",
+      "name": "Catch a Monster",
+      "group": "Game"
+    },
+    {
+      "id": "32",
+      "name": "Brainrot Evolution",
+      "group": "Game"
+    },
+    {
+      "id": "33",
+      "name": "Climb for Brainrots",
+      "group": "Game"
+    },
+    {
+      "id": "34",
+      "name": "Sailor Piece",
+      "group": "Game"
+    },
+    {
+      "id": "35",
+      "name": "bridger: Western",
+      "group": "Game"
+    },
+    {
+      "id": "36",
+      "name": "Deepwoken",
+      "group": "Game"
+    },
+    {
+      "id": "37",
+      "name": "The Strongest Battlegrounds",
+      "group": "Game"
+    },
+    {
+      "id": "38",
+      "name": "Mini War",
+      "group": "Game"
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

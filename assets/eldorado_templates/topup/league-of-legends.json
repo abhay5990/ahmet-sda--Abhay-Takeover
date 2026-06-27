@@ -1,0 +1,274 @@
+{
+  "game_id": "17",
+  "game": "league-of-legends",
+  "game_name": "League of Legends",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "EU",
+      "group": "Region"
+    },
+    {
+      "id": "1",
+      "name": "NA",
+      "group": "Region"
+    },
+    {
+      "id": "2",
+      "name": "Malaysia",
+      "group": "Region"
+    },
+    {
+      "id": "3",
+      "name": "Singapore",
+      "group": "Region"
+    },
+    {
+      "id": "4",
+      "name": "Hong Kong",
+      "group": "Region"
+    },
+    {
+      "id": "5",
+      "name": "Middle East",
+      "group": "Region"
+    },
+    {
+      "id": "6",
+      "name": "Latin America",
+      "group": "Region"
+    },
+    {
+      "id": "7",
+      "name": "Turkey",
+      "group": "Region"
+    }
+  ],
+  "attributes": {
+    "lol-riot-points": {
+      "name": "Riot Points",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "1000-riot-points",
+          "name": "1000 Riot Points"
+        },
+        {
+          "id": "10000-riot-points",
+          "name": "10000 Riot Points"
+        },
+        {
+          "id": "10250-riot-points",
+          "name": "10250 Riot Points"
+        },
+        {
+          "id": "10290-riot-points",
+          "name": "10290 Riot Points"
+        },
+        {
+          "id": "12185-riot-points",
+          "name": "12185 Riot Points"
+        },
+        {
+          "id": "1240-riot-points",
+          "name": "1240 Riot Points"
+        },
+        {
+          "id": "1400-riot-points",
+          "name": "1400 Riot Points"
+        },
+        {
+          "id": "1425-riot-points",
+          "name": "1425 Riot Points"
+        },
+        {
+          "id": "150-riot-points",
+          "name": "150 Riot Points"
+        },
+        {
+          "id": "1525-riot-points",
+          "name": "1525 Riot Points"
+        },
+        {
+          "id": "1895-riot-points",
+          "name": "1895 Riot Points"
+        },
+        {
+          "id": "20000-riot-points",
+          "name": "20000 Riot Points"
+        },
+        {
+          "id": "20500-riot-points",
+          "name": "20500 Riot Points"
+        },
+        {
+          "id": "2470-riot-points",
+          "name": "2470 Riot Points"
+        },
+        {
+          "id": "2850-riot-points",
+          "name": "2850 Riot Points"
+        },
+        {
+          "id": "2900-riot-points",
+          "name": "2900 Riot Points"
+        },
+        {
+          "id": "3135-riot-points",
+          "name": "3135 Riot Points"
+        },
+        {
+          "id": "3190-riot-points",
+          "name": "3190 Riot Points"
+        },
+        {
+          "id": "3625-riot-points",
+          "name": "3625 Riot Points"
+        },
+        {
+          "id": "40000-riot-points",
+          "name": "40000 Riot Points"
+        },
+        {
+          "id": "4600-riot-points",
+          "name": "4500 Riot Points"
+        },
+        {
+          "id": "475-riot-points",
+          "name": "475 Riot Points"
+        },
+        {
+          "id": "500-riot-points",
+          "name": "500 Riot Points"
+        },
+        {
+          "id": "5000-riot-points",
+          "name": "5000 Riot Points"
+        },
+        {
+          "id": "5250-riot-points",
+          "name": "5250 Riot Points"
+        },
+        {
+          "id": "5680-riot-points",
+          "name": "5680 Riot Points"
+        },
+        {
+          "id": "5700-riot-points",
+          "name": "5700 Riot Points"
+        },
+        {
+          "id": "575-riot-points",
+          "name": "575 Riot Points"
+        },
+        {
+          "id": "6500-riot-points",
+          "name": "6500 Riot Points"
+        },
+        {
+          "id": "7620-riot-points",
+          "name": "7620 Riot Points"
+        },
+        {
+          "id": "8390-riot-points",
+          "name": "8390 Riot Points"
+        },
+        {
+          "id": "460-riot-points",
+          "name": "460 Riot Points"
+        },
+        {
+          "id": "1005-riot-points",
+          "name": "1005 Riot Points"
+        },
+        {
+          "id": "2105-riot-points",
+          "name": "2105 Riot Points"
+        },
+        {
+          "id": "5295-riot-points",
+          "name": "5295 Riot Points"
+        },
+        {
+          "id": "10875-riot-points",
+          "name": "10875 Riot Points"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

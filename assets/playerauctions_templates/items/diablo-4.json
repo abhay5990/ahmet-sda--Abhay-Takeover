@@ -1,0 +1,2741 @@
+{
+  "game_id": 13341,
+  "game": "diablo-4",
+  "game_name": "Diablo 4",
+  "seo_name": "Diablo-4",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1788,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 8391,
+          "name": "Amulets",
+          "seoName": "Amulets"
+        },
+        {
+          "id": 8392,
+          "name": "Pants",
+          "seoName": "Pants"
+        },
+        {
+          "id": 8393,
+          "name": "Chest Armor",
+          "seoName": "Chest Armor"
+        },
+        {
+          "id": 8394,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 8395,
+          "name": "Gloves",
+          "seoName": "Gloves"
+        },
+        {
+          "id": 8396,
+          "name": "Helm",
+          "seoName": "Helm"
+        },
+        {
+          "id": 8397,
+          "name": "Rings",
+          "seoName": "Rings"
+        }
+      ]
+    },
+    {
+      "id": 1789,
+      "name": "Builds and Gear Sets",
+      "seoName": "Builds and Gear Sets",
+      "subCategories": [
+        {
+          "id": 8400,
+          "name": "Gear Sets",
+          "seoName": "Gear Sets"
+        },
+        {
+          "id": 9708,
+          "name": "Spiritborn Builds",
+          "seoName": "Spiritborn Builds"
+        },
+        {
+          "id": 9709,
+          "name": "Barbarian Builds",
+          "seoName": "Barbarian Builds"
+        },
+        {
+          "id": 9710,
+          "name": "Druid Builds",
+          "seoName": "Druid Builds"
+        },
+        {
+          "id": 9711,
+          "name": "Necromancer Builds",
+          "seoName": "Necromancer Builds"
+        },
+        {
+          "id": 9712,
+          "name": "Rogue Builds",
+          "seoName": "Rogue Builds"
+        },
+        {
+          "id": 9713,
+          "name": "Sorcerer Builds",
+          "seoName": "Sorcerer Builds"
+        },
+        {
+          "id": 10842,
+          "name": "Paladin Builds",
+          "seoName": "Paladin Builds"
+        },
+        {
+          "id": 11036,
+          "name": "Warlock Builds",
+          "seoName": "Warlock Builds"
+        }
+      ]
+    },
+    {
+      "id": 1790,
+      "name": "Gems",
+      "seoName": "Gems",
+      "subCategories": [
+        {
+          "id": 8480,
+          "name": "Royal Sapphires",
+          "seoName": "Royal Sapphires"
+        },
+        {
+          "id": 8481,
+          "name": "Royal Skulls",
+          "seoName": "Royal Skulls"
+        },
+        {
+          "id": 8482,
+          "name": "Royal Amethyst",
+          "seoName": "Royal Amethyst"
+        },
+        {
+          "id": 8483,
+          "name": "Royal Emerald",
+          "seoName": "Royal Emerald"
+        },
+        {
+          "id": 8484,
+          "name": "Royal Ruby",
+          "seoName": "Royal Ruby"
+        },
+        {
+          "id": 8485,
+          "name": "Royal Diamond",
+          "seoName": "Royal Diamond"
+        },
+        {
+          "id": 8486,
+          "name": "Royal Topaz",
+          "seoName": "Royal Topaz"
+        },
+        {
+          "id": 8494,
+          "name": "Crude Sapphires",
+          "seoName": "Crude Sapphires"
+        },
+        {
+          "id": 8495,
+          "name": "Crude Skulls",
+          "seoName": "Crude Skulls"
+        },
+        {
+          "id": 8496,
+          "name": "Crude Amethyst",
+          "seoName": "Crude Amethyst"
+        },
+        {
+          "id": 8497,
+          "name": "Crude Emerald",
+          "seoName": "Crude Emerald"
+        },
+        {
+          "id": 8498,
+          "name": "Crude Ruby",
+          "seoName": "Crude Ruby"
+        },
+        {
+          "id": 8499,
+          "name": "Crude Diamond",
+          "seoName": "Crude Diamond"
+        },
+        {
+          "id": 8500,
+          "name": "Crude Topaz",
+          "seoName": "Crude Topaz"
+        },
+        {
+          "id": 8501,
+          "name": "Flawless Sapphires",
+          "seoName": "Flawless Sapphires"
+        },
+        {
+          "id": 8502,
+          "name": "Flawless Skulls",
+          "seoName": "Flawless Skulls"
+        },
+        {
+          "id": 8503,
+          "name": "Flawless Amethyst",
+          "seoName": "Flawless Amethyst"
+        },
+        {
+          "id": 8504,
+          "name": "Flawless Emerald",
+          "seoName": "Flawless Emerald"
+        },
+        {
+          "id": 8505,
+          "name": "Flawless Ruby",
+          "seoName": "Flawless Ruby"
+        },
+        {
+          "id": 8506,
+          "name": "Flawless Diamond",
+          "seoName": "Flawless Diamond"
+        },
+        {
+          "id": 8507,
+          "name": "Flawless Topaz",
+          "seoName": "Flawless Topaz"
+        },
+        {
+          "id": 8510,
+          "name": "Chipped Amethyst",
+          "seoName": "Chipped Amethyst"
+        },
+        {
+          "id": 9719,
+          "name": "Grand Amethyst",
+          "seoName": "Grand Amethyst"
+        },
+        {
+          "id": 9720,
+          "name": "Grand Diamond",
+          "seoName": "Grand Diamond"
+        },
+        {
+          "id": 9721,
+          "name": "Grand Emerald",
+          "seoName": "Grand Emerald"
+        },
+        {
+          "id": 9722,
+          "name": "Grand Ruby",
+          "seoName": "Grand Ruby"
+        },
+        {
+          "id": 9723,
+          "name": "Grand Sapphire",
+          "seoName": "Grand Sapphire"
+        },
+        {
+          "id": 9724,
+          "name": "Grand Topaz",
+          "seoName": "Grand Topaz"
+        },
+        {
+          "id": 9725,
+          "name": "Grand Skull",
+          "seoName": "Grand Skull"
+        },
+        {
+          "id": 11231,
+          "name": "Horadric Amethyst",
+          "seoName": "Horadric Amethyst"
+        },
+        {
+          "id": 11232,
+          "name": "Horadric Diamond",
+          "seoName": "Horadric Diamond"
+        },
+        {
+          "id": 11233,
+          "name": "Horadric Emerald",
+          "seoName": "Horadric Emerald"
+        },
+        {
+          "id": 11234,
+          "name": "Horadric Ruby",
+          "seoName": "Horadric Ruby"
+        },
+        {
+          "id": 11235,
+          "name": "Horadric Sapphire",
+          "seoName": "Horadric Sapphire"
+        },
+        {
+          "id": 11236,
+          "name": "Horadric Skulls",
+          "seoName": "Horadric Skulls"
+        },
+        {
+          "id": 11237,
+          "name": "Horadric Topaz",
+          "seoName": "Horadric Topaz"
+        }
+      ]
+    },
+    {
+      "id": 1792,
+      "name": "Boss Materials",
+      "seoName": "Boss Materials",
+      "subCategories": [
+        {
+          "id": 8405,
+          "name": "Duriel Mats",
+          "seoName": "Duriel Mats"
+        },
+        {
+          "id": 8843,
+          "name": "Varshan Mats",
+          "seoName": "Varshan Mats"
+        },
+        {
+          "id": 8844,
+          "name": "Lord Zir Mats",
+          "seoName": "Lord Zir Mats"
+        },
+        {
+          "id": 8845,
+          "name": "Grigoire Mats",
+          "seoName": "Grigoire Mats"
+        },
+        {
+          "id": 8846,
+          "name": "The Beast In The Ice Mats",
+          "seoName": "The Beast In The Ice Mats"
+        },
+        {
+          "id": 8847,
+          "name": "Andariel Mats",
+          "seoName": "Andariel Mats"
+        },
+        {
+          "id": 11037,
+          "name": "Betrayer's Husk",
+          "seoName": "Betrayer's Husk"
+        },
+        {
+          "id": 11038,
+          "name": "Greater Lair Key",
+          "seoName": "Greater Lair Key"
+        },
+        {
+          "id": 11039,
+          "name": "Lair Key",
+          "seoName": "Lair Key"
+        }
+      ]
+    },
+    {
+      "id": 1793,
+      "name": "Misc",
+      "seoName": "Misc",
+      "subCategories": [
+        {
+          "id": 8406,
+          "name": "Misc",
+          "seoName": "Misc"
+        }
+      ]
+    },
+    {
+      "id": 1795,
+      "name": "Recipes",
+      "seoName": "Recipes",
+      "subCategories": [
+        {
+          "id": 8408,
+          "name": "Recipes",
+          "seoName": "Recipes"
+        }
+      ]
+    },
+    {
+      "id": 1796,
+      "name": "Runes",
+      "seoName": "Runes",
+      "subCategories": [
+        {
+          "id": 8472,
+          "name": "Thul",
+          "seoName": "Thul"
+        },
+        {
+          "id": 8479,
+          "name": "Vex",
+          "seoName": "Vex"
+        },
+        {
+          "id": 9798,
+          "name": "Ahu",
+          "seoName": "Ahu"
+        },
+        {
+          "id": 9799,
+          "name": "Bac",
+          "seoName": "Bac"
+        },
+        {
+          "id": 9800,
+          "name": "Cem",
+          "seoName": "Cem"
+        },
+        {
+          "id": 9801,
+          "name": "Cir",
+          "seoName": "Cir"
+        },
+        {
+          "id": 9802,
+          "name": "Feo",
+          "seoName": "Feo"
+        },
+        {
+          "id": 9803,
+          "name": "Lith",
+          "seoName": "Lith"
+        },
+        {
+          "id": 9804,
+          "name": "Muni",
+          "seoName": "Muni"
+        },
+        {
+          "id": 9805,
+          "name": "Neo",
+          "seoName": "Neo"
+        },
+        {
+          "id": 9806,
+          "name": "Noc",
+          "seoName": "Noc"
+        },
+        {
+          "id": 9807,
+          "name": "Poc",
+          "seoName": "Poc"
+        },
+        {
+          "id": 9808,
+          "name": "Tam",
+          "seoName": "Tam"
+        },
+        {
+          "id": 9809,
+          "name": "Ur",
+          "seoName": "Ur"
+        },
+        {
+          "id": 9810,
+          "name": "Xol",
+          "seoName": "Xol"
+        },
+        {
+          "id": 9811,
+          "name": "Yax",
+          "seoName": "Yax"
+        },
+        {
+          "id": 9812,
+          "name": "Yul",
+          "seoName": "Yul"
+        },
+        {
+          "id": 9813,
+          "name": "Zan",
+          "seoName": "Zan"
+        },
+        {
+          "id": 9814,
+          "name": "Ceh",
+          "seoName": "Ceh"
+        },
+        {
+          "id": 9815,
+          "name": "Eom",
+          "seoName": "Eom"
+        },
+        {
+          "id": 9816,
+          "name": "Gar",
+          "seoName": "Gar"
+        },
+        {
+          "id": 9817,
+          "name": "Jah",
+          "seoName": "Jah"
+        },
+        {
+          "id": 9818,
+          "name": "Kry",
+          "seoName": "Kry"
+        },
+        {
+          "id": 9819,
+          "name": "Kaa",
+          "seoName": "Kaa"
+        },
+        {
+          "id": 9820,
+          "name": "Lum",
+          "seoName": "Lum"
+        },
+        {
+          "id": 9821,
+          "name": "Met",
+          "seoName": "Met"
+        },
+        {
+          "id": 9822,
+          "name": "Mot",
+          "seoName": "Mot"
+        },
+        {
+          "id": 9823,
+          "name": "Ner",
+          "seoName": "Ner"
+        },
+        {
+          "id": 9824,
+          "name": "Ohm",
+          "seoName": "Ohm"
+        },
+        {
+          "id": 9825,
+          "name": "Ono",
+          "seoName": "Ono"
+        },
+        {
+          "id": 9826,
+          "name": "Qax",
+          "seoName": "Qax"
+        },
+        {
+          "id": 9827,
+          "name": "Qua",
+          "seoName": "Qua"
+        },
+        {
+          "id": 9828,
+          "name": "Que",
+          "seoName": "Que"
+        },
+        {
+          "id": 9829,
+          "name": "Tal",
+          "seoName": "Tal"
+        },
+        {
+          "id": 9830,
+          "name": "Teb",
+          "seoName": "Teb"
+        },
+        {
+          "id": 9831,
+          "name": "Tec",
+          "seoName": "Tec"
+        },
+        {
+          "id": 9832,
+          "name": "Ton",
+          "seoName": "Ton"
+        },
+        {
+          "id": 9833,
+          "name": "Tun",
+          "seoName": "Tun"
+        },
+        {
+          "id": 9834,
+          "name": "Tzic",
+          "seoName": "Tzic"
+        },
+        {
+          "id": 9835,
+          "name": "Wat",
+          "seoName": "Wat"
+        },
+        {
+          "id": 9836,
+          "name": "Xan",
+          "seoName": "Xan"
+        },
+        {
+          "id": 9837,
+          "name": "Xal",
+          "seoName": "Xal"
+        },
+        {
+          "id": 9838,
+          "name": "Yom",
+          "seoName": "Yom"
+        },
+        {
+          "id": 9839,
+          "name": "Zec",
+          "seoName": "Zec"
+        }
+      ]
+    },
+    {
+      "id": 1799,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 8415,
+          "name": "1-Handed Weapons",
+          "seoName": "1-Handed Weapons"
+        },
+        {
+          "id": 8416,
+          "name": "2-Handed Weapons",
+          "seoName": "2-Handed Weapons"
+        },
+        {
+          "id": 8417,
+          "name": "Ranged Weapons",
+          "seoName": "Ranged Weapons"
+        },
+        {
+          "id": 8726,
+          "name": "Axe",
+          "seoName": "Axe"
+        },
+        {
+          "id": 8727,
+          "name": "Bow",
+          "seoName": "Bow"
+        },
+        {
+          "id": 8728,
+          "name": "Cross Bow",
+          "seoName": "Cross Bow"
+        },
+        {
+          "id": 8729,
+          "name": "Dagger",
+          "seoName": "Dagger"
+        },
+        {
+          "id": 8730,
+          "name": "Focus",
+          "seoName": "Focus"
+        },
+        {
+          "id": 8731,
+          "name": "Mace",
+          "seoName": "Mace"
+        },
+        {
+          "id": 8732,
+          "name": "Polearm",
+          "seoName": "Polearm"
+        },
+        {
+          "id": 8733,
+          "name": "Scythe",
+          "seoName": "Scythe"
+        },
+        {
+          "id": 8734,
+          "name": "Shield",
+          "seoName": "Shield"
+        },
+        {
+          "id": 8735,
+          "name": "Staff",
+          "seoName": "Staff"
+        },
+        {
+          "id": 8736,
+          "name": "Sword",
+          "seoName": "Sword"
+        },
+        {
+          "id": 8737,
+          "name": "Totem",
+          "seoName": "Totem"
+        },
+        {
+          "id": 8738,
+          "name": "Two Handed Axe",
+          "seoName": "Two Handed Axe"
+        },
+        {
+          "id": 8739,
+          "name": "Two Handed Mace",
+          "seoName": "Two Handed Mace"
+        },
+        {
+          "id": 8740,
+          "name": "Two Handed Scythe",
+          "seoName": "Two Handed Scythe"
+        },
+        {
+          "id": 8741,
+          "name": "Two Handed Sword",
+          "seoName": "Two Handed Sword"
+        },
+        {
+          "id": 8742,
+          "name": "Wand",
+          "seoName": "Wand"
+        },
+        {
+          "id": 9717,
+          "name": "Quarterstaff",
+          "seoName": "Quarterstaff"
+        },
+        {
+          "id": 9718,
+          "name": "Glaive",
+          "seoName": "Glaive"
+        }
+      ]
+    },
+    {
+      "id": 1802,
+      "name": "Aspects",
+      "seoName": "Aspects",
+      "subCategories": [
+        {
+          "id": 8489,
+          "name": "Druid Aspects",
+          "seoName": "Druid Aspects"
+        },
+        {
+          "id": 8490,
+          "name": "Necromancer Aspects",
+          "seoName": "Necromancer Aspects"
+        },
+        {
+          "id": 8491,
+          "name": "Rougue Aspects",
+          "seoName": "Rougue Aspects"
+        },
+        {
+          "id": 8492,
+          "name": "Sorcerer Aspects",
+          "seoName": "Sorcerer Aspects"
+        },
+        {
+          "id": 9714,
+          "name": "Barbarian Aspects",
+          "seoName": "Barbarian Aspects"
+        },
+        {
+          "id": 9715,
+          "name": "Generic Aspects",
+          "seoName": "Generic Aspects"
+        },
+        {
+          "id": 9716,
+          "name": "Spiritborn Aspects",
+          "seoName": "Spiritborn Aspects"
+        },
+        {
+          "id": 10871,
+          "name": "Paladin Aspects",
+          "seoName": "Paladin Aspects"
+        }
+      ]
+    },
+    {
+      "id": 1826,
+      "name": "Junk for Salvage",
+      "seoName": "Junk for Salvage",
+      "subCategories": [
+        {
+          "id": 8625,
+          "name": "Junk for Salvage",
+          "seoName": "Junk for Salvage"
+        }
+      ]
+    },
+    {
+      "id": 1866,
+      "name": "Unique Items",
+      "seoName": "Unique Items",
+      "subCategories": [
+        {
+          "id": 8745,
+          "name": "Paingorger's Gauntlets",
+          "seoName": "Paingorger's Gauntlets"
+        },
+        {
+          "id": 8747,
+          "name": "Tal Rasha's Iridescent Loop",
+          "seoName": "Tal Rasha's Iridescent Loop"
+        },
+        {
+          "id": 8748,
+          "name": "Tempest Roar",
+          "seoName": "Tempest Roar"
+        },
+        {
+          "id": 8751,
+          "name": "Banished Lord's Talisman",
+          "seoName": "Banished Lord's Talisman"
+        },
+        {
+          "id": 8752,
+          "name": "Blood Moon Breeches",
+          "seoName": "Blood Moon Breeches"
+        },
+        {
+          "id": 8753,
+          "name": "Ebonpiercer",
+          "seoName": "Ebonpiercer"
+        },
+        {
+          "id": 8754,
+          "name": "Flameweaver",
+          "seoName": "Flameweaver"
+        },
+        {
+          "id": 8755,
+          "name": "Fractured Winterglass",
+          "seoName": "Fractured Winterglass"
+        },
+        {
+          "id": 8756,
+          "name": "Godslayer Crown",
+          "seoName": "Godslayer Crown"
+        },
+        {
+          "id": 8757,
+          "name": "Hunter's Zenith",
+          "seoName": "Hunter's Zenith"
+        },
+        {
+          "id": 8758,
+          "name": "Mad Wolf's Glee",
+          "seoName": "Mad Wolf's Glee"
+        },
+        {
+          "id": 8760,
+          "name": "Rage of Harrogath",
+          "seoName": "Rage of Harrogath"
+        },
+        {
+          "id": 8761,
+          "name": "Raiment of the Infinite",
+          "seoName": "Raiment of the Infinite"
+        },
+        {
+          "id": 8762,
+          "name": "Ramaladni's Magnum Opus",
+          "seoName": "Ramaladni's Magnum Opus"
+        },
+        {
+          "id": 8763,
+          "name": "Razorplate",
+          "seoName": "Razorplate"
+        },
+        {
+          "id": 8764,
+          "name": "Ring of Mendeln",
+          "seoName": "Ring of Mendeln"
+        },
+        {
+          "id": 8765,
+          "name": "Ring of the Sacrilegious Soul",
+          "seoName": "Ring of the Sacrilegious Soul"
+        },
+        {
+          "id": 8766,
+          "name": "Scoundrel's Kiss",
+          "seoName": "Scoundrel's Kiss"
+        },
+        {
+          "id": 8767,
+          "name": "Tibault's Will",
+          "seoName": "Tibault's Will"
+        },
+        {
+          "id": 8768,
+          "name": "Tuskhelm of Joritz the Mighty",
+          "seoName": "Tuskhelm of Joritz the Mighty"
+        },
+        {
+          "id": 8770,
+          "name": "Wildheart Hunger",
+          "seoName": "Wildheart Hunger"
+        },
+        {
+          "id": 8771,
+          "name": "X'Fal's Corroded Signet",
+          "seoName": "X'Fal's Corroded Signet"
+        },
+        {
+          "id": 8772,
+          "name": "Ahavarion Spear of Lycander",
+          "seoName": "Ahavarion Spear of Lycander"
+        },
+        {
+          "id": 8773,
+          "name": "Beastfall Boots",
+          "seoName": "Beastfall Boots"
+        },
+        {
+          "id": 8774,
+          "name": "Blue Rose",
+          "seoName": "Blue Rose"
+        },
+        {
+          "id": 8775,
+          "name": "Deathless Visage",
+          "seoName": "Deathless Visage"
+        },
+        {
+          "id": 8776,
+          "name": "Dolmen Stone",
+          "seoName": "Dolmen Stone"
+        },
+        {
+          "id": 8777,
+          "name": "Earthbreaker",
+          "seoName": "Earthbreaker"
+        },
+        {
+          "id": 8778,
+          "name": "Gloves of the Illuminator",
+          "seoName": "Gloves of the Illuminator"
+        },
+        {
+          "id": 8779,
+          "name": "Greatstaff of the Crone",
+          "seoName": "Greatstaff of the Crone"
+        },
+        {
+          "id": 8780,
+          "name": "Greaves of the Empty Tomb",
+          "seoName": "Greaves of the Empty Tomb"
+        },
+        {
+          "id": 8781,
+          "name": "Hellhammer",
+          "seoName": "Hellhammer"
+        },
+        {
+          "id": 8782,
+          "name": "Iceheart Brais",
+          "seoName": "Iceheart Brais"
+        },
+        {
+          "id": 8783,
+          "name": "Insatiable Fury",
+          "seoName": "Insatiable Fury"
+        },
+        {
+          "id": 8784,
+          "name": "Lidless Wall",
+          "seoName": "Lidless Wall"
+        },
+        {
+          "id": 8785,
+          "name": "Ring of the Ravenous",
+          "seoName": "Ring of the Ravenous"
+        },
+        {
+          "id": 8786,
+          "name": "Starfall Coronet",
+          "seoName": "Starfall Coronet"
+        },
+        {
+          "id": 8787,
+          "name": "Storm's Companion",
+          "seoName": "Storm's Companion"
+        },
+        {
+          "id": 8788,
+          "name": "Temerity",
+          "seoName": "Temerity"
+        },
+        {
+          "id": 8789,
+          "name": "Unsung Ascetic's Wraps",
+          "seoName": "Unsung Ascetic's Wraps"
+        },
+        {
+          "id": 8790,
+          "name": "Yen's Blessing",
+          "seoName": "Yen's Blessing"
+        },
+        {
+          "id": 8791,
+          "name": "Blood Artisan's Cuirass",
+          "seoName": "Blood Artisan's Cuirass"
+        },
+        {
+          "id": 8792,
+          "name": "Bloodless Scream",
+          "seoName": "Bloodless Scream"
+        },
+        {
+          "id": 8793,
+          "name": "Cruor's Embrace",
+          "seoName": "Cruor's Embrace"
+        },
+        {
+          "id": 8794,
+          "name": "Deathspeaker's Pendant",
+          "seoName": "Deathspeaker's Pendant"
+        },
+        {
+          "id": 8795,
+          "name": "Esadora's Overflowing Cameo",
+          "seoName": "Esadora's Overflowing Cameo"
+        },
+        {
+          "id": 8796,
+          "name": "Esu's Heirloom",
+          "seoName": "Esu's Heirloom"
+        },
+        {
+          "id": 8797,
+          "name": "Grasp of Shadow",
+          "seoName": "Grasp of Shadow"
+        },
+        {
+          "id": 8798,
+          "name": "Howl from Below",
+          "seoName": "Howl from Below"
+        },
+        {
+          "id": 8799,
+          "name": "Mother's Embrace",
+          "seoName": "Mother's Embrace"
+        },
+        {
+          "id": 8800,
+          "name": "Overkill",
+          "seoName": "Overkill"
+        },
+        {
+          "id": 8801,
+          "name": "Ring of Red Furor",
+          "seoName": "Ring of Red Furor"
+        },
+        {
+          "id": 8802,
+          "name": "Saboteur's Signet",
+          "seoName": "Saboteur's Signet"
+        },
+        {
+          "id": 8803,
+          "name": "Soulbrand",
+          "seoName": "Soulbrand"
+        },
+        {
+          "id": 8804,
+          "name": "Twin Strikes",
+          "seoName": "Twin Strikes"
+        },
+        {
+          "id": 8805,
+          "name": "Battle Trance",
+          "seoName": "Battle Trance"
+        },
+        {
+          "id": 8806,
+          "name": "Black River",
+          "seoName": "Black River"
+        },
+        {
+          "id": 8807,
+          "name": "Condemnation",
+          "seoName": "Condemnation"
+        },
+        {
+          "id": 8808,
+          "name": "Fists of Fate",
+          "seoName": "Fists of Fate"
+        },
+        {
+          "id": 8809,
+          "name": "Flamescar",
+          "seoName": "Flamescar"
+        },
+        {
+          "id": 8810,
+          "name": "Fleshrender",
+          "seoName": "Fleshrender"
+        },
+        {
+          "id": 8811,
+          "name": "Mutilator Plate",
+          "seoName": "Mutilator Plate"
+        },
+        {
+          "id": 8812,
+          "name": "Penitent Greaves",
+          "seoName": "Penitent Greaves"
+        },
+        {
+          "id": 8813,
+          "name": "Staff of Endless Rage",
+          "seoName": "Staff of Endless Rage"
+        },
+        {
+          "id": 8814,
+          "name": "Staff of Lam Esen",
+          "seoName": "Staff of Lam Esen"
+        },
+        {
+          "id": 8815,
+          "name": "The Oculus",
+          "seoName": "The Oculus"
+        },
+        {
+          "id": 8816,
+          "name": "Vasily's Prayer",
+          "seoName": "Vasily's Prayer"
+        },
+        {
+          "id": 8817,
+          "name": "Windforce",
+          "seoName": "Windforce"
+        },
+        {
+          "id": 8818,
+          "name": "Writhing Band of Trickery",
+          "seoName": "Writhing Band of Trickery"
+        },
+        {
+          "id": 8819,
+          "name": "Arreat's Bearing",
+          "seoName": "Arreat's Bearing"
+        },
+        {
+          "id": 8820,
+          "name": "Asheara's Khanjar",
+          "seoName": "Asheara's Khanjar"
+        },
+        {
+          "id": 8821,
+          "name": "100000 Steps",
+          "seoName": "100000 Steps"
+        },
+        {
+          "id": 8822,
+          "name": "Airidah's Inexorable Will",
+          "seoName": "Airidah's Inexorable Will"
+        },
+        {
+          "id": 8823,
+          "name": "Ancients' Oath",
+          "seoName": "Ancients' Oath"
+        },
+        {
+          "id": 8824,
+          "name": "Cowl of the Nameless",
+          "seoName": "Cowl of the Nameless"
+        },
+        {
+          "id": 8825,
+          "name": "Eaglehorn",
+          "seoName": "Eaglehorn"
+        },
+        {
+          "id": 8826,
+          "name": "Eyes in the Dark",
+          "seoName": "Eyes in the Dark"
+        },
+        {
+          "id": 8827,
+          "name": "Fields of Crimson",
+          "seoName": "Fields of Crimson"
+        },
+        {
+          "id": 8828,
+          "name": "Flickerstep",
+          "seoName": "Flickerstep"
+        },
+        {
+          "id": 8829,
+          "name": "Gohr's Devastating Grips",
+          "seoName": "Gohr's Devastating Grips"
+        },
+        {
+          "id": 8830,
+          "name": "Frostburn",
+          "seoName": "Frostburn"
+        },
+        {
+          "id": 8831,
+          "name": "Scoundrel's Leathers",
+          "seoName": "Scoundrel's Leathers"
+        },
+        {
+          "id": 8832,
+          "name": "Skyhunter",
+          "seoName": "Skyhunter"
+        },
+        {
+          "id": 8833,
+          "name": "Tassets of the Dawning Sky",
+          "seoName": "Tassets of the Dawning Sky"
+        },
+        {
+          "id": 8834,
+          "name": "The Butcher's Cleaver",
+          "seoName": "The Butcher's Cleaver"
+        },
+        {
+          "id": 8835,
+          "name": "Waxing Gibbous",
+          "seoName": "Waxing Gibbous"
+        },
+        {
+          "id": 8836,
+          "name": "Word of Hakan",
+          "seoName": "Word of Hakan"
+        },
+        {
+          "id": 9762,
+          "name": "Wushe Nak Pa",
+          "seoName": "Wushe Nak Pa"
+        },
+        {
+          "id": 9763,
+          "name": "Wound Drinker",
+          "seoName": "Wound Drinker"
+        },
+        {
+          "id": 9764,
+          "name": "Vox Omnium",
+          "seoName": "Vox Omnium"
+        },
+        {
+          "id": 9765,
+          "name": "Unbroken Chain",
+          "seoName": "Unbroken Chain"
+        },
+        {
+          "id": 9766,
+          "name": "Ugly Bastard Helm",
+          "seoName": "Ugly Bastard Helm"
+        },
+        {
+          "id": 9767,
+          "name": "The Unmaker",
+          "seoName": "The Unmaker"
+        },
+        {
+          "id": 9768,
+          "name": "The Umbracrux",
+          "seoName": "The Umbracrux"
+        },
+        {
+          "id": 9769,
+          "name": "The Third Blade",
+          "seoName": "The Third Blade"
+        },
+        {
+          "id": 9770,
+          "name": "The Mortacrux",
+          "seoName": "The Mortacrux"
+        },
+        {
+          "id": 9771,
+          "name": "The Basilisk",
+          "seoName": "The Basilisk"
+        },
+        {
+          "id": 9772,
+          "name": "Stone of Vehemen",
+          "seoName": "Stone of Vehemen"
+        },
+        {
+          "id": 9773,
+          "name": "Sidhe Bindings",
+          "seoName": "Sidhe Bindings"
+        },
+        {
+          "id": 9774,
+          "name": "Shroud of Khanduras",
+          "seoName": "Shroud of Khanduras"
+        },
+        {
+          "id": 9775,
+          "name": "Shard of Verathiel",
+          "seoName": "Shard of Verathiel"
+        },
+        {
+          "id": 9776,
+          "name": "Sepazontec",
+          "seoName": "Sepazontec"
+        },
+        {
+          "id": 9777,
+          "name": "Scorn of the Earth",
+          "seoName": "Scorn of the Earth"
+        },
+        {
+          "id": 9778,
+          "name": "Rod of Kepeleke",
+          "seoName": "Rod of Kepeleke"
+        },
+        {
+          "id": 9779,
+          "name": "Ring of Writhing Moon",
+          "seoName": "Ring of Writhing Moon"
+        },
+        {
+          "id": 9780,
+          "name": "Ring of the Midnight Sun",
+          "seoName": "Ring of the Midnight Sun"
+        },
+        {
+          "id": 9781,
+          "name": "Ring of the Midday Hunt",
+          "seoName": "Ring of the Midday Hunt"
+        },
+        {
+          "id": 9782,
+          "name": "Rakanoth's Wake",
+          "seoName": "Rakanoth's Wake"
+        },
+        {
+          "id": 9783,
+          "name": "Protection of the Prime",
+          "seoName": "Protection of the Prime"
+        },
+        {
+          "id": 9784,
+          "name": "Pitfighter's Gull",
+          "seoName": "Pitfighter's Gull"
+        },
+        {
+          "id": 9785,
+          "name": "Peacemonger's Signet",
+          "seoName": "Peacemonger's Signet"
+        },
+        {
+          "id": 9786,
+          "name": "Path of Trag'Oul",
+          "seoName": "Path of Trag'Oul"
+        },
+        {
+          "id": 9787,
+          "name": "Mjolnic Ryng",
+          "seoName": "Mjolnic Ryng"
+        },
+        {
+          "id": 9788,
+          "name": "Loyalty's Mantle",
+          "seoName": "Loyalty's Mantle"
+        },
+        {
+          "id": 9789,
+          "name": "Locran's Talisman",
+          "seoName": "Locran's Talisman"
+        },
+        {
+          "id": 9790,
+          "name": "Jacinth Shell",
+          "seoName": "Jacinth Shell"
+        },
+        {
+          "id": 9791,
+          "name": "Harmony of Ebewaka",
+          "seoName": "Harmony of Ebewaka"
+        },
+        {
+          "id": 9792,
+          "name": "Endurant Faith",
+          "seoName": "Endurant Faith"
+        },
+        {
+          "id": 9793,
+          "name": "Crown of Lucion",
+          "seoName": "Crown of Lucion"
+        },
+        {
+          "id": 9794,
+          "name": "Craze of the Dead God",
+          "seoName": "Craze of the Dead God"
+        },
+        {
+          "id": 9795,
+          "name": "Band of First Breath",
+          "seoName": "Band of First Breath"
+        },
+        {
+          "id": 9796,
+          "name": "Azurewrath",
+          "seoName": "Azurewrath"
+        },
+        {
+          "id": 9797,
+          "name": "Axial Conduit",
+          "seoName": "Axial Conduit"
+        },
+        {
+          "id": 10226,
+          "name": "Kessime's Legacy",
+          "seoName": "Kessime's Legacy"
+        },
+        {
+          "id": 10332,
+          "name": "Hooves of the Mountain God",
+          "seoName": "Hooves of the Mountain God"
+        },
+        {
+          "id": 10333,
+          "name": "Rotting Lightbringer",
+          "seoName": "Rotting Lightbringer"
+        },
+        {
+          "id": 10334,
+          "name": "The Hand of Naz",
+          "seoName": "The Hand of Naz"
+        },
+        {
+          "id": 10335,
+          "name": "Deathmask of Nirmitrug",
+          "seoName": "Deathmask of Nirmitrug"
+        },
+        {
+          "id": 10336,
+          "name": "Ophidian Iris",
+          "seoName": "Ophidian Iris"
+        },
+        {
+          "id": 10337,
+          "name": "Balazan’s Maxtlatl",
+          "seoName": "Balazan’s Maxtlatl"
+        },
+        {
+          "id": 10354,
+          "name": "Sabre of Tsasgal",
+          "seoName": "Sabre of Tsasgal"
+        },
+        {
+          "id": 10355,
+          "name": "Kilt of Blackwing",
+          "seoName": "Kilt of Blackwing"
+        },
+        {
+          "id": 10356,
+          "name": "Gospel of Devotee",
+          "seoName": "Gospel of Devotee"
+        },
+        {
+          "id": 10357,
+          "name": "Orphan Maker",
+          "seoName": "Orphan Maker"
+        },
+        {
+          "id": 10358,
+          "name": "Galvanic Azurite",
+          "seoName": "Galvanic Azurite"
+        },
+        {
+          "id": 10359,
+          "name": "Hesha e Kesungi",
+          "seoName": "Hesha e Kesungi"
+        },
+        {
+          "id": 10471,
+          "name": "Chainscourged Mail",
+          "seoName": "Chainscourged Mail"
+        },
+        {
+          "id": 10472,
+          "name": "Khamsin Steppewalkers",
+          "seoName": "Khamsin Steppewalkers"
+        },
+        {
+          "id": 10473,
+          "name": "Death's Pavane",
+          "seoName": "Death's Pavane"
+        },
+        {
+          "id": 10474,
+          "name": "Gravebloom",
+          "seoName": "Gravebloom"
+        },
+        {
+          "id": 10475,
+          "name": "Orisvane",
+          "seoName": "Orisvane"
+        },
+        {
+          "id": 10476,
+          "name": "Path of the Emissary",
+          "seoName": "Path of the Emissary"
+        },
+        {
+          "id": 10843,
+          "name": "Promise of Glory",
+          "seoName": "Promise of Glory"
+        },
+        {
+          "id": 10844,
+          "name": "Bastion of Sir Matthias",
+          "seoName": "Bastion of Sir Matthias"
+        },
+        {
+          "id": 10845,
+          "name": "March of the Stalwart Soul",
+          "seoName": "March of the Stalwart Soul"
+        },
+        {
+          "id": 10846,
+          "name": "Herald’s Morningstar",
+          "seoName": "Herald’s Morningstar"
+        },
+        {
+          "id": 10847,
+          "name": "Herald of Zakarum",
+          "seoName": "Herald of Zakarum"
+        },
+        {
+          "id": 10848,
+          "name": "Supplication",
+          "seoName": "Supplication"
+        },
+        {
+          "id": 10849,
+          "name": "Griswold’s Opus",
+          "seoName": "Griswold’s Opus"
+        },
+        {
+          "id": 10850,
+          "name": "Mantle of the Grey",
+          "seoName": "Mantle of the Grey"
+        },
+        {
+          "id": 10851,
+          "name": "Argent Veil",
+          "seoName": "Argent Veil"
+        },
+        {
+          "id": 10852,
+          "name": "Gate of the Red Dawn",
+          "seoName": "Gate of the Red Dawn"
+        },
+        {
+          "id": 10853,
+          "name": "Sunbrand",
+          "seoName": "Sunbrand"
+        },
+        {
+          "id": 10854,
+          "name": "Dawnfire",
+          "seoName": "Dawnfire"
+        },
+        {
+          "id": 10855,
+          "name": "Arcadia",
+          "seoName": "Arcadia"
+        },
+        {
+          "id": 10856,
+          "name": "Wreath of Auric Laurel",
+          "seoName": "Wreath of Auric Laurel"
+        },
+        {
+          "id": 10857,
+          "name": "Ward of the White Dove",
+          "seoName": "Ward of the White Dove"
+        },
+        {
+          "id": 10858,
+          "name": "Red Sermon",
+          "seoName": "Red Sermon"
+        },
+        {
+          "id": 10859,
+          "name": "Sundered Night",
+          "seoName": "Sundered Night"
+        },
+        {
+          "id": 10860,
+          "name": "Judicant’s Glaivehelm",
+          "seoName": "Judicant’s Glaivehelm"
+        },
+        {
+          "id": 10861,
+          "name": "Sanctis of Kethamar",
+          "seoName": "Sanctis of Kethamar"
+        },
+        {
+          "id": 10862,
+          "name": "Cathedral’s Song",
+          "seoName": "Cathedral’s Song"
+        },
+        {
+          "id": 10863,
+          "name": "Light’s Rebuke",
+          "seoName": "Light’s Rebuke"
+        },
+        {
+          "id": 10864,
+          "name": "Seal of the Second Trumpet",
+          "seoName": "Seal of the Second Trumpet"
+        },
+        {
+          "id": 10865,
+          "name": "Judgment of Auriel",
+          "seoName": "Judgment of Auriel"
+        },
+        {
+          "id": 10866,
+          "name": "Thousand-Eye Reaver",
+          "seoName": "Thousand-Eye Reaver"
+        },
+        {
+          "id": 10867,
+          "name": "Wyrdskin",
+          "seoName": "Wyrdskin"
+        },
+        {
+          "id": 10868,
+          "name": "Rustbitten Dirk",
+          "seoName": "Rustbitten Dirk"
+        },
+        {
+          "id": 10869,
+          "name": "Wendigo Brand",
+          "seoName": "Wendigo Brand"
+        },
+        {
+          "id": 10870,
+          "name": "Blood-Mad Idol",
+          "seoName": "Blood-Mad Idol"
+        },
+        {
+          "id": 11187,
+          "name": "Ae'grom's Schism",
+          "seoName": "Ae'grom's Schism"
+        },
+        {
+          "id": 11188,
+          "name": "Anathema of the Primes",
+          "seoName": "Anathema of the Primes"
+        },
+        {
+          "id": 11189,
+          "name": "Autumnal Crown",
+          "seoName": "Autumnal Crown"
+        },
+        {
+          "id": 11190,
+          "name": "Bindings of Attrition",
+          "seoName": "Bindings of Attrition"
+        },
+        {
+          "id": 11191,
+          "name": "Cage of Madness",
+          "seoName": "Cage of Madness"
+        },
+        {
+          "id": 11192,
+          "name": "Cassia's Grace",
+          "seoName": "Cassia's Grace"
+        },
+        {
+          "id": 11193,
+          "name": "Cowl of Malefic Torment",
+          "seoName": "Cowl of Malefic Torment"
+        },
+        {
+          "id": 11194,
+          "name": "Desperate March",
+          "seoName": "Desperate March"
+        },
+        {
+          "id": 11195,
+          "name": "Dirge of Odium",
+          "seoName": "Dirge of Odium"
+        },
+        {
+          "id": 11196,
+          "name": "Eye of Baal",
+          "seoName": "Eye of Baal"
+        },
+        {
+          "id": 11197,
+          "name": "Fleshwrit Carapace",
+          "seoName": "Fleshwrit Carapace"
+        },
+        {
+          "id": 11198,
+          "name": "Footfalls of the Waning World",
+          "seoName": "Footfalls of the Waning World"
+        },
+        {
+          "id": 11199,
+          "name": "Fury of the Wilds",
+          "seoName": "Fury of the Wilds"
+        },
+        {
+          "id": 11200,
+          "name": "Gauntlets of Sheol",
+          "seoName": "Gauntlets of Sheol"
+        },
+        {
+          "id": 11201,
+          "name": "Hands of the Worldbreaker",
+          "seoName": "Hands of the Worldbreaker"
+        },
+        {
+          "id": 11202,
+          "name": "Hecaton Chasm",
+          "seoName": "Hecaton Chasm"
+        },
+        {
+          "id": 11203,
+          "name": "Hellbrand Signet",
+          "seoName": "Hellbrand Signet"
+        },
+        {
+          "id": 11204,
+          "name": "Hellhound's Sabaton's",
+          "seoName": "Hellhound's Sabaton's"
+        },
+        {
+          "id": 11205,
+          "name": "Infernal Homunculus",
+          "seoName": "Infernal Homunculus"
+        },
+        {
+          "id": 11206,
+          "name": "Kabraxis' Will",
+          "seoName": "Kabraxis' Will"
+        },
+        {
+          "id": 11207,
+          "name": "Kleos, Spear of Athulua",
+          "seoName": "Kleos, Spear of Athulua"
+        },
+        {
+          "id": 11208,
+          "name": "Litany of Sable",
+          "seoName": "Litany of Sable"
+        },
+        {
+          "id": 11209,
+          "name": "Lurid Pact",
+          "seoName": "Lurid Pact"
+        },
+        {
+          "id": 11210,
+          "name": "Moloch's Beating Flame",
+          "seoName": "Moloch's Beating Flame"
+        },
+        {
+          "id": 11211,
+          "name": "Molten Band",
+          "seoName": "Molten Band"
+        },
+        {
+          "id": 11212,
+          "name": "Night Terror",
+          "seoName": "Night Terror"
+        },
+        {
+          "id": 11213,
+          "name": "Raiment of the Sea",
+          "seoName": "Raiment of the Sea"
+        },
+        {
+          "id": 11214,
+          "name": "Sashes of the Wretched",
+          "seoName": "Sashes of the Wretched"
+        },
+        {
+          "id": 11215,
+          "name": "Scepter of the Three",
+          "seoName": "Scepter of the Three"
+        },
+        {
+          "id": 11216,
+          "name": "Seal of the Ophanim",
+          "seoName": "Seal of the Ophanim"
+        },
+        {
+          "id": 11217,
+          "name": "Seed of Horazon",
+          "seoName": "Seed of Horazon"
+        },
+        {
+          "id": 11218,
+          "name": "Shanar's Resonance",
+          "seoName": "Shanar's Resonance"
+        },
+        {
+          "id": 11219,
+          "name": "Shrouded Gift",
+          "seoName": "Shrouded Gift"
+        },
+        {
+          "id": 11220,
+          "name": "Signet of Pelghain",
+          "seoName": "Signet of Pelghain"
+        },
+        {
+          "id": 11221,
+          "name": "Sire of Sin",
+          "seoName": "Sire of Sin"
+        },
+        {
+          "id": 11222,
+          "name": "Sliver of Hate",
+          "seoName": "Sliver of Hate"
+        },
+        {
+          "id": 11223,
+          "name": "Spine of Tathamet",
+          "seoName": "Spine of Tathamet"
+        },
+        {
+          "id": 11224,
+          "name": "The Blade of Sight Aflame",
+          "seoName": "The Blade of Sight Aflame"
+        },
+        {
+          "id": 11225,
+          "name": "The Eightfold Idol",
+          "seoName": "The Eightfold Idol"
+        },
+        {
+          "id": 11226,
+          "name": "The Fecund Seal",
+          "seoName": "The Fecund Seal"
+        },
+        {
+          "id": 11227,
+          "name": "The Hemat Stone",
+          "seoName": "The Hemat Stone"
+        },
+        {
+          "id": 11228,
+          "name": "The Maestro",
+          "seoName": "The Maestro"
+        },
+        {
+          "id": 11229,
+          "name": "The Relentless Heart",
+          "seoName": "The Relentless Heart"
+        },
+        {
+          "id": 11230,
+          "name": "Thrice-Woven Nightmare",
+          "seoName": "Thrice-Woven Nightmare"
+        }
+      ]
+    },
+    {
+      "id": 1982,
+      "name": "Crafting Mythic Runes",
+      "seoName": "Crafting Mythic Runes",
+      "subCategories": [
+        {
+          "id": 9840,
+          "name": "Doombringer",
+          "seoName": "Doombringer"
+        },
+        {
+          "id": 9841,
+          "name": "Harlequin Crest",
+          "seoName": "Harlequin Crest"
+        },
+        {
+          "id": 9842,
+          "name": "Heir of Perdition",
+          "seoName": "Heir of Perdition"
+        },
+        {
+          "id": 9843,
+          "name": "Shroud of False Death",
+          "seoName": "Shroud of False Death"
+        },
+        {
+          "id": 9844,
+          "name": "Ring of Starless Skies",
+          "seoName": "Ring of Starless Skies"
+        },
+        {
+          "id": 9845,
+          "name": "Tyrael's Might",
+          "seoName": "Tyrael's Might"
+        },
+        {
+          "id": 9846,
+          "name": "The Grandfather",
+          "seoName": "The Grandfather"
+        },
+        {
+          "id": 9847,
+          "name": "Andariel's Visage",
+          "seoName": "Andariel's Visage"
+        },
+        {
+          "id": 9848,
+          "name": "Melted Heart of Selig",
+          "seoName": "Melted Heart of Selig"
+        },
+        {
+          "id": 9849,
+          "name": "Shattered Vow",
+          "seoName": "Shattered Vow"
+        },
+        {
+          "id": 9850,
+          "name": "Ahavarion, Spear of Lycander",
+          "seoName": "Ahavarion, Spear of Lycander"
+        },
+        {
+          "id": 9851,
+          "name": "Nesekem",
+          "seoName": "Nesekem"
+        },
+        {
+          "id": 9852,
+          "name": "the Herald",
+          "seoName": "the Herald"
+        }
+      ]
+    },
+    {
+      "id": 2165,
+      "name": "Set Charms",
+      "seoName": "Set Charms",
+      "subCategories": [
+        {
+          "id": 11040,
+          "name": "Survival Set",
+          "seoName": "Survival Set"
+        },
+        {
+          "id": 11041,
+          "name": "Nilfur's Narrow Eye Set",
+          "seoName": "Nilfur's Narrow Eye Set"
+        },
+        {
+          "id": 11042,
+          "name": "Shadow of Harash Set",
+          "seoName": "Shadow of Harash Set"
+        },
+        {
+          "id": 11043,
+          "name": "Horazon's Chains Set",
+          "seoName": "Horazon's Chains Set"
+        },
+        {
+          "id": 11044,
+          "name": "Flesh of Abbadon Set",
+          "seoName": "Flesh of Abbadon Set"
+        },
+        {
+          "id": 11045,
+          "name": "Ritual of the Nameless Set",
+          "seoName": "Ritual of the Nameless Set"
+        },
+        {
+          "id": 11046,
+          "name": "Light's Epiphany Set",
+          "seoName": "Light's Epiphany Set"
+        },
+        {
+          "id": 11047,
+          "name": "Way of the Blurring Blade Set",
+          "seoName": "Way of the Blurring Blade Set"
+        },
+        {
+          "id": 11048,
+          "name": "Cathan's Righteous Will Set",
+          "seoName": "Cathan's Righteous Will Set"
+        },
+        {
+          "id": 11049,
+          "name": "Cathan's Dauntless Faith Set",
+          "seoName": "Cathan's Dauntless Faith Set"
+        },
+        {
+          "id": 11050,
+          "name": "Cathan's Iron Conviction",
+          "seoName": "Cathan's Iron Conviction"
+        },
+        {
+          "id": 11051,
+          "name": "Nafain's Bestiary Set",
+          "seoName": "Nafain's Bestiary Set"
+        },
+        {
+          "id": 11052,
+          "name": "Heaven's Radiant Fire Set",
+          "seoName": "Heaven's Radiant Fire Set"
+        },
+        {
+          "id": 11053,
+          "name": "Arms of Arreat Set",
+          "seoName": "Arms of Arreat Set"
+        },
+        {
+          "id": 11054,
+          "name": "Berserker's Crucible Set",
+          "seoName": "Berserker's Crucible Set"
+        },
+        {
+          "id": 11055,
+          "name": "Bloodletter's Flow Set",
+          "seoName": "Bloodletter's Flow Set"
+        },
+        {
+          "id": 11056,
+          "name": "Bul-Kathos' Pride Set",
+          "seoName": "Bul-Kathos' Pride Set"
+        },
+        {
+          "id": 11057,
+          "name": "Sescheron's Fury Set",
+          "seoName": "Sescheron's Fury Set"
+        },
+        {
+          "id": 11058,
+          "name": "Might of the Den Mother Set",
+          "seoName": "Might of the Den Mother Set"
+        },
+        {
+          "id": 11059,
+          "name": "Rush of the Red Wolf Moon Set",
+          "seoName": "Rush of the Red Wolf Moon Set"
+        },
+        {
+          "id": 11060,
+          "name": "Song of the Old Mountain Set",
+          "seoName": "Song of the Old Mountain Set"
+        },
+        {
+          "id": 11061,
+          "name": "Storm Shepherd's Call Set",
+          "seoName": "Storm Shepherd's Call Set"
+        },
+        {
+          "id": 11062,
+          "name": "Art of the Bone Weaver Set",
+          "seoName": "Art of the Bone Weaver Set"
+        },
+        {
+          "id": 11063,
+          "name": "Peace of the Black Shroud Set",
+          "seoName": "Peace of the Black Shroud Set"
+        },
+        {
+          "id": 11064,
+          "name": "Radament's Desecration Set",
+          "seoName": "Radament's Desecration Set"
+        },
+        {
+          "id": 11065,
+          "name": "Rathma's Waking Touch Set",
+          "seoName": "Rathma's Waking Touch Set"
+        },
+        {
+          "id": 11066,
+          "name": "Word of the Blood Binder Set",
+          "seoName": "Word of the Blood Binder Set"
+        },
+        {
+          "id": 11067,
+          "name": "Applied Alchemy Set",
+          "seoName": "Applied Alchemy Set"
+        },
+        {
+          "id": 11068,
+          "name": "Legacy of the Sightless Set",
+          "seoName": "Legacy of the Sightless Set"
+        },
+        {
+          "id": 11069,
+          "name": "Spellbound Steel Set",
+          "seoName": "Spellbound Steel Set"
+        },
+        {
+          "id": 11070,
+          "name": "Breath of Frozen Sea Set",
+          "seoName": "Breath of Frozen Sea Set"
+        },
+        {
+          "id": 11071,
+          "name": "Cain's Wild Lightning Set",
+          "seoName": "Cain's Wild Lightning Set"
+        },
+        {
+          "id": 11072,
+          "name": "Habacalva's Cauldron Set",
+          "seoName": "Habacalva's Cauldron Set"
+        },
+        {
+          "id": 11073,
+          "name": "Tal Rasha's Threefold Way Set",
+          "seoName": "Tal Rasha's Threefold Way Set"
+        },
+        {
+          "id": 11074,
+          "name": "Tiraj's Uncanny Insight Set",
+          "seoName": "Tiraj's Uncanny Insight Set"
+        },
+        {
+          "id": 11075,
+          "name": "Balazan's Bite Set",
+          "seoName": "Balazan's Bite Set"
+        },
+        {
+          "id": 11076,
+          "name": "Bliss of the Multitude Set",
+          "seoName": "Bliss of the Multitude Set"
+        },
+        {
+          "id": 11077,
+          "name": "Kwatli's Grace Set",
+          "seoName": "Kwatli's Grace Set"
+        },
+        {
+          "id": 11078,
+          "name": "Rezoka's Rage Set",
+          "seoName": "Rezoka's Rage Set"
+        },
+        {
+          "id": 11079,
+          "name": "Wumba's Embrace Set",
+          "seoName": "Wumba's Embrace Set"
+        },
+        {
+          "id": 11080,
+          "name": "Fulcrum of Mefis Set",
+          "seoName": "Fulcrum of Mefis Set"
+        },
+        {
+          "id": 11081,
+          "name": "Mastery Set",
+          "seoName": "Mastery Set"
+        },
+        {
+          "id": 11082,
+          "name": "Slaughter Set",
+          "seoName": "Slaughter Set"
+        }
+      ]
+    },
+    {
+      "id": 2166,
+      "name": "Unique Charms",
+      "seoName": "Unique Charms",
+      "subCategories": [
+        {
+          "id": 11083,
+          "name": "Accord of the Wilds",
+          "seoName": "Accord of the Wilds"
+        },
+        {
+          "id": 11084,
+          "name": "Anathema of the Primes",
+          "seoName": "Anathema of the Primes"
+        },
+        {
+          "id": 11085,
+          "name": "Arcadia",
+          "seoName": "Arcadia"
+        },
+        {
+          "id": 11086,
+          "name": "Argent Veil",
+          "seoName": "Argent Veil"
+        },
+        {
+          "id": 11087,
+          "name": "Arreat's Bearing",
+          "seoName": "Arreat's Bearing"
+        },
+        {
+          "id": 11088,
+          "name": "Assassin's Stride",
+          "seoName": "Assassin's Stride"
+        },
+        {
+          "id": 11089,
+          "name": "Azurewrath",
+          "seoName": "Azurewrath"
+        },
+        {
+          "id": 11090,
+          "name": "Balazan's Maxtlatl",
+          "seoName": "Balazan's Maxtlatl"
+        },
+        {
+          "id": 11091,
+          "name": "Band of First Breath",
+          "seoName": "Band of First Breath"
+        },
+        {
+          "id": 11092,
+          "name": "Banished Lord's Talisman",
+          "seoName": "Banished Lord's Talisman"
+        },
+        {
+          "id": 11093,
+          "name": "Blood-Mad Idol",
+          "seoName": "Blood-Mad Idol"
+        },
+        {
+          "id": 11094,
+          "name": "Blood Moon Breeches",
+          "seoName": "Blood Moon Breeches"
+        },
+        {
+          "id": 11095,
+          "name": "Bloodless Scream",
+          "seoName": "Bloodless Scream"
+        },
+        {
+          "id": 11096,
+          "name": "Cathedral's Song",
+          "seoName": "Cathedral's Song"
+        },
+        {
+          "id": 11097,
+          "name": "Chainscourged Mail",
+          "seoName": "Chainscourged Mail"
+        },
+        {
+          "id": 11098,
+          "name": "Condemnation",
+          "seoName": "Condemnation"
+        },
+        {
+          "id": 11099,
+          "name": "Cowl of the Nameless",
+          "seoName": "Cowl of the Nameless"
+        },
+        {
+          "id": 11100,
+          "name": "Crown of Lucion",
+          "seoName": "Crown of Lucion"
+        },
+        {
+          "id": 11101,
+          "name": "Dark Stalker's Medallion",
+          "seoName": "Dark Stalker's Medallion"
+        },
+        {
+          "id": 11102,
+          "name": "Dirge of Airidah",
+          "seoName": "Dirge of Airidah"
+        },
+        {
+          "id": 11103,
+          "name": "Dirge of Odium",
+          "seoName": "Dirge of Odium"
+        },
+        {
+          "id": 11104,
+          "name": "Drognan's Anguish",
+          "seoName": "Drognan's Anguish"
+        },
+        {
+          "id": 11105,
+          "name": "Echo of Kwatli",
+          "seoName": "Echo of Kwatli"
+        },
+        {
+          "id": 11106,
+          "name": "Emberfury",
+          "seoName": "Emberfury"
+        },
+        {
+          "id": 11107,
+          "name": "Emblem of Staalbreak",
+          "seoName": "Emblem of Staalbreak"
+        },
+        {
+          "id": 11108,
+          "name": "Endurant Faith",
+          "seoName": "Endurant Faith"
+        },
+        {
+          "id": 11109,
+          "name": "Esu's Heirloom",
+          "seoName": "Esu's Heirloom"
+        },
+        {
+          "id": 11110,
+          "name": "Etna's Lost Dagger",
+          "seoName": "Etna's Lost Dagger"
+        },
+        {
+          "id": 11111,
+          "name": "Fist of the Iron Rose",
+          "seoName": "Fist of the Iron Rose"
+        },
+        {
+          "id": 11112,
+          "name": "Fists of Fate",
+          "seoName": "Fists of Fate"
+        },
+        {
+          "id": 11113,
+          "name": "Fleshwrit Carapace",
+          "seoName": "Fleshwrit Carapace"
+        },
+        {
+          "id": 11114,
+          "name": "Flickerstep",
+          "seoName": "Flickerstep"
+        },
+        {
+          "id": 11115,
+          "name": "Fractured Runestone",
+          "seoName": "Fractured Runestone"
+        },
+        {
+          "id": 11116,
+          "name": "Frostburn",
+          "seoName": "Frostburn"
+        },
+        {
+          "id": 11117,
+          "name": "Fury of the Wilds",
+          "seoName": "Fury of the Wilds"
+        },
+        {
+          "id": 11118,
+          "name": "Gladiator's Triumph",
+          "seoName": "Gladiator's Triumph"
+        },
+        {
+          "id": 11119,
+          "name": "Godslayer Crown",
+          "seoName": "Godslayer Crown"
+        },
+        {
+          "id": 11120,
+          "name": "Gravewalker's Hand",
+          "seoName": "Gravewalker's Hand"
+        },
+        {
+          "id": 11121,
+          "name": "Greenwalker's Signet",
+          "seoName": "Greenwalker's Signet"
+        },
+        {
+          "id": 11122,
+          "name": "Griswold's Opus",
+          "seoName": "Griswold's Opus"
+        },
+        {
+          "id": 11123,
+          "name": "Harmony of Ebewaka",
+          "seoName": "Harmony of Ebewaka"
+        },
+        {
+          "id": 11124,
+          "name": "Herald of Zakarum",
+          "seoName": "Herald of Zakarum"
+        },
+        {
+          "id": 11125,
+          "name": "Hooves of the Mountain God",
+          "seoName": "Hooves of the Mountain God"
+        },
+        {
+          "id": 11126,
+          "name": "Jacinth Shell",
+          "seoName": "Jacinth Shell"
+        },
+        {
+          "id": 11127,
+          "name": "Judicant's Glaivehelm",
+          "seoName": "Judicant's Glaivehelm"
+        },
+        {
+          "id": 11128,
+          "name": "Locran's Talisman",
+          "seoName": "Locran's Talisman"
+        },
+        {
+          "id": 11129,
+          "name": "Loyalty's Mantle",
+          "seoName": "Loyalty's Mantle"
+        },
+        {
+          "id": 11130,
+          "name": "Mantle of the Grey",
+          "seoName": "Mantle of the Grey"
+        },
+        {
+          "id": 11131,
+          "name": "Mark of the Old Wolf",
+          "seoName": "Mark of the Old Wolf"
+        },
+        {
+          "id": 11132,
+          "name": "Might of the Ursine",
+          "seoName": "Might of the Ursine"
+        },
+        {
+          "id": 11133,
+          "name": "Misericorde",
+          "seoName": "Misericorde"
+        },
+        {
+          "id": 11134,
+          "name": "Moloch's Beating Flame",
+          "seoName": "Moloch's Beating Flame"
+        },
+        {
+          "id": 11135,
+          "name": "Molten Band",
+          "seoName": "Molten Band"
+        },
+        {
+          "id": 11136,
+          "name": "Morlu Fleshward",
+          "seoName": "Morlu Fleshward"
+        },
+        {
+          "id": 11137,
+          "name": "Mother's Embrace",
+          "seoName": "Mother's Embrace"
+        },
+        {
+          "id": 11138,
+          "name": "Night Terror",
+          "seoName": "Night Terror"
+        },
+        {
+          "id": 11139,
+          "name": "Nomad's Longing Heart",
+          "seoName": "Nomad's Longing Heart"
+        },
+        {
+          "id": 11140,
+          "name": "Omen of Pain",
+          "seoName": "Omen of Pain"
+        },
+        {
+          "id": 11141,
+          "name": "Orsivane",
+          "seoName": "Orsivane"
+        },
+        {
+          "id": 11142,
+          "name": "Pact of the Bone",
+          "seoName": "Pact of the Bone"
+        },
+        {
+          "id": 11143,
+          "name": "Paingorger's Gauntlets",
+          "seoName": "Paingorger's Gauntlets"
+        },
+        {
+          "id": 11144,
+          "name": "Peacemonger's Signet",
+          "seoName": "Peacemonger's Signet"
+        },
+        {
+          "id": 11145,
+          "name": "Penitent Greaves",
+          "seoName": "Penitent Greaves"
+        },
+        {
+          "id": 11146,
+          "name": "Protean Heart",
+          "seoName": "Protean Heart"
+        },
+        {
+          "id": 11147,
+          "name": "Protection of the Prime",
+          "seoName": "Protection of the Prime"
+        },
+        {
+          "id": 11148,
+          "name": "Rage of Harrogath",
+          "seoName": "Rage of Harrogath"
+        },
+        {
+          "id": 11149,
+          "name": "Rakanoth's Wake",
+          "seoName": "Rakanoth's Wake"
+        },
+        {
+          "id": 11150,
+          "name": "Ramaladni's Magnum Opus",
+          "seoName": "Ramaladni's Magnum Opus"
+        },
+        {
+          "id": 11151,
+          "name": "Razorplate",
+          "seoName": "Razorplate"
+        },
+        {
+          "id": 11152,
+          "name": "Red Blessing",
+          "seoName": "Red Blessing"
+        },
+        {
+          "id": 11153,
+          "name": "Ring of Red Furor",
+          "seoName": "Ring of Red Furor"
+        },
+        {
+          "id": 11154,
+          "name": "Ring of the Midday Hunt",
+          "seoName": "Ring of the Midday Hunt"
+        },
+        {
+          "id": 11155,
+          "name": "Ring of the Midnight Sun",
+          "seoName": "Ring of the Midnight Sun"
+        },
+        {
+          "id": 11156,
+          "name": "Ring of the Writhing Moon",
+          "seoName": "Ring of the Writhing Moon"
+        },
+        {
+          "id": 11157,
+          "name": "Rod of Kepeleke",
+          "seoName": "Rod of Kepeleke"
+        },
+        {
+          "id": 11158,
+          "name": "Rustbitten Dirk",
+          "seoName": "Rustbitten Dirk"
+        },
+        {
+          "id": 11159,
+          "name": "Saboteur's Signet",
+          "seoName": "Saboteur's Signet"
+        },
+        {
+          "id": 11160,
+          "name": "Sabre of Tsasgal",
+          "seoName": "Sabre of Tsasgal"
+        },
+        {
+          "id": 11161,
+          "name": "Sanctis of Kethamar",
+          "seoName": "Sanctis of Kethamar"
+        },
+        {
+          "id": 11162,
+          "name": "Scepter of the Three",
+          "seoName": "Scepter of the Three"
+        },
+        {
+          "id": 11163,
+          "name": "Scoundrel's Kiss",
+          "seoName": "Scoundrel's Kiss"
+        },
+        {
+          "id": 11164,
+          "name": "Scoundrel's Leathers",
+          "seoName": "Scoundrel's Leathers"
+        },
+        {
+          "id": 11165,
+          "name": "Sea Lord's Fine Gloves",
+          "seoName": "Sea Lord's Fine Gloves"
+        },
+        {
+          "id": 11166,
+          "name": "Seal of the Second Trumpet",
+          "seoName": "Seal of the Second Trumpet"
+        },
+        {
+          "id": 11167,
+          "name": "Seed of Horazon",
+          "seoName": "Seed of Horazon"
+        },
+        {
+          "id": 11168,
+          "name": "Sepazontec",
+          "seoName": "Sepazontec"
+        },
+        {
+          "id": 11169,
+          "name": "Soulbrand",
+          "seoName": "Soulbrand"
+        },
+        {
+          "id": 11170,
+          "name": "Sunbird's Gorget",
+          "seoName": "Sunbird's Gorget"
+        },
+        {
+          "id": 11171,
+          "name": "Sundered Night",
+          "seoName": "Sundered Night"
+        },
+        {
+          "id": 11172,
+          "name": "Sunstained War-Crozier",
+          "seoName": "Sunstained War-Crozier"
+        },
+        {
+          "id": 11173,
+          "name": "Tal Rasha's Iridescent Loop",
+          "seoName": "Tal Rasha's Iridescent Loop"
+        },
+        {
+          "id": 11174,
+          "name": "Tassets of the Dawning Sky",
+          "seoName": "Tassets of the Dawning Sky"
+        },
+        {
+          "id": 11175,
+          "name": "Temerity",
+          "seoName": "Temerity"
+        },
+        {
+          "id": 11176,
+          "name": "The Butcher's Cleaver",
+          "seoName": "The Butcher's Cleaver"
+        },
+        {
+          "id": 11177,
+          "name": "The Gloom Ward",
+          "seoName": "The Gloom Ward"
+        },
+        {
+          "id": 11178,
+          "name": "The Open Eye of Gorgorra",
+          "seoName": "The Open Eye of Gorgorra"
+        },
+        {
+          "id": 11179,
+          "name": "The Umbracrux",
+          "seoName": "The Umbracrux"
+        },
+        {
+          "id": 11180,
+          "name": "Thousand-Eye Reaver",
+          "seoName": "Thousand-Eye Reaver"
+        },
+        {
+          "id": 11181,
+          "name": "Tibault's Will",
+          "seoName": "Tibault's Will"
+        },
+        {
+          "id": 11182,
+          "name": "Tuskhelm of Joritz the Mighty",
+          "seoName": "Tuskhelm of Joritz the Mighty"
+        },
+        {
+          "id": 11183,
+          "name": "Wushe Nak Pa",
+          "seoName": "Wushe Nak Pa"
+        },
+        {
+          "id": 11184,
+          "name": "Wyrdskin",
+          "seoName": "Wyrdskin"
+        }
+      ]
+    },
+    {
+      "id": 2167,
+      "name": "Talisman Seals",
+      "seoName": "Talisman Seals",
+      "subCategories": [
+        {
+          "id": 11185,
+          "name": "6 slot seal",
+          "seoName": "6 slot seal"
+        },
+        {
+          "id": 11186,
+          "name": "Mythic Unique Seal",
+          "seoName": "Mythic Unique Seal"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15131,
+      "name": "S13 - Season of Reckoning SC"
+    },
+    {
+      "id": 15132,
+      "name": "S13 - Season of Reckoning HC"
+    },
+    {
+      "id": 13398,
+      "name": "Eternal Realm SC"
+    },
+    {
+      "id": 13399,
+      "name": "Eternal Realm HC"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

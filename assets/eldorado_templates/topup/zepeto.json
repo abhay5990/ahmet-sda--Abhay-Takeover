@@ -1,0 +1,125 @@
+{
+  "game_id": "272",
+  "game": "zepeto",
+  "game_name": "ZEPETO",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "zepeto-zems": {
+      "name": "ZEMs",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "7-zems",
+          "name": "7 ZEMs"
+        },
+        {
+          "id": "14-zems",
+          "name": "14 ZEMs"
+        },
+        {
+          "id": "28-zems",
+          "name": "28 ZEMs"
+        },
+        {
+          "id": "125-zems",
+          "name": "125 ZEMs"
+        },
+        {
+          "id": "128-zems",
+          "name": "128 ZEMs"
+        },
+        {
+          "id": "196-zems",
+          "name": "196 ZEMs"
+        },
+        {
+          "id": "323-zems",
+          "name": "323 ZEMs"
+        },
+        {
+          "id": "770-zems",
+          "name": "770 ZEMs"
+        },
+        {
+          "id": "1000-zems",
+          "name": "1000 ZEMs"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

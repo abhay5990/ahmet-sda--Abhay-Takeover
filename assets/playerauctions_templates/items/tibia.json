@@ -1,0 +1,701 @@
+{
+  "game_id": 2231,
+  "game": "tibia",
+  "game_name": "Tibia",
+  "seo_name": "Tibia",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1713,
+      "name": "Body Equipment",
+      "seoName": "Body Equipment",
+      "subCategories": [
+        {
+          "id": 7891,
+          "name": "Helmets",
+          "seoName": "Helmets"
+        },
+        {
+          "id": 7892,
+          "name": "Armors",
+          "seoName": "Armors"
+        },
+        {
+          "id": 7893,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 7894,
+          "name": "Legs",
+          "seoName": "Legs"
+        },
+        {
+          "id": 7895,
+          "name": "Spellbooks",
+          "seoName": "Spellbooks"
+        },
+        {
+          "id": 7896,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 7897,
+          "name": "Quivers",
+          "seoName": "Quivers"
+        }
+      ]
+    },
+    {
+      "id": 1714,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 7898,
+          "name": "Axe Weapons",
+          "seoName": "Axe Weapons"
+        },
+        {
+          "id": 7899,
+          "name": "Club Weapons",
+          "seoName": "Club Weapons"
+        },
+        {
+          "id": 7900,
+          "name": "Sword Weapons",
+          "seoName": "Sword Weapons"
+        },
+        {
+          "id": 7901,
+          "name": "Rods",
+          "seoName": "Rods"
+        },
+        {
+          "id": 7902,
+          "name": "Wands",
+          "seoName": "Wands"
+        },
+        {
+          "id": 7903,
+          "name": "Ammunition",
+          "seoName": "Ammunition"
+        },
+        {
+          "id": 7904,
+          "name": "Distance Weapons",
+          "seoName": "Distance Weapons"
+        }
+      ]
+    },
+    {
+      "id": 1715,
+      "name": "Household Items",
+      "seoName": "Household Items",
+      "subCategories": [
+        {
+          "id": 7905,
+          "name": "Books",
+          "seoName": "Books"
+        },
+        {
+          "id": 7906,
+          "name": "Carpets",
+          "seoName": "Carpets"
+        },
+        {
+          "id": 7907,
+          "name": "Containers",
+          "seoName": "Containers"
+        },
+        {
+          "id": 7908,
+          "name": "Contest Prizes",
+          "seoName": "Contest Prizes"
+        },
+        {
+          "id": 7909,
+          "name": "Fansite Items",
+          "seoName": "Fansite Items"
+        },
+        {
+          "id": 7910,
+          "name": "Decorations",
+          "seoName": "Decorations"
+        },
+        {
+          "id": 7911,
+          "name": "Documents and Papers",
+          "seoName": "Documents and Papers"
+        },
+        {
+          "id": 7912,
+          "name": "Dolls and Bears",
+          "seoName": "Dolls and Bears"
+        },
+        {
+          "id": 7913,
+          "name": "Furniture",
+          "seoName": "Furniture"
+        },
+        {
+          "id": 7914,
+          "name": "Kitchen Tools",
+          "seoName": "Kitchen Tools"
+        },
+        {
+          "id": 7915,
+          "name": "Musical Instruments",
+          "seoName": "Musical Instruments"
+        },
+        {
+          "id": 7916,
+          "name": "Trophies",
+          "seoName": "Trophies"
+        }
+      ]
+    },
+    {
+      "id": 1716,
+      "name": "Animal Products",
+      "seoName": "Animal Products",
+      "subCategories": [
+        {
+          "id": 7917,
+          "name": "Creature Products",
+          "seoName": "Creature Products"
+        }
+      ]
+    },
+    {
+      "id": 1717,
+      "name": "Food and Drink",
+      "seoName": "Food and Drink",
+      "subCategories": [
+        {
+          "id": 7918,
+          "name": "Food",
+          "seoName": "Food"
+        },
+        {
+          "id": 7919,
+          "name": "Liquids",
+          "seoName": "Liquids"
+        }
+      ]
+    },
+    {
+      "id": 1718,
+      "name": "Plants",
+      "seoName": "Plants",
+      "subCategories": [
+        {
+          "id": 7920,
+          "name": "Plants and Herbs",
+          "seoName": "Plants and Herbs"
+        }
+      ]
+    },
+    {
+      "id": 1719,
+      "name": "Tools and other Equipment",
+      "seoName": "Tools and other Equipment",
+      "subCategories": [
+        {
+          "id": 7921,
+          "name": "Amulets and Necklaces",
+          "seoName": "Amulets and Necklaces"
+        },
+        {
+          "id": 7922,
+          "name": "Keys",
+          "seoName": "Keys"
+        },
+        {
+          "id": 7923,
+          "name": "Light Sources",
+          "seoName": "Light Sources"
+        },
+        {
+          "id": 7924,
+          "name": "Painting Equipment",
+          "seoName": "Painting Equipment"
+        },
+        {
+          "id": 7925,
+          "name": "Rings",
+          "seoName": "Rings"
+        },
+        {
+          "id": 7926,
+          "name": "Tools",
+          "seoName": "Tools"
+        },
+        {
+          "id": 7927,
+          "name": "Taming Items",
+          "seoName": "Taming Items"
+        },
+        {
+          "id": 7928,
+          "name": "Diving Equipment",
+          "seoName": "Diving Equipment"
+        }
+      ]
+    },
+    {
+      "id": 1720,
+      "name": "Miscellaneous Items",
+      "seoName": "Miscellaneous Items",
+      "subCategories": [
+        {
+          "id": 7929,
+          "name": "Clothing Accessories",
+          "seoName": "Clothing Accessories"
+        },
+        {
+          "id": 7930,
+          "name": "Enchanted Items",
+          "seoName": "Enchanted Items"
+        },
+        {
+          "id": 7931,
+          "name": "Game Tokens",
+          "seoName": "Game Tokens"
+        },
+        {
+          "id": 7932,
+          "name": "Valuables",
+          "seoName": "Valuables"
+        },
+        {
+          "id": 7933,
+          "name": "Magical Items",
+          "seoName": "Magical Items"
+        },
+        {
+          "id": 7934,
+          "name": "Metals",
+          "seoName": "Metals"
+        },
+        {
+          "id": 7935,
+          "name": "Party Items",
+          "seoName": "Party Items"
+        },
+        {
+          "id": 7936,
+          "name": "Blessing Charms",
+          "seoName": "Blessing Charms"
+        },
+        {
+          "id": 7937,
+          "name": "Quest Items",
+          "seoName": "Quest Items"
+        },
+        {
+          "id": 7938,
+          "name": "Rubbish",
+          "seoName": "Rubbish"
+        },
+        {
+          "id": 7939,
+          "name": "Runes",
+          "seoName": "Runes"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14128,
+      "name": "Aethera"
+    },
+    {
+      "id": 2234,
+      "name": "Antica"
+    },
+    {
+      "id": 2306,
+      "name": "Astera"
+    },
+    {
+      "id": 7707,
+      "name": "Belobra"
+    },
+    {
+      "id": 14757,
+      "name": "Blumera"
+    },
+    {
+      "id": 8264,
+      "name": "Bona"
+    },
+    {
+      "id": 14129,
+      "name": "Bravoria"
+    },
+    {
+      "id": 2241,
+      "name": "Calmera"
+    },
+    {
+      "id": 14130,
+      "name": "Cantabra"
+    },
+    {
+      "id": 8986,
+      "name": "Celebra"
+    },
+    {
+      "id": 2243,
+      "name": "Celesta"
+    },
+    {
+      "id": 14764,
+      "name": "Citra"
+    },
+    {
+      "id": 10679,
+      "name": "Collabra"
+    },
+    {
+      "id": 8090,
+      "name": "Descubra"
+    },
+    {
+      "id": 13437,
+      "name": "Dia"
+    },
+    {
+      "id": 14767,
+      "name": "Dracobra"
+    },
+    {
+      "id": 14762,
+      "name": "Eclipta"
+    },
+    {
+      "id": 8265,
+      "name": "Epoca"
+    },
+    {
+      "id": 13438,
+      "name": "Etebra"
+    },
+    {
+      "id": 8093,
+      "name": "Ferobra"
+    },
+    {
+      "id": 8267,
+      "name": "Firmera"
+    },
+    {
+      "id": 15157,
+      "name": "Floribra"
+    },
+    {
+      "id": 8094,
+      "name": "Gentebra"
+    },
+    {
+      "id": 8268,
+      "name": "Gladera"
+    },
+    {
+      "id": 13940,
+      "name": "Gladibra"
+    },
+    {
+      "id": 2257,
+      "name": "Harmonia"
+    },
+    {
+      "id": 10683,
+      "name": "Havera"
+    },
+    {
+      "id": 8096,
+      "name": "Honbra"
+    },
+    {
+      "id": 14766,
+      "name": "Hostera"
+    },
+    {
+      "id": 14765,
+      "name": "Idyllia"
+    },
+    {
+      "id": 14226,
+      "name": "Ignitera"
+    },
+    {
+      "id": 8098,
+      "name": "Inabra"
+    },
+    {
+      "id": 13209,
+      "name": "Issobra"
+    },
+    {
+      "id": 13476,
+      "name": "Jadebra"
+    },
+    {
+      "id": 15156,
+      "name": "Junera"
+    },
+    {
+      "id": 14763,
+      "name": "Kalanta"
+    },
+    {
+      "id": 8099,
+      "name": "Kalibra"
+    },
+    {
+      "id": 13941,
+      "name": "Karmeya"
+    },
+    {
+      "id": 8270,
+      "name": "Lobera"
+    },
+    {
+      "id": 2269,
+      "name": "Luminera"
+    },
+    {
+      "id": 8100,
+      "name": "Lutabra"
+    },
+    {
+      "id": 15155,
+      "name": "Maligna"
+    },
+    {
+      "id": 2272,
+      "name": "Menera"
+    },
+    {
+      "id": 14758,
+      "name": "Monstera"
+    },
+    {
+      "id": 8271,
+      "name": "Monza"
+    },
+    {
+      "id": 8272,
+      "name": "Nefera"
+    },
+    {
+      "id": 13479,
+      "name": "Nevia"
+    },
+    {
+      "id": 14227,
+      "name": "Noctalia"
+    },
+    {
+      "id": 13943,
+      "name": "Oceanis"
+    },
+    {
+      "id": 8273,
+      "name": "Ombra"
+    },
+    {
+      "id": 13944,
+      "name": "Ourobra"
+    },
+    {
+      "id": 2281,
+      "name": "Pacera"
+    },
+    {
+      "id": 8104,
+      "name": "Peloria"
+    },
+    {
+      "id": 2283,
+      "name": "Premia"
+    },
+    {
+      "id": 8105,
+      "name": "Quelibra"
+    },
+    {
+      "id": 13945,
+      "name": "Quidera"
+    },
+    {
+      "id": 8106,
+      "name": "Quintera"
+    },
+    {
+      "id": 13482,
+      "name": "Rasteibra"
+    },
+    {
+      "id": 2285,
+      "name": "Refugia"
+    },
+    {
+      "id": 13483,
+      "name": "Retalia"
+    },
+    {
+      "id": 2289,
+      "name": "Secura"
+    },
+    {
+      "id": 7710,
+      "name": "Serdebra"
+    },
+    {
+      "id": 8274,
+      "name": "Solidera"
+    },
+    {
+      "id": 14761,
+      "name": "Sombra"
+    },
+    {
+      "id": 14768,
+      "name": "Sonira"
+    },
+    {
+      "id": 14040,
+      "name": "Stralis"
+    },
+    {
+      "id": 8275,
+      "name": "Talera"
+    },
+    {
+      "id": 14759,
+      "name": "Tempestera"
+    },
+    {
+      "id": 14760,
+      "name": "Terribra"
+    },
+    {
+      "id": 10688,
+      "name": "Thyria"
+    },
+    {
+      "id": 13485,
+      "name": "Tornabra"
+    },
+    {
+      "id": 14042,
+      "name": "Unebra"
+    },
+    {
+      "id": 13486,
+      "name": "Ustebra"
+    },
+    {
+      "id": 9154,
+      "name": "Venebra"
+    },
+    {
+      "id": 14044,
+      "name": "Victoris"
+    },
+    {
+      "id": 8110,
+      "name": "Vunira"
+    },
+    {
+      "id": 8276,
+      "name": "Wintera"
+    },
+    {
+      "id": 14228,
+      "name": "Xybra"
+    },
+    {
+      "id": 13946,
+      "name": "Xyla"
+    },
+    {
+      "id": 14756,
+      "name": "Xymera"
+    },
+    {
+      "id": 9491,
+      "name": "Yonabra"
+    },
+    {
+      "id": 13488,
+      "name": "Yovera"
+    },
+    {
+      "id": 13724,
+      "name": "Yubra"
+    },
+    {
+      "id": 8111,
+      "name": "Zuna"
+    },
+    {
+      "id": 8112,
+      "name": "Zunera"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

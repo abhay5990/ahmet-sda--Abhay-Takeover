@@ -1,0 +1,108 @@
+{
+  "game_id": 8174,
+  "game": "pubg-mobile",
+  "game_name": "PUBG Mobile",
+  "seo_name": "PUBG-Mobile",
+  "currencyName": "UC",
+  "categories": [
+    {
+      "id": 1052,
+      "name": "Popularity",
+      "seoName": "Popularity",
+      "subCategories": [
+        {
+          "id": 5075,
+          "name": "Popularity",
+          "seoName": "Popularity"
+        }
+      ]
+    },
+    {
+      "id": 1053,
+      "name": "Clan",
+      "seoName": "Clan",
+      "subCategories": [
+        {
+          "id": 5076,
+          "name": "Clan",
+          "seoName": "Clan"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 9339,
+      "name": "ASIA"
+    },
+    {
+      "id": 9338,
+      "name": "EU"
+    },
+    {
+      "id": 9551,
+      "name": "INDIA"
+    },
+    {
+      "id": 9341,
+      "name": "KRJP"
+    },
+    {
+      "id": 8175,
+      "name": "NA"
+    },
+    {
+      "id": 9340,
+      "name": "SA"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

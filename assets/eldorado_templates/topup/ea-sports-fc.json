@@ -1,0 +1,174 @@
+{
+  "game_id": "142",
+  "game": "ea-sports-fc",
+  "game_name": "EA Sports FC",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "PC - no EA Membership"
+    },
+    {
+      "id": "3",
+      "name": "PC - with EA Membership"
+    },
+    {
+      "id": "1",
+      "name": "Xbox"
+    },
+    {
+      "id": "2",
+      "name": "PlayStation"
+    }
+  ],
+  "attributes": {
+    "ea-sports-fc-points": {
+      "name": "FC Points",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "500-points",
+          "name": "500 Points"
+        },
+        {
+          "id": "1050-points",
+          "name": "1050 Points"
+        },
+        {
+          "id": "1600-points",
+          "name": "1600 Points"
+        },
+        {
+          "id": "2800-points",
+          "name": "2800 Points"
+        },
+        {
+          "id": "5900-points",
+          "name": "5900 Points"
+        },
+        {
+          "id": "12000-points",
+          "name": "12000 Points"
+        },
+        {
+          "id": "18500-points",
+          "name": "18500 Points"
+        },
+        {
+          "id": "24000-points",
+          "name": "24000 Points"
+        },
+        {
+          "id": "36000-points",
+          "name": "36000 Points"
+        },
+        {
+          "id": "37000-points",
+          "name": "37000 Points"
+        },
+        {
+          "id": "48000-points",
+          "name": "48000 Points"
+        },
+        {
+          "id": "55500-points",
+          "name": "55500 Points"
+        },
+        {
+          "id": "60000-points",
+          "name": "60000 Points"
+        },
+        {
+          "id": "72000-points",
+          "name": "72000 Points"
+        },
+        {
+          "id": "74000-points",
+          "name": "74000 Points"
+        },
+        {
+          "id": "84000-points",
+          "name": "84000 Points"
+        },
+        {
+          "id": "96000-points",
+          "name": "96000 Points"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

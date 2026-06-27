@@ -59,15 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Worlds",
-        "Texture Packs",
-        "Skin Packs",
-        "Mash Up Packs",
-        "Mini Games",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

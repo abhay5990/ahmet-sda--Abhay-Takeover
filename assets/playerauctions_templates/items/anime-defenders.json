@@ -1,0 +1,186 @@
+{
+  "game_id": 13894,
+  "game": "anime-defenders",
+  "game_name": "Anime Defenders",
+  "seo_name": "Anime-Defenders",
+  "currencyName": "Gems",
+  "categories": [
+    {
+      "id": 1888,
+      "name": "Trait Crystal",
+      "seoName": "Trait Crystal",
+      "subCategories": [
+        {
+          "id": 9448,
+          "name": "Trait Crystal",
+          "seoName": "Trait Crystal"
+        }
+      ]
+    },
+    {
+      "id": 1901,
+      "name": "Units",
+      "seoName": "Units",
+      "subCategories": [
+        {
+          "id": 9470,
+          "name": "The Cursed Knight",
+          "seoName": "The Cursed Knight"
+        },
+        {
+          "id": 9471,
+          "name": "Shadow Dragon",
+          "seoName": "Shadow Dragon"
+        },
+        {
+          "id": 9472,
+          "name": "The Rift Sorcerer",
+          "seoName": "The Rift Sorcerer"
+        },
+        {
+          "id": 9473,
+          "name": "Demon King",
+          "seoName": "Demon King"
+        },
+        {
+          "id": 9474,
+          "name": "Slime Spirit",
+          "seoName": "Slime Spirit"
+        },
+        {
+          "id": 9475,
+          "name": "The Gamer",
+          "seoName": "The Gamer"
+        },
+        {
+          "id": 9476,
+          "name": "Chance Taker",
+          "seoName": "Chance Taker"
+        },
+        {
+          "id": 9477,
+          "name": "Legion Captain",
+          "seoName": "Legion Captain"
+        }
+      ]
+    },
+    {
+      "id": 1902,
+      "name": "Gamepass",
+      "seoName": "Gamepass",
+      "subCategories": [
+        {
+          "id": 9478,
+          "name": "Battlepass",
+          "seoName": "Battlepass"
+        },
+        {
+          "id": 9479,
+          "name": "VIP",
+          "seoName": "VIP"
+        },
+        {
+          "id": 9480,
+          "name": "Shiny Hunter",
+          "seoName": "Shiny Hunter"
+        }
+      ]
+    },
+    {
+      "id": 1903,
+      "name": "Frost Bind",
+      "seoName": "Frost Bind",
+      "subCategories": [
+        {
+          "id": 9481,
+          "name": "Frost Bind",
+          "seoName": "Frost Bind"
+        }
+      ]
+    },
+    {
+      "id": 1904,
+      "name": "Risky Dice",
+      "seoName": "Risky Dice",
+      "subCategories": [
+        {
+          "id": 9482,
+          "name": "Risky Dice",
+          "seoName": "Risky Dice"
+        }
+      ]
+    },
+    {
+      "id": 1905,
+      "name": "Wish",
+      "seoName": "Wish",
+      "subCategories": [
+        {
+          "id": 9483,
+          "name": "Wish",
+          "seoName": "Wish"
+        },
+        {
+          "id": 9484,
+          "name": "Divine Wish",
+          "seoName": "Divine Wish"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13902,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

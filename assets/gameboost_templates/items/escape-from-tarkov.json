@@ -59,26 +59,11 @@
   "item_data": {
     "server": {
       "type": "string",
-      "required": true,
-      "values": [
-        "PvP",
-        "PvE"
-      ]
+      "required": false
     },
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Ammunition",
-        "Containers",
-        "Gear",
-        "Keycards",
-        "Keys",
-        "Medical Items",
-        "Quest Items",
-        "Weapons",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

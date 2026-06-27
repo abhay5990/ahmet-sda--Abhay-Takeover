@@ -1,0 +1,157 @@
+{
+  "game_id": 24,
+  "game": "gaia",
+  "game_name": "Gaia Online",
+  "seo_name": "Gaia",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1426,
+      "name": "Premium Items",
+      "seoName": "Premium Items",
+      "subCategories": [
+        {
+          "id": 6576,
+          "name": "Chance Items",
+          "seoName": "Chance Items"
+        },
+        {
+          "id": 6577,
+          "name": "Evolving Items",
+          "seoName": "Evolving Items"
+        },
+        {
+          "id": 6578,
+          "name": "Monthly Collectibles",
+          "seoName": "Monthly Collectibles"
+        },
+        {
+          "id": 6579,
+          "name": "Animated Items",
+          "seoName": "Animated Items"
+        },
+        {
+          "id": 6580,
+          "name": "Other Items",
+          "seoName": "Other Items"
+        }
+      ]
+    },
+    {
+      "id": 1427,
+      "name": "Aquarium Items",
+      "seoName": "Aquarium Items",
+      "subCategories": [
+        {
+          "id": 6581,
+          "name": "Fish",
+          "seoName": "Fish"
+        },
+        {
+          "id": 6582,
+          "name": "Decorations",
+          "seoName": "Decorations"
+        },
+        {
+          "id": 6583,
+          "name": "Backgrounds",
+          "seoName": "Backgrounds"
+        },
+        {
+          "id": 6584,
+          "name": "Terrain",
+          "seoName": "Terrain"
+        },
+        {
+          "id": 6585,
+          "name": "Special Bundles",
+          "seoName": "Special Bundles"
+        }
+      ]
+    },
+    {
+      "id": 1428,
+      "name": "Clothing",
+      "seoName": "Clothing",
+      "subCategories": [
+        {
+          "id": 6586,
+          "name": "Beauty Items",
+          "seoName": "Beauty Items"
+        },
+        {
+          "id": 6587,
+          "name": "Paw Items",
+          "seoName": "Paw Items"
+        }
+      ]
+    },
+    {
+      "id": 1429,
+      "name": "Platinum",
+      "seoName": "Platinum",
+      "subCategories": [
+        {
+          "id": 6588,
+          "name": "Platinum",
+          "seoName": "Platinum"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 1743,
+      "name": "Gaia"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

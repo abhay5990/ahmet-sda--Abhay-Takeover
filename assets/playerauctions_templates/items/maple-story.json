@@ -1,0 +1,149 @@
+{
+  "game_id": 29,
+  "game": "maple-story",
+  "game_name": "MapleStory Global",
+  "seo_name": "Maple-Story",
+  "currencyName": "Mesos",
+  "categories": [
+    {
+      "id": 1519,
+      "name": "Equipment",
+      "seoName": "Equipment",
+      "subCategories": [
+        {
+          "id": 7439,
+          "name": "Weapon",
+          "seoName": "Weapon"
+        },
+        {
+          "id": 7440,
+          "name": "Armor",
+          "seoName": "Armor"
+        }
+      ]
+    },
+    {
+      "id": 1520,
+      "name": "Usable Items",
+      "seoName": "Usable Items",
+      "subCategories": [
+        {
+          "id": 7441,
+          "name": "Usable Items",
+          "seoName": "Usable Items"
+        }
+      ]
+    },
+    {
+      "id": 1521,
+      "name": "Set-up Items",
+      "seoName": "Set-up Items",
+      "subCategories": [
+        {
+          "id": 7442,
+          "name": "Set-up Items",
+          "seoName": "Set-up Items"
+        }
+      ]
+    },
+    {
+      "id": 1522,
+      "name": "Cash Shop Items",
+      "seoName": "Cash Shop Items",
+      "subCategories": [
+        {
+          "id": 7443,
+          "name": "Cash Shop Items",
+          "seoName": "Cash Shop Items"
+        }
+      ]
+    },
+    {
+      "id": 383,
+      "name": "Maplestory NX Cash Card",
+      "seoName": "Maplestory NX Cash Card",
+      "subCategories": [
+        {
+          "id": 1399,
+          "name": "Masters Edition",
+          "seoName": "Masters Edition"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 8919,
+      "name": "Aurora"
+    },
+    {
+      "id": 1771,
+      "name": "Bera"
+    },
+    {
+      "id": 8918,
+      "name": "Elysium"
+    },
+    {
+      "id": 7552,
+      "name": "Luna"
+    },
+    {
+      "id": 7551,
+      "name": "Reboot"
+    },
+    {
+      "id": 1775,
+      "name": "Scania"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

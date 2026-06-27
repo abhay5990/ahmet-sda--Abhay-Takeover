@@ -1,0 +1,466 @@
+{
+  "game_id": "7",
+  "game": "final-fantasy-xiv",
+  "game_name": "Final Fantasy XIV",
+  "category": "Currency",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "JP",
+      "group": "Region",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "Aegis"
+        },
+        {
+          "id": "0-1",
+          "name": "Alexander"
+        },
+        {
+          "id": "0-10",
+          "name": "Fenrir"
+        },
+        {
+          "id": "0-11",
+          "name": "Garuda"
+        },
+        {
+          "id": "0-12",
+          "name": "Gungnir"
+        },
+        {
+          "id": "0-13",
+          "name": "Hades"
+        },
+        {
+          "id": "0-14",
+          "name": "Ifrit"
+        },
+        {
+          "id": "0-15",
+          "name": "Ixion"
+        },
+        {
+          "id": "0-16",
+          "name": "Kujata"
+        },
+        {
+          "id": "0-17",
+          "name": "Mandragora"
+        },
+        {
+          "id": "0-18",
+          "name": "Masamune"
+        },
+        {
+          "id": "0-19",
+          "name": "Pandaemonium"
+        },
+        {
+          "id": "0-2",
+          "name": "Anima"
+        },
+        {
+          "id": "0-20",
+          "name": "Ramuh"
+        },
+        {
+          "id": "0-21",
+          "name": "Ridill"
+        },
+        {
+          "id": "0-22",
+          "name": "Shinryu"
+        },
+        {
+          "id": "0-23",
+          "name": "Tiamat"
+        },
+        {
+          "id": "0-24",
+          "name": "Titan"
+        },
+        {
+          "id": "0-25",
+          "name": "Tonberry"
+        },
+        {
+          "id": "0-26",
+          "name": "Typhon"
+        },
+        {
+          "id": "0-27",
+          "name": "Ultima"
+        },
+        {
+          "id": "0-28",
+          "name": "Unicorn"
+        },
+        {
+          "id": "0-29",
+          "name": "Valefor"
+        },
+        {
+          "id": "0-3",
+          "name": "Asura"
+        },
+        {
+          "id": "0-30",
+          "name": "Yojimbo"
+        },
+        {
+          "id": "0-31",
+          "name": "Zeromus"
+        },
+        {
+          "id": "0-4",
+          "name": "Atomos"
+        },
+        {
+          "id": "0-5",
+          "name": "Bahamut"
+        },
+        {
+          "id": "0-6",
+          "name": "Belias"
+        },
+        {
+          "id": "0-7",
+          "name": "Carbuncle"
+        },
+        {
+          "id": "0-8",
+          "name": "Chocobo"
+        },
+        {
+          "id": "0-9",
+          "name": "Durandal"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "NA",
+      "group": "Region",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "Adamantoise"
+        },
+        {
+          "id": "1-1",
+          "name": "Balmung"
+        },
+        {
+          "id": "1-10",
+          "name": "Famfrit"
+        },
+        {
+          "id": "1-11",
+          "name": "Gilgamesh"
+        },
+        {
+          "id": "1-12",
+          "name": "Goblin"
+        },
+        {
+          "id": "1-13",
+          "name": "Hyperion"
+        },
+        {
+          "id": "1-14",
+          "name": "Jenova"
+        },
+        {
+          "id": "1-15",
+          "name": "Lamia"
+        },
+        {
+          "id": "1-16",
+          "name": "Leviathan"
+        },
+        {
+          "id": "1-17",
+          "name": "Malboro"
+        },
+        {
+          "id": "1-18",
+          "name": "Mateus"
+        },
+        {
+          "id": "1-19",
+          "name": "Midgardsormr"
+        },
+        {
+          "id": "1-2",
+          "name": "Behemoth"
+        },
+        {
+          "id": "1-20",
+          "name": "Sargatanas"
+        },
+        {
+          "id": "1-21",
+          "name": "Siren"
+        },
+        {
+          "id": "1-22",
+          "name": "Ultros"
+        },
+        {
+          "id": "1-23",
+          "name": "Zalera"
+        },
+        {
+          "id": "1-24",
+          "name": "Halicarnassus"
+        },
+        {
+          "id": "1-25",
+          "name": "Maduin"
+        },
+        {
+          "id": "1-26",
+          "name": "Marilith"
+        },
+        {
+          "id": "1-27",
+          "name": "Seraph"
+        },
+        {
+          "id": "1-28",
+          "name": "Cuchulainn"
+        },
+        {
+          "id": "1-29",
+          "name": "Golem"
+        },
+        {
+          "id": "1-3",
+          "name": "Brynhildr"
+        },
+        {
+          "id": "1-30",
+          "name": "Kraken"
+        },
+        {
+          "id": "1-31",
+          "name": "Rafflesia"
+        },
+        {
+          "id": "1-4",
+          "name": "Cactuar"
+        },
+        {
+          "id": "1-5",
+          "name": "Coeurl"
+        },
+        {
+          "id": "1-6",
+          "name": "Diabolos"
+        },
+        {
+          "id": "1-7",
+          "name": "Excalibur"
+        },
+        {
+          "id": "1-8",
+          "name": "Exodus"
+        },
+        {
+          "id": "1-9",
+          "name": "Faerie"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "EU",
+      "group": "Region",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "Cerberus"
+        },
+        {
+          "id": "2-1",
+          "name": "Lich"
+        },
+        {
+          "id": "2-10",
+          "name": "Spriggan"
+        },
+        {
+          "id": "2-11",
+          "name": "Twintania"
+        },
+        {
+          "id": "2-12",
+          "name": "Sagittarius"
+        },
+        {
+          "id": "2-13",
+          "name": "Phantom"
+        },
+        {
+          "id": "2-14",
+          "name": "Alpha"
+        },
+        {
+          "id": "2-15",
+          "name": "Raiden"
+        },
+        {
+          "id": "2-16",
+          "name": "Innocence"
+        },
+        {
+          "id": "2-17",
+          "name": "Pixie"
+        },
+        {
+          "id": "2-18",
+          "name": "Titania"
+        },
+        {
+          "id": "2-19",
+          "name": "Tycoon"
+        },
+        {
+          "id": "2-2",
+          "name": "Louisoix"
+        },
+        {
+          "id": "2-3",
+          "name": "Moogle"
+        },
+        {
+          "id": "2-4",
+          "name": "Odin"
+        },
+        {
+          "id": "2-5",
+          "name": "Omega"
+        },
+        {
+          "id": "2-6",
+          "name": "Phoenix"
+        },
+        {
+          "id": "2-7",
+          "name": "Ragnarok"
+        },
+        {
+          "id": "2-8",
+          "name": "Shiva"
+        },
+        {
+          "id": "2-9",
+          "name": "Zodiark"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "OC",
+      "group": "Region",
+      "children": [
+        {
+          "id": "3-0",
+          "name": "Bismarck"
+        },
+        {
+          "id": "3-1",
+          "name": "Ravana"
+        },
+        {
+          "id": "3-2",
+          "name": "Sephirot"
+        },
+        {
+          "id": "3-3",
+          "name": "Sophia"
+        },
+        {
+          "id": "3-4",
+          "name": "Zurvan"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

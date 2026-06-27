@@ -1,0 +1,162 @@
+{
+  "game_id": "137",
+  "game": "honkai-star-rail",
+  "game_name": "Honkai: Star Rail",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "NA",
+      "group": "Server"
+    },
+    {
+      "id": "1",
+      "name": "EU",
+      "group": "Server"
+    },
+    {
+      "id": "2",
+      "name": "Asia",
+      "group": "Server"
+    },
+    {
+      "id": "3",
+      "name": "TW, HK, MO",
+      "group": "Server"
+    }
+  ],
+  "attributes": {
+    "hsr-oneiric-shard": {
+      "name": "Oneiric Shards",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "1090-oneiric-shard",
+          "name": "1090 Oneiric Shard"
+        },
+        {
+          "id": "16160-oneiric-shard",
+          "name": "16160 Oneiric Shard"
+        },
+        {
+          "id": "2240-oneiric-shard",
+          "name": "2240 Oneiric Shard"
+        },
+        {
+          "id": "24240-oneiric-shard",
+          "name": "24240 Oneiric Shard"
+        },
+        {
+          "id": "32320-oneiric-shard",
+          "name": "32320 Oneiric Shard"
+        },
+        {
+          "id": "330-oneiric-shard",
+          "name": "330 Oneiric Shard"
+        },
+        {
+          "id": "3880-oneiric-shard",
+          "name": "3880 Oneiric Shard"
+        },
+        {
+          "id": "60-oneiric-shard",
+          "name": "60 Oneiric Shard"
+        },
+        {
+          "id": "8080-oneiric-shard",
+          "name": "8080 Oneiric Shard"
+        },
+        {
+          "id": "all-in-one-bundle",
+          "name": "All-In-One Bundle"
+        },
+        {
+          "id": "express-supply-pass",
+          "name": "Express Supply Pass"
+        },
+        {
+          "id": "nameless-glory-battle-pass",
+          "name": "Nameless Glory - Battle Pass"
+        },
+        {
+          "id": "nameless-medal-battle-pass",
+          "name": "Nameless Medal - Battle Pass"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

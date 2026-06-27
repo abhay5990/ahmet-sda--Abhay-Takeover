@@ -1,0 +1,238 @@
+{
+  "game_id": 13319,
+  "game": "dark-and-darker",
+  "game_name": "Dark and Darker",
+  "seo_name": "Dark-and-Darker",
+  "currencyName": "Gold Coins",
+  "categories": [
+    {
+      "id": 1767,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 8313,
+          "name": "Swords",
+          "seoName": "Swords"
+        },
+        {
+          "id": 8314,
+          "name": "Maces",
+          "seoName": "Maces"
+        },
+        {
+          "id": 8315,
+          "name": "Daggers",
+          "seoName": "Daggers"
+        },
+        {
+          "id": 8316,
+          "name": "Polearms",
+          "seoName": "Polearms"
+        },
+        {
+          "id": 8317,
+          "name": "Axes",
+          "seoName": "Axes"
+        },
+        {
+          "id": 8318,
+          "name": "Bows",
+          "seoName": "Bows"
+        },
+        {
+          "id": 8319,
+          "name": "Crossbows",
+          "seoName": "Crossbows"
+        },
+        {
+          "id": 8320,
+          "name": "Magical Weapons",
+          "seoName": "Magical Weapons"
+        },
+        {
+          "id": 8321,
+          "name": "Shields",
+          "seoName": "Shields"
+        }
+      ]
+    },
+    {
+      "id": 1768,
+      "name": "Armors",
+      "seoName": "Armors",
+      "subCategories": [
+        {
+          "id": 8322,
+          "name": "Head",
+          "seoName": "Head"
+        },
+        {
+          "id": 8323,
+          "name": "Chest",
+          "seoName": "Chest"
+        },
+        {
+          "id": 8324,
+          "name": "Legs",
+          "seoName": "Legs"
+        },
+        {
+          "id": 8325,
+          "name": "Hands",
+          "seoName": "Hands"
+        },
+        {
+          "id": 8326,
+          "name": "Foot",
+          "seoName": "Foot"
+        }
+      ]
+    },
+    {
+      "id": 1769,
+      "name": "Jewelry",
+      "seoName": "Jewelry",
+      "subCategories": [
+        {
+          "id": 8327,
+          "name": "Necklaces/Pendants",
+          "seoName": "Necklaces/Pendants"
+        },
+        {
+          "id": 8328,
+          "name": "Rings",
+          "seoName": "Rings"
+        }
+      ]
+    },
+    {
+      "id": 1770,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 8329,
+          "name": "Potions",
+          "seoName": "Potions"
+        },
+        {
+          "id": 8330,
+          "name": "Other",
+          "seoName": "Other"
+        }
+      ]
+    },
+    {
+      "id": 1771,
+      "name": "Utility",
+      "seoName": "Utility",
+      "subCategories": [
+        {
+          "id": 8331,
+          "name": "Tools",
+          "seoName": "Tools"
+        },
+        {
+          "id": 8332,
+          "name": "Tools with Rarities",
+          "seoName": "Tools with Rarities"
+        },
+        {
+          "id": 8333,
+          "name": "Combat",
+          "seoName": "Combat"
+        }
+      ]
+    },
+    {
+      "id": 1772,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 8334,
+          "name": "Ores",
+          "seoName": "Ores"
+        },
+        {
+          "id": 8335,
+          "name": "Cobalt",
+          "seoName": "Cobalt"
+        },
+        {
+          "id": 8336,
+          "name": "Rubysilver",
+          "seoName": "Rubysilver"
+        }
+      ]
+    },
+    {
+      "id": 1773,
+      "name": "Heart Candy",
+      "seoName": "Heart Candy",
+      "subCategories": [
+        {
+          "id": 8337,
+          "name": "Heart Candy",
+          "seoName": "Heart Candy"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13320,
+      "name": "PC"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

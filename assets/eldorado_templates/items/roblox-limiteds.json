@@ -1,0 +1,191 @@
+{
+  "game_id": "206",
+  "game": "roblox-limiteds",
+  "game_name": "Roblox Limiteds",
+  "category": "CustomItem",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Clothing",
+      "group": "Item Type",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "T-Shirts"
+        },
+        {
+          "id": "0-1",
+          "name": "Sweaters"
+        },
+        {
+          "id": "0-2",
+          "name": "Jackets"
+        },
+        {
+          "id": "0-3",
+          "name": "Pants"
+        },
+        {
+          "id": "0-4",
+          "name": "Shorts"
+        },
+        {
+          "id": "0-5",
+          "name": "Dresses & Skirts"
+        },
+        {
+          "id": "0-6",
+          "name": "Shoes"
+        },
+        {
+          "id": "0-7",
+          "name": "Classic Shirts"
+        },
+        {
+          "id": "0-8",
+          "name": "Classic T-Shirts"
+        },
+        {
+          "id": "0-9",
+          "name": "Classic Pants"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "Accessories",
+      "group": "Item Type",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "Head"
+        },
+        {
+          "id": "1-1",
+          "name": "Face"
+        },
+        {
+          "id": "1-2",
+          "name": "Neck"
+        },
+        {
+          "id": "1-3",
+          "name": "Shoulder"
+        },
+        {
+          "id": "1-4",
+          "name": "Front"
+        },
+        {
+          "id": "1-5",
+          "name": "Back"
+        },
+        {
+          "id": "1-6",
+          "name": "Waist"
+        },
+        {
+          "id": "1-7",
+          "name": "Gear"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Heads",
+      "group": "Item Type",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "Heads"
+        },
+        {
+          "id": "2-1",
+          "name": "Hair"
+        },
+        {
+          "id": "2-2",
+          "name": "Classic Heads"
+        },
+        {
+          "id": "2-3",
+          "name": "Classic Faces"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

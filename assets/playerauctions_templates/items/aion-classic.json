@@ -1,0 +1,213 @@
+{
+  "game_id": 9754,
+  "game": "aion-classic",
+  "game_name": "Aion Classic",
+  "seo_name": "Aion-Classic",
+  "currencyName": "Kinah",
+  "categories": [
+    {
+      "id": 1156,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 5447,
+          "name": "Melee Weapons",
+          "seoName": "Melee Weapons"
+        },
+        {
+          "id": 5448,
+          "name": "Ranged Weapons",
+          "seoName": "Ranged Weapons"
+        }
+      ]
+    },
+    {
+      "id": 1157,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 5449,
+          "name": "Cloth",
+          "seoName": "Cloth"
+        },
+        {
+          "id": 5450,
+          "name": "Leather",
+          "seoName": "Leather"
+        },
+        {
+          "id": 5451,
+          "name": "Chain",
+          "seoName": "Chain"
+        },
+        {
+          "id": 5452,
+          "name": "Plate",
+          "seoName": "Plate"
+        },
+        {
+          "id": 5453,
+          "name": "Clothing",
+          "seoName": "Clothing"
+        },
+        {
+          "id": 5454,
+          "name": "Wings",
+          "seoName": "Wings"
+        }
+      ]
+    },
+    {
+      "id": 1158,
+      "name": "Accessories",
+      "seoName": "Accessories",
+      "subCategories": [
+        {
+          "id": 5455,
+          "name": "Head",
+          "seoName": "Head"
+        },
+        {
+          "id": 5456,
+          "name": "Ring",
+          "seoName": "Ring"
+        },
+        {
+          "id": 5457,
+          "name": "Necklace",
+          "seoName": "Necklace"
+        },
+        {
+          "id": 5458,
+          "name": "Belt",
+          "seoName": "Belt"
+        },
+        {
+          "id": 5459,
+          "name": "Plume",
+          "seoName": "Plume"
+        }
+      ]
+    },
+    {
+      "id": 1159,
+      "name": "Potions",
+      "seoName": "Potions",
+      "subCategories": [
+        {
+          "id": 5460,
+          "name": "Potions",
+          "seoName": "Potions"
+        }
+      ]
+    },
+    {
+      "id": 1218,
+      "name": "Mounts",
+      "seoName": "Mounts",
+      "subCategories": [
+        {
+          "id": 5669,
+          "name": "Mounts",
+          "seoName": "Mounts"
+        }
+      ]
+    },
+    {
+      "id": 1219,
+      "name": "Pets",
+      "seoName": "Pets",
+      "subCategories": [
+        {
+          "id": 5670,
+          "name": "Pets",
+          "seoName": "Pets"
+        }
+      ]
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 9755,
+      "name": "NA",
+      "subCategories": [
+        {
+          "id": 9756,
+          "name": "Siel - Asmodian"
+        },
+        {
+          "id": 9758,
+          "name": "Siel - Elyos"
+        }
+      ]
+    },
+    {
+      "id": 13393,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 13394,
+          "name": "Atreia - Asmodian"
+        },
+        {
+          "id": 13395,
+          "name": "Atreia - Elyos"
+        },
+        {
+          "id": 13396,
+          "name": "Tahabata - Asmodian"
+        },
+        {
+          "id": 13397,
+          "name": "Tahabata - Elyos"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -59,18 +59,11 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Money",
-        "Level Boosts",
-        "Vehicles",
-        "Modded Cars",
-        "Weapons",
-        "Outfits",
-        "Properties",
-        "Unlocks",
-        "Other"
-      ]
+      "required": false
+    },
+    "platform": {
+      "type": "string",
+      "required": false
     }
   }
 }

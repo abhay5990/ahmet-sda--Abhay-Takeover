@@ -59,20 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Arcanas",
-        "Immortal Items",
-        "Collector’s Cache Items",
-        "Battle Pass Items",
-        "Treasure Items",
-        "Loading Screens",
-        "Music Packs",
-        "Emoticons",
-        "Weather Effects",
-        "Effigies and Effigy Blocks",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

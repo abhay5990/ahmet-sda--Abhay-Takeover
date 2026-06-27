@@ -1,0 +1,133 @@
+{
+  "game_id": "321",
+  "game": "arena-breakout",
+  "game_name": "Arena Breakout",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "arena-breakout-bonds": {
+      "name": "Bonds",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "66-bonds",
+          "name": "66 Bonds"
+        },
+        {
+          "id": "335-bonds",
+          "name": "335 Bonds"
+        },
+        {
+          "id": "675-bonds",
+          "name": "675 Bonds"
+        },
+        {
+          "id": "1690-bonds",
+          "name": "1690 Bonds"
+        },
+        {
+          "id": "3400-bonds",
+          "name": "3400 Bonds"
+        },
+        {
+          "id": "6820-bonds",
+          "name": "6820 Bonds"
+        },
+        {
+          "id": "advanced-battle-pass",
+          "name": "Advanced Battle Pass"
+        },
+        {
+          "id": "beginner-choice",
+          "name": "Beginner Choice"
+        },
+        {
+          "id": "bulletproof-case",
+          "name": "Bulletproof Case"
+        },
+        {
+          "id": "composite-case",
+          "name": "Composite Case"
+        },
+        {
+          "id": "premium-battle-pass",
+          "name": "Premium Battle Pass"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

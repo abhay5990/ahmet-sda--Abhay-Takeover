@@ -59,16 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Brainrot",
-        "Gear",
-        "Gamepass",
-        "Packs",
-        "Money",
-        "Limited",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

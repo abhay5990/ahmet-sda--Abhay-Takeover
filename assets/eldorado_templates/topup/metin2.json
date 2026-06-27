@@ -1,0 +1,109 @@
+{
+  "game_id": "335",
+  "game": "metin2",
+  "game_name": "Metin2",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "metin2-dragon-coins": {
+      "name": "Dragon Coins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "300-dragon-coins",
+          "name": "300 Dragon Coins"
+        },
+        {
+          "id": "900-dragon-coins",
+          "name": "900 Dragon Coins"
+        },
+        {
+          "id": "2100-dragon-coins",
+          "name": "2100 Dragon Coins"
+        },
+        {
+          "id": "4800-dragon-coins",
+          "name": "4800 Dragon Coins"
+        },
+        {
+          "id": "10500-dragon-coins",
+          "name": "10500 Dragon Coins"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

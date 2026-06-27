@@ -1,0 +1,136 @@
+{
+  "game_id": 11,
+  "game": "eq2",
+  "game_name": "EverQuest II",
+  "seo_name": "EQ2",
+  "currencyName": "Platinum",
+  "categories": [
+    {
+      "id": 810,
+      "name": "Krono",
+      "seoName": "Krono",
+      "subCategories": [
+        {
+          "id": 2378,
+          "name": "Krono",
+          "seoName": "Krono"
+        }
+      ]
+    },
+    {
+      "id": 811,
+      "name": "Loot Card",
+      "seoName": "Loot Card",
+      "subCategories": [
+        {
+          "id": 2379,
+          "name": "Loot Card",
+          "seoName": "Loot Card"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13838,
+      "name": "Anashti Sul"
+    },
+    {
+      "id": 7340,
+      "name": "Antonia Bayle"
+    },
+    {
+      "id": 14338,
+      "name": "Dozekar"
+    },
+    {
+      "id": 7344,
+      "name": "Halls of Fate"
+    },
+    {
+      "id": 7451,
+      "name": "Isle of Refuge"
+    },
+    {
+      "id": 8563,
+      "name": "Kaladim"
+    },
+    {
+      "id": 7347,
+      "name": "Maj dul"
+    },
+    {
+      "id": 9221,
+      "name": "Rivervale"
+    },
+    {
+      "id": 7349,
+      "name": "Skyfire"
+    },
+    {
+      "id": 10640,
+      "name": "Tarinax"
+    },
+    {
+      "id": 7374,
+      "name": "Thurgadin"
+    },
+    {
+      "id": 15173,
+      "name": "Wuoshi"
+    },
+    {
+      "id": 12558,
+      "name": "Varsoon"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

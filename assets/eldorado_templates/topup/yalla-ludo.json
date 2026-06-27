@@ -1,0 +1,121 @@
+{
+  "game_id": "378",
+  "game": "yalla-ludo",
+  "game_name": "Yalla Ludo",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "yalla-ludo-diamonds": {
+      "name": "Diamonds",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "830-diamonds",
+          "name": "830 Diamonds"
+        },
+        {
+          "id": "2320-diamonds",
+          "name": "2320 Diamonds"
+        },
+        {
+          "id": "5150-diamonds",
+          "name": "5150 Diamonds"
+        },
+        {
+          "id": "13580-diamonds",
+          "name": "13580 Diamonds"
+        },
+        {
+          "id": "27640-diamonds",
+          "name": "27640 Diamonds"
+        },
+        {
+          "id": "55800-diamonds",
+          "name": "55800 Diamonds"
+        },
+        {
+          "id": "168860-diamonds",
+          "name": "168860 Diamonds"
+        },
+        {
+          "id": "283460-diamonds",
+          "name": "283460 Diamonds"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

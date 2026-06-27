@@ -59,17 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Honey",
-        "Tokens",
-        "Bees",
-        "Eggs",
-        "Beequips",
-        "Stickers",
-        "Tickets",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

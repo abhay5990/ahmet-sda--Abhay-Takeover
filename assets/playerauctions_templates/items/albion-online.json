@@ -1,0 +1,336 @@
+{
+  "game_id": 6664,
+  "game": "albion-online",
+  "game_name": "Albion Online",
+  "seo_name": "Albion-Online",
+  "currencyName": "Silver",
+  "categories": [
+    {
+      "id": 1495,
+      "name": "Accessories",
+      "seoName": "Accessories",
+      "subCategories": [
+        {
+          "id": 7406,
+          "name": "Accessories",
+          "seoName": "Accessories"
+        }
+      ]
+    },
+    {
+      "id": 1496,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 7407,
+          "name": "Armor",
+          "seoName": "Armor"
+        }
+      ]
+    },
+    {
+      "id": 1497,
+      "name": "Artifact",
+      "seoName": "Artifact",
+      "subCategories": [
+        {
+          "id": 7408,
+          "name": "Artifact",
+          "seoName": "Artifact"
+        }
+      ]
+    },
+    {
+      "id": 1498,
+      "name": "City Resources",
+      "seoName": "City Resources",
+      "subCategories": [
+        {
+          "id": 7409,
+          "name": "City Resources",
+          "seoName": "City Resources"
+        }
+      ]
+    },
+    {
+      "id": 1499,
+      "name": "Consumable",
+      "seoName": "Consumable",
+      "subCategories": [
+        {
+          "id": 7410,
+          "name": "Consumable",
+          "seoName": "Consumable"
+        }
+      ]
+    },
+    {
+      "id": 1500,
+      "name": "Farmable",
+      "seoName": "Farmable",
+      "subCategories": [
+        {
+          "id": 7411,
+          "name": "Farmable",
+          "seoName": "Farmable"
+        }
+      ]
+    },
+    {
+      "id": 1501,
+      "name": "Furniture",
+      "seoName": "Furniture",
+      "subCategories": [
+        {
+          "id": 7412,
+          "name": "Furniture",
+          "seoName": "Furniture"
+        }
+      ]
+    },
+    {
+      "id": 1502,
+      "name": "Gathering Gear",
+      "seoName": "Gathering Gear",
+      "subCategories": [
+        {
+          "id": 7413,
+          "name": "Gathering Gear",
+          "seoName": "Gathering Gear"
+        }
+      ]
+    },
+    {
+      "id": 1503,
+      "name": "Luxury Goods",
+      "seoName": "Luxury Goods",
+      "subCategories": [
+        {
+          "id": 7414,
+          "name": "Luxury Goods",
+          "seoName": "Luxury Goods"
+        }
+      ]
+    },
+    {
+      "id": 1504,
+      "name": "Magic",
+      "seoName": "Magic",
+      "subCategories": [
+        {
+          "id": 7415,
+          "name": "Magic",
+          "seoName": "Magic"
+        }
+      ]
+    },
+    {
+      "id": 1505,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 7416,
+          "name": "Materials",
+          "seoName": "Materials"
+        }
+      ]
+    },
+    {
+      "id": 1506,
+      "name": "Melee",
+      "seoName": "Melee",
+      "subCategories": [
+        {
+          "id": 7417,
+          "name": "Melee",
+          "seoName": "Melee"
+        }
+      ]
+    },
+    {
+      "id": 1507,
+      "name": "Mount",
+      "seoName": "Mount",
+      "subCategories": [
+        {
+          "id": 7418,
+          "name": "Mount",
+          "seoName": "Mount"
+        }
+      ]
+    },
+    {
+      "id": 1508,
+      "name": "Off-Hand",
+      "seoName": "Off-Hand",
+      "subCategories": [
+        {
+          "id": 7419,
+          "name": "Off-Hand",
+          "seoName": "Off-Hand"
+        }
+      ]
+    },
+    {
+      "id": 1509,
+      "name": "Other",
+      "seoName": "Other",
+      "subCategories": [
+        {
+          "id": 7420,
+          "name": "Other",
+          "seoName": "Other"
+        }
+      ]
+    },
+    {
+      "id": 1510,
+      "name": "Product",
+      "seoName": "Product",
+      "subCategories": [
+        {
+          "id": 7421,
+          "name": "Product",
+          "seoName": "Product"
+        }
+      ]
+    },
+    {
+      "id": 1511,
+      "name": "Ranged",
+      "seoName": "Ranged",
+      "subCategories": [
+        {
+          "id": 7422,
+          "name": "Ranged",
+          "seoName": "Ranged"
+        }
+      ]
+    },
+    {
+      "id": 1512,
+      "name": "Resource",
+      "seoName": "Resource",
+      "subCategories": [
+        {
+          "id": 7423,
+          "name": "Resource",
+          "seoName": "Resource"
+        }
+      ]
+    },
+    {
+      "id": 1513,
+      "name": "Tomes",
+      "seoName": "Tomes",
+      "subCategories": [
+        {
+          "id": 7424,
+          "name": "Tomes",
+          "seoName": "Tomes"
+        }
+      ]
+    },
+    {
+      "id": 1514,
+      "name": "Token",
+      "seoName": "Token",
+      "subCategories": [
+        {
+          "id": 7425,
+          "name": "Token",
+          "seoName": "Token"
+        }
+      ]
+    },
+    {
+      "id": 1515,
+      "name": "Tool",
+      "seoName": "Tool",
+      "subCategories": [
+        {
+          "id": 7426,
+          "name": "Tool",
+          "seoName": "Tool"
+        }
+      ]
+    },
+    {
+      "id": 1516,
+      "name": "Trophies",
+      "seoName": "Trophies",
+      "subCategories": [
+        {
+          "id": 7427,
+          "name": "Trophies",
+          "seoName": "Trophies"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 6665,
+      "name": "Albion Americas"
+    },
+    {
+      "id": 7143,
+      "name": "Albion Asia"
+    },
+    {
+      "id": 13784,
+      "name": "Albion Europe"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

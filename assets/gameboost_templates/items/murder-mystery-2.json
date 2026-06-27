@@ -59,36 +59,15 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Chroma",
-        "FX",
-        "Other"
-      ]
+      "required": false
     },
     "weapon_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Guns",
-        "Knives",
-        "Other"
-      ]
+      "required": false
     },
     "rarity": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Ancient",
-        "Common",
-        "Godly",
-        "Legendary",
-        "Other",
-        "Rare",
-        "Uncommon",
-        "Unique",
-        "Vintage"
-      ]
+      "required": false
     }
   }
 }

@@ -1,0 +1,121 @@
+{
+  "game_id": "271",
+  "game": "blood-strike",
+  "game_name": "Blood Strike",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "blood-strike-gold": {
+      "name": "Gold",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "105-gold",
+          "name": "105 Gold"
+        },
+        {
+          "id": "320-gold",
+          "name": "320 Gold"
+        },
+        {
+          "id": "540-gold",
+          "name": "540 Gold"
+        },
+        {
+          "id": "1100-gold",
+          "name": "1100 Gold"
+        },
+        {
+          "id": "2260-gold",
+          "name": "2260 Gold"
+        },
+        {
+          "id": "5800-gold",
+          "name": "5800 Gold"
+        },
+        {
+          "id": "strike-pass-elite",
+          "name": "Strike Pass Elite"
+        },
+        {
+          "id": "strike-pass-premium",
+          "name": "Strike Pass Premium"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

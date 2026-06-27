@@ -1,0 +1,117 @@
+{
+  "game_id": "48",
+  "game": "rainbow-six-siege-x",
+  "game_name": "Rainbow Six Siege X",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "rainbow-six-siege-x-credits": {
+      "name": "Credits",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "600-credits",
+          "name": "600 Credits"
+        },
+        {
+          "id": "1200-credits",
+          "name": "1200 Credits"
+        },
+        {
+          "id": "3300-credits",
+          "name": "3300 Credits"
+        },
+        {
+          "id": "7200-credits",
+          "name": "7200 Credits"
+        },
+        {
+          "id": "15000-credits",
+          "name": "15000 Credits"
+        },
+        {
+          "id": "30000-credits",
+          "name": "30000 Credits"
+        },
+        {
+          "id": "45000-credits",
+          "name": "45000 Credits"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

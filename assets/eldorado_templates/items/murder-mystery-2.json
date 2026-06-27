@@ -1,0 +1,163 @@
+{
+  "game_id": "204",
+  "game": "murder-mystery-2",
+  "game_name": "Murder Mystery 2",
+  "category": "CustomItem",
+  "tradeEnvironments": [],
+  "attributes": {
+    "murder-mystery-2-item-types": {
+      "name": "Item Types",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "chroma",
+          "name": "Chroma"
+        },
+        {
+          "id": "fx",
+          "name": "FX"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "murder-mystery-2-rarity": {
+      "name": "Rarity",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "ancient",
+          "name": "Ancient"
+        },
+        {
+          "id": "common",
+          "name": "Common"
+        },
+        {
+          "id": "godly",
+          "name": "Godly"
+        },
+        {
+          "id": "legendary",
+          "name": "Legendary"
+        },
+        {
+          "id": "rare",
+          "name": "Rare"
+        },
+        {
+          "id": "uncommon",
+          "name": "Uncommon"
+        },
+        {
+          "id": "unique",
+          "name": "Unique"
+        },
+        {
+          "id": "vintage",
+          "name": "Vintage"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "murder-mystery-2-weapon-type": {
+      "name": "Weapon type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "guns",
+          "name": "Guns"
+        },
+        {
+          "id": "knives",
+          "name": "Knives"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

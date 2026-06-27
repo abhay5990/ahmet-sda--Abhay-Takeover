@@ -59,14 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Vehicles",
-        "Textures",
-        "Accessories",
-        "Customizations",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

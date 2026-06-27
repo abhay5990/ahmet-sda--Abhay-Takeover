@@ -166,7 +166,7 @@
       ]
     },
     "pokemon-go-mythical-pokemons": {
-      "name": "Mythical Pokemons",
+      "name": "Mythical Pokémons",
       "type": "Select",
       "required": true,
       "values": [

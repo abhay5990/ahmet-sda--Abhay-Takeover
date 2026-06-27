@@ -1,0 +1,129 @@
+{
+  "game_id": 2853,
+  "game": "imvu",
+  "game_name": "IMVU",
+  "seo_name": "IMVU",
+  "currencyName": "Credits",
+  "categories": [
+    {
+      "id": 1225,
+      "name": "Outfits",
+      "seoName": "Outfits",
+      "subCategories": [
+        {
+          "id": 5702,
+          "name": "Women",
+          "seoName": "Women"
+        },
+        {
+          "id": 5703,
+          "name": "Men",
+          "seoName": "Men"
+        }
+      ]
+    },
+    {
+      "id": 1226,
+      "name": "Stickers",
+      "seoName": "Stickers",
+      "subCategories": [
+        {
+          "id": 5704,
+          "name": "Stickers",
+          "seoName": "Stickers"
+        }
+      ]
+    },
+    {
+      "id": 1227,
+      "name": "Furniture",
+      "seoName": "Furniture",
+      "subCategories": [
+        {
+          "id": 5705,
+          "name": "Furniture",
+          "seoName": "Furniture"
+        }
+      ]
+    },
+    {
+      "id": 1228,
+      "name": "Rooms",
+      "seoName": "Rooms",
+      "subCategories": [
+        {
+          "id": 5706,
+          "name": "Rooms",
+          "seoName": "Rooms"
+        }
+      ]
+    },
+    {
+      "id": 1229,
+      "name": "Avatars",
+      "seoName": "Avatars",
+      "subCategories": [
+        {
+          "id": 5707,
+          "name": "Avatars",
+          "seoName": "Avatars"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 2854,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

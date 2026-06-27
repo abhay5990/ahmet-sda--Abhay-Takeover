@@ -1,0 +1,128 @@
+{
+  "game_id": 5767,
+  "game": "pokemmo",
+  "game_name": "PokeMMO",
+  "seo_name": "PokeMMO",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1711,
+      "name": "Pokemon",
+      "seoName": "Pokemon",
+      "subCategories": [
+        {
+          "id": 7881,
+          "name": "Normal",
+          "seoName": "Normal"
+        },
+        {
+          "id": 7882,
+          "name": "Shiny",
+          "seoName": "Shiny"
+        }
+      ]
+    },
+    {
+      "id": 1712,
+      "name": "Held Items",
+      "seoName": "Held Items",
+      "subCategories": [
+        {
+          "id": 7883,
+          "name": "Items",
+          "seoName": "Items"
+        },
+        {
+          "id": 7884,
+          "name": "Medicine",
+          "seoName": "Medicine"
+        },
+        {
+          "id": 7885,
+          "name": "Battle Items",
+          "seoName": "Battle Items"
+        },
+        {
+          "id": 7886,
+          "name": "Key Items",
+          "seoName": "Key Items"
+        },
+        {
+          "id": 7887,
+          "name": "Poké Balls",
+          "seoName": "Poké Balls"
+        },
+        {
+          "id": 7888,
+          "name": "TMs and HMs",
+          "seoName": "TMs and HMs"
+        },
+        {
+          "id": 7889,
+          "name": "Berries",
+          "seoName": "Berries"
+        },
+        {
+          "id": 7890,
+          "name": "Cosmetics",
+          "seoName": "Cosmetics"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 5768,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

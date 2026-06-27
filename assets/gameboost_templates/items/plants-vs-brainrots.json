@@ -59,24 +59,11 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Brainrot",
-        "Plant",
-        "Other"
-      ]
+      "required": false
     },
     "rarity": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Rare",
-        "Epic",
-        "Legendary",
-        "Mythic",
-        "Godly",
-        "Secret"
-      ]
+      "required": false
     }
   }
 }

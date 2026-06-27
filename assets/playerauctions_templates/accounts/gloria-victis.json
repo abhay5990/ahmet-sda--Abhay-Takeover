@@ -1,0 +1,155 @@
+{
+  "game_id": 15174,
+  "game": "gloria-victis",
+  "game_name": "Gloria Victis: Medieval MMORPG",
+  "seo_name": "Gloria-Victis",
+  "servers": [
+    {
+      "id": 15186,
+      "name": "NA",
+      "subCategories": [
+        {
+          "id": 15187,
+          "name": "Aquilla"
+        },
+        {
+          "id": 15188,
+          "name": "Aquilla 2"
+        },
+        {
+          "id": 15189,
+          "name": "Aquilla 3"
+        }
+      ]
+    },
+    {
+      "id": 15190,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 15191,
+          "name": "Wolfield"
+        },
+        {
+          "id": 15192,
+          "name": "Wolfield 2"
+        },
+        {
+          "id": 15193,
+          "name": "Wolfield 3"
+        }
+      ]
+    },
+    {
+      "id": 15194,
+      "name": "SEA",
+      "subCategories": [
+        {
+          "id": 15195,
+          "name": "Dukla"
+        },
+        {
+          "id": 15196,
+          "name": "Dukla 2"
+        }
+      ]
+    }
+  ],
+  "requiredFields": {
+    "securityQA": false,
+    "cdKey": false,
+    "parentalPassword": false
+  },
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "screenShot": {
+      "type": "string",
+      "required": false
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "freeInsurance": {
+      "type": "integer",
+      "required": true,
+      "default": 7,
+      "description": "Free insurance in days"
+    },
+    "isAuto": {
+      "type": "boolean",
+      "required": true,
+      "default": true,
+      "description": "true = auto delivery, false = manual delivery"
+    }
+  },
+  "autoDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true,
+      "encrypted": true
+    },
+    "characterName": {
+      "type": "string",
+      "required": false
+    },
+    "instruction": {
+      "type": "string",
+      "required": false
+    },
+    "ownerInfo": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "manualDelivery": {
+    "loginName": {
+      "type": "string",
+      "required": false
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "game_id": "70",
+  "game": "roblox",
+  "game_name": "Roblox",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "roblox-robux": {
+      "name": "Robux",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "400-robux",
+          "name": "400 Robux"
+        },
+        {
+          "id": "800-robux",
+          "name": "800 Robux"
+        },
+        {
+          "id": "1700-robux",
+          "name": "1700 Robux"
+        },
+        {
+          "id": "2000-robux",
+          "name": "2000 Robux"
+        },
+        {
+          "id": "4500-robux",
+          "name": "4500 Robux"
+        },
+        {
+          "id": "10000-robux",
+          "name": "10000 Robux"
+        },
+        {
+          "id": "22500-robux",
+          "name": "22500 Robux"
+        },
+        {
+          "id": "45000-robux",
+          "name": "45000 Robux"
+        },
+        {
+          "id": "67500-robux",
+          "name": "67500 Robux"
+        },
+        {
+          "id": "premium-membership-450",
+          "name": "Premium Membership - 450"
+        },
+        {
+          "id": "premium-membership-1000",
+          "name": "Premium Membership - 1000"
+        },
+        {
+          "id": "premium-membership-2200",
+          "name": "Premium Membership - 2200"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

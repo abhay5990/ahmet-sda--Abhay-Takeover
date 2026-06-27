@@ -1,0 +1,238 @@
+{
+  "game_id": 15071,
+  "game": "dragonkin-tb",
+  "game_name": "Dragonkin: The Banished",
+  "seo_name": "Dragonkin-TB",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 2133,
+      "name": "Fragments",
+      "seoName": "Fragments",
+      "subCategories": [
+        {
+          "id": 10873,
+          "name": "Ancestral Fragments",
+          "seoName": "Ancestral Fragments"
+        },
+        {
+          "id": 10874,
+          "name": "Modifier Fragments",
+          "seoName": "Modifier Fragments"
+        },
+        {
+          "id": 10875,
+          "name": "Ultimate Fragments",
+          "seoName": "Ultimate Fragments"
+        }
+      ]
+    },
+    {
+      "id": 2134,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 10876,
+          "name": "One-Handed",
+          "seoName": "One-Handed"
+        },
+        {
+          "id": 10877,
+          "name": "Two-Handed",
+          "seoName": "Two-Handed"
+        },
+        {
+          "id": 10878,
+          "name": "Ranged",
+          "seoName": "Ranged"
+        },
+        {
+          "id": 10879,
+          "name": "Shields",
+          "seoName": "Shields"
+        }
+      ]
+    },
+    {
+      "id": 2135,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 10880,
+          "name": "Helmets",
+          "seoName": "Helmets"
+        },
+        {
+          "id": 10881,
+          "name": "Chest Armor",
+          "seoName": "Chest Armor"
+        },
+        {
+          "id": 10882,
+          "name": "Gloves",
+          "seoName": "Gloves"
+        },
+        {
+          "id": 10883,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 10884,
+          "name": "Pants",
+          "seoName": "Pants"
+        }
+      ]
+    },
+    {
+      "id": 2136,
+      "name": "Jewelry",
+      "seoName": "Jewelry",
+      "subCategories": [
+        {
+          "id": 10885,
+          "name": "Rings",
+          "seoName": "Rings"
+        },
+        {
+          "id": 10886,
+          "name": "Amulets",
+          "seoName": "Amulets"
+        },
+        {
+          "id": 10887,
+          "name": "Charms",
+          "seoName": "Charms"
+        }
+      ]
+    },
+    {
+      "id": 2137,
+      "name": "Endgame Gear",
+      "seoName": "Endgame Gear",
+      "subCategories": [
+        {
+          "id": 10888,
+          "name": "Divine Items",
+          "seoName": "Divine Items"
+        },
+        {
+          "id": 10889,
+          "name": "Draconic Items",
+          "seoName": "Draconic Items"
+        },
+        {
+          "id": 10890,
+          "name": "Mythic Items",
+          "seoName": "Mythic Items"
+        }
+      ]
+    },
+    {
+      "id": 2138,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 10891,
+          "name": "City Resources",
+          "seoName": "City Resources"
+        },
+        {
+          "id": 10892,
+          "name": "Essences",
+          "seoName": "Essences"
+        },
+        {
+          "id": 10893,
+          "name": "Upgrade Stones",
+          "seoName": "Upgrade Stones"
+        },
+        {
+          "id": 10894,
+          "name": "Crafting Components",
+          "seoName": "Crafting Components"
+        }
+      ]
+    },
+    {
+      "id": 2139,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 10895,
+          "name": "Potions",
+          "seoName": "Potions"
+        },
+        {
+          "id": 10896,
+          "name": "Elixirs",
+          "seoName": "Elixirs"
+        },
+        {
+          "id": 10897,
+          "name": "Chaos Hunt Maps",
+          "seoName": "Chaos Hunt Maps"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15072,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

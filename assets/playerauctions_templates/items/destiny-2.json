@@ -1,0 +1,114 @@
+{
+  "game_id": 7942,
+  "game": "destiny-2",
+  "game_name": "Destiny 2",
+  "seo_name": "Destiny-2",
+  "currencyName": "Silver",
+  "categories": [
+    {
+      "id": 1766,
+      "name": "Emblems",
+      "seoName": "Emblems",
+      "subCategories": [
+        {
+          "id": 8306,
+          "name": "Class",
+          "seoName": "Class"
+        },
+        {
+          "id": 8307,
+          "name": "Seasonal",
+          "seoName": "Seasonal"
+        },
+        {
+          "id": 8308,
+          "name": "Gameplay",
+          "seoName": "Gameplay"
+        },
+        {
+          "id": 8309,
+          "name": "Nightfall",
+          "seoName": "Nightfall"
+        },
+        {
+          "id": 8310,
+          "name": "Raid",
+          "seoName": "Raid"
+        },
+        {
+          "id": 8311,
+          "name": "Exclusive",
+          "seoName": "Exclusive"
+        },
+        {
+          "id": 8312,
+          "name": "Modified",
+          "seoName": "Modified"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7945,
+      "name": "PC"
+    },
+    {
+      "id": 7943,
+      "name": "PlayStation"
+    },
+    {
+      "id": 7944,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

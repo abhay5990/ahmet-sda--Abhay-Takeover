@@ -1,0 +1,274 @@
+{
+  "game_id": "46",
+  "game": "garena-free-fire",
+  "game_name": "Garena Free Fire",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Global",
+      "group": "Region"
+    },
+    {
+      "id": "1",
+      "name": "Brazil",
+      "group": "Region"
+    },
+    {
+      "id": "2",
+      "name": "LATAM",
+      "group": "Region"
+    },
+    {
+      "id": "3",
+      "name": "India",
+      "group": "Region"
+    },
+    {
+      "id": "4",
+      "name": "Indonesia",
+      "group": "Region"
+    },
+    {
+      "id": "5",
+      "name": "Vietnam",
+      "group": "Region"
+    },
+    {
+      "id": "6",
+      "name": "MENA",
+      "group": "Region"
+    },
+    {
+      "id": "7",
+      "name": "EU",
+      "group": "Region"
+    }
+  ],
+  "attributes": {
+    "garena-free-fire-diamonds": {
+      "name": "Diamonds",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "1080-diamonds",
+          "name": "1080 Diamonds"
+        },
+        {
+          "id": "110-diamonds",
+          "name": "110 Diamonds"
+        },
+        {
+          "id": "1166-diamonds",
+          "name": "1166 Diamonds"
+        },
+        {
+          "id": "210-diamonds",
+          "name": "210 Diamonds"
+        },
+        {
+          "id": "2200-diamonds",
+          "name": "2200 Diamonds"
+        },
+        {
+          "id": "2398-diamonds",
+          "name": "2398 Diamonds"
+        },
+        {
+          "id": "341-diamonds",
+          "name": "341 Diamonds"
+        },
+        {
+          "id": "4450-diamonds",
+          "name": "4450 Diamonds"
+        },
+        {
+          "id": "530-diamonds",
+          "name": "530 Diamonds"
+        },
+        {
+          "id": "572-diamonds",
+          "name": "572 Diamonds"
+        },
+        {
+          "id": "6160-diamonds",
+          "name": "6160 Diamonds"
+        },
+        {
+          "id": "645-diamonds",
+          "name": "645 Diamonds"
+        },
+        {
+          "id": "6900-diamonds",
+          "name": "6900 Diamonds"
+        },
+        {
+          "id": "booyah-pass",
+          "name": "Booyah Pass"
+        },
+        {
+          "id": "43-diamonds",
+          "name": "43 Diamonds"
+        },
+        {
+          "id": "51-diamonds",
+          "name": "51 Diamonds"
+        },
+        {
+          "id": "100-diamonds",
+          "name": "100 Diamonds"
+        },
+        {
+          "id": "137-diamonds",
+          "name": "137 Diamonds"
+        },
+        {
+          "id": "231-diamonds",
+          "name": "231 Diamonds"
+        },
+        {
+          "id": "310-diamonds",
+          "name": "310 Diamonds"
+        },
+        {
+          "id": "470-diamonds",
+          "name": "470 Diamonds"
+        },
+        {
+          "id": "520-diamonds",
+          "name": "520 Diamonds"
+        },
+        {
+          "id": "583-diamonds",
+          "name": "583 Diamonds"
+        },
+        {
+          "id": "627-diamonds",
+          "name": "627 Diamonds"
+        },
+        {
+          "id": "956-diamonds",
+          "name": "956 Diamonds"
+        },
+        {
+          "id": "1060-diamonds",
+          "name": "1060 Diamonds"
+        },
+        {
+          "id": "1188-diamonds",
+          "name": "1188 Diamonds"
+        },
+        {
+          "id": "1637-diamonds",
+          "name": "1637 Diamonds"
+        },
+        {
+          "id": "2180-diamonds",
+          "name": "2180 Diamonds"
+        },
+        {
+          "id": "2420-diamonds",
+          "name": "2420 Diamonds"
+        },
+        {
+          "id": "3361-diamonds",
+          "name": "3361 Diamonds"
+        },
+        {
+          "id": "5600-diamonds",
+          "name": "5600 Diamonds"
+        },
+        {
+          "id": "11500-diamonds",
+          "name": "11500 Diamonds"
+        },
+        {
+          "id": "level-up-pass",
+          "name": "Level Up Pass"
+        },
+        {
+          "id": "monthly-membership",
+          "name": "Monthly Membership"
+        },
+        {
+          "id": "weekly-membership",
+          "name": "Weekly Membership"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,327 @@
+{
+  "game_id": 7383,
+  "game": "hay-day",
+  "game_name": "Hay Day",
+  "seo_name": "Hay-Day",
+  "currencyName": "Coins",
+  "categories": [
+    {
+      "id": 1419,
+      "name": "Vouchers",
+      "seoName": "Vouchers",
+      "subCategories": [
+        {
+          "id": 6524,
+          "name": "Purple",
+          "seoName": "Purple"
+        },
+        {
+          "id": 6525,
+          "name": "Golden",
+          "seoName": "Golden"
+        },
+        {
+          "id": 6526,
+          "name": "Blue",
+          "seoName": "Blue"
+        },
+        {
+          "id": 6527,
+          "name": "Green",
+          "seoName": "Green"
+        }
+      ]
+    },
+    {
+      "id": 1420,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 6528,
+          "name": "Trees",
+          "seoName": "Trees"
+        },
+        {
+          "id": 6529,
+          "name": "Bushes",
+          "seoName": "Bushes"
+        },
+        {
+          "id": 6530,
+          "name": "Fields and Buildings",
+          "seoName": "Fields and Buildings"
+        },
+        {
+          "id": 6531,
+          "name": "Decorations",
+          "seoName": "Decorations"
+        }
+      ]
+    },
+    {
+      "id": 1421,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 6532,
+          "name": "Brick",
+          "seoName": "Brick"
+        },
+        {
+          "id": 6533,
+          "name": "Bolt",
+          "seoName": "Bolt"
+        },
+        {
+          "id": 6534,
+          "name": "Blueprint",
+          "seoName": "Blueprint"
+        },
+        {
+          "id": 6535,
+          "name": "Axe",
+          "seoName": "Axe"
+        },
+        {
+          "id": 6550,
+          "name": "Duct Tape",
+          "seoName": "Duct Tape"
+        },
+        {
+          "id": 6551,
+          "name": "Dynamite",
+          "seoName": "Dynamite"
+        },
+        {
+          "id": 6552,
+          "name": "Expansion Permit",
+          "seoName": "Expansion Permit"
+        },
+        {
+          "id": 6553,
+          "name": "Fuel Spin",
+          "seoName": "Fuel Spin"
+        },
+        {
+          "id": 6554,
+          "name": "Hammer",
+          "seoName": "Hammer"
+        },
+        {
+          "id": 6555,
+          "name": "Hand Drill",
+          "seoName": "Hand Drill"
+        },
+        {
+          "id": 6556,
+          "name": "Land Deed",
+          "seoName": "Land Deed"
+        },
+        {
+          "id": 6557,
+          "name": "Mallet",
+          "seoName": "Mallet"
+        },
+        {
+          "id": 6558,
+          "name": "Map Piece",
+          "seoName": "Map Piece"
+        },
+        {
+          "id": 6559,
+          "name": "Marker Stake",
+          "seoName": "Marker Stake"
+        },
+        {
+          "id": 6560,
+          "name": "Nail",
+          "seoName": "Nail"
+        },
+        {
+          "id": 6561,
+          "name": "Paint Bucket",
+          "seoName": "Paint Bucket"
+        },
+        {
+          "id": 6562,
+          "name": "Pickaxe",
+          "seoName": "Pickaxe"
+        },
+        {
+          "id": 6563,
+          "name": "Plank",
+          "seoName": "Plank"
+        },
+        {
+          "id": 6564,
+          "name": "Saw",
+          "seoName": "Saw"
+        },
+        {
+          "id": 6565,
+          "name": "Screw",
+          "seoName": "Screw"
+        },
+        {
+          "id": 6566,
+          "name": "Shovel",
+          "seoName": "Shovel"
+        },
+        {
+          "id": 6567,
+          "name": "Stone Block",
+          "seoName": "Stone Block"
+        },
+        {
+          "id": 6568,
+          "name": "Supplies",
+          "seoName": "Supplies"
+        },
+        {
+          "id": 6569,
+          "name": "Tar Bucket",
+          "seoName": "Tar Bucket"
+        },
+        {
+          "id": 6570,
+          "name": "TNT Barrel",
+          "seoName": "TNT Barrel"
+        },
+        {
+          "id": 6571,
+          "name": "Wood Panel",
+          "seoName": "Wood Panel"
+        }
+      ]
+    },
+    {
+      "id": 1422,
+      "name": "Animals",
+      "seoName": "Animals",
+      "subCategories": [
+        {
+          "id": 6536,
+          "name": "Farm Animals",
+          "seoName": "Farm Animals"
+        },
+        {
+          "id": 6537,
+          "name": "Sanctuary Animals",
+          "seoName": "Sanctuary Animals"
+        },
+        {
+          "id": 6538,
+          "name": "Pets",
+          "seoName": "Pets"
+        },
+        {
+          "id": 6539,
+          "name": "Shelters",
+          "seoName": "Shelters"
+        }
+      ]
+    },
+    {
+      "id": 1423,
+      "name": "Food",
+      "seoName": "Food",
+      "subCategories": [
+        {
+          "id": 6572,
+          "name": "Crops",
+          "seoName": "Crops"
+        },
+        {
+          "id": 6573,
+          "name": "Products",
+          "seoName": "Products"
+        }
+      ]
+    },
+    {
+      "id": 1424,
+      "name": "Town Packs",
+      "seoName": "Town Packs",
+      "subCategories": [
+        {
+          "id": 6574,
+          "name": "Town Packs",
+          "seoName": "Town Packs"
+        }
+      ]
+    },
+    {
+      "id": 1425,
+      "name": "Diamonds",
+      "seoName": "Diamonds",
+      "subCategories": [
+        {
+          "id": 6575,
+          "name": "Diamonds",
+          "seoName": "Diamonds"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7385,
+      "name": "Android"
+    },
+    {
+      "id": 7384,
+      "name": "IOS"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

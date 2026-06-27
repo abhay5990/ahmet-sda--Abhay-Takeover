@@ -59,36 +59,15 @@
   "item_data": {
     "platform": {
       "type": "string",
-      "required": true,
-      "values": [
-        "PC",
-        "PlayStation",
-        "Xbox"
-      ]
+      "required": false
     },
     "realm": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Softcore Non-Ladder",
-        "Softcore Ladder",
-        "Hardcore Non-Ladder",
-        "Hardcore Ladder"
-      ]
+      "required": false
     },
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Unique",
-        "Runesword",
-        "Runes",
-        "Set",
-        "Gems",
-        "Miscellanous",
-        "Custom Sets",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

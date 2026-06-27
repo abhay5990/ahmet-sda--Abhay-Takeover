@@ -1,0 +1,108 @@
+{
+  "game_id": 7097,
+  "game": "overwatch",
+  "game_name": "Overwatch ",
+  "seo_name": "Overwatch",
+  "currencyName": "Coins",
+  "categories": [
+    {
+      "id": 1653,
+      "name": "Skins",
+      "seoName": "Skins",
+      "subCategories": [
+        {
+          "id": 7797,
+          "name": "Amazon Loot",
+          "seoName": "Amazon Loot"
+        },
+        {
+          "id": 8304,
+          "name": "Widowmaker Noire",
+          "seoName": "Widowmaker Noire"
+        },
+        {
+          "id": 8305,
+          "name": "Other Skins",
+          "seoName": "Other Skins"
+        },
+        {
+          "id": 8849,
+          "name": "Pink Mercy",
+          "seoName": "Pink Mercy"
+        },
+        {
+          "id": 8850,
+          "name": "Rose Gold Mercy",
+          "seoName": "Rose Gold Mercy"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7098,
+      "name": "PC"
+    },
+    {
+      "id": 7100,
+      "name": "PlayStation"
+    },
+    {
+      "id": 9871,
+      "name": "Switch"
+    },
+    {
+      "id": 7099,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

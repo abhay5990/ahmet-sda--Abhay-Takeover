@@ -1,0 +1,334 @@
+{
+  "game_id": 2,
+  "game": "ffxi",
+  "game_name": "Final Fantasy XI",
+  "seo_name": "FFXI",
+  "currencyName": "Gil",
+  "categories": [
+    {
+      "id": 1615,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 7681,
+          "name": "Hand-to-Hand",
+          "seoName": "Hand-to-Hand"
+        },
+        {
+          "id": 7682,
+          "name": "Dagger",
+          "seoName": "Dagger"
+        },
+        {
+          "id": 7683,
+          "name": "Sword",
+          "seoName": "Sword"
+        },
+        {
+          "id": 7684,
+          "name": "Great Sword",
+          "seoName": "Great Sword"
+        },
+        {
+          "id": 7685,
+          "name": "Axe",
+          "seoName": "Axe"
+        },
+        {
+          "id": 7686,
+          "name": "Great Axe",
+          "seoName": "Great Axe"
+        },
+        {
+          "id": 7687,
+          "name": "Scythe",
+          "seoName": "Scythe"
+        },
+        {
+          "id": 7688,
+          "name": "Polearm",
+          "seoName": "Polearm"
+        },
+        {
+          "id": 7689,
+          "name": "Katana",
+          "seoName": "Katana"
+        },
+        {
+          "id": 7690,
+          "name": "Great Katana",
+          "seoName": "Great Katana"
+        },
+        {
+          "id": 7691,
+          "name": "Staff",
+          "seoName": "Staff"
+        },
+        {
+          "id": 7692,
+          "name": "Club",
+          "seoName": "Club"
+        },
+        {
+          "id": 7693,
+          "name": "Ranged",
+          "seoName": "Ranged"
+        },
+        {
+          "id": 7694,
+          "name": "Instrument",
+          "seoName": "Instrument"
+        },
+        {
+          "id": 7695,
+          "name": "Pet Items",
+          "seoName": "Pet Items"
+        },
+        {
+          "id": 7696,
+          "name": "Grips",
+          "seoName": "Grips"
+        },
+        {
+          "id": 7697,
+          "name": "Fishing Gear",
+          "seoName": "Fishing Gear"
+        }
+      ]
+    },
+    {
+      "id": 1616,
+      "name": "Armors",
+      "seoName": "Armors",
+      "subCategories": [
+        {
+          "id": 7698,
+          "name": "Head",
+          "seoName": "Head"
+        },
+        {
+          "id": 7699,
+          "name": "Neck",
+          "seoName": "Neck"
+        },
+        {
+          "id": 7700,
+          "name": "Body",
+          "seoName": "Body"
+        },
+        {
+          "id": 7701,
+          "name": "Hands",
+          "seoName": "Hands"
+        },
+        {
+          "id": 7702,
+          "name": "Waist",
+          "seoName": "Waist"
+        },
+        {
+          "id": 7703,
+          "name": "Back",
+          "seoName": "Back"
+        },
+        {
+          "id": 7704,
+          "name": "Rings",
+          "seoName": "Rings"
+        },
+        {
+          "id": 7705,
+          "name": "Earrings",
+          "seoName": "Earrings"
+        },
+        {
+          "id": 7706,
+          "name": "Legs",
+          "seoName": "Legs"
+        },
+        {
+          "id": 7707,
+          "name": "Feet",
+          "seoName": "Feet"
+        },
+        {
+          "id": 7708,
+          "name": "Shields",
+          "seoName": "Shields"
+        }
+      ]
+    },
+    {
+      "id": 1617,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 7709,
+          "name": "Food",
+          "seoName": "Food"
+        },
+        {
+          "id": 7710,
+          "name": "Drinks",
+          "seoName": "Drinks"
+        },
+        {
+          "id": 7711,
+          "name": "Medication",
+          "seoName": "Medication"
+        },
+        {
+          "id": 7712,
+          "name": "Scrolls",
+          "seoName": "Scrolls"
+        },
+        {
+          "id": 7713,
+          "name": "Imbued Items",
+          "seoName": "Imbued Items"
+        }
+      ]
+    },
+    {
+      "id": 1618,
+      "name": "Furnishings",
+      "seoName": "Furnishings",
+      "subCategories": [
+        {
+          "id": 7714,
+          "name": "Furnishings",
+          "seoName": "Furnishings"
+        }
+      ]
+    },
+    {
+      "id": 1619,
+      "name": "Key items",
+      "seoName": "Key items",
+      "subCategories": [
+        {
+          "id": 7715,
+          "name": "Key items",
+          "seoName": "Key items"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 46,
+      "name": "Asura"
+    },
+    {
+      "id": 2086,
+      "name": "Bahamut"
+    },
+    {
+      "id": 47,
+      "name": "Bismarck"
+    },
+    {
+      "id": 2088,
+      "name": "Carbuncle"
+    },
+    {
+      "id": 2089,
+      "name": "Cerberus"
+    },
+    {
+      "id": 2092,
+      "name": "Fenrir"
+    },
+    {
+      "id": 2098,
+      "name": "Lakshmi"
+    },
+    {
+      "id": 2099,
+      "name": "Leviathan"
+    },
+    {
+      "id": 2101,
+      "name": "Odin"
+    },
+    {
+      "id": 2103,
+      "name": "Phoenix"
+    },
+    {
+      "id": 2104,
+      "name": "Quetzalcoatl"
+    },
+    {
+      "id": 2105,
+      "name": "Ragnarok"
+    },
+    {
+      "id": 39,
+      "name": "Shiva"
+    },
+    {
+      "id": 40,
+      "name": "Siren"
+    },
+    {
+      "id": 41,
+      "name": "Sylph"
+    },
+    {
+      "id": 44,
+      "name": "Valefor"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -1,0 +1,455 @@
+{
+  "game_id": 15076,
+  "game": "lineage-classic",
+  "game_name": "Lineage Classic",
+  "seo_name": "Lineage-Classic",
+  "currencyName": "Adena",
+  "categories": [
+    {
+      "id": 2140,
+      "name": "Weapon",
+      "seoName": "Weapon",
+      "subCategories": [
+        {
+          "id": 10909,
+          "name": "One-handed Sword",
+          "seoName": "One-handed Sword"
+        },
+        {
+          "id": 10910,
+          "name": "Two-handed Sword",
+          "seoName": "Two-handed Sword"
+        },
+        {
+          "id": 10911,
+          "name": "Dagger",
+          "seoName": "Dagger"
+        },
+        {
+          "id": 10912,
+          "name": "Bow",
+          "seoName": "Bow"
+        },
+        {
+          "id": 10913,
+          "name": "Staff",
+          "seoName": "Staff"
+        },
+        {
+          "id": 10914,
+          "name": "Spear",
+          "seoName": "Spear"
+        },
+        {
+          "id": 10915,
+          "name": "Axe",
+          "seoName": "Axe"
+        },
+        {
+          "id": 10916,
+          "name": "Blunt Weapon",
+          "seoName": "Blunt Weapon"
+        },
+        {
+          "id": 10917,
+          "name": "Edoryu",
+          "seoName": "Edoryu"
+        },
+        {
+          "id": 10918,
+          "name": "Claw",
+          "seoName": "Claw"
+        }
+      ]
+    },
+    {
+      "id": 2141,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 10919,
+          "name": "Helmet",
+          "seoName": "Helmet"
+        },
+        {
+          "id": 10920,
+          "name": "Plate Mail",
+          "seoName": "Plate Mail"
+        },
+        {
+          "id": 10921,
+          "name": "Leather Armor",
+          "seoName": "Leather Armor"
+        },
+        {
+          "id": 10922,
+          "name": "Robe",
+          "seoName": "Robe"
+        },
+        {
+          "id": 10923,
+          "name": "Cloak",
+          "seoName": "Cloak"
+        },
+        {
+          "id": 10924,
+          "name": "Shield",
+          "seoName": "Shield"
+        },
+        {
+          "id": 10925,
+          "name": "Gloves",
+          "seoName": "Gloves"
+        },
+        {
+          "id": 10926,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 10927,
+          "name": "T-Shirt",
+          "seoName": "T-Shirt"
+        },
+        {
+          "id": 10928,
+          "name": "Girdle",
+          "seoName": "Girdle"
+        }
+      ]
+    },
+    {
+      "id": 2142,
+      "name": "Accessory",
+      "seoName": "Accessory",
+      "subCategories": [
+        {
+          "id": 10929,
+          "name": "Ring",
+          "seoName": "Ring"
+        },
+        {
+          "id": 10930,
+          "name": "Necklace",
+          "seoName": "Necklace"
+        },
+        {
+          "id": 10931,
+          "name": "Earring",
+          "seoName": "Earring"
+        },
+        {
+          "id": 10932,
+          "name": "Belt",
+          "seoName": "Belt"
+        },
+        {
+          "id": 10933,
+          "name": "Charm",
+          "seoName": "Charm"
+        }
+      ]
+    },
+    {
+      "id": 2143,
+      "name": "Skillbook",
+      "seoName": "Skillbook",
+      "subCategories": [
+        {
+          "id": 10934,
+          "name": "Prince Scroll",
+          "seoName": "Prince Scroll"
+        },
+        {
+          "id": 10935,
+          "name": "Knight Technical Book",
+          "seoName": "Knight Technical Book"
+        },
+        {
+          "id": 10936,
+          "name": "Elf Spirit Crystal",
+          "seoName": "Elf Spirit Crystal"
+        },
+        {
+          "id": 10937,
+          "name": "Wizard Spellbook",
+          "seoName": "Wizard Spellbook"
+        },
+        {
+          "id": 10938,
+          "name": "Dark Elf Tablet",
+          "seoName": "Dark Elf Tablet"
+        }
+      ]
+    },
+    {
+      "id": 2144,
+      "name": "Consumable",
+      "seoName": "Consumable",
+      "subCategories": [
+        {
+          "id": 10939,
+          "name": "Healing Potion",
+          "seoName": "Healing Potion"
+        },
+        {
+          "id": 10940,
+          "name": "Buff Potion",
+          "seoName": "Buff Potion"
+        },
+        {
+          "id": 10941,
+          "name": "Weapon Enchant Scroll",
+          "seoName": "Weapon Enchant Scroll"
+        },
+        {
+          "id": 10942,
+          "name": "Armor Enchant Scroll",
+          "seoName": "Armor Enchant Scroll"
+        },
+        {
+          "id": 10943,
+          "name": "Teleport Scroll",
+          "seoName": "Teleport Scroll"
+        },
+        {
+          "id": 10944,
+          "name": "Blank Scroll",
+          "seoName": "Blank Scroll"
+        },
+        {
+          "id": 10945,
+          "name": "Wand",
+          "seoName": "Wand"
+        }
+      ]
+    },
+    {
+      "id": 2145,
+      "name": "Material",
+      "seoName": "Material",
+      "subCategories": [
+        {
+          "id": 10946,
+          "name": "Iron Ore",
+          "seoName": "Iron Ore"
+        },
+        {
+          "id": 10947,
+          "name": "Leather",
+          "seoName": "Leather"
+        },
+        {
+          "id": 10948,
+          "name": "Cloth",
+          "seoName": "Cloth"
+        },
+        {
+          "id": 10949,
+          "name": "Gemstone",
+          "seoName": "Gemstone"
+        },
+        {
+          "id": 10950,
+          "name": "Dragon Scale",
+          "seoName": "Dragon Scale"
+        },
+        {
+          "id": 10951,
+          "name": "Rough Mithril",
+          "seoName": "Rough Mithril"
+        },
+        {
+          "id": 10952,
+          "name": "Element Stone",
+          "seoName": "Element Stone"
+        }
+      ]
+    },
+    {
+      "id": 2146,
+      "name": "Magic Doll",
+      "seoName": "Magic Doll",
+      "subCategories": [
+        {
+          "id": 10953,
+          "name": "Tier 1 Doll",
+          "seoName": "Tier 1 Doll"
+        },
+        {
+          "id": 10954,
+          "name": "Tier 2 Doll",
+          "seoName": "Tier 2 Doll"
+        },
+        {
+          "id": 10955,
+          "name": "Tier 3 Doll",
+          "seoName": "Tier 3 Doll"
+        },
+        {
+          "id": 10956,
+          "name": "Doll Growth Item",
+          "seoName": "Doll Growth Item"
+        }
+      ]
+    },
+    {
+      "id": 2147,
+      "name": "Miscellaneous",
+      "seoName": "Miscellaneous",
+      "subCategories": [
+        {
+          "id": 10957,
+          "name": "Quest Item",
+          "seoName": "Quest Item"
+        },
+        {
+          "id": 10958,
+          "name": "Event Token",
+          "seoName": "Event Token"
+        },
+        {
+          "id": 10959,
+          "name": "Recipe",
+          "seoName": "Recipe"
+        },
+        {
+          "id": 10960,
+          "name": "Cooking Ingredient",
+          "seoName": "Cooking Ingredient"
+        },
+        {
+          "id": 10961,
+          "name": "Fishing Supply",
+          "seoName": "Fishing Supply"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15077,
+      "name": "Taiwan",
+      "subCategories": [
+        {
+          "id": 15082,
+          "name": "冥王黑帝斯"
+        },
+        {
+          "id": 15083,
+          "name": "勝利女神雅典娜"
+        },
+        {
+          "id": 15078,
+          "name": "半人馬涅索斯"
+        },
+        {
+          "id": 15079,
+          "name": "天后海拉"
+        },
+        {
+          "id": 15080,
+          "name": "天神宙斯"
+        },
+        {
+          "id": 15081,
+          "name": "太陽神阿波羅"
+        },
+        {
+          "id": 15092,
+          "name": "愛神邱比特"
+        },
+        {
+          "id": 15089,
+          "name": "戰神馬爾斯"
+        },
+        {
+          "id": 15091,
+          "name": "收獲女神蒂蜜特"
+        },
+        {
+          "id": 15088,
+          "name": "月亮女神阿緹蜜斯"
+        },
+        {
+          "id": 15087,
+          "name": "水蛇許德拉"
+        },
+        {
+          "id": 15094,
+          "name": "泰坦女神瑞亞"
+        },
+        {
+          "id": 15090,
+          "name": "海神波塞頓"
+        },
+        {
+          "id": 15084,
+          "name": "火神赫發斯特斯"
+        },
+        {
+          "id": 15093,
+          "name": "牛人彌諾陶洛斯"
+        },
+        {
+          "id": 15085,
+          "name": "美神維納斯"
+        },
+        {
+          "id": 15086,
+          "name": "蛇髮女墨杜沙"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

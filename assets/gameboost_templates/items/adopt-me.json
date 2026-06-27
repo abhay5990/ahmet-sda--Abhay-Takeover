@@ -59,29 +59,11 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Eggs",
-        "Food",
-        "Gifts",
-        "Pet Wear",
-        "Pets",
-        "Strollers",
-        "Toys",
-        "Transport",
-        "Other"
-      ]
+      "required": false
     },
     "item_rarity": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Common",
-        "Uncommon",
-        "Rare",
-        "Ultra Rare",
-        "Legendary"
-      ]
+      "required": false
     }
   }
 }

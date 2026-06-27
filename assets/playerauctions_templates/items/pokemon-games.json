@@ -1,0 +1,182 @@
+{
+  "game_id": 9902,
+  "game": "pokemon-games",
+  "game_name": "Pokémon Games: SV / Sword & Shield / BDSP etc",
+  "seo_name": "Pokemon-Games",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1450,
+      "name": "Pokemon TCG",
+      "seoName": "Pokemon TCG",
+      "subCategories": [
+        {
+          "id": 6971,
+          "name": "Cards",
+          "seoName": "Cards"
+        }
+      ]
+    },
+    {
+      "id": 1451,
+      "name": "Pokemon Ultra Sun Moon",
+      "seoName": "Pokemon Ultra Sun Moon",
+      "subCategories": [
+        {
+          "id": 6972,
+          "name": "Pokemon",
+          "seoName": "Pokemon"
+        },
+        {
+          "id": 6973,
+          "name": "Bundles",
+          "seoName": "Bundles"
+        },
+        {
+          "id": 6974,
+          "name": "Pokeballs",
+          "seoName": "Pokeballs"
+        }
+      ]
+    },
+    {
+      "id": 1452,
+      "name": "Pokemon Sun Moon",
+      "seoName": "Pokemon Sun Moon",
+      "subCategories": [
+        {
+          "id": 6975,
+          "name": "Pokemon",
+          "seoName": "Pokemon"
+        }
+      ]
+    },
+    {
+      "id": 2066,
+      "name": "Pokémon BDSP",
+      "seoName": "Pokémon BDSP",
+      "subCategories": [
+        {
+          "id": 10346,
+          "name": "Pokémon",
+          "seoName": "Pokémon"
+        },
+        {
+          "id": 10347,
+          "name": "Held Items",
+          "seoName": "Held Items"
+        }
+      ]
+    },
+    {
+      "id": 2067,
+      "name": "Pokémon Legends Arceus",
+      "seoName": "Pokémon Legends Arceus",
+      "subCategories": [
+        {
+          "id": 10348,
+          "name": "Pokémon",
+          "seoName": "Pokémon"
+        },
+        {
+          "id": 10349,
+          "name": "Held Items",
+          "seoName": "Held Items"
+        }
+      ]
+    },
+    {
+      "id": 2068,
+      "name": "Pokémon Scarlet and Violet",
+      "seoName": "Pokémon Scarlet and Violet",
+      "subCategories": [
+        {
+          "id": 10350,
+          "name": "Pokémon",
+          "seoName": "Pokémon"
+        },
+        {
+          "id": 10351,
+          "name": "Held Items",
+          "seoName": "Held Items"
+        }
+      ]
+    },
+    {
+      "id": 2069,
+      "name": "Pokémon Sword and Shield",
+      "seoName": "Pokémon Sword and Shield",
+      "subCategories": [
+        {
+          "id": 10352,
+          "name": "Pokémon",
+          "seoName": "Pokémon"
+        },
+        {
+          "id": 10353,
+          "name": "Held Items",
+          "seoName": "Held Items"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14600,
+      "name": "Switch"
+    },
+    {
+      "id": 9907,
+      "name": "Other Platforms"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

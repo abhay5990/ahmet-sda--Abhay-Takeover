@@ -1,0 +1,92 @@
+{
+  "game_id": 14849,
+  "game": "where-winds-meet",
+  "game_name": "Where Winds Meet",
+  "seo_name": "Where-Winds-Meet",
+  "currencyName": "Echo Beads",
+  "categories": [
+    {
+      "id": 2087,
+      "name": "Potions",
+      "seoName": "Potions",
+      "subCategories": [
+        {
+          "id": 10457,
+          "name": "Potions",
+          "seoName": "Potions"
+        }
+      ]
+    },
+    {
+      "id": 2088,
+      "name": "Cosmetics",
+      "seoName": "Cosmetics",
+      "subCategories": [
+        {
+          "id": 10458,
+          "name": "Cosmetics",
+          "seoName": "Cosmetics"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14850,
+      "name": "PC"
+    },
+    {
+      "id": 14851,
+      "name": "PS"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -57,54 +57,17 @@
     }
   },
   "item_data": {
-    "platform": {
-      "type": "string",
-      "required": true,
-      "values": [
-        "PC",
-        "PlayStation",
-        "Xbox"
-      ]
-    },
     "server": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Standard",
-        "Hardcore",
-        "Mirage - Hardcore",
-        "Mirage - Standard",
-        "Keepers of the Flame - Hardcore",
-        "Keepers of the Flame - Softcore"
-      ]
+      "required": false
+    },
+    "platform": {
+      "type": "string",
+      "required": false
     },
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Bow",
-        "Dagger",
-        "Mace",
-        "Sceptre",
-        "Thrusting",
-        "Claw",
-        "Axe",
-        "Sword",
-        "Staff",
-        "Wand",
-        "Body Armour",
-        "Gloves",
-        "Shield",
-        "Boots",
-        "Helmet",
-        "Amulet",
-        "Ring",
-        "Skill Gems",
-        "Map",
-        "Twitch Drops",
-        "Bundle",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

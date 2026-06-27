@@ -59,12 +59,7 @@
   "item_data": {
     "region": {
       "type": "string",
-      "required": true,
-      "values": [
-        "North America",
-        "Europe",
-        "Oceania"
-      ]
+      "required": false
     }
   }
 }

@@ -1,0 +1,122 @@
+{
+  "game_id": "338",
+  "game": "knight-online",
+  "game_name": "Knight Online",
+  "category": "CustomItem",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Agartha",
+      "group": "Server"
+    },
+    {
+      "id": "1",
+      "name": "Destan",
+      "group": "Server"
+    },
+    {
+      "id": "2",
+      "name": "Dryads",
+      "group": "Server"
+    },
+    {
+      "id": "3",
+      "name": "Felis",
+      "group": "Server"
+    },
+    {
+      "id": "4",
+      "name": "Minark",
+      "group": "Server"
+    },
+    {
+      "id": "5",
+      "name": "Oreads",
+      "group": "Server"
+    },
+    {
+      "id": "6",
+      "name": "Pandora",
+      "group": "Server"
+    },
+    {
+      "id": "7",
+      "name": "Zero",
+      "group": "Server"
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

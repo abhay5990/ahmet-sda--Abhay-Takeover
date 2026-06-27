@@ -1,0 +1,404 @@
+{
+  "game_id": "70",
+  "game": "roblox",
+  "game_name": "Roblox",
+  "category": "GiftCard",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Global",
+      "group": "Region",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "10 USD"
+        },
+        {
+          "id": "0-1",
+          "name": "15 USD"
+        },
+        {
+          "id": "0-10",
+          "name": "2000 Robux"
+        },
+        {
+          "id": "0-11",
+          "name": "4500 Robux"
+        },
+        {
+          "id": "0-12",
+          "name": "10000 Robux"
+        },
+        {
+          "id": "0-13",
+          "name": "11000 Robux"
+        },
+        {
+          "id": "0-14",
+          "name": "3000 Robux"
+        },
+        {
+          "id": "0-15",
+          "name": "4000 Robux"
+        },
+        {
+          "id": "0-16",
+          "name": "5250 Robux"
+        },
+        {
+          "id": "0-17",
+          "name": "24000 Robux"
+        },
+        {
+          "id": "0-18",
+          "name": "5 USD"
+        },
+        {
+          "id": "0-19",
+          "name": "200 Robux"
+        },
+        {
+          "id": "0-2",
+          "name": "20 USD"
+        },
+        {
+          "id": "0-20",
+          "name": "100 Robux"
+        },
+        {
+          "id": "0-21",
+          "name": "150 Robux"
+        },
+        {
+          "id": "0-22",
+          "name": "175 Robux"
+        },
+        {
+          "id": "0-23",
+          "name": "300 Robux"
+        },
+        {
+          "id": "0-24",
+          "name": "500 Robux"
+        },
+        {
+          "id": "0-25",
+          "name": "570 Robux"
+        },
+        {
+          "id": "0-26",
+          "name": "600 Robux"
+        },
+        {
+          "id": "0-27",
+          "name": "700 Robux"
+        },
+        {
+          "id": "0-28",
+          "name": "860 Robux"
+        },
+        {
+          "id": "0-29",
+          "name": "900 Robux"
+        },
+        {
+          "id": "0-3",
+          "name": "25 USD"
+        },
+        {
+          "id": "0-30",
+          "name": "1200 Robux"
+        },
+        {
+          "id": "0-31",
+          "name": "1700 Robux"
+        },
+        {
+          "id": "0-32",
+          "name": "1800 Robux"
+        },
+        {
+          "id": "0-33",
+          "name": "1900 Robux"
+        },
+        {
+          "id": "0-34",
+          "name": "2200 Robux"
+        },
+        {
+          "id": "0-35",
+          "name": "2500 Robux"
+        },
+        {
+          "id": "0-36",
+          "name": "2600 Robux"
+        },
+        {
+          "id": "0-37",
+          "name": "2700 Robux"
+        },
+        {
+          "id": "0-4",
+          "name": "50 USD"
+        },
+        {
+          "id": "0-5",
+          "name": "100 USD"
+        },
+        {
+          "id": "0-6",
+          "name": "400 Robux"
+        },
+        {
+          "id": "0-7",
+          "name": "800 Robux"
+        },
+        {
+          "id": "0-8",
+          "name": "1000 Robux"
+        },
+        {
+          "id": "0-9",
+          "name": "1500 Robux"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "Europe",
+      "group": "Region",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "10 EUR"
+        },
+        {
+          "id": "1-1",
+          "name": "15 EUR"
+        },
+        {
+          "id": "1-2",
+          "name": "20 EUR"
+        },
+        {
+          "id": "1-3",
+          "name": "25 EUR"
+        },
+        {
+          "id": "1-4",
+          "name": "50 EUR"
+        },
+        {
+          "id": "1-5",
+          "name": "100 EUR"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "United Kingdom",
+      "group": "Region",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "10 GBP"
+        },
+        {
+          "id": "2-1",
+          "name": "15 GBP"
+        },
+        {
+          "id": "2-2",
+          "name": "20 GBP"
+        },
+        {
+          "id": "2-3",
+          "name": "25 GBP"
+        },
+        {
+          "id": "2-4",
+          "name": "50 GBP"
+        },
+        {
+          "id": "2-5",
+          "name": "100 GBP"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Brazil",
+      "group": "Region",
+      "children": [
+        {
+          "id": "3-0",
+          "name": "25 BRL"
+        },
+        {
+          "id": "3-1",
+          "name": "40 BRL"
+        },
+        {
+          "id": "3-2",
+          "name": "60 BRL"
+        },
+        {
+          "id": "3-3",
+          "name": "100 BRL"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Canada",
+      "group": "Region",
+      "children": [
+        {
+          "id": "4-0",
+          "name": "15 CAD"
+        },
+        {
+          "id": "4-1",
+          "name": "20 CAD"
+        },
+        {
+          "id": "4-2",
+          "name": "25 CAD"
+        },
+        {
+          "id": "4-3",
+          "name": "50 CAD"
+        },
+        {
+          "id": "4-4",
+          "name": "100 CAD"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "United States",
+      "group": "Region",
+      "children": [
+        {
+          "id": "5-0",
+          "name": "10 USD"
+        },
+        {
+          "id": "5-1",
+          "name": "15 USD"
+        },
+        {
+          "id": "5-10",
+          "name": "6 USD"
+        },
+        {
+          "id": "5-2",
+          "name": "20 USD"
+        },
+        {
+          "id": "5-3",
+          "name": "25 USD"
+        },
+        {
+          "id": "5-4",
+          "name": "50 USD"
+        },
+        {
+          "id": "5-5",
+          "name": "75 USD"
+        },
+        {
+          "id": "5-6",
+          "name": "100 USD"
+        },
+        {
+          "id": "5-7",
+          "name": "5 USD"
+        },
+        {
+          "id": "5-8",
+          "name": "3 USD"
+        },
+        {
+          "id": "5-9",
+          "name": "4 USD"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "game_id": 7313,
+  "game": "cod",
+  "game_name": "Call of Duty - Warzone / BO7 & All Legacy Versions",
+  "seo_name": "COD",
+  "currencyName": "Points",
+  "categories": [
+    {
+      "id": 2025,
+      "name": "Bundle",
+      "seoName": "Bundle",
+      "subCategories": [
+        {
+          "id": 10156,
+          "name": "Monster Energy",
+          "seoName": "Monster Energy"
+        },
+        {
+          "id": 10157,
+          "name": "MW3 Burger King Skin",
+          "seoName": "MW3 Burger King Skin"
+        },
+        {
+          "id": 10158,
+          "name": "Endowment Tracer Pack",
+          "seoName": "Endowment Tracer Pack"
+        },
+        {
+          "id": 10159,
+          "name": "Warrior Pack Rare Pack",
+          "seoName": "Warrior Pack Rare Pack"
+        },
+        {
+          "id": 10160,
+          "name": "Other Bundles",
+          "seoName": "Other Bundles"
+        }
+      ]
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 8288,
+      "name": "PC"
+    },
+    {
+      "id": 8290,
+      "name": "PlayStation"
+    },
+    {
+      "id": 8291,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

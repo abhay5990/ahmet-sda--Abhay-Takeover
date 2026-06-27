@@ -59,15 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Weapons",
-        "Armor",
-        "Consumables",
-        "Trade Goods",
-        "Mounts",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

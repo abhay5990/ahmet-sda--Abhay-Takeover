@@ -59,14 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Armors",
-        "Jewelry",
-        "Utility",
-        "Weapons",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

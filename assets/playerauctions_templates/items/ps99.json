@@ -1,0 +1,2730 @@
+{
+  "game_id": 13887,
+  "game": "ps99",
+  "game_name": "Pet Simulator 99",
+  "seo_name": "PS99",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 1870,
+      "name": "Other Pets",
+      "seoName": "Other Pets",
+      "subCategories": [
+        {
+          "id": 8861,
+          "name": "Pets",
+          "seoName": "Pets"
+        }
+      ]
+    },
+    {
+      "id": 1871,
+      "name": "Huges",
+      "seoName": "Huges",
+      "subCategories": [
+        {
+          "id": 8862,
+          "name": "Huge Pets",
+          "seoName": "Huge Pets"
+        },
+        {
+          "id": 8869,
+          "name": "Huge Pixel Cat",
+          "seoName": "Huge Pixel Cat"
+        },
+        {
+          "id": 8870,
+          "name": "Huge Festive Cat",
+          "seoName": "Huge Festive Cat"
+        },
+        {
+          "id": 8871,
+          "name": "Huge Hacked Cat",
+          "seoName": "Huge Hacked Cat"
+        },
+        {
+          "id": 8872,
+          "name": "Huge Dragon",
+          "seoName": "Huge Dragon"
+        },
+        {
+          "id": 8873,
+          "name": "Huge Pumpkin Cat",
+          "seoName": "Huge Pumpkin Cat"
+        },
+        {
+          "id": 8874,
+          "name": "Huge Gargoyle Dragon",
+          "seoName": "Huge Gargoyle Dragon"
+        },
+        {
+          "id": 8875,
+          "name": "Huge Storm Agony",
+          "seoName": "Huge Storm Agony"
+        },
+        {
+          "id": 8876,
+          "name": "Huge Cupcake",
+          "seoName": "Huge Cupcake"
+        },
+        {
+          "id": 8877,
+          "name": "Huge Easter Cat",
+          "seoName": "Huge Easter Cat"
+        },
+        {
+          "id": 8878,
+          "name": "Huge Santa Paws",
+          "seoName": "Huge Santa Paws"
+        },
+        {
+          "id": 8879,
+          "name": "Huge Forest Wyvern",
+          "seoName": "Huge Forest Wyvern"
+        },
+        {
+          "id": 8880,
+          "name": "Huge Cat",
+          "seoName": "Huge Cat"
+        },
+        {
+          "id": 8881,
+          "name": "Huge Lucky Cat",
+          "seoName": "Huge Lucky Cat"
+        },
+        {
+          "id": 8882,
+          "name": "Huge Rainbow Unicorn",
+          "seoName": "Huge Rainbow Unicorn"
+        },
+        {
+          "id": 8883,
+          "name": "Huge Corgi",
+          "seoName": "Huge Corgi"
+        },
+        {
+          "id": 8884,
+          "name": "Huge Phoenix",
+          "seoName": "Huge Phoenix"
+        },
+        {
+          "id": 8885,
+          "name": "Huge Axolotl",
+          "seoName": "Huge Axolotl"
+        },
+        {
+          "id": 8886,
+          "name": "Huge Glitch Dragon",
+          "seoName": "Huge Glitch Dragon"
+        },
+        {
+          "id": 8887,
+          "name": "Huge Super Corgi",
+          "seoName": "Huge Super Corgi"
+        },
+        {
+          "id": 8888,
+          "name": "Huge Steampunk Crocodile",
+          "seoName": "Huge Steampunk Crocodile"
+        },
+        {
+          "id": 8889,
+          "name": "Huge Rainbow Pegasus",
+          "seoName": "Huge Rainbow Pegasus"
+        },
+        {
+          "id": 8890,
+          "name": "Huge Frost Dragon",
+          "seoName": "Huge Frost Dragon"
+        },
+        {
+          "id": 8891,
+          "name": "Huge Walrus",
+          "seoName": "Huge Walrus"
+        },
+        {
+          "id": 8892,
+          "name": "Huge Reindeer",
+          "seoName": "Huge Reindeer"
+        },
+        {
+          "id": 8893,
+          "name": "Huge Elf",
+          "seoName": "Huge Elf"
+        },
+        {
+          "id": 8894,
+          "name": "Huge Dominus Astra",
+          "seoName": "Huge Dominus Astra"
+        },
+        {
+          "id": 8895,
+          "name": "Huge T-Rex",
+          "seoName": "Huge T-Rex"
+        },
+        {
+          "id": 8896,
+          "name": "Huge Scorpio",
+          "seoName": "Huge Scorpio"
+        },
+        {
+          "id": 8897,
+          "name": "Huge Hell Rock",
+          "seoName": "Huge Hell Rock"
+        },
+        {
+          "id": 8898,
+          "name": "Huge Golden Dragon",
+          "seoName": "Huge Golden Dragon"
+        },
+        {
+          "id": 8899,
+          "name": "Huge Pegasus",
+          "seoName": "Huge Pegasus"
+        },
+        {
+          "id": 8900,
+          "name": "Huge Tortoise",
+          "seoName": "Huge Tortoise"
+        },
+        {
+          "id": 8901,
+          "name": "Huge Shark",
+          "seoName": "Huge Shark"
+        },
+        {
+          "id": 8902,
+          "name": "Huge Griffin",
+          "seoName": "Huge Griffin"
+        },
+        {
+          "id": 8903,
+          "name": "Huge Butterfly",
+          "seoName": "Huge Butterfly"
+        },
+        {
+          "id": 8904,
+          "name": "Huge Phantom Wolf",
+          "seoName": "Huge Phantom Wolf"
+        },
+        {
+          "id": 8905,
+          "name": "Huge Lava Scorpion",
+          "seoName": "Huge Lava Scorpion"
+        },
+        {
+          "id": 8906,
+          "name": "Huge Witch Cat",
+          "seoName": "Huge Witch Cat"
+        },
+        {
+          "id": 8907,
+          "name": "Huge Empyrean Dragon",
+          "seoName": "Huge Empyrean Dragon"
+        },
+        {
+          "id": 8908,
+          "name": "Huge Immortal One",
+          "seoName": "Huge Immortal One"
+        },
+        {
+          "id": 8909,
+          "name": "Huge Vampire Bat",
+          "seoName": "Huge Vampire Bat"
+        },
+        {
+          "id": 8910,
+          "name": "Huge Wraith",
+          "seoName": "Huge Wraith"
+        },
+        {
+          "id": 8911,
+          "name": "Huge Lion",
+          "seoName": "Huge Lion"
+        },
+        {
+          "id": 8912,
+          "name": "Huge Hippogriff",
+          "seoName": "Huge Hippogriff"
+        },
+        {
+          "id": 8913,
+          "name": "Huge Jolly Penguin",
+          "seoName": "Huge Jolly Penguin"
+        },
+        {
+          "id": 8914,
+          "name": "Huge Ice Cream Cone",
+          "seoName": "Huge Ice Cream Cone"
+        },
+        {
+          "id": 8915,
+          "name": "Huge Mechanical Spider",
+          "seoName": "Huge Mechanical Spider"
+        },
+        {
+          "id": 8916,
+          "name": "Huge Alien Parasite",
+          "seoName": "Huge Alien Parasite"
+        },
+        {
+          "id": 8917,
+          "name": "Huge Snowman",
+          "seoName": "Huge Snowman"
+        },
+        {
+          "id": 8918,
+          "name": "Huge Golden Griffin",
+          "seoName": "Huge Golden Griffin"
+        },
+        {
+          "id": 8919,
+          "name": "Christmas Huge Pets",
+          "seoName": "Christmas Huge Pets"
+        },
+        {
+          "id": 8920,
+          "name": "Other Huge Pets",
+          "seoName": "Other Huge Pets"
+        }
+      ]
+    },
+    {
+      "id": 1872,
+      "name": "Gems",
+      "seoName": "Gems",
+      "subCategories": [
+        {
+          "id": 8863,
+          "name": "1B",
+          "seoName": "1B"
+        },
+        {
+          "id": 8864,
+          "name": "2B",
+          "seoName": "2B"
+        },
+        {
+          "id": 8865,
+          "name": "5B",
+          "seoName": "5B"
+        },
+        {
+          "id": 8866,
+          "name": "10B",
+          "seoName": "10B"
+        }
+      ]
+    },
+    {
+      "id": 1873,
+      "name": "Eggs",
+      "seoName": "Eggs",
+      "subCategories": [
+        {
+          "id": 8867,
+          "name": "Other Eggs",
+          "seoName": "Other Eggs"
+        },
+        {
+          "id": 9119,
+          "name": "Series 1 Basic Gift",
+          "seoName": "Series 1 Basic Gift"
+        },
+        {
+          "id": 9120,
+          "name": "Series 1 Rare Gift",
+          "seoName": "Series 1 Rare Gift"
+        },
+        {
+          "id": 9121,
+          "name": "Series 1 Epic Gift",
+          "seoName": "Series 1 Epic Gift"
+        },
+        {
+          "id": 9122,
+          "name": "Series 1 Legendary Gift",
+          "seoName": "Series 1 Legendary Gift"
+        },
+        {
+          "id": 9123,
+          "name": "Series 1 Mythical Gift",
+          "seoName": "Series 1 Mythical Gift"
+        },
+        {
+          "id": 9124,
+          "name": "Series 2 Basic Gift",
+          "seoName": "Series 2 Basic Gift"
+        },
+        {
+          "id": 9125,
+          "name": "Series 2 Rare Gift",
+          "seoName": "Series 2 Rare Gift"
+        },
+        {
+          "id": 9126,
+          "name": "Series 2 Epic Gift",
+          "seoName": "Series 2 Epic Gift"
+        },
+        {
+          "id": 9127,
+          "name": "Series 2 Legendary Gift",
+          "seoName": "Series 2 Legendary Gift"
+        },
+        {
+          "id": 9128,
+          "name": "Series 2 Mythical Gift",
+          "seoName": "Series 2 Mythical Gift"
+        },
+        {
+          "id": 9129,
+          "name": "Exclusive Original Egg",
+          "seoName": "Exclusive Original Egg"
+        },
+        {
+          "id": 9130,
+          "name": "Exclusive Capybara Egg",
+          "seoName": "Exclusive Capybara Egg"
+        },
+        {
+          "id": 9131,
+          "name": "Exclusive Elemental Egg",
+          "seoName": "Exclusive Elemental Egg"
+        },
+        {
+          "id": 9132,
+          "name": "Exclusive Neon Twilight Egg",
+          "seoName": "Exclusive Neon Twilight Egg"
+        },
+        {
+          "id": 9133,
+          "name": "Exclusive Anime Egg",
+          "seoName": "Exclusive Anime Egg"
+        },
+        {
+          "id": 9134,
+          "name": "Exclusive Jolly Egg",
+          "seoName": "Exclusive Jolly Egg"
+        },
+        {
+          "id": 9135,
+          "name": "Exclusive Balloon Egg",
+          "seoName": "Exclusive Balloon Egg"
+        },
+        {
+          "id": 9136,
+          "name": "Exclusive Neon Egg",
+          "seoName": "Exclusive Neon Egg"
+        },
+        {
+          "id": 9137,
+          "name": "Exclusive Meme Egg",
+          "seoName": "Exclusive Meme Egg"
+        },
+        {
+          "id": 9138,
+          "name": "Exclusive Dominus Egg",
+          "seoName": "Exclusive Dominus Egg"
+        },
+        {
+          "id": 9139,
+          "name": "Exclusive Hologram Egg",
+          "seoName": "Exclusive Hologram Egg"
+        },
+        {
+          "id": 9140,
+          "name": "Exclusive Crystal Egg",
+          "seoName": "Exclusive Crystal Egg"
+        },
+        {
+          "id": 9141,
+          "name": "Exclusive Jelly Egg",
+          "seoName": "Exclusive Jelly Egg"
+        },
+        {
+          "id": 9142,
+          "name": "Exclusive Nightmare Egg",
+          "seoName": "Exclusive Nightmare Egg"
+        },
+        {
+          "id": 9143,
+          "name": "Exclusive Atlantean Egg",
+          "seoName": "Exclusive Atlantean Egg"
+        },
+        {
+          "id": 9144,
+          "name": "Exclusive Cosmic Egg",
+          "seoName": "Exclusive Cosmic Egg"
+        },
+        {
+          "id": 9145,
+          "name": "Exclusive Dragon Egg",
+          "seoName": "Exclusive Dragon Egg"
+        },
+        {
+          "id": 9146,
+          "name": "Exclusive Fruit Egg",
+          "seoName": "Exclusive Fruit Egg"
+        },
+        {
+          "id": 9147,
+          "name": "Huge Machine Angelus Egg",
+          "seoName": "Huge Machine Angelus Egg"
+        },
+        {
+          "id": 9148,
+          "name": "Huge Machine Kraken Egg",
+          "seoName": "Huge Machine Kraken Egg"
+        },
+        {
+          "id": 9149,
+          "name": "Exclusive Xmas Egg",
+          "seoName": "Exclusive Xmas Egg"
+        },
+        {
+          "id": 9150,
+          "name": "Exclusive Emoji Egg",
+          "seoName": "Exclusive Emoji Egg"
+        },
+        {
+          "id": 9151,
+          "name": "Exclusive Valentines Egg",
+          "seoName": "Exclusive Valentines Egg"
+        },
+        {
+          "id": 9152,
+          "name": "Exclusive Super Jelly Egg",
+          "seoName": "Exclusive Super Jelly Egg"
+        },
+        {
+          "id": 9153,
+          "name": "Huge Machine Blurred Dominus Egg",
+          "seoName": "Huge Machine Blurred Dominus Egg"
+        },
+        {
+          "id": 9154,
+          "name": "Exclusive Superhero Egg",
+          "seoName": "Exclusive Superhero Egg"
+        },
+        {
+          "id": 9155,
+          "name": "Active Huge Egg",
+          "seoName": "Active Huge Egg"
+        },
+        {
+          "id": 9156,
+          "name": "Event Cool Egg",
+          "seoName": "Event Cool Egg"
+        },
+        {
+          "id": 9157,
+          "name": "Exclusive Sketch Egg",
+          "seoName": "Exclusive Sketch Egg"
+        },
+        {
+          "id": 9158,
+          "name": "Hype Egg",
+          "seoName": "Hype Egg"
+        },
+        {
+          "id": 9159,
+          "name": "Exclusive Black Hole Egg",
+          "seoName": "Exclusive Black Hole Egg"
+        },
+        {
+          "id": 9160,
+          "name": "Exclusive Bejeweled Egg",
+          "seoName": "Exclusive Bejeweled Egg"
+        },
+        {
+          "id": 9161,
+          "name": "Exclusive Flex Egg",
+          "seoName": "Exclusive Flex Egg"
+        },
+        {
+          "id": 9162,
+          "name": "Exclusive Blazing Egg",
+          "seoName": "Exclusive Blazing Egg"
+        },
+        {
+          "id": 9163,
+          "name": "Exclusive Valkyrie Egg",
+          "seoName": "Exclusive Valkyrie Egg"
+        }
+      ]
+    },
+    {
+      "id": 1874,
+      "name": "Misc",
+      "seoName": "Misc",
+      "subCategories": [
+        {
+          "id": 8868,
+          "name": "Misc",
+          "seoName": "Misc"
+        },
+        {
+          "id": 9368,
+          "name": "Booth",
+          "seoName": "Booth"
+        },
+        {
+          "id": 9369,
+          "name": "Charm",
+          "seoName": "Charm"
+        },
+        {
+          "id": 9370,
+          "name": "Enchant",
+          "seoName": "Enchant"
+        },
+        {
+          "id": 9371,
+          "name": "Flag",
+          "seoName": "Flag"
+        },
+        {
+          "id": 9372,
+          "name": "Hoverboard",
+          "seoName": "Hoverboard"
+        },
+        {
+          "id": 9373,
+          "name": "Potion",
+          "seoName": "Potion"
+        },
+        {
+          "id": 9374,
+          "name": "Bag",
+          "seoName": "Bag"
+        },
+        {
+          "id": 9375,
+          "name": "Coin Jar",
+          "seoName": "Coin Jar"
+        },
+        {
+          "id": 9376,
+          "name": "Christmas Ornament",
+          "seoName": "Christmas Ornament"
+        },
+        {
+          "id": 9377,
+          "name": "Christmas Present",
+          "seoName": "Christmas Present"
+        },
+        {
+          "id": 9378,
+          "name": "Bundle",
+          "seoName": "Bundle"
+        },
+        {
+          "id": 9379,
+          "name": "Ticket",
+          "seoName": "Ticket"
+        },
+        {
+          "id": 9380,
+          "name": "Key",
+          "seoName": "Key"
+        },
+        {
+          "id": 9381,
+          "name": "Gift",
+          "seoName": "Gift"
+        },
+        {
+          "id": 9561,
+          "name": "Other Misc.",
+          "seoName": "Other Misc."
+        }
+      ]
+    },
+    {
+      "id": 1875,
+      "name": "Titanics",
+      "seoName": "Titanics",
+      "subCategories": [
+        {
+          "id": 8921,
+          "name": "Other Titanic Pets",
+          "seoName": "Other Titanic Pets"
+        },
+        {
+          "id": 8922,
+          "name": "Titanic Jolly Cat",
+          "seoName": "Titanic Jolly Cat"
+        },
+        {
+          "id": 8923,
+          "name": "Golden Titanic Jolly Cat",
+          "seoName": "Golden Titanic Jolly Cat"
+        },
+        {
+          "id": 8924,
+          "name": "Rainbow Titanic Jolly Cat",
+          "seoName": "Rainbow Titanic Jolly Cat"
+        },
+        {
+          "id": 8925,
+          "name": "Titanic Balloon Monkey",
+          "seoName": "Titanic Balloon Monkey"
+        },
+        {
+          "id": 8926,
+          "name": "Rainbow Titanic Balloon Monkey",
+          "seoName": "Rainbow Titanic Balloon Monkey"
+        },
+        {
+          "id": 8927,
+          "name": "Titanic Neon Agony",
+          "seoName": "Titanic Neon Agony"
+        },
+        {
+          "id": 8928,
+          "name": "Rainbow Titanic Neon Agony",
+          "seoName": "Rainbow Titanic Neon Agony"
+        },
+        {
+          "id": 8929,
+          "name": "Titanic Blue Balloon Cat",
+          "seoName": "Titanic Blue Balloon Cat"
+        },
+        {
+          "id": 8930,
+          "name": "Rainbow Titanic Blue Balloon Cat",
+          "seoName": "Rainbow Titanic Blue Balloon Cat"
+        },
+        {
+          "id": 8931,
+          "name": "Titanic Red Balloon Cat",
+          "seoName": "Titanic Red Balloon Cat"
+        },
+        {
+          "id": 8932,
+          "name": "Rainbow Titanic Red Balloon Cat",
+          "seoName": "Rainbow Titanic Red Balloon Cat"
+        },
+        {
+          "id": 8933,
+          "name": "Titanic Hubert",
+          "seoName": "Titanic Hubert"
+        },
+        {
+          "id": 8934,
+          "name": "Rainbow Titanic Hubert",
+          "seoName": "Rainbow Titanic Hubert"
+        },
+        {
+          "id": 8935,
+          "name": "Titanic Dominus Astra",
+          "seoName": "Titanic Dominus Astra"
+        },
+        {
+          "id": 8936,
+          "name": "Rainbow Titanic Dominus Astra",
+          "seoName": "Rainbow Titanic Dominus Astra"
+        },
+        {
+          "id": 8937,
+          "name": "Titanic Hippomelon",
+          "seoName": "Titanic Hippomelon"
+        },
+        {
+          "id": 8938,
+          "name": "Rainbow Titanic Hippomelon",
+          "seoName": "Rainbow Titanic Hippomelon"
+        },
+        {
+          "id": 8939,
+          "name": "Titanic Blobfish",
+          "seoName": "Titanic Blobfish"
+        },
+        {
+          "id": 8940,
+          "name": "Titanic Hologram Cat",
+          "seoName": "Titanic Hologram Cat"
+        },
+        {
+          "id": 8941,
+          "name": "Rainbow Titanic Hologram Cat",
+          "seoName": "Rainbow Titanic Hologram Cat"
+        },
+        {
+          "id": 8942,
+          "name": "Titanic Capybara",
+          "seoName": "Titanic Capybara"
+        },
+        {
+          "id": 8943,
+          "name": "Rainbow Titanic Capybara",
+          "seoName": "Rainbow Titanic Capybara"
+        },
+        {
+          "id": 8944,
+          "name": "Titanic Lucki",
+          "seoName": "Titanic Lucki"
+        },
+        {
+          "id": 8945,
+          "name": "Rainbow Titanic Lucki",
+          "seoName": "Rainbow Titanic Lucki"
+        },
+        {
+          "id": 8946,
+          "name": "Titanic Mystic Corgi",
+          "seoName": "Titanic Mystic Corgi"
+        },
+        {
+          "id": 8947,
+          "name": "Rainbow Titanic Mystic Corgi",
+          "seoName": "Rainbow Titanic Mystic Corgi"
+        },
+        {
+          "id": 8948,
+          "name": "Titanic Jelly Cat",
+          "seoName": "Titanic Jelly Cat"
+        },
+        {
+          "id": 8949,
+          "name": "Rainbow Titanic Jelly Cat",
+          "seoName": "Rainbow Titanic Jelly Cat"
+        },
+        {
+          "id": 8950,
+          "name": "Titanic Tiedye Cat",
+          "seoName": "Titanic Tiedye Cat"
+        },
+        {
+          "id": 8951,
+          "name": "Rainbow Titanic Tiedye Cat",
+          "seoName": "Rainbow Titanic Tiedye Cat"
+        },
+        {
+          "id": 8952,
+          "name": "Titanic Tiedye Dragon",
+          "seoName": "Titanic Tiedye Dragon"
+        },
+        {
+          "id": 8953,
+          "name": "Rainbow Titanic Tiedye Dragon",
+          "seoName": "Rainbow Titanic Tiedye Dragon"
+        },
+        {
+          "id": 8954,
+          "name": "Titanic Nightmare Cat",
+          "seoName": "Titanic Nightmare Cat"
+        },
+        {
+          "id": 8955,
+          "name": "Rainbow Titanic Nightmare Cat",
+          "seoName": "Rainbow Titanic Nightmare Cat"
+        },
+        {
+          "id": 8956,
+          "name": "Titanic Atlantean Jellyfish",
+          "seoName": "Titanic Atlantean Jellyfish"
+        },
+        {
+          "id": 8957,
+          "name": "Rainbow Titanic Atlantean Jellyfish",
+          "seoName": "Rainbow Titanic Atlantean Jellyfish"
+        },
+        {
+          "id": 8958,
+          "name": "Titanic Cat",
+          "seoName": "Titanic Cat"
+        },
+        {
+          "id": 8959,
+          "name": "Golden Titanic Cat",
+          "seoName": "Golden Titanic Cat"
+        },
+        {
+          "id": 8960,
+          "name": "Rainbow Titanic Cat",
+          "seoName": "Rainbow Titanic Cat"
+        },
+        {
+          "id": 8961,
+          "name": "Titanic Cosmic Pegasus",
+          "seoName": "Titanic Cosmic Pegasus"
+        },
+        {
+          "id": 8962,
+          "name": "Rainbow Titanic Cosmic Pegasus",
+          "seoName": "Rainbow Titanic Cosmic Pegasus"
+        },
+        {
+          "id": 8963,
+          "name": "Titanic Fire Dragon",
+          "seoName": "Titanic Fire Dragon"
+        },
+        {
+          "id": 8964,
+          "name": "Rainbow Titanic Fire Dragon",
+          "seoName": "Rainbow Titanic Fire Dragon"
+        },
+        {
+          "id": 8965,
+          "name": "Titanic Shadow Griffin",
+          "seoName": "Titanic Shadow Griffin"
+        },
+        {
+          "id": 8966,
+          "name": "Rainbow Titanic Shadow Griffin",
+          "seoName": "Rainbow Titanic Shadow Griffin"
+        },
+        {
+          "id": 8967,
+          "name": "Titanic Scary Corgi",
+          "seoName": "Titanic Scary Corgi"
+        },
+        {
+          "id": 8968,
+          "name": "Rainbow Titanic Scary Corgi",
+          "seoName": "Rainbow Titanic Scary Corgi"
+        },
+        {
+          "id": 8969,
+          "name": "Titanic Banana Cat",
+          "seoName": "Titanic Banana Cat"
+        },
+        {
+          "id": 8970,
+          "name": "Rainbow Titanic Banana Cat",
+          "seoName": "Rainbow Titanic Banana Cat"
+        },
+        {
+          "id": 8971,
+          "name": "Titanic Fawn",
+          "seoName": "Titanic Fawn"
+        },
+        {
+          "id": 8972,
+          "name": "Rainbow Titanic Fawn",
+          "seoName": "Rainbow Titanic Fawn"
+        },
+        {
+          "id": 8973,
+          "name": "Titanic Reindeer",
+          "seoName": "Titanic Reindeer"
+        },
+        {
+          "id": 8974,
+          "name": "Rainbow Titanic Reindeer",
+          "seoName": "Rainbow Titanic Reindeer"
+        },
+        {
+          "id": 8975,
+          "name": "Shiny Titanic Jolly Cat",
+          "seoName": "Shiny Titanic Jolly Cat"
+        },
+        {
+          "id": 8976,
+          "name": "Shiny Titanic Balloon Monkey",
+          "seoName": "Shiny Titanic Balloon Monkey"
+        },
+        {
+          "id": 8977,
+          "name": "Shiny Rainbow Titanic Balloon Monkey",
+          "seoName": "Shiny Rainbow Titanic Balloon Monkey"
+        },
+        {
+          "id": 8978,
+          "name": "Shiny Titanic Neon Agony",
+          "seoName": "Shiny Titanic Neon Agony"
+        },
+        {
+          "id": 8979,
+          "name": "Shiny Titanic Blue Balloon Cat",
+          "seoName": "Shiny Titanic Blue Balloon Cat"
+        },
+        {
+          "id": 8980,
+          "name": "Shiny Rainbow Titanic Blue Balloon Cat",
+          "seoName": "Shiny Rainbow Titanic Blue Balloon Cat"
+        },
+        {
+          "id": 8981,
+          "name": "Shiny Titanic Red Balloon Cat",
+          "seoName": "Shiny Titanic Red Balloon Cat"
+        },
+        {
+          "id": 8982,
+          "name": "Shiny Titanic Hubert",
+          "seoName": "Shiny Titanic Hubert"
+        },
+        {
+          "id": 8983,
+          "name": "Shiny Titanic Dominus Astra",
+          "seoName": "Shiny Titanic Dominus Astra"
+        },
+        {
+          "id": 8984,
+          "name": "Shiny Titanic Hippomelon",
+          "seoName": "Shiny Titanic Hippomelon"
+        },
+        {
+          "id": 8985,
+          "name": "Shiny Titanic Hologram Cat",
+          "seoName": "Shiny Titanic Hologram Cat"
+        },
+        {
+          "id": 8986,
+          "name": "Shiny Titanic Capybara",
+          "seoName": "Shiny Titanic Capybara"
+        },
+        {
+          "id": 8987,
+          "name": "Shiny Titanic Lucki",
+          "seoName": "Shiny Titanic Lucki"
+        },
+        {
+          "id": 8988,
+          "name": "Shiny Titanic Mystic Corgi",
+          "seoName": "Shiny Titanic Mystic Corgi"
+        },
+        {
+          "id": 8989,
+          "name": "Shiny Rainbow Titanic Mystic Corgi",
+          "seoName": "Shiny Rainbow Titanic Mystic Corgi"
+        },
+        {
+          "id": 8990,
+          "name": "Shiny Titanic Jelly Cat",
+          "seoName": "Shiny Titanic Jelly Cat"
+        },
+        {
+          "id": 8991,
+          "name": "Shiny Titanic Tiedye Cat",
+          "seoName": "Shiny Titanic Tiedye Cat"
+        },
+        {
+          "id": 8992,
+          "name": "Shiny Titanic Tiedye Dragon",
+          "seoName": "Shiny Titanic Tiedye Dragon"
+        },
+        {
+          "id": 8993,
+          "name": "Shiny Titanic Nightmare Cat",
+          "seoName": "Shiny Titanic Nightmare Cat"
+        },
+        {
+          "id": 8994,
+          "name": "Shiny Titanic Atlantean Jellyfish",
+          "seoName": "Shiny Titanic Atlantean Jellyfish"
+        },
+        {
+          "id": 8995,
+          "name": "Shiny Titanic Cat",
+          "seoName": "Shiny Titanic Cat"
+        },
+        {
+          "id": 8996,
+          "name": "Shiny Titanic Cosmic Pegasus",
+          "seoName": "Shiny Titanic Cosmic Pegasus"
+        },
+        {
+          "id": 8997,
+          "name": "Titanic Silver Dragon",
+          "seoName": "Titanic Silver Dragon"
+        },
+        {
+          "id": 8998,
+          "name": "Rainbow Titanic Silver Dragon",
+          "seoName": "Rainbow Titanic Silver Dragon"
+        },
+        {
+          "id": 8999,
+          "name": "Titanic Cheerful Yeti",
+          "seoName": "Titanic Cheerful Yeti"
+        },
+        {
+          "id": 9000,
+          "name": "Shiny Titanic Cheerful Yeti",
+          "seoName": "Shiny Titanic Cheerful Yeti"
+        },
+        {
+          "id": 9001,
+          "name": "Rainbow Titanic Cheerful Yeti",
+          "seoName": "Rainbow Titanic Cheerful Yeti"
+        },
+        {
+          "id": 9002,
+          "name": "Shiny Titanic Banana Cat",
+          "seoName": "Shiny Titanic Banana Cat"
+        },
+        {
+          "id": 9003,
+          "name": "Shiny Titanic Reindeer",
+          "seoName": "Shiny Titanic Reindeer"
+        },
+        {
+          "id": 9004,
+          "name": "Shiny Titanic Fawn",
+          "seoName": "Shiny Titanic Fawn"
+        },
+        {
+          "id": 9005,
+          "name": "Titanic Monkey",
+          "seoName": "Titanic Monkey"
+        },
+        {
+          "id": 9006,
+          "name": "Titanic Red Panda",
+          "seoName": "Titanic Red Panda"
+        },
+        {
+          "id": 9007,
+          "name": "Shiny Titanic Red Panda",
+          "seoName": "Shiny Titanic Red Panda"
+        },
+        {
+          "id": 9008,
+          "name": "Rainbow Titanic Red Panda",
+          "seoName": "Rainbow Titanic Red Panda"
+        },
+        {
+          "id": 9009,
+          "name": "Shiny Titanic Monkey",
+          "seoName": "Shiny Titanic Monkey"
+        },
+        {
+          "id": 9010,
+          "name": "Rainbow Titanic Monkey",
+          "seoName": "Rainbow Titanic Monkey"
+        },
+        {
+          "id": 9011,
+          "name": "Shiny Titanic Silver Dragon",
+          "seoName": "Shiny Titanic Silver Dragon"
+        },
+        {
+          "id": 9012,
+          "name": "Titanic Corgi",
+          "seoName": "Titanic Corgi"
+        },
+        {
+          "id": 9013,
+          "name": "Titanic Axolotl",
+          "seoName": "Titanic Axolotl"
+        },
+        {
+          "id": 9014,
+          "name": "Titanic Emoji Corgi",
+          "seoName": "Titanic Emoji Corgi"
+        },
+        {
+          "id": 9015,
+          "name": "Rainbow Titanic Emoji Corgi",
+          "seoName": "Rainbow Titanic Emoji Corgi"
+        },
+        {
+          "id": 9016,
+          "name": "Shiny Titanic Emoji Corgi",
+          "seoName": "Shiny Titanic Emoji Corgi"
+        },
+        {
+          "id": 9017,
+          "name": "Shiny Titanic Shadow Griffin",
+          "seoName": "Shiny Titanic Shadow Griffin"
+        },
+        {
+          "id": 9018,
+          "name": "Shiny Titanic Scary Corgi",
+          "seoName": "Shiny Titanic Scary Corgi"
+        },
+        {
+          "id": 9019,
+          "name": "Shiny Titanic Corgi",
+          "seoName": "Shiny Titanic Corgi"
+        },
+        {
+          "id": 9020,
+          "name": "Shiny Titanic Axolotl",
+          "seoName": "Shiny Titanic Axolotl"
+        },
+        {
+          "id": 9021,
+          "name": "Titanic Lovemelon",
+          "seoName": "Titanic Lovemelon"
+        },
+        {
+          "id": 9022,
+          "name": "Shiny Titanic Lovemelon",
+          "seoName": "Shiny Titanic Lovemelon"
+        },
+        {
+          "id": 9023,
+          "name": "Rainbow Titanic Lovemelon",
+          "seoName": "Rainbow Titanic Lovemelon"
+        },
+        {
+          "id": 9024,
+          "name": "Rainbow Titanic Corgi",
+          "seoName": "Rainbow Titanic Corgi"
+        },
+        {
+          "id": 9025,
+          "name": "Rainbow Titanic Axolotl",
+          "seoName": "Rainbow Titanic Axolotl"
+        },
+        {
+          "id": 9026,
+          "name": "Titanic Valentines Cat",
+          "seoName": "Titanic Valentines Cat"
+        },
+        {
+          "id": 9027,
+          "name": "Titanic Love Lamb",
+          "seoName": "Titanic Love Lamb"
+        },
+        {
+          "id": 9028,
+          "name": "Titanic Jelly Dragon",
+          "seoName": "Titanic Jelly Dragon"
+        },
+        {
+          "id": 9029,
+          "name": "Rainbow Titanic Jelly Dragon",
+          "seoName": "Rainbow Titanic Jelly Dragon"
+        },
+        {
+          "id": 9030,
+          "name": "Shiny Titanic Jelly Dragon",
+          "seoName": "Shiny Titanic Jelly Dragon"
+        },
+        {
+          "id": 9031,
+          "name": "Rainbow Titanic Love Lamb",
+          "seoName": "Rainbow Titanic Love Lamb"
+        },
+        {
+          "id": 9032,
+          "name": "Shiny Titanic Love Lamb",
+          "seoName": "Shiny Titanic Love Lamb"
+        },
+        {
+          "id": 9033,
+          "name": "Shiny Rainbow Titanic Love Lamb",
+          "seoName": "Shiny Rainbow Titanic Love Lamb"
+        },
+        {
+          "id": 9034,
+          "name": "Rainbow Titanic Valentines Cat",
+          "seoName": "Rainbow Titanic Valentines Cat"
+        },
+        {
+          "id": 9035,
+          "name": "Shiny Titanic Valentines Cat",
+          "seoName": "Shiny Titanic Valentines Cat"
+        },
+        {
+          "id": 9036,
+          "name": "Shiny Rainbow Titanic Valentines Cat",
+          "seoName": "Shiny Rainbow Titanic Valentines Cat"
+        },
+        {
+          "id": 9037,
+          "name": "Titanic Bread Shiba",
+          "seoName": "Titanic Bread Shiba"
+        },
+        {
+          "id": 9038,
+          "name": "Rainbow Titanic Bread Shiba",
+          "seoName": "Rainbow Titanic Bread Shiba"
+        },
+        {
+          "id": 9039,
+          "name": "Shiny Titanic Bread Shiba",
+          "seoName": "Shiny Titanic Bread Shiba"
+        },
+        {
+          "id": 9040,
+          "name": "Shiny Rainbow Titanic Bread Shiba",
+          "seoName": "Shiny Rainbow Titanic Bread Shiba"
+        },
+        {
+          "id": 9041,
+          "name": "Titanic Kawaii Cat",
+          "seoName": "Titanic Kawaii Cat"
+        },
+        {
+          "id": 9042,
+          "name": "Rainbow Titanic Kawaii Cat",
+          "seoName": "Rainbow Titanic Kawaii Cat"
+        },
+        {
+          "id": 9043,
+          "name": "Shiny Titanic Kawaii Cat",
+          "seoName": "Shiny Titanic Kawaii Cat"
+        },
+        {
+          "id": 9044,
+          "name": "Titanic Bat Cat",
+          "seoName": "Titanic Bat Cat"
+        },
+        {
+          "id": 9045,
+          "name": "Rainbow Titanic Bat Cat",
+          "seoName": "Rainbow Titanic Bat Cat"
+        },
+        {
+          "id": 9046,
+          "name": "Shiny Titanic Bat Cat",
+          "seoName": "Shiny Titanic Bat Cat"
+        },
+        {
+          "id": 9047,
+          "name": "Titanic Sock Cat",
+          "seoName": "Titanic Sock Cat"
+        },
+        {
+          "id": 9048,
+          "name": "Titanic Sock Monkey",
+          "seoName": "Titanic Sock Monkey"
+        },
+        {
+          "id": 9049,
+          "name": "Shiny Titanic Sock Cat",
+          "seoName": "Shiny Titanic Sock Cat"
+        },
+        {
+          "id": 9050,
+          "name": "Shiny Titanic Sock Monkey",
+          "seoName": "Shiny Titanic Sock Monkey"
+        },
+        {
+          "id": 9051,
+          "name": "Rainbow Titanic Sock Cat",
+          "seoName": "Rainbow Titanic Sock Cat"
+        },
+        {
+          "id": 9052,
+          "name": "Rainbow Titanic Sock Monkey",
+          "seoName": "Rainbow Titanic Sock Monkey"
+        },
+        {
+          "id": 9053,
+          "name": "Golden Titanic Party Cat",
+          "seoName": "Golden Titanic Party Cat"
+        },
+        {
+          "id": 9054,
+          "name": "Rainbow Titanic Sketch Cat",
+          "seoName": "Rainbow Titanic Sketch Cat"
+        },
+        {
+          "id": 9055,
+          "name": "Shiny Golden Titanic Party Cat",
+          "seoName": "Shiny Golden Titanic Party Cat"
+        },
+        {
+          "id": 9056,
+          "name": "Shiny Rainbow Titanic Party Cat",
+          "seoName": "Shiny Rainbow Titanic Party Cat"
+        },
+        {
+          "id": 9057,
+          "name": "Shiny Titanic Party Cat",
+          "seoName": "Shiny Titanic Party Cat"
+        },
+        {
+          "id": 9058,
+          "name": "Rainbow Titanic Party Cat",
+          "seoName": "Rainbow Titanic Party Cat"
+        },
+        {
+          "id": 9059,
+          "name": "Titanic Party Cat",
+          "seoName": "Titanic Party Cat"
+        },
+        {
+          "id": 9060,
+          "name": "Titanic Sketch Cat",
+          "seoName": "Titanic Sketch Cat"
+        },
+        {
+          "id": 9061,
+          "name": "Shiny Rainbow Titanic Nightmare Cat",
+          "seoName": "Shiny Rainbow Titanic Nightmare Cat"
+        },
+        {
+          "id": 9062,
+          "name": "Shiny Rainbow Titanic Atlantean Jellyfish",
+          "seoName": "Shiny Rainbow Titanic Atlantean Jellyfish"
+        },
+        {
+          "id": 9063,
+          "name": "Shiny Rainbow Titanic Cat",
+          "seoName": "Shiny Rainbow Titanic Cat"
+        },
+        {
+          "id": 9064,
+          "name": "Shiny Rainbow Titanic Neon Agony",
+          "seoName": "Shiny Rainbow Titanic Neon Agony"
+        },
+        {
+          "id": 9065,
+          "name": "Titanic Pink Balloon Cat",
+          "seoName": "Titanic Pink Balloon Cat"
+        },
+        {
+          "id": 9066,
+          "name": "Shiny Titanic Pink Balloon Cat",
+          "seoName": "Shiny Titanic Pink Balloon Cat"
+        },
+        {
+          "id": 9067,
+          "name": "Rainbow Titanic Pink Balloon",
+          "seoName": "Rainbow Titanic Pink Balloon"
+        },
+        {
+          "id": 9068,
+          "name": "Shiny Golden Titanic Rich Cat",
+          "seoName": "Shiny Golden Titanic Rich Cat"
+        },
+        {
+          "id": 9069,
+          "name": "Golden Titanic Rich Cat",
+          "seoName": "Golden Titanic Rich Cat"
+        },
+        {
+          "id": 9070,
+          "name": "Rainbow Titanic Black Hole Angelus",
+          "seoName": "Rainbow Titanic Black Hole Angelus"
+        },
+        {
+          "id": 9071,
+          "name": "Shiny Titanic Black Hole Angelus",
+          "seoName": "Shiny Titanic Black Hole Angelus"
+        },
+        {
+          "id": 9072,
+          "name": "Titanic Black Hole Angelus",
+          "seoName": "Titanic Black Hole Angelus"
+        },
+        {
+          "id": 9073,
+          "name": "Shiny Rainbow Titanic Rich Cat",
+          "seoName": "Shiny Rainbow Titanic Rich Cat"
+        },
+        {
+          "id": 9074,
+          "name": "Rainbow Titanic Rich Cat",
+          "seoName": "Rainbow Titanic Rich Cat"
+        },
+        {
+          "id": 9075,
+          "name": "Shiny Titanic Rich Cat",
+          "seoName": "Shiny Titanic Rich Cat"
+        },
+        {
+          "id": 9076,
+          "name": "Titanic Rich Cat",
+          "seoName": "Titanic Rich Cat"
+        },
+        {
+          "id": 9077,
+          "name": "Shiny Titanic Sketch Cat",
+          "seoName": "Shiny Titanic Sketch Cat"
+        },
+        {
+          "id": 9078,
+          "name": "Shiny Titanic Shiba",
+          "seoName": "Shiny Titanic Shiba"
+        },
+        {
+          "id": 9079,
+          "name": "Rainbow Titanic Shiba",
+          "seoName": "Rainbow Titanic Shiba"
+        },
+        {
+          "id": 9080,
+          "name": "Titanic Shiba",
+          "seoName": "Titanic Shiba"
+        },
+        {
+          "id": 9081,
+          "name": "Rainbow Titanic Bejeweled Griffin",
+          "seoName": "Rainbow Titanic Bejeweled Griffin"
+        },
+        {
+          "id": 9082,
+          "name": "Shiny Titanic Bejeweled Griffin",
+          "seoName": "Shiny Titanic Bejeweled Griffin"
+        },
+        {
+          "id": 9083,
+          "name": "Titanic Bejeweled Griffin",
+          "seoName": "Titanic Bejeweled Griffin"
+        },
+        {
+          "id": 9084,
+          "name": "Titanic Stargazing Bull",
+          "seoName": "Titanic Stargazing Bull"
+        },
+        {
+          "id": 9085,
+          "name": "Shiny Titanic Stargazing Bull",
+          "seoName": "Shiny Titanic Stargazing Bull"
+        },
+        {
+          "id": 9086,
+          "name": "Rainbow Titanic Stargazing Bull",
+          "seoName": "Rainbow Titanic Stargazing Bull"
+        },
+        {
+          "id": 9087,
+          "name": "Shiny Titanic Blazing Dragon",
+          "seoName": "Shiny Titanic Blazing Dragon"
+        },
+        {
+          "id": 9088,
+          "name": "Rainbow Titanic Blazing Dragon",
+          "seoName": "Rainbow Titanic Blazing Dragon"
+        },
+        {
+          "id": 9089,
+          "name": "Titanic Blazing Dragon",
+          "seoName": "Titanic Blazing Dragon"
+        },
+        {
+          "id": 9090,
+          "name": "Titanic Butterfly",
+          "seoName": "Titanic Butterfly"
+        },
+        {
+          "id": 9091,
+          "name": "Rainbow Titanic Butterfly",
+          "seoName": "Rainbow Titanic Butterfly"
+        },
+        {
+          "id": 9092,
+          "name": "Shiny Rainbow Titanic Butterfly",
+          "seoName": "Shiny Rainbow Titanic Butterfly"
+        },
+        {
+          "id": 9093,
+          "name": "Shiny Titanic Butterfly",
+          "seoName": "Shiny Titanic Butterfly"
+        },
+        {
+          "id": 9094,
+          "name": "Shiny Golden Titanic Butterfly",
+          "seoName": "Shiny Golden Titanic Butterfly"
+        },
+        {
+          "id": 9095,
+          "name": "Titanic Flex Cat",
+          "seoName": "Titanic Flex Cat"
+        },
+        {
+          "id": 9096,
+          "name": "Shiny Titanic Flex Cat",
+          "seoName": "Shiny Titanic Flex Cat"
+        },
+        {
+          "id": 9097,
+          "name": "Golden Titanic Butterfly",
+          "seoName": "Golden Titanic Butterfly"
+        },
+        {
+          "id": 9098,
+          "name": "Rainbow Titanic Flex Cat",
+          "seoName": "Rainbow Titanic Flex Cat"
+        },
+        {
+          "id": 9099,
+          "name": "Titanic Kitsune Fox",
+          "seoName": "Titanic Kitsune Fox"
+        },
+        {
+          "id": 9100,
+          "name": "Titanic Dino Cat",
+          "seoName": "Titanic Dino Cat"
+        },
+        {
+          "id": 9101,
+          "name": "Shiny Titanic Kitsune Fox",
+          "seoName": "Shiny Titanic Kitsune Fox"
+        },
+        {
+          "id": 9102,
+          "name": "Shiny Titanic Dino Cat",
+          "seoName": "Shiny Titanic Dino Cat"
+        },
+        {
+          "id": 9103,
+          "name": "Rainbow Titanic Kitsune Fox",
+          "seoName": "Rainbow Titanic Kitsune Fox"
+        },
+        {
+          "id": 9104,
+          "name": "Rainbow Titanic Dino Cat",
+          "seoName": "Rainbow Titanic Dino Cat"
+        },
+        {
+          "id": 9105,
+          "name": "Shiny Rainbow Titanic Kitsune Fox",
+          "seoName": "Shiny Rainbow Titanic Kitsune Fox"
+        },
+        {
+          "id": 9106,
+          "name": "Shiny Rainbow Titanic Dino Cat",
+          "seoName": "Shiny Rainbow Titanic Dino Cat"
+        },
+        {
+          "id": 9107,
+          "name": "Golden Titanic Kitsune Fox",
+          "seoName": "Golden Titanic Kitsune Fox"
+        },
+        {
+          "id": 9108,
+          "name": "Shiny Golden Titanic Kitsune Fox",
+          "seoName": "Shiny Golden Titanic Kitsune Fox"
+        },
+        {
+          "id": 9109,
+          "name": "Titanic Valkyrie Pegasus",
+          "seoName": "Titanic Valkyrie Pegasus"
+        },
+        {
+          "id": 9110,
+          "name": "Shiny Titanic Valkyrie Pegasus",
+          "seoName": "Shiny Titanic Valkyrie Pegasus"
+        },
+        {
+          "id": 9111,
+          "name": "Rainbow Titanic Valkyrie Pegasus",
+          "seoName": "Rainbow Titanic Valkyrie Pegasus"
+        },
+        {
+          "id": 9112,
+          "name": "Titanic Strawberry Cow",
+          "seoName": "Titanic Strawberry Cow"
+        },
+        {
+          "id": 9113,
+          "name": "Shiny Titanic Strawberry Cow",
+          "seoName": "Shiny Titanic Strawberry Cow"
+        },
+        {
+          "id": 9114,
+          "name": "Rainbow Titanic Strawberry Cow",
+          "seoName": "Rainbow Titanic Strawberry Cow"
+        },
+        {
+          "id": 9115,
+          "name": "Shiny Rainbow Titanic Strawberry Cow",
+          "seoName": "Shiny Rainbow Titanic Strawberry Cow"
+        },
+        {
+          "id": 9116,
+          "name": "Titanic Spongebob Squarepants",
+          "seoName": "Titanic Spongebob Squarepants"
+        },
+        {
+          "id": 9117,
+          "name": "Shiny Titanic Spongebob Squarepants",
+          "seoName": "Shiny Titanic Spongebob Squarepants"
+        },
+        {
+          "id": 9118,
+          "name": "Rainbow Titanic Spongebob Squarepants",
+          "seoName": "Rainbow Titanic Spongebob Squarepants"
+        }
+      ]
+    },
+    {
+      "id": 1876,
+      "name": "Exclusives",
+      "seoName": "Exclusives",
+      "subCategories": [
+        {
+          "id": 9164,
+          "name": "Other Exclusives",
+          "seoName": "Other Exclusives"
+        },
+        {
+          "id": 9183,
+          "name": "Dominus Astra",
+          "seoName": "Dominus Astra"
+        },
+        {
+          "id": 9184,
+          "name": "Storm Wolf",
+          "seoName": "Storm Wolf"
+        },
+        {
+          "id": 9185,
+          "name": "Galaxy Dragon",
+          "seoName": "Galaxy Dragon"
+        },
+        {
+          "id": 9186,
+          "name": "Domortuus Astra",
+          "seoName": "Domortuus Astra"
+        },
+        {
+          "id": 9187,
+          "name": "Empyrean Agony",
+          "seoName": "Empyrean Agony"
+        },
+        {
+          "id": 9188,
+          "name": "Nebula Dragon",
+          "seoName": "Nebula Dragon"
+        },
+        {
+          "id": 9189,
+          "name": "Galaxy Pegasus",
+          "seoName": "Galaxy Pegasus"
+        },
+        {
+          "id": 9190,
+          "name": "Dominus Darkwing",
+          "seoName": "Dominus Darkwing"
+        },
+        {
+          "id": 9191,
+          "name": "Storm Dragon",
+          "seoName": "Storm Dragon"
+        },
+        {
+          "id": 9192,
+          "name": "Wicked Angelus",
+          "seoName": "Wicked Angelus"
+        },
+        {
+          "id": 9193,
+          "name": "Sapphire Phoenix",
+          "seoName": "Sapphire Phoenix"
+        },
+        {
+          "id": 9194,
+          "name": "Chest Mimic",
+          "seoName": "Chest Mimic"
+        },
+        {
+          "id": 9195,
+          "name": "Electric Slime",
+          "seoName": "Electric Slime"
+        },
+        {
+          "id": 9196,
+          "name": "Mushroom King",
+          "seoName": "Mushroom King"
+        },
+        {
+          "id": 9197,
+          "name": "Noobortuus",
+          "seoName": "Noobortuus"
+        },
+        {
+          "id": 9198,
+          "name": "Sock Monkey",
+          "seoName": "Sock Monkey"
+        },
+        {
+          "id": 9199,
+          "name": "Sock Corgi",
+          "seoName": "Sock Corgi"
+        },
+        {
+          "id": 9200,
+          "name": "Sock Cat",
+          "seoName": "Sock Cat"
+        },
+        {
+          "id": 9201,
+          "name": "Punkey",
+          "seoName": "Punkey"
+        },
+        {
+          "id": 9202,
+          "name": "Doge",
+          "seoName": "Doge"
+        },
+        {
+          "id": 9203,
+          "name": "Blobfish",
+          "seoName": "Blobfish"
+        },
+        {
+          "id": 9204,
+          "name": "Guest Noob",
+          "seoName": "Guest Noob"
+        },
+        {
+          "id": 9205,
+          "name": "Hell Chest Mimic",
+          "seoName": "Hell Chest Mimic"
+        },
+        {
+          "id": 9206,
+          "name": "Pterodactyl",
+          "seoName": "Pterodactyl"
+        },
+        {
+          "id": 9207,
+          "name": "Grumpy Cat",
+          "seoName": "Grumpy Cat"
+        },
+        {
+          "id": 9208,
+          "name": "Lava Scorpion",
+          "seoName": "Lava Scorpion"
+        },
+        {
+          "id": 9209,
+          "name": "Blobenstein",
+          "seoName": "Blobenstein"
+        },
+        {
+          "id": 9210,
+          "name": "Yee-Haw Cat",
+          "seoName": "Yee-Haw Cat"
+        },
+        {
+          "id": 9211,
+          "name": "Sea Dragon",
+          "seoName": "Sea Dragon"
+        },
+        {
+          "id": 9212,
+          "name": "Otter",
+          "seoName": "Otter"
+        },
+        {
+          "id": 9213,
+          "name": "Wicked Empyrean Dragon",
+          "seoName": "Wicked Empyrean Dragon"
+        },
+        {
+          "id": 9214,
+          "name": "Fairy Queen",
+          "seoName": "Fairy Queen"
+        },
+        {
+          "id": 9215,
+          "name": "Lucky Cat",
+          "seoName": "Lucky Cat"
+        },
+        {
+          "id": 9216,
+          "name": "Storm Agony",
+          "seoName": "Storm Agony"
+        },
+        {
+          "id": 9217,
+          "name": "Starfall Dragon",
+          "seoName": "Starfall Dragon"
+        },
+        {
+          "id": 9218,
+          "name": "Sleipnir",
+          "seoName": "Sleipnir"
+        },
+        {
+          "id": 9219,
+          "name": "Cyborg Capybara",
+          "seoName": "Cyborg Capybara"
+        },
+        {
+          "id": 9220,
+          "name": "Nature Dragon",
+          "seoName": "Nature Dragon"
+        },
+        {
+          "id": 9221,
+          "name": "Gargoyle Dragon",
+          "seoName": "Gargoyle Dragon"
+        },
+        {
+          "id": 9222,
+          "name": "Ice Cream Cone",
+          "seoName": "Ice Cream Cone"
+        },
+        {
+          "id": 9223,
+          "name": "Pony",
+          "seoName": "Pony"
+        },
+        {
+          "id": 9224,
+          "name": "Rainbow Unicorn",
+          "seoName": "Rainbow Unicorn"
+        },
+        {
+          "id": 9225,
+          "name": "Super Capybara",
+          "seoName": "Super Capybara"
+        },
+        {
+          "id": 9226,
+          "name": "Keyboard Cat",
+          "seoName": "Keyboard Cat"
+        },
+        {
+          "id": 9227,
+          "name": "Orca",
+          "seoName": "Orca"
+        },
+        {
+          "id": 9228,
+          "name": "Rave Crab",
+          "seoName": "Rave Crab"
+        },
+        {
+          "id": 9229,
+          "name": "Koala",
+          "seoName": "Koala"
+        },
+        {
+          "id": 9230,
+          "name": "Super Corgi",
+          "seoName": "Super Corgi"
+        },
+        {
+          "id": 9231,
+          "name": "Super Cat",
+          "seoName": "Super Cat"
+        },
+        {
+          "id": 9232,
+          "name": "Capybara",
+          "seoName": "Capybara"
+        },
+        {
+          "id": 9233,
+          "name": "Prickly Panda",
+          "seoName": "Prickly Panda"
+        },
+        {
+          "id": 9234,
+          "name": "Lightning Bat",
+          "seoName": "Lightning Bat"
+        },
+        {
+          "id": 9235,
+          "name": "Subzero Cat",
+          "seoName": "Subzero Cat"
+        },
+        {
+          "id": 9236,
+          "name": "Inferno Cat",
+          "seoName": "Inferno Cat"
+        },
+        {
+          "id": 9237,
+          "name": "Neon Twilight Dragon",
+          "seoName": "Neon Twilight Dragon"
+        },
+        {
+          "id": 9238,
+          "name": "Neon Twilight Wolf",
+          "seoName": "Neon Twilight Wolf"
+        },
+        {
+          "id": 9239,
+          "name": "Neon Twilight Cat",
+          "seoName": "Neon Twilight Cat"
+        },
+        {
+          "id": 9240,
+          "name": "Neon Twilight Tiger",
+          "seoName": "Neon Twilight Tiger"
+        },
+        {
+          "id": 9241,
+          "name": "Anime Corgi",
+          "seoName": "Anime Corgi"
+        },
+        {
+          "id": 9242,
+          "name": "Anime Monkey",
+          "seoName": "Anime Monkey"
+        },
+        {
+          "id": 9243,
+          "name": "Anime Agony",
+          "seoName": "Anime Agony"
+        },
+        {
+          "id": 9244,
+          "name": "Anime Unicorn",
+          "seoName": "Anime Unicorn"
+        },
+        {
+          "id": 9245,
+          "name": "Grinch Cat",
+          "seoName": "Grinch Cat"
+        },
+        {
+          "id": 9246,
+          "name": "Present Chest Mimic",
+          "seoName": "Present Chest Mimic"
+        },
+        {
+          "id": 9247,
+          "name": "Balloon Dragon",
+          "seoName": "Balloon Dragon"
+        },
+        {
+          "id": 9248,
+          "name": "Balloon Corgi",
+          "seoName": "Balloon Corgi"
+        },
+        {
+          "id": 9249,
+          "name": "Balloon Axolotl",
+          "seoName": "Balloon Axolotl"
+        },
+        {
+          "id": 9250,
+          "name": "Neon Cat",
+          "seoName": "Neon Cat"
+        },
+        {
+          "id": 9251,
+          "name": "Neon Dog",
+          "seoName": "Neon Dog"
+        },
+        {
+          "id": 9252,
+          "name": "Neon Griffin",
+          "seoName": "Neon Griffin"
+        },
+        {
+          "id": 9253,
+          "name": "Floppa",
+          "seoName": "Floppa"
+        },
+        {
+          "id": 9254,
+          "name": "Pop Cat",
+          "seoName": "Pop Cat"
+        },
+        {
+          "id": 9255,
+          "name": "Clout Cat",
+          "seoName": "Clout Cat"
+        },
+        {
+          "id": 9256,
+          "name": "Knife Cat",
+          "seoName": "Knife Cat"
+        },
+        {
+          "id": 9257,
+          "name": "Storm Dominus",
+          "seoName": "Storm Dominus"
+        },
+        {
+          "id": 9258,
+          "name": "Empyrean Dominus",
+          "seoName": "Empyrean Dominus"
+        },
+        {
+          "id": 9259,
+          "name": "Inferno Dominus",
+          "seoName": "Inferno Dominus"
+        },
+        {
+          "id": 9260,
+          "name": "Hologram Shark",
+          "seoName": "Hologram Shark"
+        },
+        {
+          "id": 9261,
+          "name": "Hologram Tiger",
+          "seoName": "Hologram Tiger"
+        },
+        {
+          "id": 9262,
+          "name": "Hologram Axolotl",
+          "seoName": "Hologram Axolotl"
+        },
+        {
+          "id": 9263,
+          "name": "Amethyst Dragon",
+          "seoName": "Amethyst Dragon"
+        },
+        {
+          "id": 9264,
+          "name": "Emerald Monkey",
+          "seoName": "Emerald Monkey"
+        },
+        {
+          "id": 9265,
+          "name": "Redstone Cat",
+          "seoName": "Redstone Cat"
+        },
+        {
+          "id": 9266,
+          "name": "Cool Corgi",
+          "seoName": "Cool Corgi"
+        },
+        {
+          "id": 9267,
+          "name": "Golden Cool Corgi",
+          "seoName": "Golden Cool Corgi"
+        },
+        {
+          "id": 9268,
+          "name": "Rainbow Cool Corgi",
+          "seoName": "Rainbow Cool Corgi"
+        },
+        {
+          "id": 9269,
+          "name": "Cool Dragon",
+          "seoName": "Cool Dragon"
+        },
+        {
+          "id": 9270,
+          "name": "Golden Cool Dragon",
+          "seoName": "Golden Cool Dragon"
+        },
+        {
+          "id": 9271,
+          "name": "Rainbow Cool Dragon",
+          "seoName": "Rainbow Cool Dragon"
+        },
+        {
+          "id": 9272,
+          "name": "Cool Cat",
+          "seoName": "Cool Cat"
+        },
+        {
+          "id": 9273,
+          "name": "Golden Cool Cat",
+          "seoName": "Golden Cool Cat"
+        },
+        {
+          "id": 9274,
+          "name": "Rainbow Cool Cat",
+          "seoName": "Rainbow Cool Cat"
+        },
+        {
+          "id": 9275,
+          "name": "Jelly Corgi",
+          "seoName": "Jelly Corgi"
+        },
+        {
+          "id": 9276,
+          "name": "Jelly Panda",
+          "seoName": "Jelly Panda"
+        },
+        {
+          "id": 9277,
+          "name": "Jelly Piggy",
+          "seoName": "Jelly Piggy"
+        },
+        {
+          "id": 9278,
+          "name": "Nightmare Kraken",
+          "seoName": "Nightmare Kraken"
+        },
+        {
+          "id": 9279,
+          "name": "Nightmare Bear",
+          "seoName": "Nightmare Bear"
+        },
+        {
+          "id": 9280,
+          "name": "Nightmare Spirit",
+          "seoName": "Nightmare Spirit"
+        },
+        {
+          "id": 9281,
+          "name": "Atlantean Orca",
+          "seoName": "Atlantean Orca"
+        },
+        {
+          "id": 9282,
+          "name": "Atlantean Stingray",
+          "seoName": "Atlantean Stingray"
+        },
+        {
+          "id": 9283,
+          "name": "Atlantean Dolphin",
+          "seoName": "Atlantean Dolphin"
+        },
+        {
+          "id": 9284,
+          "name": "Stunt Unicorn",
+          "seoName": "Stunt Unicorn"
+        },
+        {
+          "id": 9285,
+          "name": "Stunt Bobcat",
+          "seoName": "Stunt Bobcat"
+        },
+        {
+          "id": 9286,
+          "name": "Stunt Chick",
+          "seoName": "Stunt Chick"
+        },
+        {
+          "id": 9287,
+          "name": "Crystal Deer",
+          "seoName": "Crystal Deer"
+        },
+        {
+          "id": 9288,
+          "name": "Golden Crystal Deer",
+          "seoName": "Golden Crystal Deer"
+        },
+        {
+          "id": 9289,
+          "name": "Rainbow Crystal Deer",
+          "seoName": "Rainbow Crystal Deer"
+        },
+        {
+          "id": 9290,
+          "name": "Crystal Dog",
+          "seoName": "Crystal Dog"
+        },
+        {
+          "id": 9291,
+          "name": "Golden Crystal Dog",
+          "seoName": "Golden Crystal Dog"
+        },
+        {
+          "id": 9292,
+          "name": "Rainbow Crystal Dog",
+          "seoName": "Rainbow Crystal Dog"
+        },
+        {
+          "id": 9293,
+          "name": "Mosaic Griffin",
+          "seoName": "Mosaic Griffin"
+        },
+        {
+          "id": 9294,
+          "name": "Golden Mosaic Griffin",
+          "seoName": "Golden Mosaic Griffin"
+        },
+        {
+          "id": 9295,
+          "name": "Rainbow Mosaic Griffin",
+          "seoName": "Rainbow Mosaic Griffin"
+        },
+        {
+          "id": 9296,
+          "name": "Mosaic Dove",
+          "seoName": "Mosaic Dove"
+        },
+        {
+          "id": 9297,
+          "name": "Golden Mosaic Dove",
+          "seoName": "Golden Mosaic Dove"
+        },
+        {
+          "id": 9298,
+          "name": "Rainbow Mosaic Dove",
+          "seoName": "Rainbow Mosaic Dove"
+        },
+        {
+          "id": 9299,
+          "name": "Mosaic Corgi",
+          "seoName": "Mosaic Corgi"
+        },
+        {
+          "id": 9300,
+          "name": "Golden Mosaic Corgi",
+          "seoName": "Golden Mosaic Corgi"
+        },
+        {
+          "id": 9301,
+          "name": "Rainbow Mosaic Corgi",
+          "seoName": "Rainbow Mosaic Corgi"
+        },
+        {
+          "id": 9302,
+          "name": "Mosaic Lamb",
+          "seoName": "Mosaic Lamb"
+        },
+        {
+          "id": 9303,
+          "name": "Golden Mosaic Lamb",
+          "seoName": "Golden Mosaic Lamb"
+        },
+        {
+          "id": 9304,
+          "name": "Rainbow Mosaic Lamb",
+          "seoName": "Rainbow Mosaic Lamb"
+        },
+        {
+          "id": 9305,
+          "name": "Mosaic Elephant",
+          "seoName": "Mosaic Elephant"
+        },
+        {
+          "id": 9306,
+          "name": "Golden Mosaic Elephant",
+          "seoName": "Golden Mosaic Elephant"
+        },
+        {
+          "id": 9307,
+          "name": "Rainbow Mosaic Elephant",
+          "seoName": "Rainbow Mosaic Elephant"
+        },
+        {
+          "id": 9308,
+          "name": "Nightfall Pegasus",
+          "seoName": "Nightfall Pegasus"
+        },
+        {
+          "id": 9309,
+          "name": "Golden Nightfall Pegasus",
+          "seoName": "Golden Nightfall Pegasus"
+        },
+        {
+          "id": 9310,
+          "name": "Rainbow Nightfall Pegasus",
+          "seoName": "Rainbow Nightfall Pegasus"
+        },
+        {
+          "id": 9311,
+          "name": "Nightfall Ram",
+          "seoName": "Nightfall Ram"
+        },
+        {
+          "id": 9312,
+          "name": "Golden Nightfall Ram",
+          "seoName": "Golden Nightfall Ram"
+        },
+        {
+          "id": 9313,
+          "name": "Rainbow Nightfall Ram",
+          "seoName": "Rainbow Nightfall Ram"
+        },
+        {
+          "id": 9314,
+          "name": "Nightfall Tiger",
+          "seoName": "Nightfall Tiger"
+        },
+        {
+          "id": 9315,
+          "name": "Golden Nightfall Tiger",
+          "seoName": "Golden Nightfall Tiger"
+        },
+        {
+          "id": 9316,
+          "name": "Rainbow Nightfall Tiger",
+          "seoName": "Rainbow Nightfall Tiger"
+        },
+        {
+          "id": 9317,
+          "name": "Nightfall Wolf",
+          "seoName": "Nightfall Wolf"
+        },
+        {
+          "id": 9318,
+          "name": "Golden Nightfall Wolf",
+          "seoName": "Golden Nightfall Wolf"
+        },
+        {
+          "id": 9319,
+          "name": "Rainbow Nightfall Wolf",
+          "seoName": "Rainbow Nightfall Wolf"
+        },
+        {
+          "id": 9320,
+          "name": "Tiedye Griffin",
+          "seoName": "Tiedye Griffin"
+        },
+        {
+          "id": 9321,
+          "name": "Golden Tiedye Griffin",
+          "seoName": "Golden Tiedye Griffin"
+        },
+        {
+          "id": 9322,
+          "name": "Rainbow Tiedye Griffin",
+          "seoName": "Rainbow Tiedye Griffin"
+        },
+        {
+          "id": 9323,
+          "name": "Tiedye Dragon",
+          "seoName": "Tiedye Dragon"
+        },
+        {
+          "id": 9324,
+          "name": "Golden Tiedye Dragon",
+          "seoName": "Golden Tiedye Dragon"
+        },
+        {
+          "id": 9325,
+          "name": "Rainbow Tiedye Dragon",
+          "seoName": "Rainbow Tiedye Dragon"
+        },
+        {
+          "id": 9326,
+          "name": "Tiedye Dog",
+          "seoName": "Tiedye Dog"
+        },
+        {
+          "id": 9327,
+          "name": "Golden Tiedye Dog",
+          "seoName": "Golden Tiedye Dog"
+        },
+        {
+          "id": 9328,
+          "name": "Rainbow Tiedye Dog",
+          "seoName": "Rainbow Tiedye Dog"
+        },
+        {
+          "id": 9329,
+          "name": "Tiedye Corgi",
+          "seoName": "Tiedye Corgi"
+        },
+        {
+          "id": 9330,
+          "name": "Golden Tiedye Corgi",
+          "seoName": "Golden Tiedye Corgi"
+        },
+        {
+          "id": 9331,
+          "name": "Rainbow Tiedye Corgi",
+          "seoName": "Rainbow Tiedye Corgi"
+        },
+        {
+          "id": 9332,
+          "name": "Tiedye Cat",
+          "seoName": "Tiedye Cat"
+        },
+        {
+          "id": 9333,
+          "name": "Golden Tiedye Cat",
+          "seoName": "Golden Tiedye Cat"
+        },
+        {
+          "id": 9334,
+          "name": "Rainbow Tiedye Cat",
+          "seoName": "Rainbow Tiedye Cat"
+        },
+        {
+          "id": 9335,
+          "name": "Tiedye Bunny",
+          "seoName": "Tiedye Bunny"
+        },
+        {
+          "id": 9336,
+          "name": "Golden Tiedye Bunny",
+          "seoName": "Golden Tiedye Bunny"
+        },
+        {
+          "id": 9337,
+          "name": "Rainbow Tiedye Bunny",
+          "seoName": "Rainbow Tiedye Bunny"
+        },
+        {
+          "id": 9338,
+          "name": "Tiedye Bear",
+          "seoName": "Tiedye Bear"
+        },
+        {
+          "id": 9339,
+          "name": "Golden Tiedye Bear",
+          "seoName": "Golden Tiedye Bear"
+        },
+        {
+          "id": 9340,
+          "name": "Rainbow Tiedye Bear",
+          "seoName": "Rainbow Tiedye Bear"
+        },
+        {
+          "id": 9341,
+          "name": "Tiedye Axolotl",
+          "seoName": "Tiedye Axolotl"
+        },
+        {
+          "id": 9342,
+          "name": "Golden Tiedye Axolotl",
+          "seoName": "Golden Tiedye Axolotl"
+        },
+        {
+          "id": 9343,
+          "name": "Rainbow Tiedye Axolotl",
+          "seoName": "Rainbow Tiedye Axolotl"
+        },
+        {
+          "id": 9344,
+          "name": "Unicorn Dragon",
+          "seoName": "Unicorn Dragon"
+        },
+        {
+          "id": 9345,
+          "name": "Rift Dragon",
+          "seoName": "Rift Dragon"
+        },
+        {
+          "id": 9346,
+          "name": "Celestial Dragon",
+          "seoName": "Celestial Dragon"
+        },
+        {
+          "id": 9347,
+          "name": "Blueberry Cow",
+          "seoName": "Blueberry Cow"
+        },
+        {
+          "id": 9348,
+          "name": "Orange Axolotl",
+          "seoName": "Orange Axolotl"
+        },
+        {
+          "id": 9349,
+          "name": "Dragonfruit Dragon",
+          "seoName": "Dragonfruit Dragon"
+        },
+        {
+          "id": 9350,
+          "name": "Holiday Pegasus",
+          "seoName": "Holiday Pegasus"
+        },
+        {
+          "id": 9351,
+          "name": "Holiday Balloon Cat",
+          "seoName": "Holiday Balloon Cat"
+        },
+        {
+          "id": 9352,
+          "name": "Peppermint Angelus",
+          "seoName": "Peppermint Angelus"
+        },
+        {
+          "id": 9353,
+          "name": "Nyan Cat",
+          "seoName": "Nyan Cat"
+        },
+        {
+          "id": 9354,
+          "name": "Stacked Doge Noob",
+          "seoName": "Stacked Doge Noob"
+        },
+        {
+          "id": 9355,
+          "name": "Emoji Cat",
+          "seoName": "Emoji Cat"
+        },
+        {
+          "id": 9356,
+          "name": "Emoji Dog",
+          "seoName": "Emoji Dog"
+        },
+        {
+          "id": 9357,
+          "name": "Emoji Monkey",
+          "seoName": "Emoji Monkey"
+        },
+        {
+          "id": 9358,
+          "name": "Valentines Cat",
+          "seoName": "Valentines Cat"
+        },
+        {
+          "id": 9359,
+          "name": "Heart Balloon Cat",
+          "seoName": "Heart Balloon Cat"
+        },
+        {
+          "id": 9360,
+          "name": "Cupid Corgi",
+          "seoName": "Cupid Corgi"
+        },
+        {
+          "id": 9361,
+          "name": "Thunder Bear",
+          "seoName": "Thunder Bear"
+        },
+        {
+          "id": 9362,
+          "name": "Jester Dog",
+          "seoName": "Jester Dog"
+        },
+        {
+          "id": 9363,
+          "name": "Super Tiger",
+          "seoName": "Super Tiger"
+        },
+        {
+          "id": 9364,
+          "name": "Sad Cat",
+          "seoName": "Sad Cat"
+        },
+        {
+          "id": 9365,
+          "name": "Puurple Cat",
+          "seoName": "Puurple Cat"
+        },
+        {
+          "id": 9366,
+          "name": "Blazing Bat",
+          "seoName": "Blazing Bat"
+        },
+        {
+          "id": 9367,
+          "name": "Blazing Shark",
+          "seoName": "Blazing Shark"
+        }
+      ]
+    },
+    {
+      "id": 1877,
+      "name": "Clan Huges",
+      "seoName": "Clan Huges",
+      "subCategories": [
+        {
+          "id": 9165,
+          "name": "Other Clan Huges",
+          "seoName": "Other Clan Huges"
+        },
+        {
+          "id": 9166,
+          "name": "Huge Present Cat",
+          "seoName": "Huge Present Cat"
+        },
+        {
+          "id": 9167,
+          "name": "Huge Owl",
+          "seoName": "Huge Owl"
+        },
+        {
+          "id": 9168,
+          "name": "Huge Sensei Penguin",
+          "seoName": "Huge Sensei Penguin"
+        },
+        {
+          "id": 9169,
+          "name": "Huge Empyrean Axolotl",
+          "seoName": "Huge Empyrean Axolotl"
+        },
+        {
+          "id": 9170,
+          "name": "Huge Mystical Fox",
+          "seoName": "Huge Mystical Fox"
+        },
+        {
+          "id": 9171,
+          "name": "Huge Alien Arachnid",
+          "seoName": "Huge Alien Arachnid"
+        },
+        {
+          "id": 9172,
+          "name": "Huge Pixel Shark",
+          "seoName": "Huge Pixel Shark"
+        },
+        {
+          "id": 9173,
+          "name": "Huge Bubble Dog",
+          "seoName": "Huge Bubble Dog"
+        },
+        {
+          "id": 9174,
+          "name": "Golden Huge Fragmented Dominus",
+          "seoName": "Golden Huge Fragmented Dominus"
+        },
+        {
+          "id": 9175,
+          "name": "Rainbow Huge Fragmented Dominus",
+          "seoName": "Rainbow Huge Fragmented Dominus"
+        },
+        {
+          "id": 9176,
+          "name": "Huge Fragmented Dominus",
+          "seoName": "Huge Fragmented Dominus"
+        },
+        {
+          "id": 9177,
+          "name": "Huge Wicked Empyrean Dragon",
+          "seoName": "Huge Wicked Empyrean Dragon"
+        },
+        {
+          "id": 9178,
+          "name": "Golden Huge Wicked Empyrean Dragon",
+          "seoName": "Golden Huge Wicked Empyrean Dragon"
+        },
+        {
+          "id": 9179,
+          "name": "Rainbow Huge Wicked Empyrean Dragon",
+          "seoName": "Rainbow Huge Wicked Empyrean Dragon"
+        },
+        {
+          "id": 9180,
+          "name": "Rainbow Huge Safety Cat",
+          "seoName": "Rainbow Huge Safety Cat"
+        },
+        {
+          "id": 9181,
+          "name": "Huge Safety Cat",
+          "seoName": "Huge Safety Cat"
+        },
+        {
+          "id": 9182,
+          "name": "Golden Huge Safety Cat",
+          "seoName": "Golden Huge Safety Cat"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13895,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "game_id": "390",
+  "game": "the-seven-deadly-sins-origin",
+  "game_name": "The Seven Deadly Sins Origin",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Europe",
+      "group": "Region"
+    },
+    {
+      "id": "1",
+      "name": "US - West",
+      "group": "Region"
+    },
+    {
+      "id": "2",
+      "name": "US - East",
+      "group": "Region"
+    },
+    {
+      "id": "3",
+      "name": "Asia",
+      "group": "Region"
+    },
+    {
+      "id": "4",
+      "name": "SEA",
+      "group": "Region"
+    }
+  ],
+  "attributes": {
+    "the-seven-deadly-sins-origin-star-memory": {
+      "name": "Star Memory",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "120-star-memory",
+          "name": "120 Star Memory"
+        },
+        {
+          "id": "600-star-memory",
+          "name": "600 Star Memory"
+        },
+        {
+          "id": "1900-star-memory",
+          "name": "1900 Star Memory"
+        },
+        {
+          "id": "3800-star-memory",
+          "name": "3800 Star Memory"
+        },
+        {
+          "id": "6200-star-memory",
+          "name": "6200 Star Memory"
+        },
+        {
+          "id": "12200-star-memory",
+          "name": "12200 Star Memory"
+        },
+        {
+          "id": "liones-supply-cart",
+          "name": "Liones Supply Cart"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

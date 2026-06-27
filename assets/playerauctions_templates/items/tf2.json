@@ -1,0 +1,117 @@
+{
+  "game_id": 3685,
+  "game": "tf2",
+  "game_name": "Team Fortress 2",
+  "seo_name": "TF2",
+  "currencyName": "Dollar",
+  "categories": [
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    },
+    {
+      "id": 769,
+      "name": "Hats",
+      "seoName": "Hats",
+      "subCategories": [
+        {
+          "id": 1516,
+          "name": "T shirts and Hoodies",
+          "seoName": "T shirts and Hoodies"
+        }
+      ]
+    },
+    {
+      "id": 770,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 2294,
+          "name": "Accessories",
+          "seoName": "Accessories"
+        }
+      ]
+    },
+    {
+      "id": 771,
+      "name": "Misc Items",
+      "seoName": "Misc Items",
+      "subCategories": [
+        {
+          "id": 2093,
+          "name": "Retro Gaming",
+          "seoName": "Retro Gaming"
+        }
+      ]
+    },
+    {
+      "id": 772,
+      "name": "Tools",
+      "seoName": "Tools"
+    },
+    {
+      "id": 769,
+      "name": "Hats",
+      "seoName": "Hats",
+      "subCategories": [
+        {
+          "id": 1516,
+          "name": "T shirts and Hoodies",
+          "seoName": "T shirts and Hoodies"
+        }
+      ]
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 3687,
+      "name": "PC"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

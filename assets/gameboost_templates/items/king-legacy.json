@@ -59,16 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Fruit",
-        "Weapon",
-        "Currency",
-        "Boost",
-        "Spin",
-        "Bundle",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

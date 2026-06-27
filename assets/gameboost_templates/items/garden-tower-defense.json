@@ -59,16 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Tower Blueprints",
-        "Tokens",
-        "Upgrade Modules",
-        "Consumables",
-        "Cosmetics",
-        "Seasonal Items",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

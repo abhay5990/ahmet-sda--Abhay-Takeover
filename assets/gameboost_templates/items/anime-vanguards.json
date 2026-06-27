@@ -59,15 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Character Tokens",
-        "Equipment",
-        "Cosmetics",
-        "Resources",
-        "Bundles",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

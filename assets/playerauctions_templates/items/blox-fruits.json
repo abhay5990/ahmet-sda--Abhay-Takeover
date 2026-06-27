@@ -1,0 +1,358 @@
+{
+  "game_id": 13891,
+  "game": "blox-fruits",
+  "game_name": "Blox Fruits",
+  "seo_name": "Blox-Fruits",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 1894,
+      "name": "Fruits",
+      "seoName": "Fruits",
+      "subCategories": [
+        {
+          "id": 9463,
+          "name": "Other Fruits",
+          "seoName": "Other Fruits"
+        },
+        {
+          "id": 9485,
+          "name": "Blizzard Fruit",
+          "seoName": "Blizzard Fruit"
+        },
+        {
+          "id": 9486,
+          "name": "Bomb Fruit",
+          "seoName": "Bomb Fruit"
+        },
+        {
+          "id": 9487,
+          "name": "Buddha Fruit",
+          "seoName": "Buddha Fruit"
+        },
+        {
+          "id": 9488,
+          "name": "Celestial Fruit",
+          "seoName": "Celestial Fruit"
+        },
+        {
+          "id": 9489,
+          "name": "Chop Fruit",
+          "seoName": "Chop Fruit"
+        },
+        {
+          "id": 9490,
+          "name": "Control Fruit",
+          "seoName": "Control Fruit"
+        },
+        {
+          "id": 9491,
+          "name": "Dark Fruit",
+          "seoName": "Dark Fruit"
+        },
+        {
+          "id": 9492,
+          "name": "Dough Fruit",
+          "seoName": "Dough Fruit"
+        },
+        {
+          "id": 9493,
+          "name": "Dragon Fruit",
+          "seoName": "Dragon Fruit"
+        },
+        {
+          "id": 9494,
+          "name": "Flame Fruit",
+          "seoName": "Flame Fruit"
+        },
+        {
+          "id": 9495,
+          "name": "Ghost Fruit",
+          "seoName": "Ghost Fruit"
+        },
+        {
+          "id": 9496,
+          "name": "Gravity Fruit",
+          "seoName": "Gravity Fruit"
+        },
+        {
+          "id": 9497,
+          "name": "Ice Fruit",
+          "seoName": "Ice Fruit"
+        },
+        {
+          "id": 9498,
+          "name": "Kilo Fruit",
+          "seoName": "Kilo Fruit"
+        },
+        {
+          "id": 9499,
+          "name": "Kitsune Fruit",
+          "seoName": "Kitsune Fruit"
+        },
+        {
+          "id": 9500,
+          "name": "Leopard Fruit",
+          "seoName": "Leopard Fruit"
+        },
+        {
+          "id": 9501,
+          "name": "Light Fruit",
+          "seoName": "Light Fruit"
+        },
+        {
+          "id": 9502,
+          "name": "Love Fruit",
+          "seoName": "Love Fruit"
+        },
+        {
+          "id": 9503,
+          "name": "Magma Fruit",
+          "seoName": "Magma Fruit"
+        },
+        {
+          "id": 9504,
+          "name": "Mammoth Fruit",
+          "seoName": "Mammoth Fruit"
+        },
+        {
+          "id": 9505,
+          "name": "Pain Fruit",
+          "seoName": "Pain Fruit"
+        },
+        {
+          "id": 9506,
+          "name": "Paw Fruit",
+          "seoName": "Paw Fruit"
+        },
+        {
+          "id": 9507,
+          "name": "Phoenix Fruit",
+          "seoName": "Phoenix Fruit"
+        },
+        {
+          "id": 9508,
+          "name": "Portal Fruit",
+          "seoName": "Portal Fruit"
+        },
+        {
+          "id": 9509,
+          "name": "Quake Fruit",
+          "seoName": "Quake Fruit"
+        },
+        {
+          "id": 9510,
+          "name": "Revive Fruit",
+          "seoName": "Revive Fruit"
+        },
+        {
+          "id": 9511,
+          "name": "Rocket Fruit",
+          "seoName": "Rocket Fruit"
+        },
+        {
+          "id": 9512,
+          "name": "Rubber Fruit",
+          "seoName": "Rubber Fruit"
+        },
+        {
+          "id": 9513,
+          "name": "Rumble Fruit",
+          "seoName": "Rumble Fruit"
+        },
+        {
+          "id": 9514,
+          "name": "Sand Fruit",
+          "seoName": "Sand Fruit"
+        },
+        {
+          "id": 9515,
+          "name": "Shadow Fruit",
+          "seoName": "Shadow Fruit"
+        },
+        {
+          "id": 9516,
+          "name": "Smoke Fruit",
+          "seoName": "Smoke Fruit"
+        },
+        {
+          "id": 9517,
+          "name": "Soul Fruit",
+          "seoName": "Soul Fruit"
+        },
+        {
+          "id": 9518,
+          "name": "Sound Fruit",
+          "seoName": "Sound Fruit"
+        },
+        {
+          "id": 9519,
+          "name": "Spider Fruit",
+          "seoName": "Spider Fruit"
+        },
+        {
+          "id": 9520,
+          "name": "Spin Fruit",
+          "seoName": "Spin Fruit"
+        },
+        {
+          "id": 9521,
+          "name": "Spirit Fruit",
+          "seoName": "Spirit Fruit"
+        },
+        {
+          "id": 9522,
+          "name": "Spring Fruit",
+          "seoName": "Spring Fruit"
+        },
+        {
+          "id": 9523,
+          "name": "T-Rex Fruit",
+          "seoName": "T-Rex Fruit"
+        },
+        {
+          "id": 9524,
+          "name": "Venom Fruit",
+          "seoName": "Venom Fruit"
+        },
+        {
+          "id": 10105,
+          "name": "Gas Fruit",
+          "seoName": "Gas Fruit"
+        },
+        {
+          "id": 10106,
+          "name": "Blade Fruit",
+          "seoName": "Blade Fruit"
+        }
+      ]
+    },
+    {
+      "id": 1895,
+      "name": "Money",
+      "seoName": "Money",
+      "subCategories": [
+        {
+          "id": 9464,
+          "name": "Money",
+          "seoName": "Money"
+        }
+      ]
+    },
+    {
+      "id": 1896,
+      "name": "Scrolls",
+      "seoName": "Scrolls",
+      "subCategories": [
+        {
+          "id": 9465,
+          "name": "Scrolls",
+          "seoName": "Scrolls"
+        }
+      ]
+    },
+    {
+      "id": 1897,
+      "name": "Gamepass",
+      "seoName": "Gamepass",
+      "subCategories": [
+        {
+          "id": 9466,
+          "name": "Gamepass",
+          "seoName": "Gamepass"
+        }
+      ]
+    },
+    {
+      "id": 1898,
+      "name": "Fragment",
+      "seoName": "Fragment",
+      "subCategories": [
+        {
+          "id": 9467,
+          "name": "Fragment",
+          "seoName": "Fragment"
+        }
+      ]
+    },
+    {
+      "id": 1899,
+      "name": "Fighting Styles",
+      "seoName": "Fighting Styles",
+      "subCategories": [
+        {
+          "id": 9597,
+          "name": "Fighting Style",
+          "seoName": "Fighting Style"
+        }
+      ]
+    },
+    {
+      "id": 1900,
+      "name": "Swords",
+      "seoName": "Swords",
+      "subCategories": [
+        {
+          "id": 9469,
+          "name": "Swords",
+          "seoName": "Swords"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13899,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

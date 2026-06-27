@@ -1,0 +1,84 @@
+{
+  "game_id": 14729,
+  "game": "battlefield",
+  "game_name": "Battlefield - BF6 / REDSEC & All Legacy Versions",
+  "seo_name": "Battlefield",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 2086,
+      "name": "Twitch Drops",
+      "seoName": "Twitch Drops",
+      "subCategories": [
+        {
+          "id": 10392,
+          "name": "Twitch Drops",
+          "seoName": "Twitch Drops"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14769,
+      "name": "PC"
+    },
+    {
+      "id": 14770,
+      "name": "PS"
+    },
+    {
+      "id": 14771,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

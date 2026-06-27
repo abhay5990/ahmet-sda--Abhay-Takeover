@@ -81,12 +81,8 @@
         "type": "string",
         "required": true,
         "values": [
-          "PC",
-          "PlayStation",
-          "Xbox",
-          "Android",
           "iOS",
-          "Switch"
+          "Android"
         ]
       }
     },

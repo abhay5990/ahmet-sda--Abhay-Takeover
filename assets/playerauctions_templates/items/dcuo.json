@@ -1,0 +1,313 @@
+{
+  "game_id": 3712,
+  "game": "dcuo",
+  "game_name": "DC Universe Online",
+  "seo_name": "DCUO",
+  "currencyName": "Cash",
+  "categories": [
+    {
+      "id": 1415,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 6503,
+          "name": "One-Handed",
+          "seoName": "One-Handed"
+        },
+        {
+          "id": 6504,
+          "name": "Two-Handed",
+          "seoName": "Two-Handed"
+        },
+        {
+          "id": 6505,
+          "name": "Dual Wield",
+          "seoName": "Dual Wield"
+        },
+        {
+          "id": 6506,
+          "name": "Staff",
+          "seoName": "Staff"
+        },
+        {
+          "id": 6507,
+          "name": "Bow",
+          "seoName": "Bow"
+        },
+        {
+          "id": 6508,
+          "name": "Dual Pistols",
+          "seoName": "Dual Pistols"
+        },
+        {
+          "id": 6509,
+          "name": "Rifle",
+          "seoName": "Rifle"
+        },
+        {
+          "id": 6510,
+          "name": "Martial Arts",
+          "seoName": "Martial Arts"
+        },
+        {
+          "id": 6511,
+          "name": "Brawling",
+          "seoName": "Brawling"
+        },
+        {
+          "id": 6512,
+          "name": "Shield",
+          "seoName": "Shield"
+        },
+        {
+          "id": 6513,
+          "name": "Hand Blaster",
+          "seoName": "Hand Blaster"
+        }
+      ]
+    },
+    {
+      "id": 1416,
+      "name": "Gear",
+      "seoName": "Gear",
+      "subCategories": [
+        {
+          "id": 6514,
+          "name": "Artifacts",
+          "seoName": "Artifacts"
+        },
+        {
+          "id": 6515,
+          "name": "PVP Items",
+          "seoName": "PVP Items"
+        },
+        {
+          "id": 6516,
+          "name": "Exobytes and Augments",
+          "seoName": "Exobytes and Augments"
+        }
+      ]
+    },
+    {
+      "id": 1417,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 6517,
+          "name": "Tokens",
+          "seoName": "Tokens"
+        },
+        {
+          "id": 6518,
+          "name": "Lockboxes",
+          "seoName": "Lockboxes"
+        },
+        {
+          "id": 6519,
+          "name": "Other Consumables",
+          "seoName": "Other Consumables"
+        }
+      ]
+    },
+    {
+      "id": 1418,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 6520,
+          "name": "Chroma Packs",
+          "seoName": "Chroma Packs"
+        },
+        {
+          "id": 6521,
+          "name": "Aura",
+          "seoName": "Aura"
+        },
+        {
+          "id": 6522,
+          "name": "Roles",
+          "seoName": "Roles"
+        },
+        {
+          "id": 6523,
+          "name": "Style Set",
+          "seoName": "Style Set"
+        },
+        {
+          "id": 6540,
+          "name": "Hair Styles",
+          "seoName": "Hair Styles"
+        },
+        {
+          "id": 6541,
+          "name": "Face Styles",
+          "seoName": "Face Styles"
+        },
+        {
+          "id": 6542,
+          "name": "Leg Styles",
+          "seoName": "Leg Styles"
+        },
+        {
+          "id": 6543,
+          "name": "Feet Styles",
+          "seoName": "Feet Styles"
+        },
+        {
+          "id": 6544,
+          "name": "Head Styles",
+          "seoName": "Head Styles"
+        },
+        {
+          "id": 6545,
+          "name": "Hand Styles",
+          "seoName": "Hand Styles"
+        },
+        {
+          "id": 6546,
+          "name": "Back Styles",
+          "seoName": "Back Styles"
+        },
+        {
+          "id": 6547,
+          "name": "Chest Styles",
+          "seoName": "Chest Styles"
+        },
+        {
+          "id": 6548,
+          "name": "Weapon Styles",
+          "seoName": "Weapon Styles"
+        },
+        {
+          "id": 6549,
+          "name": "Waist Styles",
+          "seoName": "Waist Styles"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 4518,
+      "name": "US PC",
+      "subCategories": [
+        {
+          "id": 4519,
+          "name": "Heroes"
+        },
+        {
+          "id": 4520,
+          "name": "Villains"
+        }
+      ]
+    },
+    {
+      "id": 4524,
+      "name": "EU PC",
+      "subCategories": [
+        {
+          "id": 4525,
+          "name": "Heroes"
+        },
+        {
+          "id": 4526,
+          "name": "Villains"
+        }
+      ]
+    },
+    {
+      "id": 6585,
+      "name": "EU PS4",
+      "subCategories": [
+        {
+          "id": 6589,
+          "name": "Heroes"
+        },
+        {
+          "id": 6590,
+          "name": "Villains"
+        }
+      ]
+    },
+    {
+      "id": 6587,
+      "name": "US PS4",
+      "subCategories": [
+        {
+          "id": 6593,
+          "name": "Heroes"
+        },
+        {
+          "id": 6594,
+          "name": "Villains"
+        }
+      ]
+    },
+    {
+      "id": 6588,
+      "name": "US Xbox",
+      "subCategories": [
+        {
+          "id": 6596,
+          "name": "Heroes"
+        },
+        {
+          "id": 6595,
+          "name": "Villains"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

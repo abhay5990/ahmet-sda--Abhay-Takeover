@@ -1,0 +1,280 @@
+{
+  "game_id": 8313,
+  "game": "ashes-of-creation",
+  "game_name": "Ashes of Creation",
+  "seo_name": "Ashes-of-Creation",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 2094,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 10479,
+          "name": "Zince",
+          "seoName": "Zince"
+        },
+        {
+          "id": 10480,
+          "name": "Copper",
+          "seoName": "Copper"
+        },
+        {
+          "id": 10481,
+          "name": "Ruby",
+          "seoName": "Ruby"
+        },
+        {
+          "id": 10482,
+          "name": "Emblem",
+          "seoName": "Emblem"
+        },
+        {
+          "id": 10483,
+          "name": "Others",
+          "seoName": "Others"
+        }
+      ]
+    },
+    {
+      "id": 2095,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 10484,
+          "name": "Swords",
+          "seoName": "Swords"
+        },
+        {
+          "id": 10485,
+          "name": "Axes",
+          "seoName": "Axes"
+        },
+        {
+          "id": 10486,
+          "name": "Maces",
+          "seoName": "Maces"
+        },
+        {
+          "id": 10487,
+          "name": "Daggers",
+          "seoName": "Daggers"
+        },
+        {
+          "id": 10488,
+          "name": "Staves",
+          "seoName": "Staves"
+        },
+        {
+          "id": 10489,
+          "name": "Wands",
+          "seoName": "Wands"
+        },
+        {
+          "id": 10490,
+          "name": "Scepters",
+          "seoName": "Scepters"
+        },
+        {
+          "id": 10491,
+          "name": "Bows",
+          "seoName": "Bows"
+        },
+        {
+          "id": 10492,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 10493,
+          "name": "Focus Items",
+          "seoName": "Focus Items"
+        }
+      ]
+    },
+    {
+      "id": 2096,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 10494,
+          "name": "Helmet",
+          "seoName": "Helmet"
+        },
+        {
+          "id": 10495,
+          "name": "Chest",
+          "seoName": "Chest"
+        },
+        {
+          "id": 10496,
+          "name": "Shoulders",
+          "seoName": "Shoulders"
+        },
+        {
+          "id": 10497,
+          "name": "Gloves",
+          "seoName": "Gloves"
+        },
+        {
+          "id": 10498,
+          "name": "Belt",
+          "seoName": "Belt"
+        },
+        {
+          "id": 10499,
+          "name": "Legs",
+          "seoName": "Legs"
+        },
+        {
+          "id": 10500,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 10501,
+          "name": "Necklace",
+          "seoName": "Necklace"
+        }
+      ]
+    },
+    {
+      "id": 2097,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 10502,
+          "name": "Elixirs",
+          "seoName": "Elixirs"
+        },
+        {
+          "id": 10503,
+          "name": "Potions",
+          "seoName": "Potions"
+        },
+        {
+          "id": 10504,
+          "name": "Scrolls",
+          "seoName": "Scrolls"
+        }
+      ]
+    },
+    {
+      "id": 2098,
+      "name": "Artisan Gear",
+      "seoName": "Artisan Gear",
+      "subCategories": [
+        {
+          "id": 10505,
+          "name": "Gathering Tools",
+          "seoName": "Gathering Tools"
+        },
+        {
+          "id": 10506,
+          "name": "Processing Tools",
+          "seoName": "Processing Tools"
+        },
+        {
+          "id": 10507,
+          "name": "Crafting Tools",
+          "seoName": "Crafting Tools"
+        }
+      ]
+    },
+    {
+      "id": 2099,
+      "name": "Mounts",
+      "seoName": "Mounts",
+      "subCategories": [
+        {
+          "id": 10508,
+          "name": "Mounts",
+          "seoName": "Mounts"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14332,
+      "name": "Shol - US"
+    },
+    {
+      "id": 14208,
+      "name": "Lotharia - EU"
+    },
+    {
+      "id": 8314,
+      "name": "Lyneth - US"
+    },
+    {
+      "id": 14980,
+      "name": "Pelune- EU"
+    },
+    {
+      "id": 14978,
+      "name": "Resna - US"
+    },
+    {
+      "id": 14979,
+      "name": "Tenok - EU"
+    },
+    {
+      "id": 14207,
+      "name": "Vyra - US"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

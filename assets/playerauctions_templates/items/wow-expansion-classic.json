@@ -1,0 +1,1146 @@
+{
+  "game_id": 12856,
+  "game": "wow-expansion-classic",
+  "game_name": "World of Warcraft: Mists of Pandaria Classic",
+  "seo_name": "WoW-Expansion-Classic",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1479,
+      "name": "Gear Sets",
+      "seoName": "Gear Sets",
+      "subCategories": [
+        {
+          "id": 7269,
+          "name": "Titansteel",
+          "seoName": "Titansteel"
+        },
+        {
+          "id": 7270,
+          "name": "Earthgiving",
+          "seoName": "Earthgiving"
+        },
+        {
+          "id": 7271,
+          "name": "Ebonweave",
+          "seoName": "Ebonweave"
+        },
+        {
+          "id": 7272,
+          "name": "Moonshroud",
+          "seoName": "Moonshroud"
+        },
+        {
+          "id": 7273,
+          "name": "Trollwoven",
+          "seoName": "Trollwoven"
+        },
+        {
+          "id": 7274,
+          "name": "Giantmaim",
+          "seoName": "Giantmaim"
+        }
+      ]
+    },
+    {
+      "id": 1480,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 7275,
+          "name": "Blade Twister",
+          "seoName": "Blade Twister"
+        },
+        {
+          "id": 7276,
+          "name": "Glorenzelg",
+          "seoName": "Glorenzelg"
+        },
+        {
+          "id": 7277,
+          "name": "Battered Hilt",
+          "seoName": "Battered Hilt"
+        },
+        {
+          "id": 7278,
+          "name": "Fezzik's Auto Cannon",
+          "seoName": "Fezzik's Auto Cannon"
+        },
+        {
+          "id": 7279,
+          "name": "Titansteel Spellblade",
+          "seoName": "Titansteel Spellblade"
+        },
+        {
+          "id": 7280,
+          "name": "Titansteel Shanker",
+          "seoName": "Titansteel Shanker"
+        },
+        {
+          "id": 7281,
+          "name": "Titansteel Destroyer",
+          "seoName": "Titansteel Destroyer"
+        }
+      ]
+    },
+    {
+      "id": 1481,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 7282,
+          "name": "Feasts",
+          "seoName": "Feasts"
+        },
+        {
+          "id": 7283,
+          "name": "Flasks",
+          "seoName": "Flasks"
+        },
+        {
+          "id": 7284,
+          "name": "Food",
+          "seoName": "Food"
+        },
+        {
+          "id": 7285,
+          "name": "Elixirs",
+          "seoName": "Elixirs"
+        },
+        {
+          "id": 7286,
+          "name": "Bandages",
+          "seoName": "Bandages"
+        },
+        {
+          "id": 7287,
+          "name": "Scrolls",
+          "seoName": "Scrolls"
+        },
+        {
+          "id": 7288,
+          "name": "Weapon Enhancements",
+          "seoName": "Weapon Enhancements"
+        },
+        {
+          "id": 7943,
+          "name": "Herbs",
+          "seoName": "Herbs"
+        }
+      ]
+    },
+    {
+      "id": 1482,
+      "name": "Mounts",
+      "seoName": "Mounts",
+      "subCategories": [
+        {
+          "id": 7289,
+          "name": "Rivendare's Charger",
+          "seoName": "Rivendare's Charger"
+        },
+        {
+          "id": 7290,
+          "name": "Swift Razashi Raptor",
+          "seoName": "Swift Razashi Raptor"
+        },
+        {
+          "id": 7291,
+          "name": "Swift Spectral Tiger",
+          "seoName": "Swift Spectral Tiger"
+        },
+        {
+          "id": 7292,
+          "name": "Raven Lord",
+          "seoName": "Raven Lord"
+        },
+        {
+          "id": 7293,
+          "name": "White Polar Bear",
+          "seoName": "White Polar Bear"
+        },
+        {
+          "id": 7294,
+          "name": "Fiery Warhorse",
+          "seoName": "Fiery Warhorse"
+        },
+        {
+          "id": 7295,
+          "name": "Invincible",
+          "seoName": "Invincible"
+        },
+        {
+          "id": 7296,
+          "name": "Green Proto Drake",
+          "seoName": "Green Proto Drake"
+        },
+        {
+          "id": 7297,
+          "name": "Mimiron's Head",
+          "seoName": "Mimiron's Head"
+        },
+        {
+          "id": 7298,
+          "name": "Violet Proto-Drake",
+          "seoName": "Violet Proto-Drake"
+        },
+        {
+          "id": 7299,
+          "name": "Grand Black War Mammoth",
+          "seoName": "Grand Black War Mammoth"
+        }
+      ]
+    },
+    {
+      "id": 1483,
+      "name": "Pets",
+      "seoName": "Pets",
+      "subCategories": [
+        {
+          "id": 7300,
+          "name": "Defense",
+          "seoName": "Defense"
+        },
+        {
+          "id": 7301,
+          "name": "Offense",
+          "seoName": "Offense"
+        },
+        {
+          "id": 7302,
+          "name": "General",
+          "seoName": "General"
+        }
+      ]
+    },
+    {
+      "id": 1484,
+      "name": "Profession Leveling Kits",
+      "seoName": "Profession Leveling Kits",
+      "subCategories": [
+        {
+          "id": 7303,
+          "name": "Alchemy",
+          "seoName": "Alchemy"
+        },
+        {
+          "id": 7304,
+          "name": "Blacksmithing",
+          "seoName": "Blacksmithing"
+        },
+        {
+          "id": 7305,
+          "name": "Cooking",
+          "seoName": "Cooking"
+        },
+        {
+          "id": 7306,
+          "name": "Enchanting",
+          "seoName": "Enchanting"
+        },
+        {
+          "id": 7307,
+          "name": "First Aid",
+          "seoName": "First Aid"
+        },
+        {
+          "id": 7308,
+          "name": "Herbalism",
+          "seoName": "Herbalism"
+        },
+        {
+          "id": 7309,
+          "name": "Jewelcrafting",
+          "seoName": "Jewelcrafting"
+        },
+        {
+          "id": 7310,
+          "name": "Leatherworking",
+          "seoName": "Leatherworking"
+        },
+        {
+          "id": 7311,
+          "name": "Mining",
+          "seoName": "Mining"
+        },
+        {
+          "id": 7312,
+          "name": "Skinning",
+          "seoName": "Skinning"
+        },
+        {
+          "id": 7313,
+          "name": "Tailoring",
+          "seoName": "Tailoring"
+        },
+        {
+          "id": 7375,
+          "name": "Engineering",
+          "seoName": "Engineering"
+        }
+      ]
+    },
+    {
+      "id": 1485,
+      "name": "Gems",
+      "seoName": "Gems",
+      "subCategories": [
+        {
+          "id": 7314,
+          "name": "Red",
+          "seoName": "Red"
+        },
+        {
+          "id": 7315,
+          "name": "Yellow",
+          "seoName": "Yellow"
+        },
+        {
+          "id": 7316,
+          "name": "Blue",
+          "seoName": "Blue"
+        },
+        {
+          "id": 7317,
+          "name": "Orange",
+          "seoName": "Orange"
+        },
+        {
+          "id": 7318,
+          "name": "Green",
+          "seoName": "Green"
+        },
+        {
+          "id": 7319,
+          "name": "Purple",
+          "seoName": "Purple"
+        },
+        {
+          "id": 7320,
+          "name": "Prismatic",
+          "seoName": "Prismatic"
+        },
+        {
+          "id": 7321,
+          "name": "Meta",
+          "seoName": "Meta"
+        }
+      ]
+    },
+    {
+      "id": 1486,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 7322,
+          "name": "Alchemy Materials",
+          "seoName": "Alchemy Materials"
+        },
+        {
+          "id": 7323,
+          "name": "Blacksmithing Materials",
+          "seoName": "Blacksmithing Materials"
+        },
+        {
+          "id": 7324,
+          "name": "Cooking Materials",
+          "seoName": "Cooking Materials"
+        },
+        {
+          "id": 7325,
+          "name": "Enchanting Materials",
+          "seoName": "Enchanting Materials"
+        },
+        {
+          "id": 7326,
+          "name": "First Aid Materials",
+          "seoName": "First Aid Materials"
+        },
+        {
+          "id": 7327,
+          "name": "Herbalism Materials",
+          "seoName": "Herbalism Materials"
+        },
+        {
+          "id": 7328,
+          "name": "Jewelcrafting Materials",
+          "seoName": "Jewelcrafting Materials"
+        },
+        {
+          "id": 7329,
+          "name": "Leatherworking Materials",
+          "seoName": "Leatherworking Materials"
+        },
+        {
+          "id": 7330,
+          "name": "Mining Materials",
+          "seoName": "Mining Materials"
+        },
+        {
+          "id": 7331,
+          "name": "Skinning Materials",
+          "seoName": "Skinning Materials"
+        },
+        {
+          "id": 7332,
+          "name": "Tailoring Materials",
+          "seoName": "Tailoring Materials"
+        },
+        {
+          "id": 7333,
+          "name": "Inscription Materials",
+          "seoName": "Inscription Materials"
+        }
+      ]
+    },
+    {
+      "id": 1487,
+      "name": "Recipes",
+      "seoName": "Recipes",
+      "subCategories": [
+        {
+          "id": 7334,
+          "name": "Alchemy Recipes",
+          "seoName": "Alchemy Recipes"
+        },
+        {
+          "id": 7335,
+          "name": "Blacksmithing Recipes",
+          "seoName": "Blacksmithing Recipes"
+        },
+        {
+          "id": 7336,
+          "name": "Enchanting Recipes",
+          "seoName": "Enchanting Recipes"
+        },
+        {
+          "id": 7337,
+          "name": "Engineering Recipes",
+          "seoName": "Engineering Recipes"
+        },
+        {
+          "id": 7338,
+          "name": "First Aid Recipes",
+          "seoName": "First Aid Recipes"
+        },
+        {
+          "id": 7339,
+          "name": "Fishing Recipes",
+          "seoName": "Fishing Recipes"
+        },
+        {
+          "id": 7340,
+          "name": "Jewelcrafting Recipes",
+          "seoName": "Jewelcrafting Recipes"
+        },
+        {
+          "id": 7341,
+          "name": "Leatherworking Recipes",
+          "seoName": "Leatherworking Recipes"
+        },
+        {
+          "id": 7342,
+          "name": "Mining Recipes",
+          "seoName": "Mining Recipes"
+        },
+        {
+          "id": 7343,
+          "name": "Tailoring Recipes",
+          "seoName": "Tailoring Recipes"
+        },
+        {
+          "id": 7344,
+          "name": "Other Recipes",
+          "seoName": "Other Recipes"
+        }
+      ]
+    },
+    {
+      "id": 1488,
+      "name": "Tier-sets",
+      "seoName": "Tier-sets",
+      "subCategories": [
+        {
+          "id": 7345,
+          "name": "Tier 7",
+          "seoName": "Tier 7"
+        },
+        {
+          "id": 7346,
+          "name": "Tier 8",
+          "seoName": "Tier 8"
+        },
+        {
+          "id": 7347,
+          "name": "Tier 9",
+          "seoName": "Tier 9"
+        },
+        {
+          "id": 7348,
+          "name": "Tier 10",
+          "seoName": "Tier 10"
+        },
+        {
+          "id": 7349,
+          "name": "Season 5",
+          "seoName": "Season 5"
+        },
+        {
+          "id": 7350,
+          "name": "Season 6",
+          "seoName": "Season 6"
+        },
+        {
+          "id": 7351,
+          "name": "Season 7",
+          "seoName": "Season 7"
+        },
+        {
+          "id": 7352,
+          "name": "Season 8",
+          "seoName": "Season 8"
+        }
+      ]
+    },
+    {
+      "id": 1489,
+      "name": "Containers",
+      "seoName": "Containers",
+      "subCategories": [
+        {
+          "id": 7353,
+          "name": "Bags",
+          "seoName": "Bags"
+        },
+        {
+          "id": 7354,
+          "name": "Cooking Bags",
+          "seoName": "Cooking Bags"
+        },
+        {
+          "id": 7355,
+          "name": "Enchanting Bags",
+          "seoName": "Enchanting Bags"
+        },
+        {
+          "id": 7356,
+          "name": "Engineering Bags",
+          "seoName": "Engineering Bags"
+        },
+        {
+          "id": 7357,
+          "name": "Gem Bags",
+          "seoName": "Gem Bags"
+        },
+        {
+          "id": 7358,
+          "name": "Herb Bags",
+          "seoName": "Herb Bags"
+        },
+        {
+          "id": 7359,
+          "name": "Leatherworking Bags",
+          "seoName": "Leatherworking Bags"
+        },
+        {
+          "id": 7360,
+          "name": "Mining Bags",
+          "seoName": "Mining Bags"
+        },
+        {
+          "id": 7361,
+          "name": "Soul Bags",
+          "seoName": "Soul Bags"
+        },
+        {
+          "id": 7362,
+          "name": "Tackle Boxes",
+          "seoName": "Tackle Boxes"
+        }
+      ]
+    },
+    {
+      "id": 1490,
+      "name": "Armors",
+      "seoName": "Armors",
+      "subCategories": [
+        {
+          "id": 7364,
+          "name": "Cloaks",
+          "seoName": "Cloaks"
+        },
+        {
+          "id": 7365,
+          "name": "Clothes",
+          "seoName": "Clothes"
+        },
+        {
+          "id": 7366,
+          "name": "Leather",
+          "seoName": "Leather"
+        },
+        {
+          "id": 7367,
+          "name": "Mail",
+          "seoName": "Mail"
+        },
+        {
+          "id": 7368,
+          "name": "Necklaces",
+          "seoName": "Necklaces"
+        },
+        {
+          "id": 7369,
+          "name": "Plate",
+          "seoName": "Plate"
+        },
+        {
+          "id": 7370,
+          "name": "Rings and Off Hand",
+          "seoName": "Rings and Off Hand"
+        },
+        {
+          "id": 7371,
+          "name": "Trinkets",
+          "seoName": "Trinkets"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13073,
+      "name": "US",
+      "subCategories": [
+        {
+          "id": 13185,
+          "name": "Angerforge - Alliance"
+        },
+        {
+          "id": 13186,
+          "name": "Angerforge - Horde"
+        },
+        {
+          "id": 13076,
+          "name": "Ashkandi - Alliance"
+        },
+        {
+          "id": 13077,
+          "name": "Ashkandi - Horde"
+        },
+        {
+          "id": 13078,
+          "name": "Atiesh - Alliance"
+        },
+        {
+          "id": 13079,
+          "name": "Atiesh - Horde"
+        },
+        {
+          "id": 13080,
+          "name": "Azuresong - Alliance"
+        },
+        {
+          "id": 13081,
+          "name": "Azuresong - Horde"
+        },
+        {
+          "id": 13082,
+          "name": "Benediction - Alliance"
+        },
+        {
+          "id": 13083,
+          "name": "Benediction - Horde"
+        },
+        {
+          "id": 13084,
+          "name": "Bloodsail Buccaneers - Alliance"
+        },
+        {
+          "id": 13085,
+          "name": "Bloodsail Buccaneers - Horde"
+        },
+        {
+          "id": 13086,
+          "name": "Earthfury - Alliance"
+        },
+        {
+          "id": 13087,
+          "name": "Earthfury - Horde"
+        },
+        {
+          "id": 13194,
+          "name": "Eranikus - Horde"
+        },
+        {
+          "id": 13193,
+          "name": "Eranikus- Alliance"
+        },
+        {
+          "id": 13088,
+          "name": "Faerlina - Alliance"
+        },
+        {
+          "id": 13089,
+          "name": "Faerlina - Horde"
+        },
+        {
+          "id": 14615,
+          "name": "Galakras - Alliance"
+        },
+        {
+          "id": 14616,
+          "name": "Galakras - Horde"
+        },
+        {
+          "id": 13091,
+          "name": "Grobbulus - Alliance"
+        },
+        {
+          "id": 13092,
+          "name": "Grobbulus - Horde"
+        },
+        {
+          "id": 14617,
+          "name": "Immerseus - Alliance"
+        },
+        {
+          "id": 14618,
+          "name": "Immerseus - Horde"
+        },
+        {
+          "id": 14619,
+          "name": "Lei Shen - Alliance"
+        },
+        {
+          "id": 14620,
+          "name": "Lei Shen - Horde"
+        },
+        {
+          "id": 13093,
+          "name": "Maladath - Horde"
+        },
+        {
+          "id": 13094,
+          "name": "Maladath- Alliance"
+        },
+        {
+          "id": 13095,
+          "name": "Mankrik - Alliance"
+        },
+        {
+          "id": 13096,
+          "name": "Mankrik - Horde"
+        },
+        {
+          "id": 13097,
+          "name": "Myzrael - Alliance"
+        },
+        {
+          "id": 13098,
+          "name": "Myzrael - Horde"
+        },
+        {
+          "id": 14621,
+          "name": "Nazgrim - Alliance"
+        },
+        {
+          "id": 14622,
+          "name": "Nazgrim - Horde"
+        },
+        {
+          "id": 13099,
+          "name": "Old Blanchy - Alliance"
+        },
+        {
+          "id": 13100,
+          "name": "Old Blanchy - Horde"
+        },
+        {
+          "id": 13101,
+          "name": "Pagle - Alliance"
+        },
+        {
+          "id": 13102,
+          "name": "Pagle - Horde"
+        },
+        {
+          "id": 14623,
+          "name": "Ra-den - Alliance"
+        },
+        {
+          "id": 14624,
+          "name": "Ra-den - Horde"
+        },
+        {
+          "id": 13103,
+          "name": "Remulos - Alliance"
+        },
+        {
+          "id": 13104,
+          "name": "Remulos - Horde"
+        },
+        {
+          "id": 13105,
+          "name": "Skyfury - Alliance"
+        },
+        {
+          "id": 13106,
+          "name": "Skyfury - Horde"
+        },
+        {
+          "id": 13107,
+          "name": "Sulfuras - Alliance"
+        },
+        {
+          "id": 13108,
+          "name": "Sulfuras - Horde"
+        },
+        {
+          "id": 13109,
+          "name": "Westfall - Alliance"
+        },
+        {
+          "id": 13110,
+          "name": "Westfall - Horde"
+        },
+        {
+          "id": 13111,
+          "name": "Whitemane - Alliance"
+        },
+        {
+          "id": 13112,
+          "name": "Whitemane - Horde"
+        },
+        {
+          "id": 13113,
+          "name": "Windseeker - Alliance"
+        },
+        {
+          "id": 13114,
+          "name": "Windseeker - Horde"
+        },
+        {
+          "id": 13115,
+          "name": "Yojamba - Alliance"
+        },
+        {
+          "id": 13116,
+          "name": "Yojamba - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13117,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 13118,
+          "name": "Amnennar - Alliance"
+        },
+        {
+          "id": 13119,
+          "name": "Amnennar - Horde"
+        },
+        {
+          "id": 13120,
+          "name": "Ashbringer - Alliance"
+        },
+        {
+          "id": 13121,
+          "name": "Ashbringer - Horde"
+        },
+        {
+          "id": 13122,
+          "name": "Auberdine - Alliance"
+        },
+        {
+          "id": 13123,
+          "name": "Auberdine - Horde"
+        },
+        {
+          "id": 13124,
+          "name": "Earthshaker - Alliance"
+        },
+        {
+          "id": 13125,
+          "name": "Earthshaker - Horde"
+        },
+        {
+          "id": 13126,
+          "name": "Everlook - Alliance"
+        },
+        {
+          "id": 13127,
+          "name": "Everlook - Horde"
+        },
+        {
+          "id": 13128,
+          "name": "Firemaw - Alliance"
+        },
+        {
+          "id": 13129,
+          "name": "Firemaw - Horde"
+        },
+        {
+          "id": 14625,
+          "name": "Garalon - Alliance"
+        },
+        {
+          "id": 14626,
+          "name": "Garalon - Horde"
+        },
+        {
+          "id": 13130,
+          "name": "Gehennas - Alliance"
+        },
+        {
+          "id": 13131,
+          "name": "Gehennas - Horde"
+        },
+        {
+          "id": 13169,
+          "name": "Giantstalker - Alliance"
+        },
+        {
+          "id": 13170,
+          "name": "Giantstalker - Horde"
+        },
+        {
+          "id": 13132,
+          "name": "Golemagg - Alliance"
+        },
+        {
+          "id": 13133,
+          "name": "Golemagg - Horde"
+        },
+        {
+          "id": 14627,
+          "name": "Hoptallus - Alliance"
+        },
+        {
+          "id": 14628,
+          "name": "Hoptallus - Horde"
+        },
+        {
+          "id": 13134,
+          "name": "Hydraxian Waterlords - Alliance"
+        },
+        {
+          "id": 13135,
+          "name": "Hydraxian Waterlords - Horde"
+        },
+        {
+          "id": 13204,
+          "name": "Jindo - Alliance"
+        },
+        {
+          "id": 13203,
+          "name": "Jindo - Horde"
+        },
+        {
+          "id": 13136,
+          "name": "Lakeshire - Alliance"
+        },
+        {
+          "id": 13137,
+          "name": "Lakeshire - Horde"
+        },
+        {
+          "id": 13138,
+          "name": "Mandokir - Alliance"
+        },
+        {
+          "id": 13139,
+          "name": "Mandokir - Horde"
+        },
+        {
+          "id": 13140,
+          "name": "Mirage Raceway - Alliance"
+        },
+        {
+          "id": 13141,
+          "name": "Mirage Raceway - Horde"
+        },
+        {
+          "id": 13142,
+          "name": "Mograine - Alliance"
+        },
+        {
+          "id": 13143,
+          "name": "Mograine - Horde"
+        },
+        {
+          "id": 13144,
+          "name": "Nethergarde Keep - Alliance"
+        },
+        {
+          "id": 13145,
+          "name": "Nethergarde Keep - Horde"
+        },
+        {
+          "id": 14629,
+          "name": "Norushen - Alliance"
+        },
+        {
+          "id": 14630,
+          "name": "Norushen - Horde"
+        },
+        {
+          "id": 14631,
+          "name": "Ook Ook - Alliance"
+        },
+        {
+          "id": 14632,
+          "name": "Ook Ook - Horde"
+        },
+        {
+          "id": 13146,
+          "name": "Patchwerk - Alliance"
+        },
+        {
+          "id": 13147,
+          "name": "Patchwerk - Horde"
+        },
+        {
+          "id": 13148,
+          "name": "Pyrewood Village - Alliance"
+        },
+        {
+          "id": 13149,
+          "name": "Pyrewood Village - Horde"
+        },
+        {
+          "id": 13150,
+          "name": "Razorfen - Alliance"
+        },
+        {
+          "id": 13151,
+          "name": "Razorfen - Horde"
+        },
+        {
+          "id": 14633,
+          "name": "Shek'zeer - Alliance"
+        },
+        {
+          "id": 14634,
+          "name": "Shek'zeer - Horde"
+        },
+        {
+          "id": 13152,
+          "name": "Sulfuron - Alliance"
+        },
+        {
+          "id": 13153,
+          "name": "Sulfuron - Horde"
+        },
+        {
+          "id": 13167,
+          "name": "Thekal - Alliance"
+        },
+        {
+          "id": 13168,
+          "name": "Thekal - Horde"
+        },
+        {
+          "id": 13154,
+          "name": "Transcendence - Alliance"
+        },
+        {
+          "id": 13155,
+          "name": "Transcendence - Horde"
+        },
+        {
+          "id": 13156,
+          "name": "Venoxis - Alliance"
+        },
+        {
+          "id": 13157,
+          "name": "Venoxis - Horde"
+        }
+      ]
+    },
+    {
+      "id": 13158,
+      "name": "Oceania",
+      "subCategories": [
+        {
+          "id": 13159,
+          "name": "Arugal - Alliance"
+        },
+        {
+          "id": 13160,
+          "name": "Arugal - Horde"
+        },
+        {
+          "id": 13163,
+          "name": "Remulos - Alliance"
+        },
+        {
+          "id": 13164,
+          "name": "Remulos - Horde"
+        },
+        {
+          "id": 13165,
+          "name": "Yojamba - Alliance"
+        },
+        {
+          "id": 13166,
+          "name": "Yojamba - Horde"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

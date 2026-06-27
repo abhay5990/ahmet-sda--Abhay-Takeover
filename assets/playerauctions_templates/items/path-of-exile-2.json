@@ -1,0 +1,590 @@
+{
+  "game_id": 13867,
+  "game": "path-of-exile-2",
+  "game_name": "Path of Exile 2",
+  "seo_name": "Path-of-Exile-2",
+  "currencyName": "Currency",
+  "categories": [
+    {
+      "id": 2004,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 10041,
+          "name": "Staff",
+          "seoName": "Staff"
+        },
+        {
+          "id": 10139,
+          "name": "Unarmed",
+          "seoName": "Unarmed"
+        },
+        {
+          "id": 10140,
+          "name": "Claw",
+          "seoName": "Claw"
+        },
+        {
+          "id": 10141,
+          "name": "Dagger",
+          "seoName": "Dagger"
+        },
+        {
+          "id": 10142,
+          "name": "One-Handed Sword",
+          "seoName": "One-Handed Sword"
+        },
+        {
+          "id": 10143,
+          "name": "One-Handed Axe",
+          "seoName": "One-Handed Axe"
+        },
+        {
+          "id": 10144,
+          "name": "One-Handed Mace",
+          "seoName": "One-Handed Mace"
+        },
+        {
+          "id": 10145,
+          "name": "Spear",
+          "seoName": "Spear"
+        },
+        {
+          "id": 10146,
+          "name": "Flail",
+          "seoName": "Flail"
+        },
+        {
+          "id": 10147,
+          "name": "Two-Handed Sword",
+          "seoName": "Two-Handed Sword"
+        },
+        {
+          "id": 10148,
+          "name": "Two-Handed Axe",
+          "seoName": "Two-Handed Axe"
+        },
+        {
+          "id": 10149,
+          "name": "Two-Handed Mace",
+          "seoName": "Two-Handed Mace"
+        },
+        {
+          "id": 10150,
+          "name": "Warstaff",
+          "seoName": "Warstaff"
+        },
+        {
+          "id": 10151,
+          "name": "Bow",
+          "seoName": "Bow"
+        },
+        {
+          "id": 10152,
+          "name": "Crossbow",
+          "seoName": "Crossbow"
+        },
+        {
+          "id": 10153,
+          "name": "Wand",
+          "seoName": "Wand"
+        },
+        {
+          "id": 10154,
+          "name": "Sceptre",
+          "seoName": "Sceptre"
+        },
+        {
+          "id": 10155,
+          "name": "Fishing Rod",
+          "seoName": "Fishing Rod"
+        }
+      ]
+    },
+    {
+      "id": 2005,
+      "name": "Armour",
+      "seoName": "Armour",
+      "subCategories": [
+        {
+          "id": 10042,
+          "name": "Helmet",
+          "seoName": "Helmet"
+        },
+        {
+          "id": 10132,
+          "name": "Body Armour",
+          "seoName": "Body Armour"
+        },
+        {
+          "id": 10133,
+          "name": "Gloves",
+          "seoName": "Gloves"
+        },
+        {
+          "id": 10134,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 10135,
+          "name": "Quiver",
+          "seoName": "Quiver"
+        },
+        {
+          "id": 10136,
+          "name": "Shield",
+          "seoName": "Shield"
+        },
+        {
+          "id": 10137,
+          "name": "Focus",
+          "seoName": "Focus"
+        },
+        {
+          "id": 10138,
+          "name": "Buckler",
+          "seoName": "Buckler"
+        }
+      ]
+    },
+    {
+      "id": 2006,
+      "name": "Accessories",
+      "seoName": "Accessories",
+      "subCategories": [
+        {
+          "id": 10043,
+          "name": "Amulet",
+          "seoName": "Amulet"
+        },
+        {
+          "id": 10130,
+          "name": "Belt",
+          "seoName": "Belt"
+        },
+        {
+          "id": 10131,
+          "name": "Ring",
+          "seoName": "Ring"
+        }
+      ]
+    },
+    {
+      "id": 2007,
+      "name": "Uniques",
+      "seoName": "Uniques",
+      "subCategories": [
+        {
+          "id": 10044,
+          "name": "Other Uniques",
+          "seoName": "Other Uniques"
+        },
+        {
+          "id": 10192,
+          "name": "Ingenuity",
+          "seoName": "Ingenuity"
+        },
+        {
+          "id": 10193,
+          "name": "Astramentis",
+          "seoName": "Astramentis"
+        },
+        {
+          "id": 10194,
+          "name": "Morior Invictus Grand Regalia",
+          "seoName": "Morior Invictus Grand Regalia"
+        },
+        {
+          "id": 10195,
+          "name": "Temporalis Silk Robe",
+          "seoName": "Temporalis Silk Robe"
+        },
+        {
+          "id": 11264,
+          "name": "Unique Weapons",
+          "seoName": "Unique Weapons"
+        },
+        {
+          "id": 11265,
+          "name": "Unique Armour",
+          "seoName": "Unique Armour"
+        },
+        {
+          "id": 11266,
+          "name": "Unique Accessories",
+          "seoName": "Unique Accessories"
+        },
+        {
+          "id": 11267,
+          "name": "Unique Jewels",
+          "seoName": "Unique Jewels"
+        }
+      ]
+    },
+    {
+      "id": 2008,
+      "name": "Twitch Drops",
+      "seoName": "Twitch Drops",
+      "subCategories": [
+        {
+          "id": 10077,
+          "name": "Twitch Drops",
+          "seoName": "Twitch Drops"
+        },
+        {
+          "id": 10091,
+          "name": "Energising Bolt Flask Effect",
+          "seoName": "Energising Bolt Flask Effect"
+        },
+        {
+          "id": 10092,
+          "name": "Halo of the Righteous Helmet Attachment",
+          "seoName": "Halo of the Righteous Helmet Attachment"
+        },
+        {
+          "id": 10093,
+          "name": "Temporal Lord's Portal Effect",
+          "seoName": "Temporal Lord's Portal Effect"
+        },
+        {
+          "id": 10094,
+          "name": "Chimera Pet",
+          "seoName": "Chimera Pet"
+        },
+        {
+          "id": 10095,
+          "name": "Hands of Xesht Back Attachment",
+          "seoName": "Hands of Xesht Back Attachment"
+        }
+      ]
+    },
+    {
+      "id": 2011,
+      "name": "Builds",
+      "seoName": "Builds",
+      "subCategories": [
+        {
+          "id": 10080,
+          "name": "Mercenary Builds",
+          "seoName": "Mercenary Builds"
+        },
+        {
+          "id": 10081,
+          "name": "Monk Builds",
+          "seoName": "Monk Builds"
+        },
+        {
+          "id": 10082,
+          "name": "Ranger Builds",
+          "seoName": "Ranger Builds"
+        },
+        {
+          "id": 10083,
+          "name": "Sorceress Builds",
+          "seoName": "Sorceress Builds"
+        },
+        {
+          "id": 10084,
+          "name": "Warrior Builds",
+          "seoName": "Warrior Builds"
+        },
+        {
+          "id": 10085,
+          "name": "Witch Builds",
+          "seoName": "Witch Builds"
+        },
+        {
+          "id": 10298,
+          "name": "Huntress Builds",
+          "seoName": "Huntress Builds"
+        },
+        {
+          "id": 11268,
+          "name": "Druid Builds",
+          "seoName": "Druid Builds"
+        }
+      ]
+    },
+    {
+      "id": 2012,
+      "name": "Gems",
+      "seoName": "Gems",
+      "subCategories": [
+        {
+          "id": 10086,
+          "name": "Skill Gems",
+          "seoName": "Skill Gems"
+        },
+        {
+          "id": 10087,
+          "name": "Spirit Gems",
+          "seoName": "Spirit Gems"
+        },
+        {
+          "id": 10088,
+          "name": "Support Gems",
+          "seoName": "Support Gems"
+        }
+      ]
+    },
+    {
+      "id": 2018,
+      "name": "Gold",
+      "seoName": "Gold",
+      "subCategories": [
+        {
+          "id": 10107,
+          "name": "Gold",
+          "seoName": "Gold"
+        }
+      ]
+    },
+    {
+      "id": 2020,
+      "name": "Maps & Fragments",
+      "seoName": "Maps & Fragments",
+      "subCategories": [
+        {
+          "id": 10116,
+          "name": "Waystone",
+          "seoName": "Waystone"
+        },
+        {
+          "id": 10117,
+          "name": "Map Fragment",
+          "seoName": "Map Fragment"
+        },
+        {
+          "id": 10118,
+          "name": "Logbook",
+          "seoName": "Logbook"
+        },
+        {
+          "id": 10119,
+          "name": "Breachstone",
+          "seoName": "Breachstone"
+        },
+        {
+          "id": 10120,
+          "name": "Barya",
+          "seoName": "Barya"
+        },
+        {
+          "id": 10121,
+          "name": "Pinnacle Key",
+          "seoName": "Pinnacle Key"
+        },
+        {
+          "id": 10122,
+          "name": "Tablet",
+          "seoName": "Tablet"
+        },
+        {
+          "id": 10123,
+          "name": "Divination Card",
+          "seoName": "Divination Card"
+        },
+        {
+          "id": 10124,
+          "name": "Relic",
+          "seoName": "Relic"
+        }
+      ]
+    },
+    {
+      "id": 2021,
+      "name": "Omens",
+      "seoName": "Omens",
+      "subCategories": [
+        {
+          "id": 10125,
+          "name": "Omen",
+          "seoName": "Omen"
+        }
+      ]
+    },
+    {
+      "id": 2022,
+      "name": "Socketables",
+      "seoName": "Socketables",
+      "subCategories": [
+        {
+          "id": 10126,
+          "name": "Rune",
+          "seoName": "Rune"
+        },
+        {
+          "id": 10127,
+          "name": "Soul Core",
+          "seoName": "Soul Core"
+        }
+      ]
+    },
+    {
+      "id": 2023,
+      "name": "Jewels",
+      "seoName": "Jewels",
+      "subCategories": [
+        {
+          "id": 10128,
+          "name": "Jewel",
+          "seoName": "Jewel"
+        }
+      ]
+    },
+    {
+      "id": 2024,
+      "name": "Flasks",
+      "seoName": "Flasks",
+      "subCategories": [
+        {
+          "id": 10129,
+          "name": "Flask",
+          "seoName": "Flask"
+        }
+      ]
+    },
+    {
+      "id": 2063,
+      "name": "Packs",
+      "seoName": "Packs",
+      "subCategories": [
+        {
+          "id": 10341,
+          "name": "Currency Packs",
+          "seoName": "Currency Packs"
+        },
+        {
+          "id": 10342,
+          "name": "Other Packs",
+          "seoName": "Other Packs"
+        }
+      ]
+    },
+    {
+      "id": 2064,
+      "name": "Essences",
+      "seoName": "Essences",
+      "subCategories": [
+        {
+          "id": 10344,
+          "name": "Essences",
+          "seoName": "Essences"
+        }
+      ]
+    },
+    {
+      "id": 2180,
+      "name": "Mirrored Items",
+      "seoName": "Mirrored Items",
+      "subCategories": [
+        {
+          "id": 11260,
+          "name": "Mirrored Weapons",
+          "seoName": "Mirrored Weapons"
+        },
+        {
+          "id": 11261,
+          "name": "Mirrored Armour",
+          "seoName": "Mirrored Armour"
+        },
+        {
+          "id": 11262,
+          "name": "Mirrored Accessories",
+          "seoName": "Mirrored Accessories"
+        }
+      ]
+    },
+    {
+      "id": 2181,
+      "name": "Crafting Bases",
+      "seoName": "Crafting Bases",
+      "subCategories": [
+        {
+          "id": 11269,
+          "name": "Weapons Bases",
+          "seoName": "Weapons Bases"
+        },
+        {
+          "id": 11270,
+          "name": "Armour Bases",
+          "seoName": "Armour Bases"
+        },
+        {
+          "id": 11271,
+          "name": "Accessory Bases",
+          "seoName": "Accessory Bases"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15153,
+      "name": "Runes of Aldur Standard"
+    },
+    {
+      "id": 15154,
+      "name": "Runes of Aldur Hardcore"
+    },
+    {
+      "id": 13868,
+      "name": "Early Access - Standard"
+    },
+    {
+      "id": 13869,
+      "name": "Early Access - Hardcore"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

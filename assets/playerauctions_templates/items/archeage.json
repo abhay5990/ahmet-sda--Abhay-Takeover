@@ -1,0 +1,210 @@
+{
+  "game_id": 6058,
+  "game": "archeage",
+  "game_name": "ArcheAge Online",
+  "seo_name": "ArcheAge",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 812,
+      "name": "APEX",
+      "seoName": "APEX",
+      "subCategories": [
+        {
+          "id": 2380,
+          "name": "APEX",
+          "seoName": "APEX"
+        }
+      ]
+    },
+    {
+      "id": 813,
+      "name": "Mounts",
+      "seoName": "Mounts",
+      "subCategories": [
+        {
+          "id": 2381,
+          "name": "Mounts",
+          "seoName": "Mounts"
+        }
+      ]
+    },
+    {
+      "id": 814,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 2382,
+          "name": "Consumables",
+          "seoName": "Consumables"
+        }
+      ]
+    },
+    {
+      "id": 815,
+      "name": "Gliders",
+      "seoName": "Gliders",
+      "subCategories": [
+        {
+          "id": 2383,
+          "name": "Gliders",
+          "seoName": "Gliders"
+        }
+      ]
+    },
+    {
+      "id": 816,
+      "name": "Craft",
+      "seoName": "Craft",
+      "subCategories": [
+        {
+          "id": 2384,
+          "name": "Craft",
+          "seoName": "Craft"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 10663,
+      "name": "NA-Ospheros",
+      "subCategories": [
+        {
+          "id": 10669,
+          "name": "Harania"
+        },
+        {
+          "id": 10670,
+          "name": "Nuia"
+        },
+        {
+          "id": 10671,
+          "name": "Pirate"
+        }
+      ]
+    },
+    {
+      "id": 13309,
+      "name": "NA-Gene",
+      "subCategories": [
+        {
+          "id": 13311,
+          "name": "Harania"
+        },
+        {
+          "id": 13312,
+          "name": "Nuia"
+        },
+        {
+          "id": 13313,
+          "name": "Pirate"
+        }
+      ]
+    },
+    {
+      "id": 10665,
+      "name": "EU-Leviathan",
+      "subCategories": [
+        {
+          "id": 10675,
+          "name": "Harania"
+        },
+        {
+          "id": 10676,
+          "name": "Nuia"
+        },
+        {
+          "id": 10677,
+          "name": "Pirate"
+        }
+      ]
+    },
+    {
+      "id": 13310,
+      "name": "EU-Melisara",
+      "subCategories": [
+        {
+          "id": 13314,
+          "name": "Harania"
+        },
+        {
+          "id": 13315,
+          "name": "Nuia"
+        },
+        {
+          "id": 13316,
+          "name": "Pirate"
+        }
+      ]
+    },
+    {
+      "id": 9241,
+      "name": "SEA",
+      "subCategories": [
+        {
+          "id": 9470,
+          "name": "Gene"
+        },
+        {
+          "id": 10043,
+          "name": "Morpheus"
+        },
+        {
+          "id": 9242,
+          "name": "Nui"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

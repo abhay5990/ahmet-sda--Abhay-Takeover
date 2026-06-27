@@ -59,71 +59,15 @@
   "item_data": {
     "server": {
       "type": "string",
-      "required": true,
-      "values": [
-        "North America",
-        "United States",
-        "Europe",
-        "Europe West",
-        "Europe Nordic & East",
-        "Brazil",
-        "Latin America North",
-        "Latin America South",
-        "Oceania",
-        "Middle East",
-        "Korea",
-        "Japan",
-        "China",
-        "Russia",
-        "Turkey",
-        "Vietnam",
-        "Philippines",
-        "Singapore",
-        "Thailand",
-        "Taiwan",
-        "America",
-        "Asia",
-        "Africa",
-        "TW/HK/MO",
-        "Asia Pacific",
-        "Public Beta Environment",
-        "Garena SEA",
-        "Global",
-        "Bangladesh",
-        "India",
-        "Indonesia",
-        "Malaysia",
-        "Mexico",
-        "Pakistan",
-        "Latin America",
-        "South America",
-        "South East Asia",
-        "Middle East & North Africa"
-      ]
+      "required": false
     },
     "platform": {
       "type": "string",
-      "required": true,
-      "values": [
-        "PC",
-        "PlayStation",
-        "Xbox"
-      ]
+      "required": false
     },
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Armor",
-        "Consumables",
-        "Crown Store Items",
-        "Glyphs",
-        "Housing",
-        "Materials",
-        "Sets",
-        "Weapons",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

@@ -1,0 +1,124 @@
+{
+  "game_id": 13785,
+  "game": "gray-zone-warfare",
+  "game_name": "Gray Zone Warfare",
+  "seo_name": "Gray-Zone-Warfare",
+  "currencyName": "Dollar",
+  "categories": [
+    {
+      "id": 1861,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 8721,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        }
+      ]
+    },
+    {
+      "id": 1862,
+      "name": "Armors",
+      "seoName": "Armors",
+      "subCategories": [
+        {
+          "id": 8722,
+          "name": "Armors",
+          "seoName": "Armors"
+        }
+      ]
+    },
+    {
+      "id": 1863,
+      "name": "Ammo",
+      "seoName": "Ammo",
+      "subCategories": [
+        {
+          "id": 8723,
+          "name": "Ammo",
+          "seoName": "Ammo"
+        }
+      ]
+    },
+    {
+      "id": 1864,
+      "name": "Supplies",
+      "seoName": "Supplies",
+      "subCategories": [
+        {
+          "id": 8724,
+          "name": "Supplies",
+          "seoName": "Supplies"
+        }
+      ]
+    },
+    {
+      "id": 1865,
+      "name": "Keys",
+      "seoName": "Keys",
+      "subCategories": [
+        {
+          "id": 8725,
+          "name": "Keys",
+          "seoName": "Keys"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13786,
+      "name": "PC"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

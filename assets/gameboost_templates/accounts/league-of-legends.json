@@ -206,19 +206,19 @@
   },
   "game_items": {
     "champions": [
-      "Lillia",
-      "Shaco",
-      "Vladimir"
+      "Volibear",
+      "Udyr",
+      "Brand"
     ],
     "skins": [
-      "Pentakill III: Lost Chapter Mordekaiser",
-      "Battle Bunny Aurora (Emerald)",
-      "Coven Cassiopeia (Tanzanite)"
+      "Space Groove Nasus",
+      "Spirit Blossom Nidalee (Pearl)",
+      "Coven Elise (Tanzanite)"
     ],
     "roles": [
-      "ADC",
-      "Top",
-      "Jungle"
+      "Jungle",
+      "Mid",
+      "Support"
     ]
   }
 }

@@ -1,0 +1,277 @@
+{
+  "game_id": 5587,
+  "game": "smite",
+  "game_name": "Smite",
+  "seo_name": "Smite",
+  "currencyName": "Gems",
+  "categories": [
+    {
+      "id": 1374,
+      "name": "God Skins",
+      "seoName": "God Skins",
+      "subCategories": [
+        {
+          "id": 6259,
+          "name": "Arthurian",
+          "seoName": "Arthurian"
+        },
+        {
+          "id": 6260,
+          "name": "Babylonian",
+          "seoName": "Babylonian"
+        },
+        {
+          "id": 6261,
+          "name": "Celtic",
+          "seoName": "Celtic"
+        },
+        {
+          "id": 6262,
+          "name": "Chinese",
+          "seoName": "Chinese"
+        },
+        {
+          "id": 6263,
+          "name": "Egyptian",
+          "seoName": "Egyptian"
+        },
+        {
+          "id": 6264,
+          "name": "Great Old Ones",
+          "seoName": "Great Old Ones"
+        },
+        {
+          "id": 6265,
+          "name": "Greek",
+          "seoName": "Greek"
+        },
+        {
+          "id": 6266,
+          "name": "Hindu",
+          "seoName": "Hindu"
+        },
+        {
+          "id": 6267,
+          "name": "Japanese",
+          "seoName": "Japanese"
+        },
+        {
+          "id": 6268,
+          "name": "Maya",
+          "seoName": "Maya"
+        },
+        {
+          "id": 6269,
+          "name": "Norse",
+          "seoName": "Norse"
+        },
+        {
+          "id": 6270,
+          "name": "Polynesian",
+          "seoName": "Polynesian"
+        },
+        {
+          "id": 6271,
+          "name": "Roman",
+          "seoName": "Roman"
+        },
+        {
+          "id": 6272,
+          "name": "Slavic",
+          "seoName": "Slavic"
+        },
+        {
+          "id": 6273,
+          "name": "Voodoo",
+          "seoName": "Voodoo"
+        },
+        {
+          "id": 6274,
+          "name": "Yoruba",
+          "seoName": "Yoruba"
+        }
+      ]
+    },
+    {
+      "id": 1375,
+      "name": "Cosmetics",
+      "seoName": "Cosmetics",
+      "subCategories": [
+        {
+          "id": 6275,
+          "name": "Ward Skins",
+          "seoName": "Ward Skins"
+        },
+        {
+          "id": 6276,
+          "name": "Avatars",
+          "seoName": "Avatars"
+        },
+        {
+          "id": 6277,
+          "name": "Loading Frames and Backgrounds",
+          "seoName": "Loading Frames and Backgrounds"
+        },
+        {
+          "id": 6278,
+          "name": "Other Cosmetics",
+          "seoName": "Other Cosmetics"
+        }
+      ]
+    },
+    {
+      "id": 1433,
+      "name": "Relics",
+      "seoName": "Relics",
+      "subCategories": [
+        {
+          "id": 6708,
+          "name": "All",
+          "seoName": "All"
+        },
+        {
+          "id": 6709,
+          "name": "Base",
+          "seoName": "Base"
+        },
+        {
+          "id": 6710,
+          "name": "Upgraded",
+          "seoName": "Upgraded"
+        }
+      ]
+    },
+    {
+      "id": 1434,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 6711,
+          "name": "Healing Potion",
+          "seoName": "Healing Potion"
+        },
+        {
+          "id": 6712,
+          "name": "Mana Potion",
+          "seoName": "Mana Potion"
+        },
+        {
+          "id": 6713,
+          "name": "Ward",
+          "seoName": "Ward"
+        },
+        {
+          "id": 6714,
+          "name": "Elixir of Power",
+          "seoName": "Elixir of Power"
+        },
+        {
+          "id": 6715,
+          "name": "Elixir of Defense",
+          "seoName": "Elixir of Defense"
+        },
+        {
+          "id": 6716,
+          "name": "Sentry Ward",
+          "seoName": "Sentry Ward"
+        },
+        {
+          "id": 6717,
+          "name": "Multi Potion",
+          "seoName": "Multi Potion"
+        },
+        {
+          "id": 6718,
+          "name": "Scare Tactics",
+          "seoName": "Scare Tactics"
+        },
+        {
+          "id": 6719,
+          "name": "Chalice of Healing",
+          "seoName": "Chalice of Healing"
+        },
+        {
+          "id": 6720,
+          "name": "Chalice of Mana",
+          "seoName": "Chalice of Mana"
+        },
+        {
+          "id": 6721,
+          "name": "Chalice of the Oracle",
+          "seoName": "Chalice of the Oracle"
+        },
+        {
+          "id": 6722,
+          "name": "Baron's Brew",
+          "seoName": "Baron's Brew"
+        },
+        {
+          "id": 6723,
+          "name": "Potion of Power",
+          "seoName": "Potion of Power"
+        },
+        {
+          "id": 6724,
+          "name": "Hand of the Gods",
+          "seoName": "Hand of the Gods"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 5588,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

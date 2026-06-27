@@ -1,0 +1,217 @@
+{
+  "game_id": "78",
+  "game": "dofus",
+  "game_name": "Dofus",
+  "category": "Currency",
+  "tradeEnvironments": [
+    {
+      "id": "18",
+      "name": "Imagiro",
+      "group": "Server"
+    },
+    {
+      "id": "19",
+      "name": "Orukam",
+      "group": "Server"
+    },
+    {
+      "id": "20",
+      "name": "Hell Mina",
+      "group": "Server"
+    },
+    {
+      "id": "21",
+      "name": "Draconiros",
+      "group": "Server"
+    },
+    {
+      "id": "22",
+      "name": "Shadow",
+      "group": "Server"
+    },
+    {
+      "id": "23",
+      "name": "Tylezia",
+      "group": "Server"
+    },
+    {
+      "id": "24",
+      "name": "Tal Kasha",
+      "group": "Server"
+    },
+    {
+      "id": "25",
+      "name": "Dakal",
+      "group": "Server"
+    },
+    {
+      "id": "26",
+      "name": "Rafal",
+      "group": "Server"
+    },
+    {
+      "id": "27",
+      "name": "Salar",
+      "group": "Server"
+    },
+    {
+      "id": "28",
+      "name": "Brial",
+      "group": "Server"
+    },
+    {
+      "id": "29",
+      "name": "Kourial",
+      "group": "Server"
+    },
+    {
+      "id": "30",
+      "name": "Mikhal",
+      "group": "Server"
+    },
+    {
+      "id": "31",
+      "name": "Touch - Blair",
+      "group": "Server"
+    },
+    {
+      "id": "32",
+      "name": "Touch - Kelerog",
+      "group": "Server"
+    },
+    {
+      "id": "33",
+      "name": "Touch - Talok",
+      "group": "Server"
+    },
+    {
+      "id": "34",
+      "name": "Touch - Tiliwan",
+      "group": "Server"
+    },
+    {
+      "id": "35",
+      "name": "Retro - Allisteria",
+      "group": "Server"
+    },
+    {
+      "id": "36",
+      "name": "Retro - Boune",
+      "group": "Server"
+    },
+    {
+      "id": "37",
+      "name": "Retro - Fallanster",
+      "group": "Server"
+    },
+    {
+      "id": "38",
+      "name": "Wakfu - Neo Ogrest",
+      "group": "Server"
+    },
+    {
+      "id": "39",
+      "name": "Wakfu - Neo Pandora 1",
+      "group": "Server"
+    },
+    {
+      "id": "40",
+      "name": "Wakfu - Neo Pandora 2",
+      "group": "Server"
+    },
+    {
+      "id": "41",
+      "name": "Wakfu - Neo Rubilax",
+      "group": "Server"
+    },
+    {
+      "id": "42",
+      "name": "Wakfu - Ogrest",
+      "group": "Server"
+    },
+    {
+      "id": "43",
+      "name": "Wakfu - Pandora",
+      "group": "Server"
+    },
+    {
+      "id": "44",
+      "name": "Wakfu - Rubilax",
+      "group": "Server"
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

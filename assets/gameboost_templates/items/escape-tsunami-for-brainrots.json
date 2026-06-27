@@ -59,13 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Brainrot",
-        "Booster or Power up",
-        "Currency",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

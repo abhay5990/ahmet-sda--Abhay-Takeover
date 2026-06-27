@@ -1,0 +1,158 @@
+{
+  "game_id": 9770,
+  "game": "pixel-worlds",
+  "game_name": "Pixel Worlds",
+  "seo_name": "Pixel-Worlds",
+  "currencyName": "Byte Coins",
+  "categories": [
+    {
+      "id": 1201,
+      "name": "Locks",
+      "seoName": "Locks",
+      "subCategories": [
+        {
+          "id": 5595,
+          "name": "World Lock",
+          "seoName": "World Lock"
+        },
+        {
+          "id": 5596,
+          "name": "Dark World Lock",
+          "seoName": "Dark World Lock"
+        },
+        {
+          "id": 5597,
+          "name": "Platinum Lock",
+          "seoName": "Platinum Lock"
+        },
+        {
+          "id": 5598,
+          "name": "Small Lock",
+          "seoName": "Small Lock"
+        },
+        {
+          "id": 5599,
+          "name": "Battle Lock",
+          "seoName": "Battle Lock"
+        },
+        {
+          "id": 5600,
+          "name": "Clan World Lock",
+          "seoName": "Clan World Lock"
+        },
+        {
+          "id": 5601,
+          "name": "Newbie World Lock",
+          "seoName": "Newbie World Lock"
+        },
+        {
+          "id": 5602,
+          "name": "Decayed Lock",
+          "seoName": "Decayed Lock"
+        }
+      ]
+    },
+    {
+      "id": 1205,
+      "name": "Blocks",
+      "seoName": "Blocks",
+      "subCategories": [
+        {
+          "id": 5620,
+          "name": "Wood Block",
+          "seoName": "Wood Block"
+        },
+        {
+          "id": 5621,
+          "name": "Strawberry Block",
+          "seoName": "Strawberry Block"
+        },
+        {
+          "id": 5622,
+          "name": "Glass Block",
+          "seoName": "Glass Block"
+        },
+        {
+          "id": 5623,
+          "name": "Iron Block",
+          "seoName": "Iron Block"
+        },
+        {
+          "id": 5624,
+          "name": "Magic Stuff",
+          "seoName": "Magic Stuff"
+        },
+        {
+          "id": 5625,
+          "name": "Fire Trap",
+          "seoName": "Fire Trap"
+        },
+        {
+          "id": 5626,
+          "name": "Yellow Brick",
+          "seoName": "Yellow Brick"
+        },
+        {
+          "id": 5627,
+          "name": "Wood Panel",
+          "seoName": "Wood Panel"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 9771,
+      "name": "Global"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

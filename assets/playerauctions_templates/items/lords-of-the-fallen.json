@@ -1,0 +1,300 @@
+{
+  "game_id": 13528,
+  "game": "lords-of-the-fallen",
+  "game_name": "Lords of the Fallen",
+  "seo_name": "Lords-of-the-Fallen",
+  "currencyName": "Vigor",
+  "categories": [
+    {
+      "id": 1812,
+      "name": "Accessories",
+      "seoName": "Accessories",
+      "subCategories": [
+        {
+          "id": 8566,
+          "name": "Rings",
+          "seoName": "Rings"
+        },
+        {
+          "id": 8567,
+          "name": "Pendants",
+          "seoName": "Pendants"
+        }
+      ]
+    },
+    {
+      "id": 1813,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 8568,
+          "name": "Chests Armor",
+          "seoName": "Chests Armor"
+        },
+        {
+          "id": 8569,
+          "name": "Gauntlets",
+          "seoName": "Gauntlets"
+        },
+        {
+          "id": 8570,
+          "name": "Helms",
+          "seoName": "Helms"
+        },
+        {
+          "id": 8571,
+          "name": "Legs",
+          "seoName": "Legs"
+        }
+      ]
+    },
+    {
+      "id": 1814,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 8572,
+          "name": "Consumables",
+          "seoName": "Consumables"
+        }
+      ]
+    },
+    {
+      "id": 1815,
+      "name": "Runes",
+      "seoName": "Runes",
+      "subCategories": [
+        {
+          "id": 8573,
+          "name": "Strength",
+          "seoName": "Strength"
+        },
+        {
+          "id": 8574,
+          "name": "Agility",
+          "seoName": "Agility"
+        },
+        {
+          "id": 8575,
+          "name": "Radiance",
+          "seoName": "Radiance"
+        },
+        {
+          "id": 8576,
+          "name": "Inferno",
+          "seoName": "Inferno"
+        }
+      ]
+    },
+    {
+      "id": 1816,
+      "name": "Set",
+      "seoName": "Set",
+      "subCategories": [
+        {
+          "id": 8577,
+          "name": "Set",
+          "seoName": "Set"
+        }
+      ]
+    },
+    {
+      "id": 1817,
+      "name": "Shields",
+      "seoName": "Shields",
+      "subCategories": [
+        {
+          "id": 8578,
+          "name": "Light Shields",
+          "seoName": "Light Shields"
+        },
+        {
+          "id": 8579,
+          "name": "Medium Shields",
+          "seoName": "Medium Shields"
+        },
+        {
+          "id": 8580,
+          "name": "Heavy Shields",
+          "seoName": "Heavy Shields"
+        }
+      ]
+    },
+    {
+      "id": 1818,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 8581,
+          "name": "Axes",
+          "seoName": "Axes"
+        },
+        {
+          "id": 8582,
+          "name": "Ammunition",
+          "seoName": "Ammunition"
+        },
+        {
+          "id": 8583,
+          "name": "Bows",
+          "seoName": "Bows"
+        },
+        {
+          "id": 8584,
+          "name": "Catalysts",
+          "seoName": "Catalysts"
+        },
+        {
+          "id": 8585,
+          "name": "Crossbows",
+          "seoName": "Crossbows"
+        },
+        {
+          "id": 8586,
+          "name": "Daggers",
+          "seoName": "Daggers"
+        },
+        {
+          "id": 8587,
+          "name": "Fists",
+          "seoName": "Fists"
+        },
+        {
+          "id": 8588,
+          "name": "Flails",
+          "seoName": "Flails"
+        },
+        {
+          "id": 8589,
+          "name": "Grand Axes",
+          "seoName": "Grand Axes"
+        },
+        {
+          "id": 8590,
+          "name": "Grand Hammers",
+          "seoName": "Grand Hammers"
+        },
+        {
+          "id": 8591,
+          "name": "Long Swords",
+          "seoName": "Long Swords"
+        },
+        {
+          "id": 8592,
+          "name": "Hammers",
+          "seoName": "Hammers"
+        },
+        {
+          "id": 8593,
+          "name": "Polearms",
+          "seoName": "Polearms"
+        },
+        {
+          "id": 8594,
+          "name": "Short Swords",
+          "seoName": "Short Swords"
+        },
+        {
+          "id": 8595,
+          "name": "Spears",
+          "seoName": "Spears"
+        },
+        {
+          "id": 8596,
+          "name": "Grand Swords",
+          "seoName": "Grand Swords"
+        }
+      ]
+    },
+    {
+      "id": 1819,
+      "name": "Boss Items",
+      "seoName": "Boss Items",
+      "subCategories": [
+        {
+          "id": 8597,
+          "name": "Boss Items",
+          "seoName": "Boss Items"
+        }
+      ]
+    },
+    {
+      "id": 1820,
+      "name": "Upgrade Materials",
+      "seoName": "Upgrade Materials",
+      "subCategories": [
+        {
+          "id": 8598,
+          "name": "Upgrade Materials",
+          "seoName": "Upgrade Materials"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13529,
+      "name": "PC"
+    },
+    {
+      "id": 13530,
+      "name": "PS"
+    },
+    {
+      "id": 13531,
+      "name": "Xbox Series X/S"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -1,0 +1,338 @@
+{
+  "game_id": 10738,
+  "game": "mortal-online-2",
+  "game_name": "Mortal Online 2",
+  "seo_name": "Mortal-Online-2",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1395,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 6391,
+          "name": "Leather Armor",
+          "seoName": "Leather Armor"
+        },
+        {
+          "id": 6392,
+          "name": "Plate Armor",
+          "seoName": "Plate Armor"
+        },
+        {
+          "id": 6393,
+          "name": "Cloth Armor",
+          "seoName": "Cloth Armor"
+        }
+      ]
+    },
+    {
+      "id": 1396,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 6394,
+          "name": "Ores",
+          "seoName": "Ores"
+        },
+        {
+          "id": 6395,
+          "name": "Wood",
+          "seoName": "Wood"
+        },
+        {
+          "id": 6396,
+          "name": "Metals",
+          "seoName": "Metals"
+        },
+        {
+          "id": 6397,
+          "name": "Hides and Leather",
+          "seoName": "Hides and Leather"
+        },
+        {
+          "id": 6398,
+          "name": "Other Resources",
+          "seoName": "Other Resources"
+        },
+        {
+          "id": 10209,
+          "name": "Fibers",
+          "seoName": "Fibers"
+        },
+        {
+          "id": 10210,
+          "name": "Stone",
+          "seoName": "Stone"
+        }
+      ]
+    },
+    {
+      "id": 2027,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 10196,
+          "name": "Swords",
+          "seoName": "Swords"
+        },
+        {
+          "id": 10197,
+          "name": "Axes",
+          "seoName": "Axes"
+        },
+        {
+          "id": 10198,
+          "name": "Bows",
+          "seoName": "Bows"
+        },
+        {
+          "id": 10199,
+          "name": "Polearms",
+          "seoName": "Polearms"
+        }
+      ]
+    },
+    {
+      "id": 2028,
+      "name": "Shields",
+      "seoName": "Shields",
+      "subCategories": [
+        {
+          "id": 10200,
+          "name": "Shields",
+          "seoName": "Shields"
+        }
+      ]
+    },
+    {
+      "id": 2029,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 10201,
+          "name": "Pickaxe",
+          "seoName": "Pickaxe"
+        },
+        {
+          "id": 10202,
+          "name": "Woodcutters Axe",
+          "seoName": "Woodcutters Axe"
+        },
+        {
+          "id": 10203,
+          "name": "Hammer",
+          "seoName": "Hammer"
+        }
+      ]
+    },
+    {
+      "id": 2030,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 10204,
+          "name": "Food",
+          "seoName": "Food"
+        },
+        {
+          "id": 10205,
+          "name": "Potions",
+          "seoName": "Potions"
+        },
+        {
+          "id": 10206,
+          "name": "Bandages",
+          "seoName": "Bandages"
+        }
+      ]
+    },
+    {
+      "id": 2031,
+      "name": "Mounts and Pets",
+      "seoName": "Mounts and Pets",
+      "subCategories": [
+        {
+          "id": 10207,
+          "name": "Mounts",
+          "seoName": "Mounts"
+        },
+        {
+          "id": 10208,
+          "name": "Pets",
+          "seoName": "Pets"
+        }
+      ]
+    },
+    {
+      "id": 2032,
+      "name": "Crafting Components",
+      "seoName": "Crafting Components",
+      "subCategories": [
+        {
+          "id": 10211,
+          "name": "Ingots",
+          "seoName": "Ingots"
+        },
+        {
+          "id": 10212,
+          "name": "Planks",
+          "seoName": "Planks"
+        },
+        {
+          "id": 10213,
+          "name": "Leather Sheets",
+          "seoName": "Leather Sheets"
+        },
+        {
+          "id": 10214,
+          "name": "Thread and Cloth",
+          "seoName": "Thread and Cloth"
+        }
+      ]
+    },
+    {
+      "id": 2033,
+      "name": "Housing",
+      "seoName": "Housing",
+      "subCategories": [
+        {
+          "id": 10215,
+          "name": "Housing",
+          "seoName": "Housing"
+        }
+      ]
+    },
+    {
+      "id": 2034,
+      "name": "Magic Items",
+      "seoName": "Magic Items",
+      "subCategories": [
+        {
+          "id": 10216,
+          "name": "Spellbooks",
+          "seoName": "Spellbooks"
+        },
+        {
+          "id": 10217,
+          "name": "Reagents",
+          "seoName": "Reagents"
+        },
+        {
+          "id": 10218,
+          "name": "Enchanted Items",
+          "seoName": "Enchanted Items"
+        }
+      ]
+    },
+    {
+      "id": 2035,
+      "name": "Miscellaneous",
+      "seoName": "Miscellaneous",
+      "subCategories": [
+        {
+          "id": 10219,
+          "name": "Keys",
+          "seoName": "Keys"
+        },
+        {
+          "id": 10220,
+          "name": "Trophies",
+          "seoName": "Trophies"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 10739,
+      "name": "Fabernum"
+    },
+    {
+      "id": 13374,
+      "name": "Bakti"
+    },
+    {
+      "id": 13375,
+      "name": "Hyllspeia"
+    },
+    {
+      "id": 13376,
+      "name": "Meduli"
+    },
+    {
+      "id": 13377,
+      "name": "Moh Ki"
+    },
+    {
+      "id": 13378,
+      "name": "Morin Khur"
+    },
+    {
+      "id": 13379,
+      "name": "Tindrem"
+    },
+    {
+      "id": 13380,
+      "name": "Toxai"
+    },
+    {
+      "id": 13381,
+      "name": "Vadda"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

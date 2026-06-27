@@ -1,0 +1,184 @@
+{
+  "game_id": 13890,
+  "game": "ttd",
+  "game_name": "Toilet Tower Defense",
+  "seo_name": "TTD",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 1889,
+      "name": "Gems",
+      "seoName": "Gems",
+      "subCategories": [
+        {
+          "id": 9449,
+          "name": "Gems",
+          "seoName": "Gems"
+        }
+      ]
+    },
+    {
+      "id": 1890,
+      "name": "Godly Units",
+      "seoName": "Godly Units",
+      "subCategories": [
+        {
+          "id": 9450,
+          "name": "Cameras",
+          "seoName": "Cameras"
+        },
+        {
+          "id": 9451,
+          "name": "Speakers",
+          "seoName": "Speakers"
+        },
+        {
+          "id": 9452,
+          "name": "TVs",
+          "seoName": "TVs"
+        },
+        {
+          "id": 9453,
+          "name": "Other Godly Units",
+          "seoName": "Other Godly Units"
+        }
+      ]
+    },
+    {
+      "id": 1891,
+      "name": "Mythic Units",
+      "seoName": "Mythic Units",
+      "subCategories": [
+        {
+          "id": 9454,
+          "name": "Cameras",
+          "seoName": "Cameras"
+        },
+        {
+          "id": 9455,
+          "name": "Speakers",
+          "seoName": "Speakers"
+        },
+        {
+          "id": 9456,
+          "name": "TVs",
+          "seoName": "TVs"
+        },
+        {
+          "id": 9457,
+          "name": "Other Mythic Units",
+          "seoName": "Other Mythic Units"
+        }
+      ]
+    },
+    {
+      "id": 1892,
+      "name": "Exclusive Units",
+      "seoName": "Exclusive Units",
+      "subCategories": [
+        {
+          "id": 9458,
+          "name": "Exclusive Cameras",
+          "seoName": "Exclusive Cameras"
+        },
+        {
+          "id": 9459,
+          "name": "Exclusive Speakers",
+          "seoName": "Exclusive Speakers"
+        },
+        {
+          "id": 9460,
+          "name": "Exclusive TVs",
+          "seoName": "Exclusive TVs"
+        },
+        {
+          "id": 9461,
+          "name": "Other Exclusive Units",
+          "seoName": "Other Exclusive Units"
+        },
+        {
+          "id": 9666,
+          "name": "Exclusive Drills",
+          "seoName": "Exclusive Drills"
+        },
+        {
+          "id": 9667,
+          "name": "Exclusive Clocks",
+          "seoName": "Exclusive Clocks"
+        },
+        {
+          "id": 9668,
+          "name": "Exclusive Fans",
+          "seoName": "Exclusive Fans"
+        }
+      ]
+    },
+    {
+      "id": 1893,
+      "name": "Crates",
+      "seoName": "Crates",
+      "subCategories": [
+        {
+          "id": 9462,
+          "name": "Crates",
+          "seoName": "Crates"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13898,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

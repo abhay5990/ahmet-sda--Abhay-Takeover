@@ -1,0 +1,209 @@
+{
+  "game_id": 5661,
+  "game": "torn-city",
+  "game_name": "TORN CITY",
+  "seo_name": "TORN-CITY",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1700,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 7869,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        }
+      ]
+    },
+    {
+      "id": 1701,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 7870,
+          "name": "Armor",
+          "seoName": "Armor"
+        }
+      ]
+    },
+    {
+      "id": 1702,
+      "name": "Collectibles",
+      "seoName": "Collectibles",
+      "subCategories": [
+        {
+          "id": 7871,
+          "name": "Collectibles",
+          "seoName": "Collectibles"
+        }
+      ]
+    },
+    {
+      "id": 1703,
+      "name": "Useful Supplies",
+      "seoName": "Useful Supplies",
+      "subCategories": [
+        {
+          "id": 7872,
+          "name": "Useful Supplies",
+          "seoName": "Useful Supplies"
+        }
+      ]
+    },
+    {
+      "id": 1704,
+      "name": "Plushies",
+      "seoName": "Plushies",
+      "subCategories": [
+        {
+          "id": 7873,
+          "name": "Plushies",
+          "seoName": "Plushies"
+        }
+      ]
+    },
+    {
+      "id": 1705,
+      "name": "Flowers and Artifacts",
+      "seoName": "Flowers and Artifacts",
+      "subCategories": [
+        {
+          "id": 7874,
+          "name": "Flowers",
+          "seoName": "Flowers"
+        },
+        {
+          "id": 7875,
+          "name": "Artifacts",
+          "seoName": "Artifacts"
+        }
+      ]
+    },
+    {
+      "id": 1706,
+      "name": "General Shopping",
+      "seoName": "General Shopping",
+      "subCategories": [
+        {
+          "id": 7876,
+          "name": "General Shopping",
+          "seoName": "General Shopping"
+        }
+      ]
+    },
+    {
+      "id": 1707,
+      "name": "Properties",
+      "seoName": "Properties",
+      "subCategories": [
+        {
+          "id": 7877,
+          "name": "Properties",
+          "seoName": "Properties"
+        }
+      ]
+    },
+    {
+      "id": 1708,
+      "name": "Companies",
+      "seoName": "Companies",
+      "subCategories": [
+        {
+          "id": 7878,
+          "name": "Companies",
+          "seoName": "Companies"
+        }
+      ]
+    },
+    {
+      "id": 1709,
+      "name": "Factions",
+      "seoName": "Factions",
+      "subCategories": [
+        {
+          "id": 7879,
+          "name": "Factions",
+          "seoName": "Factions"
+        }
+      ]
+    },
+    {
+      "id": 1710,
+      "name": "Money",
+      "seoName": "Money",
+      "subCategories": [
+        {
+          "id": 7880,
+          "name": "Money",
+          "seoName": "Money"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 5663,
+      "name": "The Criminal"
+    },
+    {
+      "id": 5662,
+      "name": "The Executive"
+    },
+    {
+      "id": 5664,
+      "name": "The Fighter"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -1,0 +1,189 @@
+{
+  "game_id": 14285,
+  "game": "rs-dragonwilds",
+  "game_name": "RuneScape: Dragonwilds",
+  "seo_name": "RS-Dragonwilds",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 2052,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 10303,
+          "name": "Melee Armor",
+          "seoName": "Melee Armor"
+        },
+        {
+          "id": 10304,
+          "name": "Ranged Armor",
+          "seoName": "Ranged Armor"
+        },
+        {
+          "id": 10305,
+          "name": "Magic Armor",
+          "seoName": "Magic Armor"
+        },
+        {
+          "id": 10306,
+          "name": "Capes",
+          "seoName": "Capes"
+        },
+        {
+          "id": 10307,
+          "name": "Miscellaneous Armor",
+          "seoName": "Miscellaneous Armor"
+        }
+      ]
+    },
+    {
+      "id": 2053,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 10308,
+          "name": "Melee Weapons",
+          "seoName": "Melee Weapons"
+        },
+        {
+          "id": 10309,
+          "name": "Ranged Weapons",
+          "seoName": "Ranged Weapons"
+        },
+        {
+          "id": 10310,
+          "name": "Magic Weapons",
+          "seoName": "Magic Weapons"
+        }
+      ]
+    },
+    {
+      "id": 2054,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 10311,
+          "name": "Wardstones",
+          "seoName": "Wardstones"
+        },
+        {
+          "id": 10312,
+          "name": "Pickaxes",
+          "seoName": "Pickaxes"
+        },
+        {
+          "id": 10313,
+          "name": "Logging Axes",
+          "seoName": "Logging Axes"
+        },
+        {
+          "id": 10314,
+          "name": "Torch",
+          "seoName": "Torch"
+        }
+      ]
+    },
+    {
+      "id": 2055,
+      "name": "Runes",
+      "seoName": "Runes",
+      "subCategories": [
+        {
+          "id": 10315,
+          "name": "Runes",
+          "seoName": "Runes"
+        }
+      ]
+    },
+    {
+      "id": 2056,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 10316,
+          "name": "Ores",
+          "seoName": "Ores"
+        },
+        {
+          "id": 10317,
+          "name": "Rocks",
+          "seoName": "Rocks"
+        },
+        {
+          "id": 10318,
+          "name": "Gems",
+          "seoName": "Gems"
+        },
+        {
+          "id": 10319,
+          "name": "Animal Parts",
+          "seoName": "Animal Parts"
+        },
+        {
+          "id": 10320,
+          "name": "Misc",
+          "seoName": "Misc"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14286,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

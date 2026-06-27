@@ -4,7 +4,205 @@
   "game_name": "Arc Raiders",
   "category": "Account",
   "tradeEnvironments": [],
-  "attributes": {},
+  "attributes": {
+    "arc-raiders-blueprints": {
+      "name": "Blueprints",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "blueprints-019",
+          "name": "0-19"
+        },
+        {
+          "id": "blueprints-2049",
+          "name": "20-49"
+        },
+        {
+          "id": "blueprints-5079",
+          "name": "50-79"
+        },
+        {
+          "id": "blueprints-80plus",
+          "name": "80+"
+        },
+        {
+          "id": "blueprints-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "arc-raiders-coins": {
+      "name": "Coins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "coins-0499",
+          "name": "0-499K"
+        },
+        {
+          "id": "coins-500099",
+          "name": "500K-0.99M"
+        },
+        {
+          "id": "coins-1199",
+          "name": "1M-1.99M"
+        },
+        {
+          "id": "coins-2plus",
+          "name": "2M+"
+        },
+        {
+          "id": "coins-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "arc-raiders-device": {
+      "name": "Device",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "device-pc",
+          "name": "PC"
+        },
+        {
+          "id": "device-playstation",
+          "name": "PlayStation"
+        },
+        {
+          "id": "device-xbox",
+          "name": "Xbox"
+        }
+      ]
+    },
+    "arc-raiders-expeditions": {
+      "name": "Expeditions",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "expeditions-1",
+          "name": "1"
+        },
+        {
+          "id": "expeditions-2",
+          "name": "2"
+        },
+        {
+          "id": "expeditions-3",
+          "name": "3"
+        },
+        {
+          "id": "expeditions-other",
+          "name": "Other"
+        },
+        {
+          "id": "expeditions-0",
+          "name": "0"
+        }
+      ]
+    },
+    "arc-raiders-level": {
+      "name": "Level",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "level-019",
+          "name": "0-19"
+        },
+        {
+          "id": "level-2039",
+          "name": "20-39"
+        },
+        {
+          "id": "level-4059",
+          "name": "40-59"
+        },
+        {
+          "id": "level-6069",
+          "name": "60-69"
+        },
+        {
+          "id": "level-7074",
+          "name": "70-74"
+        },
+        {
+          "id": "level-75",
+          "name": "75"
+        },
+        {
+          "id": "level-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "arc-raiders-maxed-weapons": {
+      "name": "Maxed Weapons",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "maxed-049",
+          "name": "0-49"
+        },
+        {
+          "id": "maxed-5099",
+          "name": "50-99"
+        },
+        {
+          "id": "maxed-100199",
+          "name": "100-199"
+        },
+        {
+          "id": "maxed-200plus",
+          "name": "200+"
+        },
+        {
+          "id": "maxed-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "arc-raiders-outfits": {
+      "name": "Outfits",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "outfits-19",
+          "name": "1-9"
+        },
+        {
+          "id": "outfits-1019",
+          "name": "10-19"
+        },
+        {
+          "id": "outfits-2029",
+          "name": "20-29"
+        },
+        {
+          "id": "outfits-3039",
+          "name": "30-39"
+        },
+        {
+          "id": "outfits-4049",
+          "name": "40-49"
+        },
+        {
+          "id": "outfits-50plus",
+          "name": "50+"
+        },
+        {
+          "id": "outfits-other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
   "details": {
     "offerTitle": {
       "type": "string",

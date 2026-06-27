@@ -59,40 +59,15 @@
   "item_data": {
     "server": {
       "type": "string",
-      "required": true,
-      "values": [
-        "PvE Legacy",
-        "PvP Legacy",
-        "PvE New",
-        "PvP New"
-      ]
+      "required": false
     },
     "platform": {
       "type": "string",
-      "required": true,
-      "values": [
-        "PC",
-        "PlayStation",
-        "Xbox"
-      ]
+      "required": false
     },
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Bases",
-        "Blueprints",
-        "Dinosaurs",
-        "Eggs",
-        "Food",
-        "Pets",
-        "Resources",
-        "Saddles",
-        "Skins",
-        "Tek",
-        "Weapons",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

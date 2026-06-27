@@ -1,0 +1,392 @@
+{
+  "game_id": 3450,
+  "game": "d2",
+  "game_name": "Diablo 2",
+  "seo_name": "D2",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1003,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 4628,
+          "name": "Belts",
+          "seoName": "Belts"
+        },
+        {
+          "id": 4629,
+          "name": "Body armor",
+          "seoName": "Body armor"
+        },
+        {
+          "id": 4630,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 4631,
+          "name": "Gloves",
+          "seoName": "Gloves"
+        },
+        {
+          "id": 4632,
+          "name": "Helmets",
+          "seoName": "Helmets"
+        },
+        {
+          "id": 4640,
+          "name": "Circlets",
+          "seoName": "Circlets"
+        },
+        {
+          "id": 4641,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 4642,
+          "name": "Amulets",
+          "seoName": "Amulets"
+        },
+        {
+          "id": 4643,
+          "name": "Rings",
+          "seoName": "Rings"
+        }
+      ]
+    },
+    {
+      "id": 1004,
+      "name": "Class Specific Items",
+      "seoName": "Class Specific Items",
+      "subCategories": [
+        {
+          "id": 4500,
+          "name": "Class Specific Items",
+          "seoName": "Class Specific Items"
+        },
+        {
+          "id": 4633,
+          "name": "Ama Weapons",
+          "seoName": "Ama Weapons"
+        },
+        {
+          "id": 4634,
+          "name": "Asn Claws",
+          "seoName": "Asn Claws"
+        },
+        {
+          "id": 4635,
+          "name": "Barb Helms",
+          "seoName": "Barb Helms"
+        },
+        {
+          "id": 4636,
+          "name": "Druid Helms",
+          "seoName": "Druid Helms"
+        },
+        {
+          "id": 4637,
+          "name": "Necro Totems",
+          "seoName": "Necro Totems"
+        },
+        {
+          "id": 4638,
+          "name": "Pal Shields",
+          "seoName": "Pal Shields"
+        },
+        {
+          "id": 4639,
+          "name": "Sorc Orbs",
+          "seoName": "Sorc Orbs"
+        }
+      ]
+    },
+    {
+      "id": 1005,
+      "name": "Crafted Items",
+      "seoName": "Crafted Items",
+      "subCategories": [
+        {
+          "id": 4501,
+          "name": "Crafted Items",
+          "seoName": "Crafted Items"
+        },
+        {
+          "id": 4644,
+          "name": "Blood Recipes",
+          "seoName": "Blood Recipes"
+        },
+        {
+          "id": 4645,
+          "name": "Caster Recipes",
+          "seoName": "Caster Recipes"
+        },
+        {
+          "id": 4646,
+          "name": "Hitpower Recipes",
+          "seoName": "Hitpower Recipes"
+        },
+        {
+          "id": 4647,
+          "name": "Safety Recipes",
+          "seoName": "Safety Recipes"
+        }
+      ]
+    },
+    {
+      "id": 1006,
+      "name": "Jewels",
+      "seoName": "Jewels",
+      "subCategories": [
+        {
+          "id": 4502,
+          "name": "Quest Items",
+          "seoName": "Quest Items"
+        },
+        {
+          "id": 4648,
+          "name": "Modifiers",
+          "seoName": "Modifiers"
+        },
+        {
+          "id": 4649,
+          "name": "Sockets",
+          "seoName": "Sockets"
+        }
+      ]
+    },
+    {
+      "id": 1007,
+      "name": "Horadric Cube",
+      "seoName": "Horadric Cube",
+      "subCategories": [
+        {
+          "id": 4657,
+          "name": "Cube Recipes",
+          "seoName": "Cube Recipes"
+        }
+      ]
+    },
+    {
+      "id": 1008,
+      "name": "Charms",
+      "seoName": "Charms",
+      "subCategories": [
+        {
+          "id": 4658,
+          "name": "Charms Affixes",
+          "seoName": "Charms Affixes"
+        },
+        {
+          "id": 4659,
+          "name": "Charms Guide",
+          "seoName": "Charms Guide"
+        }
+      ]
+    },
+    {
+      "id": 1009,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 4660,
+          "name": "Axes",
+          "seoName": "Axes"
+        },
+        {
+          "id": 4661,
+          "name": "Bows",
+          "seoName": "Bows"
+        },
+        {
+          "id": 4662,
+          "name": "Crossbows",
+          "seoName": "Crossbows"
+        },
+        {
+          "id": 4663,
+          "name": "Daggers",
+          "seoName": "Daggers"
+        },
+        {
+          "id": 4664,
+          "name": "Javelins",
+          "seoName": "Javelins"
+        },
+        {
+          "id": 4665,
+          "name": "Maces",
+          "seoName": "Maces"
+        },
+        {
+          "id": 4666,
+          "name": "Polearms",
+          "seoName": "Polearms"
+        },
+        {
+          "id": 4667,
+          "name": "Scepters",
+          "seoName": "Scepters"
+        },
+        {
+          "id": 4668,
+          "name": "Spears",
+          "seoName": "Spears"
+        },
+        {
+          "id": 4669,
+          "name": "Staves",
+          "seoName": "Staves"
+        },
+        {
+          "id": 4670,
+          "name": "Swords",
+          "seoName": "Swords"
+        },
+        {
+          "id": 4671,
+          "name": "Throwing",
+          "seoName": "Throwing"
+        },
+        {
+          "id": 4672,
+          "name": "Wands",
+          "seoName": "Wands"
+        }
+      ]
+    },
+    {
+      "id": 1010,
+      "name": "Runes",
+      "seoName": "Runes",
+      "subCategories": [
+        {
+          "id": 4506,
+          "name": "Runes",
+          "seoName": "Runes"
+        }
+      ]
+    },
+    {
+      "id": 1012,
+      "name": "Gems",
+      "seoName": "Gems",
+      "subCategories": [
+        {
+          "id": 4650,
+          "name": "Amethyst",
+          "seoName": "Amethyst"
+        },
+        {
+          "id": 4651,
+          "name": "Diamond",
+          "seoName": "Diamond"
+        },
+        {
+          "id": 4652,
+          "name": "Emerald",
+          "seoName": "Emerald"
+        },
+        {
+          "id": 4653,
+          "name": "Ruby",
+          "seoName": "Ruby"
+        },
+        {
+          "id": 4654,
+          "name": "Sapphire",
+          "seoName": "Sapphire"
+        },
+        {
+          "id": 4655,
+          "name": "Topaz",
+          "seoName": "Topaz"
+        },
+        {
+          "id": 4656,
+          "name": "Skull",
+          "seoName": "Skull"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 3451,
+      "name": "East Ladder"
+    },
+    {
+      "id": 9249,
+      "name": "East Non Ladder"
+    },
+    {
+      "id": 9250,
+      "name": "Europe Ladder"
+    },
+    {
+      "id": 9251,
+      "name": "Europe Non Ladder"
+    },
+    {
+      "id": 9252,
+      "name": "West Ladder"
+    },
+    {
+      "id": 9253,
+      "name": "West Non Ladder"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

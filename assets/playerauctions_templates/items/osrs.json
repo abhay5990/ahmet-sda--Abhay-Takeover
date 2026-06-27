@@ -1,0 +1,545 @@
+{
+  "game_id": 5567,
+  "game": "osrs",
+  "game_name": "RuneScape - Old School",
+  "seo_name": "OSRS",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 126,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 818,
+          "name": "Other Melee",
+          "seoName": "Other Melee"
+        },
+        {
+          "id": 819,
+          "name": "Other Ranged",
+          "seoName": "Other Ranged"
+        },
+        {
+          "id": 820,
+          "name": "Other Magic",
+          "seoName": "Other Magic"
+        },
+        {
+          "id": 5903,
+          "name": "Twisted Bow",
+          "seoName": "Twisted Bow"
+        },
+        {
+          "id": 9671,
+          "name": "Stab",
+          "seoName": "Stab"
+        },
+        {
+          "id": 9855,
+          "name": "Elder Maul",
+          "seoName": "Elder Maul"
+        },
+        {
+          "id": 9856,
+          "name": "Dragon Crossbow",
+          "seoName": "Dragon Crossbow"
+        },
+        {
+          "id": 9857,
+          "name": "Dragon Pickaxe",
+          "seoName": "Dragon Pickaxe"
+        },
+        {
+          "id": 9858,
+          "name": "Abyssal Whip",
+          "seoName": "Abyssal Whip"
+        },
+        {
+          "id": 9859,
+          "name": "Dragon Axe",
+          "seoName": "Dragon Axe"
+        },
+        {
+          "id": 9860,
+          "name": "Trident",
+          "seoName": "Trident"
+        },
+        {
+          "id": 9861,
+          "name": "Dragon Warhammer",
+          "seoName": "Dragon Warhammer"
+        },
+        {
+          "id": 9862,
+          "name": "Blowpipe",
+          "seoName": "Blowpipe"
+        },
+        {
+          "id": 9863,
+          "name": "Dragon Harpoon",
+          "seoName": "Dragon Harpoon"
+        },
+        {
+          "id": 9864,
+          "name": "Venator Bow",
+          "seoName": "Venator Bow"
+        },
+        {
+          "id": 9865,
+          "name": "Scythe of Vitur",
+          "seoName": "Scythe of Vitur"
+        },
+        {
+          "id": 9866,
+          "name": "Abyssal Dagger",
+          "seoName": "Abyssal Dagger"
+        },
+        {
+          "id": 9867,
+          "name": "Armadyl Crossbow",
+          "seoName": "Armadyl Crossbow"
+        },
+        {
+          "id": 9868,
+          "name": "Staff of the Dead",
+          "seoName": "Staff of the Dead"
+        },
+        {
+          "id": 9869,
+          "name": "Dragonfire Shield",
+          "seoName": "Dragonfire Shield"
+        },
+        {
+          "id": 9870,
+          "name": "Serpentine Helm",
+          "seoName": "Serpentine Helm"
+        },
+        {
+          "id": 9871,
+          "name": "Zaryte Crossbow",
+          "seoName": "Zaryte Crossbow"
+        },
+        {
+          "id": 9872,
+          "name": "Dragon Hunter Lance",
+          "seoName": "Dragon Hunter Lance"
+        },
+        {
+          "id": 9873,
+          "name": "Red Chinchompa",
+          "seoName": "Red Chinchompa"
+        },
+        {
+          "id": 9874,
+          "name": "Warped Sceptre",
+          "seoName": "Warped Sceptre"
+        },
+        {
+          "id": 9875,
+          "name": "Webweaver Bow",
+          "seoName": "Webweaver Bow"
+        },
+        {
+          "id": 9876,
+          "name": "Master Wand",
+          "seoName": "Master Wand"
+        },
+        {
+          "id": 9877,
+          "name": "Basilisk Jaw",
+          "seoName": "Basilisk Jaw"
+        },
+        {
+          "id": 9878,
+          "name": "Kodai Wand",
+          "seoName": "Kodai Wand"
+        },
+        {
+          "id": 9879,
+          "name": "Granite Maul",
+          "seoName": "Granite Maul"
+        },
+        {
+          "id": 9880,
+          "name": "Rapier",
+          "seoName": "Rapier"
+        },
+        {
+          "id": 9881,
+          "name": "Blade of Saeldor",
+          "seoName": "Blade of Saeldor"
+        },
+        {
+          "id": 9882,
+          "name": "Toxic Trident",
+          "seoName": "Toxic Trident"
+        },
+        {
+          "id": 9883,
+          "name": "Dragon Knife",
+          "seoName": "Dragon Knife"
+        },
+        {
+          "id": 9884,
+          "name": "Nightmare Staff",
+          "seoName": "Nightmare Staff"
+        },
+        {
+          "id": 9894,
+          "name": "Dragon Claws",
+          "seoName": "Dragon Claws"
+        },
+        {
+          "id": 10108,
+          "name": "3rd Age Pickaxe",
+          "seoName": "3rd Age Pickaxe"
+        },
+        {
+          "id": 10222,
+          "name": "Tumeken's Shadow",
+          "seoName": "Tumeken's Shadow"
+        },
+        {
+          "id": 11006,
+          "name": "Inquisitor's Mace",
+          "seoName": "Inquisitor's Mace"
+        },
+        {
+          "id": 11007,
+          "name": "Soulreaper Axe",
+          "seoName": "Soulreaper Axe"
+        }
+      ]
+    },
+    {
+      "id": 127,
+      "name": "Armour",
+      "seoName": "Armour",
+      "subCategories": [
+        {
+          "id": 808,
+          "name": "Armour Set",
+          "seoName": "Armour Set"
+        },
+        {
+          "id": 810,
+          "name": "Hands",
+          "seoName": "Hands"
+        },
+        {
+          "id": 811,
+          "name": "Feet",
+          "seoName": "Feet"
+        },
+        {
+          "id": 812,
+          "name": "Shield",
+          "seoName": "Shield"
+        },
+        {
+          "id": 813,
+          "name": "Head",
+          "seoName": "Head"
+        },
+        {
+          "id": 814,
+          "name": "Ring",
+          "seoName": "Ring"
+        },
+        {
+          "id": 815,
+          "name": "Legs",
+          "seoName": "Legs"
+        },
+        {
+          "id": 816,
+          "name": "Chest",
+          "seoName": "Chest"
+        },
+        {
+          "id": 817,
+          "name": "Neck",
+          "seoName": "Neck"
+        },
+        {
+          "id": 8162,
+          "name": "Proselyte Armour",
+          "seoName": "Proselyte Armour"
+        },
+        {
+          "id": 8163,
+          "name": "Armadyl Armour",
+          "seoName": "Armadyl Armour"
+        },
+        {
+          "id": 8164,
+          "name": "Bandos Armour",
+          "seoName": "Bandos Armour"
+        },
+        {
+          "id": 8165,
+          "name": "Obsidian Armour",
+          "seoName": "Obsidian Armour"
+        },
+        {
+          "id": 8166,
+          "name": "Varrock Armour",
+          "seoName": "Varrock Armour"
+        },
+        {
+          "id": 8167,
+          "name": "Justiciar Armour",
+          "seoName": "Justiciar Armour"
+        },
+        {
+          "id": 8168,
+          "name": "Torva Armour",
+          "seoName": "Torva Armour"
+        },
+        {
+          "id": 10321,
+          "name": "Oathplate Armour",
+          "seoName": "Oathplate Armour"
+        },
+        {
+          "id": 11008,
+          "name": "Masori Armour",
+          "seoName": "Masori Armour"
+        }
+      ]
+    },
+    {
+      "id": 128,
+      "name": "Potions",
+      "seoName": "Potions",
+      "subCategories": [
+        {
+          "id": 4331,
+          "name": "All",
+          "seoName": "All"
+        },
+        {
+          "id": 9885,
+          "name": "Prayer Potion",
+          "seoName": "Prayer Potion"
+        },
+        {
+          "id": 9886,
+          "name": "Super Restore",
+          "seoName": "Super Restore"
+        },
+        {
+          "id": 9887,
+          "name": "Stamina Potion",
+          "seoName": "Stamina Potion"
+        },
+        {
+          "id": 9888,
+          "name": "Saradomin Brew",
+          "seoName": "Saradomin Brew"
+        },
+        {
+          "id": 9889,
+          "name": "Sanfew Serum",
+          "seoName": "Sanfew Serum"
+        },
+        {
+          "id": 9890,
+          "name": "Magic Potion",
+          "seoName": "Magic Potion"
+        },
+        {
+          "id": 9891,
+          "name": "Ranging Potion",
+          "seoName": "Ranging Potion"
+        },
+        {
+          "id": 9892,
+          "name": "Super Combat Potion",
+          "seoName": "Super Combat Potion"
+        },
+        {
+          "id": 9893,
+          "name": "Anti Venom",
+          "seoName": "Anti Venom"
+        }
+      ]
+    },
+    {
+      "id": 129,
+      "name": "Misc",
+      "seoName": "Misc",
+      "subCategories": [
+        {
+          "id": 821,
+          "name": "Holiday Items",
+          "seoName": "Holiday Items"
+        },
+        {
+          "id": 8161,
+          "name": "Dexterous Prayer Scroll",
+          "seoName": "Dexterous Prayer Scroll"
+        }
+      ]
+    },
+    {
+      "id": 1062,
+      "name": "Orbs",
+      "seoName": "Orbs",
+      "subCategories": [
+        {
+          "id": 8153,
+          "name": "Armonised Orbs",
+          "seoName": "Armonised Orbs"
+        },
+        {
+          "id": 8154,
+          "name": "Volatile Orbs",
+          "seoName": "Volatile Orbs"
+        },
+        {
+          "id": 8155,
+          "name": "Eldritch Orbs",
+          "seoName": "Eldritch Orbs"
+        },
+        {
+          "id": 8156,
+          "name": "Other Orbs",
+          "seoName": "Other Orbs"
+        },
+        {
+          "id": 10221,
+          "name": "Harmonised Orbs",
+          "seoName": "Harmonised Orbs"
+        }
+      ]
+    },
+    {
+      "id": 1094,
+      "name": "High-Level Gear",
+      "seoName": "High-Level Gear",
+      "subCategories": [
+        {
+          "id": 5158,
+          "name": "Dragon Equipment",
+          "seoName": "Dragon Equipment"
+        },
+        {
+          "id": 5159,
+          "name": "God Equipment",
+          "seoName": "God Equipment"
+        },
+        {
+          "id": 5160,
+          "name": "Ancestral Equipment",
+          "seoName": "Ancestral Equipment"
+        },
+        {
+          "id": 5161,
+          "name": "Third Age Equipment",
+          "seoName": "Third Age Equipment"
+        }
+      ]
+    },
+    {
+      "id": 1760,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 8152,
+          "name": "Dragon Bones",
+          "seoName": "Dragon Bones"
+        },
+        {
+          "id": 8157,
+          "name": "Superior Dragon Bones",
+          "seoName": "Superior Dragon Bones"
+        },
+        {
+          "id": 8158,
+          "name": "Black Dragon Leather",
+          "seoName": "Black Dragon Leather"
+        },
+        {
+          "id": 8159,
+          "name": "Mahogany Plank",
+          "seoName": "Mahogany Plank"
+        },
+        {
+          "id": 8160,
+          "name": "Teak Plank",
+          "seoName": "Teak Plank"
+        }
+      ]
+    },
+    {
+      "id": 1976,
+      "name": "Bonds",
+      "seoName": "Bonds",
+      "subCategories": [
+        {
+          "id": 9669,
+          "name": "Bonds",
+          "seoName": "Bonds"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 5568,
+      "name": "Main OSRS Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "game_id": "358",
+  "game": "arknights-endfield",
+  "game_name": "Arknights: Endfield",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "arknights-endfield-origeometry": {
+      "name": "Origeometry",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "4-origeometry",
+          "name": "4 Origeometry"
+        },
+        {
+          "id": "21-origeometry",
+          "name": "21 Origeometry"
+        },
+        {
+          "id": "34-origeometry",
+          "name": "34 Origeometry"
+        },
+        {
+          "id": "57-origeometry",
+          "name": "57 Origeometry"
+        },
+        {
+          "id": "92-origeometry",
+          "name": "92 Origeometry"
+        },
+        {
+          "id": "194-origeometry",
+          "name": "194 Origeometry"
+        },
+        {
+          "id": "monthly-pass",
+          "name": "Monthly Pass"
+        },
+        {
+          "id": "protocol-customized",
+          "name": "Protocol Customized"
+        },
+        {
+          "id": "starting-point-bundle",
+          "name": "Starting Point Bundle"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

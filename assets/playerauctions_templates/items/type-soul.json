@@ -1,0 +1,279 @@
+{
+  "game_id": 13893,
+  "game": "type-soul",
+  "game_name": "Type Soul",
+  "seo_name": "Type-Soul",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 1927,
+      "name": "Essences",
+      "seoName": "Essences",
+      "subCategories": [
+        {
+          "id": 9562,
+          "name": "Partial",
+          "seoName": "Partial"
+        },
+        {
+          "id": 9563,
+          "name": "Territorial Mark",
+          "seoName": "Territorial Mark"
+        },
+        {
+          "id": 9564,
+          "name": "Unseen Blade",
+          "seoName": "Unseen Blade"
+        },
+        {
+          "id": 9565,
+          "name": "Fusion",
+          "seoName": "Fusion"
+        },
+        {
+          "id": 9566,
+          "name": "Horizon Core",
+          "seoName": "Horizon Core"
+        },
+        {
+          "id": 9567,
+          "name": "Bala Fireworks",
+          "seoName": "Bala Fireworks"
+        },
+        {
+          "id": 9568,
+          "name": "Crazed Blitz",
+          "seoName": "Crazed Blitz"
+        },
+        {
+          "id": 9569,
+          "name": "Raging Reiatsu",
+          "seoName": "Raging Reiatsu"
+        },
+        {
+          "id": 9570,
+          "name": "Extricate",
+          "seoName": "Extricate"
+        },
+        {
+          "id": 9571,
+          "name": "Gran Raikoho",
+          "seoName": "Gran Raikoho"
+        },
+        {
+          "id": 9572,
+          "name": "Teppusatsu",
+          "seoName": "Teppusatsu"
+        },
+        {
+          "id": 9573,
+          "name": "Shattered Comet",
+          "seoName": "Shattered Comet"
+        },
+        {
+          "id": 9574,
+          "name": "True Blut",
+          "seoName": "True Blut"
+        }
+      ]
+    },
+    {
+      "id": 1928,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 9575,
+          "name": "Paintbrush",
+          "seoName": "Paintbrush"
+        },
+        {
+          "id": 9576,
+          "name": "Longsword",
+          "seoName": "Longsword"
+        },
+        {
+          "id": 9577,
+          "name": "Greatsword",
+          "seoName": "Greatsword"
+        },
+        {
+          "id": 9578,
+          "name": "Katana",
+          "seoName": "Katana"
+        },
+        {
+          "id": 9579,
+          "name": "Dual Swords",
+          "seoName": "Dual Swords"
+        },
+        {
+          "id": 9580,
+          "name": "Dagger",
+          "seoName": "Dagger"
+        },
+        {
+          "id": 9581,
+          "name": "Hammer",
+          "seoName": "Hammer"
+        },
+        {
+          "id": 9582,
+          "name": "Hakuda Gauntlets",
+          "seoName": "Hakuda Gauntlets"
+        },
+        {
+          "id": 9583,
+          "name": "Spear",
+          "seoName": "Spear"
+        },
+        {
+          "id": 9584,
+          "name": "Scythe",
+          "seoName": "Scythe"
+        },
+        {
+          "id": 9585,
+          "name": "Twinblade",
+          "seoName": "Twinblade"
+        },
+        {
+          "id": 9614,
+          "name": "Other Weapons",
+          "seoName": "Other Weapons"
+        },
+        {
+          "id": 9615,
+          "name": "Universal weapons",
+          "seoName": "Universal weapons"
+        }
+      ]
+    },
+    {
+      "id": 1929,
+      "name": "Accessories",
+      "seoName": "Accessories",
+      "subCategories": [
+        {
+          "id": 9586,
+          "name": "Head",
+          "seoName": "Head"
+        },
+        {
+          "id": 9587,
+          "name": "Face",
+          "seoName": "Face"
+        },
+        {
+          "id": 9588,
+          "name": "Neck",
+          "seoName": "Neck"
+        },
+        {
+          "id": 9589,
+          "name": "Arm",
+          "seoName": "Arm"
+        },
+        {
+          "id": 9590,
+          "name": "Back",
+          "seoName": "Back"
+        },
+        {
+          "id": 9591,
+          "name": "Torso",
+          "seoName": "Torso"
+        },
+        {
+          "id": 9592,
+          "name": "Leg",
+          "seoName": "Leg"
+        },
+        {
+          "id": 9593,
+          "name": "Waist",
+          "seoName": "Waist"
+        }
+      ]
+    },
+    {
+      "id": 1930,
+      "name": "Fragments",
+      "seoName": "Fragments",
+      "subCategories": [
+        {
+          "id": 9594,
+          "name": "Fragments",
+          "seoName": "Fragments"
+        }
+      ]
+    },
+    {
+      "id": 1931,
+      "name": "Skill Boxes",
+      "seoName": "Skill Boxes",
+      "subCategories": [
+        {
+          "id": 9595,
+          "name": "Skill Boxes",
+          "seoName": "Skill Boxes"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13901,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

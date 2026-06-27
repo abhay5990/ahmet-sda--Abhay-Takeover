@@ -1,0 +1,248 @@
+{
+  "game_id": "260",
+  "game": "razer",
+  "game_name": "Razer",
+  "category": "GiftCard",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Global",
+      "group": "Region",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "5 USD"
+        },
+        {
+          "id": "0-1",
+          "name": "10 USD"
+        },
+        {
+          "id": "0-2",
+          "name": "20 USD"
+        },
+        {
+          "id": "0-3",
+          "name": "25 USD"
+        },
+        {
+          "id": "0-4",
+          "name": "50 USD"
+        },
+        {
+          "id": "0-5",
+          "name": "100 USD"
+        },
+        {
+          "id": "0-6",
+          "name": "1 USD"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "United States",
+      "group": "Region",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "10 USD"
+        },
+        {
+          "id": "1-1",
+          "name": "25 USD"
+        },
+        {
+          "id": "1-2",
+          "name": "50 USD"
+        },
+        {
+          "id": "1-3",
+          "name": "100 USD"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Europe",
+      "group": "Region",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "5 EUR"
+        },
+        {
+          "id": "2-1",
+          "name": "10 EUR"
+        },
+        {
+          "id": "2-2",
+          "name": "25 EUR"
+        },
+        {
+          "id": "2-3",
+          "name": "50 EUR"
+        },
+        {
+          "id": "2-4",
+          "name": "100 EUR"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Canada",
+      "group": "Region",
+      "children": [
+        {
+          "id": "3-0",
+          "name": "20 CAD"
+        },
+        {
+          "id": "3-1",
+          "name": "25 CAD"
+        },
+        {
+          "id": "3-2",
+          "name": "50 CAD"
+        },
+        {
+          "id": "3-3",
+          "name": "100 CAD"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Poland",
+      "group": "Region",
+      "children": [
+        {
+          "id": "4-0",
+          "name": "40 PLN"
+        },
+        {
+          "id": "4-1",
+          "name": "100 PLN"
+        },
+        {
+          "id": "4-2",
+          "name": "200 PLN"
+        },
+        {
+          "id": "4-3",
+          "name": "400 PLN"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Turkey",
+      "group": "Region",
+      "children": [
+        {
+          "id": "5-0",
+          "name": "5 TRY"
+        },
+        {
+          "id": "5-1",
+          "name": "10 TRY"
+        },
+        {
+          "id": "5-2",
+          "name": "25 TRY"
+        },
+        {
+          "id": "5-3",
+          "name": "50 TRY"
+        },
+        {
+          "id": "5-4",
+          "name": "100 TRY"
+        },
+        {
+          "id": "5-5",
+          "name": "250 TRY"
+        },
+        {
+          "id": "5-6",
+          "name": "500 TRY"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "game_id": 13892,
+  "game": "peroxide",
+  "game_name": "Peroxide",
+  "seo_name": "Peroxide",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 1906,
+      "name": "Accessories",
+      "seoName": "Accessories",
+      "subCategories": [
+        {
+          "id": 9525,
+          "name": "Hat",
+          "seoName": "Hat"
+        },
+        {
+          "id": 9526,
+          "name": "Collar",
+          "seoName": "Collar"
+        },
+        {
+          "id": 9527,
+          "name": "Face",
+          "seoName": "Face"
+        },
+        {
+          "id": 9528,
+          "name": "Outfit",
+          "seoName": "Outfit"
+        },
+        {
+          "id": 9529,
+          "name": "Wrist",
+          "seoName": "Wrist"
+        }
+      ]
+    },
+    {
+      "id": 1932,
+      "name": "Crystals",
+      "seoName": "Crystals",
+      "subCategories": [
+        {
+          "id": 9596,
+          "name": "Crystals",
+          "seoName": "Crystals"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13900,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

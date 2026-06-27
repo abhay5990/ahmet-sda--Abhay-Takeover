@@ -1,0 +1,221 @@
+{
+  "game_id": 15036,
+  "game": "project-gorgon",
+  "game_name": "Project: Gorgon",
+  "seo_name": "Project-Gorgon",
+  "currencyName": "Councils",
+  "categories": [
+    {
+      "id": 2118,
+      "name": "Main Hand Weapons",
+      "seoName": "Main Hand Weapons",
+      "subCategories": [
+        {
+          "id": 10713,
+          "name": "Hammer",
+          "seoName": "Hammer"
+        },
+        {
+          "id": 10714,
+          "name": "Staff",
+          "seoName": "Staff"
+        },
+        {
+          "id": 10715,
+          "name": "Sword",
+          "seoName": "Sword"
+        },
+        {
+          "id": 10716,
+          "name": "Beaker",
+          "seoName": "Beaker"
+        },
+        {
+          "id": 10717,
+          "name": "Dagger",
+          "seoName": "Dagger"
+        },
+        {
+          "id": 10718,
+          "name": "Fist",
+          "seoName": "Fist"
+        },
+        {
+          "id": 10719,
+          "name": "Lute",
+          "seoName": "Lute"
+        }
+      ]
+    },
+    {
+      "id": 2119,
+      "name": "Off Hand Weapons",
+      "seoName": "Off Hand Weapons",
+      "subCategories": [
+        {
+          "id": 10720,
+          "name": "Orb",
+          "seoName": "Orb"
+        },
+        {
+          "id": 10721,
+          "name": "Shield",
+          "seoName": "Shield"
+        },
+        {
+          "id": 10722,
+          "name": "Bow",
+          "seoName": "Bow"
+        },
+        {
+          "id": 10723,
+          "name": "Flask",
+          "seoName": "Flask"
+        },
+        {
+          "id": 10724,
+          "name": "Claw",
+          "seoName": "Claw"
+        },
+        {
+          "id": 10725,
+          "name": "Horn",
+          "seoName": "Horn"
+        },
+        {
+          "id": 10726,
+          "name": "Dirk",
+          "seoName": "Dirk"
+        }
+      ]
+    },
+    {
+      "id": 2120,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 10727,
+          "name": "Belts",
+          "seoName": "Belts"
+        },
+        {
+          "id": 10728,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 10729,
+          "name": "Chest",
+          "seoName": "Chest"
+        },
+        {
+          "id": 10730,
+          "name": "Legs",
+          "seoName": "Legs"
+        },
+        {
+          "id": 10731,
+          "name": "Headgear",
+          "seoName": "Headgear"
+        },
+        {
+          "id": 10732,
+          "name": "Gloves",
+          "seoName": "Gloves"
+        },
+        {
+          "id": 10733,
+          "name": "Neck",
+          "seoName": "Neck"
+        },
+        {
+          "id": 10734,
+          "name": "Ring",
+          "seoName": "Ring"
+        },
+        {
+          "id": 10735,
+          "name": "Earring",
+          "seoName": "Earring"
+        },
+        {
+          "id": 10736,
+          "name": "Navel Gem",
+          "seoName": "Navel Gem"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15037,
+      "name": "Arisetsu"
+    },
+    {
+      "id": 15038,
+      "name": "Dreva"
+    },
+    {
+      "id": 15102,
+      "name": "Laeth"
+    },
+    {
+      "id": 15047,
+      "name": "Miraverre"
+    },
+    {
+      "id": 15039,
+      "name": "Strekios"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

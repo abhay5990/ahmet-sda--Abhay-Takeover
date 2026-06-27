@@ -1,0 +1,170 @@
+{
+  "game_id": "362",
+  "game": "silkroad-online-t-rkiye",
+  "game_name": "Silkroad Online Türkiye",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Troya - TR",
+      "group": "Server"
+    },
+    {
+      "id": "1",
+      "name": "Harput - TR",
+      "group": "Server"
+    },
+    {
+      "id": "2",
+      "name": "Knidos - TR",
+      "group": "Server"
+    },
+    {
+      "id": "3",
+      "name": "Millet - TR",
+      "group": "Server"
+    },
+    {
+      "id": "4",
+      "name": "Nemrut - TR",
+      "group": "Server"
+    },
+    {
+      "id": "5",
+      "name": "Hyperion - US",
+      "group": "Server"
+    },
+    {
+      "id": "6",
+      "name": "Theia - US",
+      "group": "Server"
+    },
+    {
+      "id": "7",
+      "name": "Arges - EU",
+      "group": "Server"
+    },
+    {
+      "id": "8",
+      "name": "Brontes - EU",
+      "group": "Server"
+    },
+    {
+      "id": "9",
+      "name": "Hebe - EU",
+      "group": "Server"
+    },
+    {
+      "id": "10",
+      "name": "Kratos- EU",
+      "group": "Server"
+    },
+    {
+      "id": "11",
+      "name": "Thanatos - EU",
+      "group": "Server"
+    }
+  ],
+  "attributes": {
+    "silkroad-online-trkiye-silk": {
+      "name": "Silk",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "100-silk",
+          "name": "100 Silk"
+        },
+        {
+          "id": "300-silk",
+          "name": "300 Silk"
+        },
+        {
+          "id": "500-silk",
+          "name": "500 Silk"
+        },
+        {
+          "id": "750-silk",
+          "name": "750 Silk"
+        },
+        {
+          "id": "1100-silk",
+          "name": "1100 Silk"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

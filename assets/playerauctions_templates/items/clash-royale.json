@@ -1,0 +1,91 @@
+{
+  "game_id": 7293,
+  "game": "clash-royale",
+  "game_name": "Clash Royale",
+  "seo_name": "Clash-Royale",
+  "currencyName": "Gems",
+  "categories": [
+    {
+      "id": 1652,
+      "name": "Cards",
+      "seoName": "Cards",
+      "subCategories": [
+        {
+          "id": 7793,
+          "name": "Common Card",
+          "seoName": "Common Card"
+        },
+        {
+          "id": 7794,
+          "name": "Rare Card",
+          "seoName": "Rare Card"
+        },
+        {
+          "id": 7795,
+          "name": "Epic Card",
+          "seoName": "Epic Card"
+        },
+        {
+          "id": 7796,
+          "name": "Legendary Card",
+          "seoName": "Legendary Card"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7295,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

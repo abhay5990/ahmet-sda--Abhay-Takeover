@@ -1,0 +1,121 @@
+{
+  "game_id": "273",
+  "game": "poppo-live",
+  "game_name": "Poppo Live",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "poppo-live-coins": {
+      "name": "Coins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "25500-coins",
+          "name": "25500 Coins"
+        },
+        {
+          "id": "43500-coins",
+          "name": "43500 Coins"
+        },
+        {
+          "id": "83000-coins",
+          "name": "83000 Coins"
+        },
+        {
+          "id": "180000-coins",
+          "name": "180000 Coins"
+        },
+        {
+          "id": "270000-coins",
+          "name": "270000 Coins"
+        },
+        {
+          "id": "450000-coins",
+          "name": "450000 Coins"
+        },
+        {
+          "id": "910000-coins",
+          "name": "910000 Coins"
+        },
+        {
+          "id": "1780000-coins",
+          "name": "1780000 Coins"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

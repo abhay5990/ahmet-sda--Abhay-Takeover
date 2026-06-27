@@ -1,0 +1,117 @@
+{
+  "game_id": 8,
+  "game": "eve",
+  "game_name": "EVE Online",
+  "seo_name": "EVE",
+  "currencyName": "ISK",
+  "categories": [
+    {
+      "id": 785,
+      "name": "PLEX",
+      "seoName": "PLEX",
+      "subCategories": [
+        {
+          "id": 2349,
+          "name": "PLEX",
+          "seoName": "PLEX"
+        }
+      ]
+    },
+    {
+      "id": 796,
+      "name": "Ships",
+      "seoName": "Ships",
+      "subCategories": [
+        {
+          "id": 2364,
+          "name": "Ships",
+          "seoName": "Ships"
+        }
+      ]
+    },
+    {
+      "id": 797,
+      "name": "Implants and Boosters",
+      "seoName": "Implants and Boosters",
+      "subCategories": [
+        {
+          "id": 2365,
+          "name": "Implants and Boosters",
+          "seoName": "Implants and Boosters"
+        }
+      ]
+    },
+    {
+      "id": 1051,
+      "name": "Skills",
+      "seoName": "Skills",
+      "subCategories": [
+        {
+          "id": 5073,
+          "name": "Skill Extractor",
+          "seoName": "Skill Extractor"
+        },
+        {
+          "id": 5074,
+          "name": "Skill Injector",
+          "seoName": "Skill Injector"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 164,
+      "name": "Tranquility"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

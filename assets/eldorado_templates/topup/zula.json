@@ -1,0 +1,124 @@
+{
+  "game_id": "334",
+  "game": "zula",
+  "game_name": "Zula",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Global",
+      "group": "Region"
+    },
+    {
+      "id": "1",
+      "name": "TR",
+      "group": "Region"
+    }
+  ],
+  "attributes": {
+    "zula-gold": {
+      "name": "Gold",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "3000-gold",
+          "name": "3000 Gold"
+        },
+        {
+          "id": "5850-gold",
+          "name": "5850 Gold"
+        },
+        {
+          "id": "16250-gold",
+          "name": "16250 Gold"
+        },
+        {
+          "id": "34000-gold",
+          "name": "34000 Gold"
+        },
+        {
+          "id": "70000-gold",
+          "name": "70000 Gold"
+        },
+        {
+          "id": "150000-gold",
+          "name": "150000 Gold"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

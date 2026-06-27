@@ -1,0 +1,119 @@
+{
+  "game_id": 15197,
+  "game": "sand",
+  "game_name": "SAND: Raiders of Sophie",
+  "seo_name": "SAND",
+  "currencyName": "Crown",
+  "categories": [
+    {
+      "id": 2182,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 11272,
+          "name": "Others",
+          "seoName": "Others"
+        }
+      ]
+    },
+    {
+      "id": 2183,
+      "name": "Ammunition",
+      "seoName": "Ammunition",
+      "subCategories": [
+        {
+          "id": 11273,
+          "name": "Others",
+          "seoName": "Others"
+        }
+      ]
+    },
+    {
+      "id": 2184,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 11274,
+          "name": "Others",
+          "seoName": "Others"
+        }
+      ]
+    },
+    {
+      "id": 2185,
+      "name": "Research Items",
+      "seoName": "Research Items",
+      "subCategories": [
+        {
+          "id": 11275,
+          "name": "Others",
+          "seoName": "Others"
+        }
+      ]
+    },
+    {
+      "id": 2186,
+      "name": "Valuable Artifacts",
+      "seoName": "Valuable Artifacts",
+      "subCategories": [
+        {
+          "id": 11276,
+          "name": "Others",
+          "seoName": "Others"
+        }
+      ]
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15198,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

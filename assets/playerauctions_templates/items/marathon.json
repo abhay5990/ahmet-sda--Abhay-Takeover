@@ -1,0 +1,324 @@
+{
+  "game_id": 14291,
+  "game": "marathon",
+  "game_name": "Marathon",
+  "seo_name": "Marathon",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 2121,
+      "name": "Implants",
+      "seoName": "Implants",
+      "subCategories": [
+        {
+          "id": 10783,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 10784,
+          "name": "Cores",
+          "seoName": "Cores"
+        },
+        {
+          "id": 10785,
+          "name": "Head",
+          "seoName": "Head"
+        },
+        {
+          "id": 10786,
+          "name": "Torso",
+          "seoName": "Torso"
+        },
+        {
+          "id": 10787,
+          "name": "Leg",
+          "seoName": "Leg"
+        }
+      ]
+    },
+    {
+      "id": 2122,
+      "name": "Backpacks",
+      "seoName": "Backpacks",
+      "subCategories": [
+        {
+          "id": 10788,
+          "name": "Prestige",
+          "seoName": "Prestige"
+        },
+        {
+          "id": 10789,
+          "name": "Superior",
+          "seoName": "Superior"
+        },
+        {
+          "id": 10790,
+          "name": "Deluxe",
+          "seoName": "Deluxe"
+        },
+        {
+          "id": 10791,
+          "name": "Enhanced",
+          "seoName": "Enhanced"
+        },
+        {
+          "id": 10792,
+          "name": "Standard",
+          "seoName": "Standard"
+        }
+      ]
+    },
+    {
+      "id": 2123,
+      "name": "Equipment",
+      "seoName": "Equipment",
+      "subCategories": [
+        {
+          "id": 10793,
+          "name": "Grenades",
+          "seoName": "Grenades"
+        },
+        {
+          "id": 10794,
+          "name": "Gadgets",
+          "seoName": "Gadgets"
+        }
+      ]
+    },
+    {
+      "id": 2124,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 10795,
+          "name": "Assault Rifles",
+          "seoName": "Assault Rifles"
+        },
+        {
+          "id": 10796,
+          "name": "Machine Guns",
+          "seoName": "Machine Guns"
+        },
+        {
+          "id": 10797,
+          "name": "Precision Rifles",
+          "seoName": "Precision Rifles"
+        },
+        {
+          "id": 10798,
+          "name": "Pistols",
+          "seoName": "Pistols"
+        },
+        {
+          "id": 10799,
+          "name": "Railguns",
+          "seoName": "Railguns"
+        },
+        {
+          "id": 10800,
+          "name": "Shotguns",
+          "seoName": "Shotguns"
+        },
+        {
+          "id": 10801,
+          "name": "Sniper Rifles",
+          "seoName": "Sniper Rifles"
+        },
+        {
+          "id": 10802,
+          "name": "Submachine Guns",
+          "seoName": "Submachine Guns"
+        }
+      ]
+    },
+    {
+      "id": 2125,
+      "name": "Weapon Mods",
+      "seoName": "Weapon Mods",
+      "subCategories": [
+        {
+          "id": 10803,
+          "name": "Barrel Mods",
+          "seoName": "Barrel Mods"
+        },
+        {
+          "id": 10804,
+          "name": "Chip Mods",
+          "seoName": "Chip Mods"
+        },
+        {
+          "id": 10805,
+          "name": "Grip Mods",
+          "seoName": "Grip Mods"
+        },
+        {
+          "id": 10806,
+          "name": "Magazine Mods",
+          "seoName": "Magazine Mods"
+        },
+        {
+          "id": 10807,
+          "name": "Optic Mods",
+          "seoName": "Optic Mods"
+        },
+        {
+          "id": 10808,
+          "name": "Shield Mods",
+          "seoName": "Shield Mods"
+        }
+      ]
+    },
+    {
+      "id": 2126,
+      "name": "Keys",
+      "seoName": "Keys",
+      "subCategories": [
+        {
+          "id": 10809,
+          "name": "Keys Perimeter",
+          "seoName": "Keys Perimeter"
+        },
+        {
+          "id": 10810,
+          "name": "Keys Dire Marsh",
+          "seoName": "Keys Dire Marsh"
+        },
+        {
+          "id": 10811,
+          "name": "Keys Outpost",
+          "seoName": "Keys Outpost"
+        },
+        {
+          "id": 10812,
+          "name": "Keys Cryo Archive",
+          "seoName": "Keys Cryo Archive"
+        }
+      ]
+    },
+    {
+      "id": 2127,
+      "name": "Datacards",
+      "seoName": "Datacards",
+      "subCategories": [
+        {
+          "id": 10813,
+          "name": "Datacards",
+          "seoName": "Datacards"
+        }
+      ]
+    },
+    {
+      "id": 2128,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 10814,
+          "name": "Consumables",
+          "seoName": "Consumables"
+        }
+      ]
+    },
+    {
+      "id": 2131,
+      "name": "Twitch Drops",
+      "seoName": "Twitch Drops",
+      "subCategories": [
+        {
+          "id": 10831,
+          "name": "Twitch Drops",
+          "seoName": "Twitch Drops"
+        }
+      ]
+    },
+    {
+      "id": 2132,
+      "name": "Salvage",
+      "seoName": "Salvage",
+      "subCategories": [
+        {
+          "id": 10832,
+          "name": "Standard",
+          "seoName": "Standard"
+        },
+        {
+          "id": 10833,
+          "name": "Enhanced",
+          "seoName": "Enhanced"
+        },
+        {
+          "id": 10834,
+          "name": "Deluxe",
+          "seoName": "Deluxe"
+        },
+        {
+          "id": 10835,
+          "name": "Superior",
+          "seoName": "Superior"
+        },
+        {
+          "id": 10836,
+          "name": "Prestige",
+          "seoName": "Prestige"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14292,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

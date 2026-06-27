@@ -1,0 +1,203 @@
+{
+  "game_id": "20",
+  "game": "counter-strike-2",
+  "game_name": "Counter-Strike 2",
+  "category": "CustomItem",
+  "tradeEnvironments": [],
+  "attributes": {
+    "counter-strike-2-condition": {
+      "name": "Condition",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "factory-new",
+          "name": "Factory New"
+        },
+        {
+          "id": "minimal-wear",
+          "name": "Minimal Wear"
+        },
+        {
+          "id": "field-tested",
+          "name": "Field-Tested"
+        },
+        {
+          "id": "well-worn",
+          "name": "Well-Worn"
+        },
+        {
+          "id": "battle-scarred",
+          "name": "Battle-Scarred"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "counter-strike-2-pattern-template": {
+      "name": "Pattern Template",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "0-100",
+          "name": "0-100"
+        },
+        {
+          "id": "101-200",
+          "name": "101-200"
+        },
+        {
+          "id": "201-300",
+          "name": "201-300"
+        },
+        {
+          "id": "301-400",
+          "name": "301-400"
+        },
+        {
+          "id": "401-500",
+          "name": "401-500"
+        },
+        {
+          "id": "501-600",
+          "name": "501-600"
+        },
+        {
+          "id": "601-700",
+          "name": "601-700"
+        },
+        {
+          "id": "701-800",
+          "name": "701-800"
+        },
+        {
+          "id": "801-900",
+          "name": "801-900"
+        },
+        {
+          "id": "901-1000",
+          "name": "901-1000"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "counter-strike-2-skin-type": {
+      "name": "Skin Type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "gloves",
+          "name": "Gloves"
+        },
+        {
+          "id": "knife",
+          "name": "Knife"
+        },
+        {
+          "id": "pistol",
+          "name": "Pistol"
+        },
+        {
+          "id": "rifle",
+          "name": "Rifle"
+        },
+        {
+          "id": "smg",
+          "name": "SMG"
+        },
+        {
+          "id": "sniper-rifle",
+          "name": "Sniper Rifle"
+        },
+        {
+          "id": "stickers",
+          "name": "Stickers"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

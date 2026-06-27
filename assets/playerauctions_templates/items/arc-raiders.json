@@ -1,0 +1,710 @@
+{
+  "game_id": 14695,
+  "game": "arc-raiders",
+  "game_name": "ARC Raiders",
+  "seo_name": "ARC-Raiders",
+  "currencyName": "Coins",
+  "categories": [
+    {
+      "id": 2074,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 10364,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        },
+        {
+          "id": 10468,
+          "name": "Ferro",
+          "seoName": "Ferro"
+        },
+        {
+          "id": 10469,
+          "name": "Kettle",
+          "seoName": "Kettle"
+        },
+        {
+          "id": 10898,
+          "name": "Anvil",
+          "seoName": "Anvil"
+        },
+        {
+          "id": 10899,
+          "name": "Renegade",
+          "seoName": "Renegade"
+        },
+        {
+          "id": 10900,
+          "name": "Bobcat",
+          "seoName": "Bobcat"
+        },
+        {
+          "id": 10901,
+          "name": "Vulcano",
+          "seoName": "Vulcano"
+        },
+        {
+          "id": 10902,
+          "name": "Venator",
+          "seoName": "Venator"
+        },
+        {
+          "id": 10903,
+          "name": "Tempest",
+          "seoName": "Tempest"
+        },
+        {
+          "id": 10904,
+          "name": "Osprey",
+          "seoName": "Osprey"
+        },
+        {
+          "id": 10905,
+          "name": "Stitcher",
+          "seoName": "Stitcher"
+        },
+        {
+          "id": 10906,
+          "name": "Bettina",
+          "seoName": "Bettina"
+        },
+        {
+          "id": 10907,
+          "name": "Il Toro",
+          "seoName": "Il Toro"
+        },
+        {
+          "id": 10908,
+          "name": "Weapon Bundles",
+          "seoName": "Weapon Bundles"
+        },
+        {
+          "id": 10962,
+          "name": "Canto",
+          "seoName": "Canto"
+        },
+        {
+          "id": 10963,
+          "name": "Dolabra",
+          "seoName": "Dolabra"
+        }
+      ]
+    },
+    {
+      "id": 2075,
+      "name": "Blueprints",
+      "seoName": "Blueprints",
+      "subCategories": [
+        {
+          "id": 10365,
+          "name": "Other Blueprints",
+          "seoName": "Other Blueprints"
+        },
+        {
+          "id": 10384,
+          "name": "Anvil Blueprint",
+          "seoName": "Anvil Blueprint"
+        },
+        {
+          "id": 10385,
+          "name": "Bettina Blueprint",
+          "seoName": "Bettina Blueprint"
+        },
+        {
+          "id": 10386,
+          "name": "Il Toro Blueprint",
+          "seoName": "Il Toro Blueprint"
+        },
+        {
+          "id": 10387,
+          "name": "Osprey Blueprint",
+          "seoName": "Osprey Blueprint"
+        },
+        {
+          "id": 10388,
+          "name": "Torrente Blueprint",
+          "seoName": "Torrente Blueprint"
+        },
+        {
+          "id": 10389,
+          "name": "Jupiter Blueprint",
+          "seoName": "Jupiter Blueprint"
+        },
+        {
+          "id": 10393,
+          "name": "Wolfpack Blueprint",
+          "seoName": "Wolfpack Blueprint"
+        },
+        {
+          "id": 10394,
+          "name": "Blaze Grenade Blueprint",
+          "seoName": "Blaze Grenade Blueprint"
+        },
+        {
+          "id": 10395,
+          "name": "Vulcano Blueprint",
+          "seoName": "Vulcano Blueprint"
+        },
+        {
+          "id": 10396,
+          "name": "Snap Hook Blueprint",
+          "seoName": "Snap Hook Blueprint"
+        },
+        {
+          "id": 10397,
+          "name": "Equalizer Blueprint",
+          "seoName": "Equalizer Blueprint"
+        },
+        {
+          "id": 10398,
+          "name": "Defibrillator Blueprint",
+          "seoName": "Defibrillator Blueprint"
+        },
+        {
+          "id": 10399,
+          "name": "Jolt Mine Blueprint",
+          "seoName": "Jolt Mine Blueprint"
+        },
+        {
+          "id": 10400,
+          "name": "Showstopper Blueprint",
+          "seoName": "Showstopper Blueprint"
+        },
+        {
+          "id": 10401,
+          "name": "Venator Blueprint",
+          "seoName": "Venator Blueprint"
+        },
+        {
+          "id": 10402,
+          "name": "Anvil Splitter Blueprint",
+          "seoName": "Anvil Splitter Blueprint"
+        },
+        {
+          "id": 10403,
+          "name": "Angled Grip II Blueprint",
+          "seoName": "Angled Grip II Blueprint"
+        },
+        {
+          "id": 10404,
+          "name": "Angled Grip III Blueprint",
+          "seoName": "Angled Grip III Blueprint"
+        },
+        {
+          "id": 10405,
+          "name": "Barricade Kit Blueprint",
+          "seoName": "Barricade Kit Blueprint"
+        },
+        {
+          "id": 10406,
+          "name": "Bobcat Blueprint",
+          "seoName": "Bobcat Blueprint"
+        },
+        {
+          "id": 10407,
+          "name": "Burletta Blueprint",
+          "seoName": "Burletta Blueprint"
+        },
+        {
+          "id": 10408,
+          "name": "Combat Mk 3 Blueprint - Aggressive",
+          "seoName": "Combat Mk 3 Blueprint - Aggressive"
+        },
+        {
+          "id": 10409,
+          "name": "Combat Mk 3 Blueprint - Flanking",
+          "seoName": "Combat Mk 3 Blueprint - Flanking"
+        },
+        {
+          "id": 10410,
+          "name": "Compensator II Blueprint",
+          "seoName": "Compensator II Blueprint"
+        },
+        {
+          "id": 10411,
+          "name": "Compensator III Blueprint",
+          "seoName": "Compensator III Blueprint"
+        },
+        {
+          "id": 10412,
+          "name": "Complex Gun Parts Blueprint",
+          "seoName": "Complex Gun Parts Blueprint"
+        },
+        {
+          "id": 10413,
+          "name": "Explosive Mine Blueprint",
+          "seoName": "Explosive Mine Blueprint"
+        },
+        {
+          "id": 10414,
+          "name": "Extended Barrel Blueprint",
+          "seoName": "Extended Barrel Blueprint"
+        },
+        {
+          "id": 10415,
+          "name": "Extended Light Mag II Blueprint",
+          "seoName": "Extended Light Mag II Blueprint"
+        },
+        {
+          "id": 10416,
+          "name": "Extended Light Mag III Blueprint",
+          "seoName": "Extended Light Mag III Blueprint"
+        },
+        {
+          "id": 10417,
+          "name": "Extended Medium Mag II Blueprint",
+          "seoName": "Extended Medium Mag II Blueprint"
+        },
+        {
+          "id": 10418,
+          "name": "Extended Medium Mag III Blueprint",
+          "seoName": "Extended Medium Mag III Blueprint"
+        },
+        {
+          "id": 10419,
+          "name": "Extended Shotgun Mag II Blueprint",
+          "seoName": "Extended Shotgun Mag II Blueprint"
+        },
+        {
+          "id": 10420,
+          "name": "Extended Shotgun Mag III Blueprint",
+          "seoName": "Extended Shotgun Mag III Blueprint"
+        },
+        {
+          "id": 10421,
+          "name": "Heavy Gun Parts Blueprint",
+          "seoName": "Heavy Gun Parts Blueprint"
+        },
+        {
+          "id": 10422,
+          "name": "Horizontal Grip Blueprint",
+          "seoName": "Horizontal Grip Blueprint"
+        },
+        {
+          "id": 10423,
+          "name": "Hullcracker Blueprint",
+          "seoName": "Hullcracker Blueprint"
+        },
+        {
+          "id": 10424,
+          "name": "Kinetic Converter Blueprint",
+          "seoName": "Kinetic Converter Blueprint"
+        },
+        {
+          "id": 10425,
+          "name": "Launcher Ammo Blueprint",
+          "seoName": "Launcher Ammo Blueprint"
+        },
+        {
+          "id": 10426,
+          "name": "Light Gun Parts Blueprint",
+          "seoName": "Light Gun Parts Blueprint"
+        },
+        {
+          "id": 10427,
+          "name": "Light Stick Blueprint - Any Color",
+          "seoName": "Light Stick Blueprint - Any Color"
+        },
+        {
+          "id": 10428,
+          "name": "Lightweight Stock Blueprint",
+          "seoName": "Lightweight Stock Blueprint"
+        },
+        {
+          "id": 10429,
+          "name": "Looting Mk 3 Survivor Blueprint",
+          "seoName": "Looting Mk 3 Survivor Blueprint"
+        },
+        {
+          "id": 10430,
+          "name": "Lure Grenade Blueprint",
+          "seoName": "Lure Grenade Blueprint"
+        },
+        {
+          "id": 10431,
+          "name": "Medium Gun Parts Blueprint",
+          "seoName": "Medium Gun Parts Blueprint"
+        },
+        {
+          "id": 10432,
+          "name": "Muzzle Brake II Blueprint",
+          "seoName": "Muzzle Brake II Blueprint"
+        },
+        {
+          "id": 10433,
+          "name": "Muzzle Brake III Blueprint",
+          "seoName": "Muzzle Brake III Blueprint"
+        },
+        {
+          "id": 10434,
+          "name": "Padded Stock Blueprint",
+          "seoName": "Padded Stock Blueprint"
+        },
+        {
+          "id": 10435,
+          "name": "Remote Raider Flare Blueprint",
+          "seoName": "Remote Raider Flare Blueprint"
+        },
+        {
+          "id": 10436,
+          "name": "Shotgun Choke II Blueprint",
+          "seoName": "Shotgun Choke II Blueprint"
+        },
+        {
+          "id": 10437,
+          "name": "Shotgun Choke III Blueprint",
+          "seoName": "Shotgun Choke III Blueprint"
+        },
+        {
+          "id": 10438,
+          "name": "Shotgun Silencer Blueprint",
+          "seoName": "Shotgun Silencer Blueprint"
+        },
+        {
+          "id": 10439,
+          "name": "Silencer I Blueprint",
+          "seoName": "Silencer I Blueprint"
+        },
+        {
+          "id": 10440,
+          "name": "Silencer II Blueprint",
+          "seoName": "Silencer II Blueprint"
+        },
+        {
+          "id": 10441,
+          "name": "Silencer III Blueprint",
+          "seoName": "Silencer III Blueprint"
+        },
+        {
+          "id": 10442,
+          "name": "Smoke Grenade Blueprint",
+          "seoName": "Smoke Grenade Blueprint"
+        },
+        {
+          "id": 10443,
+          "name": "Stable Stock II Blueprint",
+          "seoName": "Stable Stock II Blueprint"
+        },
+        {
+          "id": 10444,
+          "name": "Stable Stock III Blueprint",
+          "seoName": "Stable Stock III Blueprint"
+        },
+        {
+          "id": 10445,
+          "name": "Tactical Mk 3 Blueprint - Defensive",
+          "seoName": "Tactical Mk 3 Blueprint - Defensive"
+        },
+        {
+          "id": 10446,
+          "name": "Tactical Mk 3 Blueprint - Healing",
+          "seoName": "Tactical Mk 3 Blueprint - Healing"
+        },
+        {
+          "id": 10447,
+          "name": "Tagging Grenade Blueprint",
+          "seoName": "Tagging Grenade Blueprint"
+        },
+        {
+          "id": 10448,
+          "name": "Tempest Blueprint",
+          "seoName": "Tempest Blueprint"
+        },
+        {
+          "id": 10449,
+          "name": "Trigger Nade Blueprint",
+          "seoName": "Trigger Nade Blueprint"
+        },
+        {
+          "id": 10450,
+          "name": "Vertical Grip II Blueprint",
+          "seoName": "Vertical Grip II Blueprint"
+        },
+        {
+          "id": 10451,
+          "name": "Vertical Grip III Blueprint",
+          "seoName": "Vertical Grip III Blueprint"
+        },
+        {
+          "id": 10452,
+          "name": "Vita Shot Blueprint",
+          "seoName": "Vita Shot Blueprint"
+        },
+        {
+          "id": 10453,
+          "name": "Vita Spray Blueprint",
+          "seoName": "Vita Spray Blueprint"
+        },
+        {
+          "id": 10459,
+          "name": "Aphelion Blueprint",
+          "seoName": "Aphelion Blueprint"
+        },
+        {
+          "id": 10460,
+          "name": "Blue Light Stick Blueprint",
+          "seoName": "Blue Light Stick Blueprint"
+        },
+        {
+          "id": 10461,
+          "name": "Green Light Stick Blueprint",
+          "seoName": "Green Light Stick Blueprint"
+        },
+        {
+          "id": 10462,
+          "name": "Looting MK 3 Cautious Blueprint",
+          "seoName": "Looting MK 3 Cautious Blueprint"
+        },
+        {
+          "id": 10463,
+          "name": "Red Light Stick Blueprint",
+          "seoName": "Red Light Stick Blueprint"
+        },
+        {
+          "id": 10464,
+          "name": "Yellow Light Stick Blueprint",
+          "seoName": "Yellow Light Stick Blueprint"
+        },
+        {
+          "id": 10964,
+          "name": "Canto Blueprint",
+          "seoName": "Canto Blueprint"
+        },
+        {
+          "id": 10965,
+          "name": "Dolabra Blueprint",
+          "seoName": "Dolabra Blueprint"
+        },
+        {
+          "id": 10966,
+          "name": "Surge Coil Blueprint",
+          "seoName": "Surge Coil Blueprint"
+        },
+        {
+          "id": 11033,
+          "name": "Powered Descender Blueprint",
+          "seoName": "Powered Descender Blueprint"
+        },
+        {
+          "id": 11034,
+          "name": "Crash Mat Blueprint",
+          "seoName": "Crash Mat Blueprint"
+        },
+        {
+          "id": 11035,
+          "name": "White Flag Blueprint",
+          "seoName": "White Flag Blueprint"
+        }
+      ]
+    },
+    {
+      "id": 2076,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 10366,
+          "name": "Crafting Materials",
+          "seoName": "Crafting Materials"
+        },
+        {
+          "id": 10367,
+          "name": "Upgrade Materials",
+          "seoName": "Upgrade Materials"
+        }
+      ]
+    },
+    {
+      "id": 2077,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 10368,
+          "name": "Resources",
+          "seoName": "Resources"
+        },
+        {
+          "id": 10454,
+          "name": "Seeds",
+          "seoName": "Seeds"
+        },
+        {
+          "id": 10455,
+          "name": "Assorted Seeds",
+          "seoName": "Assorted Seeds"
+        },
+        {
+          "id": 10456,
+          "name": "Leaper Pulse Unit",
+          "seoName": "Leaper Pulse Unit"
+        }
+      ]
+    },
+    {
+      "id": 2078,
+      "name": "Keycards",
+      "seoName": "Keycards",
+      "subCategories": [
+        {
+          "id": 10369,
+          "name": "Keycards",
+          "seoName": "Keycards"
+        }
+      ]
+    },
+    {
+      "id": 2079,
+      "name": "Kits",
+      "seoName": "Kits",
+      "subCategories": [
+        {
+          "id": 10370,
+          "name": "Kits",
+          "seoName": "Kits"
+        }
+      ]
+    },
+    {
+      "id": 2083,
+      "name": "Mods",
+      "seoName": "Mods",
+      "subCategories": [
+        {
+          "id": 10381,
+          "name": "Anvil Mod",
+          "seoName": "Anvil Mod"
+        },
+        {
+          "id": 10382,
+          "name": "Exodus Mod",
+          "seoName": "Exodus Mod"
+        },
+        {
+          "id": 10383,
+          "name": "Other Mods",
+          "seoName": "Other Mods"
+        }
+      ]
+    },
+    {
+      "id": 2103,
+      "name": "Bundles",
+      "seoName": "Bundles",
+      "subCategories": [
+        {
+          "id": 10518,
+          "name": "Blueprint",
+          "seoName": "Blueprint"
+        },
+        {
+          "id": 10519,
+          "name": "Scrappy",
+          "seoName": "Scrappy"
+        },
+        {
+          "id": 10520,
+          "name": "Expedition",
+          "seoName": "Expedition"
+        },
+        {
+          "id": 10521,
+          "name": "Workbench",
+          "seoName": "Workbench"
+        },
+        {
+          "id": 10522,
+          "name": "Others",
+          "seoName": "Others"
+        }
+      ]
+    },
+    {
+      "id": 2129,
+      "name": "Trinkets",
+      "seoName": "Trinkets",
+      "subCategories": [
+        {
+          "id": 10815,
+          "name": "Familiar Duck",
+          "seoName": "Familiar Duck"
+        },
+        {
+          "id": 10816,
+          "name": "Lance's Mixtape 5th Edition",
+          "seoName": "Lance's Mixtape 5th Edition"
+        },
+        {
+          "id": 10817,
+          "name": "Breathtaking Snow Globe",
+          "seoName": "Breathtaking Snow Globe"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14806,
+      "name": "Steam"
+    },
+    {
+      "id": 14807,
+      "name": "PS"
+    },
+    {
+      "id": 14808,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

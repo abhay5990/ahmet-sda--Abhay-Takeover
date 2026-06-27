@@ -1,0 +1,327 @@
+{
+  "game_id": "14",
+  "game": "world-of-warcraft-mists-of-pandaria",
+  "game_name": "World of Warcraft Mists of Pandaria",
+  "category": "Currency",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "NA",
+      "group": "Region",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "Atiesh"
+        },
+        {
+          "id": "0-1",
+          "name": "Mankrik"
+        },
+        {
+          "id": "0-10",
+          "name": "Grobbulus"
+        },
+        {
+          "id": "0-13",
+          "name": "Ashkandi"
+        },
+        {
+          "id": "0-19",
+          "name": "Old Blanchy"
+        },
+        {
+          "id": "0-2",
+          "name": "Myzrael"
+        },
+        {
+          "id": "0-23",
+          "name": "Sulfuras"
+        },
+        {
+          "id": "0-24",
+          "name": "Westfall"
+        },
+        {
+          "id": "0-27",
+          "name": "Azuresong"
+        },
+        {
+          "id": "0-28",
+          "name": "Benediction"
+        },
+        {
+          "id": "0-3",
+          "name": "Pagle"
+        },
+        {
+          "id": "0-30",
+          "name": "Windseeker"
+        },
+        {
+          "id": "0-33",
+          "name": "Earthfury"
+        },
+        {
+          "id": "0-34",
+          "name": "Skyfury"
+        },
+        {
+          "id": "0-35",
+          "name": "Maladath"
+        },
+        {
+          "id": "0-36",
+          "name": "Angerforge"
+        },
+        {
+          "id": "0-37",
+          "name": "Eranikus"
+        },
+        {
+          "id": "0-38",
+          "name": "Ra-den"
+        },
+        {
+          "id": "0-39",
+          "name": "Nazgrim"
+        },
+        {
+          "id": "0-4",
+          "name": "Faerlina"
+        },
+        {
+          "id": "0-40",
+          "name": "Lei Shen"
+        },
+        {
+          "id": "0-41",
+          "name": "Immerseus"
+        },
+        {
+          "id": "0-42",
+          "name": "Galakras"
+        },
+        {
+          "id": "0-8",
+          "name": "Whitemane"
+        },
+        {
+          "id": "0-9",
+          "name": "Bloodsail Buccaneers"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "EU",
+      "group": "Region",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "Golemagg"
+        },
+        {
+          "id": "1-16",
+          "name": "Gehennas"
+        },
+        {
+          "id": "1-17",
+          "name": "Mograine"
+        },
+        {
+          "id": "1-18",
+          "name": "Nethergarde Keep"
+        },
+        {
+          "id": "1-19",
+          "name": "Razorfen"
+        },
+        {
+          "id": "1-2",
+          "name": "Mirage Raceway"
+        },
+        {
+          "id": "1-20",
+          "name": "Venoxis"
+        },
+        {
+          "id": "1-21",
+          "name": "Ashbringer"
+        },
+        {
+          "id": "1-23",
+          "name": "Amnennar"
+        },
+        {
+          "id": "1-27",
+          "name": "Firemaw"
+        },
+        {
+          "id": "1-28",
+          "name": "Lakeshire"
+        },
+        {
+          "id": "1-3",
+          "name": "Pyrewood Village"
+        },
+        {
+          "id": "1-31",
+          "name": "Patchwerk"
+        },
+        {
+          "id": "1-33",
+          "name": "Transcendence"
+        },
+        {
+          "id": "1-38",
+          "name": "Earthshaker"
+        },
+        {
+          "id": "1-41",
+          "name": "Mandokir"
+        },
+        {
+          "id": "1-42",
+          "name": "Thekal"
+        },
+        {
+          "id": "1-43",
+          "name": "Giantstalker"
+        },
+        {
+          "id": "1-44",
+          "name": "Jin’do"
+        },
+        {
+          "id": "1-45",
+          "name": "Hydraxian Waterlords"
+        },
+        {
+          "id": "1-46",
+          "name": "Shek'zeer"
+        },
+        {
+          "id": "1-47",
+          "name": "Norushen"
+        },
+        {
+          "id": "1-48",
+          "name": "Hoptallus"
+        },
+        {
+          "id": "1-49",
+          "name": "Garalon"
+        },
+        {
+          "id": "1-50",
+          "name": "Ook Ook"
+        },
+        {
+          "id": "1-6",
+          "name": "Auberdine"
+        },
+        {
+          "id": "1-7",
+          "name": "Sulfuron"
+        },
+        {
+          "id": "1-8",
+          "name": "Everlook"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Oceanic",
+      "group": "Region",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "Arugal"
+        },
+        {
+          "id": "2-1",
+          "name": "Remulos"
+        },
+        {
+          "id": "2-2",
+          "name": "Yojamba"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

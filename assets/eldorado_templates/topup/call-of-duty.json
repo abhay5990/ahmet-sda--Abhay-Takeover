@@ -1,0 +1,149 @@
+{
+  "game_id": "35",
+  "game": "call-of-duty",
+  "game_name": "Call of Duty",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Battlenet",
+      "group": "Platform"
+    },
+    {
+      "id": "2",
+      "name": "Xbox",
+      "group": "Platform"
+    },
+    {
+      "id": "3",
+      "name": "PlayStation",
+      "group": "Platform"
+    }
+  ],
+  "attributes": {
+    "call-of-duty-cod-points": {
+      "name": "CoD Points",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "12000-cp",
+          "name": "12000 CP"
+        },
+        {
+          "id": "200-cp",
+          "name": "200 CP"
+        },
+        {
+          "id": "38400-cp",
+          "name": "38400 CP"
+        },
+        {
+          "id": "21600-cp",
+          "name": "21600 CP"
+        },
+        {
+          "id": "500-cp",
+          "name": "500 CP"
+        },
+        {
+          "id": "1100-cp",
+          "name": "1100 CP"
+        },
+        {
+          "id": "4800-cp",
+          "name": "4800 CP"
+        },
+        {
+          "id": "2400-cp",
+          "name": "2400 CP"
+        },
+        {
+          "id": "9600-cp",
+          "name": "9600 CP"
+        },
+        {
+          "id": "26400-cp",
+          "name": "26400 CP"
+        },
+        {
+          "id": "blackcell-battle-pass",
+          "name": "BlackCell Battle Pass"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

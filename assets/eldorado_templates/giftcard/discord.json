@@ -1,0 +1,139 @@
+{
+  "game_id": "217",
+  "game": "discord",
+  "game_name": "Discord",
+  "category": "GiftCard",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Basic",
+      "group": "Type",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "1 Month"
+        },
+        {
+          "id": "0-1",
+          "name": "3 months"
+        },
+        {
+          "id": "0-2",
+          "name": "1 year"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "Classic",
+      "group": "Type",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "1 Month"
+        },
+        {
+          "id": "1-1",
+          "name": "3 months"
+        },
+        {
+          "id": "1-2",
+          "name": "1 year"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Nitro",
+      "group": "Type",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "1 Month"
+        },
+        {
+          "id": "2-1",
+          "name": "3 months"
+        },
+        {
+          "id": "2-2",
+          "name": "1 year"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

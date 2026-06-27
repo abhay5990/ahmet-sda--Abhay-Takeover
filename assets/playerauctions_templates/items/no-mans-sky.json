@@ -1,0 +1,167 @@
+{
+  "game_id": 7489,
+  "game": "no-mans-sky",
+  "game_name": "No Man's Sky",
+  "seo_name": "No-Mans-Sky",
+  "currencyName": "Units",
+  "categories": [
+    {
+      "id": 1390,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 6355,
+          "name": "Nanites",
+          "seoName": "Nanites"
+        },
+        {
+          "id": 6356,
+          "name": "Quicksilvers",
+          "seoName": "Quicksilvers"
+        },
+        {
+          "id": 6357,
+          "name": "Metals",
+          "seoName": "Metals"
+        },
+        {
+          "id": 6358,
+          "name": "Junk",
+          "seoName": "Junk"
+        },
+        {
+          "id": 6359,
+          "name": "Other Resources",
+          "seoName": "Other Resources"
+        }
+      ]
+    },
+    {
+      "id": 1391,
+      "name": "Equipment",
+      "seoName": "Equipment",
+      "subCategories": [
+        {
+          "id": 6360,
+          "name": "Starships",
+          "seoName": "Starships"
+        },
+        {
+          "id": 6361,
+          "name": "Freighters",
+          "seoName": "Freighters"
+        },
+        {
+          "id": 6362,
+          "name": "Exocrafts",
+          "seoName": "Exocrafts"
+        },
+        {
+          "id": 6363,
+          "name": "Exosuits",
+          "seoName": "Exosuits"
+        },
+        {
+          "id": 6364,
+          "name": "Multi-Tools",
+          "seoName": "Multi-Tools"
+        },
+        {
+          "id": 6365,
+          "name": "Blueprints",
+          "seoName": "Blueprints"
+        }
+      ]
+    },
+    {
+      "id": 1721,
+      "name": "S-Class Ships",
+      "seoName": "S-Class Ships",
+      "subCategories": [
+        {
+          "id": 7940,
+          "name": "Solar Ships",
+          "seoName": "Solar Ships"
+        },
+        {
+          "id": 7941,
+          "name": "Exotic ships",
+          "seoName": "Exotic ships"
+        },
+        {
+          "id": 7942,
+          "name": "Living Ships",
+          "seoName": "Living Ships"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7490,
+      "name": "PC"
+    },
+    {
+      "id": 7491,
+      "name": "PlayStation"
+    },
+    {
+      "id": 13192,
+      "name": "Switch"
+    },
+    {
+      "id": 13197,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

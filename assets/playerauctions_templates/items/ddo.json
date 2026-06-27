@@ -1,0 +1,202 @@
+{
+  "game_id": 14,
+  "game": "ddo",
+  "game_name": "Dungeons and Dragons",
+  "seo_name": "DDO",
+  "currencyName": "Platinum",
+  "categories": [
+    {
+      "id": 1562,
+      "name": "Armor and Shields",
+      "seoName": "Armor and Shields",
+      "subCategories": [
+        {
+          "id": 7612,
+          "name": "Armor",
+          "seoName": "Armor"
+        },
+        {
+          "id": 7613,
+          "name": "Shields",
+          "seoName": "Shields"
+        }
+      ]
+    },
+    {
+      "id": 1563,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 7614,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        }
+      ]
+    },
+    {
+      "id": 1564,
+      "name": "Potions",
+      "seoName": "Potions",
+      "subCategories": [
+        {
+          "id": 7615,
+          "name": "Potions",
+          "seoName": "Potions"
+        }
+      ]
+    },
+    {
+      "id": 1565,
+      "name": "Rings",
+      "seoName": "Rings",
+      "subCategories": [
+        {
+          "id": 7616,
+          "name": "Rings",
+          "seoName": "Rings"
+        }
+      ]
+    },
+    {
+      "id": 1566,
+      "name": "Rods",
+      "seoName": "Rods",
+      "subCategories": [
+        {
+          "id": 7617,
+          "name": "Rods",
+          "seoName": "Rods"
+        }
+      ]
+    },
+    {
+      "id": 1567,
+      "name": "Scrolls",
+      "seoName": "Scrolls",
+      "subCategories": [
+        {
+          "id": 7618,
+          "name": "Scrolls",
+          "seoName": "Scrolls"
+        }
+      ]
+    },
+    {
+      "id": 1568,
+      "name": "Staffs",
+      "seoName": "Staffs",
+      "subCategories": [
+        {
+          "id": 7619,
+          "name": "Staffs",
+          "seoName": "Staffs"
+        }
+      ]
+    },
+    {
+      "id": 1569,
+      "name": "Wondrous Items",
+      "seoName": "Wondrous Items",
+      "subCategories": [
+        {
+          "id": 7620,
+          "name": "Wondrous Items",
+          "seoName": "Wondrous Items"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    },
+    {
+      "id": 2458,
+      "name": "Astral Shards",
+      "seoName": "Astral Shards"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 9797,
+      "name": "EU-Devourer"
+    },
+    {
+      "id": 9798,
+      "name": "EU-Keeper"
+    },
+    {
+      "id": 667,
+      "name": "NA-Argonnessen"
+    },
+    {
+      "id": 3542,
+      "name": "NA-Cannith"
+    },
+    {
+      "id": 670,
+      "name": "NA-Ghallanda"
+    },
+    {
+      "id": 671,
+      "name": "NA-Khyber"
+    },
+    {
+      "id": 3543,
+      "name": "NA-Orien"
+    },
+    {
+      "id": 676,
+      "name": "NA-Sarlona"
+    },
+    {
+      "id": 679,
+      "name": "NA-Thelanis"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

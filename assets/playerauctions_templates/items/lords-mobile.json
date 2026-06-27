@@ -1,0 +1,96 @@
+{
+  "game_id": 7803,
+  "game": "lords-mobile",
+  "game_name": "Lords Mobile",
+  "seo_name": "Lords-Mobile",
+  "currencyName": "Diamond",
+  "categories": [
+    {
+      "id": 1491,
+      "name": "Resource",
+      "seoName": "Resource",
+      "subCategories": [
+        {
+          "id": 7376,
+          "name": "Combat",
+          "seoName": "Combat"
+        },
+        {
+          "id": 7377,
+          "name": "Chest",
+          "seoName": "Chest"
+        },
+        {
+          "id": 7378,
+          "name": "Resources",
+          "seoName": "Resources"
+        },
+        {
+          "id": 7379,
+          "name": "Speed Up",
+          "seoName": "Speed Up"
+        },
+        {
+          "id": 7380,
+          "name": "Unique",
+          "seoName": "Unique"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7804,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

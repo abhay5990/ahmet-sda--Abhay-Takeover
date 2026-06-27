@@ -1,0 +1,236 @@
+{
+  "game_id": 10105,
+  "game": "mir4",
+  "game_name": "MIR4",
+  "seo_name": "MIR4",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1647,
+      "name": "Equipment",
+      "seoName": "Equipment",
+      "subCategories": [
+        {
+          "id": 7788,
+          "name": "Equipment",
+          "seoName": "Equipment"
+        }
+      ]
+    },
+    {
+      "id": 1648,
+      "name": "Material",
+      "seoName": "Material",
+      "subCategories": [
+        {
+          "id": 7789,
+          "name": "Material",
+          "seoName": "Material"
+        }
+      ]
+    },
+    {
+      "id": 1649,
+      "name": "Magic Stone",
+      "seoName": "Magic Stone",
+      "subCategories": [
+        {
+          "id": 7790,
+          "name": "Magic Stone",
+          "seoName": "Magic Stone"
+        }
+      ]
+    },
+    {
+      "id": 1650,
+      "name": "Spirits",
+      "seoName": "Spirits",
+      "subCategories": [
+        {
+          "id": 7791,
+          "name": "Spirits",
+          "seoName": "Spirits"
+        }
+      ]
+    },
+    {
+      "id": 1651,
+      "name": "Sundry",
+      "seoName": "Sundry",
+      "subCategories": [
+        {
+          "id": 7792,
+          "name": "Sundry",
+          "seoName": "Sundry"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 10119,
+      "name": "ASIA11"
+    },
+    {
+      "id": 10120,
+      "name": "ASIA12"
+    },
+    {
+      "id": 10121,
+      "name": "ASIA13"
+    },
+    {
+      "id": 10122,
+      "name": "ASIA14"
+    },
+    {
+      "id": 10123,
+      "name": "ASIA21"
+    },
+    {
+      "id": 10124,
+      "name": "ASIA22"
+    },
+    {
+      "id": 10125,
+      "name": "ASIA23"
+    },
+    {
+      "id": 10126,
+      "name": "ASIA24"
+    },
+    {
+      "id": 10127,
+      "name": "ASIA31"
+    },
+    {
+      "id": 10128,
+      "name": "ASIA32"
+    },
+    {
+      "id": 10129,
+      "name": "ASIA33"
+    },
+    {
+      "id": 10130,
+      "name": "ASIA34"
+    },
+    {
+      "id": 10131,
+      "name": "ASIA41"
+    },
+    {
+      "id": 10132,
+      "name": "ASIA42"
+    },
+    {
+      "id": 10133,
+      "name": "ASIA43"
+    },
+    {
+      "id": 10134,
+      "name": "ASIA44"
+    },
+    {
+      "id": 10116,
+      "name": "EU11"
+    },
+    {
+      "id": 10117,
+      "name": "EU12"
+    },
+    {
+      "id": 10118,
+      "name": "EU13"
+    },
+    {
+      "id": 10106,
+      "name": "NA11"
+    },
+    {
+      "id": 10107,
+      "name": "NA12"
+    },
+    {
+      "id": 10108,
+      "name": "NA13"
+    },
+    {
+      "id": 10109,
+      "name": "NA14"
+    },
+    {
+      "id": 10110,
+      "name": "NA21"
+    },
+    {
+      "id": 10111,
+      "name": "NA22"
+    },
+    {
+      "id": 10112,
+      "name": "NA23"
+    },
+    {
+      "id": 10113,
+      "name": "NA24"
+    },
+    {
+      "id": 10114,
+      "name": "NA31"
+    },
+    {
+      "id": 10115,
+      "name": "NA32"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -59,14 +59,7 @@
   "item_data": {
     "platform": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Xbox One",
-        "Xbox Series X/S",
-        "PlayStation 4",
-        "PlayStation 5",
-        "PC(Steam)"
-      ]
+      "required": false
     }
   }
 }

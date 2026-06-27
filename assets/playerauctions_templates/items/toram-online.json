@@ -1,0 +1,177 @@
+{
+  "game_id": 8135,
+  "game": "toram-online",
+  "game_name": "Toram Online",
+  "seo_name": "Toram-Online",
+  "currencyName": "Spina",
+  "categories": [
+    {
+      "id": 1570,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 7621,
+          "name": "Healing",
+          "seoName": "Healing"
+        },
+        {
+          "id": 7622,
+          "name": "Support",
+          "seoName": "Support"
+        }
+      ]
+    },
+    {
+      "id": 1571,
+      "name": "Crystas",
+      "seoName": "Crystas",
+      "subCategories": [
+        {
+          "id": 7623,
+          "name": "Normal Crystas",
+          "seoName": "Normal Crystas"
+        },
+        {
+          "id": 7624,
+          "name": "Boss Crysta",
+          "seoName": "Boss Crysta"
+        }
+      ]
+    },
+    {
+      "id": 1572,
+      "name": "Equipment",
+      "seoName": "Equipment",
+      "subCategories": [
+        {
+          "id": 7625,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        },
+        {
+          "id": 7626,
+          "name": "Sub-Weapons",
+          "seoName": "Sub-Weapons"
+        },
+        {
+          "id": 7627,
+          "name": "Body Armor",
+          "seoName": "Body Armor"
+        },
+        {
+          "id": 7628,
+          "name": "Helmets",
+          "seoName": "Helmets"
+        },
+        {
+          "id": 7629,
+          "name": "Accessories",
+          "seoName": "Accessories"
+        },
+        {
+          "id": 7630,
+          "name": "Avatar Items",
+          "seoName": "Avatar Items"
+        },
+        {
+          "id": 7631,
+          "name": "Special Equipment",
+          "seoName": "Special Equipment"
+        }
+      ]
+    },
+    {
+      "id": 1573,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 7632,
+          "name": "Beast",
+          "seoName": "Beast"
+        },
+        {
+          "id": 7633,
+          "name": "Metal",
+          "seoName": "Metal"
+        },
+        {
+          "id": 7634,
+          "name": "Cloth",
+          "seoName": "Cloth"
+        },
+        {
+          "id": 7635,
+          "name": "Wood",
+          "seoName": "Wood"
+        },
+        {
+          "id": 7636,
+          "name": "Mana",
+          "seoName": "Mana"
+        },
+        {
+          "id": 7637,
+          "name": "Medicine",
+          "seoName": "Medicine"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 8136,
+      "name": "Global"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

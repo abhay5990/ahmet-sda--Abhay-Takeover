@@ -1,0 +1,295 @@
+{
+  "game_id": 13,
+  "game": "gw",
+  "game_name": "Guild Wars",
+  "seo_name": "GW",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1332,
+      "name": "Ecto",
+      "seoName": "Ecto",
+      "subCategories": [
+        {
+          "id": 6034,
+          "name": "Ecto",
+          "seoName": "Ecto"
+        }
+      ]
+    },
+    {
+      "id": 1333,
+      "name": "Zkey",
+      "seoName": "Zkey",
+      "subCategories": [
+        {
+          "id": 6035,
+          "name": "Zaishen Key",
+          "seoName": "Zaishen Key"
+        }
+      ]
+    },
+    {
+      "id": 1334,
+      "name": "Armbrace of Truth",
+      "seoName": "Armbrace of Truth",
+      "subCategories": [
+        {
+          "id": 6036,
+          "name": "Armbrace of Truth",
+          "seoName": "Armbrace of Truth"
+        }
+      ]
+    },
+    {
+      "id": 1335,
+      "name": "Miniatures",
+      "seoName": "Miniatures",
+      "subCategories": [
+        {
+          "id": 6037,
+          "name": "Mini Pets",
+          "seoName": "Mini Pets"
+        }
+      ]
+    },
+    {
+      "id": 1336,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 6038,
+          "name": "Tormented Weapons",
+          "seoName": "Tormented Weapons"
+        },
+        {
+          "id": 6039,
+          "name": "Destroyer Weapons",
+          "seoName": "Destroyer Weapons"
+        },
+        {
+          "id": 6040,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 6399,
+          "name": "Axe",
+          "seoName": "Axe"
+        },
+        {
+          "id": 6400,
+          "name": "Sword",
+          "seoName": "Sword"
+        },
+        {
+          "id": 6401,
+          "name": "Daggers",
+          "seoName": "Daggers"
+        },
+        {
+          "id": 6402,
+          "name": "Hammer",
+          "seoName": "Hammer"
+        },
+        {
+          "id": 6403,
+          "name": "Scythe",
+          "seoName": "Scythe"
+        },
+        {
+          "id": 6404,
+          "name": "Spear",
+          "seoName": "Spear"
+        },
+        {
+          "id": 6405,
+          "name": "Bow",
+          "seoName": "Bow"
+        },
+        {
+          "id": 6406,
+          "name": "Wand",
+          "seoName": "Wand"
+        },
+        {
+          "id": 6407,
+          "name": "Staff",
+          "seoName": "Staff"
+        },
+        {
+          "id": 6408,
+          "name": "Focus item",
+          "seoName": "Focus item"
+        }
+      ]
+    },
+    {
+      "id": 1337,
+      "name": "Skins",
+      "seoName": "Skins",
+      "subCategories": [
+        {
+          "id": 6041,
+          "name": "Skins",
+          "seoName": "Skins"
+        },
+        {
+          "id": 6060,
+          "name": "Longbow Skins",
+          "seoName": "Longbow Skins"
+        },
+        {
+          "id": 6061,
+          "name": "Scythe Skins",
+          "seoName": "Scythe Skins"
+        },
+        {
+          "id": 6062,
+          "name": "Torch Skins",
+          "seoName": "Torch Skins"
+        }
+      ]
+    },
+    {
+      "id": 1338,
+      "name": "Essence of Celerity",
+      "seoName": "Essence of Celerity",
+      "subCategories": [
+        {
+          "id": 6042,
+          "name": "Essence of Celerity",
+          "seoName": "Essence of Celerity"
+        }
+      ]
+    },
+    {
+      "id": 1339,
+      "name": "Diessa Chalice",
+      "seoName": "Diessa Chalice",
+      "subCategories": [
+        {
+          "id": 6043,
+          "name": "Diessa Chalice",
+          "seoName": "Diessa Chalice"
+        }
+      ]
+    },
+    {
+      "id": 1397,
+      "name": "Armors",
+      "seoName": "Armors",
+      "subCategories": [
+        {
+          "id": 6409,
+          "name": "Armors",
+          "seoName": "Armors"
+        }
+      ]
+    },
+    {
+      "id": 1398,
+      "name": "Everlasting Tonics",
+      "seoName": "Everlasting Tonics",
+      "subCategories": [
+        {
+          "id": 6410,
+          "name": "Everlasting Tonics",
+          "seoName": "Everlasting Tonics"
+        }
+      ]
+    },
+    {
+      "id": 1399,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 6411,
+          "name": "Consumables",
+          "seoName": "Consumables"
+        }
+      ]
+    },
+    {
+      "id": 1400,
+      "name": "Pre-Searing",
+      "seoName": "Pre-Searing",
+      "subCategories": [
+        {
+          "id": 6412,
+          "name": "Pre-Searing",
+          "seoName": "Pre-Searing"
+        }
+      ]
+    },
+    {
+      "id": 2092,
+      "name": "Post-Searing",
+      "seoName": "Post-Searing",
+      "subCategories": [
+        {
+          "id": 10477,
+          "name": "Post-Searing",
+          "seoName": "Post-Searing"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 661,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

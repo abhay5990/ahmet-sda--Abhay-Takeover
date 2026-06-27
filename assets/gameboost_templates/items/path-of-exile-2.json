@@ -59,22 +59,11 @@
   "item_data": {
     "server": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Standard",
-        "Hardcore",
-        "Fate of the Vaal",
-        "Fate of the Vaal Hardcore"
-      ]
+      "required": false
     },
     "platform": {
       "type": "string",
-      "required": true,
-      "values": [
-        "PC",
-        "PlayStation",
-        "Xbox"
-      ]
+      "required": false
     }
   }
 }

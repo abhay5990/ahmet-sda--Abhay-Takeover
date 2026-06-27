@@ -21,6 +21,14 @@
       "name": "PC - Mirage Ruthless"
     },
     {
+      "id": 15200,
+      "name": "PC - Return of The Ancestors HC"
+    },
+    {
+      "id": 15199,
+      "name": "PC - Return of The Ancestors SC"
+    },
+    {
       "id": 15054,
       "name": "PS - Mirage"
     },
@@ -37,6 +45,14 @@
       "name": "PS - Mirage Ruthless"
     },
     {
+      "id": 15202,
+      "name": "PS - Return of The Ancestors HC"
+    },
+    {
+      "id": 15201,
+      "name": "PS - Return of The Ancestors SC"
+    },
+    {
       "id": 15058,
       "name": "Xbox - Mirage"
     },
@@ -51,6 +67,14 @@
     {
       "id": 15060,
       "name": "Xbox - Mirage Ruthless"
+    },
+    {
+      "id": 15204,
+      "name": "Xbox - Return of The Ancestors HC"
+    },
+    {
+      "id": 15203,
+      "name": "Xbox - Return of The Ancestors SC"
     },
     {
       "id": 5578,

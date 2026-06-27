@@ -1,0 +1,456 @@
+{
+  "game_id": 13888,
+  "game": "gpo",
+  "game_name": "Grand Piece Online",
+  "seo_name": "GPO",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 1878,
+      "name": "Devil Fruits",
+      "seoName": "Devil Fruits",
+      "subCategories": [
+        {
+          "id": 9382,
+          "name": "Other Devil Fruits",
+          "seoName": "Other Devil Fruits"
+        },
+        {
+          "id": 9395,
+          "name": "Mera Mera No Mi",
+          "seoName": "Mera Mera No Mi"
+        },
+        {
+          "id": 9396,
+          "name": "Magu Magu No Mi",
+          "seoName": "Magu Magu No Mi"
+        },
+        {
+          "id": 9397,
+          "name": "Goro Goro No Mi",
+          "seoName": "Goro Goro No Mi"
+        },
+        {
+          "id": 9398,
+          "name": "Mochi Mochi No Mi",
+          "seoName": "Mochi Mochi No Mi"
+        },
+        {
+          "id": 9399,
+          "name": "Pika Pika No Mi",
+          "seoName": "Pika Pika No Mi"
+        },
+        {
+          "id": 9400,
+          "name": "Zushi Zushi No Mi",
+          "seoName": "Zushi Zushi No Mi"
+        },
+        {
+          "id": 9401,
+          "name": "KAGE KAGE No Mi",
+          "seoName": "KAGE KAGE No Mi"
+        },
+        {
+          "id": 9402,
+          "name": "Gura Gura No Mi",
+          "seoName": "Gura Gura No Mi"
+        },
+        {
+          "id": 9403,
+          "name": "Ito Ito No Mi",
+          "seoName": "Ito Ito No Mi"
+        },
+        {
+          "id": 9404,
+          "name": "Yami Yami No Mi",
+          "seoName": "Yami Yami No Mi"
+        },
+        {
+          "id": 9405,
+          "name": "Tori Tori No Mi",
+          "seoName": "Tori Tori No Mi"
+        },
+        {
+          "id": 9406,
+          "name": "Suna Suna No Mi",
+          "seoName": "Suna Suna No Mi"
+        },
+        {
+          "id": 9407,
+          "name": "Hie Hie No Mi",
+          "seoName": "Hie Hie No Mi"
+        },
+        {
+          "id": 9598,
+          "name": "Ope Ope no Mi",
+          "seoName": "Ope Ope no Mi"
+        },
+        {
+          "id": 9599,
+          "name": "Hito Hito no Mi",
+          "seoName": "Hito Hito no Mi"
+        },
+        {
+          "id": 9601,
+          "name": "Magu Magu no Mi",
+          "seoName": "Magu Magu no Mi"
+        },
+        {
+          "id": 9602,
+          "name": "Gura Gura no Mi",
+          "seoName": "Gura Gura no Mi"
+        },
+        {
+          "id": 9603,
+          "name": "Zushi Zushi no Mi",
+          "seoName": "Zushi Zushi no Mi"
+        },
+        {
+          "id": 9604,
+          "name": "Suke Suke no Mi",
+          "seoName": "Suke Suke no Mi"
+        },
+        {
+          "id": 9605,
+          "name": "Bari Bari no Mi",
+          "seoName": "Bari Bari no Mi"
+        },
+        {
+          "id": 9606,
+          "name": "Ito Ito no Mi",
+          "seoName": "Ito Ito no Mi"
+        },
+        {
+          "id": 9607,
+          "name": "Gomu Gomu no Mi",
+          "seoName": "Gomu Gomu no Mi"
+        },
+        {
+          "id": 9608,
+          "name": "Bomu Bomu no Mi",
+          "seoName": "Bomu Bomu no Mi"
+        },
+        {
+          "id": 9609,
+          "name": "Gasu Gasu no Mi",
+          "seoName": "Gasu Gasu no Mi"
+        },
+        {
+          "id": 9610,
+          "name": "Soru Soru no Mi",
+          "seoName": "Soru Soru no Mi"
+        },
+        {
+          "id": 9611,
+          "name": "Kage Kage no Mi",
+          "seoName": "Kage Kage no Mi"
+        }
+      ]
+    },
+    {
+      "id": 1879,
+      "name": "Ships",
+      "seoName": "Ships",
+      "subCategories": [
+        {
+          "id": 9383,
+          "name": "Other Ships",
+          "seoName": "Other Ships"
+        },
+        {
+          "id": 9413,
+          "name": "Hoverboard",
+          "seoName": "Hoverboard"
+        }
+      ]
+    },
+    {
+      "id": 1880,
+      "name": "Bounty and Peli",
+      "seoName": "Bounty and Peli",
+      "subCategories": [
+        {
+          "id": 9384,
+          "name": "Other Bouty and Peli",
+          "seoName": "Other Bouty and Peli"
+        },
+        {
+          "id": 9435,
+          "name": "Bounty",
+          "seoName": "Bounty"
+        }
+      ]
+    },
+    {
+      "id": 1881,
+      "name": "Accessories",
+      "seoName": "Accessories",
+      "subCategories": [
+        {
+          "id": 9385,
+          "name": "Other Accessoires",
+          "seoName": "Other Accessoires"
+        },
+        {
+          "id": 9388,
+          "name": "All Seeing Eye",
+          "seoName": "All Seeing Eye"
+        },
+        {
+          "id": 9389,
+          "name": "Jester Outfit",
+          "seoName": "Jester Outfit"
+        },
+        {
+          "id": 9390,
+          "name": "Ryuma Outfit",
+          "seoName": "Ryuma Outfit"
+        },
+        {
+          "id": 9391,
+          "name": "Cupid Outfit",
+          "seoName": "Cupid Outfit"
+        },
+        {
+          "id": 9392,
+          "name": "Cupid Queen Outfit",
+          "seoName": "Cupid Queen Outfit"
+        },
+        {
+          "id": 9393,
+          "name": "Candy Cane",
+          "seoName": "Candy Cane"
+        },
+        {
+          "id": 9394,
+          "name": "Soul King Guitar",
+          "seoName": "Soul King Guitar"
+        },
+        {
+          "id": 9431,
+          "name": "Kraken Armor",
+          "seoName": "Kraken Armor"
+        },
+        {
+          "id": 9432,
+          "name": "Borj Armor",
+          "seoName": "Borj Armor"
+        },
+        {
+          "id": 9433,
+          "name": "Borg Armor",
+          "seoName": "Borg Armor"
+        },
+        {
+          "id": 9612,
+          "name": "Soul King Scarf",
+          "seoName": "Soul King Scarf"
+        },
+        {
+          "id": 9613,
+          "name": "Donmingo",
+          "seoName": "Donmingo"
+        },
+        {
+          "id": 9853,
+          "name": "Sunken Armor",
+          "seoName": "Sunken Armor"
+        }
+      ]
+    },
+    {
+      "id": 1882,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 9386,
+          "name": "Other Weapons",
+          "seoName": "Other Weapons"
+        },
+        {
+          "id": 9408,
+          "name": "Swords",
+          "seoName": "Swords"
+        },
+        {
+          "id": 9409,
+          "name": "Guns",
+          "seoName": "Guns"
+        },
+        {
+          "id": 9410,
+          "name": "Crab Cutlass",
+          "seoName": "Crab Cutlass"
+        },
+        {
+          "id": 9411,
+          "name": "Elo Hammer",
+          "seoName": "Elo Hammer"
+        },
+        {
+          "id": 9412,
+          "name": "Dark Blade",
+          "seoName": "Dark Blade"
+        },
+        {
+          "id": 9434,
+          "name": "Ace Sword",
+          "seoName": "Ace Sword"
+        }
+      ]
+    },
+    {
+      "id": 1883,
+      "name": "Grips",
+      "seoName": "Grips",
+      "subCategories": [
+        {
+          "id": 9387,
+          "name": "Other Grips",
+          "seoName": "Other Grips"
+        },
+        {
+          "id": 9414,
+          "name": "Burning Body",
+          "seoName": "Burning Body"
+        },
+        {
+          "id": 9415,
+          "name": "Explosion",
+          "seoName": "Explosion"
+        },
+        {
+          "id": 9416,
+          "name": "UFO Beam",
+          "seoName": "UFO Beam"
+        },
+        {
+          "id": 9417,
+          "name": "Deathball",
+          "seoName": "Deathball"
+        },
+        {
+          "id": 9418,
+          "name": "String Dissection",
+          "seoName": "String Dissection"
+        },
+        {
+          "id": 9419,
+          "name": "Ope Scramble",
+          "seoName": "Ope Scramble"
+        },
+        {
+          "id": 9420,
+          "name": "Dirty Fireworks",
+          "seoName": "Dirty Fireworks"
+        },
+        {
+          "id": 9421,
+          "name": "Oni",
+          "seoName": "Oni"
+        },
+        {
+          "id": 9422,
+          "name": "Meteor Strike",
+          "seoName": "Meteor Strike"
+        },
+        {
+          "id": 9423,
+          "name": "Sentinel",
+          "seoName": "Sentinel"
+        },
+        {
+          "id": 9424,
+          "name": "Pica Smash",
+          "seoName": "Pica Smash"
+        },
+        {
+          "id": 9425,
+          "name": "Reaver",
+          "seoName": "Reaver"
+        },
+        {
+          "id": 9426,
+          "name": "Venom Hydra",
+          "seoName": "Venom Hydra"
+        },
+        {
+          "id": 9427,
+          "name": "KO",
+          "seoName": "KO"
+        },
+        {
+          "id": 9428,
+          "name": "Kurohitsugi",
+          "seoName": "Kurohitsugi"
+        },
+        {
+          "id": 9429,
+          "name": "Susanoo",
+          "seoName": "Susanoo"
+        },
+        {
+          "id": 9430,
+          "name": "Planetary Devastation",
+          "seoName": "Planetary Devastation"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13896,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

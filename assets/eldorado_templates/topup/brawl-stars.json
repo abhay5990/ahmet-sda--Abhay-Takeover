@@ -1,0 +1,133 @@
+{
+  "game_id": "56",
+  "game": "brawl-stars",
+  "game_name": "Brawl Stars",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "brawl-stars-gems": {
+      "name": "Gems",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "170-gems",
+          "name": "170 Gems"
+        },
+        {
+          "id": "2000-gems",
+          "name": "2000 Gems"
+        },
+        {
+          "id": "30-gems",
+          "name": "30 Gems"
+        },
+        {
+          "id": "360-gems",
+          "name": "360 Gems"
+        },
+        {
+          "id": "80-gems",
+          "name": "80 Gems"
+        },
+        {
+          "id": "950-gems",
+          "name": "950 Gems"
+        },
+        {
+          "id": "any-999-pack",
+          "name": "Any 9.99 Pack"
+        },
+        {
+          "id": "any-1699-pack",
+          "name": "Any 16.99 Pack"
+        },
+        {
+          "id": "any-1999-pack",
+          "name": "Any 19.99 Pack"
+        },
+        {
+          "id": "brawl-pass-plus",
+          "name": "Brawl Pass Plus"
+        },
+        {
+          "id": "pro-pass",
+          "name": "Pro Pass"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

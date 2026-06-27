@@ -114,36 +114,15 @@
         ]
       }
     },
-    "platform": {
-      "type": "string",
-      "required": false,
-      "values": [
-        "PC",
-        "PlayStation",
-        "Xbox One",
-        "BattleNet",
-        "Steam"
-      ]
-    },
     "account_level": {
       "type": "integer",
       "required": false,
       "min": 0
     },
     "linkable_platforms": {
-      "type": "array",
+      "type": "integer",
       "required": false,
-      "items": {
-        "type": "string",
-        "required": false,
-        "values": [
-          "PC",
-          "PlayStation",
-          "Xbox One",
-          "BattleNet",
-          "Steam"
-        ]
-      }
+      "min": 1
     },
     "prestige_level": {
       "type": "integer",

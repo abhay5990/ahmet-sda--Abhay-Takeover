@@ -1,0 +1,464 @@
+{
+  "game_id": "104",
+  "game": "playstation",
+  "game_name": "PlayStation",
+  "category": "GiftCard",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "United States",
+      "group": "Region",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "5 USD"
+        },
+        {
+          "id": "0-1",
+          "name": "10 USD"
+        },
+        {
+          "id": "0-10",
+          "name": "4 USD"
+        },
+        {
+          "id": "0-11",
+          "name": "15 USD"
+        },
+        {
+          "id": "0-12",
+          "name": "20 USD"
+        },
+        {
+          "id": "0-2",
+          "name": "25 USD"
+        },
+        {
+          "id": "0-3",
+          "name": "30 USD"
+        },
+        {
+          "id": "0-4",
+          "name": "50 USD"
+        },
+        {
+          "id": "0-5",
+          "name": "75 USD"
+        },
+        {
+          "id": "0-6",
+          "name": "100 USD"
+        },
+        {
+          "id": "0-7",
+          "name": "1 USD"
+        },
+        {
+          "id": "0-8",
+          "name": "2 USD"
+        },
+        {
+          "id": "0-9",
+          "name": "3 USD"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "United Kingdom",
+      "group": "Region",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "10 GBP"
+        },
+        {
+          "id": "1-1",
+          "name": "20 GBP"
+        },
+        {
+          "id": "1-2",
+          "name": "30 GBP"
+        },
+        {
+          "id": "1-3",
+          "name": "50 GBP"
+        },
+        {
+          "id": "1-4",
+          "name": "80 GBP"
+        },
+        {
+          "id": "1-5",
+          "name": "100 GBP"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Germany",
+      "group": "Region",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "5 EUR"
+        },
+        {
+          "id": "2-1",
+          "name": "10 EUR"
+        },
+        {
+          "id": "2-2",
+          "name": "20 EUR"
+        },
+        {
+          "id": "2-3",
+          "name": "25 EUR"
+        },
+        {
+          "id": "2-4",
+          "name": "30 EUR"
+        },
+        {
+          "id": "2-5",
+          "name": "50 EUR"
+        },
+        {
+          "id": "2-6",
+          "name": "75 EUR"
+        },
+        {
+          "id": "2-7",
+          "name": "100 EUR"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Spain",
+      "group": "Region",
+      "children": [
+        {
+          "id": "3-0",
+          "name": "5 EUR"
+        },
+        {
+          "id": "3-1",
+          "name": "10 EUR"
+        },
+        {
+          "id": "3-2",
+          "name": "20 EUR"
+        },
+        {
+          "id": "3-3",
+          "name": "25 EUR"
+        },
+        {
+          "id": "3-4",
+          "name": "30 EUR"
+        },
+        {
+          "id": "3-5",
+          "name": "50 EUR"
+        },
+        {
+          "id": "3-6",
+          "name": "75 EUR"
+        },
+        {
+          "id": "3-7",
+          "name": "100 EUR"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "France",
+      "group": "Region",
+      "children": [
+        {
+          "id": "4-0",
+          "name": "5 EUR"
+        },
+        {
+          "id": "4-1",
+          "name": "10 EUR"
+        },
+        {
+          "id": "4-2",
+          "name": "20 EUR"
+        },
+        {
+          "id": "4-3",
+          "name": "25 EUR"
+        },
+        {
+          "id": "4-4",
+          "name": "30 EUR"
+        },
+        {
+          "id": "4-5",
+          "name": "50 EUR"
+        },
+        {
+          "id": "4-6",
+          "name": "75 EUR"
+        },
+        {
+          "id": "4-7",
+          "name": "100 EUR"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "Italy",
+      "group": "Region",
+      "children": [
+        {
+          "id": "5-0",
+          "name": "5 EUR"
+        },
+        {
+          "id": "5-1",
+          "name": "10 EUR"
+        },
+        {
+          "id": "5-2",
+          "name": "20 EUR"
+        },
+        {
+          "id": "5-3",
+          "name": "25 EUR"
+        },
+        {
+          "id": "5-4",
+          "name": "30 EUR"
+        },
+        {
+          "id": "5-5",
+          "name": "50 EUR"
+        },
+        {
+          "id": "5-6",
+          "name": "75 EUR"
+        },
+        {
+          "id": "5-7",
+          "name": "100 EUR"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Canada",
+      "group": "Region",
+      "children": [
+        {
+          "id": "6-0",
+          "name": "10 CAD"
+        },
+        {
+          "id": "6-1",
+          "name": "20 CAD"
+        },
+        {
+          "id": "6-2",
+          "name": "25 CAD"
+        },
+        {
+          "id": "6-3",
+          "name": "40 CAD"
+        },
+        {
+          "id": "6-4",
+          "name": "50 CAD"
+        },
+        {
+          "id": "6-5",
+          "name": "75 CAD"
+        },
+        {
+          "id": "6-6",
+          "name": "100 CAD"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Turkey",
+      "group": "Region",
+      "children": [
+        {
+          "id": "7-0",
+          "name": "250 TRY"
+        },
+        {
+          "id": "7-1",
+          "name": "500 TRY"
+        },
+        {
+          "id": "7-2",
+          "name": "1000 TRY"
+        },
+        {
+          "id": "7-3",
+          "name": "1500 TRY"
+        },
+        {
+          "id": "7-4",
+          "name": "2000 TRY"
+        },
+        {
+          "id": "7-5",
+          "name": "2500 TRY"
+        },
+        {
+          "id": "7-6",
+          "name": "3000 TRY"
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "name": "India",
+      "group": "Region",
+      "children": [
+        {
+          "id": "8-0",
+          "name": "1000 INR"
+        },
+        {
+          "id": "8-1",
+          "name": "2000 INR"
+        },
+        {
+          "id": "8-2",
+          "name": "3000 INR"
+        },
+        {
+          "id": "8-3",
+          "name": "4000 INR"
+        },
+        {
+          "id": "8-4",
+          "name": "5000 INR"
+        },
+        {
+          "id": "8-5",
+          "name": "8000 INR"
+        },
+        {
+          "id": "8-6",
+          "name": "9000 INR"
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "name": "UAE",
+      "group": "Region",
+      "children": [
+        {
+          "id": "9-0",
+          "name": "5 USD"
+        },
+        {
+          "id": "9-1",
+          "name": "10 USD"
+        },
+        {
+          "id": "9-2",
+          "name": "20 USD"
+        },
+        {
+          "id": "9-3",
+          "name": "30 USD"
+        },
+        {
+          "id": "9-4",
+          "name": "50 USD"
+        },
+        {
+          "id": "9-5",
+          "name": "100 USD"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -101,7 +101,8 @@
     },
     "gems_count": {
       "type": "integer",
-      "required": false
+      "required": false,
+      "min": 0
     },
     "brawlers_count": {
       "type": "integer",

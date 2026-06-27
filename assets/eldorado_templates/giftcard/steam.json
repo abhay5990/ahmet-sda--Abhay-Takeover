@@ -1,0 +1,422 @@
+{
+  "game_id": "42",
+  "game": "steam",
+  "game_name": "Steam",
+  "category": "GiftCard",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Global",
+      "group": "Region",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "5 USD"
+        },
+        {
+          "id": "0-1",
+          "name": "10 USD"
+        },
+        {
+          "id": "0-2",
+          "name": "20 USD"
+        },
+        {
+          "id": "0-3",
+          "name": "25 USD"
+        },
+        {
+          "id": "0-4",
+          "name": "30 USD"
+        },
+        {
+          "id": "0-5",
+          "name": "50 USD"
+        },
+        {
+          "id": "0-6",
+          "name": "75 USD"
+        },
+        {
+          "id": "0-7",
+          "name": "100 USD"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "Europe",
+      "group": "Region",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "5 EUR"
+        },
+        {
+          "id": "1-1",
+          "name": "10 EUR"
+        },
+        {
+          "id": "1-2",
+          "name": "20 EUR"
+        },
+        {
+          "id": "1-3",
+          "name": "30 EUR"
+        },
+        {
+          "id": "1-4",
+          "name": "50 EUR"
+        },
+        {
+          "id": "1-5",
+          "name": "100 EUR"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "United Kingdom",
+      "group": "Region",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "5 GBP"
+        },
+        {
+          "id": "2-1",
+          "name": "10 GBP"
+        },
+        {
+          "id": "2-2",
+          "name": "20 GBP"
+        },
+        {
+          "id": "2-3",
+          "name": "25 GBP"
+        },
+        {
+          "id": "2-4",
+          "name": "50 GBP"
+        },
+        {
+          "id": "2-5",
+          "name": "100 GBP"
+        },
+        {
+          "id": "2-6",
+          "name": "30 GBP"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "United States",
+      "group": "Region",
+      "children": [
+        {
+          "id": "3-0",
+          "name": "10 USD"
+        },
+        {
+          "id": "3-1",
+          "name": "15 USD"
+        },
+        {
+          "id": "3-2",
+          "name": "20 USD"
+        },
+        {
+          "id": "3-3",
+          "name": "25 USD"
+        },
+        {
+          "id": "3-4",
+          "name": "50 USD"
+        },
+        {
+          "id": "3-5",
+          "name": "75 USD"
+        },
+        {
+          "id": "3-6",
+          "name": "100 USD"
+        },
+        {
+          "id": "3-7",
+          "name": "5 USD"
+        },
+        {
+          "id": "3-8",
+          "name": "30 USD"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Indonesia",
+      "group": "Region",
+      "children": [
+        {
+          "id": "4-0",
+          "name": "12000 IDR"
+        },
+        {
+          "id": "4-1",
+          "name": "45000 IDR"
+        },
+        {
+          "id": "4-2",
+          "name": "60000 IDR"
+        },
+        {
+          "id": "4-3",
+          "name": "90000 IDR"
+        },
+        {
+          "id": "4-4",
+          "name": "120000 IDR"
+        },
+        {
+          "id": "4-5",
+          "name": "250000 IDR"
+        },
+        {
+          "id": "4-6",
+          "name": "400000 IDR"
+        },
+        {
+          "id": "4-7",
+          "name": "500000 IDR"
+        },
+        {
+          "id": "4-8",
+          "name": "600000 IDR"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "name": "India",
+      "group": "Region",
+      "children": [
+        {
+          "id": "5-0",
+          "name": "100 INR"
+        },
+        {
+          "id": "5-1",
+          "name": "150 INR"
+        },
+        {
+          "id": "5-10",
+          "name": "4000 INR"
+        },
+        {
+          "id": "5-11",
+          "name": "5000 INR"
+        },
+        {
+          "id": "5-2",
+          "name": "175 INR"
+        },
+        {
+          "id": "5-3",
+          "name": "250 INR"
+        },
+        {
+          "id": "5-4",
+          "name": "325 INR"
+        },
+        {
+          "id": "5-5",
+          "name": "500 INR"
+        },
+        {
+          "id": "5-6",
+          "name": "1000 INR"
+        },
+        {
+          "id": "5-7",
+          "name": "1500 INR"
+        },
+        {
+          "id": "5-8",
+          "name": "2500 INR"
+        },
+        {
+          "id": "5-9",
+          "name": "3300 INR"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Brazil",
+      "group": "Region",
+      "children": [
+        {
+          "id": "6-0",
+          "name": "10 BRL"
+        },
+        {
+          "id": "6-1",
+          "name": "20 BRL"
+        },
+        {
+          "id": "6-10",
+          "name": "165 BRL"
+        },
+        {
+          "id": "6-11",
+          "name": "275 BRL"
+        },
+        {
+          "id": "6-2",
+          "name": "30 BRL"
+        },
+        {
+          "id": "6-3",
+          "name": "50 BRL"
+        },
+        {
+          "id": "6-4",
+          "name": "100 BRL"
+        },
+        {
+          "id": "6-5",
+          "name": "150 BRL"
+        },
+        {
+          "id": "6-6",
+          "name": "200 BRL"
+        },
+        {
+          "id": "6-7",
+          "name": "27 BRL"
+        },
+        {
+          "id": "6-8",
+          "name": "55 BRL"
+        },
+        {
+          "id": "6-9",
+          "name": "110 BRL"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Philippines",
+      "group": "Region",
+      "children": [
+        {
+          "id": "7-0",
+          "name": "100 PHP"
+        },
+        {
+          "id": "7-1",
+          "name": "200 PHP"
+        },
+        {
+          "id": "7-2",
+          "name": "300 PHP"
+        },
+        {
+          "id": "7-3",
+          "name": "400 PHP"
+        },
+        {
+          "id": "7-4",
+          "name": "500 PHP"
+        },
+        {
+          "id": "7-5",
+          "name": "800 PHP"
+        },
+        {
+          "id": "7-6",
+          "name": "1000 PHP"
+        },
+        {
+          "id": "7-7",
+          "name": "2200 PHP"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -59,25 +59,11 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Weapons",
-        "Armor",
-        "Artifact",
-        "Twitch Drops",
-        "Other"
-      ]
+      "required": false
     },
     "region": {
       "type": "string",
-      "required": true,
-      "values": [
-        "North America",
-        "Europe",
-        "Russia",
-        "Asia",
-        "Northeast Asia"
-      ]
+      "required": false
     }
   }
 }

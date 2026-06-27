@@ -1,0 +1,206 @@
+{
+  "game_id": 9,
+  "game": "sl",
+  "game_name": "Second Life",
+  "seo_name": "SL",
+  "currencyName": "Linden",
+  "categories": [
+    {
+      "id": 2026,
+      "name": "Transfer Only",
+      "seoName": "Transfer Only",
+      "subCategories": [
+        {
+          "id": 10165,
+          "name": "Animals",
+          "seoName": "Animals"
+        },
+        {
+          "id": 10166,
+          "name": "Animated Objects",
+          "seoName": "Animated Objects"
+        },
+        {
+          "id": 10167,
+          "name": "Animations",
+          "seoName": "Animations"
+        },
+        {
+          "id": 10168,
+          "name": "Apparel",
+          "seoName": "Apparel"
+        },
+        {
+          "id": 10169,
+          "name": "Art",
+          "seoName": "Art"
+        },
+        {
+          "id": 10170,
+          "name": "Audio and Video",
+          "seoName": "Audio and Video"
+        },
+        {
+          "id": 10171,
+          "name": "Avatar Accessories",
+          "seoName": "Avatar Accessories"
+        },
+        {
+          "id": 10172,
+          "name": "Avatar Appearance",
+          "seoName": "Avatar Appearance"
+        },
+        {
+          "id": 10173,
+          "name": "Avatar Components",
+          "seoName": "Avatar Components"
+        },
+        {
+          "id": 10174,
+          "name": "Breedables",
+          "seoName": "Breedables"
+        },
+        {
+          "id": 10175,
+          "name": "Building and Object Components",
+          "seoName": "Building and Object Components"
+        },
+        {
+          "id": 10176,
+          "name": "Buildings and Other Structures",
+          "seoName": "Buildings and Other Structures"
+        },
+        {
+          "id": 10177,
+          "name": "Business",
+          "seoName": "Business"
+        },
+        {
+          "id": 10178,
+          "name": "Celebrations",
+          "seoName": "Celebrations"
+        },
+        {
+          "id": 10179,
+          "name": "Complete Avatars",
+          "seoName": "Complete Avatars"
+        },
+        {
+          "id": 10180,
+          "name": "Furry",
+          "seoName": "Furry"
+        },
+        {
+          "id": 10181,
+          "name": "Gachas",
+          "seoName": "Gachas"
+        },
+        {
+          "id": 10182,
+          "name": "Gadgets",
+          "seoName": "Gadgets"
+        },
+        {
+          "id": 10183,
+          "name": "Home and Garden",
+          "seoName": "Home and Garden"
+        },
+        {
+          "id": 10184,
+          "name": "Miscellaneous",
+          "seoName": "Miscellaneous"
+        },
+        {
+          "id": 10185,
+          "name": "Real Estate",
+          "seoName": "Real Estate"
+        },
+        {
+          "id": 10186,
+          "name": "Recreation and Entertainment",
+          "seoName": "Recreation and Entertainment"
+        },
+        {
+          "id": 10187,
+          "name": "Scripts",
+          "seoName": "Scripts"
+        },
+        {
+          "id": 10188,
+          "name": "Service",
+          "seoName": "Service"
+        },
+        {
+          "id": 10189,
+          "name": "Used Items",
+          "seoName": "Used Items"
+        },
+        {
+          "id": 10190,
+          "name": "Vehicles",
+          "seoName": "Vehicles"
+        },
+        {
+          "id": 10191,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 1801,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

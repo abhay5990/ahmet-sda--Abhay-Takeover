@@ -1,0 +1,1004 @@
+{
+  "game_id": 14335,
+  "game": "dune-awakening",
+  "game_name": "Dune: Awakening",
+  "seo_name": "Dune-Awakening",
+  "currencyName": "Solaris",
+  "categories": [
+    {
+      "id": 2060,
+      "name": "Vehicles",
+      "seoName": "Vehicles",
+      "subCategories": [
+        {
+          "id": 10329,
+          "name": "Ornithopter",
+          "seoName": "Ornithopter"
+        },
+        {
+          "id": 10330,
+          "name": "Buggy",
+          "seoName": "Buggy"
+        }
+      ]
+    },
+    {
+      "id": 2061,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 10331,
+          "name": "Spices",
+          "seoName": "Spices"
+        },
+        {
+          "id": 10338,
+          "name": "Plastanium Ingot",
+          "seoName": "Plastanium Ingot"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14351,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 14454,
+          "name": "Actaeon"
+        },
+        {
+          "id": 14455,
+          "name": "Aiglon"
+        },
+        {
+          "id": 14371,
+          "name": "Alpha Corvus"
+        },
+        {
+          "id": 14456,
+          "name": "Andromeda"
+        },
+        {
+          "id": 14352,
+          "name": "Archidamas III"
+        },
+        {
+          "id": 14457,
+          "name": "Arkon"
+        },
+        {
+          "id": 14353,
+          "name": "Bahamonde"
+        },
+        {
+          "id": 14355,
+          "name": "Buzzell"
+        },
+        {
+          "id": 14458,
+          "name": "Calypso"
+        },
+        {
+          "id": 14356,
+          "name": "Canopus"
+        },
+        {
+          "id": 14372,
+          "name": "Cassiopeia"
+        },
+        {
+          "id": 14357,
+          "name": "Centaurus"
+        },
+        {
+          "id": 14459,
+          "name": "Chapterhouse"
+        },
+        {
+          "id": 14460,
+          "name": "Circinus"
+        },
+        {
+          "id": 14358,
+          "name": "Corona Borealis"
+        },
+        {
+          "id": 14461,
+          "name": "Cycliadas"
+        },
+        {
+          "id": 14359,
+          "name": "Daedros"
+        },
+        {
+          "id": 14373,
+          "name": "Daxos"
+        },
+        {
+          "id": 14354,
+          "name": "Deneb"
+        },
+        {
+          "id": 14360,
+          "name": "Eluzai"
+        },
+        {
+          "id": 14374,
+          "name": "Epsilon Eridani"
+        },
+        {
+          "id": 14462,
+          "name": "Eumenes"
+        },
+        {
+          "id": 14375,
+          "name": "Fides"
+        },
+        {
+          "id": 14361,
+          "name": "Galacia"
+        },
+        {
+          "id": 14463,
+          "name": "Gansireed"
+        },
+        {
+          "id": 14464,
+          "name": "Ghanima"
+        },
+        {
+          "id": 14362,
+          "name": "Grumman"
+        },
+        {
+          "id": 14376,
+          "name": "Hagal"
+        },
+        {
+          "id": 14465,
+          "name": "Helios"
+        },
+        {
+          "id": 14466,
+          "name": "Hicetas"
+        },
+        {
+          "id": 14467,
+          "name": "Horologium"
+        },
+        {
+          "id": 14363,
+          "name": "Icarus"
+        },
+        {
+          "id": 14377,
+          "name": "Indra"
+        },
+        {
+          "id": 14468,
+          "name": "Ipyr"
+        },
+        {
+          "id": 14469,
+          "name": "Ixalco"
+        },
+        {
+          "id": 14470,
+          "name": "Jansine"
+        },
+        {
+          "id": 14378,
+          "name": "Jongleur"
+        },
+        {
+          "id": 14471,
+          "name": "Karna"
+        },
+        {
+          "id": 14364,
+          "name": "Khala"
+        },
+        {
+          "id": 14379,
+          "name": "Korona"
+        },
+        {
+          "id": 14472,
+          "name": "Lacerta"
+        },
+        {
+          "id": 14380,
+          "name": "Lampadas"
+        },
+        {
+          "id": 14473,
+          "name": "Laurrant"
+        },
+        {
+          "id": 14474,
+          "name": "Leto"
+        },
+        {
+          "id": 14365,
+          "name": "Limos"
+        },
+        {
+          "id": 14475,
+          "name": "Lothar"
+        },
+        {
+          "id": 14476,
+          "name": "Martijoz"
+        },
+        {
+          "id": 14477,
+          "name": "Menelaus"
+        },
+        {
+          "id": 14478,
+          "name": "Mihna"
+        },
+        {
+          "id": 14479,
+          "name": "Molitor"
+        },
+        {
+          "id": 14381,
+          "name": "Mycenae"
+        },
+        {
+          "id": 14480,
+          "name": "Nereus"
+        },
+        {
+          "id": 14481,
+          "name": "Niveus"
+        },
+        {
+          "id": 14482,
+          "name": "Octans"
+        },
+        {
+          "id": 14483,
+          "name": "Orion"
+        },
+        {
+          "id": 14484,
+          "name": "Ostara"
+        },
+        {
+          "id": 14382,
+          "name": "Oxylon"
+        },
+        {
+          "id": 14366,
+          "name": "Pax"
+        },
+        {
+          "id": 14485,
+          "name": "Persephone"
+        },
+        {
+          "id": 14486,
+          "name": "Phaedra"
+        },
+        {
+          "id": 14487,
+          "name": "Pisces"
+        },
+        {
+          "id": 14488,
+          "name": "Porthos"
+        },
+        {
+          "id": 14367,
+          "name": "Puppis"
+        },
+        {
+          "id": 14383,
+          "name": "Quirinus"
+        },
+        {
+          "id": 14489,
+          "name": "Remus"
+        },
+        {
+          "id": 14368,
+          "name": "Rhea"
+        },
+        {
+          "id": 14490,
+          "name": "Richese"
+        },
+        {
+          "id": 14491,
+          "name": "Rossak"
+        },
+        {
+          "id": 14492,
+          "name": "Salusa Secundus"
+        },
+        {
+          "id": 14384,
+          "name": "Saturnia"
+        },
+        {
+          "id": 14369,
+          "name": "Selene"
+        },
+        {
+          "id": 14493,
+          "name": "Serpens"
+        },
+        {
+          "id": 14494,
+          "name": "Shamal"
+        },
+        {
+          "id": 14370,
+          "name": "Solaria"
+        },
+        {
+          "id": 14495,
+          "name": "Suk Alusus"
+        },
+        {
+          "id": 14496,
+          "name": "Tantalus"
+        },
+        {
+          "id": 14497,
+          "name": "Terminus"
+        },
+        {
+          "id": 14498,
+          "name": "Thule"
+        },
+        {
+          "id": 14385,
+          "name": "Tucana"
+        },
+        {
+          "id": 14499,
+          "name": "Volans"
+        },
+        {
+          "id": 14386,
+          "name": "Xenophon"
+        }
+      ]
+    },
+    {
+      "id": 14387,
+      "name": "US Central",
+      "subCategories": [
+        {
+          "id": 14531,
+          "name": "Aren’s Refuge"
+        },
+        {
+          "id": 14388,
+          "name": "Chains of Karak"
+        },
+        {
+          "id": 14527,
+          "name": "Dewgap"
+        },
+        {
+          "id": 14389,
+          "name": "Edgeway"
+        },
+        {
+          "id": 14532,
+          "name": "Flatrock"
+        },
+        {
+          "id": 14533,
+          "name": "Fury"
+        },
+        {
+          "id": 14390,
+          "name": "Garrick"
+        },
+        {
+          "id": 14528,
+          "name": "Hand of Khidr"
+        },
+        {
+          "id": 14534,
+          "name": "Hollow Arches"
+        },
+        {
+          "id": 14529,
+          "name": "Hydra"
+        },
+        {
+          "id": 14391,
+          "name": "Limbo"
+        },
+        {
+          "id": 14530,
+          "name": "Pinnacle Station"
+        },
+        {
+          "id": 14392,
+          "name": "Riftrun"
+        },
+        {
+          "id": 14535,
+          "name": "Sculptor"
+        },
+        {
+          "id": 14393,
+          "name": "Solitary"
+        },
+        {
+          "id": 14536,
+          "name": "Stoneheart"
+        },
+        {
+          "id": 14537,
+          "name": "The Anvil"
+        },
+        {
+          "id": 14394,
+          "name": "The Salusan Bull"
+        },
+        {
+          "id": 14395,
+          "name": "Vowbreaker"
+        },
+        {
+          "id": 14538,
+          "name": "World’s End"
+        }
+      ]
+    },
+    {
+      "id": 14396,
+      "name": "US West",
+      "subCategories": [
+        {
+          "id": 14502,
+          "name": "Alajory"
+        },
+        {
+          "id": 14397,
+          "name": "Aramanli"
+        },
+        {
+          "id": 14503,
+          "name": "Beakkal"
+        },
+        {
+          "id": 14398,
+          "name": "Broken Stone"
+        },
+        {
+          "id": 14504,
+          "name": "Caelum"
+        },
+        {
+          "id": 14399,
+          "name": "Cetus"
+        },
+        {
+          "id": 14505,
+          "name": "Crompton"
+        },
+        {
+          "id": 14400,
+          "name": "Dayside"
+        },
+        {
+          "id": 14516,
+          "name": "Dis"
+        },
+        {
+          "id": 14517,
+          "name": "Dustpan"
+        },
+        {
+          "id": 14506,
+          "name": "Equuleus"
+        },
+        {
+          "id": 14401,
+          "name": "Farhold"
+        },
+        {
+          "id": 14402,
+          "name": "Frostholm"
+        },
+        {
+          "id": 14507,
+          "name": "Gliese"
+        },
+        {
+          "id": 14518,
+          "name": "Griffin’s Reach"
+        },
+        {
+          "id": 14519,
+          "name": "Helius Gate"
+        },
+        {
+          "id": 14508,
+          "name": "Hestia"
+        },
+        {
+          "id": 14403,
+          "name": "House of Ilm"
+        },
+        {
+          "id": 14520,
+          "name": "Ishtar"
+        },
+        {
+          "id": 14404,
+          "name": "Junction"
+        },
+        {
+          "id": 14521,
+          "name": "Laran"
+        },
+        {
+          "id": 14509,
+          "name": "Lorentz"
+        },
+        {
+          "id": 14522,
+          "name": "Monoceros"
+        },
+        {
+          "id": 14405,
+          "name": "Nova"
+        },
+        {
+          "id": 14510,
+          "name": "Old Terra"
+        },
+        {
+          "id": 14523,
+          "name": "Pallas"
+        },
+        {
+          "id": 14406,
+          "name": "Phobos"
+        },
+        {
+          "id": 14524,
+          "name": "Red Maw"
+        },
+        {
+          "id": 14407,
+          "name": "Relicon"
+        },
+        {
+          "id": 14511,
+          "name": "Sagitta"
+        },
+        {
+          "id": 14408,
+          "name": "Sandtide"
+        },
+        {
+          "id": 14512,
+          "name": "Serenity"
+        },
+        {
+          "id": 14525,
+          "name": "Sirius"
+        },
+        {
+          "id": 14513,
+          "name": "Stepstone"
+        },
+        {
+          "id": 14409,
+          "name": "Tartarus"
+        },
+        {
+          "id": 14514,
+          "name": "The Anomaly"
+        },
+        {
+          "id": 14410,
+          "name": "The Jumble"
+        },
+        {
+          "id": 14526,
+          "name": "Veiled Cleft"
+        },
+        {
+          "id": 14515,
+          "name": "Windsong"
+        },
+        {
+          "id": 14411,
+          "name": "Wrath"
+        }
+      ]
+    },
+    {
+      "id": 14412,
+      "name": "US East",
+      "subCategories": [
+        {
+          "id": 14413,
+          "name": "Acheron"
+        },
+        {
+          "id": 14564,
+          "name": "Andioyu"
+        },
+        {
+          "id": 14565,
+          "name": "Arrakis"
+        },
+        {
+          "id": 14414,
+          "name": "Auriga"
+        },
+        {
+          "id": 14566,
+          "name": "Bootes"
+        },
+        {
+          "id": 14567,
+          "name": "Breaker Station"
+        },
+        {
+          "id": 14415,
+          "name": "Canis Major"
+        },
+        {
+          "id": 14539,
+          "name": "Carpathia"
+        },
+        {
+          "id": 14568,
+          "name": "Colomba"
+        },
+        {
+          "id": 14569,
+          "name": "Crater"
+        },
+        {
+          "id": 14540,
+          "name": "Dahkotah"
+        },
+        {
+          "id": 14541,
+          "name": "Dendros"
+        },
+        {
+          "id": 14570,
+          "name": "Duskwraith"
+        },
+        {
+          "id": 14542,
+          "name": "Egeria"
+        },
+        {
+          "id": 14571,
+          "name": "Eurasia"
+        },
+        {
+          "id": 14543,
+          "name": "Fallow Eight"
+        },
+        {
+          "id": 14416,
+          "name": "Foranis Triad"
+        },
+        {
+          "id": 14544,
+          "name": "Freya"
+        },
+        {
+          "id": 14417,
+          "name": "Greed"
+        },
+        {
+          "id": 14418,
+          "name": "Harmony"
+        },
+        {
+          "id": 14545,
+          "name": "House of Fiqh"
+        },
+        {
+          "id": 14546,
+          "name": "Hyperbatas"
+        },
+        {
+          "id": 14419,
+          "name": "Indara"
+        },
+        {
+          "id": 14547,
+          "name": "Ironwatch"
+        },
+        {
+          "id": 14548,
+          "name": "Jasper"
+        },
+        {
+          "id": 14549,
+          "name": "Kadrish"
+        },
+        {
+          "id": 14420,
+          "name": "Kirana III"
+        },
+        {
+          "id": 14550,
+          "name": "Kytheria"
+        },
+        {
+          "id": 14421,
+          "name": "Lernaeus"
+        },
+        {
+          "id": 14551,
+          "name": "Lust"
+        },
+        {
+          "id": 14422,
+          "name": "Mask Prime"
+        },
+        {
+          "id": 14552,
+          "name": "Microscopium"
+        },
+        {
+          "id": 14423,
+          "name": "Narbog"
+        },
+        {
+          "id": 14553,
+          "name": "Nicodemus"
+        },
+        {
+          "id": 14572,
+          "name": "Odin"
+        },
+        {
+          "id": 14554,
+          "name": "Orsippus"
+        },
+        {
+          "id": 14555,
+          "name": "Pellucidar"
+        },
+        {
+          "id": 14556,
+          "name": "Ponciard"
+        },
+        {
+          "id": 14424,
+          "name": "Pyxis"
+        },
+        {
+          "id": 14557,
+          "name": "Quarterhouse"
+        },
+        {
+          "id": 14558,
+          "name": "Rigel"
+        },
+        {
+          "id": 14425,
+          "name": "Scorpius"
+        },
+        {
+          "id": 14559,
+          "name": "Sentinel City"
+        },
+        {
+          "id": 14573,
+          "name": "Sextans"
+        },
+        {
+          "id": 14426,
+          "name": "Splinter"
+        },
+        {
+          "id": 14560,
+          "name": "Stygia"
+        },
+        {
+          "id": 14561,
+          "name": "Taqwa’s Watch"
+        },
+        {
+          "id": 14562,
+          "name": "The Crossroads"
+        },
+        {
+          "id": 14427,
+          "name": "The Spiral"
+        },
+        {
+          "id": 14563,
+          "name": "Themis"
+        },
+        {
+          "id": 14428,
+          "name": "Vela"
+        },
+        {
+          "id": 14429,
+          "name": "Watchway"
+        },
+        {
+          "id": 14574,
+          "name": "Wormsight"
+        }
+      ]
+    },
+    {
+      "id": 14430,
+      "name": "Asia",
+      "subCategories": [
+        {
+          "id": 14431,
+          "name": "Al Dhanab"
+        },
+        {
+          "id": 14445,
+          "name": "Bezel II"
+        },
+        {
+          "id": 14446,
+          "name": "Bifrost"
+        },
+        {
+          "id": 14432,
+          "name": "Corrin"
+        },
+        {
+          "id": 14447,
+          "name": "Essen"
+        },
+        {
+          "id": 14448,
+          "name": "Foum al-Hout"
+        },
+        {
+          "id": 14433,
+          "name": "Ishia"
+        },
+        {
+          "id": 14449,
+          "name": "Kolhar"
+        },
+        {
+          "id": 14450,
+          "name": "Lepuscuadra"
+        },
+        {
+          "id": 14451,
+          "name": "Meridian"
+        },
+        {
+          "id": 14434,
+          "name": "Nyx"
+        },
+        {
+          "id": 14452,
+          "name": "Quadra"
+        },
+        {
+          "id": 14453,
+          "name": "Revona"
+        },
+        {
+          "id": 14435,
+          "name": "Sparta"
+        }
+      ]
+    },
+    {
+      "id": 14436,
+      "name": "Oceania",
+      "subCategories": [
+        {
+          "id": 14437,
+          "name": "Aerarium IV"
+        },
+        {
+          "id": 14438,
+          "name": "Canes Venatici"
+        },
+        {
+          "id": 14439,
+          "name": "Elara"
+        },
+        {
+          "id": 14440,
+          "name": "Libra"
+        },
+        {
+          "id": 14441,
+          "name": "Palma"
+        }
+      ]
+    },
+    {
+      "id": 14442,
+      "name": "South America",
+      "subCategories": [
+        {
+          "id": 14443,
+          "name": "Balut"
+        },
+        {
+          "id": 14500,
+          "name": "Mimosa"
+        },
+        {
+          "id": 14501,
+          "name": "Othello"
+        },
+        {
+          "id": 14444,
+          "name": "Sharrukin"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

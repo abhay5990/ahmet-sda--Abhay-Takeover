@@ -59,15 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Weapons",
-        "VIP",
-        "Battle Pass",
-        "Gems",
-        "Cases",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

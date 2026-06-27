@@ -1,0 +1,450 @@
+{
+  "game_id": 6091,
+  "game": "elder-scrolls-online",
+  "game_name": "Elder Scrolls Online",
+  "seo_name": "Elder-Scrolls-Online",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 964,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 4516,
+          "name": "Armor",
+          "seoName": "Armor"
+        },
+        {
+          "id": 4622,
+          "name": "Headgear",
+          "seoName": "Headgear"
+        },
+        {
+          "id": 4623,
+          "name": "Cuirasses",
+          "seoName": "Cuirasses"
+        },
+        {
+          "id": 4624,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 4625,
+          "name": "Gauntlets",
+          "seoName": "Gauntlets"
+        },
+        {
+          "id": 4626,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 4627,
+          "name": "Jewelry",
+          "seoName": "Jewelry"
+        }
+      ]
+    },
+    {
+      "id": 965,
+      "name": "Consumable",
+      "seoName": "Consumable",
+      "subCategories": [
+        {
+          "id": 4517,
+          "name": "Consumable",
+          "seoName": "Consumable"
+        },
+        {
+          "id": 8601,
+          "name": "Food",
+          "seoName": "Food"
+        },
+        {
+          "id": 8602,
+          "name": "Drinks",
+          "seoName": "Drinks"
+        },
+        {
+          "id": 8603,
+          "name": "Recipes",
+          "seoName": "Recipes"
+        },
+        {
+          "id": 8604,
+          "name": "Potions",
+          "seoName": "Potions"
+        },
+        {
+          "id": 8605,
+          "name": "Poisons",
+          "seoName": "Poisons"
+        },
+        {
+          "id": 8606,
+          "name": "Style Motifs",
+          "seoName": "Style Motifs"
+        },
+        {
+          "id": 8607,
+          "name": "Master Writs",
+          "seoName": "Master Writs"
+        },
+        {
+          "id": 8608,
+          "name": "Containers",
+          "seoName": "Containers"
+        },
+        {
+          "id": 8609,
+          "name": "Repair items",
+          "seoName": "Repair items"
+        },
+        {
+          "id": 8610,
+          "name": "Miscellaneous",
+          "seoName": "Miscellaneous"
+        }
+      ]
+    },
+    {
+      "id": 966,
+      "name": "Material",
+      "seoName": "Material",
+      "subCategories": [
+        {
+          "id": 4518,
+          "name": "Other Material",
+          "seoName": "Other Material"
+        },
+        {
+          "id": 6053,
+          "name": "Alchemy",
+          "seoName": "Alchemy"
+        },
+        {
+          "id": 6054,
+          "name": "Blacksmithing",
+          "seoName": "Blacksmithing"
+        },
+        {
+          "id": 6055,
+          "name": "Clothier",
+          "seoName": "Clothier"
+        },
+        {
+          "id": 6056,
+          "name": "Enchanting",
+          "seoName": "Enchanting"
+        },
+        {
+          "id": 6057,
+          "name": "Jewelcrafting",
+          "seoName": "Jewelcrafting"
+        },
+        {
+          "id": 6058,
+          "name": "Woodworking",
+          "seoName": "Woodworking"
+        },
+        {
+          "id": 6059,
+          "name": "Provisioning",
+          "seoName": "Provisioning"
+        },
+        {
+          "id": 8611,
+          "name": "Style Materials",
+          "seoName": "Style Materials"
+        },
+        {
+          "id": 8612,
+          "name": "Trait Items",
+          "seoName": "Trait Items"
+        },
+        {
+          "id": 8613,
+          "name": "Furnishing Materials",
+          "seoName": "Furnishing Materials"
+        }
+      ]
+    },
+    {
+      "id": 967,
+      "name": "Weapon",
+      "seoName": "Weapon",
+      "subCategories": [
+        {
+          "id": 4519,
+          "name": "Weapon",
+          "seoName": "Weapon"
+        },
+        {
+          "id": 4611,
+          "name": "Daggers",
+          "seoName": "Daggers"
+        },
+        {
+          "id": 4612,
+          "name": "Maces",
+          "seoName": "Maces"
+        },
+        {
+          "id": 4613,
+          "name": "Swords",
+          "seoName": "Swords"
+        },
+        {
+          "id": 4614,
+          "name": "War Axes",
+          "seoName": "War Axes"
+        },
+        {
+          "id": 4615,
+          "name": "Battleaxes",
+          "seoName": "Battleaxes"
+        },
+        {
+          "id": 4616,
+          "name": "Greatswords",
+          "seoName": "Greatswords"
+        },
+        {
+          "id": 4617,
+          "name": "Warhammers",
+          "seoName": "Warhammers"
+        },
+        {
+          "id": 4618,
+          "name": "Bows",
+          "seoName": "Bows"
+        },
+        {
+          "id": 4619,
+          "name": "Arrow",
+          "seoName": "Arrow"
+        },
+        {
+          "id": 4620,
+          "name": "Crossbows",
+          "seoName": "Crossbows"
+        },
+        {
+          "id": 4621,
+          "name": "Bolts",
+          "seoName": "Bolts"
+        }
+      ]
+    },
+    {
+      "id": 1058,
+      "name": "Glyph",
+      "seoName": "Glyph",
+      "subCategories": [
+        {
+          "id": 5443,
+          "name": "Jewelry Glyph",
+          "seoName": "Jewelry Glyph"
+        },
+        {
+          "id": 5444,
+          "name": "Armor Glyph",
+          "seoName": "Armor Glyph"
+        },
+        {
+          "id": 5445,
+          "name": "Weapon Glyph",
+          "seoName": "Weapon Glyph"
+        }
+      ]
+    },
+    {
+      "id": 1061,
+      "name": "Housing",
+      "seoName": "Housing",
+      "subCategories": [
+        {
+          "id": 5446,
+          "name": "Furnishings",
+          "seoName": "Furnishings"
+        }
+      ]
+    },
+    {
+      "id": 1265,
+      "name": "Sets",
+      "seoName": "Sets",
+      "subCategories": [
+        {
+          "id": 5819,
+          "name": "Heavy Armor Sets",
+          "seoName": "Heavy Armor Sets"
+        },
+        {
+          "id": 5820,
+          "name": "Gear Sets",
+          "seoName": "Gear Sets"
+        },
+        {
+          "id": 5821,
+          "name": "Monster Sets",
+          "seoName": "Monster Sets"
+        },
+        {
+          "id": 5822,
+          "name": "Light Armor Sets",
+          "seoName": "Light Armor Sets"
+        },
+        {
+          "id": 5823,
+          "name": "Dungeon Sets",
+          "seoName": "Dungeon Sets"
+        },
+        {
+          "id": 5824,
+          "name": "Overland Sets",
+          "seoName": "Overland Sets"
+        },
+        {
+          "id": 5825,
+          "name": "Craftable Sets",
+          "seoName": "Craftable Sets"
+        },
+        {
+          "id": 5826,
+          "name": "Medium Armor Sets",
+          "seoName": "Medium Armor Sets"
+        }
+      ]
+    },
+    {
+      "id": 1805,
+      "name": "Crown Store Items",
+      "seoName": "Crown Store Items",
+      "subCategories": [
+        {
+          "id": 8523,
+          "name": "Houses",
+          "seoName": "Houses"
+        },
+        {
+          "id": 8524,
+          "name": "Furniture",
+          "seoName": "Furniture"
+        },
+        {
+          "id": 8525,
+          "name": "Utility",
+          "seoName": "Utility"
+        },
+        {
+          "id": 8526,
+          "name": "Wardrobe",
+          "seoName": "Wardrobe"
+        },
+        {
+          "id": 8527,
+          "name": "Mounts",
+          "seoName": "Mounts"
+        },
+        {
+          "id": 8528,
+          "name": "DLC",
+          "seoName": "DLC"
+        },
+        {
+          "id": 8529,
+          "name": "Crafting",
+          "seoName": "Crafting"
+        },
+        {
+          "id": 8530,
+          "name": "Style Parlor",
+          "seoName": "Style Parlor"
+        },
+        {
+          "id": 8531,
+          "name": "Pets",
+          "seoName": "Pets"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 6092,
+      "name": "PC-North America"
+    },
+    {
+      "id": 6102,
+      "name": "PC-Europe"
+    },
+    {
+      "id": 6958,
+      "name": "PS4/5-Europe"
+    },
+    {
+      "id": 6960,
+      "name": "PS4/5-North America"
+    },
+    {
+      "id": 6959,
+      "name": "Xbox One/X/S-Europe"
+    },
+    {
+      "id": 9873,
+      "name": "Xbox One/X/S-North America"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

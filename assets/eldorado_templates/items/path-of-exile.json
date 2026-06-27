@@ -1,0 +1,196 @@
+{
+  "game_id": "2",
+  "game": "path-of-exile",
+  "game_name": "Path of Exile",
+  "category": "CustomItem",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "PC",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "Standard"
+        },
+        {
+          "id": "0-1",
+          "name": "Hardcore"
+        },
+        {
+          "id": "0-10",
+          "name": "Ruthless"
+        },
+        {
+          "id": "0-11",
+          "name": "Ruthless Hardcore"
+        },
+        {
+          "id": "0-14",
+          "name": "Mirage Standard"
+        },
+        {
+          "id": "0-15",
+          "name": "Mirage Hardcore"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "PlayStation",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "Standard"
+        },
+        {
+          "id": "1-1",
+          "name": "Hardcore"
+        },
+        {
+          "id": "1-10",
+          "name": "Ruthless"
+        },
+        {
+          "id": "1-11",
+          "name": "Ruthless Hardcore"
+        },
+        {
+          "id": "1-14",
+          "name": "Mirage"
+        },
+        {
+          "id": "1-15",
+          "name": "Mirage Hardcore"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Xbox",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "Standard"
+        },
+        {
+          "id": "2-1",
+          "name": "Hardcore"
+        },
+        {
+          "id": "2-10",
+          "name": "Ruthless"
+        },
+        {
+          "id": "2-11",
+          "name": "Ruthless Hardcore"
+        },
+        {
+          "id": "2-14",
+          "name": "Mirage Standard"
+        },
+        {
+          "id": "2-15",
+          "name": "Mirage Hardcore"
+        }
+      ]
+    }
+  ],
+  "attributes": {
+    "path-of-exile-item-type": {
+      "name": "Item Type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "accessories",
+          "name": "Accessories"
+        },
+        {
+          "id": "armour",
+          "name": "Armour"
+        },
+        {
+          "id": "weapons",
+          "name": "Weapons"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

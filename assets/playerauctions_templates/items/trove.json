@@ -1,0 +1,279 @@
+{
+  "game_id": 6776,
+  "game": "trove",
+  "game_name": "Trove",
+  "seo_name": "Trove",
+  "currencyName": "Flux",
+  "categories": [
+    {
+      "id": 749,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 2256,
+          "name": "Dragons",
+          "seoName": "Dragons"
+        },
+        {
+          "id": 2257,
+          "name": "Biome Specific",
+          "seoName": "Biome Specific"
+        },
+        {
+          "id": 2258,
+          "name": "Common Ores",
+          "seoName": "Common Ores"
+        },
+        {
+          "id": 2259,
+          "name": "Forging Materials",
+          "seoName": "Forging Materials"
+        },
+        {
+          "id": 2260,
+          "name": "Profession - Gardening",
+          "seoName": "Profession - Gardening"
+        },
+        {
+          "id": 2261,
+          "name": "Profession - Ringcrafting",
+          "seoName": "Profession - Ringcrafting"
+        },
+        {
+          "id": 2262,
+          "name": "Profession - Runecrafting",
+          "seoName": "Profession - Runecrafting"
+        },
+        {
+          "id": 2263,
+          "name": "Shadow Arena",
+          "seoName": "Shadow Arena"
+        },
+        {
+          "id": 2264,
+          "name": "Seasonal & Event",
+          "seoName": "Seasonal & Event"
+        }
+      ]
+    },
+    {
+      "id": 750,
+      "name": "Fishing",
+      "seoName": "Fishing",
+      "subCategories": [
+        {
+          "id": 2265,
+          "name": "Fishing Pole",
+          "seoName": "Fishing Pole"
+        },
+        {
+          "id": 2266,
+          "name": "Fishes & Resources",
+          "seoName": "Fishes & Resources"
+        }
+      ]
+    },
+    {
+      "id": 751,
+      "name": "Equipment",
+      "seoName": "Equipment",
+      "subCategories": [
+        {
+          "id": 2267,
+          "name": "Equipment",
+          "seoName": "Equipment"
+        },
+        {
+          "id": 2268,
+          "name": "Rings",
+          "seoName": "Rings"
+        }
+      ]
+    },
+    {
+      "id": 752,
+      "name": "Movement",
+      "seoName": "Movement",
+      "subCategories": [
+        {
+          "id": 2269,
+          "name": "Mounts",
+          "seoName": "Mounts"
+        },
+        {
+          "id": 2270,
+          "name": "Boats",
+          "seoName": "Boats"
+        },
+        {
+          "id": 2271,
+          "name": "Mag Riders",
+          "seoName": "Mag Riders"
+        },
+        {
+          "id": 2272,
+          "name": "Wings",
+          "seoName": "Wings"
+        }
+      ]
+    },
+    {
+      "id": 753,
+      "name": "Allies",
+      "seoName": "Allies",
+      "subCategories": [
+        {
+          "id": 2273,
+          "name": "Allies",
+          "seoName": "Allies"
+        }
+      ]
+    },
+    {
+      "id": 754,
+      "name": "Tomes",
+      "seoName": "Tomes",
+      "subCategories": [
+        {
+          "id": 2274,
+          "name": "Tomes",
+          "seoName": "Tomes"
+        }
+      ]
+    },
+    {
+      "id": 755,
+      "name": "Costumes",
+      "seoName": "Costumes",
+      "subCategories": [
+        {
+          "id": 2275,
+          "name": "Knight",
+          "seoName": "Knight"
+        },
+        {
+          "id": 2276,
+          "name": "Gunslinger",
+          "seoName": "Gunslinger"
+        },
+        {
+          "id": 2277,
+          "name": "Fae Trickster",
+          "seoName": "Fae Trickster"
+        },
+        {
+          "id": 2278,
+          "name": "Dracolyte",
+          "seoName": "Dracolyte"
+        },
+        {
+          "id": 2279,
+          "name": "Neon Ninja",
+          "seoName": "Neon Ninja"
+        },
+        {
+          "id": 2280,
+          "name": "Candy Barbarian",
+          "seoName": "Candy Barbarian"
+        },
+        {
+          "id": 2281,
+          "name": "Ice Sage",
+          "seoName": "Ice Sage"
+        },
+        {
+          "id": 2282,
+          "name": "Shadow Hunter",
+          "seoName": "Shadow Hunter"
+        },
+        {
+          "id": 2283,
+          "name": "Pirate Captain",
+          "seoName": "Pirate Captain"
+        },
+        {
+          "id": 2284,
+          "name": "Boomeranger",
+          "seoName": "Boomeranger"
+        },
+        {
+          "id": 2285,
+          "name": "Tomb Raiser",
+          "seoName": "Tomb Raiser"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 6777,
+      "name": "PC"
+    },
+    {
+      "id": 7742,
+      "name": "PS4 EU"
+    },
+    {
+      "id": 7741,
+      "name": "PS4 US"
+    },
+    {
+      "id": 9870,
+      "name": "Switch"
+    },
+    {
+      "id": 7743,
+      "name": "Xbox One"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -202,6 +202,10 @@
         {
           "id": "pets-other",
           "name": "Other"
+        },
+        {
+          "id": "pets-0",
+          "name": "0"
         }
       ]
     },

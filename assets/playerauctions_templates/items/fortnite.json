@@ -1,0 +1,525 @@
+{
+  "game_id": 7876,
+  "game": "fortnite",
+  "game_name": "Fortnite",
+  "seo_name": "Fortnite",
+  "currencyName": "V-Bucks",
+  "categories": [
+    {
+      "id": 836,
+      "name": "Ore",
+      "seoName": "Ore",
+      "subCategories": [
+        {
+          "id": 2695,
+          "name": "Copper Ore",
+          "seoName": "Copper Ore"
+        },
+        {
+          "id": 2696,
+          "name": "Silver Ore",
+          "seoName": "Silver Ore"
+        },
+        {
+          "id": 2697,
+          "name": "Malachite Ore",
+          "seoName": "Malachite Ore"
+        },
+        {
+          "id": 2698,
+          "name": "Obsidian Ore",
+          "seoName": "Obsidian Ore"
+        },
+        {
+          "id": 2699,
+          "name": "Brightcore Ore",
+          "seoName": "Brightcore Ore"
+        },
+        {
+          "id": 2700,
+          "name": "Rough Ore",
+          "seoName": "Rough Ore"
+        },
+        {
+          "id": 2701,
+          "name": "Spectrolite Ore",
+          "seoName": "Spectrolite Ore"
+        }
+      ]
+    },
+    {
+      "id": 837,
+      "name": "Crystal",
+      "seoName": "Crystal",
+      "subCategories": [
+        {
+          "id": 2702,
+          "name": "Sunbeam Crystal",
+          "seoName": "Sunbeam Crystal"
+        },
+        {
+          "id": 2703,
+          "name": "Shadowshard Crystal",
+          "seoName": "Shadowshard Crystal"
+        },
+        {
+          "id": 2704,
+          "name": "Quartz Crystal",
+          "seoName": "Quartz Crystal"
+        },
+        {
+          "id": 4888,
+          "name": "Rainbow Crystal",
+          "seoName": "Rainbow Crystal"
+        },
+        {
+          "id": 4889,
+          "name": "Moonglow Crystal",
+          "seoName": "Moonglow Crystal"
+        }
+      ]
+    },
+    {
+      "id": 838,
+      "name": "Powder",
+      "seoName": "Powder",
+      "subCategories": [
+        {
+          "id": 2705,
+          "name": "Rough Mineral Powder",
+          "seoName": "Rough Mineral Powder"
+        },
+        {
+          "id": 2706,
+          "name": "Simple Mineral Powder",
+          "seoName": "Simple Mineral Powder"
+        },
+        {
+          "id": 2707,
+          "name": "Fine-grain Mineral Powder",
+          "seoName": "Fine-grain Mineral Powder"
+        },
+        {
+          "id": 2708,
+          "name": "Char-Black Mineral Powder",
+          "seoName": "Char-Black Mineral Powder"
+        },
+        {
+          "id": 2709,
+          "name": "Oxidized Mineral Powder",
+          "seoName": "Oxidized Mineral Powder"
+        },
+        {
+          "id": 2710,
+          "name": "Spectral Mineral Powder",
+          "seoName": "Spectral Mineral Powder"
+        },
+        {
+          "id": 2711,
+          "name": "Blast Powder",
+          "seoName": "Blast Powder"
+        }
+      ]
+    },
+    {
+      "id": 839,
+      "name": "Twine",
+      "seoName": "Twine",
+      "subCategories": [
+        {
+          "id": 2712,
+          "name": "Stringy Twine",
+          "seoName": "Stringy Twine"
+        },
+        {
+          "id": 2713,
+          "name": "Simple Twine",
+          "seoName": "Simple Twine"
+        },
+        {
+          "id": 2714,
+          "name": "Sturdy Twine",
+          "seoName": "Sturdy Twine"
+        },
+        {
+          "id": 2715,
+          "name": "Peaky Twine",
+          "seoName": "Peaky Twine"
+        },
+        {
+          "id": 2716,
+          "name": "Carved Twine",
+          "seoName": "Carved Twine"
+        },
+        {
+          "id": 2717,
+          "name": "Spectral Twine",
+          "seoName": "Spectral Twine"
+        }
+      ]
+    },
+    {
+      "id": 840,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 2718,
+          "name": "Active Powercell",
+          "seoName": "Active Powercell"
+        },
+        {
+          "id": 2719,
+          "name": "Adhesive Resin",
+          "seoName": "Adhesive Resin"
+        },
+        {
+          "id": 2720,
+          "name": "Bacon",
+          "seoName": "Bacon"
+        },
+        {
+          "id": 2721,
+          "name": "Batteries",
+          "seoName": "Batteries"
+        },
+        {
+          "id": 2722,
+          "name": "Coal",
+          "seoName": "Coal"
+        },
+        {
+          "id": 2723,
+          "name": "Flower Petals",
+          "seoName": "Flower Petals"
+        },
+        {
+          "id": 2724,
+          "name": "Fibrous Herbs",
+          "seoName": "Fibrous Herbs"
+        },
+        {
+          "id": 2725,
+          "name": "Honey",
+          "seoName": "Honey"
+        },
+        {
+          "id": 2726,
+          "name": "Nuts 'n' Bolts",
+          "seoName": "Nuts 'n' Bolts"
+        },
+        {
+          "id": 2727,
+          "name": "Planks",
+          "seoName": "Planks"
+        },
+        {
+          "id": 2728,
+          "name": "Rotating Gizmo",
+          "seoName": "Rotating Gizmo"
+        },
+        {
+          "id": 2729,
+          "name": "Duct Tape",
+          "seoName": "Duct Tape"
+        },
+        {
+          "id": 2730,
+          "name": "Metal",
+          "seoName": "Metal"
+        },
+        {
+          "id": 2731,
+          "name": "Wood",
+          "seoName": "Wood"
+        },
+        {
+          "id": 2732,
+          "name": "Stone",
+          "seoName": "Stone"
+        }
+      ]
+    },
+    {
+      "id": 841,
+      "name": "Mechanical Parts",
+      "seoName": "Mechanical Parts",
+      "subCategories": [
+        {
+          "id": 2733,
+          "name": "Rusty Mechanical Parts",
+          "seoName": "Rusty Mechanical Parts"
+        },
+        {
+          "id": 2734,
+          "name": "Simple Mechanical Parts",
+          "seoName": "Simple Mechanical Parts"
+        },
+        {
+          "id": 2735,
+          "name": "Sturdy Mechanical Parts",
+          "seoName": "Sturdy Mechanical Parts"
+        },
+        {
+          "id": 2736,
+          "name": "Sleek Mechanical Parts",
+          "seoName": "Sleek Mechanical Parts"
+        },
+        {
+          "id": 2737,
+          "name": "Efficient Mechanical Parts",
+          "seoName": "Efficient Mechanical Parts"
+        },
+        {
+          "id": 2738,
+          "name": "Vindertech Mechanical Parts",
+          "seoName": "Vindertech Mechanical Parts"
+        }
+      ]
+    },
+    {
+      "id": 852,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 2855,
+          "name": "Grave Digger",
+          "seoName": "Grave Digger"
+        },
+        {
+          "id": 2856,
+          "name": "Nocturno",
+          "seoName": "Nocturno"
+        },
+        {
+          "id": 2857,
+          "name": "Pressure Cutter",
+          "seoName": "Pressure Cutter"
+        },
+        {
+          "id": 2858,
+          "name": "Founder's Blazing Masamune",
+          "seoName": "Founder's Blazing Masamune"
+        },
+        {
+          "id": 2859,
+          "name": "Siegebreaker",
+          "seoName": "Siegebreaker"
+        },
+        {
+          "id": 2860,
+          "name": "Dam Buster",
+          "seoName": "Dam Buster"
+        },
+        {
+          "id": 2861,
+          "name": "Vindertech Slicer",
+          "seoName": "Vindertech Slicer"
+        },
+        {
+          "id": 2862,
+          "name": "Husk Buster",
+          "seoName": "Husk Buster"
+        },
+        {
+          "id": 2863,
+          "name": "Super Shredder",
+          "seoName": "Super Shredder"
+        },
+        {
+          "id": 2864,
+          "name": "Hydra",
+          "seoName": "Hydra"
+        },
+        {
+          "id": 2865,
+          "name": "One Shot",
+          "seoName": "One Shot"
+        },
+        {
+          "id": 2866,
+          "name": "Founder's Drumroll",
+          "seoName": "Founder's Drumroll"
+        },
+        {
+          "id": 2867,
+          "name": "Thunderbolt",
+          "seoName": "Thunderbolt"
+        },
+        {
+          "id": 2868,
+          "name": "Buzzcut",
+          "seoName": "Buzzcut"
+        },
+        {
+          "id": 2869,
+          "name": "Shredder",
+          "seoName": "Shredder"
+        },
+        {
+          "id": 2870,
+          "name": "Tiny Instrument Of Death",
+          "seoName": "Tiny Instrument Of Death"
+        },
+        {
+          "id": 2871,
+          "name": "Assault Rifle",
+          "seoName": "Assault Rifle"
+        },
+        {
+          "id": 2872,
+          "name": "Vacuum Tube Revolver",
+          "seoName": "Vacuum Tube Revolver"
+        },
+        {
+          "id": 2873,
+          "name": "Dragon's Roar",
+          "seoName": "Dragon's Roar"
+        },
+        {
+          "id": 5475,
+          "name": "Hunter Killer",
+          "seoName": "Hunter Killer"
+        },
+        {
+          "id": 8282,
+          "name": "Pickaxes",
+          "seoName": "Pickaxes"
+        }
+      ]
+    },
+    {
+      "id": 1763,
+      "name": "Skins",
+      "seoName": "Skins",
+      "subCategories": [
+        {
+          "id": 8280,
+          "name": "Batarang Axe Pickaxe",
+          "seoName": "Batarang Axe Pickaxe"
+        },
+        {
+          "id": 8281,
+          "name": "Catwoman's Claw Pickaxe",
+          "seoName": "Catwoman's Claw Pickaxe"
+        },
+        {
+          "id": 8283,
+          "name": "Harley Quinn",
+          "seoName": "Harley Quinn"
+        },
+        {
+          "id": 8284,
+          "name": "Spider-Man",
+          "seoName": "Spider-Man"
+        },
+        {
+          "id": 8285,
+          "name": "Minty Legends Pack",
+          "seoName": "Minty Legends Pack"
+        },
+        {
+          "id": 8286,
+          "name": "Deathstroke Destroyer Glider",
+          "seoName": "Deathstroke Destroyer Glider"
+        },
+        {
+          "id": 8287,
+          "name": "Tech Future Pack",
+          "seoName": "Tech Future Pack"
+        },
+        {
+          "id": 8288,
+          "name": "Spider-Man Zero",
+          "seoName": "Spider-Man Zero"
+        },
+        {
+          "id": 8289,
+          "name": "Armored Batman Zero",
+          "seoName": "Armored Batman Zero"
+        },
+        {
+          "id": 8290,
+          "name": "Adamantium Claws",
+          "seoName": "Adamantium Claws"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7877,
+      "name": "PC"
+    },
+    {
+      "id": 7878,
+      "name": "PlayStation"
+    },
+    {
+      "id": 7879,
+      "name": "Xbox"
+    },
+    {
+      "id": 8321,
+      "name": "Switch"
+    },
+    {
+      "id": 8173,
+      "name": "Android"
+    },
+    {
+      "id": 8172,
+      "name": "IOS"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

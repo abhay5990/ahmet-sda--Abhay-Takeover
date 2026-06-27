@@ -1,0 +1,592 @@
+{
+  "game_id": "371",
+  "game": "tibia",
+  "game_name": "Tibia",
+  "category": "Currency",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Aethera",
+      "group": "Server"
+    },
+    {
+      "id": "1",
+      "name": "Ambra",
+      "group": "Server"
+    },
+    {
+      "id": "2",
+      "name": "Antica",
+      "group": "Server"
+    },
+    {
+      "id": "3",
+      "name": "Astera",
+      "group": "Server"
+    },
+    {
+      "id": "4",
+      "name": "Belobra",
+      "group": "Server"
+    },
+    {
+      "id": "5",
+      "name": "Blumera",
+      "group": "Server"
+    },
+    {
+      "id": "6",
+      "name": "Bona",
+      "group": "Server"
+    },
+    {
+      "id": "7",
+      "name": "Bravoria",
+      "group": "Server"
+    },
+    {
+      "id": "8",
+      "name": "Calmera",
+      "group": "Server"
+    },
+    {
+      "id": "9",
+      "name": "Cantabra",
+      "group": "Server"
+    },
+    {
+      "id": "10",
+      "name": "Celebra",
+      "group": "Server"
+    },
+    {
+      "id": "11",
+      "name": "Celesta",
+      "group": "Server"
+    },
+    {
+      "id": "12",
+      "name": "Citra",
+      "group": "Server"
+    },
+    {
+      "id": "13",
+      "name": "Collabra",
+      "group": "Server"
+    },
+    {
+      "id": "14",
+      "name": "Descubra",
+      "group": "Server"
+    },
+    {
+      "id": "15",
+      "name": "Dia",
+      "group": "Server"
+    },
+    {
+      "id": "16",
+      "name": "Divina",
+      "group": "Server"
+    },
+    {
+      "id": "17",
+      "name": "Dracobra",
+      "group": "Server"
+    },
+    {
+      "id": "18",
+      "name": "Eclipta",
+      "group": "Server"
+    },
+    {
+      "id": "19",
+      "name": "Epoca",
+      "group": "Server"
+    },
+    {
+      "id": "20",
+      "name": "Esmera",
+      "group": "Server"
+    },
+    {
+      "id": "21",
+      "name": "Etebra",
+      "group": "Server"
+    },
+    {
+      "id": "22",
+      "name": "Ferobra",
+      "group": "Server"
+    },
+    {
+      "id": "23",
+      "name": "Fibera",
+      "group": "Server"
+    },
+    {
+      "id": "24",
+      "name": "Firmera",
+      "group": "Server"
+    },
+    {
+      "id": "25",
+      "name": "Flamera",
+      "group": "Server"
+    },
+    {
+      "id": "26",
+      "name": "Gentebra",
+      "group": "Server"
+    },
+    {
+      "id": "27",
+      "name": "Gladera",
+      "group": "Server"
+    },
+    {
+      "id": "28",
+      "name": "Gladibra",
+      "group": "Server"
+    },
+    {
+      "id": "29",
+      "name": "Gravitera",
+      "group": "Server"
+    },
+    {
+      "id": "30",
+      "name": "Harmonia",
+      "group": "Server"
+    },
+    {
+      "id": "31",
+      "name": "Havera",
+      "group": "Server"
+    },
+    {
+      "id": "32",
+      "name": "Honbra",
+      "group": "Server"
+    },
+    {
+      "id": "33",
+      "name": "Hostera",
+      "group": "Server"
+    },
+    {
+      "id": "34",
+      "name": "Idyllia",
+      "group": "Server"
+    },
+    {
+      "id": "35",
+      "name": "Ignitera",
+      "group": "Server"
+    },
+    {
+      "id": "36",
+      "name": "Inabra",
+      "group": "Server"
+    },
+    {
+      "id": "37",
+      "name": "Issobra",
+      "group": "Server"
+    },
+    {
+      "id": "38",
+      "name": "Jacabra",
+      "group": "Server"
+    },
+    {
+      "id": "39",
+      "name": "Jadebra",
+      "group": "Server"
+    },
+    {
+      "id": "40",
+      "name": "Jaguna",
+      "group": "Server"
+    },
+    {
+      "id": "41",
+      "name": "Kalanta",
+      "group": "Server"
+    },
+    {
+      "id": "42",
+      "name": "Kalibra",
+      "group": "Server"
+    },
+    {
+      "id": "43",
+      "name": "Karmeya",
+      "group": "Server"
+    },
+    {
+      "id": "44",
+      "name": "Lobera",
+      "group": "Server"
+    },
+    {
+      "id": "45",
+      "name": "Luminera",
+      "group": "Server"
+    },
+    {
+      "id": "46",
+      "name": "Lutabra",
+      "group": "Server"
+    },
+    {
+      "id": "47",
+      "name": "Malivora",
+      "group": "Server"
+    },
+    {
+      "id": "48",
+      "name": "Menera",
+      "group": "Server"
+    },
+    {
+      "id": "49",
+      "name": "Monstera",
+      "group": "Server"
+    },
+    {
+      "id": "50",
+      "name": "Monza",
+      "group": "Server"
+    },
+    {
+      "id": "51",
+      "name": "Nefera",
+      "group": "Server"
+    },
+    {
+      "id": "52",
+      "name": "Nevia",
+      "group": "Server"
+    },
+    {
+      "id": "53",
+      "name": "Noctalia",
+      "group": "Server"
+    },
+    {
+      "id": "54",
+      "name": "Obscubra",
+      "group": "Server"
+    },
+    {
+      "id": "55",
+      "name": "Oceanis",
+      "group": "Server"
+    },
+    {
+      "id": "56",
+      "name": "Ombra",
+      "group": "Server"
+    },
+    {
+      "id": "57",
+      "name": "Ourobra",
+      "group": "Server"
+    },
+    {
+      "id": "58",
+      "name": "Pacera",
+      "group": "Server"
+    },
+    {
+      "id": "59",
+      "name": "Peloria",
+      "group": "Server"
+    },
+    {
+      "id": "60",
+      "name": "Premia",
+      "group": "Server"
+    },
+    {
+      "id": "61",
+      "name": "Quebra",
+      "group": "Server"
+    },
+    {
+      "id": "62",
+      "name": "Quelibra",
+      "group": "Server"
+    },
+    {
+      "id": "63",
+      "name": "Quidera",
+      "group": "Server"
+    },
+    {
+      "id": "64",
+      "name": "Quintera",
+      "group": "Server"
+    },
+    {
+      "id": "65",
+      "name": "Rasteibra",
+      "group": "Server"
+    },
+    {
+      "id": "66",
+      "name": "Refugia",
+      "group": "Server"
+    },
+    {
+      "id": "67",
+      "name": "Retalia",
+      "group": "Server"
+    },
+    {
+      "id": "68",
+      "name": "Runera",
+      "group": "Server"
+    },
+    {
+      "id": "69",
+      "name": "Secura",
+      "group": "Server"
+    },
+    {
+      "id": "70",
+      "name": "Serdebra",
+      "group": "Server"
+    },
+    {
+      "id": "71",
+      "name": "Solidera",
+      "group": "Server"
+    },
+    {
+      "id": "72",
+      "name": "Sombra",
+      "group": "Server"
+    },
+    {
+      "id": "73",
+      "name": "Sonira",
+      "group": "Server"
+    },
+    {
+      "id": "74",
+      "name": "Stralis",
+      "group": "Server"
+    },
+    {
+      "id": "75",
+      "name": "Talera",
+      "group": "Server"
+    },
+    {
+      "id": "76",
+      "name": "Temera",
+      "group": "Server"
+    },
+    {
+      "id": "77",
+      "name": "Tempestera",
+      "group": "Server"
+    },
+    {
+      "id": "78",
+      "name": "Terribra",
+      "group": "Server"
+    },
+    {
+      "id": "79",
+      "name": "Thyria",
+      "group": "Server"
+    },
+    {
+      "id": "80",
+      "name": "Tornabra",
+      "group": "Server"
+    },
+    {
+      "id": "81",
+      "name": "Ulera",
+      "group": "Server"
+    },
+    {
+      "id": "82",
+      "name": "Unebra",
+      "group": "Server"
+    },
+    {
+      "id": "83",
+      "name": "Ustebra",
+      "group": "Server"
+    },
+    {
+      "id": "84",
+      "name": "Vandera",
+      "group": "Server"
+    },
+    {
+      "id": "85",
+      "name": "Venebra",
+      "group": "Server"
+    },
+    {
+      "id": "86",
+      "name": "Victoris",
+      "group": "Server"
+    },
+    {
+      "id": "87",
+      "name": "Vitera",
+      "group": "Server"
+    },
+    {
+      "id": "88",
+      "name": "Vunira",
+      "group": "Server"
+    },
+    {
+      "id": "89",
+      "name": "Wadira",
+      "group": "Server"
+    },
+    {
+      "id": "90",
+      "name": "Wildera",
+      "group": "Server"
+    },
+    {
+      "id": "91",
+      "name": "Wintera",
+      "group": "Server"
+    },
+    {
+      "id": "92",
+      "name": "Xybra",
+      "group": "Server"
+    },
+    {
+      "id": "93",
+      "name": "Xyla",
+      "group": "Server"
+    },
+    {
+      "id": "94",
+      "name": "Xymera",
+      "group": "Server"
+    },
+    {
+      "id": "95",
+      "name": "Yara",
+      "group": "Server"
+    },
+    {
+      "id": "96",
+      "name": "Yonabra",
+      "group": "Server"
+    },
+    {
+      "id": "97",
+      "name": "Yovera",
+      "group": "Server"
+    },
+    {
+      "id": "98",
+      "name": "Yubra",
+      "group": "Server"
+    },
+    {
+      "id": "99",
+      "name": "Zephyra",
+      "group": "Server"
+    },
+    {
+      "id": "100",
+      "name": "Zuna",
+      "group": "Server"
+    },
+    {
+      "id": "101",
+      "name": "Zunera",
+      "group": "Server"
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

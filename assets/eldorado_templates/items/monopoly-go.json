@@ -1,0 +1,208 @@
+{
+  "game_id": "215",
+  "game": "monopoly-go",
+  "game_name": "Monopoly Go",
+  "category": "CustomItem",
+  "tradeEnvironments": [],
+  "attributes": {
+    "monopoly-go-album-set": {
+      "name": "Album set",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "set1-spideys-nyc",
+          "name": "Set1: Spidey's NYC"
+        },
+        {
+          "id": "set2-muscle-builders",
+          "name": "Set2: Muscle Builders"
+        },
+        {
+          "id": "set3-cosmo--scottie",
+          "name": "Set3: Cosmo & Scottie"
+        },
+        {
+          "id": "set4-gym-buddies",
+          "name": "Set4: Gym Buddies"
+        },
+        {
+          "id": "set5-web-weaver",
+          "name": "Set5: Web Weaver"
+        },
+        {
+          "id": "set6-deadpool-double",
+          "name": "Set6: Deadpool Double"
+        },
+        {
+          "id": "set7-green-driver",
+          "name": "Set7: Green Driver"
+        },
+        {
+          "id": "set8-shield-training",
+          "name": "Set8: SHIELD Training"
+        },
+        {
+          "id": "set9-green-goblin",
+          "name": "Set9: Green Goblin"
+        },
+        {
+          "id": "set10-avengers-monopoly",
+          "name": "Set10: Avengers Monopoly"
+        },
+        {
+          "id": "set11-the-heist",
+          "name": "Set11: The Heist"
+        },
+        {
+          "id": "set12-before-the-heist",
+          "name": "Set12: Before the Heist"
+        },
+        {
+          "id": "set13-detective-jones",
+          "name": "Set13: Detective Jones"
+        },
+        {
+          "id": "set14-wade--logan",
+          "name": "Set14: Wade & Logan"
+        },
+        {
+          "id": "set15-planet-savers",
+          "name": "Set15: Planet Savers"
+        },
+        {
+          "id": "set16-wakanda-style",
+          "name": "Set16: Wakanda Style"
+        },
+        {
+          "id": "set17-x-mansion",
+          "name": "Set17: X-Mansion"
+        },
+        {
+          "id": "set18-a-bit-strange",
+          "name": "Set18: A Bit Strange"
+        },
+        {
+          "id": "set19-galax-e-guards",
+          "name": "Set19: Galax-E Guards"
+        },
+        {
+          "id": "set20-go-racers",
+          "name": "Set20: GO! Racers"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "monopoly-go-sticker-type": {
+      "name": "Sticker type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "1-star",
+          "name": "1 Star"
+        },
+        {
+          "id": "2-star",
+          "name": "2 Star"
+        },
+        {
+          "id": "3-star",
+          "name": "3 Star"
+        },
+        {
+          "id": "4-star",
+          "name": "4 Star"
+        },
+        {
+          "id": "5-star",
+          "name": "5 Star"
+        },
+        {
+          "id": "golden",
+          "name": "Golden"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

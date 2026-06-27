@@ -1,0 +1,181 @@
+{
+  "game_id": 5103,
+  "game": "diablo-3",
+  "game_name": "Diablo 3",
+  "seo_name": "Diablo-3",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 994,
+      "name": "Accessory",
+      "seoName": "Accessory",
+      "subCategories": [
+        {
+          "id": 5999,
+          "name": "Accessories",
+          "seoName": "Accessories"
+        }
+      ]
+    },
+    {
+      "id": 995,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 5994,
+          "name": "Armor Sets",
+          "seoName": "Armor Sets"
+        },
+        {
+          "id": 5998,
+          "name": "Armor",
+          "seoName": "Armor"
+        }
+      ]
+    },
+    {
+      "id": 996,
+      "name": "Weapon",
+      "seoName": "Weapon",
+      "subCategories": [
+        {
+          "id": 5995,
+          "name": "One-Handed Weapons",
+          "seoName": "One-Handed Weapons"
+        },
+        {
+          "id": 5996,
+          "name": "Two Handed Weapons",
+          "seoName": "Two Handed Weapons"
+        },
+        {
+          "id": 5997,
+          "name": "Ranged Weapons",
+          "seoName": "Ranged Weapons"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 5107,
+      "name": "Diablo 3 Asia",
+      "subCategories": [
+        {
+          "id": 5108,
+          "name": "Hardcore Mode"
+        },
+        {
+          "id": 5112,
+          "name": "Normal Mode"
+        }
+      ]
+    },
+    {
+      "id": 5109,
+      "name": "Diablo 3 EU",
+      "subCategories": [
+        {
+          "id": 5110,
+          "name": "Hardcore Mode"
+        },
+        {
+          "id": 5111,
+          "name": "Normal Mode"
+        }
+      ]
+    },
+    {
+      "id": 6742,
+      "name": "Diablo 3 PS4",
+      "subCategories": [
+        {
+          "id": 6743,
+          "name": "Hardcore Mode"
+        },
+        {
+          "id": 6744,
+          "name": "Normal Mode"
+        }
+      ]
+    },
+    {
+      "id": 5104,
+      "name": "Diablo 3 US",
+      "subCategories": [
+        {
+          "id": 5105,
+          "name": "Hardcore Mode"
+        },
+        {
+          "id": 5106,
+          "name": "Normal Mode"
+        }
+      ]
+    },
+    {
+      "id": 5879,
+      "name": "Diablo 3 Xbox",
+      "subCategories": [
+        {
+          "id": 5884,
+          "name": "Hardcore Mode"
+        },
+        {
+          "id": 5883,
+          "name": "Normal Mode"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -1,0 +1,898 @@
+{
+  "game_id": 13630,
+  "game": "monopoly-go",
+  "game_name": "Monopoly Go",
+  "seo_name": "Monopoly-Go",
+  "currencyName": "Stars",
+  "categories": [
+    {
+      "id": 1867,
+      "name": "Stickers",
+      "seoName": "Stickers",
+      "subCategories": [
+        {
+          "id": 8851,
+          "name": "Stickers",
+          "seoName": "Stickers"
+        },
+        {
+          "id": 10557,
+          "name": "1 Star",
+          "seoName": "1 Star"
+        },
+        {
+          "id": 10558,
+          "name": "2 Stars",
+          "seoName": "2 Stars"
+        },
+        {
+          "id": 10559,
+          "name": "3 Stars",
+          "seoName": "3 Stars"
+        },
+        {
+          "id": 10560,
+          "name": "4 Stars",
+          "seoName": "4 Stars"
+        },
+        {
+          "id": 10561,
+          "name": "5 Stars",
+          "seoName": "5 Stars"
+        },
+        {
+          "id": 10562,
+          "name": "6 Stars",
+          "seoName": "6 Stars"
+        }
+      ]
+    },
+    {
+      "id": 2112,
+      "name": "1 Star",
+      "seoName": "1 Star",
+      "subCategories": [
+        {
+          "id": 10563,
+          "name": "Set1",
+          "seoName": "Set1"
+        },
+        {
+          "id": 10564,
+          "name": "Set2",
+          "seoName": "Set2"
+        },
+        {
+          "id": 10565,
+          "name": "Set3",
+          "seoName": "Set3"
+        },
+        {
+          "id": 10566,
+          "name": "Set4",
+          "seoName": "Set4"
+        },
+        {
+          "id": 10567,
+          "name": "Set5",
+          "seoName": "Set5"
+        },
+        {
+          "id": 10568,
+          "name": "Set6",
+          "seoName": "Set6"
+        },
+        {
+          "id": 10569,
+          "name": "Set7",
+          "seoName": "Set7"
+        },
+        {
+          "id": 10570,
+          "name": "Set8",
+          "seoName": "Set8"
+        },
+        {
+          "id": 10571,
+          "name": "Set9",
+          "seoName": "Set9"
+        },
+        {
+          "id": 10572,
+          "name": "Set10",
+          "seoName": "Set10"
+        },
+        {
+          "id": 10573,
+          "name": "Set11",
+          "seoName": "Set11"
+        },
+        {
+          "id": 10574,
+          "name": "Set12",
+          "seoName": "Set12"
+        },
+        {
+          "id": 10575,
+          "name": "Set13",
+          "seoName": "Set13"
+        },
+        {
+          "id": 10576,
+          "name": "Set14",
+          "seoName": "Set14"
+        },
+        {
+          "id": 10577,
+          "name": "Set15",
+          "seoName": "Set15"
+        },
+        {
+          "id": 10578,
+          "name": "Set16",
+          "seoName": "Set16"
+        },
+        {
+          "id": 10579,
+          "name": "Set17",
+          "seoName": "Set17"
+        },
+        {
+          "id": 10580,
+          "name": "Set18",
+          "seoName": "Set18"
+        },
+        {
+          "id": 10581,
+          "name": "Set19",
+          "seoName": "Set19"
+        },
+        {
+          "id": 10582,
+          "name": "Set20",
+          "seoName": "Set20"
+        },
+        {
+          "id": 10583,
+          "name": "Set21",
+          "seoName": "Set21"
+        },
+        {
+          "id": 10584,
+          "name": "Set22",
+          "seoName": "Set22"
+        },
+        {
+          "id": 10585,
+          "name": "Set23",
+          "seoName": "Set23"
+        },
+        {
+          "id": 10586,
+          "name": "Set24",
+          "seoName": "Set24"
+        },
+        {
+          "id": 10587,
+          "name": "Set25",
+          "seoName": "Set25"
+        }
+      ]
+    },
+    {
+      "id": 2113,
+      "name": "2 Stars",
+      "seoName": "2 Stars",
+      "subCategories": [
+        {
+          "id": 10588,
+          "name": "Set1",
+          "seoName": "Set1"
+        },
+        {
+          "id": 10589,
+          "name": "Set2",
+          "seoName": "Set2"
+        },
+        {
+          "id": 10590,
+          "name": "Set3",
+          "seoName": "Set3"
+        },
+        {
+          "id": 10591,
+          "name": "Set4",
+          "seoName": "Set4"
+        },
+        {
+          "id": 10592,
+          "name": "Set5",
+          "seoName": "Set5"
+        },
+        {
+          "id": 10593,
+          "name": "Set6",
+          "seoName": "Set6"
+        },
+        {
+          "id": 10594,
+          "name": "Set7",
+          "seoName": "Set7"
+        },
+        {
+          "id": 10595,
+          "name": "Set8",
+          "seoName": "Set8"
+        },
+        {
+          "id": 10596,
+          "name": "Set9",
+          "seoName": "Set9"
+        },
+        {
+          "id": 10597,
+          "name": "Set10",
+          "seoName": "Set10"
+        },
+        {
+          "id": 10598,
+          "name": "Set11",
+          "seoName": "Set11"
+        },
+        {
+          "id": 10599,
+          "name": "Set12",
+          "seoName": "Set12"
+        },
+        {
+          "id": 10600,
+          "name": "Set13",
+          "seoName": "Set13"
+        },
+        {
+          "id": 10601,
+          "name": "Set14",
+          "seoName": "Set14"
+        },
+        {
+          "id": 10602,
+          "name": "Set15",
+          "seoName": "Set15"
+        },
+        {
+          "id": 10603,
+          "name": "Set16",
+          "seoName": "Set16"
+        },
+        {
+          "id": 10604,
+          "name": "Set17",
+          "seoName": "Set17"
+        },
+        {
+          "id": 10605,
+          "name": "Set18",
+          "seoName": "Set18"
+        },
+        {
+          "id": 10606,
+          "name": "Set19",
+          "seoName": "Set19"
+        },
+        {
+          "id": 10607,
+          "name": "Set20",
+          "seoName": "Set20"
+        },
+        {
+          "id": 10608,
+          "name": "Set21",
+          "seoName": "Set21"
+        },
+        {
+          "id": 10609,
+          "name": "Set22",
+          "seoName": "Set22"
+        },
+        {
+          "id": 10610,
+          "name": "Set23",
+          "seoName": "Set23"
+        },
+        {
+          "id": 10611,
+          "name": "Set24",
+          "seoName": "Set24"
+        },
+        {
+          "id": 10612,
+          "name": "Set25",
+          "seoName": "Set25"
+        }
+      ]
+    },
+    {
+      "id": 2114,
+      "name": "3 Stars",
+      "seoName": "3 Stars",
+      "subCategories": [
+        {
+          "id": 10613,
+          "name": "Set1",
+          "seoName": "Set1"
+        },
+        {
+          "id": 10614,
+          "name": "Set2",
+          "seoName": "Set2"
+        },
+        {
+          "id": 10615,
+          "name": "Set3",
+          "seoName": "Set3"
+        },
+        {
+          "id": 10616,
+          "name": "Set4",
+          "seoName": "Set4"
+        },
+        {
+          "id": 10617,
+          "name": "Set5",
+          "seoName": "Set5"
+        },
+        {
+          "id": 10618,
+          "name": "Set6",
+          "seoName": "Set6"
+        },
+        {
+          "id": 10619,
+          "name": "Set7",
+          "seoName": "Set7"
+        },
+        {
+          "id": 10620,
+          "name": "Set8",
+          "seoName": "Set8"
+        },
+        {
+          "id": 10621,
+          "name": "Set9",
+          "seoName": "Set9"
+        },
+        {
+          "id": 10622,
+          "name": "Set10",
+          "seoName": "Set10"
+        },
+        {
+          "id": 10623,
+          "name": "Set11",
+          "seoName": "Set11"
+        },
+        {
+          "id": 10624,
+          "name": "Set12",
+          "seoName": "Set12"
+        },
+        {
+          "id": 10625,
+          "name": "Set13",
+          "seoName": "Set13"
+        },
+        {
+          "id": 10626,
+          "name": "Set14",
+          "seoName": "Set14"
+        },
+        {
+          "id": 10627,
+          "name": "Set15",
+          "seoName": "Set15"
+        },
+        {
+          "id": 10628,
+          "name": "Set16",
+          "seoName": "Set16"
+        },
+        {
+          "id": 10629,
+          "name": "Set17",
+          "seoName": "Set17"
+        },
+        {
+          "id": 10630,
+          "name": "Set18",
+          "seoName": "Set18"
+        },
+        {
+          "id": 10631,
+          "name": "Set19",
+          "seoName": "Set19"
+        },
+        {
+          "id": 10632,
+          "name": "Set20",
+          "seoName": "Set20"
+        },
+        {
+          "id": 10633,
+          "name": "Set21",
+          "seoName": "Set21"
+        },
+        {
+          "id": 10634,
+          "name": "Set22",
+          "seoName": "Set22"
+        },
+        {
+          "id": 10635,
+          "name": "Set23",
+          "seoName": "Set23"
+        },
+        {
+          "id": 10636,
+          "name": "Set24",
+          "seoName": "Set24"
+        },
+        {
+          "id": 10637,
+          "name": "Set25",
+          "seoName": "Set25"
+        }
+      ]
+    },
+    {
+      "id": 2115,
+      "name": "4 Stars",
+      "seoName": "4 Stars",
+      "subCategories": [
+        {
+          "id": 10638,
+          "name": "Set1",
+          "seoName": "Set1"
+        },
+        {
+          "id": 10639,
+          "name": "Set2",
+          "seoName": "Set2"
+        },
+        {
+          "id": 10640,
+          "name": "Set3",
+          "seoName": "Set3"
+        },
+        {
+          "id": 10641,
+          "name": "Set4",
+          "seoName": "Set4"
+        },
+        {
+          "id": 10642,
+          "name": "Set5",
+          "seoName": "Set5"
+        },
+        {
+          "id": 10643,
+          "name": "Set6",
+          "seoName": "Set6"
+        },
+        {
+          "id": 10644,
+          "name": "Set7",
+          "seoName": "Set7"
+        },
+        {
+          "id": 10645,
+          "name": "Set8",
+          "seoName": "Set8"
+        },
+        {
+          "id": 10646,
+          "name": "Set9",
+          "seoName": "Set9"
+        },
+        {
+          "id": 10647,
+          "name": "Set10",
+          "seoName": "Set10"
+        },
+        {
+          "id": 10648,
+          "name": "Set11",
+          "seoName": "Set11"
+        },
+        {
+          "id": 10649,
+          "name": "Set12",
+          "seoName": "Set12"
+        },
+        {
+          "id": 10650,
+          "name": "Set13",
+          "seoName": "Set13"
+        },
+        {
+          "id": 10651,
+          "name": "Set14",
+          "seoName": "Set14"
+        },
+        {
+          "id": 10652,
+          "name": "Set15",
+          "seoName": "Set15"
+        },
+        {
+          "id": 10653,
+          "name": "Set16",
+          "seoName": "Set16"
+        },
+        {
+          "id": 10654,
+          "name": "Set17",
+          "seoName": "Set17"
+        },
+        {
+          "id": 10655,
+          "name": "Set18",
+          "seoName": "Set18"
+        },
+        {
+          "id": 10656,
+          "name": "Set19",
+          "seoName": "Set19"
+        },
+        {
+          "id": 10657,
+          "name": "Set20",
+          "seoName": "Set20"
+        },
+        {
+          "id": 10658,
+          "name": "Set21",
+          "seoName": "Set21"
+        },
+        {
+          "id": 10659,
+          "name": "Set22",
+          "seoName": "Set22"
+        },
+        {
+          "id": 10660,
+          "name": "Set23",
+          "seoName": "Set23"
+        },
+        {
+          "id": 10661,
+          "name": "Set24",
+          "seoName": "Set24"
+        },
+        {
+          "id": 10662,
+          "name": "Set25",
+          "seoName": "Set25"
+        }
+      ]
+    },
+    {
+      "id": 2116,
+      "name": "5 Stars",
+      "seoName": "5 Stars",
+      "subCategories": [
+        {
+          "id": 10663,
+          "name": "Set1",
+          "seoName": "Set1"
+        },
+        {
+          "id": 10664,
+          "name": "Set2",
+          "seoName": "Set2"
+        },
+        {
+          "id": 10665,
+          "name": "Set3",
+          "seoName": "Set3"
+        },
+        {
+          "id": 10666,
+          "name": "Set4",
+          "seoName": "Set4"
+        },
+        {
+          "id": 10667,
+          "name": "Set5",
+          "seoName": "Set5"
+        },
+        {
+          "id": 10668,
+          "name": "Set6",
+          "seoName": "Set6"
+        },
+        {
+          "id": 10669,
+          "name": "Set7",
+          "seoName": "Set7"
+        },
+        {
+          "id": 10670,
+          "name": "Set8",
+          "seoName": "Set8"
+        },
+        {
+          "id": 10671,
+          "name": "Set9",
+          "seoName": "Set9"
+        },
+        {
+          "id": 10672,
+          "name": "Set10",
+          "seoName": "Set10"
+        },
+        {
+          "id": 10673,
+          "name": "Set11",
+          "seoName": "Set11"
+        },
+        {
+          "id": 10674,
+          "name": "Set12",
+          "seoName": "Set12"
+        },
+        {
+          "id": 10675,
+          "name": "Set13",
+          "seoName": "Set13"
+        },
+        {
+          "id": 10676,
+          "name": "Set14",
+          "seoName": "Set14"
+        },
+        {
+          "id": 10677,
+          "name": "Set15",
+          "seoName": "Set15"
+        },
+        {
+          "id": 10678,
+          "name": "Set16",
+          "seoName": "Set16"
+        },
+        {
+          "id": 10679,
+          "name": "Set17",
+          "seoName": "Set17"
+        },
+        {
+          "id": 10680,
+          "name": "Set18",
+          "seoName": "Set18"
+        },
+        {
+          "id": 10681,
+          "name": "Set19",
+          "seoName": "Set19"
+        },
+        {
+          "id": 10682,
+          "name": "Set20",
+          "seoName": "Set20"
+        },
+        {
+          "id": 10683,
+          "name": "Set21",
+          "seoName": "Set21"
+        },
+        {
+          "id": 10684,
+          "name": "Set22",
+          "seoName": "Set22"
+        },
+        {
+          "id": 10685,
+          "name": "Set23",
+          "seoName": "Set23"
+        },
+        {
+          "id": 10686,
+          "name": "Set24",
+          "seoName": "Set24"
+        },
+        {
+          "id": 10687,
+          "name": "Set25",
+          "seoName": "Set25"
+        }
+      ]
+    },
+    {
+      "id": 2117,
+      "name": "6 Stars",
+      "seoName": "6 Stars",
+      "subCategories": [
+        {
+          "id": 10688,
+          "name": "Set1",
+          "seoName": "Set1"
+        },
+        {
+          "id": 10689,
+          "name": "Set2",
+          "seoName": "Set2"
+        },
+        {
+          "id": 10690,
+          "name": "Set3",
+          "seoName": "Set3"
+        },
+        {
+          "id": 10691,
+          "name": "Set4",
+          "seoName": "Set4"
+        },
+        {
+          "id": 10692,
+          "name": "Set5",
+          "seoName": "Set5"
+        },
+        {
+          "id": 10693,
+          "name": "Set6",
+          "seoName": "Set6"
+        },
+        {
+          "id": 10694,
+          "name": "Set7",
+          "seoName": "Set7"
+        },
+        {
+          "id": 10695,
+          "name": "Set8",
+          "seoName": "Set8"
+        },
+        {
+          "id": 10696,
+          "name": "Set9",
+          "seoName": "Set9"
+        },
+        {
+          "id": 10697,
+          "name": "Set10",
+          "seoName": "Set10"
+        },
+        {
+          "id": 10698,
+          "name": "Set11",
+          "seoName": "Set11"
+        },
+        {
+          "id": 10699,
+          "name": "Set12",
+          "seoName": "Set12"
+        },
+        {
+          "id": 10700,
+          "name": "Set13",
+          "seoName": "Set13"
+        },
+        {
+          "id": 10701,
+          "name": "Set14",
+          "seoName": "Set14"
+        },
+        {
+          "id": 10702,
+          "name": "Set15",
+          "seoName": "Set15"
+        },
+        {
+          "id": 10703,
+          "name": "Set16",
+          "seoName": "Set16"
+        },
+        {
+          "id": 10704,
+          "name": "Set17",
+          "seoName": "Set17"
+        },
+        {
+          "id": 10705,
+          "name": "Set18",
+          "seoName": "Set18"
+        },
+        {
+          "id": 10706,
+          "name": "Set19",
+          "seoName": "Set19"
+        },
+        {
+          "id": 10707,
+          "name": "Set20",
+          "seoName": "Set20"
+        },
+        {
+          "id": 10708,
+          "name": "Set21",
+          "seoName": "Set21"
+        },
+        {
+          "id": 10709,
+          "name": "Set22",
+          "seoName": "Set22"
+        },
+        {
+          "id": 10710,
+          "name": "Set23",
+          "seoName": "Set23"
+        },
+        {
+          "id": 10711,
+          "name": "Set24",
+          "seoName": "Set24"
+        },
+        {
+          "id": 10712,
+          "name": "Set25",
+          "seoName": "Set25"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13632,
+      "name": "Main"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

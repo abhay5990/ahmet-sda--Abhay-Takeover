@@ -1,0 +1,140 @@
+{
+  "game_id": 4100,
+  "game": "wot",
+  "game_name": "World of Tanks",
+  "seo_name": "WOT",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 707,
+      "name": "Gold",
+      "seoName": "Gold",
+      "subCategories": [
+        {
+          "id": 2210,
+          "name": "a.1250",
+          "seoName": "a.1250"
+        },
+        {
+          "id": 2211,
+          "name": "b.3000",
+          "seoName": "b.3000"
+        },
+        {
+          "id": 2212,
+          "name": "c.6500",
+          "seoName": "c.6500"
+        },
+        {
+          "id": 2213,
+          "name": "d.12000",
+          "seoName": "d.12000"
+        },
+        {
+          "id": 2214,
+          "name": "e.25000",
+          "seoName": "e.25000"
+        }
+      ]
+    },
+    {
+      "id": 708,
+      "name": "Premium Account",
+      "seoName": "Premium Account",
+      "subCategories": [
+        {
+          "id": 2199,
+          "name": "Premium Account",
+          "seoName": "Premium Account"
+        }
+      ]
+    },
+    {
+      "id": 709,
+      "name": "Vehicles",
+      "seoName": "Vehicles",
+      "subCategories": [
+        {
+          "id": 2200,
+          "name": "Vehicles",
+          "seoName": "Vehicles"
+        }
+      ]
+    },
+    {
+      "id": 710,
+      "name": "Specials",
+      "seoName": "Specials",
+      "subCategories": [
+        {
+          "id": 2201,
+          "name": "Specials",
+          "seoName": "Specials"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 4101,
+      "name": "US"
+    },
+    {
+      "id": 4102,
+      "name": "EU"
+    },
+    {
+      "id": 5670,
+      "name": "SEA"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

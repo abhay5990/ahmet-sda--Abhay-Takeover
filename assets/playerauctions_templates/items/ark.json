@@ -1,0 +1,1248 @@
+{
+  "game_id": 7702,
+  "game": "ark",
+  "game_name": "ARK: Survival Ascended",
+  "seo_name": "ARK",
+  "currencyName": "Dollar",
+  "categories": [
+    {
+      "id": 826,
+      "name": "Dinosaurs",
+      "seoName": "Dinosaurs",
+      "subCategories": [
+        {
+          "id": 2534,
+          "name": "Wyvern",
+          "seoName": "Wyvern"
+        },
+        {
+          "id": 2536,
+          "name": "Vulture",
+          "seoName": "Vulture"
+        },
+        {
+          "id": 2537,
+          "name": "Thorny Dragon",
+          "seoName": "Thorny Dragon"
+        },
+        {
+          "id": 2538,
+          "name": "Rock Elemental",
+          "seoName": "Rock Elemental"
+        },
+        {
+          "id": 2539,
+          "name": "Mantis",
+          "seoName": "Mantis"
+        },
+        {
+          "id": 2540,
+          "name": "Achatina",
+          "seoName": "Achatina"
+        },
+        {
+          "id": 2541,
+          "name": "Ankylosaurus",
+          "seoName": "Ankylosaurus"
+        },
+        {
+          "id": 2542,
+          "name": "Argentavis",
+          "seoName": "Argentavis"
+        },
+        {
+          "id": 2543,
+          "name": "Baryonyx",
+          "seoName": "Baryonyx"
+        },
+        {
+          "id": 2544,
+          "name": "Bulbdog",
+          "seoName": "Bulbdog"
+        },
+        {
+          "id": 2545,
+          "name": "Daeodon",
+          "seoName": "Daeodon"
+        },
+        {
+          "id": 2546,
+          "name": "Direwolf",
+          "seoName": "Direwolf"
+        },
+        {
+          "id": 2547,
+          "name": "Doedicurus",
+          "seoName": "Doedicurus"
+        },
+        {
+          "id": 2548,
+          "name": "Giganotosaurus",
+          "seoName": "Giganotosaurus"
+        },
+        {
+          "id": 2549,
+          "name": "Griffin",
+          "seoName": "Griffin"
+        },
+        {
+          "id": 2550,
+          "name": "Megapithecus",
+          "seoName": "Megapithecus"
+        },
+        {
+          "id": 2551,
+          "name": "Megatherium",
+          "seoName": "Megatherium"
+        },
+        {
+          "id": 2552,
+          "name": "Otter",
+          "seoName": "Otter"
+        },
+        {
+          "id": 2554,
+          "name": "Rex",
+          "seoName": "Rex"
+        },
+        {
+          "id": 2555,
+          "name": "Quetzal",
+          "seoName": "Quetzal"
+        },
+        {
+          "id": 2556,
+          "name": "Thylacoleo",
+          "seoName": "Thylacoleo"
+        },
+        {
+          "id": 2557,
+          "name": "Pteranodon",
+          "seoName": "Pteranodon"
+        },
+        {
+          "id": 2597,
+          "name": "Allosaurus",
+          "seoName": "Allosaurus"
+        },
+        {
+          "id": 2598,
+          "name": "Ammonite",
+          "seoName": "Ammonite"
+        },
+        {
+          "id": 2599,
+          "name": "Anglerfish",
+          "seoName": "Anglerfish"
+        },
+        {
+          "id": 2600,
+          "name": "Araneo",
+          "seoName": "Araneo"
+        },
+        {
+          "id": 2601,
+          "name": "Archaeopteryx",
+          "seoName": "Archaeopteryx"
+        },
+        {
+          "id": 2602,
+          "name": "Arthropluera",
+          "seoName": "Arthropluera"
+        },
+        {
+          "id": 2603,
+          "name": "Basilisk",
+          "seoName": "Basilisk"
+        },
+        {
+          "id": 2604,
+          "name": "Basilosaurus",
+          "seoName": "Basilosaurus"
+        },
+        {
+          "id": 2605,
+          "name": "Beelzebufo",
+          "seoName": "Beelzebufo"
+        },
+        {
+          "id": 2606,
+          "name": "Brontosaurus",
+          "seoName": "Brontosaurus"
+        },
+        {
+          "id": 2607,
+          "name": "Carbonemys",
+          "seoName": "Carbonemys"
+        },
+        {
+          "id": 2608,
+          "name": "Carnotaurus",
+          "seoName": "Carnotaurus"
+        },
+        {
+          "id": 2609,
+          "name": "Castoroides",
+          "seoName": "Castoroides"
+        },
+        {
+          "id": 2610,
+          "name": "Chalicotherium",
+          "seoName": "Chalicotherium"
+        },
+        {
+          "id": 2611,
+          "name": "Coelacanth",
+          "seoName": "Coelacanth"
+        },
+        {
+          "id": 2612,
+          "name": "Compy",
+          "seoName": "Compy"
+        },
+        {
+          "id": 2613,
+          "name": "Dilophosaur",
+          "seoName": "Dilophosaur"
+        },
+        {
+          "id": 2614,
+          "name": "Dimetrodon",
+          "seoName": "Dimetrodon"
+        },
+        {
+          "id": 2615,
+          "name": "Dimorphodon",
+          "seoName": "Dimorphodon"
+        },
+        {
+          "id": 2616,
+          "name": "Diplocaulus",
+          "seoName": "Diplocaulus"
+        },
+        {
+          "id": 2617,
+          "name": "Diplodocus",
+          "seoName": "Diplodocus"
+        },
+        {
+          "id": 2618,
+          "name": "Direbear",
+          "seoName": "Direbear"
+        },
+        {
+          "id": 2619,
+          "name": "Dodo",
+          "seoName": "Dodo"
+        },
+        {
+          "id": 2620,
+          "name": "Dung Beetle",
+          "seoName": "Dung Beetle"
+        },
+        {
+          "id": 2621,
+          "name": "Dunkleosteus",
+          "seoName": "Dunkleosteus"
+        },
+        {
+          "id": 2622,
+          "name": "Electrophorus",
+          "seoName": "Electrophorus"
+        },
+        {
+          "id": 2623,
+          "name": "Equus",
+          "seoName": "Equus"
+        },
+        {
+          "id": 2624,
+          "name": "Featherlight",
+          "seoName": "Featherlight"
+        },
+        {
+          "id": 2625,
+          "name": "Gallimimus",
+          "seoName": "Gallimimus"
+        },
+        {
+          "id": 2626,
+          "name": "Giant Bee",
+          "seoName": "Giant Bee"
+        },
+        {
+          "id": 2627,
+          "name": "Gigantopithecus",
+          "seoName": "Gigantopithecus"
+        },
+        {
+          "id": 2628,
+          "name": "Glowbug",
+          "seoName": "Glowbug"
+        },
+        {
+          "id": 2629,
+          "name": "Glowtail",
+          "seoName": "Glowtail"
+        },
+        {
+          "id": 2630,
+          "name": "Hesperornis",
+          "seoName": "Hesperornis"
+        },
+        {
+          "id": 2631,
+          "name": "Hyaenodon",
+          "seoName": "Hyaenodon"
+        },
+        {
+          "id": 2632,
+          "name": "Ichthy",
+          "seoName": "Ichthy"
+        },
+        {
+          "id": 2633,
+          "name": "Ichthyornis",
+          "seoName": "Ichthyornis"
+        },
+        {
+          "id": 2634,
+          "name": "Iguanodon",
+          "seoName": "Iguanodon"
+        },
+        {
+          "id": 2635,
+          "name": "Jerboa",
+          "seoName": "Jerboa"
+        },
+        {
+          "id": 2636,
+          "name": "Kairuku",
+          "seoName": "Kairuku"
+        },
+        {
+          "id": 2637,
+          "name": "Kaprosuchus",
+          "seoName": "Kaprosuchus"
+        },
+        {
+          "id": 2638,
+          "name": "Karkinos",
+          "seoName": "Karkinos"
+        },
+        {
+          "id": 2639,
+          "name": "Kentrosaurus",
+          "seoName": "Kentrosaurus"
+        },
+        {
+          "id": 2640,
+          "name": "Lymantria",
+          "seoName": "Lymantria"
+        },
+        {
+          "id": 2641,
+          "name": "Lystrosaurus",
+          "seoName": "Lystrosaurus"
+        },
+        {
+          "id": 2642,
+          "name": "Mammoth",
+          "seoName": "Mammoth"
+        },
+        {
+          "id": 2643,
+          "name": "Manta",
+          "seoName": "Manta"
+        },
+        {
+          "id": 2644,
+          "name": "Megalania",
+          "seoName": "Megalania"
+        },
+        {
+          "id": 2645,
+          "name": "Megaloceros",
+          "seoName": "Megaloceros"
+        },
+        {
+          "id": 2646,
+          "name": "Megalodon",
+          "seoName": "Megalodon"
+        },
+        {
+          "id": 2647,
+          "name": "Megalosaurus",
+          "seoName": "Megalosaurus"
+        },
+        {
+          "id": 2648,
+          "name": "Mesopithecus",
+          "seoName": "Mesopithecus"
+        },
+        {
+          "id": 2649,
+          "name": "Microraptor",
+          "seoName": "Microraptor"
+        },
+        {
+          "id": 2650,
+          "name": "Morellatops",
+          "seoName": "Morellatops"
+        },
+        {
+          "id": 2651,
+          "name": "Mosasaurus",
+          "seoName": "Mosasaurus"
+        },
+        {
+          "id": 2652,
+          "name": "Moschops",
+          "seoName": "Moschops"
+        },
+        {
+          "id": 2653,
+          "name": "Onyc",
+          "seoName": "Onyc"
+        },
+        {
+          "id": 2654,
+          "name": "Oviraptor",
+          "seoName": "Oviraptor"
+        },
+        {
+          "id": 2655,
+          "name": "Ovis",
+          "seoName": "Ovis"
+        },
+        {
+          "id": 2656,
+          "name": "Pachy",
+          "seoName": "Pachy"
+        },
+        {
+          "id": 2657,
+          "name": "Pachyrhinosaurus",
+          "seoName": "Pachyrhinosaurus"
+        },
+        {
+          "id": 2658,
+          "name": "Paracer",
+          "seoName": "Paracer"
+        },
+        {
+          "id": 2659,
+          "name": "Parasaur",
+          "seoName": "Parasaur"
+        },
+        {
+          "id": 2660,
+          "name": "Pegomastax",
+          "seoName": "Pegomastax"
+        },
+        {
+          "id": 2661,
+          "name": "Pelagornis",
+          "seoName": "Pelagornis"
+        },
+        {
+          "id": 2662,
+          "name": "Phiomia",
+          "seoName": "Phiomia"
+        },
+        {
+          "id": 2663,
+          "name": "Phoenix",
+          "seoName": "Phoenix"
+        },
+        {
+          "id": 2664,
+          "name": "Plesiosaur",
+          "seoName": "Plesiosaur"
+        },
+        {
+          "id": 2665,
+          "name": "Procoptodon",
+          "seoName": "Procoptodon"
+        },
+        {
+          "id": 2666,
+          "name": "Pulmonoscorpius",
+          "seoName": "Pulmonoscorpius"
+        },
+        {
+          "id": 2667,
+          "name": "Purlovia",
+          "seoName": "Purlovia"
+        },
+        {
+          "id": 2668,
+          "name": "Raptor",
+          "seoName": "Raptor"
+        },
+        {
+          "id": 2669,
+          "name": "Ravager",
+          "seoName": "Ravager"
+        },
+        {
+          "id": 2670,
+          "name": "Reaper",
+          "seoName": "Reaper"
+        },
+        {
+          "id": 2671,
+          "name": "Rock Drake",
+          "seoName": "Rock Drake"
+        },
+        {
+          "id": 2672,
+          "name": "Roll Rat",
+          "seoName": "Roll Rat"
+        },
+        {
+          "id": 2673,
+          "name": "Sabertooth",
+          "seoName": "Sabertooth"
+        },
+        {
+          "id": 2674,
+          "name": "Sarco",
+          "seoName": "Sarco"
+        },
+        {
+          "id": 2675,
+          "name": "Shinehorn",
+          "seoName": "Shinehorn"
+        },
+        {
+          "id": 2676,
+          "name": "Spinosaurus",
+          "seoName": "Spinosaurus"
+        },
+        {
+          "id": 2677,
+          "name": "Stegosaurus",
+          "seoName": "Stegosaurus"
+        },
+        {
+          "id": 2678,
+          "name": "Tapejara",
+          "seoName": "Tapejara"
+        },
+        {
+          "id": 2679,
+          "name": "TerrorBird",
+          "seoName": "TerrorBird"
+        },
+        {
+          "id": 2680,
+          "name": "Therizinosaur",
+          "seoName": "Therizinosaur"
+        },
+        {
+          "id": 2681,
+          "name": "Titanoboa",
+          "seoName": "Titanoboa"
+        },
+        {
+          "id": 2682,
+          "name": "Titanosaur",
+          "seoName": "Titanosaur"
+        },
+        {
+          "id": 2683,
+          "name": "Triceratops",
+          "seoName": "Triceratops"
+        },
+        {
+          "id": 2684,
+          "name": "Troodon",
+          "seoName": "Troodon"
+        },
+        {
+          "id": 2685,
+          "name": "Tusoteuthis",
+          "seoName": "Tusoteuthis"
+        },
+        {
+          "id": 2686,
+          "name": "Woolly Rhino",
+          "seoName": "Woolly Rhino"
+        },
+        {
+          "id": 2687,
+          "name": "Yutyrannus",
+          "seoName": "Yutyrannus"
+        },
+        {
+          "id": 3871,
+          "name": "Managarmr",
+          "seoName": "Managarmr"
+        },
+        {
+          "id": 5070,
+          "name": "Snow Owl",
+          "seoName": "Snow Owl"
+        },
+        {
+          "id": 5207,
+          "name": "Other Dinos",
+          "seoName": "Other Dinos"
+        },
+        {
+          "id": 5213,
+          "name": "Velonasaur",
+          "seoName": "Velonasaur"
+        },
+        {
+          "id": 8654,
+          "name": "Rhynio",
+          "seoName": "Rhynio"
+        },
+        {
+          "id": 8655,
+          "name": "Carchar",
+          "seoName": "Carchar"
+        },
+        {
+          "id": 10223,
+          "name": "Dreadmare",
+          "seoName": "Dreadmare"
+        }
+      ]
+    },
+    {
+      "id": 827,
+      "name": "Eggs",
+      "seoName": "Eggs",
+      "subCategories": [
+        {
+          "id": 2568,
+          "name": "Wyvern Egg",
+          "seoName": "Wyvern Egg"
+        },
+        {
+          "id": 2569,
+          "name": "Rex Egg",
+          "seoName": "Rex Egg"
+        },
+        {
+          "id": 2570,
+          "name": "Giga Egg",
+          "seoName": "Giga Egg"
+        },
+        {
+          "id": 2571,
+          "name": "Fert Egg",
+          "seoName": "Fert Egg"
+        },
+        {
+          "id": 2572,
+          "name": "Other Eggs",
+          "seoName": "Other Eggs"
+        },
+        {
+          "id": 5195,
+          "name": "Rock Drake Egg",
+          "seoName": "Rock Drake Egg"
+        },
+        {
+          "id": 5243,
+          "name": "Dodo Egg",
+          "seoName": "Dodo Egg"
+        }
+      ]
+    },
+    {
+      "id": 828,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 2559,
+          "name": "Auto Turret",
+          "seoName": "Auto Turret"
+        },
+        {
+          "id": 2560,
+          "name": "Heavy Auto Turret",
+          "seoName": "Heavy Auto Turret"
+        },
+        {
+          "id": 2561,
+          "name": "Ballista Turret",
+          "seoName": "Ballista Turret"
+        },
+        {
+          "id": 2562,
+          "name": "Catapult Turret",
+          "seoName": "Catapult Turret"
+        },
+        {
+          "id": 2563,
+          "name": "Minigun Turret",
+          "seoName": "Minigun Turret"
+        },
+        {
+          "id": 2564,
+          "name": "Rocket Turret",
+          "seoName": "Rocket Turret"
+        },
+        {
+          "id": 2565,
+          "name": "Simple Bullet",
+          "seoName": "Simple Bullet"
+        },
+        {
+          "id": 2566,
+          "name": "Advanced Rifle Bullet",
+          "seoName": "Advanced Rifle Bullet"
+        },
+        {
+          "id": 2567,
+          "name": "Other Weapons",
+          "seoName": "Other Weapons"
+        }
+      ]
+    },
+    {
+      "id": 829,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 2573,
+          "name": "Metal Foundation",
+          "seoName": "Metal Foundation"
+        },
+        {
+          "id": 2574,
+          "name": "Metal Wall",
+          "seoName": "Metal Wall"
+        },
+        {
+          "id": 2575,
+          "name": "Metal Ceiling",
+          "seoName": "Metal Ceiling"
+        },
+        {
+          "id": 2576,
+          "name": "Metal Dinosaur Gateway",
+          "seoName": "Metal Dinosaur Gateway"
+        },
+        {
+          "id": 2577,
+          "name": "Metal Dinosaur Gate",
+          "seoName": "Metal Dinosaur Gate"
+        },
+        {
+          "id": 2578,
+          "name": "Metal Ingot",
+          "seoName": "Metal Ingot"
+        },
+        {
+          "id": 2579,
+          "name": "Silica Pearls",
+          "seoName": "Silica Pearls"
+        },
+        {
+          "id": 2580,
+          "name": "Other Resources",
+          "seoName": "Other Resources"
+        },
+        {
+          "id": 4673,
+          "name": "Behemoth Gate",
+          "seoName": "Behemoth Gate"
+        },
+        {
+          "id": 4674,
+          "name": "Behemoth Gateway",
+          "seoName": "Behemoth Gateway"
+        },
+        {
+          "id": 4675,
+          "name": "Black Pearls",
+          "seoName": "Black Pearls"
+        },
+        {
+          "id": 4676,
+          "name": "Stone Wall",
+          "seoName": "Stone Wall"
+        },
+        {
+          "id": 5187,
+          "name": "Stone Foundation",
+          "seoName": "Stone Foundation"
+        },
+        {
+          "id": 5188,
+          "name": "Stone Ceiling",
+          "seoName": "Stone Ceiling"
+        },
+        {
+          "id": 5189,
+          "name": "Stone Behemoth Gate",
+          "seoName": "Stone Behemoth Gate"
+        },
+        {
+          "id": 5190,
+          "name": "Greenhouse Wall",
+          "seoName": "Greenhouse Wall"
+        },
+        {
+          "id": 5191,
+          "name": "Industrial Forge",
+          "seoName": "Industrial Forge"
+        },
+        {
+          "id": 5192,
+          "name": "Industrial Cooker",
+          "seoName": "Industrial Cooker"
+        },
+        {
+          "id": 5193,
+          "name": "Industrial Grinder",
+          "seoName": "Industrial Grinder"
+        },
+        {
+          "id": 5194,
+          "name": "Greenhouse Ceiling",
+          "seoName": "Greenhouse Ceiling"
+        }
+      ]
+    },
+    {
+      "id": 830,
+      "name": "Food",
+      "seoName": "Food",
+      "subCategories": [
+        {
+          "id": 2581,
+          "name": "Kibble",
+          "seoName": "Kibble"
+        },
+        {
+          "id": 2582,
+          "name": "Other Food",
+          "seoName": "Other Food"
+        },
+        {
+          "id": 5261,
+          "name": "Extraordinary Kibble",
+          "seoName": "Extraordinary Kibble"
+        },
+        {
+          "id": 5262,
+          "name": "Superior Kibble",
+          "seoName": "Superior Kibble"
+        },
+        {
+          "id": 5263,
+          "name": "Exceptional Kibble",
+          "seoName": "Exceptional Kibble"
+        }
+      ]
+    },
+    {
+      "id": 835,
+      "name": "Bases",
+      "seoName": "Bases",
+      "subCategories": [
+        {
+          "id": 2689,
+          "name": "Bases",
+          "seoName": "Bases"
+        },
+        {
+          "id": 2690,
+          "name": "The Island",
+          "seoName": "The Island"
+        },
+        {
+          "id": 2691,
+          "name": "The Center",
+          "seoName": "The Center"
+        },
+        {
+          "id": 2692,
+          "name": "Ragnarok",
+          "seoName": "Ragnarok"
+        },
+        {
+          "id": 2693,
+          "name": "Aberration",
+          "seoName": "Aberration"
+        },
+        {
+          "id": 2694,
+          "name": "Scorched Earth",
+          "seoName": "Scorched Earth"
+        }
+      ]
+    },
+    {
+      "id": 853,
+      "name": "Tek",
+      "seoName": "Tek",
+      "subCategories": [
+        {
+          "id": 2875,
+          "name": "Tek Transmitter",
+          "seoName": "Tek Transmitter"
+        },
+        {
+          "id": 2876,
+          "name": "Tek Generator",
+          "seoName": "Tek Generator"
+        },
+        {
+          "id": 2877,
+          "name": "Tek Replicator",
+          "seoName": "Tek Replicator"
+        },
+        {
+          "id": 2878,
+          "name": "Tek Trough",
+          "seoName": "Tek Trough"
+        },
+        {
+          "id": 2879,
+          "name": "Tek Dinosaur Gate",
+          "seoName": "Tek Dinosaur Gate"
+        },
+        {
+          "id": 2880,
+          "name": "Tek Behemoth",
+          "seoName": "Tek Behemoth"
+        },
+        {
+          "id": 2881,
+          "name": "Tek Doorframe",
+          "seoName": "Tek Doorframe"
+        },
+        {
+          "id": 2882,
+          "name": "Tek Walls",
+          "seoName": "Tek Walls"
+        },
+        {
+          "id": 2883,
+          "name": "Tek Rex Saddle",
+          "seoName": "Tek Rex Saddle"
+        },
+        {
+          "id": 2884,
+          "name": "Tek Sleeping Pod",
+          "seoName": "Tek Sleeping Pod"
+        },
+        {
+          "id": 2885,
+          "name": "Tek Door",
+          "seoName": "Tek Door"
+        },
+        {
+          "id": 2886,
+          "name": "Tek Ceiling",
+          "seoName": "Tek Ceiling"
+        },
+        {
+          "id": 2887,
+          "name": "Tek Foundation",
+          "seoName": "Tek Foundation"
+        },
+        {
+          "id": 2888,
+          "name": "Tek Teleporter",
+          "seoName": "Tek Teleporter"
+        },
+        {
+          "id": 2889,
+          "name": "Tek Boots",
+          "seoName": "Tek Boots"
+        },
+        {
+          "id": 2890,
+          "name": "Tek Armor",
+          "seoName": "Tek Armor"
+        },
+        {
+          "id": 2891,
+          "name": "Tek Helmet",
+          "seoName": "Tek Helmet"
+        },
+        {
+          "id": 5196,
+          "name": "Tek Rifle",
+          "seoName": "Tek Rifle"
+        },
+        {
+          "id": 5197,
+          "name": "Tek Sword",
+          "seoName": "Tek Sword"
+        },
+        {
+          "id": 8848,
+          "name": "Other Teks",
+          "seoName": "Other Teks"
+        }
+      ]
+    },
+    {
+      "id": 1112,
+      "name": "Saddles",
+      "seoName": "Saddles",
+      "subCategories": [
+        {
+          "id": 5198,
+          "name": "Pteranodon Saddle",
+          "seoName": "Pteranodon Saddle"
+        },
+        {
+          "id": 5199,
+          "name": "Rex Saddle",
+          "seoName": "Rex Saddle"
+        },
+        {
+          "id": 5200,
+          "name": "Argentavis Saddle",
+          "seoName": "Argentavis Saddle"
+        },
+        {
+          "id": 5201,
+          "name": "Bronto Saddle",
+          "seoName": "Bronto Saddle"
+        },
+        {
+          "id": 5202,
+          "name": "Snow Owl Saddle",
+          "seoName": "Snow Owl Saddle"
+        },
+        {
+          "id": 5203,
+          "name": "Wyvern Saddle",
+          "seoName": "Wyvern Saddle"
+        },
+        {
+          "id": 5209,
+          "name": "Other Saddles",
+          "seoName": "Other Saddles"
+        }
+      ]
+    },
+    {
+      "id": 1113,
+      "name": "Pets",
+      "seoName": "Pets",
+      "subCategories": [
+        {
+          "id": 5204,
+          "name": "Chibi Pets",
+          "seoName": "Chibi Pets"
+        },
+        {
+          "id": 5205,
+          "name": "Shoulder Pets",
+          "seoName": "Shoulder Pets"
+        },
+        {
+          "id": 5206,
+          "name": "Light Pets",
+          "seoName": "Light Pets"
+        },
+        {
+          "id": 5208,
+          "name": "Other Pets",
+          "seoName": "Other Pets"
+        }
+      ]
+    },
+    {
+      "id": 1832,
+      "name": "Blueprints",
+      "seoName": "Blueprints",
+      "subCategories": [
+        {
+          "id": 8656,
+          "name": "Weapon Blueprint",
+          "seoName": "Weapon Blueprint"
+        },
+        {
+          "id": 8657,
+          "name": "Tool Blueprint",
+          "seoName": "Tool Blueprint"
+        },
+        {
+          "id": 8658,
+          "name": "Armor Blueprint",
+          "seoName": "Armor Blueprint"
+        },
+        {
+          "id": 8659,
+          "name": "Shield Blueprint",
+          "seoName": "Shield Blueprint"
+        },
+        {
+          "id": 8660,
+          "name": "Saddle Blueprint",
+          "seoName": "Saddle Blueprint"
+        },
+        {
+          "id": 8661,
+          "name": "Other Blueprint",
+          "seoName": "Other Blueprint"
+        }
+      ]
+    },
+    {
+      "id": 1860,
+      "name": "Skins",
+      "seoName": "Skins",
+      "subCategories": [
+        {
+          "id": 8720,
+          "name": "Skins",
+          "seoName": "Skins"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7963,
+      "name": "PC",
+      "subCategories": [
+        {
+          "id": 7966,
+          "name": "Official PvE"
+        },
+        {
+          "id": 8577,
+          "name": "PvP Classic"
+        },
+        {
+          "id": 7969,
+          "name": "PVP Legacy"
+        },
+        {
+          "id": 7968,
+          "name": "PVP New"
+        },
+        {
+          "id": 8431,
+          "name": "PVP Offline Raid Protection"
+        },
+        {
+          "id": 8332,
+          "name": "PVP Small Tribes"
+        }
+      ]
+    },
+    {
+      "id": 7964,
+      "name": "PS",
+      "subCategories": [
+        {
+          "id": 7973,
+          "name": "Official PvE"
+        },
+        {
+          "id": 9055,
+          "name": "PVE Primitive Plus"
+        },
+        {
+          "id": 7970,
+          "name": "PVP Legacy"
+        },
+        {
+          "id": 7971,
+          "name": "PVP New"
+        },
+        {
+          "id": 8432,
+          "name": "PVP Offline Raid Protection"
+        },
+        {
+          "id": 8333,
+          "name": "PVP Small Tribes"
+        }
+      ]
+    },
+    {
+      "id": 7965,
+      "name": "Xbox",
+      "subCategories": [
+        {
+          "id": 7974,
+          "name": "PVE"
+        },
+        {
+          "id": 7977,
+          "name": "PVP Legacy"
+        },
+        {
+          "id": 7976,
+          "name": "PVP New"
+        },
+        {
+          "id": 8433,
+          "name": "PVP Offline Raid Protection"
+        },
+        {
+          "id": 8334,
+          "name": "PVP Small Tribes"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

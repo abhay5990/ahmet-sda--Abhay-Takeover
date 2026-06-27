@@ -1,0 +1,488 @@
+{
+  "game_id": 5243,
+  "game": "path-of-exile",
+  "game_name": "Path of Exile",
+  "seo_name": "Path-of-Exile",
+  "currencyName": "Currency",
+  "categories": [
+    {
+      "id": 124,
+      "name": "Maps",
+      "seoName": "Maps",
+      "subCategories": [
+        {
+          "id": 2467,
+          "name": "Maps",
+          "seoName": "Maps"
+        },
+        {
+          "id": 5051,
+          "name": "Map Fragments",
+          "seoName": "Map Fragments"
+        },
+        {
+          "id": 5052,
+          "name": "Sets",
+          "seoName": "Sets"
+        },
+        {
+          "id": 5066,
+          "name": "Other Maps",
+          "seoName": "Other Maps"
+        }
+      ]
+    },
+    {
+      "id": 1042,
+      "name": "Armour",
+      "seoName": "Armour",
+      "subCategories": [
+        {
+          "id": 5018,
+          "name": "Body Armor",
+          "seoName": "Body Armor"
+        },
+        {
+          "id": 5019,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 5020,
+          "name": "Gloves",
+          "seoName": "Gloves"
+        },
+        {
+          "id": 5021,
+          "name": "Helmets",
+          "seoName": "Helmets"
+        },
+        {
+          "id": 5022,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 5060,
+          "name": "Other Armour",
+          "seoName": "Other Armour"
+        },
+        {
+          "id": 8464,
+          "name": "Tabula Rasa",
+          "seoName": "Tabula Rasa"
+        },
+        {
+          "id": 8465,
+          "name": "Hateforge",
+          "seoName": "Hateforge"
+        },
+        {
+          "id": 8466,
+          "name": "Stasis Prison",
+          "seoName": "Stasis Prison"
+        }
+      ]
+    },
+    {
+      "id": 1043,
+      "name": "Weapon",
+      "seoName": "Weapon",
+      "subCategories": [
+        {
+          "id": 5024,
+          "name": "Sceptres",
+          "seoName": "Sceptres"
+        },
+        {
+          "id": 5025,
+          "name": "Maces",
+          "seoName": "Maces"
+        },
+        {
+          "id": 5026,
+          "name": "Axes",
+          "seoName": "Axes"
+        },
+        {
+          "id": 5027,
+          "name": "Swords",
+          "seoName": "Swords"
+        },
+        {
+          "id": 5028,
+          "name": "Bows",
+          "seoName": "Bows"
+        },
+        {
+          "id": 5029,
+          "name": "Claws",
+          "seoName": "Claws"
+        },
+        {
+          "id": 5030,
+          "name": "Staves",
+          "seoName": "Staves"
+        },
+        {
+          "id": 5031,
+          "name": "Wands",
+          "seoName": "Wands"
+        },
+        {
+          "id": 5032,
+          "name": "Fishing Rods",
+          "seoName": "Fishing Rods"
+        },
+        {
+          "id": 5061,
+          "name": "Other Weapon",
+          "seoName": "Other Weapon"
+        },
+        {
+          "id": 8469,
+          "name": "Voidforge",
+          "seoName": "Voidforge"
+        }
+      ]
+    },
+    {
+      "id": 1044,
+      "name": "Accessory",
+      "seoName": "Accessory",
+      "subCategories": [
+        {
+          "id": 5033,
+          "name": "Amulets",
+          "seoName": "Amulets"
+        },
+        {
+          "id": 5034,
+          "name": "Belts",
+          "seoName": "Belts"
+        },
+        {
+          "id": 5035,
+          "name": "Rings",
+          "seoName": "Rings"
+        },
+        {
+          "id": 5036,
+          "name": "Quivers",
+          "seoName": "Quivers"
+        },
+        {
+          "id": 5062,
+          "name": "Other Accessory",
+          "seoName": "Other Accessory"
+        },
+        {
+          "id": 8462,
+          "name": "Mageblood",
+          "seoName": "Mageblood"
+        },
+        {
+          "id": 8463,
+          "name": "Headhunter",
+          "seoName": "Headhunter"
+        }
+      ]
+    },
+    {
+      "id": 1045,
+      "name": "Flask",
+      "seoName": "Flask",
+      "subCategories": [
+        {
+          "id": 5037,
+          "name": "Life Flasks",
+          "seoName": "Life Flasks"
+        },
+        {
+          "id": 5038,
+          "name": "Mana Flasks",
+          "seoName": "Mana Flasks"
+        },
+        {
+          "id": 5039,
+          "name": "Hybrid Flasks",
+          "seoName": "Hybrid Flasks"
+        },
+        {
+          "id": 5040,
+          "name": "Utility Flasks",
+          "seoName": "Utility Flasks"
+        },
+        {
+          "id": 5041,
+          "name": "Critical Utility Flasks",
+          "seoName": "Critical Utility Flasks"
+        },
+        {
+          "id": 5063,
+          "name": "Other Flask",
+          "seoName": "Other Flask"
+        },
+        {
+          "id": 8467,
+          "name": "Progenesis",
+          "seoName": "Progenesis"
+        }
+      ]
+    },
+    {
+      "id": 1048,
+      "name": "Jewel",
+      "seoName": "Jewel",
+      "subCategories": [
+        {
+          "id": 5068,
+          "name": "Unique Jewels",
+          "seoName": "Unique Jewels"
+        },
+        {
+          "id": 5069,
+          "name": "Other Jewels",
+          "seoName": "Other Jewels"
+        }
+      ]
+    },
+    {
+      "id": 1170,
+      "name": "Skill Gems",
+      "seoName": "Skill Gems",
+      "subCategories": [
+        {
+          "id": 5503,
+          "name": "Support Gems",
+          "seoName": "Support Gems"
+        },
+        {
+          "id": 5504,
+          "name": "All Skill Gems",
+          "seoName": "All Skill Gems"
+        },
+        {
+          "id": 8468,
+          "name": "Awakened Gems",
+          "seoName": "Awakened Gems"
+        }
+      ]
+    },
+    {
+      "id": 1271,
+      "name": "Packs",
+      "seoName": "Packs",
+      "subCategories": [
+        {
+          "id": 5835,
+          "name": "Mixed Packs",
+          "seoName": "Mixed Packs"
+        },
+        {
+          "id": 5836,
+          "name": "Gem Packs",
+          "seoName": "Gem Packs"
+        },
+        {
+          "id": 5837,
+          "name": "Currency Packs",
+          "seoName": "Currency Packs"
+        },
+        {
+          "id": 5838,
+          "name": "Map Packs",
+          "seoName": "Map Packs"
+        },
+        {
+          "id": 5839,
+          "name": "Complete Builds",
+          "seoName": "Complete Builds"
+        }
+      ]
+    },
+    {
+      "id": 1331,
+      "name": "Beast",
+      "seoName": "Beast",
+      "subCategories": [
+        {
+          "id": 6033,
+          "name": "Beast",
+          "seoName": "Beast"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15050,
+      "name": "PC - Mirage"
+    },
+    {
+      "id": 15051,
+      "name": "PC - Mirage HC"
+    },
+    {
+      "id": 15053,
+      "name": "PC - Mirage HC Ruthless"
+    },
+    {
+      "id": 15052,
+      "name": "PC - Mirage Ruthless"
+    },
+    {
+      "id": 15200,
+      "name": "PC - Return of The Ancestors HC"
+    },
+    {
+      "id": 15199,
+      "name": "PC - Return of The Ancestors SC"
+    },
+    {
+      "id": 15054,
+      "name": "PS - Mirage"
+    },
+    {
+      "id": 15055,
+      "name": "PS - Mirage HC"
+    },
+    {
+      "id": 15057,
+      "name": "PS - Mirage HC Ruthless"
+    },
+    {
+      "id": 15056,
+      "name": "PS - Mirage Ruthless"
+    },
+    {
+      "id": 15202,
+      "name": "PS - Return of The Ancestors HC"
+    },
+    {
+      "id": 15201,
+      "name": "PS - Return of The Ancestors SC"
+    },
+    {
+      "id": 15058,
+      "name": "Xbox - Mirage"
+    },
+    {
+      "id": 15059,
+      "name": "Xbox - Mirage HC"
+    },
+    {
+      "id": 15061,
+      "name": "Xbox - Mirage HC Ruthless"
+    },
+    {
+      "id": 15060,
+      "name": "Xbox - Mirage Ruthless"
+    },
+    {
+      "id": 15204,
+      "name": "Xbox - Return of The Ancestors HC"
+    },
+    {
+      "id": 15203,
+      "name": "Xbox - Return of The Ancestors SC"
+    },
+    {
+      "id": 5578,
+      "name": "PC - Standard"
+    },
+    {
+      "id": 5577,
+      "name": "PC - Hardcore"
+    },
+    {
+      "id": 13364,
+      "name": "PC - Ruthless"
+    },
+    {
+      "id": 13367,
+      "name": "PC - Hardcore Ruthless"
+    },
+    {
+      "id": 8559,
+      "name": "PS - Standard"
+    },
+    {
+      "id": 8560,
+      "name": "PS - Hardcore"
+    },
+    {
+      "id": 13365,
+      "name": "PS - Ruthless"
+    },
+    {
+      "id": 13368,
+      "name": "PS - Hardcore Ruthless"
+    },
+    {
+      "id": 7911,
+      "name": "Xbox - Standard"
+    },
+    {
+      "id": 7910,
+      "name": "Xbox - Hardcore"
+    },
+    {
+      "id": 13366,
+      "name": "Xbox - Ruthless"
+    },
+    {
+      "id": 13369,
+      "name": "Xbox - Hardcore Ruthless"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

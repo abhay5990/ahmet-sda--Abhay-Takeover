@@ -1,0 +1,224 @@
+{
+  "game_id": 6778,
+  "game": "elite-dangerous",
+  "game_name": "Elite:Dangerous",
+  "seo_name": "Elite-Dangerous",
+  "currencyName": "Credit",
+  "categories": [
+    {
+      "id": 1129,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 5284,
+          "name": "Primary Weapon",
+          "seoName": "Primary Weapon"
+        },
+        {
+          "id": 5285,
+          "name": "Secondary Weapons",
+          "seoName": "Secondary Weapons"
+        }
+      ]
+    },
+    {
+      "id": 1130,
+      "name": "Ships",
+      "seoName": "Ships",
+      "subCategories": [
+        {
+          "id": 5273,
+          "name": "Small Ships",
+          "seoName": "Small Ships"
+        },
+        {
+          "id": 5274,
+          "name": "Medium Ships",
+          "seoName": "Medium Ships"
+        },
+        {
+          "id": 5275,
+          "name": "Large Ships",
+          "seoName": "Large Ships"
+        },
+        {
+          "id": 5276,
+          "name": "Ship-Launched Fighters",
+          "seoName": "Ship-Launched Fighters"
+        },
+        {
+          "id": 5277,
+          "name": "Capital Ships",
+          "seoName": "Capital Ships"
+        }
+      ]
+    },
+    {
+      "id": 1131,
+      "name": "Modules",
+      "seoName": "Modules",
+      "subCategories": [
+        {
+          "id": 5271,
+          "name": "Core Internal Modules",
+          "seoName": "Core Internal Modules"
+        },
+        {
+          "id": 5272,
+          "name": "Optional Internal Modules",
+          "seoName": "Optional Internal Modules"
+        }
+      ]
+    },
+    {
+      "id": 1132,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 5268,
+          "name": "Raw Materials",
+          "seoName": "Raw Materials"
+        },
+        {
+          "id": 5269,
+          "name": "Manufactured Materials",
+          "seoName": "Manufactured Materials"
+        },
+        {
+          "id": 5270,
+          "name": "Encoded Materials",
+          "seoName": "Encoded Materials"
+        }
+      ]
+    },
+    {
+      "id": 1133,
+      "name": "Engineers",
+      "seoName": "Engineers",
+      "subCategories": [
+        {
+          "id": 5278,
+          "name": "Grade 1 Engineer",
+          "seoName": "Grade 1 Engineer"
+        },
+        {
+          "id": 5279,
+          "name": "Grade 2 Engineer",
+          "seoName": "Grade 2 Engineer"
+        },
+        {
+          "id": 5280,
+          "name": "Grade 3 Engineer",
+          "seoName": "Grade 3 Engineer"
+        },
+        {
+          "id": 5281,
+          "name": "Grade 4 Engineer",
+          "seoName": "Grade 4 Engineer"
+        },
+        {
+          "id": 5282,
+          "name": "Grade 5 Engineer",
+          "seoName": "Grade 5 Engineer"
+        },
+        {
+          "id": 6695,
+          "name": "Engineer Pack",
+          "seoName": "Engineer Pack"
+        }
+      ]
+    },
+    {
+      "id": 1432,
+      "name": "Guardian Items",
+      "seoName": "Guardian Items",
+      "subCategories": [
+        {
+          "id": 6691,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        },
+        {
+          "id": 6692,
+          "name": "Modules",
+          "seoName": "Modules"
+        },
+        {
+          "id": 6693,
+          "name": "Fighters",
+          "seoName": "Fighters"
+        },
+        {
+          "id": 6694,
+          "name": "Pack",
+          "seoName": "Pack"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 6779,
+      "name": "PC"
+    },
+    {
+      "id": 7887,
+      "name": "PS4"
+    },
+    {
+      "id": 7888,
+      "name": "Xbox One"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

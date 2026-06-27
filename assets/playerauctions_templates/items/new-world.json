@@ -1,0 +1,599 @@
+{
+  "game_id": 9045,
+  "game": "new-world",
+  "game_name": "New World",
+  "seo_name": "New-World",
+  "currencyName": "Coins",
+  "categories": [
+    {
+      "id": 1177,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 5543,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 5544,
+          "name": "Rapiers",
+          "seoName": "Rapiers"
+        },
+        {
+          "id": 5545,
+          "name": "Swords",
+          "seoName": "Swords"
+        },
+        {
+          "id": 5546,
+          "name": "Fire Staffs",
+          "seoName": "Fire Staffs"
+        },
+        {
+          "id": 5749,
+          "name": "Bows",
+          "seoName": "Bows"
+        },
+        {
+          "id": 5750,
+          "name": "Hatchets",
+          "seoName": "Hatchets"
+        },
+        {
+          "id": 5751,
+          "name": "Spears",
+          "seoName": "Spears"
+        },
+        {
+          "id": 5752,
+          "name": "Great Axes",
+          "seoName": "Great Axes"
+        },
+        {
+          "id": 5753,
+          "name": "War Hammers",
+          "seoName": "War Hammers"
+        },
+        {
+          "id": 5754,
+          "name": "Muskets",
+          "seoName": "Muskets"
+        },
+        {
+          "id": 5755,
+          "name": "Life Staffs",
+          "seoName": "Life Staffs"
+        },
+        {
+          "id": 5756,
+          "name": "Ice Gauntlets",
+          "seoName": "Ice Gauntlets"
+        }
+      ]
+    },
+    {
+      "id": 1178,
+      "name": "Bags",
+      "seoName": "Bags",
+      "subCategories": [
+        {
+          "id": 5539,
+          "name": "Satchel",
+          "seoName": "Satchel"
+        },
+        {
+          "id": 5540,
+          "name": "Duffel",
+          "seoName": "Duffel"
+        }
+      ]
+    },
+    {
+      "id": 1179,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 5541,
+          "name": "Turkey",
+          "seoName": "Turkey"
+        },
+        {
+          "id": 5542,
+          "name": "Stone",
+          "seoName": "Stone"
+        },
+        {
+          "id": 5733,
+          "name": "Ore",
+          "seoName": "Ore"
+        },
+        {
+          "id": 5734,
+          "name": "Animal Hide",
+          "seoName": "Animal Hide"
+        },
+        {
+          "id": 5735,
+          "name": "Wood",
+          "seoName": "Wood"
+        },
+        {
+          "id": 5736,
+          "name": "Fiber",
+          "seoName": "Fiber"
+        },
+        {
+          "id": 5737,
+          "name": "Fruits",
+          "seoName": "Fruits"
+        },
+        {
+          "id": 5738,
+          "name": "Vegetables",
+          "seoName": "Vegetables"
+        },
+        {
+          "id": 5739,
+          "name": "Herbs",
+          "seoName": "Herbs"
+        }
+      ]
+    },
+    {
+      "id": 1180,
+      "name": "Apparel",
+      "seoName": "Apparel",
+      "subCategories": [
+        {
+          "id": 5531,
+          "name": "Hats, Helms & Masks",
+          "seoName": "Hats, Helms & Masks"
+        },
+        {
+          "id": 5532,
+          "name": "Shirts, Coats & Robes",
+          "seoName": "Shirts, Coats & Robes"
+        },
+        {
+          "id": 5533,
+          "name": "Gloves & Gauntlets",
+          "seoName": "Gloves & Gauntlets"
+        },
+        {
+          "id": 5534,
+          "name": "Pants, Trousers & Greaves",
+          "seoName": "Pants, Trousers & Greaves"
+        },
+        {
+          "id": 5535,
+          "name": "Boots & Shoes",
+          "seoName": "Boots & Shoes"
+        },
+        {
+          "id": 5536,
+          "name": "Amulets",
+          "seoName": "Amulets"
+        },
+        {
+          "id": 5537,
+          "name": "Rings",
+          "seoName": "Rings"
+        },
+        {
+          "id": 5538,
+          "name": "Earrings",
+          "seoName": "Earrings"
+        },
+        {
+          "id": 5759,
+          "name": "Breastplates",
+          "seoName": "Breastplates"
+        }
+      ]
+    },
+    {
+      "id": 1182,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 5528,
+          "name": "Food and Drinks",
+          "seoName": "Food and Drinks"
+        },
+        {
+          "id": 5529,
+          "name": "Tinctures",
+          "seoName": "Tinctures"
+        },
+        {
+          "id": 5530,
+          "name": "Weapon Coatings",
+          "seoName": "Weapon Coatings"
+        },
+        {
+          "id": 5757,
+          "name": "Potions",
+          "seoName": "Potions"
+        }
+      ]
+    },
+    {
+      "id": 1183,
+      "name": "Dyes",
+      "seoName": "Dyes",
+      "subCategories": [
+        {
+          "id": 5547,
+          "name": "Dyes",
+          "seoName": "Dyes"
+        }
+      ]
+    },
+    {
+      "id": 1245,
+      "name": "Refining Resources",
+      "seoName": "Refining Resources",
+      "subCategories": [
+        {
+          "id": 5740,
+          "name": "Ingots",
+          "seoName": "Ingots"
+        },
+        {
+          "id": 5741,
+          "name": "Blocks",
+          "seoName": "Blocks"
+        },
+        {
+          "id": 5742,
+          "name": "Gemstones",
+          "seoName": "Gemstones"
+        },
+        {
+          "id": 5743,
+          "name": "Planks",
+          "seoName": "Planks"
+        },
+        {
+          "id": 5744,
+          "name": "Leather",
+          "seoName": "Leather"
+        },
+        {
+          "id": 5745,
+          "name": "Cloth",
+          "seoName": "Cloth"
+        },
+        {
+          "id": 5746,
+          "name": "Essence",
+          "seoName": "Essence"
+        }
+      ]
+    },
+    {
+      "id": 1246,
+      "name": "Armor Sets",
+      "seoName": "Armor Sets",
+      "subCategories": [
+        {
+          "id": 5758,
+          "name": "Voidbent",
+          "seoName": "Voidbent"
+        },
+        {
+          "id": 5896,
+          "name": "Other Armor Sets",
+          "seoName": "Other Armor Sets"
+        }
+      ]
+    },
+    {
+      "id": 1327,
+      "name": "Armor Skins",
+      "seoName": "Armor Skins",
+      "subCategories": [
+        {
+          "id": 5895,
+          "name": "Golden Rage",
+          "seoName": "Golden Rage"
+        },
+        {
+          "id": 6021,
+          "name": "Woodsman",
+          "seoName": "Woodsman"
+        },
+        {
+          "id": 6022,
+          "name": "Vinespun",
+          "seoName": "Vinespun"
+        },
+        {
+          "id": 6023,
+          "name": "Wheel of Time",
+          "seoName": "Wheel of Time"
+        },
+        {
+          "id": 6024,
+          "name": "The Royal Fisher",
+          "seoName": "The Royal Fisher"
+        },
+        {
+          "id": 6025,
+          "name": "Pirate",
+          "seoName": "Pirate"
+        }
+      ]
+    },
+    {
+      "id": 1980,
+      "name": "Trophies",
+      "seoName": "Trophies",
+      "subCategories": [
+        {
+          "id": 9680,
+          "name": "Major Crafting Trophies",
+          "seoName": "Major Crafting Trophies"
+        },
+        {
+          "id": 9681,
+          "name": "Major Gathering Trophies",
+          "seoName": "Major Gathering Trophies"
+        },
+        {
+          "id": 9682,
+          "name": "Major Combat Trophies",
+          "seoName": "Major Combat Trophies"
+        },
+        {
+          "id": 9683,
+          "name": "All Major Trophies",
+          "seoName": "All Major Trophies"
+        },
+        {
+          "id": 9698,
+          "name": "Miscellaneous Trophies",
+          "seoName": "Miscellaneous Trophies"
+        },
+        {
+          "id": 9699,
+          "name": "Combination Trophies",
+          "seoName": "Combination Trophies"
+        }
+      ]
+    },
+    {
+      "id": 1981,
+      "name": "Storage Chest",
+      "seoName": "Storage Chest",
+      "subCategories": [
+        {
+          "id": 9684,
+          "name": "Hewn Log Storage Chest",
+          "seoName": "Hewn Log Storage Chest"
+        },
+        {
+          "id": 9685,
+          "name": "Old Wood Storage Chest",
+          "seoName": "Old Wood Storage Chest"
+        },
+        {
+          "id": 9686,
+          "name": "Mossy Rock Storage Chest",
+          "seoName": "Mossy Rock Storage Chest"
+        },
+        {
+          "id": 9687,
+          "name": "Iron Storage Chest",
+          "seoName": "Iron Storage Chest"
+        },
+        {
+          "id": 9688,
+          "name": "Stone Storage Chest",
+          "seoName": "Stone Storage Chest"
+        },
+        {
+          "id": 9689,
+          "name": "Hunter Storage Chest",
+          "seoName": "Hunter Storage Chest"
+        },
+        {
+          "id": 9690,
+          "name": "Legion Storage Chest",
+          "seoName": "Legion Storage Chest"
+        },
+        {
+          "id": 9691,
+          "name": "Dynasty Storage Chest",
+          "seoName": "Dynasty Storage Chest"
+        },
+        {
+          "id": 9692,
+          "name": "Hope Storage Chest",
+          "seoName": "Hope Storage Chest"
+        },
+        {
+          "id": 9693,
+          "name": "Booty Storage Chest",
+          "seoName": "Booty Storage Chest"
+        },
+        {
+          "id": 9694,
+          "name": "Golden Steel Storage Chest",
+          "seoName": "Golden Steel Storage Chest"
+        },
+        {
+          "id": 9695,
+          "name": "Polished Marble Storage Chest",
+          "seoName": "Polished Marble Storage Chest"
+        },
+        {
+          "id": 9696,
+          "name": "Cursed Storage Chest",
+          "seoName": "Cursed Storage Chest"
+        },
+        {
+          "id": 9697,
+          "name": "Defiled Storage Chest of the Hare",
+          "seoName": "Defiled Storage Chest of the Hare"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 9920,
+      "name": "US East",
+      "subCategories": [
+        {
+          "id": 10318,
+          "name": "Empi"
+        },
+        {
+          "id": 14100,
+          "name": "Hudsonland"
+        },
+        {
+          "id": 14103,
+          "name": "Pangea"
+        },
+        {
+          "id": 10371,
+          "name": "Tumtum"
+        },
+        {
+          "id": 9939,
+          "name": "Valhalla"
+        }
+      ]
+    },
+    {
+      "id": 9916,
+      "name": "US West",
+      "subCategories": [
+        {
+          "id": 10029,
+          "name": "El Dorado"
+        }
+      ]
+    },
+    {
+      "id": 9917,
+      "name": "AP Southeast",
+      "subCategories": [
+        {
+          "id": 14206,
+          "name": "Cahokia"
+        },
+        {
+          "id": 14146,
+          "name": "Cerberus"
+        },
+        {
+          "id": 14112,
+          "name": "Crux"
+        },
+        {
+          "id": 10549,
+          "name": "Delos"
+        },
+        {
+          "id": 14111,
+          "name": "Taiyi"
+        }
+      ]
+    },
+    {
+      "id": 9919,
+      "name": "EU Central",
+      "subCategories": [
+        {
+          "id": 14115,
+          "name": "Aries"
+        },
+        {
+          "id": 9965,
+          "name": "Bifrost"
+        },
+        {
+          "id": 9969,
+          "name": "Fae"
+        },
+        {
+          "id": 9974,
+          "name": "Harmonia"
+        },
+        {
+          "id": 9987,
+          "name": "Nysa"
+        },
+        {
+          "id": 10190,
+          "name": "Saba"
+        }
+      ]
+    },
+    {
+      "id": 9918,
+      "name": "SA East",
+      "subCategories": [
+        {
+          "id": 10410,
+          "name": "Devaloka"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

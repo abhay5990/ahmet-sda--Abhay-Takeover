@@ -1,0 +1,125 @@
+{
+  "game_id": 13635,
+  "game": "enshrouded",
+  "game_name": "Enshrouded",
+  "seo_name": "Enshrouded",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 1998,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 10014,
+          "name": "Melee",
+          "seoName": "Melee"
+        },
+        {
+          "id": 10015,
+          "name": "Ranged",
+          "seoName": "Ranged"
+        },
+        {
+          "id": 10016,
+          "name": "Magic",
+          "seoName": "Magic"
+        }
+      ]
+    },
+    {
+      "id": 1999,
+      "name": "Armors",
+      "seoName": "Armors",
+      "subCategories": [
+        {
+          "id": 10017,
+          "name": "Melee Armor",
+          "seoName": "Melee Armor"
+        },
+        {
+          "id": 10018,
+          "name": "Ranged Armor",
+          "seoName": "Ranged Armor"
+        },
+        {
+          "id": 10019,
+          "name": "Magic Armor",
+          "seoName": "Magic Armor"
+        },
+        {
+          "id": 10020,
+          "name": "Cosmetic Clothing",
+          "seoName": "Cosmetic Clothing"
+        }
+      ]
+    },
+    {
+      "id": 2000,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 10021,
+          "name": "Materials",
+          "seoName": "Materials"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13636,
+      "name": "PC"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

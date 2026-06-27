@@ -59,13 +59,7 @@
   "item_data": {
     "game_series": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Battlefield 1",
-        "Battlefield V",
-        "Battlefield 2042",
-        "Battlefield 6"
-      ]
+      "required": false
     }
   }
 }

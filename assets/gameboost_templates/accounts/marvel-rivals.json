@@ -108,14 +108,14 @@
   },
   "game_items": {
     "roles": [
-      "Vanguard",
+      "Duelist",
       "Strategist",
-      "Duelist"
+      "Vanguard"
     ],
     "heroes": [
-      "Black Panther",
-      "Groot",
-      "Captain America"
+      "Psylocke",
+      "Jeff The Land Shark",
+      "Adam Warlock"
     ]
   }
 }

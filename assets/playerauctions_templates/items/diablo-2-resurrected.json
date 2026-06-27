@@ -1,0 +1,795 @@
+{
+  "game_id": 10255,
+  "game": "diablo-2-resurrected",
+  "game_name": "Diablo 2 Resurrected",
+  "seo_name": "Diablo-2-Resurrected",
+  "currencyName": "Runes",
+  "categories": [
+    {
+      "id": 1249,
+      "name": "Potions",
+      "seoName": "Potions",
+      "subCategories": [
+        {
+          "id": 5766,
+          "name": "Potions",
+          "seoName": "Potions"
+        }
+      ]
+    },
+    {
+      "id": 1251,
+      "name": "Gems",
+      "seoName": "Gems",
+      "subCategories": [
+        {
+          "id": 5768,
+          "name": "Gems",
+          "seoName": "Gems"
+        },
+        {
+          "id": 10737,
+          "name": "Perfect Amethyst",
+          "seoName": "Perfect Amethyst"
+        },
+        {
+          "id": 10738,
+          "name": "Perfect Emerald",
+          "seoName": "Perfect Emerald"
+        },
+        {
+          "id": 10739,
+          "name": "Perfect Sapphire",
+          "seoName": "Perfect Sapphire"
+        },
+        {
+          "id": 10740,
+          "name": "Perfect Skull",
+          "seoName": "Perfect Skull"
+        },
+        {
+          "id": 10741,
+          "name": "Perfect Diamond",
+          "seoName": "Perfect Diamond"
+        },
+        {
+          "id": 10742,
+          "name": "Perfect Ruby",
+          "seoName": "Perfect Ruby"
+        }
+      ]
+    },
+    {
+      "id": 1252,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 5798,
+          "name": "Materials",
+          "seoName": "Materials"
+        }
+      ]
+    },
+    {
+      "id": 1253,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 5795,
+          "name": "1-Handed Weapons",
+          "seoName": "1-Handed Weapons"
+        },
+        {
+          "id": 5796,
+          "name": "2-Handed Weapons",
+          "seoName": "2-Handed Weapons"
+        },
+        {
+          "id": 5797,
+          "name": "Ranged Weapons",
+          "seoName": "Ranged Weapons"
+        }
+      ]
+    },
+    {
+      "id": 1254,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 5769,
+          "name": "Helm",
+          "seoName": "Helm"
+        },
+        {
+          "id": 5770,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 5771,
+          "name": "Belt",
+          "seoName": "Belt"
+        },
+        {
+          "id": 5772,
+          "name": "Rings",
+          "seoName": "Rings"
+        },
+        {
+          "id": 5773,
+          "name": "Amulets",
+          "seoName": "Amulets"
+        },
+        {
+          "id": 5774,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 5775,
+          "name": "Gloves",
+          "seoName": "Gloves"
+        },
+        {
+          "id": 5799,
+          "name": "Body Armor",
+          "seoName": "Body Armor"
+        },
+        {
+          "id": 5809,
+          "name": "Shako",
+          "seoName": "Shako"
+        }
+      ]
+    },
+    {
+      "id": 1255,
+      "name": "Gear Sets",
+      "seoName": "Gear Sets",
+      "subCategories": [
+        {
+          "id": 5776,
+          "name": "Gear Sets",
+          "seoName": "Gear Sets"
+        },
+        {
+          "id": 10743,
+          "name": "Angelic Raiment",
+          "seoName": "Angelic Raiment"
+        },
+        {
+          "id": 10744,
+          "name": "Arcanna's Tricks",
+          "seoName": "Arcanna's Tricks"
+        },
+        {
+          "id": 10745,
+          "name": "Arctic Gear",
+          "seoName": "Arctic Gear"
+        },
+        {
+          "id": 10746,
+          "name": "Berserker's Arsenal",
+          "seoName": "Berserker's Arsenal"
+        },
+        {
+          "id": 10747,
+          "name": "Cathan's Traps",
+          "seoName": "Cathan's Traps"
+        },
+        {
+          "id": 10748,
+          "name": "Civerb's Vestments",
+          "seoName": "Civerb's Vestments"
+        },
+        {
+          "id": 10749,
+          "name": "Cleglaw's Brace",
+          "seoName": "Cleglaw's Brace"
+        },
+        {
+          "id": 10750,
+          "name": "Death's Disguise",
+          "seoName": "Death's Disguise"
+        },
+        {
+          "id": 10751,
+          "name": "Hsarus' Defense",
+          "seoName": "Hsarus' Defense"
+        },
+        {
+          "id": 10752,
+          "name": "Infernal Tools",
+          "seoName": "Infernal Tools"
+        },
+        {
+          "id": 10753,
+          "name": "Iratha's Finery",
+          "seoName": "Iratha's Finery"
+        },
+        {
+          "id": 10754,
+          "name": "Isenhart's Armory",
+          "seoName": "Isenhart's Armory"
+        },
+        {
+          "id": 10755,
+          "name": "Milabrega's Regalia",
+          "seoName": "Milabrega's Regalia"
+        },
+        {
+          "id": 10756,
+          "name": "Sigon's Complete Steel",
+          "seoName": "Sigon's Complete Steel"
+        },
+        {
+          "id": 10757,
+          "name": "Tancred's Battlegear",
+          "seoName": "Tancred's Battlegear"
+        },
+        {
+          "id": 10758,
+          "name": "Vidala's Rig",
+          "seoName": "Vidala's Rig"
+        },
+        {
+          "id": 10759,
+          "name": "Aldur's Watchtower",
+          "seoName": "Aldur's Watchtower"
+        },
+        {
+          "id": 10760,
+          "name": "Bul-Kathos' Children",
+          "seoName": "Bul-Kathos' Children"
+        },
+        {
+          "id": 10761,
+          "name": "Cow King's Leathers",
+          "seoName": "Cow King's Leathers"
+        },
+        {
+          "id": 10762,
+          "name": "The Disciple",
+          "seoName": "The Disciple"
+        },
+        {
+          "id": 10763,
+          "name": "Griswold's Legacy",
+          "seoName": "Griswold's Legacy"
+        },
+        {
+          "id": 10764,
+          "name": "Heaven's Brethren",
+          "seoName": "Heaven's Brethren"
+        },
+        {
+          "id": 10765,
+          "name": "Hwanin's Majesty",
+          "seoName": "Hwanin's Majesty"
+        },
+        {
+          "id": 10766,
+          "name": "Immortal King",
+          "seoName": "Immortal King"
+        },
+        {
+          "id": 10767,
+          "name": "M'avina's Battle Hymn",
+          "seoName": "M'avina's Battle Hymn"
+        },
+        {
+          "id": 10768,
+          "name": "Natalya's Odium",
+          "seoName": "Natalya's Odium"
+        },
+        {
+          "id": 10769,
+          "name": "Naj's Ancient Vestige",
+          "seoName": "Naj's Ancient Vestige"
+        },
+        {
+          "id": 10770,
+          "name": "Orphan's Call",
+          "seoName": "Orphan's Call"
+        },
+        {
+          "id": 10771,
+          "name": "Sander's Folly",
+          "seoName": "Sander's Folly"
+        },
+        {
+          "id": 10772,
+          "name": "Sazabi's Grand Tribute",
+          "seoName": "Sazabi's Grand Tribute"
+        },
+        {
+          "id": 10773,
+          "name": "Tal Rasha's Wrappings",
+          "seoName": "Tal Rasha's Wrappings"
+        },
+        {
+          "id": 10774,
+          "name": "Trang-Oul's Avatar",
+          "seoName": "Trang-Oul's Avatar"
+        }
+      ]
+    },
+    {
+      "id": 1256,
+      "name": "Uniques",
+      "seoName": "Uniques",
+      "subCategories": [
+        {
+          "id": 5788,
+          "name": "Elite Unique Items",
+          "seoName": "Elite Unique Items"
+        },
+        {
+          "id": 5789,
+          "name": "Exceptional Unique Items",
+          "seoName": "Exceptional Unique Items"
+        },
+        {
+          "id": 5790,
+          "name": "Normal Unique Items",
+          "seoName": "Normal Unique Items"
+        },
+        {
+          "id": 5791,
+          "name": "Unique Items",
+          "seoName": "Unique Items"
+        },
+        {
+          "id": 10822,
+          "name": "Griffon's Eye",
+          "seoName": "Griffon's Eye"
+        },
+        {
+          "id": 10823,
+          "name": "Death's web",
+          "seoName": "Death's web"
+        },
+        {
+          "id": 10824,
+          "name": "Death's Fathom",
+          "seoName": "Death's Fathom"
+        },
+        {
+          "id": 10825,
+          "name": "Ars Al'Diabolos",
+          "seoName": "Ars Al'Diabolos"
+        },
+        {
+          "id": 10826,
+          "name": "Ars Dul'Mephistos",
+          "seoName": "Ars Dul'Mephistos"
+        },
+        {
+          "id": 10827,
+          "name": "Ars Tor'Baalos",
+          "seoName": "Ars Tor'Baalos"
+        },
+        {
+          "id": 10828,
+          "name": "Titan's Revenge",
+          "seoName": "Titan's Revenge"
+        }
+      ]
+    },
+    {
+      "id": 1257,
+      "name": "Runewords",
+      "seoName": "Runewords",
+      "subCategories": [
+        {
+          "id": 5792,
+          "name": "Other Runewords",
+          "seoName": "Other Runewords"
+        },
+        {
+          "id": 5806,
+          "name": "Enigma Runeword",
+          "seoName": "Enigma Runeword"
+        },
+        {
+          "id": 5807,
+          "name": "Infinity Runeword",
+          "seoName": "Infinity Runeword"
+        },
+        {
+          "id": 5808,
+          "name": "Grief Runeword",
+          "seoName": "Grief Runeword"
+        },
+        {
+          "id": 5810,
+          "name": "Spirit Runeword",
+          "seoName": "Spirit Runeword"
+        },
+        {
+          "id": 6644,
+          "name": "Breath of the Dying",
+          "seoName": "Breath of the Dying"
+        },
+        {
+          "id": 6645,
+          "name": "Dream Runeword",
+          "seoName": "Dream Runeword"
+        },
+        {
+          "id": 6646,
+          "name": "Silence Runeword",
+          "seoName": "Silence Runeword"
+        },
+        {
+          "id": 6647,
+          "name": "Famine Runeword",
+          "seoName": "Famine Runeword"
+        },
+        {
+          "id": 6648,
+          "name": "Fortitude Runeword",
+          "seoName": "Fortitude Runeword"
+        },
+        {
+          "id": 6649,
+          "name": "Heart of the Oak",
+          "seoName": "Heart of the Oak"
+        },
+        {
+          "id": 6650,
+          "name": "Leaf Runeword",
+          "seoName": "Leaf Runeword"
+        },
+        {
+          "id": 6651,
+          "name": "Stealth Runeword",
+          "seoName": "Stealth Runeword"
+        },
+        {
+          "id": 6652,
+          "name": "Faith Runeword",
+          "seoName": "Faith Runeword"
+        },
+        {
+          "id": 6653,
+          "name": "Beast Runeword",
+          "seoName": "Beast Runeword"
+        },
+        {
+          "id": 6654,
+          "name": "Call to Arms",
+          "seoName": "Call to Arms"
+        },
+        {
+          "id": 6655,
+          "name": "Chains of Honor",
+          "seoName": "Chains of Honor"
+        },
+        {
+          "id": 6656,
+          "name": "Lore Runeword",
+          "seoName": "Lore Runeword"
+        },
+        {
+          "id": 6657,
+          "name": "Melody Runeword",
+          "seoName": "Melody Runeword"
+        },
+        {
+          "id": 6658,
+          "name": "Memory Runeword",
+          "seoName": "Memory Runeword"
+        },
+        {
+          "id": 6659,
+          "name": "Peace Runeword",
+          "seoName": "Peace Runeword"
+        },
+        {
+          "id": 6660,
+          "name": "Splendor Runeword",
+          "seoName": "Splendor Runeword"
+        },
+        {
+          "id": 6661,
+          "name": "White Runeword",
+          "seoName": "White Runeword"
+        },
+        {
+          "id": 6662,
+          "name": "Harmony Runeword",
+          "seoName": "Harmony Runeword"
+        }
+      ]
+    },
+    {
+      "id": 1258,
+      "name": "Misc",
+      "seoName": "Misc",
+      "subCategories": [
+        {
+          "id": 5794,
+          "name": "Misc",
+          "seoName": "Misc"
+        },
+        {
+          "id": 10775,
+          "name": "Token of Absolution",
+          "seoName": "Token of Absolution"
+        },
+        {
+          "id": 10776,
+          "name": "Key of Destruction",
+          "seoName": "Key of Destruction"
+        },
+        {
+          "id": 10777,
+          "name": "Key of Terror",
+          "seoName": "Key of Terror"
+        },
+        {
+          "id": 10778,
+          "name": "Twisted Essence of Suffering",
+          "seoName": "Twisted Essence of Suffering"
+        },
+        {
+          "id": 10779,
+          "name": "Key of Hate",
+          "seoName": "Key of Hate"
+        },
+        {
+          "id": 10780,
+          "name": "Charged Essence of Hatred",
+          "seoName": "Charged Essence of Hatred"
+        },
+        {
+          "id": 10781,
+          "name": "Festering Essence of Destruction",
+          "seoName": "Festering Essence of Destruction"
+        },
+        {
+          "id": 10782,
+          "name": "Burning Essence of Terror",
+          "seoName": "Burning Essence of Terror"
+        },
+        {
+          "id": 11253,
+          "name": "Bul-Kathos' Nightmare",
+          "seoName": "Bul-Kathos' Nightmare"
+        },
+        {
+          "id": 11254,
+          "name": "Korlic's Pain",
+          "seoName": "Korlic's Pain"
+        },
+        {
+          "id": 11255,
+          "name": "Madawc's Ire",
+          "seoName": "Madawc's Ire"
+        },
+        {
+          "id": 11256,
+          "name": "Talic's Anguish",
+          "seoName": "Talic's Anguish"
+        },
+        {
+          "id": 11257,
+          "name": "Worusk's End",
+          "seoName": "Worusk's End"
+        },
+        {
+          "id": 11258,
+          "name": "Worldstone Shards",
+          "seoName": "Worldstone Shards"
+        }
+      ]
+    },
+    {
+      "id": 1259,
+      "name": "Recipes",
+      "seoName": "Recipes",
+      "subCategories": [
+        {
+          "id": 5793,
+          "name": "Recipes",
+          "seoName": "Recipes"
+        }
+      ]
+    },
+    {
+      "id": 1264,
+      "name": "Jewelry",
+      "seoName": "Jewelry",
+      "subCategories": [
+        {
+          "id": 5813,
+          "name": "Jewelry",
+          "seoName": "Jewelry"
+        },
+        {
+          "id": 10829,
+          "name": "Rainbow Facet",
+          "seoName": "Rainbow Facet"
+        },
+        {
+          "id": 11252,
+          "name": "Colossal Ancient Jewels",
+          "seoName": "Colossal Ancient Jewels"
+        }
+      ]
+    },
+    {
+      "id": 2084,
+      "name": "Gold",
+      "seoName": "Gold",
+      "subCategories": [
+        {
+          "id": 10390,
+          "name": "Gold",
+          "seoName": "Gold"
+        }
+      ]
+    },
+    {
+      "id": 2130,
+      "name": "Charms",
+      "seoName": "Charms",
+      "subCategories": [
+        {
+          "id": 5811,
+          "name": "Hellfire Torch",
+          "seoName": "Hellfire Torch"
+        },
+        {
+          "id": 5833,
+          "name": "Annihilus Charm",
+          "seoName": "Annihilus Charm"
+        },
+        {
+          "id": 10818,
+          "name": "Grand Charm",
+          "seoName": "Grand Charm"
+        },
+        {
+          "id": 10819,
+          "name": "Large Charm",
+          "seoName": "Large Charm"
+        },
+        {
+          "id": 10820,
+          "name": "Small Charm",
+          "seoName": "Small Charm"
+        },
+        {
+          "id": 10821,
+          "name": "Resist Sundering Charm",
+          "seoName": "Resist Sundering Charm"
+        },
+        {
+          "id": 10830,
+          "name": "Gheeds Fortune",
+          "seoName": "Gheeds Fortune"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 12493,
+      "name": "PC - Ladder- Softcore"
+    },
+    {
+      "id": 12494,
+      "name": "PC - Ladder- Hardcore"
+    },
+    {
+      "id": 10269,
+      "name": "PC - Softcore"
+    },
+    {
+      "id": 10268,
+      "name": "PC - Hardcore"
+    },
+    {
+      "id": 10265,
+      "name": "Nintendo Switch - Hardcore"
+    },
+    {
+      "id": 10257,
+      "name": "Nintendo Switch - Softcore"
+    },
+    {
+      "id": 10267,
+      "name": "PS4/PS5 - Hardcore"
+    },
+    {
+      "id": 10266,
+      "name": "PS4/PS5 - Softcore"
+    },
+    {
+      "id": 10256,
+      "name": "Xbox One/Series - Hardcore"
+    },
+    {
+      "id": 10258,
+      "name": "Xbox One/Series - Softcore"
+    },
+    {
+      "id": 12496,
+      "name": "Nintendo Switch- Ladder- Hardcore"
+    },
+    {
+      "id": 12495,
+      "name": "Nintendo Switch- Ladder- Softcore"
+    },
+    {
+      "id": 12497,
+      "name": "PS4/PS5 - Ladder - Hardcore"
+    },
+    {
+      "id": 12498,
+      "name": "PS4/PS5 - Ladder - Softcore"
+    },
+    {
+      "id": 12499,
+      "name": "Xbox One/Series - Ladder - Hardcore"
+    },
+    {
+      "id": 12500,
+      "name": "Xbox One/Series - Ladder - Softcore"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "game_id": 10588,
+  "game": "halo-infinite",
+  "game_name": "Halo Infinite",
+  "seo_name": "Halo-Infinite",
+  "currencyName": "Coins",
+  "categories": [
+    {
+      "id": 1303,
+      "name": "Armor Coatings",
+      "seoName": "Armor Coatings",
+      "subCategories": [
+        {
+          "id": 5897,
+          "name": "Deathly Poison",
+          "seoName": "Deathly Poison"
+        },
+        {
+          "id": 5898,
+          "name": "Funko",
+          "seoName": "Funko"
+        },
+        {
+          "id": 5899,
+          "name": "Granular",
+          "seoName": "Granular"
+        },
+        {
+          "id": 5900,
+          "name": "Monarch",
+          "seoName": "Monarch"
+        },
+        {
+          "id": 5901,
+          "name": "Tahuna Sands",
+          "seoName": "Tahuna Sands"
+        }
+      ]
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 10589,
+      "name": "Global"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

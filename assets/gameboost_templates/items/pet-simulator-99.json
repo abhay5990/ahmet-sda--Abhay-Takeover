@@ -59,44 +59,15 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Eggs",
-        "Enchants",
-        "Pets",
-        "Potions",
-        "Other"
-      ]
+      "required": false
     },
     "pet_power": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Evolved Huge",
-        "Golden Huge",
-        "Huge",
-        "Rainbow Huge",
-        "Shiny Huge",
-        "Other"
-      ]
+      "required": false
     },
     "item_rarity": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Basic",
-        "Celestial",
-        "Divine",
-        "Epic",
-        "Exlusive",
-        "Exotic",
-        "Legendary",
-        "Mythical",
-        "Rare",
-        "Secret",
-        "Superior",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

@@ -1,0 +1,251 @@
+{
+  "game_id": 6662,
+  "game": "black-desert",
+  "game_name": "Black Desert",
+  "seo_name": "Black-Desert",
+  "currencyName": "Silver",
+  "categories": [
+    {
+      "id": 1230,
+      "name": "Accessories",
+      "seoName": "Accessories",
+      "subCategories": [
+        {
+          "id": 5708,
+          "name": "Belt",
+          "seoName": "Belt"
+        },
+        {
+          "id": 5709,
+          "name": "Earring",
+          "seoName": "Earring"
+        },
+        {
+          "id": 5710,
+          "name": "Necklace",
+          "seoName": "Necklace"
+        },
+        {
+          "id": 5711,
+          "name": "Ring",
+          "seoName": "Ring"
+        }
+      ]
+    },
+    {
+      "id": 1231,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 5712,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        }
+      ]
+    },
+    {
+      "id": 1232,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 5713,
+          "name": "Armor",
+          "seoName": "Armor"
+        }
+      ]
+    },
+    {
+      "id": 1233,
+      "name": "Alchemy Stone",
+      "seoName": "Alchemy Stone",
+      "subCategories": [
+        {
+          "id": 5714,
+          "name": "Alchemy Stone",
+          "seoName": "Alchemy Stone"
+        }
+      ]
+    },
+    {
+      "id": 1234,
+      "name": "Awakening",
+      "seoName": "Awakening",
+      "subCategories": [
+        {
+          "id": 5715,
+          "name": "Awakening",
+          "seoName": "Awakening"
+        }
+      ]
+    },
+    {
+      "id": 1235,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 5722,
+          "name": "Consumables",
+          "seoName": "Consumables"
+        }
+      ]
+    },
+    {
+      "id": 1236,
+      "name": "Mounts",
+      "seoName": "Mounts",
+      "subCategories": [
+        {
+          "id": 5721,
+          "name": "Mounts",
+          "seoName": "Mounts"
+        }
+      ]
+    },
+    {
+      "id": 1237,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 5720,
+          "name": "Materials",
+          "seoName": "Materials"
+        }
+      ]
+    },
+    {
+      "id": 1238,
+      "name": "Enhancements",
+      "seoName": "Enhancements",
+      "subCategories": [
+        {
+          "id": 5719,
+          "name": "Enhancements",
+          "seoName": "Enhancements"
+        }
+      ]
+    },
+    {
+      "id": 1239,
+      "name": "Crystals",
+      "seoName": "Crystals",
+      "subCategories": [
+        {
+          "id": 5718,
+          "name": "Crystals",
+          "seoName": "Crystals"
+        }
+      ]
+    },
+    {
+      "id": 1240,
+      "name": "Ships",
+      "seoName": "Ships",
+      "subCategories": [
+        {
+          "id": 5717,
+          "name": "Ships",
+          "seoName": "Ships"
+        }
+      ]
+    },
+    {
+      "id": 1241,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 5716,
+          "name": "Tools",
+          "seoName": "Tools"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7744,
+      "name": "PC-NA"
+    },
+    {
+      "id": 7745,
+      "name": "PC-EU"
+    },
+    {
+      "id": 9067,
+      "name": "PC-MENA"
+    },
+    {
+      "id": 7873,
+      "name": "PC-SA"
+    },
+    {
+      "id": 8004,
+      "name": "PC-SEA"
+    },
+    {
+      "id": 8005,
+      "name": "PC-Thai"
+    },
+    {
+      "id": 8624,
+      "name": "Playstation"
+    },
+    {
+      "id": 8544,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

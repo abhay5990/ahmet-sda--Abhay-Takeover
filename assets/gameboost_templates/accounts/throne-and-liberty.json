@@ -78,14 +78,10 @@
       "type": "string",
       "required": true,
       "values": [
-        "NA West",
-        "NA East",
-        "South America",
+        "America",
         "Europe",
-        "Asia Pacific",
-        "Japan",
-        "Korea",
-        "Oceania"
+        "Oceania",
+        "Japan"
       ]
     }
   }

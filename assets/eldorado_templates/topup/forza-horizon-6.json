@@ -1,0 +1,122 @@
+{
+  "game_id": "414",
+  "game": "forza-horizon-6",
+  "game_name": "Forza Horizon 6",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Xbox"
+    },
+    {
+      "id": "1",
+      "name": "PC"
+    }
+  ],
+  "attributes": {
+    "fh6-credits": {
+      "name": "Credits",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "999m-credits",
+          "name": "999.999"
+        },
+        {
+          "id": "999m-skill-points",
+          "name": "Skill Points 999M"
+        },
+        {
+          "id": "999m-wheelspins-bundle",
+          "name": "Wheelspins Bundle 999M"
+        },
+        {
+          "id": "all-cars-bundle",
+          "name": "All Cars Bundle"
+        },
+        {
+          "id": "all-in-one-bundle",
+          "name": "All-In-One Bundle"
+        },
+        {
+          "id": "car-voucher-code",
+          "name": "Car Voucher Code"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

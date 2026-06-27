@@ -1,0 +1,217 @@
+{
+  "game_id": 8132,
+  "game": "sea-of-thieves",
+  "game_name": "Sea of Thieves",
+  "seo_name": "Sea-of-Thieves",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1404,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 6439,
+          "name": "Cutlass",
+          "seoName": "Cutlass"
+        },
+        {
+          "id": 6440,
+          "name": "Flintlock",
+          "seoName": "Flintlock"
+        },
+        {
+          "id": 6441,
+          "name": "Blunderbuss",
+          "seoName": "Blunderbuss"
+        },
+        {
+          "id": 6442,
+          "name": "Eye of Reach",
+          "seoName": "Eye of Reach"
+        }
+      ]
+    },
+    {
+      "id": 1405,
+      "name": "Equipment",
+      "seoName": "Equipment",
+      "subCategories": [
+        {
+          "id": 6443,
+          "name": "Tools",
+          "seoName": "Tools"
+        },
+        {
+          "id": 6444,
+          "name": "Instruments",
+          "seoName": "Instruments"
+        }
+      ]
+    },
+    {
+      "id": 1406,
+      "name": "Treasures",
+      "seoName": "Treasures",
+      "subCategories": [
+        {
+          "id": 6445,
+          "name": "Gold Hoarders",
+          "seoName": "Gold Hoarders"
+        },
+        {
+          "id": 6446,
+          "name": "Order of Souls and Merchant Alliance",
+          "seoName": "Order of Souls and Merchant Alliance"
+        },
+        {
+          "id": 6447,
+          "name": "Mermaid Gems",
+          "seoName": "Mermaid Gems"
+        },
+        {
+          "id": 6448,
+          "name": "Other Treasure Items",
+          "seoName": "Other Treasure Items"
+        }
+      ]
+    },
+    {
+      "id": 1407,
+      "name": "Cosmetics",
+      "seoName": "Cosmetics",
+      "subCategories": [
+        {
+          "id": 6449,
+          "name": "Ship Skins",
+          "seoName": "Ship Skins"
+        },
+        {
+          "id": 6450,
+          "name": "Weapon Skins",
+          "seoName": "Weapon Skins"
+        },
+        {
+          "id": 6451,
+          "name": "Vanity",
+          "seoName": "Vanity"
+        },
+        {
+          "id": 6452,
+          "name": "Clothing",
+          "seoName": "Clothing"
+        },
+        {
+          "id": 6453,
+          "name": "Twitch Drops",
+          "seoName": "Twitch Drops"
+        }
+      ]
+    },
+    {
+      "id": 1408,
+      "name": "Ship Parts",
+      "seoName": "Ship Parts",
+      "subCategories": [
+        {
+          "id": 6454,
+          "name": "Capstans",
+          "seoName": "Capstans"
+        },
+        {
+          "id": 6455,
+          "name": "Cannons",
+          "seoName": "Cannons"
+        },
+        {
+          "id": 6456,
+          "name": "Figureheads",
+          "seoName": "Figureheads"
+        },
+        {
+          "id": 6457,
+          "name": "Flags",
+          "seoName": "Flags"
+        },
+        {
+          "id": 6458,
+          "name": "Hulls",
+          "seoName": "Hulls"
+        },
+        {
+          "id": 6459,
+          "name": "Sails",
+          "seoName": "Sails"
+        },
+        {
+          "id": 6460,
+          "name": "Wheels",
+          "seoName": "Wheels"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 8133,
+      "name": "PC"
+    },
+    {
+      "id": 13783,
+      "name": "PS"
+    },
+    {
+      "id": 8134,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

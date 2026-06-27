@@ -1,0 +1,112 @@
+{
+  "game_id": 13662,
+  "game": "arena-breakout",
+  "game_name": "Arena Breakout",
+  "seo_name": "Arena-Breakout",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 2048,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 10299,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        }
+      ]
+    },
+    {
+      "id": 2049,
+      "name": "Armors",
+      "seoName": "Armors",
+      "subCategories": [
+        {
+          "id": 10300,
+          "name": "Armors",
+          "seoName": "Armors"
+        }
+      ]
+    },
+    {
+      "id": 2050,
+      "name": "Ammo",
+      "seoName": "Ammo",
+      "subCategories": [
+        {
+          "id": 10301,
+          "name": "Ammo",
+          "seoName": "Ammo"
+        }
+      ]
+    },
+    {
+      "id": 2051,
+      "name": "Supplies",
+      "seoName": "Supplies",
+      "subCategories": [
+        {
+          "id": 10302,
+          "name": "Supplies",
+          "seoName": "Supplies"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13663,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

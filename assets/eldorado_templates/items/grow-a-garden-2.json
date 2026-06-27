@@ -1,0 +1,354 @@
+{
+  "game_id": "430",
+  "game": "grow-a-garden-2",
+  "game_name": "Grow a Garden 2",
+  "category": "CustomItem",
+  "tradeEnvironments": [],
+  "attributes": {
+    "gag2-items-type": {
+      "name": "Items Type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "seeds",
+          "name": "Seeds"
+        },
+        {
+          "id": "pets",
+          "name": "Pets"
+        },
+        {
+          "id": "sheckles",
+          "name": "Sheckles"
+        },
+        {
+          "id": "gamepasses",
+          "name": "Gamepasses"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "gag2-pets": {
+      "name": "Pets",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "frog",
+          "name": "Frog"
+        },
+        {
+          "id": "bunny",
+          "name": "Bunny"
+        },
+        {
+          "id": "owl",
+          "name": "Owl"
+        },
+        {
+          "id": "deer",
+          "name": "Deer"
+        },
+        {
+          "id": "robin",
+          "name": "Robin"
+        },
+        {
+          "id": "bee",
+          "name": "Bee"
+        },
+        {
+          "id": "monkey",
+          "name": "Monkey"
+        },
+        {
+          "id": "golden-dragonfly",
+          "name": "Golden Dragonfly"
+        },
+        {
+          "id": "unicorn",
+          "name": "Unicorn"
+        },
+        {
+          "id": "raccoon",
+          "name": "Raccoon"
+        },
+        {
+          "id": "black-dragon",
+          "name": "Black Dragon"
+        },
+        {
+          "id": "ice-serpent",
+          "name": "Ice Serpent"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        },
+        {
+          "id": "pet-bear",
+          "name": "Bear"
+        },
+        {
+          "id": "turtle",
+          "name": "Turtle"
+        }
+      ]
+    },
+    "gag2-rarity": {
+      "name": "Rarity",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "common",
+          "name": "Common"
+        },
+        {
+          "id": "uncommon",
+          "name": "Uncommon"
+        },
+        {
+          "id": "rare",
+          "name": "Rare"
+        },
+        {
+          "id": "legendary",
+          "name": "Legendary"
+        },
+        {
+          "id": "mythic",
+          "name": "Mythic"
+        },
+        {
+          "id": "super",
+          "name": "Super"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "gag2-seeds": {
+      "name": "Seeds",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "other",
+          "name": "Other"
+        },
+        {
+          "id": "gold-seed",
+          "name": "Gold Seed"
+        },
+        {
+          "id": "rainbow-seed",
+          "name": "Rainbow Seed"
+        },
+        {
+          "id": "carrot-seed",
+          "name": "Carrot Seed"
+        },
+        {
+          "id": "strawberry-seed",
+          "name": "Strawberry Seed"
+        },
+        {
+          "id": "blueberry-seed",
+          "name": "Blueberry Seed"
+        },
+        {
+          "id": "tulip-seed",
+          "name": "Tulip Seed"
+        },
+        {
+          "id": "tomato-seed",
+          "name": "Tomato Seed"
+        },
+        {
+          "id": "apple-seed",
+          "name": "Apple Seed"
+        },
+        {
+          "id": "bamboo-seed",
+          "name": "Bamboo Seed"
+        },
+        {
+          "id": "corn-seed",
+          "name": "Corn Seed"
+        },
+        {
+          "id": "cactus-seed",
+          "name": "Cactus Seed"
+        },
+        {
+          "id": "pineapple-seed",
+          "name": "Pineapple Seed"
+        },
+        {
+          "id": "mushroom-seed",
+          "name": "Mushroom Seed"
+        },
+        {
+          "id": "green-bean-seed",
+          "name": "Green Bean Seed"
+        },
+        {
+          "id": "banana-seed",
+          "name": "Banana Seed"
+        },
+        {
+          "id": "grape-seed",
+          "name": "Grape Seed"
+        },
+        {
+          "id": "coconut-seed",
+          "name": "Coconut Seed"
+        },
+        {
+          "id": "mango-seed",
+          "name": "Mango Seed"
+        },
+        {
+          "id": "dragon-fruit-seed",
+          "name": "Dragon Fruit Seed"
+        },
+        {
+          "id": "acorn-seed",
+          "name": "Acorn Seed"
+        },
+        {
+          "id": "cherry-seed",
+          "name": "Cherry Seed"
+        },
+        {
+          "id": "sunflower-seed",
+          "name": "Sunflower Seed"
+        },
+        {
+          "id": "venus-fly-trap-seed",
+          "name": "Venus Fly Trap Seed"
+        },
+        {
+          "id": "pomegranate-seed",
+          "name": "Pomegranate Seed"
+        },
+        {
+          "id": "poison-apple-seed",
+          "name": "Poison Apple Seed"
+        },
+        {
+          "id": "moon-bloom-seed",
+          "name": "Moon Bloom Seed"
+        },
+        {
+          "id": "dragons-breath-seed",
+          "name": "Dragon's Breath Seed"
+        },
+        {
+          "id": "ghost-pepper-seed",
+          "name": "Ghost Pepper Seed"
+        },
+        {
+          "id": "poison-ivy-seed",
+          "name": "Poison Ivy Seed"
+        },
+        {
+          "id": "glow-mushroom-seed",
+          "name": "Glow Mushroom Seed"
+        },
+        {
+          "id": "horned-melon-seed",
+          "name": "Horned Melon Seed"
+        },
+        {
+          "id": "baby-cactus-seed",
+          "name": "Baby Cactus Seed"
+        },
+        {
+          "id": "venom-spitter-seed",
+          "name": "Venom Spitter Seed"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

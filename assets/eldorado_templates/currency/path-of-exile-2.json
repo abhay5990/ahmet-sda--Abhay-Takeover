@@ -1,0 +1,154 @@
+{
+  "game_id": "220",
+  "game": "path-of-exile-2",
+  "game_name": "Path of Exile 2",
+  "category": "Currency",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Standard",
+      "group": "Server"
+    },
+    {
+      "id": "1",
+      "name": "Hardcore",
+      "group": "Server"
+    },
+    {
+      "id": "10",
+      "name": "Runes of Aldur Standard",
+      "group": "Server"
+    },
+    {
+      "id": "11",
+      "name": "Runes of Aldur Hardcore",
+      "group": "Server"
+    }
+  ],
+  "attributes": {
+    "path-of-exile-2-orbs": {
+      "name": "Orbs",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "chaos-orb",
+          "name": "Chaos Orb"
+        },
+        {
+          "id": "divine-orb",
+          "name": "Divine Orb"
+        },
+        {
+          "id": "exalted-orb",
+          "name": "Exalted Orb"
+        },
+        {
+          "id": "greater-jewellers-orb",
+          "name": "Greater Jeweller's Orb"
+        },
+        {
+          "id": "lesser-jewellers-orb",
+          "name": "Lesser Jeweller's Orb"
+        },
+        {
+          "id": "mirror-of-kalandra",
+          "name": "Mirror of Kalandra"
+        },
+        {
+          "id": "orb-of-alchemy",
+          "name": "Orb of Alchemy"
+        },
+        {
+          "id": "orb-of-chance",
+          "name": "Orb of Chance"
+        },
+        {
+          "id": "perfect-jewellers-orb",
+          "name": "Perfect Jeweller's Orb"
+        },
+        {
+          "id": "regal-orb",
+          "name": "Regal Orb"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

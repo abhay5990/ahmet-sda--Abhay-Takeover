@@ -1,0 +1,1340 @@
+{
+  "game_id": 5204,
+  "game": "roblox",
+  "game_name": "Roblox",
+  "seo_name": "Roblox",
+  "currencyName": "ROBUX",
+  "categories": [
+    {
+      "id": 1221,
+      "name": "Limiteds",
+      "seoName": "Limiteds",
+      "subCategories": [
+        {
+          "id": 5692,
+          "name": "Limited Items",
+          "seoName": "Limited Items"
+        },
+        {
+          "id": 5693,
+          "name": "Rare Items",
+          "seoName": "Rare Items"
+        },
+        {
+          "id": 5694,
+          "name": "Limited Unique Items",
+          "seoName": "Limited Unique Items"
+        },
+        {
+          "id": 7363,
+          "name": "Limited Faces",
+          "seoName": "Limited Faces"
+        },
+        {
+          "id": 8545,
+          "name": "Prime Gaming",
+          "seoName": "Prime Gaming"
+        }
+      ]
+    },
+    {
+      "id": 1222,
+      "name": "Accessories",
+      "seoName": "Accessories",
+      "subCategories": [
+        {
+          "id": 5695,
+          "name": "Hats",
+          "seoName": "Hats"
+        },
+        {
+          "id": 5696,
+          "name": "Hair",
+          "seoName": "Hair"
+        },
+        {
+          "id": 5697,
+          "name": "Face Accessories",
+          "seoName": "Face Accessories"
+        },
+        {
+          "id": 5698,
+          "name": "Neck Accessories",
+          "seoName": "Neck Accessories"
+        },
+        {
+          "id": 5699,
+          "name": "Shoulder Accessories",
+          "seoName": "Shoulder Accessories"
+        },
+        {
+          "id": 5700,
+          "name": "Front Accessories",
+          "seoName": "Front Accessories"
+        },
+        {
+          "id": 5701,
+          "name": "Back Accessories",
+          "seoName": "Back Accessories"
+        }
+      ]
+    },
+    {
+      "id": 1223,
+      "name": "Outfits",
+      "seoName": "Outfits",
+      "subCategories": [
+        {
+          "id": 5691,
+          "name": "Outfits",
+          "seoName": "Outfits"
+        }
+      ]
+    },
+    {
+      "id": 1224,
+      "name": "Gear",
+      "seoName": "Gear",
+      "subCategories": [
+        {
+          "id": 6366,
+          "name": "Melee Weapons",
+          "seoName": "Melee Weapons"
+        },
+        {
+          "id": 6367,
+          "name": "Ranged Weapons",
+          "seoName": "Ranged Weapons"
+        },
+        {
+          "id": 6368,
+          "name": "Explosives",
+          "seoName": "Explosives"
+        },
+        {
+          "id": 6369,
+          "name": "Power ups",
+          "seoName": "Power ups"
+        },
+        {
+          "id": 6370,
+          "name": "Navigation Enhancers",
+          "seoName": "Navigation Enhancers"
+        },
+        {
+          "id": 6371,
+          "name": "Musical Instruments",
+          "seoName": "Musical Instruments"
+        },
+        {
+          "id": 6372,
+          "name": "Social Items",
+          "seoName": "Social Items"
+        },
+        {
+          "id": 6373,
+          "name": "Building Tools",
+          "seoName": "Building Tools"
+        },
+        {
+          "id": 6374,
+          "name": "Personal Transport",
+          "seoName": "Personal Transport"
+        }
+      ]
+    },
+    {
+      "id": 1322,
+      "name": "Royale High",
+      "seoName": "Royale High",
+      "subCategories": [
+        {
+          "id": 6002,
+          "name": "RH Halos",
+          "seoName": "RH Halos"
+        },
+        {
+          "id": 6003,
+          "name": "RH Diamonds",
+          "seoName": "RH Diamonds"
+        },
+        {
+          "id": 6004,
+          "name": "RH Sets",
+          "seoName": "RH Sets"
+        }
+      ]
+    },
+    {
+      "id": 1323,
+      "name": "Dungeon Quest",
+      "seoName": "Dungeon Quest",
+      "subCategories": [
+        {
+          "id": 6005,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        }
+      ]
+    },
+    {
+      "id": 1325,
+      "name": "Breaking Point",
+      "seoName": "Breaking Point",
+      "subCategories": [
+        {
+          "id": 6009,
+          "name": "Knives",
+          "seoName": "Knives"
+        },
+        {
+          "id": 6010,
+          "name": "Chairs",
+          "seoName": "Chairs"
+        },
+        {
+          "id": 6011,
+          "name": "Guns",
+          "seoName": "Guns"
+        },
+        {
+          "id": 6012,
+          "name": "Accessories",
+          "seoName": "Accessories"
+        }
+      ]
+    },
+    {
+      "id": 1326,
+      "name": "Pet Simulator X",
+      "seoName": "Pet Simulator X",
+      "subCategories": [
+        {
+          "id": 6020,
+          "name": "PSX Pets",
+          "seoName": "PSX Pets"
+        },
+        {
+          "id": 6375,
+          "name": "Gems",
+          "seoName": "Gems"
+        },
+        {
+          "id": 8247,
+          "name": "Starfall Dragon",
+          "seoName": "Starfall Dragon"
+        },
+        {
+          "id": 8248,
+          "name": "Pixel Demon",
+          "seoName": "Pixel Demon"
+        },
+        {
+          "id": 8249,
+          "name": "Huge Lucky Cat",
+          "seoName": "Huge Lucky Cat"
+        },
+        {
+          "id": 8250,
+          "name": "Hippo Melon",
+          "seoName": "Hippo Melon"
+        },
+        {
+          "id": 8251,
+          "name": "Huge Hacked Cat",
+          "seoName": "Huge Hacked Cat"
+        },
+        {
+          "id": 8252,
+          "name": "Rainbow Unicorn",
+          "seoName": "Rainbow Unicorn"
+        },
+        {
+          "id": 8253,
+          "name": "Hellish Axolotl",
+          "seoName": "Hellish Axolotl"
+        },
+        {
+          "id": 8254,
+          "name": "Pony",
+          "seoName": "Pony"
+        },
+        {
+          "id": 8255,
+          "name": "Lucky Cat",
+          "seoName": "Lucky Cat"
+        },
+        {
+          "id": 8256,
+          "name": "Huge Cupcake",
+          "seoName": "Huge Cupcake"
+        },
+        {
+          "id": 8257,
+          "name": "Keyboard Cat",
+          "seoName": "Keyboard Cat"
+        },
+        {
+          "id": 8258,
+          "name": "Dark Matter Pixel Demon",
+          "seoName": "Dark Matter Pixel Demon"
+        },
+        {
+          "id": 8259,
+          "name": "Storm Agony",
+          "seoName": "Storm Agony"
+        },
+        {
+          "id": 8260,
+          "name": "Big Maskot",
+          "seoName": "Big Maskot"
+        },
+        {
+          "id": 8261,
+          "name": "Huge Super Corgi",
+          "seoName": "Huge Super Corgi"
+        },
+        {
+          "id": 8262,
+          "name": "Pixel Wolf",
+          "seoName": "Pixel Wolf"
+        },
+        {
+          "id": 8263,
+          "name": "Astral Axolotl",
+          "seoName": "Astral Axolotl"
+        },
+        {
+          "id": 8264,
+          "name": "Dm Pixel Demon",
+          "seoName": "Dm Pixel Demon"
+        },
+        {
+          "id": 8265,
+          "name": "Nature Dragon",
+          "seoName": "Nature Dragon"
+        },
+        {
+          "id": 8266,
+          "name": "Rainbow Pixel Demon",
+          "seoName": "Rainbow Pixel Demon"
+        },
+        {
+          "id": 8267,
+          "name": "Rave Crab",
+          "seoName": "Rave Crab"
+        },
+        {
+          "id": 8268,
+          "name": "Orca",
+          "seoName": "Orca"
+        },
+        {
+          "id": 8269,
+          "name": "Huge Storm Agony",
+          "seoName": "Huge Storm Agony"
+        },
+        {
+          "id": 8270,
+          "name": "Huge Festive Cat",
+          "seoName": "Huge Festive Cat"
+        },
+        {
+          "id": 8271,
+          "name": "Pog Cat",
+          "seoName": "Pog Cat"
+        },
+        {
+          "id": 8272,
+          "name": "Huge Cat",
+          "seoName": "Huge Cat"
+        },
+        {
+          "id": 8273,
+          "name": "Galaxy Fox",
+          "seoName": "Galaxy Fox"
+        },
+        {
+          "id": 8274,
+          "name": "Party Cat",
+          "seoName": "Party Cat"
+        },
+        {
+          "id": 8275,
+          "name": "Knife Cat",
+          "seoName": "Knife Cat"
+        },
+        {
+          "id": 8276,
+          "name": "Dominus",
+          "seoName": "Dominus"
+        },
+        {
+          "id": 8277,
+          "name": "Huge Dog",
+          "seoName": "Huge Dog"
+        },
+        {
+          "id": 8365,
+          "name": "Golden Huge Hell Rock",
+          "seoName": "Golden Huge Hell Rock"
+        },
+        {
+          "id": 8366,
+          "name": "Huge Inferno Cat",
+          "seoName": "Huge Inferno Cat"
+        },
+        {
+          "id": 8367,
+          "name": "Titanic Balloon Monkey",
+          "seoName": "Titanic Balloon Monkey"
+        },
+        {
+          "id": 8368,
+          "name": "Golden Huge Party Cat",
+          "seoName": "Golden Huge Party Cat"
+        },
+        {
+          "id": 8369,
+          "name": "Titanic Jolly Cat",
+          "seoName": "Titanic Jolly Cat"
+        }
+      ]
+    },
+    {
+      "id": 1329,
+      "name": "Your Bizarre Adventure",
+      "seoName": "Your Bizarre Adventure",
+      "subCategories": [
+        {
+          "id": 6031,
+          "name": "YBA Items",
+          "seoName": "YBA Items"
+        },
+        {
+          "id": 8338,
+          "name": "Horseman Of Heaven HOH",
+          "seoName": "Horseman Of Heaven HOH"
+        },
+        {
+          "id": 8339,
+          "name": "Skins",
+          "seoName": "Skins"
+        },
+        {
+          "id": 8340,
+          "name": "OAA MIH",
+          "seoName": "OAA MIH"
+        },
+        {
+          "id": 8341,
+          "name": "Lucky Arrow",
+          "seoName": "Lucky Arrow"
+        },
+        {
+          "id": 8342,
+          "name": "TWAU",
+          "seoName": "TWAU"
+        },
+        {
+          "id": 8343,
+          "name": "Stands",
+          "seoName": "Stands"
+        },
+        {
+          "id": 8344,
+          "name": "Tusk Act 4",
+          "seoName": "Tusk Act 4"
+        },
+        {
+          "id": 8345,
+          "name": "The World Over Heaven",
+          "seoName": "The World Over Heaven"
+        },
+        {
+          "id": 8346,
+          "name": "KCR",
+          "seoName": "KCR"
+        },
+        {
+          "id": 8347,
+          "name": "Ancient Scroll",
+          "seoName": "Ancient Scroll"
+        },
+        {
+          "id": 8348,
+          "name": "White Snake",
+          "seoName": "White Snake"
+        },
+        {
+          "id": 8349,
+          "name": "SCR",
+          "seoName": "SCR"
+        },
+        {
+          "id": 8350,
+          "name": "Ger",
+          "seoName": "Ger"
+        },
+        {
+          "id": 8351,
+          "name": "SPTW",
+          "seoName": "SPTW"
+        }
+      ]
+    },
+    {
+      "id": 1330,
+      "name": "Anime Fight Simulator",
+      "seoName": "Anime Fight Simulator",
+      "subCategories": [
+        {
+          "id": 6032,
+          "name": "AFS Items",
+          "seoName": "AFS Items"
+        }
+      ]
+    },
+    {
+      "id": 1474,
+      "name": "STK Weapons",
+      "seoName": "STK Weapons",
+      "subCategories": [
+        {
+          "id": 7169,
+          "name": "Noxious Reaver",
+          "seoName": "Noxious Reaver"
+        },
+        {
+          "id": 7170,
+          "name": "Arachnaphobia",
+          "seoName": "Arachnaphobia"
+        },
+        {
+          "id": 7171,
+          "name": "Axe of the Reaper",
+          "seoName": "Axe of the Reaper"
+        },
+        {
+          "id": 7172,
+          "name": "Permafrost",
+          "seoName": "Permafrost"
+        },
+        {
+          "id": 7173,
+          "name": "Deadly Dark Scythe",
+          "seoName": "Deadly Dark Scythe"
+        },
+        {
+          "id": 7174,
+          "name": "Obsidian",
+          "seoName": "Obsidian"
+        },
+        {
+          "id": 7175,
+          "name": "Cupid’s Spear",
+          "seoName": "Cupid’s Spear"
+        },
+        {
+          "id": 7176,
+          "name": "1000 Degree Knife",
+          "seoName": "1000 Degree Knife"
+        },
+        {
+          "id": 7177,
+          "name": "Jackman’s Blade",
+          "seoName": "Jackman’s Blade"
+        },
+        {
+          "id": 7178,
+          "name": "Key to the Rocket",
+          "seoName": "Key to the Rocket"
+        },
+        {
+          "id": 7179,
+          "name": "Limited Weapons",
+          "seoName": "Limited Weapons"
+        },
+        {
+          "id": 7180,
+          "name": "Mechatorque",
+          "seoName": "Mechatorque"
+        },
+        {
+          "id": 7181,
+          "name": "Kunzite Crusader",
+          "seoName": "Kunzite Crusader"
+        },
+        {
+          "id": 7182,
+          "name": "O Christmas Tree",
+          "seoName": "O Christmas Tree"
+        },
+        {
+          "id": 7183,
+          "name": "Plastic Puncture",
+          "seoName": "Plastic Puncture"
+        },
+        {
+          "id": 7184,
+          "name": "Breath of Winter",
+          "seoName": "Breath of Winter"
+        },
+        {
+          "id": 7185,
+          "name": "Catacylsm",
+          "seoName": "Catacylsm"
+        },
+        {
+          "id": 7186,
+          "name": "Charred Rolling Pin",
+          "seoName": "Charred Rolling Pin"
+        },
+        {
+          "id": 7187,
+          "name": "Scimitar of the Screamer",
+          "seoName": "Scimitar of the Screamer"
+        },
+        {
+          "id": 7188,
+          "name": "Skadi’s Glacier Spear",
+          "seoName": "Skadi’s Glacier Spear"
+        },
+        {
+          "id": 7189,
+          "name": "Dragnarok",
+          "seoName": "Dragnarok"
+        },
+        {
+          "id": 7190,
+          "name": "Fang of the Black Widow",
+          "seoName": "Fang of the Black Widow"
+        },
+        {
+          "id": 7191,
+          "name": "Toxic Lantern",
+          "seoName": "Toxic Lantern"
+        },
+        {
+          "id": 7192,
+          "name": "Toxic Sorrow",
+          "seoName": "Toxic Sorrow"
+        },
+        {
+          "id": 7193,
+          "name": "Vampire Vanquisher",
+          "seoName": "Vampire Vanquisher"
+        },
+        {
+          "id": 8418,
+          "name": "Frostbreath",
+          "seoName": "Frostbreath"
+        },
+        {
+          "id": 8419,
+          "name": "Poltergeist Scythe",
+          "seoName": "Poltergeist Scythe"
+        },
+        {
+          "id": 8420,
+          "name": "Gloomhammer",
+          "seoName": "Gloomhammer"
+        },
+        {
+          "id": 8421,
+          "name": "Deadly Fark Scythe",
+          "seoName": "Deadly Fark Scythe"
+        },
+        {
+          "id": 8422,
+          "name": "Cupid’s Heartstopper",
+          "seoName": "Cupid’s Heartstopper"
+        },
+        {
+          "id": 8423,
+          "name": "Shamrock Scimitar",
+          "seoName": "Shamrock Scimitar"
+        },
+        {
+          "id": 8424,
+          "name": "Axe of the Fairy",
+          "seoName": "Axe of the Fairy"
+        },
+        {
+          "id": 8425,
+          "name": "Hallow’s End",
+          "seoName": "Hallow’s End"
+        },
+        {
+          "id": 8426,
+          "name": "Blood Ruby",
+          "seoName": "Blood Ruby"
+        },
+        {
+          "id": 8427,
+          "name": "Crimson Crusader",
+          "seoName": "Crimson Crusader"
+        },
+        {
+          "id": 8428,
+          "name": "Fey’s Slycer",
+          "seoName": "Fey’s Slycer"
+        },
+        {
+          "id": 8429,
+          "name": "Collector’s 500M Slycer",
+          "seoName": "Collector’s 500M Slycer"
+        },
+        {
+          "id": 8430,
+          "name": "Collector’s 900M Slycer",
+          "seoName": "Collector’s 900M Slycer"
+        },
+        {
+          "id": 8431,
+          "name": "Collector’s 700M Slycer",
+          "seoName": "Collector’s 700M Slycer"
+        },
+        {
+          "id": 8432,
+          "name": "Collector’s 800M Slycer",
+          "seoName": "Collector’s 800M Slycer"
+        },
+        {
+          "id": 8433,
+          "name": "Wings Of Cupid",
+          "seoName": "Wings Of Cupid"
+        },
+        {
+          "id": 8434,
+          "name": "Gilded Hearts",
+          "seoName": "Gilded Hearts"
+        },
+        {
+          "id": 8435,
+          "name": "Over The Rainbow",
+          "seoName": "Over The Rainbow"
+        },
+        {
+          "id": 8436,
+          "name": "Cold Wings Of Cupid",
+          "seoName": "Cold Wings Of Cupid"
+        },
+        {
+          "id": 8437,
+          "name": "Clucky’s Corruptor",
+          "seoName": "Clucky’s Corruptor"
+        },
+        {
+          "id": 8438,
+          "name": "Fae’s Golden Lament",
+          "seoName": "Fae’s Golden Lament"
+        },
+        {
+          "id": 8439,
+          "name": "Brutostein",
+          "seoName": "Brutostein"
+        },
+        {
+          "id": 8440,
+          "name": "Cold Corrupt Clucky",
+          "seoName": "Cold Corrupt Clucky"
+        },
+        {
+          "id": 8441,
+          "name": "Corrupt Clucky",
+          "seoName": "Corrupt Clucky"
+        },
+        {
+          "id": 8442,
+          "name": "The Grim Reaper",
+          "seoName": "The Grim Reaper"
+        },
+        {
+          "id": 8443,
+          "name": "Deadly Dark Reaper",
+          "seoName": "Deadly Dark Reaper"
+        },
+        {
+          "id": 8444,
+          "name": "Corrupt Cupid",
+          "seoName": "Corrupt Cupid"
+        },
+        {
+          "id": 8445,
+          "name": "Corrupt Alfred",
+          "seoName": "Corrupt Alfred"
+        },
+        {
+          "id": 8446,
+          "name": "Corrupt Maya Rose",
+          "seoName": "Corrupt Maya Rose"
+        },
+        {
+          "id": 8447,
+          "name": "Corrupt Papa Roni",
+          "seoName": "Corrupt Papa Roni"
+        },
+        {
+          "id": 8448,
+          "name": "Divine Cupid",
+          "seoName": "Divine Cupid"
+        },
+        {
+          "id": 8449,
+          "name": "Snow Castle",
+          "seoName": "Snow Castle"
+        }
+      ]
+    },
+    {
+      "id": 1475,
+      "name": "ASTD Units and Items",
+      "seoName": "ASTD Units and Items",
+      "subCategories": [
+        {
+          "id": 7194,
+          "name": "Fire King",
+          "seoName": "Fire King"
+        },
+        {
+          "id": 7195,
+          "name": "Underwater God",
+          "seoName": "Underwater God"
+        },
+        {
+          "id": 7196,
+          "name": "Ice X-Marine",
+          "seoName": "Ice X-Marine"
+        },
+        {
+          "id": 7197,
+          "name": "Legendary Leader",
+          "seoName": "Legendary Leader"
+        },
+        {
+          "id": 7198,
+          "name": "Flower Trainer",
+          "seoName": "Flower Trainer"
+        },
+        {
+          "id": 7199,
+          "name": "Shirtless Devil",
+          "seoName": "Shirtless Devil"
+        },
+        {
+          "id": 7200,
+          "name": "Demonside",
+          "seoName": "Demonside"
+        },
+        {
+          "id": 7201,
+          "name": "Davi",
+          "seoName": "Davi"
+        },
+        {
+          "id": 7202,
+          "name": "Shield Master",
+          "seoName": "Shield Master"
+        },
+        {
+          "id": 7203,
+          "name": "Ice Jaw",
+          "seoName": "Ice Jaw"
+        },
+        {
+          "id": 7204,
+          "name": "The Boys",
+          "seoName": "The Boys"
+        },
+        {
+          "id": 7205,
+          "name": "Zorro",
+          "seoName": "Zorro"
+        },
+        {
+          "id": 7206,
+          "name": "Kogan",
+          "seoName": "Kogan"
+        },
+        {
+          "id": 7207,
+          "name": "Gogeta",
+          "seoName": "Gogeta"
+        },
+        {
+          "id": 7208,
+          "name": "Sabo",
+          "seoName": "Sabo"
+        },
+        {
+          "id": 7209,
+          "name": "Salesman",
+          "seoName": "Salesman"
+        },
+        {
+          "id": 7210,
+          "name": "Kovegu",
+          "seoName": "Kovegu"
+        },
+        {
+          "id": 7211,
+          "name": "Ice Dragon",
+          "seoName": "Ice Dragon"
+        },
+        {
+          "id": 7212,
+          "name": "Lightning Bolt",
+          "seoName": "Lightning Bolt"
+        },
+        {
+          "id": 7213,
+          "name": "Gun Girl",
+          "seoName": "Gun Girl"
+        },
+        {
+          "id": 7214,
+          "name": "Zio",
+          "seoName": "Zio"
+        },
+        {
+          "id": 7215,
+          "name": "Mist Man",
+          "seoName": "Mist Man"
+        },
+        {
+          "id": 7216,
+          "name": "Joke da Fool",
+          "seoName": "Joke da Fool"
+        },
+        {
+          "id": 7217,
+          "name": "Toshiro",
+          "seoName": "Toshiro"
+        },
+        {
+          "id": 7218,
+          "name": "Maid Waifu",
+          "seoName": "Maid Waifu"
+        },
+        {
+          "id": 7219,
+          "name": "Large Mother",
+          "seoName": "Large Mother"
+        },
+        {
+          "id": 7220,
+          "name": "Captain Sparkle",
+          "seoName": "Captain Sparkle"
+        },
+        {
+          "id": 7221,
+          "name": "Bright Reaper",
+          "seoName": "Bright Reaper"
+        },
+        {
+          "id": 7222,
+          "name": "Old Will",
+          "seoName": "Old Will"
+        },
+        {
+          "id": 8390,
+          "name": "Others",
+          "seoName": "Others"
+        }
+      ]
+    },
+    {
+      "id": 1775,
+      "name": "Project Slayers",
+      "seoName": "Project Slayers",
+      "subCategories": [
+        {
+          "id": 8360,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        },
+        {
+          "id": 8361,
+          "name": "Accessories",
+          "seoName": "Accessories"
+        },
+        {
+          "id": 8362,
+          "name": "Consumables",
+          "seoName": "Consumables"
+        },
+        {
+          "id": 8363,
+          "name": "Currencies",
+          "seoName": "Currencies"
+        },
+        {
+          "id": 8364,
+          "name": "Miscellaneous",
+          "seoName": "Miscellaneous"
+        }
+      ]
+    },
+    {
+      "id": 1804,
+      "name": "Anime Adventures",
+      "seoName": "Anime Adventures",
+      "subCategories": [
+        {
+          "id": 8515,
+          "name": "New Units",
+          "seoName": "New Units"
+        },
+        {
+          "id": 8516,
+          "name": "Secret Units",
+          "seoName": "Secret Units"
+        },
+        {
+          "id": 8517,
+          "name": "Mythic Units",
+          "seoName": "Mythic Units"
+        },
+        {
+          "id": 8518,
+          "name": "Legendary Units",
+          "seoName": "Legendary Units"
+        },
+        {
+          "id": 8519,
+          "name": "Epic Units",
+          "seoName": "Epic Units"
+        },
+        {
+          "id": 8520,
+          "name": "Rare Units",
+          "seoName": "Rare Units"
+        },
+        {
+          "id": 8521,
+          "name": "Trait Reroll",
+          "seoName": "Trait Reroll"
+        },
+        {
+          "id": 8522,
+          "name": "XP Items",
+          "seoName": "XP Items"
+        }
+      ]
+    },
+    {
+      "id": 1806,
+      "name": "Blade Ball",
+      "seoName": "Blade Ball",
+      "subCategories": [
+        {
+          "id": 8546,
+          "name": "Sword Skins",
+          "seoName": "Sword Skins"
+        }
+      ]
+    },
+    {
+      "id": 1808,
+      "name": "Bedwars",
+      "seoName": "Bedwars",
+      "subCategories": [
+        {
+          "id": 8553,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        },
+        {
+          "id": 8554,
+          "name": "Tools",
+          "seoName": "Tools"
+        },
+        {
+          "id": 8555,
+          "name": "Blocks",
+          "seoName": "Blocks"
+        },
+        {
+          "id": 8556,
+          "name": "Armor",
+          "seoName": "Armor"
+        },
+        {
+          "id": 8557,
+          "name": "Currencies",
+          "seoName": "Currencies"
+        }
+      ]
+    },
+    {
+      "id": 1809,
+      "name": "Haze Piece",
+      "seoName": "Haze Piece",
+      "subCategories": [
+        {
+          "id": 8558,
+          "name": "Fruits",
+          "seoName": "Fruits"
+        }
+      ]
+    },
+    {
+      "id": 1810,
+      "name": "Arm Wrestle Simulator",
+      "seoName": "Arm Wrestle Simulator",
+      "subCategories": [
+        {
+          "id": 8559,
+          "name": "Equipment",
+          "seoName": "Equipment"
+        },
+        {
+          "id": 8560,
+          "name": "AWS Pets",
+          "seoName": "AWS Pets"
+        },
+        {
+          "id": 8561,
+          "name": "Trails",
+          "seoName": "Trails"
+        },
+        {
+          "id": 8562,
+          "name": "Arms",
+          "seoName": "Arms"
+        }
+      ]
+    },
+    {
+      "id": 1825,
+      "name": "Elemental Dungeons",
+      "seoName": "Elemental Dungeons",
+      "subCategories": [
+        {
+          "id": 8623,
+          "name": "Boost",
+          "seoName": "Boost"
+        },
+        {
+          "id": 8624,
+          "name": "Equipment",
+          "seoName": "Equipment"
+        }
+      ]
+    },
+    {
+      "id": 1840,
+      "name": "Da Hood",
+      "seoName": "Da Hood",
+      "subCategories": [
+        {
+          "id": 8678,
+          "name": "Da Hood Skins",
+          "seoName": "Da Hood Skins"
+        }
+      ]
+    },
+    {
+      "id": 1938,
+      "name": "RIVALS",
+      "seoName": "RIVALS",
+      "subCategories": [
+        {
+          "id": 9623,
+          "name": "Skins",
+          "seoName": "Skins"
+        },
+        {
+          "id": 9624,
+          "name": "Keys",
+          "seoName": "Keys"
+        }
+      ]
+    },
+    {
+      "id": 1974,
+      "name": "Creatures of Sonaria",
+      "seoName": "Creatures of Sonaria",
+      "subCategories": [
+        {
+          "id": 9660,
+          "name": "Creatures",
+          "seoName": "Creatures"
+        },
+        {
+          "id": 9661,
+          "name": "Plushies",
+          "seoName": "Plushies"
+        },
+        {
+          "id": 9662,
+          "name": "Tokens",
+          "seoName": "Tokens"
+        },
+        {
+          "id": 9663,
+          "name": "Palettes",
+          "seoName": "Palettes"
+        }
+      ]
+    },
+    {
+      "id": 1975,
+      "name": "A Universal Time",
+      "seoName": "A Universal Time",
+      "subCategories": [
+        {
+          "id": 9664,
+          "name": "Stands",
+          "seoName": "Stands"
+        },
+        {
+          "id": 9665,
+          "name": "Items",
+          "seoName": "Items"
+        }
+      ]
+    },
+    {
+      "id": 1978,
+      "name": "Five Nights TD",
+      "seoName": "Five Nights TD",
+      "subCategories": [
+        {
+          "id": 9673,
+          "name": "Units",
+          "seoName": "Units"
+        },
+        {
+          "id": 9674,
+          "name": "Souls",
+          "seoName": "Souls"
+        },
+        {
+          "id": 9675,
+          "name": "Items and Accessories",
+          "seoName": "Items and Accessories"
+        }
+      ]
+    },
+    {
+      "id": 1979,
+      "name": "Anime Vanguards",
+      "seoName": "Anime Vanguards",
+      "subCategories": [
+        {
+          "id": 9676,
+          "name": "Gems",
+          "seoName": "Gems"
+        },
+        {
+          "id": 9677,
+          "name": "Units",
+          "seoName": "Units"
+        },
+        {
+          "id": 9678,
+          "name": "Items",
+          "seoName": "Items"
+        },
+        {
+          "id": 9679,
+          "name": "Gamepasses",
+          "seoName": "Gamepasses"
+        }
+      ]
+    },
+    {
+      "id": 2058,
+      "name": "Grow A Garden",
+      "seoName": "Grow A Garden",
+      "subCategories": [
+        {
+          "id": 10323,
+          "name": "Candy Blossom",
+          "seoName": "Candy Blossom"
+        },
+        {
+          "id": 10324,
+          "name": "Eggs",
+          "seoName": "Eggs"
+        },
+        {
+          "id": 10325,
+          "name": "Pets",
+          "seoName": "Pets"
+        },
+        {
+          "id": 10326,
+          "name": "Seeds",
+          "seoName": "Seeds"
+        },
+        {
+          "id": 10327,
+          "name": "Sheckles",
+          "seoName": "Sheckles"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 5205,
+      "name": "Tax Not Covered"
+    },
+    {
+      "id": 13417,
+      "name": "Tax Covered"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

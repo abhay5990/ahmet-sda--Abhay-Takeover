@@ -1,0 +1,206 @@
+{
+  "game_id": 7638,
+  "game": "paladins",
+  "game_name": "Paladins",
+  "seo_name": "Paladins",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1367,
+      "name": "Treasure Chest",
+      "seoName": "Treasure Chest",
+      "subCategories": [
+        {
+          "id": 6213,
+          "name": "Diamond Trove",
+          "seoName": "Diamond Trove"
+        },
+        {
+          "id": 6214,
+          "name": "Festive Presents",
+          "seoName": "Festive Presents"
+        },
+        {
+          "id": 6215,
+          "name": "Flair and Style",
+          "seoName": "Flair and Style"
+        },
+        {
+          "id": 6216,
+          "name": "gen-LOCK",
+          "seoName": "gen-LOCK"
+        },
+        {
+          "id": 6217,
+          "name": "Golden Cache",
+          "seoName": "Golden Cache"
+        },
+        {
+          "id": 6218,
+          "name": "Kawaii Collection",
+          "seoName": "Kawaii Collection"
+        },
+        {
+          "id": 6219,
+          "name": "Magistrate's Resolve",
+          "seoName": "Magistrate's Resolve"
+        },
+        {
+          "id": 6220,
+          "name": "Pandemonium",
+          "seoName": "Pandemonium"
+        }
+      ]
+    },
+    {
+      "id": 1368,
+      "name": "Cosmetics",
+      "seoName": "Cosmetics",
+      "subCategories": [
+        {
+          "id": 6221,
+          "name": "Mount Skins",
+          "seoName": "Mount Skins"
+        },
+        {
+          "id": 6222,
+          "name": "Avatars",
+          "seoName": "Avatars"
+        },
+        {
+          "id": 6223,
+          "name": "Death Stamps",
+          "seoName": "Death Stamps"
+        },
+        {
+          "id": 6224,
+          "name": "Others Cosmetics",
+          "seoName": "Others Cosmetics"
+        }
+      ]
+    },
+    {
+      "id": 1369,
+      "name": "Champion Skins",
+      "seoName": "Champion Skins",
+      "subCategories": [
+        {
+          "id": 6225,
+          "name": "Exclusive",
+          "seoName": "Exclusive"
+        },
+        {
+          "id": 6226,
+          "name": "Mastery",
+          "seoName": "Mastery"
+        },
+        {
+          "id": 6227,
+          "name": "Limited",
+          "seoName": "Limited"
+        },
+        {
+          "id": 6228,
+          "name": "Epic",
+          "seoName": "Epic"
+        },
+        {
+          "id": 6229,
+          "name": "Legendary",
+          "seoName": "Legendary"
+        }
+      ]
+    },
+    {
+      "id": 1447,
+      "name": "Credits",
+      "seoName": "Credits",
+      "subCategories": [
+        {
+          "id": 6942,
+          "name": "Credits",
+          "seoName": "Credits"
+        }
+      ]
+    },
+    {
+      "id": 1448,
+      "name": "Crystals",
+      "seoName": "Crystals",
+      "subCategories": [
+        {
+          "id": 6943,
+          "name": "Crystals",
+          "seoName": "Crystals"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 8543,
+      "name": "Nintendo Switch"
+    },
+    {
+      "id": 7641,
+      "name": "PC"
+    },
+    {
+      "id": 7642,
+      "name": "PS4"
+    },
+    {
+      "id": 7643,
+      "name": "Xbox One"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

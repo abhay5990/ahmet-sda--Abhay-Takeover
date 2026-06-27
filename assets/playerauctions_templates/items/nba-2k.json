@@ -1,0 +1,131 @@
+{
+  "game_id": 10063,
+  "game": "nba-2k",
+  "game_name": "NBA 2K",
+  "seo_name": "NBA-2K",
+  "currencyName": "MT",
+  "categories": [
+    {
+      "id": 2044,
+      "name": "VC",
+      "seoName": "VC",
+      "subCategories": [
+        {
+          "id": 10282,
+          "name": "15000 VC",
+          "seoName": "15000 VC"
+        },
+        {
+          "id": 10283,
+          "name": "35000 VC",
+          "seoName": "35000 VC"
+        },
+        {
+          "id": 10284,
+          "name": "75000 VC",
+          "seoName": "75000 VC"
+        },
+        {
+          "id": 10285,
+          "name": "200000 VC",
+          "seoName": "200000 VC"
+        },
+        {
+          "id": 10286,
+          "name": "450000 VC",
+          "seoName": "450000 VC"
+        }
+      ]
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14601,
+      "name": "NBA 2K26",
+      "subCategories": [
+        {
+          "id": 14602,
+          "name": "PC"
+        },
+        {
+          "id": 14603,
+          "name": "Playstation"
+        },
+        {
+          "id": 14604,
+          "name": "Switch"
+        },
+        {
+          "id": 14605,
+          "name": "Xbox"
+        }
+      ]
+    },
+    {
+      "id": 13919,
+      "name": "NBA 2K25",
+      "subCategories": [
+        {
+          "id": 13920,
+          "name": "PC"
+        },
+        {
+          "id": 13921,
+          "name": "PlayStation"
+        },
+        {
+          "id": 13923,
+          "name": "Switch"
+        },
+        {
+          "id": 13922,
+          "name": "Xbox"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

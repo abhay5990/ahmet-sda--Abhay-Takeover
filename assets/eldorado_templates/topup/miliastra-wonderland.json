@@ -1,0 +1,150 @@
+{
+  "game_id": "315",
+  "game": "miliastra-wonderland",
+  "game_name": "Miliastra Wonderland",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "EU",
+      "group": "Region"
+    },
+    {
+      "id": "1",
+      "name": "NA",
+      "group": "Region"
+    },
+    {
+      "id": "2",
+      "name": "Asia",
+      "group": "Region"
+    },
+    {
+      "id": "3",
+      "name": "TW, HK, MO",
+      "group": "Region"
+    }
+  ],
+  "attributes": {
+    "miliastra-wonderland-chronal-nexus": {
+      "name": "Chronal Nexus",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "60-chronal-nexus",
+          "name": "60 Chronal Nexus"
+        },
+        {
+          "id": "330-chronal-nexus",
+          "name": "330  Chronal Nexus"
+        },
+        {
+          "id": "1090-chronal-nexus",
+          "name": "1090 Chronal Nexus"
+        },
+        {
+          "id": "2240-chronal-nexus",
+          "name": "2240 Chronal Nexus"
+        },
+        {
+          "id": "3880-chronal-nexus",
+          "name": "3880 Chronal Nexus"
+        },
+        {
+          "id": "8080-chronal-nexus",
+          "name": "8080 Chronal Nexus"
+        },
+        {
+          "id": "16160-chronal-nexus",
+          "name": "16160 Chronal Nexus"
+        },
+        {
+          "id": "24240-chronal-nexus",
+          "name": "24240 Chronal Nexus"
+        },
+        {
+          "id": "32320-chronal-nexus",
+          "name": "32320 Chronal Nexus"
+        },
+        {
+          "id": "all-in-one-bundle",
+          "name": "All-In-One Bundle"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

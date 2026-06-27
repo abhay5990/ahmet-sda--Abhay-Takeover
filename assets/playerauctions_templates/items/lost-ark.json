@@ -1,0 +1,569 @@
+{
+  "game_id": 9027,
+  "game": "lost-ark",
+  "game_name": "Lost Ark",
+  "seo_name": "Lost-Ark",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1272,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 5864,
+          "name": "Consumables",
+          "seoName": "Consumables"
+        },
+        {
+          "id": 6461,
+          "name": "Bombs and Grenades",
+          "seoName": "Bombs and Grenades"
+        },
+        {
+          "id": 6462,
+          "name": "Potions",
+          "seoName": "Potions"
+        },
+        {
+          "id": 6463,
+          "name": "Health Recovery Items",
+          "seoName": "Health Recovery Items"
+        },
+        {
+          "id": 6464,
+          "name": "Robes",
+          "seoName": "Robes"
+        }
+      ]
+    },
+    {
+      "id": 1273,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 5865,
+          "name": "Tools",
+          "seoName": "Tools"
+        }
+      ]
+    },
+    {
+      "id": 1274,
+      "name": "Runes",
+      "seoName": "Runes",
+      "subCategories": [
+        {
+          "id": 5866,
+          "name": "Runes",
+          "seoName": "Runes"
+        }
+      ]
+    },
+    {
+      "id": 1275,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 5862,
+          "name": "Armor Sets",
+          "seoName": "Armor Sets"
+        },
+        {
+          "id": 5869,
+          "name": "Armor",
+          "seoName": "Armor"
+        }
+      ]
+    },
+    {
+      "id": 1276,
+      "name": "Pets",
+      "seoName": "Pets",
+      "subCategories": [
+        {
+          "id": 5867,
+          "name": "Pets",
+          "seoName": "Pets"
+        }
+      ]
+    },
+    {
+      "id": 1277,
+      "name": "Mounts",
+      "seoName": "Mounts",
+      "subCategories": [
+        {
+          "id": 5841,
+          "name": "Relic Mounts",
+          "seoName": "Relic Mounts"
+        },
+        {
+          "id": 5842,
+          "name": "Legendary Mounts",
+          "seoName": "Legendary Mounts"
+        },
+        {
+          "id": 5843,
+          "name": "Epic Mounts",
+          "seoName": "Epic Mounts"
+        },
+        {
+          "id": 5844,
+          "name": "Rare Mounts",
+          "seoName": "Rare Mounts"
+        },
+        {
+          "id": 5845,
+          "name": "Uncommon",
+          "seoName": "Uncommon"
+        }
+      ]
+    },
+    {
+      "id": 1278,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 5868,
+          "name": "Oreha Fusion Material",
+          "seoName": "Oreha Fusion Material"
+        },
+        {
+          "id": 6465,
+          "name": "Harmony Shards",
+          "seoName": "Harmony Shards"
+        },
+        {
+          "id": 6466,
+          "name": "Harmony Leapstones",
+          "seoName": "Harmony Leapstones"
+        },
+        {
+          "id": 6466,
+          "name": "Harmony Leapstones",
+          "seoName": "Harmony Leapstones"
+        },
+        {
+          "id": 6467,
+          "name": "Destruction Stone Fragments",
+          "seoName": "Destruction Stone Fragments"
+        },
+        {
+          "id": 6468,
+          "name": "Guardian Stone Fragments",
+          "seoName": "Guardian Stone Fragments"
+        },
+        {
+          "id": 6469,
+          "name": "Life Shards",
+          "seoName": "Life Shards"
+        },
+        {
+          "id": 6470,
+          "name": "Life Leapstones",
+          "seoName": "Life Leapstones"
+        },
+        {
+          "id": 6471,
+          "name": "Guardian Stones",
+          "seoName": "Guardian Stones"
+        },
+        {
+          "id": 6472,
+          "name": "Destruction Stones",
+          "seoName": "Destruction Stones"
+        },
+        {
+          "id": 6473,
+          "name": "Caldarr Fusion Material",
+          "seoName": "Caldarr Fusion Material"
+        },
+        {
+          "id": 6474,
+          "name": "Honor Shards",
+          "seoName": "Honor Shards"
+        },
+        {
+          "id": 6475,
+          "name": "Honor Leapstones",
+          "seoName": "Honor Leapstones"
+        },
+        {
+          "id": 6476,
+          "name": "Great Honor Leapstones",
+          "seoName": "Great Honor Leapstones"
+        },
+        {
+          "id": 6477,
+          "name": "Guardian Stone Crystals",
+          "seoName": "Guardian Stone Crystals"
+        },
+        {
+          "id": 6478,
+          "name": "Destruction Stone Crystals",
+          "seoName": "Destruction Stone Crystals"
+        },
+        {
+          "id": 6486,
+          "name": "Stars Breath",
+          "seoName": "Stars Breath"
+        }
+      ]
+    },
+    {
+      "id": 1279,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 5846,
+          "name": "Uncommon Weapons",
+          "seoName": "Uncommon Weapons"
+        },
+        {
+          "id": 5847,
+          "name": "Rare Weapons",
+          "seoName": "Rare Weapons"
+        },
+        {
+          "id": 5848,
+          "name": "Epic Weapons",
+          "seoName": "Epic Weapons"
+        },
+        {
+          "id": 5849,
+          "name": "Legendary Weapons",
+          "seoName": "Legendary Weapons"
+        },
+        {
+          "id": 5850,
+          "name": "Relic Weapons",
+          "seoName": "Relic Weapons"
+        }
+      ]
+    },
+    {
+      "id": 1280,
+      "name": "Currency",
+      "seoName": "Currency",
+      "subCategories": [
+        {
+          "id": 5851,
+          "name": "Shillings",
+          "seoName": "Shillings"
+        },
+        {
+          "id": 5852,
+          "name": "Resurrection Feathers",
+          "seoName": "Resurrection Feathers"
+        },
+        {
+          "id": 5853,
+          "name": "Peons",
+          "seoName": "Peons"
+        },
+        {
+          "id": 5854,
+          "name": "Blue Crystals",
+          "seoName": "Blue Crystals"
+        },
+        {
+          "id": 5855,
+          "name": "Rift Shards",
+          "seoName": "Rift Shards"
+        },
+        {
+          "id": 5856,
+          "name": "Pirate and Voyage Coins",
+          "seoName": "Pirate and Voyage Coins"
+        },
+        {
+          "id": 5857,
+          "name": "Shards",
+          "seoName": "Shards"
+        },
+        {
+          "id": 5858,
+          "name": "Courage Tokens",
+          "seoName": "Courage Tokens"
+        },
+        {
+          "id": 5859,
+          "name": "Silmael Crystals",
+          "seoName": "Silmael Crystals"
+        },
+        {
+          "id": 5860,
+          "name": "Carnelians",
+          "seoName": "Carnelians"
+        },
+        {
+          "id": 5861,
+          "name": "Estate Orders",
+          "seoName": "Estate Orders"
+        }
+      ]
+    },
+    {
+      "id": 1328,
+      "name": "Skins",
+      "seoName": "Skins",
+      "subCategories": [
+        {
+          "id": 5863,
+          "name": "Weapon Skins",
+          "seoName": "Weapon Skins"
+        },
+        {
+          "id": 6030,
+          "name": "Skin Set",
+          "seoName": "Skin Set"
+        },
+        {
+          "id": 6967,
+          "name": "Omen Skin Set",
+          "seoName": "Omen Skin Set"
+        },
+        {
+          "id": 6968,
+          "name": "Platinum Complimentary Skin Set",
+          "seoName": "Platinum Complimentary Skin Set"
+        },
+        {
+          "id": 6969,
+          "name": "Lawmaker Set",
+          "seoName": "Lawmaker Set"
+        }
+      ]
+    },
+    {
+      "id": 1409,
+      "name": "Crafting Materials",
+      "seoName": "Crafting Materials",
+      "subCategories": [
+        {
+          "id": 6479,
+          "name": "Foraging Rewards",
+          "seoName": "Foraging Rewards"
+        },
+        {
+          "id": 6480,
+          "name": "Logging Loot",
+          "seoName": "Logging Loot"
+        },
+        {
+          "id": 6481,
+          "name": "Mining Loot",
+          "seoName": "Mining Loot"
+        },
+        {
+          "id": 6482,
+          "name": "Hunting Loot",
+          "seoName": "Hunting Loot"
+        },
+        {
+          "id": 6483,
+          "name": "Fishing Loot",
+          "seoName": "Fishing Loot"
+        },
+        {
+          "id": 6484,
+          "name": "Excavating Loot",
+          "seoName": "Excavating Loot"
+        },
+        {
+          "id": 6485,
+          "name": "Other Loot",
+          "seoName": "Other Loot"
+        }
+      ]
+    },
+    {
+      "id": 1449,
+      "name": "Twitch Drops",
+      "seoName": "Twitch Drops",
+      "subCategories": [
+        {
+          "id": 6970,
+          "name": "Twitch Drops",
+          "seoName": "Twitch Drops"
+        }
+      ]
+    },
+    {
+      "id": 2164,
+      "name": "Destiny Shard",
+      "seoName": "Destiny Shard",
+      "subCategories": [
+        {
+          "id": 11032,
+          "name": "Destiny Shard",
+          "seoName": "Destiny Shard"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 10762,
+      "name": "North America East",
+      "subCategories": [
+        {
+          "id": 10764,
+          "name": "Azena"
+        },
+        {
+          "id": 13717,
+          "name": "Balthorr"
+        },
+        {
+          "id": 14697,
+          "name": "Brelshaza"
+        },
+        {
+          "id": 13718,
+          "name": "Inanna"
+        },
+        {
+          "id": 13716,
+          "name": "Luterra"
+        },
+        {
+          "id": 13719,
+          "name": "Nineveh"
+        },
+        {
+          "id": 14698,
+          "name": "Thaemine"
+        },
+        {
+          "id": 13832,
+          "name": "Vairgrys"
+        }
+      ]
+    },
+    {
+      "id": 10763,
+      "name": "North America West",
+      "subCategories": [
+        {
+          "id": 13721,
+          "name": "Brelshaza"
+        },
+        {
+          "id": 13720,
+          "name": "Thaemine"
+        },
+        {
+          "id": 10772,
+          "name": "Valtan"
+        }
+      ]
+    },
+    {
+      "id": 10602,
+      "name": "Europe Central",
+      "subCategories": [
+        {
+          "id": 13714,
+          "name": "Arcturus"
+        },
+        {
+          "id": 13712,
+          "name": "Elpon"
+        },
+        {
+          "id": 13715,
+          "name": "Gienah"
+        },
+        {
+          "id": 10753,
+          "name": "Ortuus"
+        },
+        {
+          "id": 13713,
+          "name": "Ratik"
+        },
+        {
+          "id": 14127,
+          "name": "Regulus"
+        }
+      ]
+    },
+    {
+      "id": 9351,
+      "name": "Japan"
+    },
+    {
+      "id": 9029,
+      "name": "Korea"
+    },
+    {
+      "id": 12748,
+      "name": "RU",
+      "subCategories": [
+        {
+          "id": 12750,
+          "name": "Альдеран"
+        },
+        {
+          "id": 12751,
+          "name": "Кратос"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

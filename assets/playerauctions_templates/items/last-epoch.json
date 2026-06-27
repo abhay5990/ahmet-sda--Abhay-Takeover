@@ -1,0 +1,112 @@
+{
+  "game_id": 13660,
+  "game": "last-epoch",
+  "game_name": "Last Epoch",
+  "seo_name": "Last-Epoch",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1833,
+      "name": "Keys",
+      "seoName": "Keys",
+      "subCategories": [
+        {
+          "id": 8662,
+          "name": "Keys",
+          "seoName": "Keys"
+        }
+      ]
+    },
+    {
+      "id": 1834,
+      "name": "Armors",
+      "seoName": "Armors",
+      "subCategories": [
+        {
+          "id": 8663,
+          "name": "Armors",
+          "seoName": "Armors"
+        }
+      ]
+    },
+    {
+      "id": 1835,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 8664,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13849,
+      "name": "Cycle - Standard"
+    },
+    {
+      "id": 13850,
+      "name": "Cycle - Hardcore"
+    },
+    {
+      "id": 13667,
+      "name": "Legacy - Standard"
+    },
+    {
+      "id": 13668,
+      "name": "Legacy - Hardcore"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

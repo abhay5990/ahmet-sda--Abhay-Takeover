@@ -1,0 +1,144 @@
+{
+  "game_id": "50",
+  "game": "lost-ark",
+  "game_name": "Lost Ark",
+  "category": "CustomItem",
+  "tradeEnvironments": [
+    {
+      "id": "3",
+      "name": "NA",
+      "group": "Region",
+      "children": [
+        {
+          "id": "3-16",
+          "name": "Luterra"
+        },
+        {
+          "id": "3-17",
+          "name": "Balthorr"
+        },
+        {
+          "id": "3-18",
+          "name": "Nineveh"
+        },
+        {
+          "id": "3-19",
+          "name": "Inanna"
+        },
+        {
+          "id": "3-20",
+          "name": "Vairgrys"
+        },
+        {
+          "id": "3-21",
+          "name": "Thaemine - West"
+        },
+        {
+          "id": "3-22",
+          "name": "Brelshaza - West"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "EU - Central",
+      "group": "Region",
+      "children": [
+        {
+          "id": "4-18",
+          "name": "Ortuus"
+        },
+        {
+          "id": "4-19",
+          "name": "Elpon"
+        },
+        {
+          "id": "4-20",
+          "name": "Ratik"
+        },
+        {
+          "id": "4-21",
+          "name": "Arcturus"
+        },
+        {
+          "id": "4-22",
+          "name": "Gienah"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

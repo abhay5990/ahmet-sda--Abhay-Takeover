@@ -1,0 +1,456 @@
+{
+  "game_id": "319",
+  "game": "arc-raiders",
+  "game_name": "Arc Raiders",
+  "category": "CustomItem",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Blueprints",
+      "group": "Item Type",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "Anvil"
+        },
+        {
+          "id": "0-1",
+          "name": "Angled Grip II"
+        },
+        {
+          "id": "0-10",
+          "name": "Combat Mk. 3 (Flanking)"
+        },
+        {
+          "id": "0-11",
+          "name": "Compensator II"
+        },
+        {
+          "id": "0-12",
+          "name": "Compensator III"
+        },
+        {
+          "id": "0-13",
+          "name": "Complex Gun Parts"
+        },
+        {
+          "id": "0-14",
+          "name": "Defibrillator"
+        },
+        {
+          "id": "0-15",
+          "name": "Explosive Mine"
+        },
+        {
+          "id": "0-16",
+          "name": "Extended Barrel"
+        },
+        {
+          "id": "0-17",
+          "name": "Extended Light Magazine II"
+        },
+        {
+          "id": "0-18",
+          "name": "Extended Light Magazine III"
+        },
+        {
+          "id": "0-19",
+          "name": "Extended Medium Magazine II"
+        },
+        {
+          "id": "0-2",
+          "name": "Angled Grip III"
+        },
+        {
+          "id": "0-20",
+          "name": "Extended Medium Magazine III"
+        },
+        {
+          "id": "0-21",
+          "name": "Extended Shotgun Magazine II"
+        },
+        {
+          "id": "0-22",
+          "name": "Extended Shotgun Magazine III"
+        },
+        {
+          "id": "0-23",
+          "name": "Equalizer"
+        },
+        {
+          "id": "0-24",
+          "name": "Fireworks Box"
+        },
+        {
+          "id": "0-25",
+          "name": "Heavy Gun Parts"
+        },
+        {
+          "id": "0-26",
+          "name": "Hullcracker"
+        },
+        {
+          "id": "0-27",
+          "name": "Il Toro"
+        },
+        {
+          "id": "0-28",
+          "name": "Jolt Mine"
+        },
+        {
+          "id": "0-29",
+          "name": "Jupiter"
+        },
+        {
+          "id": "0-3",
+          "name": "Aphelion"
+        },
+        {
+          "id": "0-30",
+          "name": "Light Gun Parts"
+        },
+        {
+          "id": "0-31",
+          "name": "Light Stick (Any Color)"
+        },
+        {
+          "id": "0-32",
+          "name": "Lightweight Stock"
+        },
+        {
+          "id": "0-33",
+          "name": "Looting Mk. 3 (Survivor)"
+        },
+        {
+          "id": "0-34",
+          "name": "Lure Grenade"
+        },
+        {
+          "id": "0-35",
+          "name": "Medium Gun Parts"
+        },
+        {
+          "id": "0-36",
+          "name": "Muzzle Brake II"
+        },
+        {
+          "id": "0-37",
+          "name": "Muzzle Brake III"
+        },
+        {
+          "id": "0-38",
+          "name": "Osprey"
+        },
+        {
+          "id": "0-39",
+          "name": "Padded Stock"
+        },
+        {
+          "id": "0-4",
+          "name": "Barricade Kit"
+        },
+        {
+          "id": "0-40",
+          "name": "Remote Raider Flare"
+        },
+        {
+          "id": "0-41",
+          "name": "Seeker Grenade"
+        },
+        {
+          "id": "0-42",
+          "name": "Shotgun Choke II"
+        },
+        {
+          "id": "0-43",
+          "name": "Shotgun Choke III"
+        },
+        {
+          "id": "0-44",
+          "name": "Shotgun Silencer"
+        },
+        {
+          "id": "0-45",
+          "name": "Showstopper"
+        },
+        {
+          "id": "0-46",
+          "name": "Silencer I"
+        },
+        {
+          "id": "0-47",
+          "name": "Silencer II"
+        },
+        {
+          "id": "0-48",
+          "name": "Smoke Grenade"
+        },
+        {
+          "id": "0-49",
+          "name": "Snap Hook"
+        },
+        {
+          "id": "0-5",
+          "name": "Bettina"
+        },
+        {
+          "id": "0-50",
+          "name": "Stable Stock II"
+        },
+        {
+          "id": "0-51",
+          "name": "Stable Stock III"
+        },
+        {
+          "id": "0-52",
+          "name": "Tactical Mk. 3 (Defensive)"
+        },
+        {
+          "id": "0-53",
+          "name": "Tactical Mk. 3 (Healing)"
+        },
+        {
+          "id": "0-54",
+          "name": "Tagging Grenade"
+        },
+        {
+          "id": "0-55",
+          "name": "Tempest"
+        },
+        {
+          "id": "0-56",
+          "name": "Torrente"
+        },
+        {
+          "id": "0-57",
+          "name": "Trigger 'Nade"
+        },
+        {
+          "id": "0-58",
+          "name": "Venator"
+        },
+        {
+          "id": "0-59",
+          "name": "Vertical Grip II"
+        },
+        {
+          "id": "0-6",
+          "name": "Blaze Grenade"
+        },
+        {
+          "id": "0-60",
+          "name": "Vertical Grip III"
+        },
+        {
+          "id": "0-61",
+          "name": "Vita Shot"
+        },
+        {
+          "id": "0-62",
+          "name": "Vita Spray"
+        },
+        {
+          "id": "0-63",
+          "name": "Vulcano"
+        },
+        {
+          "id": "0-64",
+          "name": "Wolfpack"
+        },
+        {
+          "id": "0-65",
+          "name": "Other"
+        },
+        {
+          "id": "0-66",
+          "name": "Trailblazer"
+        },
+        {
+          "id": "0-67",
+          "name": "Gas Mine"
+        },
+        {
+          "id": "0-68",
+          "name": "Deadline"
+        },
+        {
+          "id": "0-69",
+          "name": "Canto"
+        },
+        {
+          "id": "0-7",
+          "name": "Bobcat"
+        },
+        {
+          "id": "0-70",
+          "name": "Dolabra"
+        },
+        {
+          "id": "0-71",
+          "name": "Surge Coil"
+        },
+        {
+          "id": "0-72",
+          "name": "Powered Descender"
+        },
+        {
+          "id": "0-73",
+          "name": "Crash Mat"
+        },
+        {
+          "id": "0-74",
+          "name": "White Flag"
+        },
+        {
+          "id": "0-76",
+          "name": "Tactical Mk. 3 (Revival)"
+        },
+        {
+          "id": "0-77",
+          "name": "Tactical Mk. 3 (Smoke)"
+        },
+        {
+          "id": "0-78",
+          "name": "Looting Mk. 3 (Safekeeper)"
+        },
+        {
+          "id": "0-8",
+          "name": "Burletta"
+        },
+        {
+          "id": "0-9",
+          "name": "Combat Mk. 3 (Aggressive)"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "Weapons",
+      "group": "Item Type"
+    },
+    {
+      "id": "2",
+      "name": "Weapon Mods",
+      "group": "Item Type"
+    },
+    {
+      "id": "3",
+      "name": "Augments",
+      "group": "Item Type"
+    },
+    {
+      "id": "4",
+      "name": "Shields",
+      "group": "Item Type"
+    },
+    {
+      "id": "5",
+      "name": "Quick Use",
+      "group": "Item Type"
+    },
+    {
+      "id": "6",
+      "name": "Traps",
+      "group": "Item Type"
+    },
+    {
+      "id": "7",
+      "name": "Crafting Materials",
+      "group": "Item Type"
+    },
+    {
+      "id": "8",
+      "name": "Keys",
+      "group": "Item Type"
+    },
+    {
+      "id": "9",
+      "name": "Coins",
+      "group": "Item Type"
+    },
+    {
+      "id": "10",
+      "name": "Other",
+      "group": "Item Type"
+    },
+    {
+      "id": "11",
+      "name": "Assorted Seeds",
+      "group": "Item Type"
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

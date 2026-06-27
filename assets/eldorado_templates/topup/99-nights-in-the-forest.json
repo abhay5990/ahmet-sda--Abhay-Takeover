@@ -1,0 +1,113 @@
+{
+  "game_id": "265",
+  "game": "99-nights-in-the-forest",
+  "game_name": "99 Nights in the Forest",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "99-nights-in-the-forest-diamonds": {
+      "name": "Diamonds",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "20-diamonds",
+          "name": "20 Diamonds"
+        },
+        {
+          "id": "100-diamonds",
+          "name": "100 Diamonds"
+        },
+        {
+          "id": "250-diamonds",
+          "name": "250 Diamonds"
+        },
+        {
+          "id": "500-diamonds",
+          "name": "500 Diamonds"
+        },
+        {
+          "id": "700-diamonds",
+          "name": "700 Diamonds"
+        },
+        {
+          "id": "1400-diamonds",
+          "name": "1400 Diamonds"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

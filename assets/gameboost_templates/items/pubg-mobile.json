@@ -59,17 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Weapon Skins",
-        "Home Vote",
-        "Popularity",
-        "Car Skins",
-        "Clothes",
-        "Parachutes",
-        "Clans",
-        "Others"
-      ]
+      "required": false
     }
   }
 }

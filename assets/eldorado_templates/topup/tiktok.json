@@ -1,0 +1,133 @@
+{
+  "game_id": "254",
+  "game": "tiktok",
+  "game_name": "TikTok",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "tiktok-coins": {
+      "name": "TikTok Coins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "30-coins",
+          "name": "30 Coins"
+        },
+        {
+          "id": "350-coins",
+          "name": "350 Coins"
+        },
+        {
+          "id": "700-coins",
+          "name": "700 Coins"
+        },
+        {
+          "id": "1400-coins",
+          "name": "1400 Coins"
+        },
+        {
+          "id": "3500-coins",
+          "name": "3500 Coins"
+        },
+        {
+          "id": "7000-coins",
+          "name": "7000 Coins"
+        },
+        {
+          "id": "17500-coins",
+          "name": "17500 Coins"
+        },
+        {
+          "id": "35000-coins",
+          "name": "35000 Coins"
+        },
+        {
+          "id": "52500-coins",
+          "name": "52500 Coins"
+        },
+        {
+          "id": "70000-coins",
+          "name": "70000 Coins"
+        },
+        {
+          "id": "87500-coins",
+          "name": "87500 Coins"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

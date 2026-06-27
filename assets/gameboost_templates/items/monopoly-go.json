@@ -59,43 +59,11 @@
   "item_data": {
     "album_set": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Set1: Spidey's NYC",
-        "Set2: Muscle Builders",
-        "Set3: Cosmo and Scottie",
-        "Set4: Gym Buddies",
-        "Set5: Web Weaver",
-        "Set6: Deadpool Double",
-        "Set7: Green Driver",
-        "Set8: Shield Training",
-        "Set9: Green Goblin",
-        "Set11: The Heist",
-        "Set12: Before The Heist",
-        "Set13: Detective Jones",
-        "Set14: Wade and Logan",
-        "Set15: Planet Savers",
-        "Set16: Wakanda Style",
-        "Set17: X-Mansion",
-        "Set18: A Bit Strange",
-        "Set19: GalaxE Guards",
-        "Set20: GORacers",
-        "Set10: Avengers Monopoly",
-        "Other"
-      ]
+      "required": false
     },
     "sticker_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "5 Star",
-        "4 Star",
-        "3 Star",
-        "2 Star",
-        "1 Star",
-        "Golden",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

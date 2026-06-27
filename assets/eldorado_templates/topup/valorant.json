@@ -1,0 +1,189 @@
+{
+  "game_id": "32",
+  "game": "valorant",
+  "game_name": "Valorant",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "EU",
+      "group": "Region"
+    },
+    {
+      "id": "1",
+      "name": "NA",
+      "group": "Region"
+    },
+    {
+      "id": "7",
+      "name": "Brazil",
+      "group": "Region"
+    },
+    {
+      "id": "3",
+      "name": "Malaysia",
+      "group": "Region"
+    },
+    {
+      "id": "4",
+      "name": "Singapore",
+      "group": "Region"
+    },
+    {
+      "id": "5",
+      "name": "Global",
+      "group": "Region"
+    },
+    {
+      "id": "6",
+      "name": "Turkey",
+      "group": "Region"
+    }
+  ],
+  "attributes": {
+    "valorant-points": {
+      "name": "Points",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "1000-points",
+          "name": "1000 Points"
+        },
+        {
+          "id": "10500-points",
+          "name": "10500 Points"
+        },
+        {
+          "id": "11000-points",
+          "name": "11000 Points"
+        },
+        {
+          "id": "14600-points",
+          "name": "14600 Points"
+        },
+        {
+          "id": "1700-points",
+          "name": "1700 Points"
+        },
+        {
+          "id": "2050-points",
+          "name": "2050 Points"
+        },
+        {
+          "id": "22000-points",
+          "name": "22000 Points"
+        },
+        {
+          "id": "2950-points",
+          "name": "2950 Points"
+        },
+        {
+          "id": "3650-points",
+          "name": "3650 Points"
+        },
+        {
+          "id": "375-points",
+          "name": "375 Points"
+        },
+        {
+          "id": "4325-points",
+          "name": "4325 Points"
+        },
+        {
+          "id": "475-points",
+          "name": "475 Points"
+        },
+        {
+          "id": "5350-points",
+          "name": "5350 Points"
+        },
+        {
+          "id": "7300-points",
+          "name": "7300 Points"
+        },
+        {
+          "id": "825-points",
+          "name": "825 Points"
+        },
+        {
+          "id": "8900-points",
+          "name": "8900 Points"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

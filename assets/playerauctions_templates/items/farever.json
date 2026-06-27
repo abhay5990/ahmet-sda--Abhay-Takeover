@@ -1,0 +1,116 @@
+{
+  "game_id": 15135,
+  "game": "farever",
+  "game_name": "Farever",
+  "seo_name": "Farever",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 2171,
+      "name": "Weapon",
+      "seoName": "Weapon",
+      "subCategories": [
+        {
+          "id": 11241,
+          "name": "Weapon",
+          "seoName": "Weapon"
+        }
+      ]
+    },
+    {
+      "id": 2172,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 11242,
+          "name": "Armor",
+          "seoName": "Armor"
+        }
+      ]
+    },
+    {
+      "id": 2173,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 11243,
+          "name": "Materials",
+          "seoName": "Materials"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15136,
+      "name": "North America"
+    },
+    {
+      "id": 15138,
+      "name": "Asia"
+    },
+    {
+      "id": 15137,
+      "name": "Europe"
+    },
+    {
+      "id": 15139,
+      "name": "South America"
+    },
+    {
+      "id": 15140,
+      "name": "Mainland China"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

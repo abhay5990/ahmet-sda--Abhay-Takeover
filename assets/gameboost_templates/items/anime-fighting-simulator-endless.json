@@ -59,14 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Yen",
-        "VIP",
-        "Game Passes",
-        "Bundles",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

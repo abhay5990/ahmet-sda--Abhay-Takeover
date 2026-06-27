@@ -7,6 +7,10 @@
     {
       "id": 14142,
       "name": "Main Server"
+    },
+    {
+      "id": 15119,
+      "name": "US Server"
     }
   ],
   "requiredFields": {

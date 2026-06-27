@@ -59,17 +59,7 @@
   "item_data": {
     "server": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Agartha",
-        "Destan",
-        "Dryads",
-        "Felis",
-        "Minark",
-        "Oreads",
-        "Pandora",
-        "Zero"
-      ]
+      "required": false
     }
   }
 }

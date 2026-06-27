@@ -59,64 +59,19 @@
   "item_data": {
     "platform": {
       "type": "string",
-      "required": true,
-      "values": [
-        "PC",
-        "PSN",
-        "XBOX"
-      ]
+      "required": false
     },
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Blueprint",
-        "Bodies",
-        "Decals",
-        "Boosts",
-        "Paints",
-        "Wheels",
-        "Trails",
-        "Toppers",
-        "Antennas",
-        "Goal Explosion",
-        "Banners",
-        "Other"
-      ]
+      "required": false
     },
     "colors": {
       "type": "string",
-      "required": false,
-      "values": [
-        "Default",
-        "Black",
-        "Burnt Sienna",
-        "Cobalt",
-        "Crimson",
-        "Forest Green",
-        "Grey",
-        "Lime",
-        "Orange",
-        "Pink",
-        "Purple",
-        "Saffron",
-        "Sky Blue",
-        "Titanium White"
-      ]
+      "required": false
     },
     "rarity": {
       "type": "string",
-      "required": false,
-      "values": [
-        "Default",
-        "Black Market",
-        "Exotic",
-        "Import",
-        "Limited",
-        "Very Rare",
-        "Rare",
-        "Uncommon"
-      ]
+      "required": false
     }
   }
 }

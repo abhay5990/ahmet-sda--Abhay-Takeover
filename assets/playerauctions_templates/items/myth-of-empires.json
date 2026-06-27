@@ -1,0 +1,322 @@
+{
+  "game_id": 10695,
+  "game": "myth-of-empires",
+  "game_name": "Myth of Empires",
+  "seo_name": "Myth-of-Empires",
+  "currencyName": "Copper Coins",
+  "categories": [
+    {
+      "id": 1312,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 5974,
+          "name": "Knife",
+          "seoName": "Knife"
+        },
+        {
+          "id": 5975,
+          "name": "Spear",
+          "seoName": "Spear"
+        },
+        {
+          "id": 5976,
+          "name": "Axe",
+          "seoName": "Axe"
+        },
+        {
+          "id": 5977,
+          "name": "Blade",
+          "seoName": "Blade"
+        },
+        {
+          "id": 5978,
+          "name": "Hammer",
+          "seoName": "Hammer"
+        },
+        {
+          "id": 5979,
+          "name": "Mace",
+          "seoName": "Mace"
+        },
+        {
+          "id": 5980,
+          "name": "Glaive",
+          "seoName": "Glaive"
+        },
+        {
+          "id": 5981,
+          "name": "Greataxe",
+          "seoName": "Greataxe"
+        },
+        {
+          "id": 5982,
+          "name": "Poleaxe",
+          "seoName": "Poleaxe"
+        },
+        {
+          "id": 5983,
+          "name": "Halberd",
+          "seoName": "Halberd"
+        },
+        {
+          "id": 5984,
+          "name": "Pike",
+          "seoName": "Pike"
+        },
+        {
+          "id": 5985,
+          "name": "Lance",
+          "seoName": "Lance"
+        },
+        {
+          "id": 5986,
+          "name": "Shield",
+          "seoName": "Shield"
+        },
+        {
+          "id": 5987,
+          "name": "Bow",
+          "seoName": "Bow"
+        },
+        {
+          "id": 5988,
+          "name": "Dart",
+          "seoName": "Dart"
+        },
+        {
+          "id": 5989,
+          "name": "Siege",
+          "seoName": "Siege"
+        }
+      ]
+    },
+    {
+      "id": 1314,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 5971,
+          "name": "Horse Armor",
+          "seoName": "Horse Armor"
+        },
+        {
+          "id": 5990,
+          "name": "Armor",
+          "seoName": "Armor"
+        },
+        {
+          "id": 6255,
+          "name": "Light Armor",
+          "seoName": "Light Armor"
+        },
+        {
+          "id": 6256,
+          "name": "Heavy Armor",
+          "seoName": "Heavy Armor"
+        },
+        {
+          "id": 6257,
+          "name": "Horse Saddles",
+          "seoName": "Horse Saddles"
+        },
+        {
+          "id": 6258,
+          "name": "Shields",
+          "seoName": "Shields"
+        }
+      ]
+    },
+    {
+      "id": 1315,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 5991,
+          "name": "Consumables",
+          "seoName": "Consumables"
+        }
+      ]
+    },
+    {
+      "id": 1316,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 5973,
+          "name": "Talent Book",
+          "seoName": "Talent Book"
+        },
+        {
+          "id": 5992,
+          "name": "Materials",
+          "seoName": "Materials"
+        }
+      ]
+    },
+    {
+      "id": 1317,
+      "name": "Mounts",
+      "seoName": "Mounts",
+      "subCategories": [
+        {
+          "id": 5972,
+          "name": "Horse",
+          "seoName": "Horse"
+        }
+      ]
+    },
+    {
+      "id": 1318,
+      "name": "Pets",
+      "seoName": "Pets",
+      "subCategories": [
+        {
+          "id": 5993,
+          "name": "Pets",
+          "seoName": "Pets"
+        }
+      ]
+    },
+    {
+      "id": 1370,
+      "name": "Ammo",
+      "seoName": "Ammo",
+      "subCategories": [
+        {
+          "id": 6230,
+          "name": "Ranged Ammo",
+          "seoName": "Ranged Ammo"
+        },
+        {
+          "id": 6231,
+          "name": "Siege Ammo",
+          "seoName": "Siege Ammo"
+        }
+      ]
+    },
+    {
+      "id": 1371,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 6232,
+          "name": "Axes",
+          "seoName": "Axes"
+        },
+        {
+          "id": 6233,
+          "name": "Hammers",
+          "seoName": "Hammers"
+        },
+        {
+          "id": 6234,
+          "name": "Hoes",
+          "seoName": "Hoes"
+        },
+        {
+          "id": 6235,
+          "name": "Hunting Knifes",
+          "seoName": "Hunting Knifes"
+        },
+        {
+          "id": 6236,
+          "name": "Sickles",
+          "seoName": "Sickles"
+        }
+      ]
+    },
+    {
+      "id": 1372,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 6237,
+          "name": "Animal",
+          "seoName": "Animal"
+        },
+        {
+          "id": 6238,
+          "name": "Lumber",
+          "seoName": "Lumber"
+        },
+        {
+          "id": 6239,
+          "name": "Mineral",
+          "seoName": "Mineral"
+        },
+        {
+          "id": 6240,
+          "name": "Plant",
+          "seoName": "Plant"
+        },
+        {
+          "id": 6241,
+          "name": "Other Resources",
+          "seoName": "Other Resources"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 10710,
+      "name": "PC"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

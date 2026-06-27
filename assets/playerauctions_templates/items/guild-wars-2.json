@@ -1,0 +1,289 @@
+{
+  "game_id": 5052,
+  "game": "guild-wars-2",
+  "game_name": "Guild Wars 2",
+  "seo_name": "Guild-Wars-2",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 984,
+      "name": "Weapon",
+      "seoName": "Weapon",
+      "subCategories": [
+        {
+          "id": 4492,
+          "name": "Legendary Weapon",
+          "seoName": "Legendary Weapon"
+        },
+        {
+          "id": 4508,
+          "name": "Ascended Weapon",
+          "seoName": "Ascended Weapon"
+        },
+        {
+          "id": 4528,
+          "name": "Exotic Weapon",
+          "seoName": "Exotic Weapon"
+        }
+      ]
+    },
+    {
+      "id": 985,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 4495,
+          "name": "Legendary Armor",
+          "seoName": "Legendary Armor"
+        },
+        {
+          "id": 4509,
+          "name": "Exotic Armor",
+          "seoName": "Exotic Armor"
+        },
+        {
+          "id": 4527,
+          "name": "Ascended Armor",
+          "seoName": "Ascended Armor"
+        }
+      ]
+    },
+    {
+      "id": 986,
+      "name": "Upgrade Components",
+      "seoName": "Upgrade Components",
+      "subCategories": [
+        {
+          "id": 4520,
+          "name": "Jewel",
+          "seoName": "Jewel"
+        },
+        {
+          "id": 4521,
+          "name": "Rune",
+          "seoName": "Rune"
+        },
+        {
+          "id": 4522,
+          "name": "Sigil",
+          "seoName": "Sigil"
+        }
+      ]
+    },
+    {
+      "id": 987,
+      "name": "Skins",
+      "seoName": "Skins",
+      "subCategories": [
+        {
+          "id": 4497,
+          "name": "Shield Skins",
+          "seoName": "Shield Skins"
+        },
+        {
+          "id": 6044,
+          "name": "Pistol Skins",
+          "seoName": "Pistol Skins"
+        },
+        {
+          "id": 6045,
+          "name": "Focus Skins",
+          "seoName": "Focus Skins"
+        },
+        {
+          "id": 6046,
+          "name": "Staff Skins",
+          "seoName": "Staff Skins"
+        },
+        {
+          "id": 6047,
+          "name": "Hammer Skins",
+          "seoName": "Hammer Skins"
+        },
+        {
+          "id": 6048,
+          "name": "Torch Skins",
+          "seoName": "Torch Skins"
+        },
+        {
+          "id": 6049,
+          "name": "Scythe Skin",
+          "seoName": "Scythe Skin"
+        },
+        {
+          "id": 6050,
+          "name": "Longbow Skins",
+          "seoName": "Longbow Skins"
+        },
+        {
+          "id": 6051,
+          "name": "Axe Skins",
+          "seoName": "Axe Skins"
+        }
+      ]
+    },
+    {
+      "id": 988,
+      "name": "Crafting Material",
+      "seoName": "Crafting Material",
+      "subCategories": [
+        {
+          "id": 4498,
+          "name": "Mystic Coins",
+          "seoName": "Mystic Coins"
+        },
+        {
+          "id": 5580,
+          "name": "Basic Crafting Materials",
+          "seoName": "Basic Crafting Materials"
+        },
+        {
+          "id": 5628,
+          "name": "Glob of Ectoplasm",
+          "seoName": "Glob of Ectoplasm"
+        },
+        {
+          "id": 5629,
+          "name": "Pile of Crystalline Dust",
+          "seoName": "Pile of Crystalline Dust"
+        },
+        {
+          "id": 5630,
+          "name": "Intermediate Crafting Materials",
+          "seoName": "Intermediate Crafting Materials"
+        },
+        {
+          "id": 5631,
+          "name": "Advanced Crafting Materials",
+          "seoName": "Advanced Crafting Materials"
+        },
+        {
+          "id": 5632,
+          "name": "Ascended Crafting Materials",
+          "seoName": "Ascended Crafting Materials"
+        },
+        {
+          "id": 5633,
+          "name": "Gemstones",
+          "seoName": "Gemstones"
+        },
+        {
+          "id": 5634,
+          "name": "Cooking Materials",
+          "seoName": "Cooking Materials"
+        },
+        {
+          "id": 5635,
+          "name": "Scribing Materials",
+          "seoName": "Scribing Materials"
+        },
+        {
+          "id": 5636,
+          "name": "Festive Materials",
+          "seoName": "Festive Materials"
+        },
+        {
+          "id": 5637,
+          "name": "Runes of Holding",
+          "seoName": "Runes of Holding"
+        }
+      ]
+    },
+    {
+      "id": 1002,
+      "name": "Dye",
+      "seoName": "Dye",
+      "subCategories": [
+        {
+          "id": 4514,
+          "name": "Dye",
+          "seoName": "Dye"
+        }
+      ]
+    },
+    {
+      "id": 1194,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 5581,
+          "name": "Recipe",
+          "seoName": "Recipe"
+        }
+      ]
+    },
+    {
+      "id": 1195,
+      "name": "Mini Pets",
+      "seoName": "Mini Pets",
+      "subCategories": [
+        {
+          "id": 5582,
+          "name": "Mini Pets",
+          "seoName": "Mini Pets"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 5198,
+      "name": "US"
+    },
+    {
+      "id": 9829,
+      "name": "EU"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "game_id": "208",
+  "game": "whiteout-survival",
+  "game_name": "Whiteout Survival",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "whiteout-survival-frost-stars": {
+      "name": "Frost Stars",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "1999-frost-stars",
+          "name": "1999 Frost Stars"
+        },
+        {
+          "id": "299-frost-stars",
+          "name": "299 Frost Stars"
+        },
+        {
+          "id": "499-frost-stars",
+          "name": "499 Frost Stars"
+        },
+        {
+          "id": "4999-frost-stars",
+          "name": "4999 Frost Stars"
+        },
+        {
+          "id": "7499-frost-stars",
+          "name": "7499 Frost Stars"
+        },
+        {
+          "id": "999-frost-stars",
+          "name": "999 Frost Stars"
+        },
+        {
+          "id": "9999-frost-stars",
+          "name": "9999 Frost Stars"
+        },
+        {
+          "id": "99-frost-stars",
+          "name": "99 Frost Stars"
+        },
+        {
+          "id": "29999-frost-stars",
+          "name": "29999 Frost Stars"
+        },
+        {
+          "id": "49999-frost-stars",
+          "name": "49999 Frost Stars"
+        },
+        {
+          "id": "69999-frost-stars",
+          "name": "69999 Frost Stars"
+        },
+        {
+          "id": "99990-frost-stars",
+          "name": "99990 Frost Stars"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

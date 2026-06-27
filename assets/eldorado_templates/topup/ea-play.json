@@ -1,0 +1,114 @@
+{
+  "game_id": "270",
+  "game": "ea-play",
+  "game_name": "EA Play",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Xbox"
+    },
+    {
+      "id": "1",
+      "name": "PC"
+    }
+  ],
+  "attributes": {
+    "ea-play-membership": {
+      "name": "Membership",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "ea-play-1-month",
+          "name": "EA Play - 1 Month"
+        },
+        {
+          "id": "ea-play-12-months",
+          "name": "EA Play - 12 Months"
+        },
+        {
+          "id": "ea-play-pro-1-month",
+          "name": "EA Play Pro - 1 Month"
+        },
+        {
+          "id": "ea-play-pro-12-months",
+          "name": "EA Play Pro - 12 Months"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "game_id": "37",
+  "game": "rust",
+  "game_name": "Rust",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Xbox"
+    },
+    {
+      "id": "1",
+      "name": "PlayStation"
+    }
+  ],
+  "attributes": {
+    "rust-coins": {
+      "name": "Coins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "500-coins",
+          "name": "500 Coins"
+        },
+        {
+          "id": "1100-coins",
+          "name": "1100 Coins"
+        },
+        {
+          "id": "2250-coins",
+          "name": "2250 Coins"
+        },
+        {
+          "id": "4600-coins",
+          "name": "4600 Coins"
+        },
+        {
+          "id": "7800-coins",
+          "name": "7800 Coins"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

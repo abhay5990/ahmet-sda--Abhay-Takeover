@@ -83,6 +83,11 @@
       "id": "17",
       "name": "Middle East",
       "group": "Server"
+    },
+    {
+      "id": "18",
+      "name": "Korea",
+      "group": "Server"
     }
   ],
   "attributes": {

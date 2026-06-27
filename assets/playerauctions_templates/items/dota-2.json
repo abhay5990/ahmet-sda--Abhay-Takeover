@@ -1,0 +1,208 @@
+{
+  "game_id": 5707,
+  "game": "dota-2",
+  "game_name": "DOTA 2",
+  "seo_name": "DOTA-2",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1025,
+      "name": "TI",
+      "seoName": "TI",
+      "subCategories": [
+        {
+          "id": 4998,
+          "name": "TI",
+          "seoName": "TI"
+        }
+      ]
+    },
+    {
+      "id": 1026,
+      "name": "Equipments",
+      "seoName": "Equipments",
+      "subCategories": [
+        {
+          "id": 4999,
+          "name": "Equipments",
+          "seoName": "Equipments"
+        }
+      ]
+    },
+    {
+      "id": 1027,
+      "name": "Treasures",
+      "seoName": "Treasures",
+      "subCategories": [
+        {
+          "id": 5000,
+          "name": "Treasures",
+          "seoName": "Treasures"
+        }
+      ]
+    },
+    {
+      "id": 1028,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 5001,
+          "name": "Tools",
+          "seoName": "Tools"
+        }
+      ]
+    },
+    {
+      "id": 1029,
+      "name": "Couries",
+      "seoName": "Couries",
+      "subCategories": [
+        {
+          "id": 5002,
+          "name": "Couries",
+          "seoName": "Couries"
+        }
+      ]
+    },
+    {
+      "id": 1030,
+      "name": "Announcers",
+      "seoName": "Announcers",
+      "subCategories": [
+        {
+          "id": 5003,
+          "name": "Announcers",
+          "seoName": "Announcers"
+        }
+      ]
+    },
+    {
+      "id": 1031,
+      "name": "Music",
+      "seoName": "Music",
+      "subCategories": [
+        {
+          "id": 5004,
+          "name": "Music",
+          "seoName": "Music"
+        }
+      ]
+    },
+    {
+      "id": 1032,
+      "name": "Wards",
+      "seoName": "Wards",
+      "subCategories": [
+        {
+          "id": 5005,
+          "name": "Wards",
+          "seoName": "Wards"
+        }
+      ]
+    },
+    {
+      "id": 1033,
+      "name": "Hud Skins",
+      "seoName": "Hud Skins",
+      "subCategories": [
+        {
+          "id": 5006,
+          "name": "Hud Skins",
+          "seoName": "Hud Skins"
+        }
+      ]
+    },
+    {
+      "id": 1034,
+      "name": "Loading Screens",
+      "seoName": "Loading Screens",
+      "subCategories": [
+        {
+          "id": 5007,
+          "name": "Loading Screens",
+          "seoName": "Loading Screens"
+        }
+      ]
+    },
+    {
+      "id": 1035,
+      "name": "Chat Emotions",
+      "seoName": "Chat Emotions",
+      "subCategories": [
+        {
+          "id": 5008,
+          "name": "Chat Emotions",
+          "seoName": "Chat Emotions"
+        }
+      ]
+    },
+    {
+      "id": 1036,
+      "name": "League",
+      "seoName": "League",
+      "subCategories": [
+        {
+          "id": 5009,
+          "name": "League",
+          "seoName": "League"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 5708,
+      "name": "All Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

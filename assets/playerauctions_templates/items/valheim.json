@@ -1,0 +1,263 @@
+{
+  "game_id": 9460,
+  "game": "valheim",
+  "game_name": "Valheim",
+  "seo_name": "Valheim",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1087,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 5155,
+          "name": "Ores",
+          "seoName": "Ores"
+        },
+        {
+          "id": 5156,
+          "name": "Scraps",
+          "seoName": "Scraps"
+        },
+        {
+          "id": 5157,
+          "name": "Refined Metals",
+          "seoName": "Refined Metals"
+        }
+      ]
+    },
+    {
+      "id": 1088,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 5140,
+          "name": "Axes",
+          "seoName": "Axes"
+        },
+        {
+          "id": 5141,
+          "name": "Pickaxes",
+          "seoName": "Pickaxes"
+        },
+        {
+          "id": 5142,
+          "name": "Miscellaneous",
+          "seoName": "Miscellaneous"
+        }
+      ]
+    },
+    {
+      "id": 1089,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 5128,
+          "name": "Properties",
+          "seoName": "Properties"
+        },
+        {
+          "id": 5129,
+          "name": "Melee Weapons",
+          "seoName": "Melee Weapons"
+        },
+        {
+          "id": 5130,
+          "name": "Bows",
+          "seoName": "Bows"
+        },
+        {
+          "id": 5131,
+          "name": "Arrows",
+          "seoName": "Arrows"
+        },
+        {
+          "id": 5132,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 5133,
+          "name": "Consumable Weapons",
+          "seoName": "Consumable Weapons"
+        }
+      ]
+    },
+    {
+      "id": 1090,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 5134,
+          "name": "Legging",
+          "seoName": "Legging"
+        },
+        {
+          "id": 5135,
+          "name": "Tunic",
+          "seoName": "Tunic"
+        },
+        {
+          "id": 5136,
+          "name": "Helmet",
+          "seoName": "Helmet"
+        },
+        {
+          "id": 5137,
+          "name": "Cape",
+          "seoName": "Cape"
+        }
+      ]
+    },
+    {
+      "id": 1091,
+      "name": "Furniture",
+      "seoName": "Furniture",
+      "subCategories": [
+        {
+          "id": 5143,
+          "name": "Item Stand",
+          "seoName": "Item Stand"
+        },
+        {
+          "id": 5144,
+          "name": "Rug",
+          "seoName": "Rug"
+        },
+        {
+          "id": 5145,
+          "name": "Bed",
+          "seoName": "Bed"
+        },
+        {
+          "id": 5146,
+          "name": "Banner",
+          "seoName": "Banner"
+        },
+        {
+          "id": 5147,
+          "name": "Table",
+          "seoName": "Table"
+        },
+        {
+          "id": 5148,
+          "name": "Chair",
+          "seoName": "Chair"
+        },
+        {
+          "id": 5149,
+          "name": "Torch",
+          "seoName": "Torch"
+        },
+        {
+          "id": 5150,
+          "name": "Chest",
+          "seoName": "Chest"
+        }
+      ]
+    },
+    {
+      "id": 1092,
+      "name": "Structures",
+      "seoName": "Structures",
+      "subCategories": [
+        {
+          "id": 5151,
+          "name": "Crafting Structures",
+          "seoName": "Crafting Structures"
+        },
+        {
+          "id": 5152,
+          "name": "Building Structures",
+          "seoName": "Building Structures"
+        },
+        {
+          "id": 5153,
+          "name": "Furniture Structures",
+          "seoName": "Furniture Structures"
+        },
+        {
+          "id": 5154,
+          "name": "Misc. Structures",
+          "seoName": "Misc. Structures"
+        }
+      ]
+    },
+    {
+      "id": 1093,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 5138,
+          "name": "Food",
+          "seoName": "Food"
+        },
+        {
+          "id": 5139,
+          "name": "Mead",
+          "seoName": "Mead"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 9461,
+      "name": "Global"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

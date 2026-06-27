@@ -1,0 +1,246 @@
+{
+  "game_id": 2785,
+  "game": "habbo",
+  "game_name": "Habbo",
+  "seo_name": "Habbo",
+  "currencyName": "Coins",
+  "categories": [
+    {
+      "id": 1401,
+      "name": "Furni",
+      "seoName": "Furni",
+      "subCategories": [
+        {
+          "id": 6414,
+          "name": "Throne",
+          "seoName": "Throne"
+        },
+        {
+          "id": 6415,
+          "name": "Norms",
+          "seoName": "Norms"
+        },
+        {
+          "id": 6416,
+          "name": "Rares",
+          "seoName": "Rares"
+        },
+        {
+          "id": 6417,
+          "name": "Normal Rares",
+          "seoName": "Normal Rares"
+        },
+        {
+          "id": 6418,
+          "name": "Super Rares",
+          "seoName": "Super Rares"
+        }
+      ]
+    },
+    {
+      "id": 1402,
+      "name": "Outfits",
+      "seoName": "Outfits",
+      "subCategories": [
+        {
+          "id": 6419,
+          "name": "Boy",
+          "seoName": "Boy"
+        },
+        {
+          "id": 6420,
+          "name": "Girl",
+          "seoName": "Girl"
+        },
+        {
+          "id": 6421,
+          "name": "Unisex",
+          "seoName": "Unisex"
+        }
+      ]
+    },
+    {
+      "id": 1403,
+      "name": "Pet",
+      "seoName": "Pet",
+      "subCategories": [
+        {
+          "id": 6422,
+          "name": "Cats",
+          "seoName": "Cats"
+        },
+        {
+          "id": 6423,
+          "name": "Bears",
+          "seoName": "Bears"
+        },
+        {
+          "id": 6424,
+          "name": "Lions",
+          "seoName": "Lions"
+        },
+        {
+          "id": 6425,
+          "name": "Frogs",
+          "seoName": "Frogs"
+        },
+        {
+          "id": 6426,
+          "name": "Turtles",
+          "seoName": "Turtles"
+        },
+        {
+          "id": 6427,
+          "name": "Bunnies",
+          "seoName": "Bunnies"
+        },
+        {
+          "id": 6428,
+          "name": "Dogs",
+          "seoName": "Dogs"
+        },
+        {
+          "id": 6429,
+          "name": "Terriers",
+          "seoName": "Terriers"
+        },
+        {
+          "id": 6430,
+          "name": "Rhinos",
+          "seoName": "Rhinos"
+        },
+        {
+          "id": 6431,
+          "name": "Chicks",
+          "seoName": "Chicks"
+        },
+        {
+          "id": 6432,
+          "name": "Monkeys",
+          "seoName": "Monkeys"
+        },
+        {
+          "id": 6433,
+          "name": "Pigeons",
+          "seoName": "Pigeons"
+        },
+        {
+          "id": 6434,
+          "name": "Crocodiles",
+          "seoName": "Crocodiles"
+        },
+        {
+          "id": 6435,
+          "name": "Pigs",
+          "seoName": "Pigs"
+        },
+        {
+          "id": 6436,
+          "name": "Spiders",
+          "seoName": "Spiders"
+        },
+        {
+          "id": 6437,
+          "name": "Dragons",
+          "seoName": "Dragons"
+        },
+        {
+          "id": 6438,
+          "name": "Horse",
+          "seoName": "Horse"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 2788,
+      "name": "English-language"
+    },
+    {
+      "id": 9193,
+      "name": "Brazil"
+    },
+    {
+      "id": 9187,
+      "name": "Finland"
+    },
+    {
+      "id": 9192,
+      "name": "France"
+    },
+    {
+      "id": 9191,
+      "name": "Germany"
+    },
+    {
+      "id": 9189,
+      "name": "Italy"
+    },
+    {
+      "id": 9190,
+      "name": "Netherlands"
+    },
+    {
+      "id": 13837,
+      "name": "Origins"
+    },
+    {
+      "id": 9188,
+      "name": "Spain"
+    },
+    {
+      "id": 9194,
+      "name": "Turkey"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

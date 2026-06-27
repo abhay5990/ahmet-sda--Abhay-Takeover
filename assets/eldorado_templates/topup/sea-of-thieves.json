@@ -1,0 +1,117 @@
+{
+  "game_id": "82",
+  "game": "sea-of-thieves",
+  "game_name": "Sea of Thieves",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "sea-of-thieves-ancient-coins": {
+      "name": "Ancient Coins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "150-ancient-coins",
+          "name": "150 Ancient Coins"
+        },
+        {
+          "id": "550-ancient-coins",
+          "name": "550 Ancient Coins"
+        },
+        {
+          "id": "1000-ancient-coins",
+          "name": "1000 Ancient Coins"
+        },
+        {
+          "id": "2550-ancient-coins",
+          "name": "2550 Ancient Coins"
+        },
+        {
+          "id": "4250-ancient-coins",
+          "name": "4250 Ancient Coins"
+        },
+        {
+          "id": "8500-ancient-coins",
+          "name": "8500 Ancient Coins"
+        },
+        {
+          "id": "12750-ancient-coins",
+          "name": "12750 Ancient Coins"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "game_id": "285",
+  "game": "plants-vs-brainrots",
+  "game_name": "Plants vs Brainrots",
+  "category": "CustomItem",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Brainrot",
+      "group": "Item Type",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "Rare"
+        },
+        {
+          "id": "0-1",
+          "name": "Epic"
+        },
+        {
+          "id": "0-2",
+          "name": "Legendary"
+        },
+        {
+          "id": "0-3",
+          "name": "Mythic"
+        },
+        {
+          "id": "0-4",
+          "name": "Godly"
+        },
+        {
+          "id": "0-5",
+          "name": "Secret"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "Plant",
+      "group": "Item Type",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "Rare"
+        },
+        {
+          "id": "1-1",
+          "name": "Epic"
+        },
+        {
+          "id": "1-2",
+          "name": "Legendary"
+        },
+        {
+          "id": "1-3",
+          "name": "Mythic"
+        },
+        {
+          "id": "1-4",
+          "name": "Godly"
+        },
+        {
+          "id": "1-5",
+          "name": "Secret"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Other",
+      "group": "Item Type"
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,285 @@
+{
+  "game_id": 4,
+  "game": "everquest",
+  "game_name": "EverQuest",
+  "seo_name": "EverQuest",
+  "currencyName": "Plat",
+  "categories": [
+    {
+      "id": 788,
+      "name": "LoN Loot Card",
+      "seoName": "LoN Loot Card",
+      "subCategories": [
+        {
+          "id": 347,
+          "name": "LoN Loot Card",
+          "seoName": "LoN Loot Card"
+        }
+      ]
+    },
+    {
+      "id": 809,
+      "name": "Krono",
+      "seoName": "Krono",
+      "subCategories": [
+        {
+          "id": 2377,
+          "name": "Krono",
+          "seoName": "Krono"
+        },
+        {
+          "id": 10022,
+          "name": "1 Krono",
+          "seoName": "1 Krono"
+        },
+        {
+          "id": 10023,
+          "name": "2 Krono",
+          "seoName": "2 Krono"
+        },
+        {
+          "id": 10024,
+          "name": "5 Krono",
+          "seoName": "5 Krono"
+        },
+        {
+          "id": 10025,
+          "name": "10 Krono",
+          "seoName": "10 Krono"
+        },
+        {
+          "id": 10026,
+          "name": "20 Krono",
+          "seoName": "20 Krono"
+        }
+      ]
+    },
+    {
+      "id": 997,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 4798,
+          "name": "Armor",
+          "seoName": "Armor"
+        }
+      ]
+    },
+    {
+      "id": 998,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 4799,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        }
+      ]
+    },
+    {
+      "id": 999,
+      "name": "Misc and Quest Items",
+      "seoName": "Misc and Quest Items",
+      "subCategories": [
+        {
+          "id": 4801,
+          "name": "Misc and Quest Items",
+          "seoName": "Misc and Quest Items"
+        }
+      ]
+    },
+    {
+      "id": 1000,
+      "name": "Containers",
+      "seoName": "Containers",
+      "subCategories": [
+        {
+          "id": 4802,
+          "name": "Containers",
+          "seoName": "Containers"
+        }
+      ]
+    },
+    {
+      "id": 1001,
+      "name": "Torment of Velious Items",
+      "seoName": "Torment of Velious Items",
+      "subCategories": [
+        {
+          "id": 4803,
+          "name": "Torment of Velious Items",
+          "seoName": "Torment of Velious Items"
+        }
+      ]
+    },
+    {
+      "id": 1015,
+      "name": "Shields",
+      "seoName": "Shields",
+      "subCategories": [
+        {
+          "id": 4800,
+          "name": "Shields",
+          "seoName": "Shields"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 87,
+      "name": "Firiona Vie"
+    },
+    {
+      "id": 79,
+      "name": "Antonius Bayle"
+    },
+    {
+      "id": 7836,
+      "name": "Agnarr"
+    },
+    {
+      "id": 9222,
+      "name": "Aradune"
+    },
+    {
+      "id": 80,
+      "name": "Bertoxxulous-Saryrn"
+    },
+    {
+      "id": 81,
+      "name": "Bristlebane-The Tribunal"
+    },
+    {
+      "id": 82,
+      "name": "Cazic-Thule-Fennin Ro"
+    },
+    {
+      "id": 83,
+      "name": "Drinal-Maelin Starpyre"
+    },
+    {
+      "id": 8565,
+      "name": "EQ20th Mangler"
+    },
+    {
+      "id": 85,
+      "name": "Erollisi Marr-The Nameless"
+    },
+    {
+      "id": 14337,
+      "name": "Fangbreaker"
+    },
+    {
+      "id": 15165,
+      "name": "Frostreaver"
+    },
+    {
+      "id": 88,
+      "name": "Luclin-Stromm"
+    },
+    {
+      "id": 9748,
+      "name": "Mischief"
+    },
+    {
+      "id": 90,
+      "name": "Povar-Quellious"
+    },
+    {
+      "id": 9223,
+      "name": "Rizlona"
+    },
+    {
+      "id": 13833,
+      "name": "Teek"
+    },
+    {
+      "id": 97,
+      "name": "The Rathe-Prexus"
+    },
+    {
+      "id": 13834,
+      "name": "Tormax"
+    },
+    {
+      "id": 100,
+      "name": "Tunare-The Seventh Hammer"
+    },
+    {
+      "id": 5019,
+      "name": "VOX"
+    },
+    {
+      "id": 101,
+      "name": "Xegony-Druzzil Ro"
+    },
+    {
+      "id": 102,
+      "name": "Zek"
+    },
+    {
+      "id": 13403,
+      "name": "Oakwynd"
+    },
+    {
+      "id": 12753,
+      "name": "Vaniki"
+    },
+    {
+      "id": 12752,
+      "name": "Yelinak"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

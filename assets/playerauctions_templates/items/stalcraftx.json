@@ -1,0 +1,143 @@
+{
+  "game_id": 14830,
+  "game": "stalcraftx",
+  "game_name": "STALCRAFT: X",
+  "seo_name": "StalcraftX",
+  "currencyName": "Rubles",
+  "categories": [
+    {
+      "id": 2080,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 10371,
+          "name": "Pistol",
+          "seoName": "Pistol"
+        },
+        {
+          "id": 10372,
+          "name": "SMG",
+          "seoName": "SMG"
+        },
+        {
+          "id": 10373,
+          "name": "Rifle",
+          "seoName": "Rifle"
+        },
+        {
+          "id": 10374,
+          "name": "Shotgun",
+          "seoName": "Shotgun"
+        },
+        {
+          "id": 10375,
+          "name": "Special Weapon",
+          "seoName": "Special Weapon"
+        }
+      ]
+    },
+    {
+      "id": 2081,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 10376,
+          "name": "Combat",
+          "seoName": "Combat"
+        },
+        {
+          "id": 10377,
+          "name": "Research",
+          "seoName": "Research"
+        },
+        {
+          "id": 10378,
+          "name": "Combined",
+          "seoName": "Combined"
+        },
+        {
+          "id": 10379,
+          "name": "Scientific",
+          "seoName": "Scientific"
+        }
+      ]
+    },
+    {
+      "id": 2082,
+      "name": "Artifact",
+      "seoName": "Artifact",
+      "subCategories": [
+        {
+          "id": 10380,
+          "name": "Artifact",
+          "seoName": "Artifact"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 14833,
+      "name": "ASIA"
+    },
+    {
+      "id": 14832,
+      "name": "EU"
+    },
+    {
+      "id": 14831,
+      "name": "NA"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

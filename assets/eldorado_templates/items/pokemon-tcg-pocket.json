@@ -1,0 +1,134 @@
+{
+  "game_id": "226",
+  "game": "pokemon-tcg-pocket",
+  "game_name": "Pokemon TCG Pocket",
+  "category": "CustomItem",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Cards",
+      "group": "Item Type",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "One-diamond"
+        },
+        {
+          "id": "0-1",
+          "name": "Two-diamond"
+        },
+        {
+          "id": "0-2",
+          "name": "Three-diamond"
+        },
+        {
+          "id": "0-3",
+          "name": "Four-diamond"
+        },
+        {
+          "id": "0-4",
+          "name": "One-star"
+        },
+        {
+          "id": "0-5",
+          "name": "Two-star"
+        },
+        {
+          "id": "0-6",
+          "name": "Three-star"
+        },
+        {
+          "id": "0-7",
+          "name": "One-shiny"
+        },
+        {
+          "id": "0-8",
+          "name": "Two-shiny"
+        },
+        {
+          "id": "0-9",
+          "name": "Crown"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "Other",
+      "group": "Item Type"
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

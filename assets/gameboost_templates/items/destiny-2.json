@@ -59,12 +59,7 @@
   "item_data": {
     "platform": {
       "type": "string",
-      "required": true,
-      "values": [
-        "PC",
-        "PlayStation",
-        "Xbox"
-      ]
+      "required": false
     }
   }
 }

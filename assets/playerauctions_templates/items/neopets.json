@@ -1,0 +1,595 @@
+{
+  "game_id": 3132,
+  "game": "neopets",
+  "game_name": "Neopets",
+  "seo_name": "Neopets",
+  "currencyName": "Neopoints",
+  "categories": [
+    {
+      "id": 1410,
+      "name": "Pets",
+      "seoName": "Pets",
+      "subCategories": [
+        {
+          "id": 6487,
+          "name": "Neopet",
+          "seoName": "Neopet"
+        },
+        {
+          "id": 6488,
+          "name": "Petpet",
+          "seoName": "Petpet"
+        },
+        {
+          "id": 6489,
+          "name": "Petpetpet",
+          "seoName": "Petpetpet"
+        }
+      ]
+    },
+    {
+      "id": 1411,
+      "name": "Paint Brushes",
+      "seoName": "Paint Brushes",
+      "subCategories": [
+        {
+          "id": 6490,
+          "name": "Petpet Paintbrushes",
+          "seoName": "Petpet Paintbrushes"
+        },
+        {
+          "id": 6491,
+          "name": "Neopets Paintbrushes",
+          "seoName": "Neopets Paintbrushes"
+        },
+        {
+          "id": 8076,
+          "name": "Rainbow Paint Brush",
+          "seoName": "Rainbow Paint Brush"
+        },
+        {
+          "id": 8077,
+          "name": "Black Paint Brush",
+          "seoName": "Black Paint Brush"
+        },
+        {
+          "id": 8078,
+          "name": "Transparent Paint Brush",
+          "seoName": "Transparent Paint Brush"
+        },
+        {
+          "id": 8079,
+          "name": "Toy Paint Brush",
+          "seoName": "Toy Paint Brush"
+        },
+        {
+          "id": 8080,
+          "name": "Red Paint Brush",
+          "seoName": "Red Paint Brush"
+        },
+        {
+          "id": 8081,
+          "name": "Baby Paint Brush",
+          "seoName": "Baby Paint Brush"
+        },
+        {
+          "id": 8082,
+          "name": "Stencil Paint Brush",
+          "seoName": "Stencil Paint Brush"
+        },
+        {
+          "id": 8083,
+          "name": "Faerie Paint Brush",
+          "seoName": "Faerie Paint Brush"
+        },
+        {
+          "id": 8084,
+          "name": "Maraquan Paint Brush",
+          "seoName": "Maraquan Paint Brush"
+        },
+        {
+          "id": 8085,
+          "name": "Royal Paint Brush",
+          "seoName": "Royal Paint Brush"
+        },
+        {
+          "id": 8086,
+          "name": "Pink Paint Brush",
+          "seoName": "Pink Paint Brush"
+        },
+        {
+          "id": 8087,
+          "name": "Stealth Paint Brush",
+          "seoName": "Stealth Paint Brush"
+        },
+        {
+          "id": 8088,
+          "name": "Invisible Paint Brush",
+          "seoName": "Invisible Paint Brush"
+        },
+        {
+          "id": 8089,
+          "name": "Blue Paint Brush",
+          "seoName": "Blue Paint Brush"
+        },
+        {
+          "id": 8090,
+          "name": "Water Paint Brush",
+          "seoName": "Water Paint Brush"
+        },
+        {
+          "id": 8091,
+          "name": "Pastel Paint Brush",
+          "seoName": "Pastel Paint Brush"
+        },
+        {
+          "id": 8092,
+          "name": "White Paint Brush",
+          "seoName": "White Paint Brush"
+        },
+        {
+          "id": 8093,
+          "name": "Stealthy Paint Brush",
+          "seoName": "Stealthy Paint Brush"
+        },
+        {
+          "id": 8094,
+          "name": "Purple Paint Brush",
+          "seoName": "Purple Paint Brush"
+        },
+        {
+          "id": 8095,
+          "name": "Wraith Paint Brush",
+          "seoName": "Wraith Paint Brush"
+        },
+        {
+          "id": 8096,
+          "name": "Halloween Paint Brush",
+          "seoName": "Halloween Paint Brush"
+        },
+        {
+          "id": 8097,
+          "name": "Royal Petpet Paint Brush",
+          "seoName": "Royal Petpet Paint Brush"
+        },
+        {
+          "id": 8098,
+          "name": "Grey Paint Brush",
+          "seoName": "Grey Paint Brush"
+        },
+        {
+          "id": 8099,
+          "name": "Spotted Paint Brush",
+          "seoName": "Spotted Paint Brush"
+        },
+        {
+          "id": 8100,
+          "name": "Pink Petpet Paint Brush",
+          "seoName": "Pink Petpet Paint Brush"
+        },
+        {
+          "id": 8101,
+          "name": "Candy Paint Brush",
+          "seoName": "Candy Paint Brush"
+        },
+        {
+          "id": 8102,
+          "name": "Electric Petpet Paint Brush",
+          "seoName": "Electric Petpet Paint Brush"
+        },
+        {
+          "id": 8103,
+          "name": "Shadow Paint Brush",
+          "seoName": "Shadow Paint Brush"
+        },
+        {
+          "id": 8104,
+          "name": "Fire Fire Your Pants On Fire Paint Brush",
+          "seoName": "Fire Fire Your Pants On Fire Paint Brush"
+        },
+        {
+          "id": 8105,
+          "name": "Black Petpet Paint Brush",
+          "seoName": "Black Petpet Paint Brush"
+        },
+        {
+          "id": 8106,
+          "name": "Oil Paint Brush",
+          "seoName": "Oil Paint Brush"
+        },
+        {
+          "id": 8107,
+          "name": "Black And White Paint Brush",
+          "seoName": "Black And White Paint Brush"
+        },
+        {
+          "id": 8108,
+          "name": "Christmas Paint Brush",
+          "seoName": "Christmas Paint Brush"
+        }
+      ]
+    },
+    {
+      "id": 1412,
+      "name": "Wearables",
+      "seoName": "Wearables",
+      "subCategories": [
+        {
+          "id": 6492,
+          "name": "Backgrounds",
+          "seoName": "Backgrounds"
+        },
+        {
+          "id": 6493,
+          "name": "Clothes",
+          "seoName": "Clothes"
+        },
+        {
+          "id": 6494,
+          "name": "Accessories",
+          "seoName": "Accessories"
+        },
+        {
+          "id": 6495,
+          "name": "Trinkets",
+          "seoName": "Trinkets"
+        }
+      ]
+    },
+    {
+      "id": 1413,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 6496,
+          "name": "Swords",
+          "seoName": "Swords"
+        },
+        {
+          "id": 6497,
+          "name": "Wands",
+          "seoName": "Wands"
+        },
+        {
+          "id": 6498,
+          "name": "Other Weapons",
+          "seoName": "Other Weapons"
+        },
+        {
+          "id": 6696,
+          "name": "Blades",
+          "seoName": "Blades"
+        },
+        {
+          "id": 6697,
+          "name": "Bows",
+          "seoName": "Bows"
+        },
+        {
+          "id": 6698,
+          "name": "Charms",
+          "seoName": "Charms"
+        },
+        {
+          "id": 6699,
+          "name": "Cloaks",
+          "seoName": "Cloaks"
+        },
+        {
+          "id": 6700,
+          "name": "Hats and Helmets",
+          "seoName": "Hats and Helmets"
+        },
+        {
+          "id": 6701,
+          "name": "Guns",
+          "seoName": "Guns"
+        },
+        {
+          "id": 6702,
+          "name": "Robes",
+          "seoName": "Robes"
+        },
+        {
+          "id": 6703,
+          "name": "Rods",
+          "seoName": "Rods"
+        },
+        {
+          "id": 6704,
+          "name": "Staves",
+          "seoName": "Staves"
+        },
+        {
+          "id": 6705,
+          "name": "Scorchstones",
+          "seoName": "Scorchstones"
+        },
+        {
+          "id": 6706,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 6707,
+          "name": "Spears",
+          "seoName": "Spears"
+        },
+        {
+          "id": 8303,
+          "name": "Battle Magic",
+          "seoName": "Battle Magic"
+        }
+      ]
+    },
+    {
+      "id": 1414,
+      "name": "Potions",
+      "seoName": "Potions",
+      "subCategories": [
+        {
+          "id": 6499,
+          "name": "Healing Potions",
+          "seoName": "Healing Potions"
+        },
+        {
+          "id": 6500,
+          "name": "Morphing Potions",
+          "seoName": "Morphing Potions"
+        },
+        {
+          "id": 6501,
+          "name": "Transmogrification Potions",
+          "seoName": "Transmogrification Potions"
+        },
+        {
+          "id": 6502,
+          "name": "Diseases Potions",
+          "seoName": "Diseases Potions"
+        }
+      ]
+    },
+    {
+      "id": 1756,
+      "name": "Stamps",
+      "seoName": "Stamps",
+      "subCategories": [
+        {
+          "id": 8109,
+          "name": "Faerie Caverns Stamp",
+          "seoName": "Faerie Caverns Stamp"
+        },
+        {
+          "id": 8109,
+          "name": "Faerie Caverns Stamp",
+          "seoName": "Faerie Caverns Stamp"
+        },
+        {
+          "id": 8110,
+          "name": "Battle Slices Stamp",
+          "seoName": "Battle Slices Stamp"
+        },
+        {
+          "id": 8111,
+          "name": "Shenkuu City Stamp",
+          "seoName": "Shenkuu City Stamp"
+        },
+        {
+          "id": 8112,
+          "name": "Moonlit Esophagor Stamp",
+          "seoName": "Moonlit Esophagor Stamp"
+        },
+        {
+          "id": 8113,
+          "name": "Official Ghoul Catchers Stamp",
+          "seoName": "Official Ghoul Catchers Stamp"
+        },
+        {
+          "id": 8114,
+          "name": "Korbats Lab Stamp",
+          "seoName": "Korbats Lab Stamp"
+        },
+        {
+          "id": 8115,
+          "name": "Flying Korbats Stamp",
+          "seoName": "Flying Korbats Stamp"
+        },
+        {
+          "id": 8116,
+          "name": "Maraquan Troops Stamp",
+          "seoName": "Maraquan Troops Stamp"
+        },
+        {
+          "id": 8117,
+          "name": "Queen Fyora Stamp",
+          "seoName": "Queen Fyora Stamp"
+        },
+        {
+          "id": 8118,
+          "name": "Altador Cup X Commemorative Stamp",
+          "seoName": "Altador Cup X Commemorative Stamp"
+        },
+        {
+          "id": 8119,
+          "name": "Easter Treats Stamp",
+          "seoName": "Easter Treats Stamp"
+        },
+        {
+          "id": 8120,
+          "name": "3D Camp Aaa Stamp",
+          "seoName": "3D Camp Aaa Stamp"
+        },
+        {
+          "id": 8121,
+          "name": "Faerie City Stamp",
+          "seoName": "Faerie City Stamp"
+        },
+        {
+          "id": 8122,
+          "name": "Mellow Marauders Plushie Stamp",
+          "seoName": "Mellow Marauders Plushie Stamp"
+        },
+        {
+          "id": 8295,
+          "name": "Other Stamps",
+          "seoName": "Other Stamps"
+        },
+        {
+          "id": 8700,
+          "name": "Lab Ray Stamp",
+          "seoName": "Lab Ray Stamp"
+        },
+        {
+          "id": 8701,
+          "name": "King Altador Stamp",
+          "seoName": "King Altador Stamp"
+        },
+        {
+          "id": 8702,
+          "name": "Snowager Stamp",
+          "seoName": "Snowager Stamp"
+        },
+        {
+          "id": 8703,
+          "name": "Nostalgic Grey Draik Stamp",
+          "seoName": "Nostalgic Grey Draik Stamp"
+        },
+        {
+          "id": 8704,
+          "name": "Jhudoras Cloud Stamp",
+          "seoName": "Jhudoras Cloud Stamp"
+        },
+        {
+          "id": 8705,
+          "name": "Feldon Dinksy Collibridge Stamp",
+          "seoName": "Feldon Dinksy Collibridge Stamp"
+        },
+        {
+          "id": 9854,
+          "name": "Misprint Meuka Stamp",
+          "seoName": "Misprint Meuka Stamp"
+        }
+      ]
+    },
+    {
+      "id": 1765,
+      "name": "Food",
+      "seoName": "Food",
+      "subCategories": [
+        {
+          "id": 8296,
+          "name": "Gourmet Food",
+          "seoName": "Gourmet Food"
+        },
+        {
+          "id": 8297,
+          "name": "Spooky Food",
+          "seoName": "Spooky Food"
+        },
+        {
+          "id": 8298,
+          "name": "All Food",
+          "seoName": "All Food"
+        },
+        {
+          "id": 8299,
+          "name": "Space Food",
+          "seoName": "Space Food"
+        },
+        {
+          "id": 8300,
+          "name": "Baked",
+          "seoName": "Baked"
+        },
+        {
+          "id": 8301,
+          "name": "Pizza",
+          "seoName": "Pizza"
+        },
+        {
+          "id": 8302,
+          "name": "Exotic Food",
+          "seoName": "Exotic Food"
+        }
+      ]
+    },
+    {
+      "id": 1845,
+      "name": "Plushies",
+      "seoName": "Plushies",
+      "subCategories": [
+        {
+          "id": 8697,
+          "name": "Magical MSP Poogle Plushie",
+          "seoName": "Magical MSP Poogle Plushie"
+        },
+        {
+          "id": 8698,
+          "name": "Darkest Faerie Plushie",
+          "seoName": "Darkest Faerie Plushie"
+        },
+        {
+          "id": 8699,
+          "name": "Mastermind Plushie",
+          "seoName": "Mastermind Plushie"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 3133,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

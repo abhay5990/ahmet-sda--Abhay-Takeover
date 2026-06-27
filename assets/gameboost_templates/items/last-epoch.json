@@ -59,25 +59,11 @@
   "item_data": {
     "server": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Beneath Ancient Skies Standard",
-        "Beneath Ancient Skies Hardcore",
-        "Tombs of the Erased Standard",
-        "Tombs of the Erased Hardcore",
-        "Legacy Standard",
-        "Legacy Hardcore"
-      ]
+      "required": false
     },
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Equipments",
-        "Crafting",
-        "Cosmetics",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

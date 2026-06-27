@@ -1,0 +1,320 @@
+{
+  "game_id": "55",
+  "game": "mobile-legends",
+  "game_name": "Mobile Legends",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Global",
+      "group": "Server"
+    },
+    {
+      "id": "5",
+      "name": "Turkey",
+      "group": "Server"
+    },
+    {
+      "id": "1",
+      "name": "Indonesia",
+      "group": "Server"
+    },
+    {
+      "id": "2",
+      "name": "Philippines",
+      "group": "Server"
+    },
+    {
+      "id": "3",
+      "name": "Malaysia",
+      "group": "Server"
+    },
+    {
+      "id": "4",
+      "name": "Singapore",
+      "group": "Server"
+    }
+  ],
+  "attributes": {
+    "mobile-legends-diamonds": {
+      "name": "Diamonds",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "1041-diamonds",
+          "name": "1041 Diamonds"
+        },
+        {
+          "id": "1067-diamonds",
+          "name": "1067 Diamonds"
+        },
+        {
+          "id": "1084-diamonds",
+          "name": "1084 Diamonds"
+        },
+        {
+          "id": "112-diamonds",
+          "name": "112 Diamonds"
+        },
+        {
+          "id": "1163-diamonds",
+          "name": "1163 Diamonds"
+        },
+        {
+          "id": "12292-diamonds",
+          "name": "12292 Diamonds"
+        },
+        {
+          "id": "133-diamonds",
+          "name": "133 Diamonds"
+        },
+        {
+          "id": "140-diamonds",
+          "name": "140 Diamonds"
+        },
+        {
+          "id": "1584-diamonds",
+          "name": "1584 Diamonds"
+        },
+        {
+          "id": "1704-diamonds",
+          "name": "1704 Diamonds"
+        },
+        {
+          "id": "1733-diamonds",
+          "name": "1733 Diamonds"
+        },
+        {
+          "id": "18438-diamonds",
+          "name": "18438 Diamonds"
+        },
+        {
+          "id": "221-diamonds",
+          "name": "221 Diamonds"
+        },
+        {
+          "id": "2398-diamonds",
+          "name": "2398 Diamonds"
+        },
+        {
+          "id": "2645-diamonds",
+          "name": "2645 Diamonds"
+        },
+        {
+          "id": "279-diamonds",
+          "name": "279 Diamonds"
+        },
+        {
+          "id": "284-diamonds",
+          "name": "284 Diamonds"
+        },
+        {
+          "id": "2855-diamonds",
+          "name": "2855 Diamonds"
+        },
+        {
+          "id": "2976-diamonds",
+          "name": "2976 Diamonds"
+        },
+        {
+          "id": "336-diamonds",
+          "name": "336 Diamonds"
+        },
+        {
+          "id": "355-diamonds",
+          "name": "355 Diamonds"
+        },
+        {
+          "id": "370-diamonds",
+          "name": "370 Diamonds"
+        },
+        {
+          "id": "3976-diamonds",
+          "name": "3976 Diamonds"
+        },
+        {
+          "id": "494-diamonds",
+          "name": "494 Diamonds"
+        },
+        {
+          "id": "518-diamonds",
+          "name": "518 Diamonds"
+        },
+        {
+          "id": "5290-diamonds",
+          "name": "5290 Diamonds"
+        },
+        {
+          "id": "56-diamonds",
+          "name": "56 Diamonds"
+        },
+        {
+          "id": "570-diamonds",
+          "name": "570 Diamonds"
+        },
+        {
+          "id": "6042-diamonds",
+          "name": "6042 Diamonds"
+        },
+        {
+          "id": "6146-diamonds",
+          "name": "6146 Diamonds"
+        },
+        {
+          "id": "6288-diamonds",
+          "name": "6288 Diamonds"
+        },
+        {
+          "id": "706-diamonds",
+          "name": "706 Diamonds"
+        },
+        {
+          "id": "7210-diamonds",
+          "name": "7210 Diamonds"
+        },
+        {
+          "id": "7502-diamonds",
+          "name": "7502 Diamonds"
+        },
+        {
+          "id": "88-diamonds",
+          "name": "88 Diamonds"
+        },
+        {
+          "id": "limited-time-value-pack",
+          "name": "Limited-Time Value Pack"
+        },
+        {
+          "id": "42-diamonds",
+          "name": "42 Diamonds"
+        },
+        {
+          "id": "86-diamonds",
+          "name": "86 Diamonds"
+        },
+        {
+          "id": "172-diamonds",
+          "name": "172 Diamonds"
+        },
+        {
+          "id": "257-diamonds",
+          "name": "257 Diamonds"
+        },
+        {
+          "id": "963-diamonds",
+          "name": "963 Diamonds"
+        },
+        {
+          "id": "2195-diamonds",
+          "name": "2195 Diamonds"
+        },
+        {
+          "id": "3688-diamonds",
+          "name": "3688 Diamonds"
+        },
+        {
+          "id": "5532-diamonds",
+          "name": "5532 Diamonds"
+        },
+        {
+          "id": "9288-diamonds",
+          "name": "9288 Diamonds"
+        },
+        {
+          "id": "12976-diamonds",
+          "name": "12976 Diamonds"
+        },
+        {
+          "id": "18576-diamonds",
+          "name": "18576 Diamonds"
+        },
+        {
+          "id": "monthly-elite-pack",
+          "name": "Monthly Elite Pack"
+        },
+        {
+          "id": "weekly-diamond-pass",
+          "name": "Weekly Diamond Pass"
+        },
+        {
+          "id": "weekly-elite-pack",
+          "name": "Weekly Elite Pack"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

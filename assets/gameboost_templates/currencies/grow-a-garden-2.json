@@ -1,0 +1,178 @@
+{
+  "game": "grow-a-garden-2",
+  "details": {
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "currency": {
+      "type": "string",
+      "required": true
+    },
+    "stock": {
+      "type": "integer",
+      "required": true
+    },
+    "min_quantity": {
+      "type": "integer",
+      "required": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    }
+  },
+  "delivery_method": "trade",
+  "excluded_delivery_fields": [],
+  "delivery_method_options": [
+    {
+      "id": "username",
+      "name": "UID/Username Top-up",
+      "value": "username",
+      "description": "Collects player UID or username details for direct top-up delivery.",
+      "fields": [
+        {
+          "key": "username",
+          "label": "UID / Username",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter UID or username"
+        }
+      ]
+    },
+    {
+      "id": "login",
+      "name": "Login",
+      "value": "login",
+      "description": "Collects account login credentials needed to complete delivery manually.",
+      "fields": [
+        {
+          "key": "login",
+          "label": "Account Login",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter email or login"
+        },
+        {
+          "key": "password",
+          "label": "Account Password",
+          "type": "password",
+          "required": true,
+          "placeholder": "Enter password"
+        }
+      ]
+    },
+    {
+      "id": "trade",
+      "name": "In-game trade",
+      "value": "trade",
+      "description": "Collects character details needed to meet the customer in game.",
+      "fields": [
+        {
+          "key": "username",
+          "label": "Character name",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter character name"
+        }
+      ]
+    },
+    {
+      "id": "auction",
+      "name": "Auction house",
+      "value": "auction",
+      "description": "Collects character details needed to find the customer auction listing.",
+      "fields": [
+        {
+          "key": "username",
+          "label": "Character name",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter character name"
+        }
+      ]
+    },
+    {
+      "id": "gift",
+      "name": "Gift system",
+      "value": "gift",
+      "description": "Collects recipient details needed to send a gift.",
+      "fields": [
+        {
+          "key": "username",
+          "label": "Username",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter username"
+        }
+      ]
+    },
+    {
+      "id": "redeem",
+      "name": "Redeem code",
+      "value": "redeem",
+      "description": "No customer information is required because the seller delivers a redeemable code.",
+      "fields": []
+    },
+    {
+      "id": "mail",
+      "name": "In-game mail",
+      "value": "mail",
+      "description": "Collects recipient details needed to deliver by in-game mail.",
+      "fields": [
+        {
+          "key": "username",
+          "label": "Character name",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter character name"
+        }
+      ]
+    },
+    {
+      "id": "user_id_zone_id",
+      "name": "User ID + Zone ID",
+      "value": "user_id_zone_id",
+      "description": "Collects user ID and zone ID details for direct top-up delivery.",
+      "fields": [
+        {
+          "key": "username",
+          "label": "User ID",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter User ID"
+        },
+        {
+          "key": "server",
+          "label": "Zone ID",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter Zone ID"
+        }
+      ]
+    }
+  ]
+}

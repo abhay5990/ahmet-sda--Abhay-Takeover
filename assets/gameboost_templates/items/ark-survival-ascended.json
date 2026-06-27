@@ -59,20 +59,11 @@
   "item_data": {
     "platform": {
       "type": "string",
-      "required": true,
-      "values": [
-        "PC",
-        "PlayStation",
-        "Xbox"
-      ]
+      "required": false
     },
     "server": {
       "type": "string",
-      "required": true,
-      "values": [
-        "PvP",
-        "PvE"
-      ]
+      "required": false
     }
   }
 }

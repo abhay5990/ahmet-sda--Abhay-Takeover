@@ -59,26 +59,11 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Battle Pass",
-        "Swords",
-        "Spins",
-        "Other"
-      ]
+      "required": false
     },
     "sword_rarity": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Common",
-        "Unique",
-        "Secret",
-        "Rare",
-        "Limited",
-        "Legendary",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

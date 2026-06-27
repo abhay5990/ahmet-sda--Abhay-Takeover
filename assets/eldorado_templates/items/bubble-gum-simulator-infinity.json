@@ -1,0 +1,132 @@
+{
+  "game_id": "238",
+  "game": "bubble-gum-simulator-infinity",
+  "game_name": "Bubble Gum Simulator INFINITY",
+  "category": "CustomItem",
+  "tradeEnvironments": [],
+  "attributes": {
+    "bubble-gum-simulator-infinity-item-type": {
+      "name": "Item Type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "bundles",
+          "name": "Bundles"
+        },
+        {
+          "id": "gamepasses",
+          "name": "Gamepasses"
+        },
+        {
+          "id": "pets",
+          "name": "Pets"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "bubble-gum-simulator-infinity-pet": {
+      "name": "Pet Variant",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "mythic",
+          "name": "Mythic"
+        },
+        {
+          "id": "normal",
+          "name": "Normal"
+        },
+        {
+          "id": "shiny",
+          "name": "Shiny"
+        },
+        {
+          "id": "shiny-mythic",
+          "name": "Shiny Mythic"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

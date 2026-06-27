@@ -1,0 +1,230 @@
+{
+  "game_id": 15107,
+  "game": "hero-siege",
+  "game_name": "Hero Siege",
+  "seo_name": "Hero-Siege",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 2154,
+      "name": "Equipments",
+      "seoName": "Equipments",
+      "subCategories": [
+        {
+          "id": 10982,
+          "name": "Amulet",
+          "seoName": "Amulet"
+        },
+        {
+          "id": 10983,
+          "name": "Belt",
+          "seoName": "Belt"
+        },
+        {
+          "id": 10984,
+          "name": "Boot",
+          "seoName": "Boot"
+        },
+        {
+          "id": 10985,
+          "name": "Charm",
+          "seoName": "Charm"
+        },
+        {
+          "id": 10986,
+          "name": "Chestplate",
+          "seoName": "Chestplate"
+        },
+        {
+          "id": 10987,
+          "name": "Glove",
+          "seoName": "Glove"
+        },
+        {
+          "id": 10988,
+          "name": "Helmet",
+          "seoName": "Helmet"
+        },
+        {
+          "id": 10989,
+          "name": "Ring",
+          "seoName": "Ring"
+        },
+        {
+          "id": 10990,
+          "name": "Shield",
+          "seoName": "Shield"
+        },
+        {
+          "id": 10991,
+          "name": "Weapon",
+          "seoName": "Weapon"
+        }
+      ]
+    },
+    {
+      "id": 2155,
+      "name": "Keys",
+      "seoName": "Keys",
+      "subCategories": [
+        {
+          "id": 10992,
+          "name": "Cellar Key",
+          "seoName": "Cellar Key"
+        },
+        {
+          "id": 10993,
+          "name": "Tower Key",
+          "seoName": "Tower Key"
+        },
+        {
+          "id": 10994,
+          "name": "Frosted Key",
+          "seoName": "Frosted Key"
+        },
+        {
+          "id": 10995,
+          "name": "Chilled Key",
+          "seoName": "Chilled Key"
+        },
+        {
+          "id": 10996,
+          "name": "Mystic Key",
+          "seoName": "Mystic Key"
+        },
+        {
+          "id": 10997,
+          "name": "Rusted Key",
+          "seoName": "Rusted Key"
+        },
+        {
+          "id": 10998,
+          "name": "Ruby Key",
+          "seoName": "Ruby Key"
+        },
+        {
+          "id": 10999,
+          "name": "Wormhole Key",
+          "seoName": "Wormhole Key"
+        }
+      ]
+    },
+    {
+      "id": 2156,
+      "name": "Runes",
+      "seoName": "Runes",
+      "subCategories": [
+        {
+          "id": 11000,
+          "name": "Boss Runes",
+          "seoName": "Boss Runes"
+        },
+        {
+          "id": 11001,
+          "name": "Inferno Runes",
+          "seoName": "Inferno Runes"
+        },
+        {
+          "id": 11002,
+          "name": "Hell Runes",
+          "seoName": "Hell Runes"
+        },
+        {
+          "id": 11003,
+          "name": "Nightmare Runes",
+          "seoName": "Nightmare Runes"
+        },
+        {
+          "id": 11004,
+          "name": "Normal Runes",
+          "seoName": "Normal Runes"
+        }
+      ]
+    },
+    {
+      "id": 2157,
+      "name": "Runewords",
+      "seoName": "Runewords",
+      "subCategories": [
+        {
+          "id": 11005,
+          "name": "Runewords",
+          "seoName": "Runewords"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15108,
+      "name": "PC",
+      "subCategories": [
+        {
+          "id": 15112,
+          "name": "Non-Seasonal HC"
+        },
+        {
+          "id": 15111,
+          "name": "Non-Seasonal SC"
+        },
+        {
+          "id": 15110,
+          "name": "Seasonal HC"
+        },
+        {
+          "id": 15109,
+          "name": "Seasonal SC"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

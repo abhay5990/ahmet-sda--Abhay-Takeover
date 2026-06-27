@@ -1,0 +1,412 @@
+{
+  "game_id": "335",
+  "game": "metin2",
+  "game_name": "Metin2",
+  "category": "Currency",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Azrael - INT",
+      "group": "Server"
+    },
+    {
+      "id": "1",
+      "name": "Alabaster - INT",
+      "group": "Server"
+    },
+    {
+      "id": "2",
+      "name": "Carpathians - INT",
+      "group": "Server"
+    },
+    {
+      "id": "3",
+      "name": "Ruby (Chimera) - INT",
+      "group": "Server"
+    },
+    {
+      "id": "4",
+      "name": "Europe -INT",
+      "group": "Server"
+    },
+    {
+      "id": "5",
+      "name": "Iberia- INT",
+      "group": "Server"
+    },
+    {
+      "id": "6",
+      "name": "Obsidian - INT",
+      "group": "Server"
+    },
+    {
+      "id": "7",
+      "name": "Polyphemos - INT",
+      "group": "Server"
+    },
+    {
+      "id": "8",
+      "name": "Serpent - INT",
+      "group": "Server"
+    },
+    {
+      "id": "9",
+      "name": "Tigerghost- INT",
+      "group": "Server"
+    },
+    {
+      "id": "10",
+      "name": "العالم_العربي - AE",
+      "group": "Server"
+    },
+    {
+      "id": "11",
+      "name": "Česko - CZ",
+      "group": "Server"
+    },
+    {
+      "id": "12",
+      "name": "Germania - DE",
+      "group": "Server"
+    },
+    {
+      "id": "13",
+      "name": "Hyperia - DE",
+      "group": "Server"
+    },
+    {
+      "id": "14",
+      "name": "Teutonia - DE",
+      "group": "Server"
+    },
+    {
+      "id": "15",
+      "name": "Emerald - Alesta",
+      "group": "Server"
+    },
+    {
+      "id": "16",
+      "name": "Emerald - Aurion",
+      "group": "Server"
+    },
+    {
+      "id": "17",
+      "name": "Emerald - Aurora",
+      "group": "Server"
+    },
+    {
+      "id": "18",
+      "name": "Azure - EU",
+      "group": "Server"
+    },
+    {
+      "id": "19",
+      "name": "Eostre - EU",
+      "group": "Server"
+    },
+    {
+      "id": "20",
+      "name": "Flash - EU",
+      "group": "Server"
+    },
+    {
+      "id": "21",
+      "name": "Oceana - EU",
+      "group": "Server"
+    },
+    {
+      "id": "22",
+      "name": "Rush - EU",
+      "group": "Server"
+    },
+    {
+      "id": "23",
+      "name": "Sol - EU",
+      "group": "Server"
+    },
+    {
+      "id": "24",
+      "name": "Tempest - EU",
+      "group": "Server"
+    },
+    {
+      "id": "25",
+      "name": "Willow - EU",
+      "group": "Server"
+    },
+    {
+      "id": "26",
+      "name": "Nyx - EU",
+      "group": "Server"
+    },
+    {
+      "id": "27",
+      "name": "Chione - EU",
+      "group": "Server"
+    },
+    {
+      "id": "28",
+      "name": "Ελλάδα - GR",
+      "group": "Server"
+    },
+    {
+      "id": "29",
+      "name": "Magyarország - HU",
+      "group": "Server"
+    },
+    {
+      "id": "30",
+      "name": "Italia - IT",
+      "group": "Server"
+    },
+    {
+      "id": "31",
+      "name": "ONYX - Alabaster",
+      "group": "Server"
+    },
+    {
+      "id": "32",
+      "name": "ONYX - Bazalt",
+      "group": "Server"
+    },
+    {
+      "id": "33",
+      "name": "ONYX - Obsidian",
+      "group": "Server"
+    },
+    {
+      "id": "34",
+      "name": "Polska - PL",
+      "group": "Server"
+    },
+    {
+      "id": "35",
+      "name": "Luna - RO",
+      "group": "Server"
+    },
+    {
+      "id": "36",
+      "name": "România - RO",
+      "group": "Server"
+    },
+    {
+      "id": "37",
+      "name": "Țara Românească - RO",
+      "group": "Server"
+    },
+    {
+      "id": "38",
+      "name": "Ruby - Kirin",
+      "group": "Server"
+    },
+    {
+      "id": "39",
+      "name": "Anadolu - TR",
+      "group": "Server"
+    },
+    {
+      "id": "40",
+      "name": "Apex - TR",
+      "group": "Server"
+    },
+    {
+      "id": "41",
+      "name": "Arkadaşlar - TR",
+      "group": "Server"
+    },
+    {
+      "id": "42",
+      "name": "Bagjanamu - TR",
+      "group": "Server"
+    },
+    {
+      "id": "43",
+      "name": "Bahar - TR",
+      "group": "Server"
+    },
+    {
+      "id": "44",
+      "name": "Barbaros - TR",
+      "group": "Server"
+    },
+    {
+      "id": "45",
+      "name": "Charon - TR",
+      "group": "Server"
+    },
+    {
+      "id": "46",
+      "name": "Cumhuriyet - TR",
+      "group": "Server"
+    },
+    {
+      "id": "47",
+      "name": "Dandanakan - TR",
+      "group": "Server"
+    },
+    {
+      "id": "48",
+      "name": "Ege - TR",
+      "group": "Server"
+    },
+    {
+      "id": "49",
+      "name": "Ezel - TR",
+      "group": "Server"
+    },
+    {
+      "id": "50",
+      "name": "Lucifer - TR",
+      "group": "Server"
+    },
+    {
+      "id": "51",
+      "name": "Marmara - TR",
+      "group": "Server"
+    },
+    {
+      "id": "52",
+      "name": "Safir - TR",
+      "group": "Server"
+    },
+    {
+      "id": "53",
+      "name": "Star - TR",
+      "group": "Server"
+    },
+    {
+      "id": "54",
+      "name": "Türkiye - TR",
+      "group": "Server"
+    },
+    {
+      "id": "55",
+      "name": "Van - TR",
+      "group": "Server"
+    },
+    {
+      "id": "56",
+      "name": "Zephyr - TR",
+      "group": "Server"
+    },
+    {
+      "id": "57",
+      "name": "Lodos - TR",
+      "group": "Server"
+    },
+    {
+      "id": "58",
+      "name": "Fırtına - TR",
+      "group": "Server"
+    },
+    {
+      "id": "59",
+      "name": "Alturi2",
+      "group": "Server"
+    },
+    {
+      "id": "60",
+      "name": "Neuri",
+      "group": "Server"
+    },
+    {
+      "id": "61",
+      "name": "Ashura",
+      "group": "Server"
+    },
+    {
+      "id": "62",
+      "name": "Shiva",
+      "group": "Server"
+    },
+    {
+      "id": "63",
+      "name": "Ruby - Charon",
+      "group": "Server"
+    },
+    {
+      "id": "64",
+      "name": "Ruby - Lucifer",
+      "group": "Server"
+    },
+    {
+      "id": "65",
+      "name": "Sapphire - Star",
+      "group": "Server"
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

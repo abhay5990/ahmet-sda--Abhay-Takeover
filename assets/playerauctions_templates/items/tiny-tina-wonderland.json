@@ -1,0 +1,520 @@
+{
+  "game_id": 10819,
+  "game": "tiny-tina-wonderland",
+  "game_name": "Tiny Tina’s Wonderlands",
+  "seo_name": "Tiny-Tina-Wonderland",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1353,
+      "name": "Shields and Wards",
+      "seoName": "Shields and Wards",
+      "subCategories": [
+        {
+          "id": 6142,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6143,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6144,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6145,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6146,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1354,
+      "name": "Snipe Rifles",
+      "seoName": "Snipe Rifles",
+      "subCategories": [
+        {
+          "id": 6147,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6148,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6149,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6150,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6151,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1355,
+      "name": "Sniper Heavy",
+      "seoName": "Sniper Heavy",
+      "subCategories": [
+        {
+          "id": 6152,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6153,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6154,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6155,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6156,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1356,
+      "name": "Guns",
+      "seoName": "Guns",
+      "subCategories": [
+        {
+          "id": 6157,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6158,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6159,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6160,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6161,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1357,
+      "name": "Amulets",
+      "seoName": "Amulets",
+      "subCategories": [
+        {
+          "id": 6162,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6163,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6164,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6165,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6166,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1358,
+      "name": "Rings",
+      "seoName": "Rings",
+      "subCategories": [
+        {
+          "id": 6167,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6168,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6169,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6170,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6171,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1359,
+      "name": "Spells",
+      "seoName": "Spells",
+      "subCategories": [
+        {
+          "id": 6172,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6173,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6174,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6175,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6176,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1360,
+      "name": "Heavy Weapons",
+      "seoName": "Heavy Weapons",
+      "subCategories": [
+        {
+          "id": 6177,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6178,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6179,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6180,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6181,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1361,
+      "name": "Assault Rifles",
+      "seoName": "Assault Rifles",
+      "subCategories": [
+        {
+          "id": 6182,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6183,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6184,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6185,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6186,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1362,
+      "name": "Shotguns",
+      "seoName": "Shotguns",
+      "subCategories": [
+        {
+          "id": 6187,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6188,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6189,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6190,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6191,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1363,
+      "name": "SMGs",
+      "seoName": "SMGs",
+      "subCategories": [
+        {
+          "id": 6192,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6193,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6194,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6195,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6196,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1364,
+      "name": "Pistols",
+      "seoName": "Pistols",
+      "subCategories": [
+        {
+          "id": 6197,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6198,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6199,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6200,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6201,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1365,
+      "name": "Melee Weapons",
+      "seoName": "Melee Weapons",
+      "subCategories": [
+        {
+          "id": 6202,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6203,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6204,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6205,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6206,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": 1366,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 6207,
+          "name": "Lvl 40",
+          "seoName": "Lvl 40"
+        },
+        {
+          "id": 6208,
+          "name": "Lvl 36-39",
+          "seoName": "Lvl 36-39"
+        },
+        {
+          "id": 6209,
+          "name": "Lvl 30-35",
+          "seoName": "Lvl 30-35"
+        },
+        {
+          "id": 6210,
+          "name": "Lvl 20-29",
+          "seoName": "Lvl 20-29"
+        },
+        {
+          "id": 6211,
+          "name": "Lvl 1-19",
+          "seoName": "Lvl 1-19"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 12415,
+      "name": "PC"
+    },
+    {
+      "id": 10820,
+      "name": "PlayStation"
+    },
+    {
+      "id": 10822,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

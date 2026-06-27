@@ -1,0 +1,270 @@
+{
+  "game_id": 13903,
+  "game": "jailbreak",
+  "game_name": "Jailbreak",
+  "seo_name": "Jailbreak",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 1907,
+      "name": "Vehicles",
+      "seoName": "Vehicles",
+      "subCategories": [
+        {
+          "id": 9531,
+          "name": "Cars",
+          "seoName": "Cars"
+        },
+        {
+          "id": 9532,
+          "name": "Helicopters",
+          "seoName": "Helicopters"
+        },
+        {
+          "id": 9533,
+          "name": "Motorcycles and Bikes",
+          "seoName": "Motorcycles and Bikes"
+        }
+      ]
+    },
+    {
+      "id": 1908,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 9534,
+          "name": "Pistols",
+          "seoName": "Pistols"
+        },
+        {
+          "id": 9535,
+          "name": "Shotguns and Rifles",
+          "seoName": "Shotguns and Rifles"
+        },
+        {
+          "id": 9536,
+          "name": "Explosives",
+          "seoName": "Explosives"
+        }
+      ]
+    },
+    {
+      "id": 1909,
+      "name": "Equipment",
+      "seoName": "Equipment",
+      "subCategories": [
+        {
+          "id": 9537,
+          "name": "Keycard",
+          "seoName": "Keycard"
+        },
+        {
+          "id": 9538,
+          "name": "Cuffs",
+          "seoName": "Cuffs"
+        },
+        {
+          "id": 9539,
+          "name": "Jetpacks",
+          "seoName": "Jetpacks"
+        }
+      ]
+    },
+    {
+      "id": 1910,
+      "name": "Power-ups",
+      "seoName": "Power-ups",
+      "subCategories": [
+        {
+          "id": 9540,
+          "name": "Rocket Fuel",
+          "seoName": "Rocket Fuel"
+        },
+        {
+          "id": 9541,
+          "name": "Body Armor",
+          "seoName": "Body Armor"
+        }
+      ]
+    },
+    {
+      "id": 1911,
+      "name": "Customization Items",
+      "seoName": "Customization Items",
+      "subCategories": [
+        {
+          "id": 9542,
+          "name": "Vehicle Skins",
+          "seoName": "Vehicle Skins"
+        },
+        {
+          "id": 9543,
+          "name": "Player Skins",
+          "seoName": "Player Skins"
+        },
+        {
+          "id": 9544,
+          "name": "Weapon Skins",
+          "seoName": "Weapon Skins"
+        }
+      ]
+    },
+    {
+      "id": 1912,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 9545,
+          "name": "Donuts",
+          "seoName": "Donuts"
+        },
+        {
+          "id": 9546,
+          "name": "Gliders",
+          "seoName": "Gliders"
+        }
+      ]
+    },
+    {
+      "id": 1913,
+      "name": "Colors",
+      "seoName": "Colors",
+      "subCategories": [
+        {
+          "id": 9547,
+          "name": "Colors",
+          "seoName": "Colors"
+        }
+      ]
+    },
+    {
+      "id": 1914,
+      "name": "Horn",
+      "seoName": "Horn",
+      "subCategories": [
+        {
+          "id": 9548,
+          "name": "Horns",
+          "seoName": "Horns"
+        }
+      ]
+    },
+    {
+      "id": 1915,
+      "name": "Spoiler",
+      "seoName": "Spoiler",
+      "subCategories": [
+        {
+          "id": 9549,
+          "name": "Spoiler",
+          "seoName": "Spoiler"
+        }
+      ]
+    },
+    {
+      "id": 1916,
+      "name": "Furniture",
+      "seoName": "Furniture",
+      "subCategories": [
+        {
+          "id": 9550,
+          "name": "Furniture",
+          "seoName": "Furniture"
+        }
+      ]
+    },
+    {
+      "id": 1917,
+      "name": "Rim",
+      "seoName": "Rim",
+      "subCategories": [
+        {
+          "id": 9551,
+          "name": "Rim",
+          "seoName": "Rim"
+        }
+      ]
+    },
+    {
+      "id": 1918,
+      "name": "Tire",
+      "seoName": "Tire",
+      "subCategories": [
+        {
+          "id": 9552,
+          "name": "Tire",
+          "seoName": "Tire"
+        }
+      ]
+    },
+    {
+      "id": 1919,
+      "name": "Cash",
+      "seoName": "Cash",
+      "subCategories": [
+        {
+          "id": 9553,
+          "name": "Cash",
+          "seoName": "Cash"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13905,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

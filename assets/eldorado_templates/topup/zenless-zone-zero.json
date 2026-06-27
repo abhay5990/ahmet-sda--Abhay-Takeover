@@ -1,0 +1,162 @@
+{
+  "game_id": "194",
+  "game": "zenless-zone-zero",
+  "game_name": "Zenless Zone Zero",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "EU",
+      "group": "Region"
+    },
+    {
+      "id": "1",
+      "name": "NA",
+      "group": "Region"
+    },
+    {
+      "id": "2",
+      "name": "Asia",
+      "group": "Region"
+    },
+    {
+      "id": "3",
+      "name": "TW, HK, MO",
+      "group": "Region"
+    }
+  ],
+  "attributes": {
+    "zenless-zone-zero-monochrome": {
+      "name": "Monochromes",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "1090-monochrome",
+          "name": "1090 Monochrome"
+        },
+        {
+          "id": "16160-monochrome",
+          "name": "16160 Monochrome"
+        },
+        {
+          "id": "2240-monochrome",
+          "name": "2240 Monochrome"
+        },
+        {
+          "id": "24240-monochrome",
+          "name": "24240 Monochrome"
+        },
+        {
+          "id": "32320-monochrome",
+          "name": "32320 Monochrome"
+        },
+        {
+          "id": "330-monochrome",
+          "name": "330 Monochrome"
+        },
+        {
+          "id": "3880-monochrome",
+          "name": "3880 Monochrome"
+        },
+        {
+          "id": "60-monochrome",
+          "name": "60 Monochrome"
+        },
+        {
+          "id": "8080-monochrome",
+          "name": "8080 Monochrome"
+        },
+        {
+          "id": "inter-knot-membership",
+          "name": "Inter-Knot Membership"
+        },
+        {
+          "id": "all-in-one-bundle",
+          "name": "All-In-One Bundle"
+        },
+        {
+          "id": "new-eridu-city-fund-growth-plan",
+          "name": "New Eridu City Fund: Growth Plan"
+        },
+        {
+          "id": "new-eridu-city-fund-premium-plan",
+          "name": "New Eridu City Fund: Premium Plan"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

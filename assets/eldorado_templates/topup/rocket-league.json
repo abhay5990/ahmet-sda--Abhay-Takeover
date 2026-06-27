@@ -1,0 +1,118 @@
+{
+  "game_id": "1",
+  "game": "rocket-league",
+  "game_name": "Rocket League",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "PC"
+    },
+    {
+      "id": "1",
+      "name": "Xbox"
+    },
+    {
+      "id": "2",
+      "name": "PlayStation"
+    }
+  ],
+  "attributes": {
+    "rocket-league-credits": {
+      "name": "Credits",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "500-credits",
+          "name": "500 Credits"
+        },
+        {
+          "id": "1100-credits",
+          "name": "1100 Credits"
+        },
+        {
+          "id": "3000-credits",
+          "name": "3000 Credits"
+        },
+        {
+          "id": "6500-credits",
+          "name": "6500 Credits"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

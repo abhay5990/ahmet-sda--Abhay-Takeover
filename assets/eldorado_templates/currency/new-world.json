@@ -1,0 +1,173 @@
+{
+  "game_id": "36",
+  "game": "new-world",
+  "game_name": "New World",
+  "category": "Currency",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "US - East",
+      "group": "Region",
+      "children": [
+        {
+          "id": "0-177",
+          "name": "Hudsonland"
+        },
+        {
+          "id": "0-180",
+          "name": "Pangea"
+        },
+        {
+          "id": "0-182",
+          "name": "Tumtum [Playstation]"
+        },
+        {
+          "id": "0-183",
+          "name": "Empi"
+        },
+        {
+          "id": "0-48",
+          "name": "Valhalla"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "US - West",
+      "group": "Region",
+      "children": [
+        {
+          "id": "1-3",
+          "name": "El Dorado"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "AP Southeast",
+      "group": "Region",
+      "children": [
+        {
+          "id": "2-17",
+          "name": "Delos"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "SA East",
+      "group": "Region",
+      "children": [
+        {
+          "id": "3-6",
+          "name": "Devaloka"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "name": "EU - Central",
+      "group": "Region",
+      "children": [
+        {
+          "id": "4-191",
+          "name": "Nysa"
+        },
+        {
+          "id": "4-201",
+          "name": "Aries"
+        },
+        {
+          "id": "4-213",
+          "name": "Bifrost"
+        },
+        {
+          "id": "4-214",
+          "name": "Saba"
+        },
+        {
+          "id": "4-215",
+          "name": "Fae"
+        },
+        {
+          "id": "4-216",
+          "name": "Harmonia"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

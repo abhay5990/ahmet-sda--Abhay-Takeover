@@ -1,0 +1,285 @@
+{
+  "game_id": "259",
+  "game": "steal-a-brainrot",
+  "game_name": "Steal a Brainrot",
+  "category": "CustomItem",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Brainrot",
+      "group": "Item Type",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "Common"
+        },
+        {
+          "id": "0-1",
+          "name": "Rare"
+        },
+        {
+          "id": "0-10",
+          "name": "Festive"
+        },
+        {
+          "id": "0-11",
+          "name": "Valentines"
+        },
+        {
+          "id": "0-12",
+          "name": "Summer"
+        },
+        {
+          "id": "0-2",
+          "name": "Epic"
+        },
+        {
+          "id": "0-3",
+          "name": "Legendary"
+        },
+        {
+          "id": "0-4",
+          "name": "Mythical"
+        },
+        {
+          "id": "0-5",
+          "name": "Brainrot God"
+        },
+        {
+          "id": "0-6",
+          "name": "Secret"
+        },
+        {
+          "id": "0-7",
+          "name": "OG"
+        },
+        {
+          "id": "0-8",
+          "name": "Admin"
+        },
+        {
+          "id": "0-9",
+          "name": "Taco"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Bundles",
+      "group": "Item Type"
+    },
+    {
+      "id": "1",
+      "name": "Other",
+      "group": "Item Type"
+    },
+    {
+      "id": "3",
+      "name": "Base Skins",
+      "group": "Item Type"
+    }
+  ],
+  "attributes": {
+    "steal-a-brainrot-ms": {
+      "name": "M/s",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "1-2499-ms",
+          "name": "1-24.99 M/s"
+        },
+        {
+          "id": "0",
+          "name": "0"
+        },
+        {
+          "id": "10-1999-bs",
+          "name": "10-19.99 B/s"
+        },
+        {
+          "id": "25-4999-ms",
+          "name": "25-49.99 M/s"
+        },
+        {
+          "id": "50-9999-ms",
+          "name": "50-99.99 M/s"
+        },
+        {
+          "id": "100-24999-ms",
+          "name": "100-249.99 M/s"
+        },
+        {
+          "id": "250-49999-ms",
+          "name": "250-499.99 M/s"
+        },
+        {
+          "id": "500-74999-ms",
+          "name": "500-749.99 M/s"
+        },
+        {
+          "id": "20-plus-bs",
+          "name": "20+ B/s"
+        },
+        {
+          "id": "750-99999-ms",
+          "name": "750-999.99 M/s"
+        },
+        {
+          "id": "1-499-bs",
+          "name": "1-4.99 B/s"
+        },
+        {
+          "id": "5-999-bs",
+          "name": "5-9.99 B/s"
+        },
+        {
+          "id": "0-99999-ks",
+          "name": "1-999.99 K/s"
+        }
+      ]
+    },
+    "steal-a-brainrot-ms-numeric": {
+      "name": "M/s",
+      "type": "Numeric",
+      "required": true,
+      "values": []
+    },
+    "steal-a-brainrot-mutations": {
+      "name": "Mutations",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "cyber",
+          "name": "Cyber"
+        },
+        {
+          "id": "bloodrot",
+          "name": "Bloodrot"
+        },
+        {
+          "id": "candy",
+          "name": "Candy"
+        },
+        {
+          "id": "cursed",
+          "name": "Cursed"
+        },
+        {
+          "id": "diamond",
+          "name": "Diamond"
+        },
+        {
+          "id": "divine",
+          "name": "Divine"
+        },
+        {
+          "id": "galaxy",
+          "name": "Galaxy"
+        },
+        {
+          "id": "gold",
+          "name": "Gold"
+        },
+        {
+          "id": "lava",
+          "name": "Lava"
+        },
+        {
+          "id": "none",
+          "name": "None"
+        },
+        {
+          "id": "radioactive",
+          "name": "Radioactive"
+        },
+        {
+          "id": "rainbow",
+          "name": "Rainbow"
+        },
+        {
+          "id": "yin-yang",
+          "name": "Yin-Yang"
+        },
+        {
+          "id": "phantom",
+          "name": "Phantom"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

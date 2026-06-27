@@ -1,0 +1,232 @@
+{
+  "game_id": 4173,
+  "game": "minecraft",
+  "game_name": "Minecraft",
+  "seo_name": "Minecraft",
+  "currencyName": "Hypixel Coins",
+  "categories": [
+    {
+      "id": 1846,
+      "name": "Ores",
+      "seoName": "Ores",
+      "subCategories": [
+        {
+          "id": 8706,
+          "name": "Ores",
+          "seoName": "Ores"
+        }
+      ]
+    },
+    {
+      "id": 1847,
+      "name": "Crafted Blocks",
+      "seoName": "Crafted Blocks",
+      "subCategories": [
+        {
+          "id": 8707,
+          "name": "Crafted Blocks",
+          "seoName": "Crafted Blocks"
+        }
+      ]
+    },
+    {
+      "id": 1848,
+      "name": "Food and Farming",
+      "seoName": "Food and Farming",
+      "subCategories": [
+        {
+          "id": 8708,
+          "name": "Food and Farming",
+          "seoName": "Food and Farming"
+        }
+      ]
+    },
+    {
+      "id": 1849,
+      "name": "Decorations",
+      "seoName": "Decorations",
+      "subCategories": [
+        {
+          "id": 8709,
+          "name": "Decorations",
+          "seoName": "Decorations"
+        }
+      ]
+    },
+    {
+      "id": 1850,
+      "name": "Misc Stuff",
+      "seoName": "Misc Stuff",
+      "subCategories": [
+        {
+          "id": 8710,
+          "name": "Misc Stuff",
+          "seoName": "Misc Stuff"
+        }
+      ]
+    },
+    {
+      "id": 1851,
+      "name": "Brewing",
+      "seoName": "Brewing",
+      "subCategories": [
+        {
+          "id": 8711,
+          "name": "Brewing",
+          "seoName": "Brewing"
+        }
+      ]
+    },
+    {
+      "id": 1852,
+      "name": "Armour",
+      "seoName": "Armour",
+      "subCategories": [
+        {
+          "id": 8712,
+          "name": "Armour",
+          "seoName": "Armour"
+        }
+      ]
+    },
+    {
+      "id": 1853,
+      "name": "Raw Blocks",
+      "seoName": "Raw Blocks",
+      "subCategories": [
+        {
+          "id": 8713,
+          "name": "Raw Blocks",
+          "seoName": "Raw Blocks"
+        }
+      ]
+    },
+    {
+      "id": 1854,
+      "name": "Wood and Plants",
+      "seoName": "Wood and Plants",
+      "subCategories": [
+        {
+          "id": 8714,
+          "name": "Wood and Plants",
+          "seoName": "Wood and Plants"
+        }
+      ]
+    },
+    {
+      "id": 1855,
+      "name": "Drops",
+      "seoName": "Drops",
+      "subCategories": [
+        {
+          "id": 8715,
+          "name": "Drops",
+          "seoName": "Drops"
+        }
+      ]
+    },
+    {
+      "id": 1856,
+      "name": "Mechanisms",
+      "seoName": "Mechanisms",
+      "subCategories": [
+        {
+          "id": 8716,
+          "name": "Mechanisms",
+          "seoName": "Mechanisms"
+        }
+      ]
+    },
+    {
+      "id": 1857,
+      "name": "Dyes",
+      "seoName": "Dyes",
+      "subCategories": [
+        {
+          "id": 8717,
+          "name": "Dyes",
+          "seoName": "Dyes"
+        }
+      ]
+    },
+    {
+      "id": 1858,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 8718,
+          "name": "Tools",
+          "seoName": "Tools"
+        }
+      ]
+    },
+    {
+      "id": 1859,
+      "name": "Enchantments",
+      "seoName": "Enchantments",
+      "subCategories": [
+        {
+          "id": 8719,
+          "name": "Enchantments",
+          "seoName": "Enchantments"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 4174,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

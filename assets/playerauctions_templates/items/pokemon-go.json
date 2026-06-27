@@ -1,0 +1,247 @@
+{
+  "game_id": 7464,
+  "game": "pokemon-go",
+  "game_name": "Pokémon Go",
+  "seo_name": "Pokemon-Go",
+  "currencyName": "Pokécoins",
+  "categories": [
+    {
+      "id": 1077,
+      "name": "Pokeballs",
+      "seoName": "Pokeballs",
+      "subCategories": [
+        {
+          "id": 5104,
+          "name": "Pokeballs",
+          "seoName": "Pokeballs"
+        },
+        {
+          "id": 7167,
+          "name": "Ultra Ball",
+          "seoName": "Ultra Ball"
+        },
+        {
+          "id": 7168,
+          "name": "Great Ball",
+          "seoName": "Great Ball"
+        }
+      ]
+    },
+    {
+      "id": 1078,
+      "name": "Bundles",
+      "seoName": "Bundles",
+      "subCategories": [
+        {
+          "id": 5105,
+          "name": "Bundles",
+          "seoName": "Bundles"
+        }
+      ]
+    },
+    {
+      "id": 1079,
+      "name": "Rare Pokemon",
+      "seoName": "Rare Pokemon",
+      "subCategories": [
+        {
+          "id": 5106,
+          "name": "Legendary Pokemon",
+          "seoName": "Legendary Pokemon"
+        },
+        {
+          "id": 5107,
+          "name": "Event Pokemon",
+          "seoName": "Event Pokemon"
+        },
+        {
+          "id": 5108,
+          "name": "Shiny Pokemon",
+          "seoName": "Shiny Pokemon"
+        },
+        {
+          "id": 5109,
+          "name": "Other Pokemon",
+          "seoName": "Other Pokemon"
+        },
+        {
+          "id": 5110,
+          "name": "Mythical Pokemon",
+          "seoName": "Mythical Pokemon"
+        },
+        {
+          "id": 5111,
+          "name": "Lucky Pokemon",
+          "seoName": "Lucky Pokemon"
+        },
+        {
+          "id": 5113,
+          "name": "Alolan Pokemon",
+          "seoName": "Alolan Pokemon"
+        },
+        {
+          "id": 5114,
+          "name": "Galarian Pokemon",
+          "seoName": "Galarian Pokemon"
+        },
+        {
+          "id": 5115,
+          "name": "Shadow Pokemon",
+          "seoName": "Shadow Pokemon"
+        }
+      ]
+    },
+    {
+      "id": 1220,
+      "name": "Pokemon",
+      "seoName": "Pokemon",
+      "subCategories": [
+        {
+          "id": 5673,
+          "name": "Bug Type Pokemon",
+          "seoName": "Bug Type Pokemon"
+        },
+        {
+          "id": 5674,
+          "name": "Dragon Type Pokemon",
+          "seoName": "Dragon Type Pokemon"
+        },
+        {
+          "id": 5675,
+          "name": "Fairy Type Pokemon",
+          "seoName": "Fairy Type Pokemon"
+        },
+        {
+          "id": 5676,
+          "name": "Fire Type Pokemon",
+          "seoName": "Fire Type Pokemon"
+        },
+        {
+          "id": 5677,
+          "name": "Ghost Type Pokemon",
+          "seoName": "Ghost Type Pokemon"
+        },
+        {
+          "id": 5678,
+          "name": "Ground Type Pokemon",
+          "seoName": "Ground Type Pokemon"
+        },
+        {
+          "id": 5679,
+          "name": "Normal Type Pokemon",
+          "seoName": "Normal Type Pokemon"
+        },
+        {
+          "id": 5680,
+          "name": "Psychic Type Pokemon",
+          "seoName": "Psychic Type Pokemon"
+        },
+        {
+          "id": 5681,
+          "name": "Steel Type Pokemon",
+          "seoName": "Steel Type Pokemon"
+        },
+        {
+          "id": 5682,
+          "name": "Dark Type Pokemon",
+          "seoName": "Dark Type Pokemon"
+        },
+        {
+          "id": 5683,
+          "name": "Electric Type Pokemon",
+          "seoName": "Electric Type Pokemon"
+        },
+        {
+          "id": 5684,
+          "name": "Fighting Type Pokemon",
+          "seoName": "Fighting Type Pokemon"
+        },
+        {
+          "id": 5685,
+          "name": "Flying Type Pokemon",
+          "seoName": "Flying Type Pokemon"
+        },
+        {
+          "id": 5686,
+          "name": "Grass Type Pokemon",
+          "seoName": "Grass Type Pokemon"
+        },
+        {
+          "id": 5687,
+          "name": "Ice Type Pokemon",
+          "seoName": "Ice Type Pokemon"
+        },
+        {
+          "id": 5688,
+          "name": "Poison Type Pokemon",
+          "seoName": "Poison Type Pokemon"
+        },
+        {
+          "id": 5689,
+          "name": "Rock Type Pokemon",
+          "seoName": "Rock Type Pokemon"
+        },
+        {
+          "id": 5690,
+          "name": "Water Type Pokemon",
+          "seoName": "Water Type Pokemon"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7466,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

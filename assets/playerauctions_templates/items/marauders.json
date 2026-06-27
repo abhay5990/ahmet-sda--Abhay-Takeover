@@ -1,0 +1,212 @@
+{
+  "game_id": 13218,
+  "game": "marauders",
+  "game_name": "Marauders",
+  "seo_name": "Marauders",
+  "currencyName": "Dollars",
+  "categories": [
+    {
+      "id": 1736,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 8004,
+          "name": "Rifles",
+          "seoName": "Rifles"
+        },
+        {
+          "id": 8005,
+          "name": "Submachine Guns",
+          "seoName": "Submachine Guns"
+        },
+        {
+          "id": 8006,
+          "name": "Machine Guns",
+          "seoName": "Machine Guns"
+        },
+        {
+          "id": 8007,
+          "name": "Shotguns",
+          "seoName": "Shotguns"
+        },
+        {
+          "id": 8008,
+          "name": "Flamethrowers",
+          "seoName": "Flamethrowers"
+        },
+        {
+          "id": 8009,
+          "name": "Pistols",
+          "seoName": "Pistols"
+        },
+        {
+          "id": 8010,
+          "name": "Explosives",
+          "seoName": "Explosives"
+        },
+        {
+          "id": 8011,
+          "name": "Melee",
+          "seoName": "Melee"
+        },
+        {
+          "id": 8012,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 8013,
+          "name": "Aummunition",
+          "seoName": "Aummunition"
+        }
+      ]
+    },
+    {
+      "id": 1737,
+      "name": "Equipment",
+      "seoName": "Equipment",
+      "subCategories": [
+        {
+          "id": 8014,
+          "name": "Helmets",
+          "seoName": "Helmets"
+        },
+        {
+          "id": 8015,
+          "name": "Armors",
+          "seoName": "Armors"
+        },
+        {
+          "id": 8016,
+          "name": "Backpacks",
+          "seoName": "Backpacks"
+        }
+      ]
+    },
+    {
+      "id": 1738,
+      "name": "Ships",
+      "seoName": "Ships",
+      "subCategories": [
+        {
+          "id": 8017,
+          "name": "Breacher Pod",
+          "seoName": "Breacher Pod"
+        },
+        {
+          "id": 8018,
+          "name": "Rustbucket",
+          "seoName": "Rustbucket"
+        },
+        {
+          "id": 8019,
+          "name": "Scout Frigate",
+          "seoName": "Scout Frigate"
+        },
+        {
+          "id": 8020,
+          "name": "Interceptor Frigate",
+          "seoName": "Interceptor Frigate"
+        },
+        {
+          "id": 8021,
+          "name": "Heavy Frigate",
+          "seoName": "Heavy Frigate"
+        },
+        {
+          "id": 8022,
+          "name": "Vulture Frigate",
+          "seoName": "Vulture Frigate"
+        },
+        {
+          "id": 8023,
+          "name": "Capital Frigate",
+          "seoName": "Capital Frigate"
+        },
+        {
+          "id": 8024,
+          "name": "SST Battleship",
+          "seoName": "SST Battleship"
+        }
+      ]
+    },
+    {
+      "id": 1739,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 8025,
+          "name": "Crafting",
+          "seoName": "Crafting"
+        },
+        {
+          "id": 8026,
+          "name": "Valuables",
+          "seoName": "Valuables"
+        },
+        {
+          "id": 8027,
+          "name": "Containers",
+          "seoName": "Containers"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13223,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

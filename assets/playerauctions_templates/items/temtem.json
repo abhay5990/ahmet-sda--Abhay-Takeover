@@ -1,0 +1,100 @@
+{
+  "game_id": 9049,
+  "game": "temtem",
+  "game_name": "Temtem",
+  "seo_name": "Temtem",
+  "currencyName": "Pansun",
+  "categories": [
+    {
+      "id": 1198,
+      "name": "Luma",
+      "seoName": "Luma",
+      "subCategories": [
+        {
+          "id": 5591,
+          "name": "Luma",
+          "seoName": "Luma"
+        }
+      ]
+    },
+    {
+      "id": 1199,
+      "name": "Perfect SVs",
+      "seoName": "Perfect SVs",
+      "subCategories": [
+        {
+          "id": 5592,
+          "name": "Perfect SVs",
+          "seoName": "Perfect SVs"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 10270,
+      "name": "PS5"
+    },
+    {
+      "id": 9050,
+      "name": "Steam"
+    },
+    {
+      "id": 10271,
+      "name": "Switch"
+    },
+    {
+      "id": 10272,
+      "name": "Xbox Series X/S"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -58,16 +58,16 @@
       "required": true,
       "values": [
         {
+          "id": "included-other",
+          "name": "Other"
+        },
+        {
           "id": "included-yes",
           "name": "Yes"
         },
         {
           "id": "included-no",
           "name": "No"
-        },
-        {
-          "id": "included-other",
-          "name": "Other"
         }
       ]
     },

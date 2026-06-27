@@ -59,15 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Characters",
-        "Emotes",
-        "Gamepasses",
-        "Boosts",
-        "Bundles",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

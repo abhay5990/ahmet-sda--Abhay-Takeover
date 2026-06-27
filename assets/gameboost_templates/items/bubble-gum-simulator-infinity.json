@@ -59,24 +59,11 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Bundles",
-        "Game Pass",
-        "Pets",
-        "Other"
-      ]
+      "required": false
     },
     "pet_variant": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Shiny Mythic",
-        "Mythic",
-        "Shiny",
-        "Normal",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

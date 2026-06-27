@@ -59,27 +59,11 @@
   "item_data": {
     "platform": {
       "type": "string",
-      "required": true,
-      "values": [
-        "PC",
-        "PlayStation",
-        "Xbox",
-        "Switch"
-      ]
+      "required": false
     },
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Warframes",
-        "Primes",
-        "Mods",
-        "Weapons",
-        "Skins",
-        "Resources",
-        "Twitch Drops",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

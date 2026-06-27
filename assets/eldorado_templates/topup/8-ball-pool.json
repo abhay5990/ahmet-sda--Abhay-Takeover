@@ -1,0 +1,264 @@
+{
+  "game_id": "77",
+  "game": "8-ball-pool",
+  "game_name": "8 Ball Pool",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Bronze",
+      "group": "VIP Tier"
+    },
+    {
+      "id": "1",
+      "name": "Silver",
+      "group": "VIP Tier"
+    },
+    {
+      "id": "2",
+      "name": "Gold",
+      "group": "VIP Tier"
+    },
+    {
+      "id": "3",
+      "name": "Emerald",
+      "group": "VIP Tier"
+    },
+    {
+      "id": "4",
+      "name": "Diamond",
+      "group": "VIP Tier"
+    },
+    {
+      "id": "5",
+      "name": "Black Diamond",
+      "group": "VIP Tier"
+    }
+  ],
+  "attributes": {
+    "8-ball-pool-cash": {
+      "name": "Cash",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "20-cash",
+          "name": "20 Cash"
+        },
+        {
+          "id": "22-cash",
+          "name": "22 Cash"
+        },
+        {
+          "id": "25-cash",
+          "name": "25 Cash"
+        },
+        {
+          "id": "30-cash",
+          "name": "30 Cash"
+        },
+        {
+          "id": "35-cash",
+          "name": "35 Cash"
+        },
+        {
+          "id": "40-cash",
+          "name": "40 Cash"
+        },
+        {
+          "id": "50-cash",
+          "name": "50 Cash"
+        },
+        {
+          "id": "55-cash",
+          "name": "55 Cash"
+        },
+        {
+          "id": "63-cash",
+          "name": "63 Cash"
+        },
+        {
+          "id": "75-cash",
+          "name": "75 Cash"
+        },
+        {
+          "id": "88-cash",
+          "name": "88 Cash"
+        },
+        {
+          "id": "100-cash",
+          "name": "100 Cash"
+        },
+        {
+          "id": "110-cash",
+          "name": "110 Cash"
+        },
+        {
+          "id": "121-cash",
+          "name": "121 Cash"
+        },
+        {
+          "id": "138-cash",
+          "name": "138 Cash"
+        },
+        {
+          "id": "165-cash",
+          "name": "165 Cash"
+        },
+        {
+          "id": "193-cash",
+          "name": "193 Cash"
+        },
+        {
+          "id": "220-cash",
+          "name": "220 Cash"
+        },
+        {
+          "id": "250-cash",
+          "name": "250 Cash"
+        },
+        {
+          "id": "275-cash",
+          "name": "275 Cash"
+        },
+        {
+          "id": "313-cash",
+          "name": "313 Cash"
+        },
+        {
+          "id": "375-cash",
+          "name": "375 Cash"
+        },
+        {
+          "id": "438-cash",
+          "name": "438 Cash"
+        },
+        {
+          "id": "500-cash",
+          "name": "500 Cash"
+        },
+        {
+          "id": "800-cash",
+          "name": "800 Cash"
+        },
+        {
+          "id": "880-cash",
+          "name": "880 Cash"
+        },
+        {
+          "id": "1000-cash",
+          "name": "1000 Cash"
+        },
+        {
+          "id": "1200-cash",
+          "name": "1200 Cash"
+        },
+        {
+          "id": "1400-cash",
+          "name": "1400 Cash"
+        },
+        {
+          "id": "1600-cash",
+          "name": "1600 Cash"
+        },
+        {
+          "id": "2000-cash",
+          "name": "2000 Cash"
+        },
+        {
+          "id": "2200-cash",
+          "name": "2200 Cash"
+        },
+        {
+          "id": "2500-cash",
+          "name": "2500 Cash"
+        },
+        {
+          "id": "3000-cash",
+          "name": "3000 Cash"
+        },
+        {
+          "id": "3500-cash",
+          "name": "3500 Cash"
+        },
+        {
+          "id": "4000-cash",
+          "name": "4000 Cash"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

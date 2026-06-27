@@ -1,0 +1,314 @@
+{
+  "game_id": 27,
+  "game": "lotro",
+  "game_name": "Lord of The Rings Online",
+  "seo_name": "LOTRO",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1574,
+      "name": "Armour",
+      "seoName": "Armour",
+      "subCategories": [
+        {
+          "id": 7638,
+          "name": "Armour",
+          "seoName": "Armour"
+        }
+      ]
+    },
+    {
+      "id": 1575,
+      "name": "Class Items",
+      "seoName": "Class Items",
+      "subCategories": [
+        {
+          "id": 7639,
+          "name": "Class Items",
+          "seoName": "Class Items"
+        }
+      ]
+    },
+    {
+      "id": 1576,
+      "name": "Crafting",
+      "seoName": "Crafting",
+      "subCategories": [
+        {
+          "id": 7640,
+          "name": "Crafting",
+          "seoName": "Crafting"
+        }
+      ]
+    },
+    {
+      "id": 1577,
+      "name": "Decoration",
+      "seoName": "Decoration",
+      "subCategories": [
+        {
+          "id": 7641,
+          "name": "Decoration",
+          "seoName": "Decoration"
+        }
+      ]
+    },
+    {
+      "id": 1578,
+      "name": "Food and Drink",
+      "seoName": "Food and Drink",
+      "subCategories": [
+        {
+          "id": 7642,
+          "name": "Food",
+          "seoName": "Food"
+        },
+        {
+          "id": 7643,
+          "name": "Drink",
+          "seoName": "Drink"
+        }
+      ]
+    },
+    {
+      "id": 1579,
+      "name": "Hobbies",
+      "seoName": "Hobbies",
+      "subCategories": [
+        {
+          "id": 7644,
+          "name": "Hobbies",
+          "seoName": "Hobbies"
+        }
+      ]
+    },
+    {
+      "id": 1580,
+      "name": "Jewellery",
+      "seoName": "Jewellery",
+      "subCategories": [
+        {
+          "id": 7645,
+          "name": "Jewellery",
+          "seoName": "Jewellery"
+        }
+      ]
+    },
+    {
+      "id": 1581,
+      "name": "Legendary Items",
+      "seoName": "Legendary Items",
+      "subCategories": [
+        {
+          "id": 7646,
+          "name": "Legendary Items",
+          "seoName": "Legendary Items"
+        }
+      ]
+    },
+    {
+      "id": 1582,
+      "name": "Outfits",
+      "seoName": "Outfits",
+      "subCategories": [
+        {
+          "id": 7647,
+          "name": "Outfits",
+          "seoName": "Outfits"
+        }
+      ]
+    },
+    {
+      "id": 1583,
+      "name": "Potions and Salves",
+      "seoName": "Potions and Salves",
+      "subCategories": [
+        {
+          "id": 7648,
+          "name": "Potions",
+          "seoName": "Potions"
+        },
+        {
+          "id": 7649,
+          "name": "Salves",
+          "seoName": "Salves"
+        }
+      ]
+    },
+    {
+      "id": 1584,
+      "name": "Premium Items",
+      "seoName": "Premium Items",
+      "subCategories": [
+        {
+          "id": 7650,
+          "name": "Premium Items",
+          "seoName": "Premium Items"
+        }
+      ]
+    },
+    {
+      "id": 1585,
+      "name": "Reputation",
+      "seoName": "Reputation",
+      "subCategories": [
+        {
+          "id": 7651,
+          "name": "Reputation",
+          "seoName": "Reputation"
+        }
+      ]
+    },
+    {
+      "id": 1586,
+      "name": "Shields",
+      "seoName": "Shields",
+      "subCategories": [
+        {
+          "id": 7652,
+          "name": "Shields",
+          "seoName": "Shields"
+        }
+      ]
+    },
+    {
+      "id": 1587,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 7653,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 9799,
+      "name": "EU-Belegaer"
+    },
+    {
+      "id": 9800,
+      "name": "EU-Bradywine"
+    },
+    {
+      "id": 9802,
+      "name": "EU-Evernight"
+    },
+    {
+      "id": 14333,
+      "name": "EU-Grond"
+    },
+    {
+      "id": 9804,
+      "name": "EU-Gwaihir"
+    },
+    {
+      "id": 9806,
+      "name": "EU-Laurelin"
+    },
+    {
+      "id": 14232,
+      "name": "EU-Meriadoc"
+    },
+    {
+      "id": 13933,
+      "name": "EU-Mordor"
+    },
+    {
+      "id": 14231,
+      "name": "EU-Orcrist"
+    },
+    {
+      "id": 9807,
+      "name": "EU-Sirannon"
+    },
+    {
+      "id": 13934,
+      "name": "NA-Angmar"
+    },
+    {
+      "id": 1749,
+      "name": "NA-Arkenstone"
+    },
+    {
+      "id": 1750,
+      "name": "NA-Brandywine"
+    },
+    {
+      "id": 3666,
+      "name": "NA-Crickhollow"
+    },
+    {
+      "id": 1753,
+      "name": "NA-Gladden"
+    },
+    {
+      "id": 14229,
+      "name": "NA-Glamdring"
+    },
+    {
+      "id": 1754,
+      "name": "NA-Landroval"
+    },
+    {
+      "id": 14230,
+      "name": "NA-Peregrin"
+    },
+    {
+      "id": 14334,
+      "name": "NA-Sting"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

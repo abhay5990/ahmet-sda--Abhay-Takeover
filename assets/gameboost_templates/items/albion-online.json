@@ -59,12 +59,7 @@
   "item_data": {
     "server": {
       "type": "string",
-      "required": true,
-      "values": [
-        "America",
-        "Asia",
-        "Europe"
-      ]
+      "required": false
     }
   }
 }

@@ -174,14 +174,14 @@
   },
   "game_items": {
     "characters": [
-      "Kachina",
-      "Zhongli",
-      "Kamisato Ayaka"
+      "Aino",
+      "Jean",
+      "Linnea"
     ],
     "weapons": [
-      "Skyrider Greatsword",
-      "Snare Hook",
-      "Etherlight Spindlelute"
+      "Sacrificer's Staff",
+      "Footprint of the Rainbow",
+      "Ultimate Overlord's Mega Magic Sword"
     ]
   }
 }

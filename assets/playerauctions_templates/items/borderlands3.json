@@ -1,0 +1,286 @@
+{
+  "game_id": 8947,
+  "game": "borderlands3",
+  "game_name": "Borderlands 3",
+  "seo_name": "Borderlands3",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 886,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 3873,
+          "name": "Assault Rifle",
+          "seoName": "Assault Rifle"
+        },
+        {
+          "id": 3876,
+          "name": "Pistol",
+          "seoName": "Pistol"
+        },
+        {
+          "id": 3877,
+          "name": "Rocket Launcher",
+          "seoName": "Rocket Launcher"
+        },
+        {
+          "id": 3879,
+          "name": "Shotgun",
+          "seoName": "Shotgun"
+        },
+        {
+          "id": 3880,
+          "name": "SMG",
+          "seoName": "SMG"
+        },
+        {
+          "id": 3881,
+          "name": "Sniper Rifle",
+          "seoName": "Sniper Rifle"
+        },
+        {
+          "id": 3882,
+          "name": "Unique",
+          "seoName": "Unique"
+        },
+        {
+          "id": 3883,
+          "name": "Grenade Mod",
+          "seoName": "Grenade Mod"
+        },
+        {
+          "id": 3884,
+          "name": "Shield",
+          "seoName": "Shield"
+        }
+      ]
+    },
+    {
+      "id": 961,
+      "name": "Shield",
+      "seoName": "Shield",
+      "subCategories": [
+        {
+          "id": 4597,
+          "name": "ABSORB",
+          "seoName": "ABSORB"
+        },
+        {
+          "id": 4598,
+          "name": "AMPLIFY",
+          "seoName": "AMPLIFY"
+        },
+        {
+          "id": 4599,
+          "name": "BOOSTER",
+          "seoName": "BOOSTER"
+        },
+        {
+          "id": 4600,
+          "name": "NOVA",
+          "seoName": "NOVA"
+        },
+        {
+          "id": 4601,
+          "name": "RESISTANCE",
+          "seoName": "RESISTANCE"
+        },
+        {
+          "id": 4602,
+          "name": "REFLECT",
+          "seoName": "REFLECT"
+        },
+        {
+          "id": 4603,
+          "name": "ROID",
+          "seoName": "ROID"
+        },
+        {
+          "id": 4604,
+          "name": "SPIKE",
+          "seoName": "SPIKE"
+        },
+        {
+          "id": 4605,
+          "name": "TRUTLE",
+          "seoName": "TRUTLE"
+        },
+        {
+          "id": 4606,
+          "name": "STANDARD",
+          "seoName": "STANDARD"
+        }
+      ]
+    },
+    {
+      "id": 963,
+      "name": "Grenades",
+      "seoName": "Grenades",
+      "subCategories": [
+        {
+          "id": 4607,
+          "name": "Bouncing Betty",
+          "seoName": "Bouncing Betty"
+        },
+        {
+          "id": 4608,
+          "name": "MIRV",
+          "seoName": "MIRV"
+        },
+        {
+          "id": 4609,
+          "name": "Singularity",
+          "seoName": "Singularity"
+        },
+        {
+          "id": 4610,
+          "name": "Transfusion",
+          "seoName": "Transfusion"
+        },
+        {
+          "id": 6683,
+          "name": "Standard",
+          "seoName": "Standard"
+        },
+        {
+          "id": 6684,
+          "name": "Area of Effect",
+          "seoName": "Area of Effect"
+        },
+        {
+          "id": 6685,
+          "name": "Unique",
+          "seoName": "Unique"
+        }
+      ]
+    },
+    {
+      "id": 1153,
+      "name": "Class Mods",
+      "seoName": "Class Mods",
+      "subCategories": [
+        {
+          "id": 5593,
+          "name": "Class Mods",
+          "seoName": "Class Mods"
+        }
+      ]
+    },
+    {
+      "id": 1154,
+      "name": "Artifacts",
+      "seoName": "Artifacts",
+      "subCategories": [
+        {
+          "id": 5594,
+          "name": "Artifacts",
+          "seoName": "Artifacts"
+        }
+      ]
+    },
+    {
+      "id": 2013,
+      "name": "Builds",
+      "seoName": "Builds",
+      "subCategories": [
+        {
+          "id": 10097,
+          "name": "Amara",
+          "seoName": "Amara"
+        },
+        {
+          "id": 10098,
+          "name": "Zane",
+          "seoName": "Zane"
+        },
+        {
+          "id": 10099,
+          "name": "Flak",
+          "seoName": "Flak"
+        },
+        {
+          "id": 10100,
+          "name": "Moze",
+          "seoName": "Moze"
+        }
+      ]
+    },
+    {
+      "id": 2014,
+      "name": "Keys and Cards",
+      "seoName": "Keys and Cards",
+      "subCategories": [
+        {
+          "id": 10101,
+          "name": "Vault Card",
+          "seoName": "Vault Card"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 8948,
+      "name": "PC"
+    },
+    {
+      "id": 8949,
+      "name": "PlayStation"
+    },
+    {
+      "id": 8950,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

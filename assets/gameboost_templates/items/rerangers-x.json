@@ -59,14 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "VIP",
-        "Bundle",
-        "Currency",
-        "Boost",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

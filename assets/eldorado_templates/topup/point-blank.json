@@ -1,0 +1,109 @@
+{
+  "game_id": "357",
+  "game": "point-blank",
+  "game_name": "Point Blank",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "point-blank-tam-gold": {
+      "name": "TAM Gold",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "900-tg",
+          "name": "900 TG"
+        },
+        {
+          "id": "1800-tg",
+          "name": "1800 TG"
+        },
+        {
+          "id": "4500-tg",
+          "name": "4500 TG"
+        },
+        {
+          "id": "10400-tg",
+          "name": "10400 TG"
+        },
+        {
+          "id": "21000-tg",
+          "name": "21000 TG"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

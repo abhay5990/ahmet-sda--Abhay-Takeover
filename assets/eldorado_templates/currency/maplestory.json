@@ -1,0 +1,162 @@
+{
+  "game_id": "120",
+  "game": "maplestory",
+  "game_name": "MapleStory",
+  "category": "Currency",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Scania",
+      "group": "Server"
+    },
+    {
+      "id": "1",
+      "name": "Bera",
+      "group": "Server"
+    },
+    {
+      "id": "2",
+      "name": "Aurora",
+      "group": "Server"
+    },
+    {
+      "id": "3",
+      "name": "Elysium",
+      "group": "Server"
+    },
+    {
+      "id": "4",
+      "name": "Luna",
+      "group": "Server"
+    },
+    {
+      "id": "7",
+      "name": "Kronos",
+      "group": "Server"
+    },
+    {
+      "id": "8",
+      "name": "Hyperion",
+      "group": "Server"
+    },
+    {
+      "id": "9",
+      "name": "Solis",
+      "group": "Server"
+    },
+    {
+      "id": "10",
+      "name": "Draco",
+      "group": "Server"
+    },
+    {
+      "id": "11",
+      "name": "Cassiopeia",
+      "group": "Server"
+    },
+    {
+      "id": "12",
+      "name": "Bootes",
+      "group": "Server"
+    },
+    {
+      "id": "13",
+      "name": "Aquila",
+      "group": "Server"
+    },
+    {
+      "id": "14",
+      "name": "Kaede",
+      "group": "Server"
+    },
+    {
+      "id": "15",
+      "name": "Kurumi",
+      "group": "Server"
+    },
+    {
+      "id": "16",
+      "name": "Yukari",
+      "group": "Server"
+    },
+    {
+      "id": "17",
+      "name": "JP Reboot",
+      "group": "Server"
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

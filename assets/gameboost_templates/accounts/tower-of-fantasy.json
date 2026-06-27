@@ -1,0 +1,199 @@
+{
+  "game": "tower-of-fantasy",
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": false
+    },
+    "login": {
+      "type": "string",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "email_login": {
+      "type": "string",
+      "required": false
+    },
+    "email_password": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "dump": {
+      "type": "string",
+      "required": false
+    },
+    "delivery_instructions": {
+      "type": "string",
+      "required": false
+    },
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "is_manual": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "delivery_time": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "duration": {
+          "type": "integer",
+          "required": true
+        },
+        "unit": {
+          "type": "string",
+          "required": true,
+          "values": [
+            "minutes",
+            "hours",
+            "days"
+          ]
+        }
+      }
+    },
+    "image_urls": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "account_data": {
+    "region": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Asia-Pacific",
+        "North America",
+        "South America",
+        "Europe",
+        "Southeast Asia"
+      ]
+    },
+    "server": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Gomap",
+        "Venus",
+        "Memory",
+        "Oxygen",
+        "Nova",
+        "Galaxy",
+        "Eden",
+        "Fate",
+        "Ruby",
+        "Babel",
+        "Pluto",
+        "Sushi",
+        "New Era",
+        "Freedom-Oasis",
+        "Observer",
+        "Lunalite",
+        "Oumuamua",
+        "Silver Bridge",
+        "Eternium Phantasy",
+        "Sol-III",
+        "Myriad",
+        "Lighthouse",
+        "Azure Plane",
+        "Nirvana",
+        "The worlds between",
+        "Frontier",
+        "The Glades",
+        "Nightfall",
+        "Libera",
+        "Solaris",
+        "Radiant",
+        "Tempest",
+        "Phoenix",
+        "Tiamat",
+        "Pegasus",
+        "Cepheu",
+        "Corvus",
+        "Cygnus",
+        "Grus",
+        "Ophiuchus",
+        "Hydra",
+        "Lyra",
+        "Centaurus",
+        "Columba",
+        "Orion",
+        "Luna Azul",
+        "Hope",
+        "Tanzanite",
+        "Calodesma Seven",
+        "Antila",
+        "Excalibur",
+        "Estrela",
+        "Blumous",
+        "Celestialrise",
+        "Dyrnwyn",
+        "Elypium",
+        "Espoir IV",
+        "Futuria",
+        "Ex Nihilor",
+        "Hephaestus",
+        "Kuura",
+        "Midgard",
+        "Ether",
+        "Iter",
+        "Lycoris",
+        "Uranus",
+        "Utopia",
+        "Jupiter",
+        "Sweetie",
+        "Atlantis",
+        "Sakura",
+        "Seeker",
+        "Shinya",
+        "Cosmos",
+        "Stella",
+        "Takoyaki",
+        "Lyramiel",
+        "Silvercoast Lab",
+        "Aimanium",
+        "Alintheus",
+        "Andos",
+        "Anomora",
+        "Astora",
+        "Valstamm",
+        "Aestral-Noa",
+        "Fantasia",
+        "Saeri",
+        "Aeria",
+        "Scarlet",
+        "Oryza",
+        "Arcania",
+        "Animus",
+        "Mistilteinn",
+        "Illyrians",
+        "Florione",
+        "Vanilla",
+        "Gumi Gumi",
+        "Stardust",
+        "Phantasia",
+        "Mechafield",
+        "Ethereal Dream",
+        "Odyssey",
+        "Osillron",
+        "Chandra"
+      ]
+    }
+  }
+}

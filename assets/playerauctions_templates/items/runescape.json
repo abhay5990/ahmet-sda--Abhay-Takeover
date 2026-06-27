@@ -1,0 +1,495 @@
+{
+  "game_id": 33,
+  "game": "runescape",
+  "game_name": "RuneScape",
+  "seo_name": "RuneScape",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 48,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 316,
+          "name": "Dragon Hatchet",
+          "seoName": "Dragon Hatchet"
+        },
+        {
+          "id": 317,
+          "name": "Dragon Pickaxe",
+          "seoName": "Dragon Pickaxe"
+        },
+        {
+          "id": 5085,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        },
+        {
+          "id": 5672,
+          "name": "Eldritch Crossbow",
+          "seoName": "Eldritch Crossbow"
+        },
+        {
+          "id": 5726,
+          "name": "Dragon Mattock",
+          "seoName": "Dragon Mattock"
+        },
+        {
+          "id": 5727,
+          "name": "Masterwork Spear of Annihilation",
+          "seoName": "Masterwork Spear of Annihilation"
+        },
+        {
+          "id": 8169,
+          "name": "Fractured Staff of Armadyl",
+          "seoName": "Fractured Staff of Armadyl"
+        },
+        {
+          "id": 8171,
+          "name": "Seren Godbow",
+          "seoName": "Seren Godbow"
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "name": "Armour",
+      "seoName": "Armour",
+      "subCategories": [
+        {
+          "id": 318,
+          "name": "Dragon Plate Armour Set (l)",
+          "seoName": "Dragon Plate Armour Set (l)"
+        },
+        {
+          "id": 319,
+          "name": "Dragon Plate Armour Set (sk)",
+          "seoName": "Dragon Plate Armour Set (sk)"
+        },
+        {
+          "id": 340,
+          "name": "Fighter Torso",
+          "seoName": "Fighter Torso"
+        },
+        {
+          "id": 5086,
+          "name": "Armour",
+          "seoName": "Armour"
+        },
+        {
+          "id": 5603,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 5604,
+          "name": "Gloves",
+          "seoName": "Gloves"
+        },
+        {
+          "id": 5605,
+          "name": "Helmets",
+          "seoName": "Helmets"
+        },
+        {
+          "id": 5606,
+          "name": "Shields",
+          "seoName": "Shields"
+        },
+        {
+          "id": 5607,
+          "name": "Chainbodies",
+          "seoName": "Chainbodies"
+        },
+        {
+          "id": 5608,
+          "name": "Magic Armour",
+          "seoName": "Magic Armour"
+        },
+        {
+          "id": 5609,
+          "name": "Melee Armour",
+          "seoName": "Melee Armour"
+        },
+        {
+          "id": 5610,
+          "name": "Platebodies",
+          "seoName": "Platebodies"
+        },
+        {
+          "id": 5611,
+          "name": "Platelegs",
+          "seoName": "Platelegs"
+        },
+        {
+          "id": 5612,
+          "name": "Plateskirts",
+          "seoName": "Plateskirts"
+        },
+        {
+          "id": 5613,
+          "name": "Ranged Armour",
+          "seoName": "Ranged Armour"
+        },
+        {
+          "id": 8170,
+          "name": "Havoc Armor",
+          "seoName": "Havoc Armor"
+        },
+        {
+          "id": 8172,
+          "name": "Cryptbloom Armour",
+          "seoName": "Cryptbloom Armour"
+        }
+      ]
+    },
+    {
+      "id": 58,
+      "name": "Potions",
+      "seoName": "Potions",
+      "subCategories": [
+        {
+          "id": 329,
+          "name": "Half Full Wine Jug",
+          "seoName": "Half Full Wine Jug"
+        },
+        {
+          "id": 5087,
+          "name": "Potions",
+          "seoName": "Potions"
+        }
+      ]
+    },
+    {
+      "id": 1101,
+      "name": "High-Level Gear",
+      "seoName": "High-Level Gear",
+      "subCategories": [
+        {
+          "id": 5175,
+          "name": "God Equipment",
+          "seoName": "God Equipment"
+        },
+        {
+          "id": 5176,
+          "name": "Noxious Equipment",
+          "seoName": "Noxious Equipment"
+        },
+        {
+          "id": 10111,
+          "name": "Hazelmere's Signet Ring",
+          "seoName": "Hazelmere's Signet Ring"
+        },
+        {
+          "id": 10112,
+          "name": "Orlando Smith's Hat",
+          "seoName": "Orlando Smith's Hat"
+        },
+        {
+          "id": 10113,
+          "name": "Tavia's Fishing Rod",
+          "seoName": "Tavia's Fishing Rod"
+        },
+        {
+          "id": 10114,
+          "name": "Guildmaster Tony's Mattock",
+          "seoName": "Guildmaster Tony's Mattock"
+        }
+      ]
+    },
+    {
+      "id": 1196,
+      "name": "Party Hat",
+      "seoName": "Party Hat",
+      "subCategories": [
+        {
+          "id": 5583,
+          "name": "Yellow PartyHat",
+          "seoName": "Yellow PartyHat"
+        },
+        {
+          "id": 5584,
+          "name": "Red PartyHat",
+          "seoName": "Red PartyHat"
+        },
+        {
+          "id": 5585,
+          "name": "Green Party Hat",
+          "seoName": "Green Party Hat"
+        },
+        {
+          "id": 5586,
+          "name": "Purple PartyHat",
+          "seoName": "Purple PartyHat"
+        },
+        {
+          "id": 5587,
+          "name": "White PartyHat",
+          "seoName": "White PartyHat"
+        },
+        {
+          "id": 5588,
+          "name": "Blue PartyHat",
+          "seoName": "Blue PartyHat"
+        },
+        {
+          "id": 5902,
+          "name": "Golden PartyHat",
+          "seoName": "Golden PartyHat"
+        },
+        {
+          "id": 11259,
+          "name": "Black PartyHat",
+          "seoName": "Black PartyHat"
+        }
+      ]
+    },
+    {
+      "id": 1197,
+      "name": "Santa Hat",
+      "seoName": "Santa Hat",
+      "subCategories": [
+        {
+          "id": 5589,
+          "name": "Black Santa Hat",
+          "seoName": "Black Santa Hat"
+        },
+        {
+          "id": 5590,
+          "name": "Red Santa Hat",
+          "seoName": "Red Santa Hat"
+        },
+        {
+          "id": 6019,
+          "name": "Green Santa Hat",
+          "seoName": "Green Santa Hat"
+        },
+        {
+          "id": 10109,
+          "name": "Purple Santa Hat",
+          "seoName": "Purple Santa Hat"
+        },
+        {
+          "id": 10110,
+          "name": "Pink Santa Hat",
+          "seoName": "Pink Santa Hat"
+        }
+      ]
+    },
+    {
+      "id": 1202,
+      "name": "Halloween Event",
+      "seoName": "Halloween Event",
+      "subCategories": [
+        {
+          "id": 5615,
+          "name": "Red Halloween Mask",
+          "seoName": "Red Halloween Mask"
+        },
+        {
+          "id": 5616,
+          "name": "Blue Halloween Mask",
+          "seoName": "Blue Halloween Mask"
+        },
+        {
+          "id": 5617,
+          "name": "Green Halloween Mask",
+          "seoName": "Green Halloween Mask"
+        }
+      ]
+    },
+    {
+      "id": 1203,
+      "name": "Christmas Event",
+      "seoName": "Christmas Event",
+      "subCategories": [
+        {
+          "id": 5619,
+          "name": "Christmas Cracker",
+          "seoName": "Christmas Cracker"
+        },
+        {
+          "id": 5917,
+          "name": "Snowboard",
+          "seoName": "Snowboard"
+        },
+        {
+          "id": 5918,
+          "name": "Other Christmas Items",
+          "seoName": "Other Christmas Items"
+        },
+        {
+          "id": 6065,
+          "name": "Christmas Scythe",
+          "seoName": "Christmas Scythe"
+        }
+      ]
+    },
+    {
+      "id": 1204,
+      "name": "Easter Event",
+      "seoName": "Easter Event",
+      "subCategories": [
+        {
+          "id": 751,
+          "name": "Easter Eggs",
+          "seoName": "Easter Eggs"
+        },
+        {
+          "id": 5614,
+          "name": "Pumpkins",
+          "seoName": "Pumpkins"
+        },
+        {
+          "id": 5618,
+          "name": "Bunny Ears",
+          "seoName": "Bunny Ears"
+        }
+      ]
+    },
+    {
+      "id": 1243,
+      "name": "Jewellery",
+      "seoName": "Jewellery",
+      "subCategories": [
+        {
+          "id": 5728,
+          "name": "Ring",
+          "seoName": "Ring"
+        },
+        {
+          "id": 5729,
+          "name": "Brooch",
+          "seoName": "Brooch"
+        },
+        {
+          "id": 5730,
+          "name": "Necklace",
+          "seoName": "Necklace"
+        },
+        {
+          "id": 5731,
+          "name": "Bracelet",
+          "seoName": "Bracelet"
+        },
+        {
+          "id": 5732,
+          "name": "Amulet",
+          "seoName": "Amulet"
+        }
+      ]
+    },
+    {
+      "id": 1761,
+      "name": "Dye",
+      "seoName": "Dye",
+      "subCategories": [
+        {
+          "id": 8173,
+          "name": "Barrows Dye",
+          "seoName": "Barrows Dye"
+        },
+        {
+          "id": 8174,
+          "name": "Blood Dye",
+          "seoName": "Blood Dye"
+        },
+        {
+          "id": 8175,
+          "name": "Shadow Dye",
+          "seoName": "Shadow Dye"
+        },
+        {
+          "id": 8176,
+          "name": "Third Age Dye",
+          "seoName": "Third Age Dye"
+        },
+        {
+          "id": 8177,
+          "name": "Ice Dye",
+          "seoName": "Ice Dye"
+        }
+      ]
+    },
+    {
+      "id": 1977,
+      "name": "Bonds",
+      "seoName": "Bonds",
+      "subCategories": [
+        {
+          "id": 9672,
+          "name": "Bonds",
+          "seoName": "Bonds"
+        }
+      ]
+    },
+    {
+      "id": 330,
+      "name": "Firecape",
+      "seoName": "Firecape",
+      "subCategories": [
+        {
+          "id": 1346,
+          "name": "Alara Reborn",
+          "seoName": "Alara Reborn"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 1889,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

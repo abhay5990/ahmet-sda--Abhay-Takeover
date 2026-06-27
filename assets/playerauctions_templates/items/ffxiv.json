@@ -1,0 +1,933 @@
+{
+  "game_id": 3647,
+  "game": "ffxiv",
+  "game_name": "Final Fantasy XIV",
+  "seo_name": "FFXIV",
+  "currencyName": "Gil",
+  "categories": [
+    {
+      "id": 789,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 2357,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        },
+        {
+          "id": 4804,
+          "name": "Paladin",
+          "seoName": "Paladin"
+        },
+        {
+          "id": 4805,
+          "name": "Warrior",
+          "seoName": "Warrior"
+        },
+        {
+          "id": 4806,
+          "name": "Dark Knight",
+          "seoName": "Dark Knight"
+        },
+        {
+          "id": 4807,
+          "name": "Gunbreaker",
+          "seoName": "Gunbreaker"
+        },
+        {
+          "id": 4808,
+          "name": "Dragoon",
+          "seoName": "Dragoon"
+        },
+        {
+          "id": 4809,
+          "name": "Monk",
+          "seoName": "Monk"
+        },
+        {
+          "id": 4810,
+          "name": "Ninja",
+          "seoName": "Ninja"
+        },
+        {
+          "id": 4811,
+          "name": "Samurai",
+          "seoName": "Samurai"
+        },
+        {
+          "id": 4812,
+          "name": "Bard",
+          "seoName": "Bard"
+        },
+        {
+          "id": 4813,
+          "name": "Machinist",
+          "seoName": "Machinist"
+        },
+        {
+          "id": 4814,
+          "name": "Dancer",
+          "seoName": "Dancer"
+        },
+        {
+          "id": 4815,
+          "name": "Summoner",
+          "seoName": "Summoner"
+        },
+        {
+          "id": 4816,
+          "name": "Black Mage",
+          "seoName": "Black Mage"
+        },
+        {
+          "id": 4817,
+          "name": "Red Mage",
+          "seoName": "Red Mage"
+        },
+        {
+          "id": 4818,
+          "name": "Scholar",
+          "seoName": "Scholar"
+        },
+        {
+          "id": 4819,
+          "name": "White Mage",
+          "seoName": "White Mage"
+        },
+        {
+          "id": 4820,
+          "name": "Astrologian",
+          "seoName": "Astrologian"
+        },
+        {
+          "id": 4821,
+          "name": "Blue Mage",
+          "seoName": "Blue Mage"
+        }
+      ]
+    },
+    {
+      "id": 790,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 2358,
+          "name": "Armor",
+          "seoName": "Armor"
+        },
+        {
+          "id": 4822,
+          "name": "Tanks",
+          "seoName": "Tanks"
+        },
+        {
+          "id": 4823,
+          "name": "Healer",
+          "seoName": "Healer"
+        },
+        {
+          "id": 4824,
+          "name": "Scouting",
+          "seoName": "Scouting"
+        },
+        {
+          "id": 4825,
+          "name": "Aiming",
+          "seoName": "Aiming"
+        },
+        {
+          "id": 4826,
+          "name": "Striking",
+          "seoName": "Striking"
+        },
+        {
+          "id": 4827,
+          "name": "Maiming",
+          "seoName": "Maiming"
+        },
+        {
+          "id": 4828,
+          "name": "Casting",
+          "seoName": "Casting"
+        },
+        {
+          "id": 4829,
+          "name": "Disciple of Hand",
+          "seoName": "Disciple of Hand"
+        },
+        {
+          "id": 4830,
+          "name": "Disciple of Land",
+          "seoName": "Disciple of Land"
+        }
+      ]
+    },
+    {
+      "id": 791,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 2359,
+          "name": "Tools",
+          "seoName": "Tools"
+        },
+        {
+          "id": 4831,
+          "name": "Alchemist",
+          "seoName": "Alchemist"
+        },
+        {
+          "id": 4832,
+          "name": "Armorer",
+          "seoName": "Armorer"
+        },
+        {
+          "id": 4833,
+          "name": "Blacksmith",
+          "seoName": "Blacksmith"
+        },
+        {
+          "id": 4834,
+          "name": "Carpenter",
+          "seoName": "Carpenter"
+        },
+        {
+          "id": 4835,
+          "name": "Culinarian",
+          "seoName": "Culinarian"
+        },
+        {
+          "id": 4836,
+          "name": "Goldsmith",
+          "seoName": "Goldsmith"
+        },
+        {
+          "id": 4837,
+          "name": "Leatherworker",
+          "seoName": "Leatherworker"
+        },
+        {
+          "id": 4838,
+          "name": "Weaver",
+          "seoName": "Weaver"
+        },
+        {
+          "id": 4839,
+          "name": "Botanist",
+          "seoName": "Botanist"
+        },
+        {
+          "id": 4840,
+          "name": "Fisher",
+          "seoName": "Fisher"
+        },
+        {
+          "id": 4841,
+          "name": "Miner",
+          "seoName": "Miner"
+        }
+      ]
+    },
+    {
+      "id": 794,
+      "name": "Minions",
+      "seoName": "Minions",
+      "subCategories": [
+        {
+          "id": 2362,
+          "name": "Minions",
+          "seoName": "Minions"
+        }
+      ]
+    },
+    {
+      "id": 943,
+      "name": "Mounts",
+      "seoName": "Mounts",
+      "subCategories": [
+        {
+          "id": 4910,
+          "name": "Mounts",
+          "seoName": "Mounts"
+        },
+        {
+          "id": 5267,
+          "name": "Lunar Whale",
+          "seoName": "Lunar Whale"
+        },
+        {
+          "id": 5501,
+          "name": "Night Pegasus Whistle",
+          "seoName": "Night Pegasus Whistle"
+        },
+        {
+          "id": 5521,
+          "name": "Fenrir Mounts",
+          "seoName": "Fenrir Mounts"
+        },
+        {
+          "id": 5522,
+          "name": "Chocorpokurr Mounts",
+          "seoName": "Chocorpokurr Mounts"
+        },
+        {
+          "id": 5523,
+          "name": "Incitatus Whistle",
+          "seoName": "Incitatus Whistle"
+        },
+        {
+          "id": 5524,
+          "name": "Morbol Mount",
+          "seoName": "Morbol Mount"
+        },
+        {
+          "id": 5525,
+          "name": "Eldthurs Horn",
+          "seoName": "Eldthurs Horn"
+        },
+        {
+          "id": 5526,
+          "name": "Construct VI S Core",
+          "seoName": "Construct VI S Core"
+        },
+        {
+          "id": 5527,
+          "name": "Magicked Bed",
+          "seoName": "Magicked Bed"
+        },
+        {
+          "id": 5725,
+          "name": "Eurekan Petrel Horn",
+          "seoName": "Eurekan Petrel Horn"
+        },
+        {
+          "id": 5904,
+          "name": "Cruise Chaser",
+          "seoName": "Cruise Chaser"
+        },
+        {
+          "id": 7040,
+          "name": "Megashiba",
+          "seoName": "Megashiba"
+        }
+      ]
+    },
+    {
+      "id": 1056,
+      "name": "Tales of Adventure",
+      "seoName": "Tales of Adventure",
+      "subCategories": [
+        {
+          "id": 5080,
+          "name": "Tales of Adventure",
+          "seoName": "Tales of Adventure"
+        },
+        {
+          "id": 6944,
+          "name": "Shadowbringers",
+          "seoName": "Shadowbringers"
+        },
+        {
+          "id": 6945,
+          "name": "Stormblood",
+          "seoName": "Stormblood"
+        },
+        {
+          "id": 6946,
+          "name": "Heavensward",
+          "seoName": "Heavensward"
+        },
+        {
+          "id": 6947,
+          "name": "A Realm Reborn",
+          "seoName": "A Realm Reborn"
+        },
+        {
+          "id": 6948,
+          "name": "One Paladin's Journey III",
+          "seoName": "One Paladin's Journey III"
+        },
+        {
+          "id": 6949,
+          "name": "One Warrior's Journey III",
+          "seoName": "One Warrior's Journey III"
+        },
+        {
+          "id": 6950,
+          "name": "One Dark Knight's Journey III",
+          "seoName": "One Dark Knight's Journey III"
+        },
+        {
+          "id": 6951,
+          "name": "One Gunbreaker's Journey I-III",
+          "seoName": "One Gunbreaker's Journey I-III"
+        },
+        {
+          "id": 6952,
+          "name": "One White Mage's Journey III",
+          "seoName": "One White Mage's Journey III"
+        },
+        {
+          "id": 6953,
+          "name": "One Scholar's Journey III",
+          "seoName": "One Scholar's Journey III"
+        },
+        {
+          "id": 6954,
+          "name": "One Astrologian's Journey III",
+          "seoName": "One Astrologian's Journey III"
+        },
+        {
+          "id": 6955,
+          "name": "One Monk's Journey III",
+          "seoName": "One Monk's Journey III"
+        },
+        {
+          "id": 6956,
+          "name": "One Dragoon's Journey III",
+          "seoName": "One Dragoon's Journey III"
+        },
+        {
+          "id": 6957,
+          "name": "One Ninja's Journey III",
+          "seoName": "One Ninja's Journey III"
+        },
+        {
+          "id": 6958,
+          "name": "One Samurai's Journey III",
+          "seoName": "One Samurai's Journey III"
+        },
+        {
+          "id": 6959,
+          "name": "One Bard's Journey III",
+          "seoName": "One Bard's Journey III"
+        },
+        {
+          "id": 6960,
+          "name": "One Machinist's Journey III",
+          "seoName": "One Machinist's Journey III"
+        },
+        {
+          "id": 6961,
+          "name": "One Dancer's Journey I-III",
+          "seoName": "One Dancer's Journey I-III"
+        },
+        {
+          "id": 6962,
+          "name": "One Black Mage's Journey III",
+          "seoName": "One Black Mage's Journey III"
+        },
+        {
+          "id": 6963,
+          "name": "One Summoner's Journey III",
+          "seoName": "One Summoner's Journey III"
+        },
+        {
+          "id": 6964,
+          "name": "One Red Mage's Journey III",
+          "seoName": "One Red Mage's Journey III"
+        },
+        {
+          "id": 6965,
+          "name": "One Retainer's Journey III",
+          "seoName": "One Retainer's Journey III"
+        }
+      ]
+    },
+    {
+      "id": 1057,
+      "name": "Housing",
+      "seoName": "Housing",
+      "subCategories": [
+        {
+          "id": 5081,
+          "name": "Housing",
+          "seoName": "Housing"
+        },
+        {
+          "id": 5962,
+          "name": "Plots",
+          "seoName": "Plots"
+        },
+        {
+          "id": 5963,
+          "name": "Furniture",
+          "seoName": "Furniture"
+        },
+        {
+          "id": 5964,
+          "name": "Exteriors",
+          "seoName": "Exteriors"
+        }
+      ]
+    },
+    {
+      "id": 1106,
+      "name": "Fantasia",
+      "seoName": "Fantasia",
+      "subCategories": [
+        {
+          "id": 5181,
+          "name": "Phial of Fantasia",
+          "seoName": "Phial of Fantasia"
+        }
+      ]
+    },
+    {
+      "id": 1169,
+      "name": "Orchestrion Rolls",
+      "seoName": "Orchestrion Rolls",
+      "subCategories": [
+        {
+          "id": 5498,
+          "name": "Pulse Orchestrion Roll Set",
+          "seoName": "Pulse Orchestrion Roll Set"
+        },
+        {
+          "id": 5499,
+          "name": "Scions Sinners Orchestrion Roll Set",
+          "seoName": "Scions Sinners Orchestrion Roll Set"
+        },
+        {
+          "id": 5500,
+          "name": "Other Orchestrion Roll Sets",
+          "seoName": "Other Orchestrion Roll Sets"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 12416,
+      "name": "NA",
+      "subCategories": [
+        {
+          "id": 12417,
+          "name": "Adamantoise"
+        },
+        {
+          "id": 12433,
+          "name": "Balmung"
+        },
+        {
+          "id": 12425,
+          "name": "Behemoth"
+        },
+        {
+          "id": 12434,
+          "name": "Brynhildr"
+        },
+        {
+          "id": 12418,
+          "name": "Cactuar"
+        },
+        {
+          "id": 12435,
+          "name": "Coeurl"
+        },
+        {
+          "id": 13839,
+          "name": "Cuchulainn"
+        },
+        {
+          "id": 12436,
+          "name": "Diabolos"
+        },
+        {
+          "id": 12426,
+          "name": "Excalibur"
+        },
+        {
+          "id": 12427,
+          "name": "Exodus"
+        },
+        {
+          "id": 12419,
+          "name": "Faerie"
+        },
+        {
+          "id": 12428,
+          "name": "Famfrit"
+        },
+        {
+          "id": 12420,
+          "name": "Gilgamesh"
+        },
+        {
+          "id": 12437,
+          "name": "Goblin"
+        },
+        {
+          "id": 13840,
+          "name": "Golem"
+        },
+        {
+          "id": 13282,
+          "name": "Halicarnassus"
+        },
+        {
+          "id": 12429,
+          "name": "Hyperion"
+        },
+        {
+          "id": 12421,
+          "name": "Jenova"
+        },
+        {
+          "id": 13841,
+          "name": "Kraken"
+        },
+        {
+          "id": 12430,
+          "name": "Lamia"
+        },
+        {
+          "id": 12431,
+          "name": "Leviathan"
+        },
+        {
+          "id": 13283,
+          "name": "Maduin"
+        },
+        {
+          "id": 12438,
+          "name": "Malboro"
+        },
+        {
+          "id": 13284,
+          "name": "Marilith"
+        },
+        {
+          "id": 12439,
+          "name": "Mateus"
+        },
+        {
+          "id": 12422,
+          "name": "Midgardsormr"
+        },
+        {
+          "id": 13842,
+          "name": "Rafflesia"
+        },
+        {
+          "id": 12423,
+          "name": "Sargatanas"
+        },
+        {
+          "id": 13285,
+          "name": "Seraph"
+        },
+        {
+          "id": 12424,
+          "name": "Siren"
+        },
+        {
+          "id": 12432,
+          "name": "Ultros"
+        },
+        {
+          "id": 12440,
+          "name": "Zalera"
+        }
+      ]
+    },
+    {
+      "id": 12441,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 12827,
+          "name": "Alpha"
+        },
+        {
+          "id": 12442,
+          "name": "Cerberus"
+        },
+        {
+          "id": 13843,
+          "name": "Innocence"
+        },
+        {
+          "id": 12448,
+          "name": "Lich"
+        },
+        {
+          "id": 12443,
+          "name": "Louisoix"
+        },
+        {
+          "id": 12444,
+          "name": "Moogle"
+        },
+        {
+          "id": 12449,
+          "name": "Odin"
+        },
+        {
+          "id": 12445,
+          "name": "Omega"
+        },
+        {
+          "id": 12826,
+          "name": "Phantom"
+        },
+        {
+          "id": 12450,
+          "name": "Phoenix"
+        },
+        {
+          "id": 13844,
+          "name": "Pixie"
+        },
+        {
+          "id": 12446,
+          "name": "Ragnarok"
+        },
+        {
+          "id": 12828,
+          "name": "Raiden"
+        },
+        {
+          "id": 12825,
+          "name": "Sagittarius"
+        },
+        {
+          "id": 12451,
+          "name": "Shiva"
+        },
+        {
+          "id": 12447,
+          "name": "Spriggan"
+        },
+        {
+          "id": 13845,
+          "name": "Titania"
+        },
+        {
+          "id": 12452,
+          "name": "Twintania"
+        },
+        {
+          "id": 13846,
+          "name": "Tycoon"
+        },
+        {
+          "id": 12453,
+          "name": "Zodiark"
+        }
+      ]
+    },
+    {
+      "id": 12454,
+      "name": "OA",
+      "subCategories": [
+        {
+          "id": 12455,
+          "name": "Bismarck"
+        },
+        {
+          "id": 12456,
+          "name": "Ravana"
+        },
+        {
+          "id": 12457,
+          "name": "Sephirot"
+        },
+        {
+          "id": 12458,
+          "name": "Sophia"
+        },
+        {
+          "id": 12459,
+          "name": "Zurvan"
+        }
+      ]
+    },
+    {
+      "id": 12460,
+      "name": "JP",
+      "subCategories": [
+        {
+          "id": 12461,
+          "name": "Aegis"
+        },
+        {
+          "id": 12471,
+          "name": "Alexander"
+        },
+        {
+          "id": 12482,
+          "name": "Anima"
+        },
+        {
+          "id": 12483,
+          "name": "Asura"
+        },
+        {
+          "id": 12462,
+          "name": "Atomos"
+        },
+        {
+          "id": 12472,
+          "name": "Bahamut"
+        },
+        {
+          "id": 12484,
+          "name": "Belias"
+        },
+        {
+          "id": 12463,
+          "name": "Carbuncle"
+        },
+        {
+          "id": 12485,
+          "name": "Chocobo"
+        },
+        {
+          "id": 12473,
+          "name": "Durandal"
+        },
+        {
+          "id": 12474,
+          "name": "Fenrir"
+        },
+        {
+          "id": 12464,
+          "name": "Garuda"
+        },
+        {
+          "id": 12465,
+          "name": "Gungnir"
+        },
+        {
+          "id": 12486,
+          "name": "Hades"
+        },
+        {
+          "id": 12475,
+          "name": "Ifrit"
+        },
+        {
+          "id": 12487,
+          "name": "Ixion"
+        },
+        {
+          "id": 12466,
+          "name": "Kujata"
+        },
+        {
+          "id": 12488,
+          "name": "Mandragora"
+        },
+        {
+          "id": 12489,
+          "name": "Masamune"
+        },
+        {
+          "id": 12490,
+          "name": "Pandaemonium"
+        },
+        {
+          "id": 12467,
+          "name": "Ramuh"
+        },
+        {
+          "id": 12476,
+          "name": "Ridill"
+        },
+        {
+          "id": 12491,
+          "name": "Shinryu"
+        },
+        {
+          "id": 12477,
+          "name": "Tiamat"
+        },
+        {
+          "id": 12492,
+          "name": "Titan"
+        },
+        {
+          "id": 12468,
+          "name": "Tonberry"
+        },
+        {
+          "id": 12469,
+          "name": "Typhon"
+        },
+        {
+          "id": 12478,
+          "name": "Ultima"
+        },
+        {
+          "id": 12470,
+          "name": "Unicorn"
+        },
+        {
+          "id": 12479,
+          "name": "Valefor"
+        },
+        {
+          "id": 12480,
+          "name": "Yojimbo"
+        },
+        {
+          "id": 12481,
+          "name": "Zeromus"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

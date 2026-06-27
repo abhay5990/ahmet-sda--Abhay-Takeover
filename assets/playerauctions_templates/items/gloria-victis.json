@@ -1,0 +1,110 @@
+{
+  "game_id": 15174,
+  "game": "gloria-victis",
+  "game_name": "Gloria Victis: Medieval MMORPG",
+  "seo_name": "Gloria-Victis",
+  "currencyName": "Gold Crown",
+  "categories": [
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15186,
+      "name": "NA",
+      "subCategories": [
+        {
+          "id": 15187,
+          "name": "Aquilla"
+        },
+        {
+          "id": 15188,
+          "name": "Aquilla 2"
+        },
+        {
+          "id": 15189,
+          "name": "Aquilla 3"
+        }
+      ]
+    },
+    {
+      "id": 15190,
+      "name": "EU",
+      "subCategories": [
+        {
+          "id": 15191,
+          "name": "Wolfield"
+        },
+        {
+          "id": 15192,
+          "name": "Wolfield 2"
+        },
+        {
+          "id": 15193,
+          "name": "Wolfield 3"
+        }
+      ]
+    },
+    {
+      "id": 15194,
+      "name": "SEA",
+      "subCategories": [
+        {
+          "id": 15195,
+          "name": "Dukla"
+        },
+        {
+          "id": 15196,
+          "name": "Dukla 2"
+        }
+      ]
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

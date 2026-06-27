@@ -1,0 +1,536 @@
+{
+  "game_id": "92",
+  "game": "wow-classic",
+  "game_name": "WoW Classic",
+  "category": "Currency",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "NA & OC",
+      "group": "Region",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "Anathema"
+        },
+        {
+          "id": "0-1",
+          "name": "Arcanite Reaper"
+        },
+        {
+          "id": "0-10",
+          "name": "Deviate Delight"
+        },
+        {
+          "id": "0-11",
+          "name": "Earthfury"
+        },
+        {
+          "id": "0-12",
+          "name": "Faerlina"
+        },
+        {
+          "id": "0-13",
+          "name": "Fairbanks"
+        },
+        {
+          "id": "0-14",
+          "name": "Felstriker"
+        },
+        {
+          "id": "0-15",
+          "name": "Grobbulus"
+        },
+        {
+          "id": "0-16",
+          "name": "Heartseeker"
+        },
+        {
+          "id": "0-17",
+          "name": "Herod"
+        },
+        {
+          "id": "0-18",
+          "name": "Incendius"
+        },
+        {
+          "id": "0-19",
+          "name": "Kirtonos"
+        },
+        {
+          "id": "0-2",
+          "name": "Arugal"
+        },
+        {
+          "id": "0-20",
+          "name": "Kromcrush"
+        },
+        {
+          "id": "0-21",
+          "name": "Kurinnaxx"
+        },
+        {
+          "id": "0-22",
+          "name": "Loatheb"
+        },
+        {
+          "id": "0-23",
+          "name": "Mankrik"
+        },
+        {
+          "id": "0-24",
+          "name": "Myzrael"
+        },
+        {
+          "id": "0-25",
+          "name": "Netherwind"
+        },
+        {
+          "id": "0-26",
+          "name": "Old Blanchy"
+        },
+        {
+          "id": "0-27",
+          "name": "Pagle"
+        },
+        {
+          "id": "0-28",
+          "name": "Rattlegore"
+        },
+        {
+          "id": "0-29",
+          "name": "Remulos"
+        },
+        {
+          "id": "0-3",
+          "name": "Ashkandi"
+        },
+        {
+          "id": "0-30",
+          "name": "Skeram"
+        },
+        {
+          "id": "0-31",
+          "name": "Smolderweb"
+        },
+        {
+          "id": "0-32",
+          "name": "Stalagg"
+        },
+        {
+          "id": "0-33",
+          "name": "Sul'thraze"
+        },
+        {
+          "id": "0-34",
+          "name": "Sulfuras"
+        },
+        {
+          "id": "0-35",
+          "name": "Thalnos"
+        },
+        {
+          "id": "0-36",
+          "name": "Thunderfury"
+        },
+        {
+          "id": "0-37",
+          "name": "Westfall"
+        },
+        {
+          "id": "0-38",
+          "name": "Whitemane"
+        },
+        {
+          "id": "0-39",
+          "name": "Windseeker"
+        },
+        {
+          "id": "0-4",
+          "name": "Atiesh"
+        },
+        {
+          "id": "0-40",
+          "name": "Yojamba"
+        },
+        {
+          "id": "0-44",
+          "name": "Defias Pillager"
+        },
+        {
+          "id": "0-45",
+          "name": "Skull Rock"
+        },
+        {
+          "id": "0-46",
+          "name": "Doomhowl"
+        },
+        {
+          "id": "0-5",
+          "name": "Azuresong"
+        },
+        {
+          "id": "0-6",
+          "name": "Benediction"
+        },
+        {
+          "id": "0-7",
+          "name": "Bigglesworth"
+        },
+        {
+          "id": "0-8",
+          "name": "Blaumeux"
+        },
+        {
+          "id": "0-9",
+          "name": "Bloodsail Buccaneers"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "EU",
+      "group": "Region",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "Amnennar"
+        },
+        {
+          "id": "1-1",
+          "name": "Ashbringer"
+        },
+        {
+          "id": "1-10",
+          "name": "Finkle"
+        },
+        {
+          "id": "1-11",
+          "name": "Firemaw"
+        },
+        {
+          "id": "1-12",
+          "name": "Flamelash"
+        },
+        {
+          "id": "1-13",
+          "name": "Gandling"
+        },
+        {
+          "id": "1-14",
+          "name": "Gehennas"
+        },
+        {
+          "id": "1-15",
+          "name": "Golemagg"
+        },
+        {
+          "id": "1-16",
+          "name": "Heartstriker"
+        },
+        {
+          "id": "1-17",
+          "name": "Hydraxian Waterlords"
+        },
+        {
+          "id": "1-18",
+          "name": "Judgement"
+        },
+        {
+          "id": "1-19",
+          "name": "Lakeshire"
+        },
+        {
+          "id": "1-2",
+          "name": "Auberdine"
+        },
+        {
+          "id": "1-20",
+          "name": "Lucifron"
+        },
+        {
+          "id": "1-21",
+          "name": "Mandokir"
+        },
+        {
+          "id": "1-22",
+          "name": "Mirage Raceway"
+        },
+        {
+          "id": "1-23",
+          "name": "Mograine"
+        },
+        {
+          "id": "1-24",
+          "name": "Nethergarde Keep"
+        },
+        {
+          "id": "1-25",
+          "name": "Noggenfogger"
+        },
+        {
+          "id": "1-26",
+          "name": "Patchwerk"
+        },
+        {
+          "id": "1-27",
+          "name": "Pyrewood Village"
+        },
+        {
+          "id": "1-28",
+          "name": "Razorfen"
+        },
+        {
+          "id": "1-29",
+          "name": "Razorgore"
+        },
+        {
+          "id": "1-3",
+          "name": "Bloodfang"
+        },
+        {
+          "id": "1-30",
+          "name": "Shazzrah"
+        },
+        {
+          "id": "1-31",
+          "name": "Skullflame"
+        },
+        {
+          "id": "1-32",
+          "name": "Stonespine"
+        },
+        {
+          "id": "1-33",
+          "name": "Sulfuron"
+        },
+        {
+          "id": "1-34",
+          "name": "Ten Storms"
+        },
+        {
+          "id": "1-35",
+          "name": "Transcendence"
+        },
+        {
+          "id": "1-36",
+          "name": "Venoxis"
+        },
+        {
+          "id": "1-37",
+          "name": "Zandalar Tribe"
+        },
+        {
+          "id": "1-4",
+          "name": "Celebras"
+        },
+        {
+          "id": "1-40",
+          "name": "Nek’Rosh"
+        },
+        {
+          "id": "1-41",
+          "name": "Stitches"
+        },
+        {
+          "id": "1-42",
+          "name": "Soulseeker"
+        },
+        {
+          "id": "1-5",
+          "name": "Dragon's Call"
+        },
+        {
+          "id": "1-6",
+          "name": "Dragonfang"
+        },
+        {
+          "id": "1-7",
+          "name": "Dreadmist"
+        },
+        {
+          "id": "1-8",
+          "name": "Earthshaker"
+        },
+        {
+          "id": "1-9",
+          "name": "Everlook"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "name": "NA Season of Discovery",
+      "group": "Region",
+      "children": [
+        {
+          "id": "6-0",
+          "name": "Crusader Strike"
+        },
+        {
+          "id": "6-1",
+          "name": "Lava Lash"
+        },
+        {
+          "id": "6-2",
+          "name": "Living Flame"
+        },
+        {
+          "id": "6-3",
+          "name": "Lone Wolf"
+        },
+        {
+          "id": "6-4",
+          "name": "Penance"
+        },
+        {
+          "id": "6-5",
+          "name": "Shadow Strike"
+        },
+        {
+          "id": "6-6",
+          "name": "Wild Growth"
+        },
+        {
+          "id": "6-7",
+          "name": "Chaos Bolt"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "EU Season of Discovery",
+      "group": "Region",
+      "children": [
+        {
+          "id": "7-0",
+          "name": "Crusader Strike"
+        },
+        {
+          "id": "7-1",
+          "name": "Lava Lash"
+        },
+        {
+          "id": "7-2",
+          "name": "Living Flame"
+        },
+        {
+          "id": "7-3",
+          "name": "Lone Wolf"
+        },
+        {
+          "id": "7-4",
+          "name": "Wild Growth"
+        },
+        {
+          "id": "7-5",
+          "name": "Chaos Bolt"
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "name": "NA & OC Anniversary",
+      "group": "Region",
+      "children": [
+        {
+          "id": "8-0",
+          "name": "Dreamscythe"
+        },
+        {
+          "id": "8-1",
+          "name": "Nightslayer"
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "name": "EU Anniversary",
+      "group": "Region",
+      "children": [
+        {
+          "id": "9-0",
+          "name": "Thunderstrike"
+        },
+        {
+          "id": "9-1",
+          "name": "Spineshatter"
+        }
+      ]
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

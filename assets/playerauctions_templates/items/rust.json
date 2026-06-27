@@ -1,0 +1,1233 @@
+{
+  "game_id": 6141,
+  "game": "rust",
+  "game_name": "RUST",
+  "seo_name": "RUST",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1435,
+      "name": "Misc",
+      "seoName": "Misc",
+      "subCategories": [
+        {
+          "id": 6725,
+          "name": "Acoustic Guitar",
+          "seoName": "Acoustic Guitar"
+        },
+        {
+          "id": 6726,
+          "name": "Door Key",
+          "seoName": "Door Key"
+        },
+        {
+          "id": 6727,
+          "name": "Note",
+          "seoName": "Note"
+        }
+      ]
+    },
+    {
+      "id": 1436,
+      "name": "Weapon",
+      "seoName": "Weapon",
+      "subCategories": [
+        {
+          "id": 6728,
+          "name": "Other Weapons",
+          "seoName": "Other Weapons"
+        },
+        {
+          "id": 6872,
+          "name": "8x Zoom Scope",
+          "seoName": "8x Zoom Scope"
+        },
+        {
+          "id": 6873,
+          "name": "Bolt Action Rifle",
+          "seoName": "Bolt Action Rifle"
+        },
+        {
+          "id": 6874,
+          "name": "Crossbow",
+          "seoName": "Crossbow"
+        },
+        {
+          "id": 6875,
+          "name": "Eoka Pistol",
+          "seoName": "Eoka Pistol"
+        },
+        {
+          "id": 6876,
+          "name": "Holosight",
+          "seoName": "Holosight"
+        },
+        {
+          "id": 6877,
+          "name": "LR-300 Assault Rifle",
+          "seoName": "LR-300 Assault Rifle"
+        },
+        {
+          "id": 6878,
+          "name": "Mace",
+          "seoName": "Mace"
+        },
+        {
+          "id": 6879,
+          "name": "Muzzle Boost",
+          "seoName": "Muzzle Boost"
+        },
+        {
+          "id": 6880,
+          "name": "Pump Shotgun",
+          "seoName": "Pump Shotgun"
+        },
+        {
+          "id": 6881,
+          "name": "Rocket Launcher",
+          "seoName": "Rocket Launcher"
+        },
+        {
+          "id": 6882,
+          "name": "Semi-Automatic Pistol",
+          "seoName": "Semi-Automatic Pistol"
+        },
+        {
+          "id": 6883,
+          "name": "Silencer",
+          "seoName": "Silencer"
+        },
+        {
+          "id": 6884,
+          "name": "Waterpipe Shotgun",
+          "seoName": "Waterpipe Shotgun"
+        },
+        {
+          "id": 6885,
+          "name": "Bone Club",
+          "seoName": "Bone Club"
+        },
+        {
+          "id": 6886,
+          "name": "M39 Rifle",
+          "seoName": "M39 Rifle"
+        },
+        {
+          "id": 6887,
+          "name": "Weapon Flashlight",
+          "seoName": "Weapon Flashlight"
+        },
+        {
+          "id": 6888,
+          "name": "Spas-12",
+          "seoName": "Spas-12"
+        },
+        {
+          "id": 6889,
+          "name": "Custom SMG",
+          "seoName": "Custom SMG"
+        },
+        {
+          "id": 6890,
+          "name": "F1 Grenade",
+          "seoName": "F1 Grenade"
+        },
+        {
+          "id": 6891,
+          "name": "Hunting Bow",
+          "seoName": "Hunting Bow"
+        },
+        {
+          "id": 6892,
+          "name": "M249",
+          "seoName": "M249"
+        },
+        {
+          "id": 6893,
+          "name": "Machete",
+          "seoName": "Machete"
+        },
+        {
+          "id": 6894,
+          "name": "Muzzle Brake",
+          "seoName": "Muzzle Brake"
+        },
+        {
+          "id": 6895,
+          "name": "Python Revolver",
+          "seoName": "Python Revolver"
+        },
+        {
+          "id": 6896,
+          "name": "Salvaged Cleaver",
+          "seoName": "Salvaged Cleaver"
+        },
+        {
+          "id": 6897,
+          "name": "Semi-Automatic Rifle",
+          "seoName": "Semi-Automatic Rifle"
+        },
+        {
+          "id": 6898,
+          "name": "Stone Spear",
+          "seoName": "Stone Spear"
+        },
+        {
+          "id": 6899,
+          "name": "Wooden Spear",
+          "seoName": "Wooden Spear"
+        },
+        {
+          "id": 6900,
+          "name": "Assault Rifle",
+          "seoName": "Assault Rifle"
+        },
+        {
+          "id": 6901,
+          "name": "Grenade Launcher",
+          "seoName": "Grenade Launcher"
+        },
+        {
+          "id": 6902,
+          "name": "Weapon Lasersight",
+          "seoName": "Weapon Lasersight"
+        },
+        {
+          "id": 6903,
+          "name": "Bone Knife",
+          "seoName": "Bone Knife"
+        },
+        {
+          "id": 6904,
+          "name": "Double Barrel Shotgun",
+          "seoName": "Double Barrel Shotgun"
+        },
+        {
+          "id": 6905,
+          "name": "Flame Thrower",
+          "seoName": "Flame Thrower"
+        },
+        {
+          "id": 6906,
+          "name": "Longsword",
+          "seoName": "Longsword"
+        },
+        {
+          "id": 6907,
+          "name": "M92 Pistol",
+          "seoName": "M92 Pistol"
+        },
+        {
+          "id": 6908,
+          "name": "MP5A4",
+          "seoName": "MP5A4"
+        },
+        {
+          "id": 6909,
+          "name": "Nailgun",
+          "seoName": "Nailgun"
+        },
+        {
+          "id": 6910,
+          "name": "Revolver",
+          "seoName": "Revolver"
+        },
+        {
+          "id": 6911,
+          "name": "Salvaged Sword",
+          "seoName": "Salvaged Sword"
+        },
+        {
+          "id": 6912,
+          "name": "Simple Handmade Sight",
+          "seoName": "Simple Handmade Sight"
+        },
+        {
+          "id": 6913,
+          "name": "Thompson",
+          "seoName": "Thompson"
+        },
+        {
+          "id": 6914,
+          "name": "Beancan Grenade",
+          "seoName": "Beancan Grenade"
+        },
+        {
+          "id": 6915,
+          "name": "L96 Sniper",
+          "seoName": "L96 Sniper"
+        }
+      ]
+    },
+    {
+      "id": 1437,
+      "name": "Resource",
+      "seoName": "Resource",
+      "subCategories": [
+        {
+          "id": 6729,
+          "name": "Other Resources",
+          "seoName": "Other Resources"
+        },
+        {
+          "id": 6916,
+          "name": "Animal Fat",
+          "seoName": "Animal Fat"
+        },
+        {
+          "id": 6917,
+          "name": "Charcoal",
+          "seoName": "Charcoal"
+        },
+        {
+          "id": 6918,
+          "name": "Crude Oil",
+          "seoName": "Crude Oil"
+        },
+        {
+          "id": 6919,
+          "name": "Explosives",
+          "seoName": "Explosives"
+        },
+        {
+          "id": 6920,
+          "name": "High Quality Metal Ore",
+          "seoName": "High Quality Metal Ore"
+        },
+        {
+          "id": 6921,
+          "name": "Low Grade Fuel",
+          "seoName": "Low Grade Fuel"
+        },
+        {
+          "id": 6922,
+          "name": "Wood",
+          "seoName": "Wood"
+        },
+        {
+          "id": 6923,
+          "name": "Stones",
+          "seoName": "Stones"
+        },
+        {
+          "id": 6924,
+          "name": "Human Skull",
+          "seoName": "Human Skull"
+        },
+        {
+          "id": 6925,
+          "name": "Metal Fragments",
+          "seoName": "Metal Fragments"
+        },
+        {
+          "id": 6926,
+          "name": "Salt Water",
+          "seoName": "Salt Water"
+        },
+        {
+          "id": 6927,
+          "name": "Sulfur",
+          "seoName": "Sulfur"
+        },
+        {
+          "id": 6928,
+          "name": "High Quality Metal",
+          "seoName": "High Quality Metal"
+        },
+        {
+          "id": 6929,
+          "name": "Leather",
+          "seoName": "Leather"
+        },
+        {
+          "id": 6930,
+          "name": "Metal Ore",
+          "seoName": "Metal Ore"
+        },
+        {
+          "id": 6931,
+          "name": "Scrap",
+          "seoName": "Scrap"
+        },
+        {
+          "id": 6932,
+          "name": "Sulfur Ore",
+          "seoName": "Sulfur Ore"
+        },
+        {
+          "id": 6933,
+          "name": "Bone Fragments",
+          "seoName": "Bone Fragments"
+        },
+        {
+          "id": 6934,
+          "name": "Cloth",
+          "seoName": "Cloth"
+        },
+        {
+          "id": 6935,
+          "name": "Empty Can Of Beans",
+          "seoName": "Empty Can Of Beans"
+        },
+        {
+          "id": 6936,
+          "name": "Water",
+          "seoName": "Water"
+        },
+        {
+          "id": 6937,
+          "name": "Wolf Skull",
+          "seoName": "Wolf Skull"
+        },
+        {
+          "id": 6938,
+          "name": "Empty Tuna Can",
+          "seoName": "Empty Tuna Can"
+        }
+      ]
+    },
+    {
+      "id": 1438,
+      "name": "Clothing",
+      "seoName": "Clothing",
+      "subCategories": [
+        {
+          "id": 6730,
+          "name": "Other Clothing Items",
+          "seoName": "Other Clothing Items"
+        },
+        {
+          "id": 6819,
+          "name": "Bandana Mask",
+          "seoName": "Bandana Mask"
+        },
+        {
+          "id": 6820,
+          "name": "Bone Armor",
+          "seoName": "Bone Armor"
+        },
+        {
+          "id": 6821,
+          "name": "Boots",
+          "seoName": "Boots"
+        },
+        {
+          "id": 6822,
+          "name": "Burlap Shirt",
+          "seoName": "Burlap Shirt"
+        },
+        {
+          "id": 6823,
+          "name": "Candle Hat",
+          "seoName": "Candle Hat"
+        },
+        {
+          "id": 6824,
+          "name": "Heavy Plate Helmet",
+          "seoName": "Heavy Plate Helmet"
+        },
+        {
+          "id": 6825,
+          "name": "Hide Boots",
+          "seoName": "Hide Boots"
+        },
+        {
+          "id": 6826,
+          "name": "Hide Poncho",
+          "seoName": "Hide Poncho"
+        },
+        {
+          "id": 6827,
+          "name": "Hoodie",
+          "seoName": "Hoodie"
+        },
+        {
+          "id": 6828,
+          "name": "Leather Gloves",
+          "seoName": "Leather Gloves"
+        },
+        {
+          "id": 6829,
+          "name": "Metal Facemask",
+          "seoName": "Metal Facemask"
+        },
+        {
+          "id": 6830,
+          "name": "Riot Helmet",
+          "seoName": "Riot Helmet"
+        },
+        {
+          "id": 6831,
+          "name": "Frog Boots",
+          "seoName": "Frog Boots"
+        },
+        {
+          "id": 6832,
+          "name": "Snow Jacket - Red",
+          "seoName": "Snow Jacket - Red"
+        },
+        {
+          "id": 6833,
+          "name": "Wolf Headdress",
+          "seoName": "Wolf Headdress"
+        },
+        {
+          "id": 6834,
+          "name": "Wood Chestplate",
+          "seoName": "Wood Chestplate"
+        },
+        {
+          "id": 6835,
+          "name": "Baseball Cap",
+          "seoName": "Baseball Cap"
+        },
+        {
+          "id": 6836,
+          "name": "Bone Helmet",
+          "seoName": "Bone Helmet"
+        },
+        {
+          "id": 6837,
+          "name": "Bucket Helmet",
+          "seoName": "Bucket Helmet"
+        },
+        {
+          "id": 6838,
+          "name": "Burlap Shoes",
+          "seoName": "Burlap Shoes"
+        },
+        {
+          "id": 6839,
+          "name": "Coffee Can Helmet",
+          "seoName": "Coffee Can Helmet"
+        },
+        {
+          "id": 6840,
+          "name": "Heavy Plate Jacket",
+          "seoName": "Heavy Plate Jacket"
+        },
+        {
+          "id": 6841,
+          "name": "Hide Halterneck",
+          "seoName": "Hide Halterneck"
+        },
+        {
+          "id": 6842,
+          "name": "Hide Skirt",
+          "seoName": "Hide Skirt"
+        },
+        {
+          "id": 6843,
+          "name": "Improvised Balaclava",
+          "seoName": "Improvised Balaclava"
+        },
+        {
+          "id": 6844,
+          "name": "Longsleeve T-Shirt",
+          "seoName": "Longsleeve T-Shirt"
+        },
+        {
+          "id": 6845,
+          "name": "Miners Hat",
+          "seoName": "Miners Hat"
+        },
+        {
+          "id": 6846,
+          "name": "Road Sign Jacket",
+          "seoName": "Road Sign Jacket"
+        },
+        {
+          "id": 6847,
+          "name": "Shirt",
+          "seoName": "Shirt"
+        },
+        {
+          "id": 6848,
+          "name": "Tank Top",
+          "seoName": "Tank Top"
+        },
+        {
+          "id": 6849,
+          "name": "Wood Armor Helmet",
+          "seoName": "Wood Armor Helmet"
+        },
+        {
+          "id": 6850,
+          "name": "Scientist Hazmat Suit",
+          "seoName": "Scientist Hazmat Suit"
+        },
+        {
+          "id": 6851,
+          "name": "Beenie Hat",
+          "seoName": "Beenie Hat"
+        },
+        {
+          "id": 6852,
+          "name": "Boonie Hat",
+          "seoName": "Boonie Hat"
+        },
+        {
+          "id": 6853,
+          "name": "Burlap Headwrap",
+          "seoName": "Burlap Headwrap"
+        },
+        {
+          "id": 6854,
+          "name": "Burlap Trousers",
+          "seoName": "Burlap Trousers"
+        },
+        {
+          "id": 6855,
+          "name": "Hazmat Suit",
+          "seoName": "Hazmat Suit"
+        },
+        {
+          "id": 6856,
+          "name": "Heavy Plate Pants",
+          "seoName": "Heavy Plate Pants"
+        },
+        {
+          "id": 6857,
+          "name": "Hide Pants",
+          "seoName": "Hide Pants"
+        },
+        {
+          "id": 6858,
+          "name": "Hide Vest",
+          "seoName": "Hide Vest"
+        },
+        {
+          "id": 6859,
+          "name": "Jacket",
+          "seoName": "Jacket"
+        },
+        {
+          "id": 6860,
+          "name": "Metal Chest Plate",
+          "seoName": "Metal Chest Plate"
+        },
+        {
+          "id": 6861,
+          "name": "Pants",
+          "seoName": "Pants"
+        },
+        {
+          "id": 6862,
+          "name": "Road Sign Kilt",
+          "seoName": "Road Sign Kilt"
+        },
+        {
+          "id": 6863,
+          "name": "Shorts",
+          "seoName": "Shorts"
+        },
+        {
+          "id": 6864,
+          "name": "T-Shirt",
+          "seoName": "T-Shirt"
+        },
+        {
+          "id": 6865,
+          "name": "Wood Armor Pants",
+          "seoName": "Wood Armor Pants"
+        }
+      ]
+    },
+    {
+      "id": 1439,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 6731,
+          "name": "Other Armo",
+          "seoName": "Other Armo"
+        }
+      ]
+    },
+    {
+      "id": 1440,
+      "name": "Ammunition",
+      "seoName": "Ammunition",
+      "subCategories": [
+        {
+          "id": 6732,
+          "name": "Other Ammunitions",
+          "seoName": "Other Ammunitions"
+        },
+        {
+          "id": 6801,
+          "name": "12 Gauge Slug",
+          "seoName": "12 Gauge Slug"
+        },
+        {
+          "id": 6802,
+          "name": "Handmade Shell",
+          "seoName": "Handmade Shell"
+        },
+        {
+          "id": 6803,
+          "name": "HV 5.56 Rifle Ammo",
+          "seoName": "HV 5.56 Rifle Ammo"
+        },
+        {
+          "id": 6804,
+          "name": "Incendiary Pistol Bullet",
+          "seoName": "Incendiary Pistol Bullet"
+        },
+        {
+          "id": 6805,
+          "name": "Pistol Bullet",
+          "seoName": "Pistol Bullet"
+        },
+        {
+          "id": 6806,
+          "name": "Wooden Arrow",
+          "seoName": "Wooden Arrow"
+        },
+        {
+          "id": 6807,
+          "name": "5.56 Rifle Ammo",
+          "seoName": "5.56 Rifle Ammo"
+        },
+        {
+          "id": 6808,
+          "name": "High Velocity Arrow",
+          "seoName": "High Velocity Arrow"
+        },
+        {
+          "id": 6809,
+          "name": "HV Pistol Ammo",
+          "seoName": "HV Pistol Ammo"
+        },
+        {
+          "id": 6810,
+          "name": "Incendiary Rocket",
+          "seoName": "Incendiary Rocket"
+        },
+        {
+          "id": 6811,
+          "name": "Rocket",
+          "seoName": "Rocket"
+        },
+        {
+          "id": 6812,
+          "name": "12 Gauge Incendiary Shell",
+          "seoName": "12 Gauge Incendiary Shell"
+        },
+        {
+          "id": 6813,
+          "name": "12 Gauge Buckshot",
+          "seoName": "12 Gauge Buckshot"
+        },
+        {
+          "id": 6814,
+          "name": "Explosive 5.56 Rifle Ammo",
+          "seoName": "Explosive 5.56 Rifle Ammo"
+        },
+        {
+          "id": 6815,
+          "name": "High Velocity Rocket",
+          "seoName": "High Velocity Rocket"
+        },
+        {
+          "id": 6816,
+          "name": "Incendiary 5.56 Rifle Ammo",
+          "seoName": "Incendiary 5.56 Rifle Ammo"
+        },
+        {
+          "id": 6817,
+          "name": "Nailgun Nails",
+          "seoName": "Nailgun Nails"
+        },
+        {
+          "id": 6818,
+          "name": "Smoke Rocket",
+          "seoName": "Smoke Rocket"
+        }
+      ]
+    },
+    {
+      "id": 1441,
+      "name": "Components",
+      "seoName": "Components",
+      "subCategories": [
+        {
+          "id": 6733,
+          "name": "Other Components",
+          "seoName": "Other Components"
+        },
+        {
+          "id": 6758,
+          "name": "Empty Propane Tank",
+          "seoName": "Empty Propane Tank"
+        },
+        {
+          "id": 6759,
+          "name": "Tech Trash",
+          "seoName": "Tech Trash"
+        },
+        {
+          "id": 6760,
+          "name": "Rifle Body",
+          "seoName": "Rifle Body"
+        },
+        {
+          "id": 6761,
+          "name": "Semi Automatic Body",
+          "seoName": "Semi Automatic Body"
+        },
+        {
+          "id": 6762,
+          "name": "SMG Body",
+          "seoName": "SMG Body"
+        },
+        {
+          "id": 6763,
+          "name": "Targeting Computer",
+          "seoName": "Targeting Computer"
+        },
+        {
+          "id": 6764,
+          "name": "Gears",
+          "seoName": "Gears"
+        },
+        {
+          "id": 6765,
+          "name": "Metal Pipe",
+          "seoName": "Metal Pipe"
+        },
+        {
+          "id": 6766,
+          "name": "Road Signs",
+          "seoName": "Road Signs"
+        },
+        {
+          "id": 6767,
+          "name": "Sewing Kit",
+          "seoName": "Sewing Kit"
+        },
+        {
+          "id": 6768,
+          "name": "Tarp",
+          "seoName": "Tarp"
+        },
+        {
+          "id": 6769,
+          "name": "Metal Blade",
+          "seoName": "Metal Blade"
+        },
+        {
+          "id": 6770,
+          "name": "Metal Spring",
+          "seoName": "Metal Spring"
+        },
+        {
+          "id": 6771,
+          "name": "Rope",
+          "seoName": "Rope"
+        },
+        {
+          "id": 6772,
+          "name": "Sheet Metal",
+          "seoName": "Sheet Metal"
+        },
+        {
+          "id": 6773,
+          "name": "CCTV Camera",
+          "seoName": "CCTV Camera"
+        }
+      ]
+    },
+    {
+      "id": 1442,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 6734,
+          "name": "Other Tools",
+          "seoName": "Other Tools"
+        },
+        {
+          "id": 6740,
+          "name": "Flare",
+          "seoName": "Flare"
+        },
+        {
+          "id": 6741,
+          "name": "Pick Axe",
+          "seoName": "Pick Axe"
+        },
+        {
+          "id": 6742,
+          "name": "Satchel Charge",
+          "seoName": "Satchel Charge"
+        },
+        {
+          "id": 6743,
+          "name": "Timed Explosive Charge",
+          "seoName": "Timed Explosive Charge"
+        },
+        {
+          "id": 6744,
+          "name": "Salvaged Hammer",
+          "seoName": "Salvaged Hammer"
+        },
+        {
+          "id": 6745,
+          "name": "Smoke Grenade",
+          "seoName": "Smoke Grenade"
+        },
+        {
+          "id": 6746,
+          "name": "Binoculars",
+          "seoName": "Binoculars"
+        },
+        {
+          "id": 6747,
+          "name": "Hatchet",
+          "seoName": "Hatchet"
+        },
+        {
+          "id": 6748,
+          "name": "Salvaged Axe",
+          "seoName": "Salvaged Axe"
+        },
+        {
+          "id": 6749,
+          "name": "Stone Pick Axe",
+          "seoName": "Stone Pick Axe"
+        },
+        {
+          "id": 6750,
+          "name": "Torch",
+          "seoName": "Torch"
+        },
+        {
+          "id": 6751,
+          "name": "Jackhammer",
+          "seoName": "Jackhammer"
+        },
+        {
+          "id": 6752,
+          "name": "Hammer",
+          "seoName": "Hammer"
+        },
+        {
+          "id": 6753,
+          "name": "Rock",
+          "seoName": "Rock"
+        },
+        {
+          "id": 6754,
+          "name": "Salvaged Icepick",
+          "seoName": "Salvaged Icepick"
+        },
+        {
+          "id": 6755,
+          "name": "Stone Hatchet",
+          "seoName": "Stone Hatchet"
+        },
+        {
+          "id": 6756,
+          "name": "Supply Signal",
+          "seoName": "Supply Signal"
+        },
+        {
+          "id": 6757,
+          "name": "Chainsaw",
+          "seoName": "Chainsaw"
+        }
+      ]
+    },
+    {
+      "id": 1443,
+      "name": "Medicals",
+      "seoName": "Medicals",
+      "subCategories": [
+        {
+          "id": 6735,
+          "name": "Anti-Radiation Pills",
+          "seoName": "Anti-Radiation Pills"
+        },
+        {
+          "id": 6736,
+          "name": "Large Medkit",
+          "seoName": "Large Medkit"
+        },
+        {
+          "id": 6737,
+          "name": "Bandage",
+          "seoName": "Bandage"
+        },
+        {
+          "id": 6738,
+          "name": "Medical Syringe",
+          "seoName": "Medical Syringe"
+        }
+      ]
+    },
+    {
+      "id": 1444,
+      "name": "Festive",
+      "seoName": "Festive",
+      "subCategories": [
+        {
+          "id": 6739,
+          "name": "Other Festive Items",
+          "seoName": "Other Festive Items"
+        },
+        {
+          "id": 6774,
+          "name": "Small Present",
+          "seoName": "Small Present"
+        },
+        {
+          "id": 6775,
+          "name": "Candy Cane",
+          "seoName": "Candy Cane"
+        },
+        {
+          "id": 6776,
+          "name": "SUPER Stocking",
+          "seoName": "SUPER Stocking"
+        },
+        {
+          "id": 6777,
+          "name": "Candy Cane Club",
+          "seoName": "Candy Cane Club"
+        },
+        {
+          "id": 6778,
+          "name": "Pookie Bear",
+          "seoName": "Pookie Bear"
+        },
+        {
+          "id": 6779,
+          "name": "CandyCane",
+          "seoName": "CandyCane"
+        },
+        {
+          "id": 6780,
+          "name": "Pinecone",
+          "seoName": "Pinecone"
+        },
+        {
+          "id": 6781,
+          "name": "Tinsel",
+          "seoName": "Tinsel"
+        },
+        {
+          "id": 6782,
+          "name": "Christmas Tree",
+          "seoName": "Christmas Tree"
+        },
+        {
+          "id": 6783,
+          "name": "Medium Present",
+          "seoName": "Medium Present"
+        },
+        {
+          "id": 6784,
+          "name": "Santa Hat",
+          "seoName": "Santa Hat"
+        },
+        {
+          "id": 6785,
+          "name": "Small Stocking",
+          "seoName": "Small Stocking"
+        },
+        {
+          "id": 6786,
+          "name": "Reindeer Antlers",
+          "seoName": "Reindeer Antlers"
+        },
+        {
+          "id": 6787,
+          "name": "Scarecrow",
+          "seoName": "Scarecrow"
+        },
+        {
+          "id": 6788,
+          "name": "Gingerbread Man",
+          "seoName": "Gingerbread Man"
+        },
+        {
+          "id": 6789,
+          "name": "Christmas Tree Star",
+          "seoName": "Christmas Tree Star"
+        },
+        {
+          "id": 6790,
+          "name": "Door Garland",
+          "seoName": "Door Garland"
+        },
+        {
+          "id": 6791,
+          "name": "Door Wreath",
+          "seoName": "Door Wreath"
+        },
+        {
+          "id": 6792,
+          "name": "Large Present",
+          "seoName": "Large Present"
+        },
+        {
+          "id": 6793,
+          "name": "Coal",
+          "seoName": "Coal"
+        },
+        {
+          "id": 6794,
+          "name": "Jack O Lantern Angry",
+          "seoName": "Jack O Lantern Angry"
+        },
+        {
+          "id": 6795,
+          "name": "Jack O Lantern Happy",
+          "seoName": "Jack O Lantern Happy"
+        },
+        {
+          "id": 6796,
+          "name": "Skull Fire Pit",
+          "seoName": "Skull Fire Pit"
+        },
+        {
+          "id": 6797,
+          "name": "Christmas Tree Light",
+          "seoName": "Christmas Tree Light"
+        },
+        {
+          "id": 6798,
+          "name": "Christmas Lightstring",
+          "seoName": "Christmas Lightstring"
+        },
+        {
+          "id": 6799,
+          "name": "Window Garland",
+          "seoName": "Window Garland"
+        },
+        {
+          "id": 6800,
+          "name": "Baubels",
+          "seoName": "Baubels"
+        }
+      ]
+    },
+    {
+      "id": 1445,
+      "name": "Traps",
+      "seoName": "Traps",
+      "subCategories": [
+        {
+          "id": 6866,
+          "name": "Auto Turret",
+          "seoName": "Auto Turret"
+        },
+        {
+          "id": 6867,
+          "name": "Shotgun Trap",
+          "seoName": "Shotgun Trap"
+        },
+        {
+          "id": 6868,
+          "name": "Flame Turret",
+          "seoName": "Flame Turret"
+        },
+        {
+          "id": 6869,
+          "name": "Snap Trap",
+          "seoName": "Snap Trap"
+        },
+        {
+          "id": 6870,
+          "name": "Land Mine",
+          "seoName": "Land Mine"
+        },
+        {
+          "id": 6871,
+          "name": "Floor Spikes",
+          "seoName": "Floor Spikes"
+        }
+      ]
+    },
+    {
+      "id": 1446,
+      "name": "Twitch Drops",
+      "seoName": "Twitch Drops",
+      "subCategories": [
+        {
+          "id": 6939,
+          "name": "Round 14",
+          "seoName": "Round 14"
+        },
+        {
+          "id": 6940,
+          "name": "Round 15",
+          "seoName": "Round 15"
+        },
+        {
+          "id": 6941,
+          "name": "Round 16",
+          "seoName": "Round 16"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 6142,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

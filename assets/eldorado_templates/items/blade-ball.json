@@ -1,0 +1,140 @@
+{
+  "game_id": "203",
+  "game": "blade-ball",
+  "game_name": "Blade Ball",
+  "category": "CustomItem",
+  "tradeEnvironments": [],
+  "attributes": {
+    "blade-ball-item-type": {
+      "name": "Item Type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "battle-pass",
+          "name": "Battle Pass"
+        },
+        {
+          "id": "spins",
+          "name": "Spins"
+        },
+        {
+          "id": "swords",
+          "name": "Swords"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "blade-ball-sword-rarity": {
+      "name": "Sword Rarity",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "common",
+          "name": "Common"
+        },
+        {
+          "id": "legendary",
+          "name": "Legendary"
+        },
+        {
+          "id": "limited",
+          "name": "Limited"
+        },
+        {
+          "id": "rare",
+          "name": "Rare"
+        },
+        {
+          "id": "secret",
+          "name": "Secret"
+        },
+        {
+          "id": "unique",
+          "name": "Unique"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

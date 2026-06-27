@@ -59,15 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Clubs",
-        "Shards",
-        "Shard Packs",
-        "Storage",
-        "Bundles",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

@@ -1,0 +1,154 @@
+{
+  "game_id": "33",
+  "game": "apex-legends",
+  "game_name": "Apex Legends",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "PC"
+    },
+    {
+      "id": "1",
+      "name": "Xbox"
+    },
+    {
+      "id": "2",
+      "name": "PlayStation"
+    }
+  ],
+  "attributes": {
+    "apex-legends-coins": {
+      "name": "Coins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "1000-coins",
+          "name": "1000 Coins"
+        },
+        {
+          "id": "2150-coins",
+          "name": "2150 Coins"
+        },
+        {
+          "id": "4350-coins",
+          "name": "4350 Coins"
+        },
+        {
+          "id": "6700-coins",
+          "name": "6700 Coins"
+        },
+        {
+          "id": "11500-coins",
+          "name": "11500 Coins"
+        },
+        {
+          "id": "23000-coins",
+          "name": "23000 Coins"
+        },
+        {
+          "id": "34500-coins",
+          "name": "34500 Coins"
+        },
+        {
+          "id": "46000-coins",
+          "name": "46000 Coins"
+        },
+        {
+          "id": "exotic-shards-10",
+          "name": "Exotic Shards - 10"
+        },
+        {
+          "id": "exotic-shards-50",
+          "name": "Exotic Shards - 50"
+        },
+        {
+          "id": "exotic-shards-110",
+          "name": "Exotic Shards - 110"
+        },
+        {
+          "id": "ultimate-battle-pass",
+          "name": "Ultimate Battle Pass"
+        },
+        {
+          "id": "ultimate-plus-battle-pass",
+          "name": "Ultimate+ Battle Pass"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

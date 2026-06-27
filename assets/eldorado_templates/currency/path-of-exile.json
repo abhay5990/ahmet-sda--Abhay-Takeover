@@ -1,0 +1,300 @@
+{
+  "game_id": "2",
+  "game": "path-of-exile",
+  "game_name": "Path of Exile",
+  "category": "Currency",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "PC",
+      "children": [
+        {
+          "id": "0-0",
+          "name": "Standard"
+        },
+        {
+          "id": "0-1",
+          "name": "Hardcore"
+        },
+        {
+          "id": "0-10",
+          "name": "Ruthless"
+        },
+        {
+          "id": "0-11",
+          "name": "Hardcore Ruthless"
+        },
+        {
+          "id": "0-16",
+          "name": "Mirage Standard"
+        },
+        {
+          "id": "0-17",
+          "name": "Mirage Hardcore"
+        },
+        {
+          "id": "0-18",
+          "name": "Return of the Ancestors Event SC"
+        },
+        {
+          "id": "0-19",
+          "name": "Return of the Ancestors Event HC"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "name": "PlayStation",
+      "children": [
+        {
+          "id": "1-0",
+          "name": "Standard"
+        },
+        {
+          "id": "1-1",
+          "name": "Hardcore"
+        },
+        {
+          "id": "1-10",
+          "name": "Ruthless"
+        },
+        {
+          "id": "1-11",
+          "name": "Hardcore Ruthless"
+        },
+        {
+          "id": "1-16",
+          "name": "Mirage Standard"
+        },
+        {
+          "id": "1-17",
+          "name": "Mirage Hardcore"
+        },
+        {
+          "id": "1-18",
+          "name": "Return of the Ancestors Event SC"
+        },
+        {
+          "id": "1-19",
+          "name": "Return of the Ancestors Event HC"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Xbox",
+      "children": [
+        {
+          "id": "2-0",
+          "name": "Standard"
+        },
+        {
+          "id": "2-1",
+          "name": "Hardcore"
+        },
+        {
+          "id": "2-10",
+          "name": "Ruthless"
+        },
+        {
+          "id": "2-11",
+          "name": "Hardcore Ruthless"
+        },
+        {
+          "id": "2-16",
+          "name": "Mirage Standard"
+        },
+        {
+          "id": "2-17",
+          "name": "Mirage Hardcore"
+        },
+        {
+          "id": "2-18",
+          "name": "Return of the Ancestors Event SC"
+        },
+        {
+          "id": "2-19",
+          "name": "Return of the Ancestors Event HC"
+        }
+      ]
+    }
+  ],
+  "attributes": {
+    "path-of-exile-orbs": {
+      "name": "Orbs",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "ancient-orb",
+          "name": "Ancient Orb"
+        },
+        {
+          "id": "blessed-orb",
+          "name": "Blessed Orb"
+        },
+        {
+          "id": "cartographers-chisel",
+          "name": "Cartographer's Chisel"
+        },
+        {
+          "id": "chaos-orb",
+          "name": "Chaos Orb"
+        },
+        {
+          "id": "chromatic-orb",
+          "name": "Chromatic Orb"
+        },
+        {
+          "id": "divine-orb",
+          "name": "Divine Orb"
+        },
+        {
+          "id": "eternal-orb",
+          "name": "Eternal Orb"
+        },
+        {
+          "id": "exalted-orb",
+          "name": "Exalted Orb"
+        },
+        {
+          "id": "gemcutters-prism",
+          "name": "Gemcutter's Prism"
+        },
+        {
+          "id": "harbingers-orb",
+          "name": "Harbinger's Orb"
+        },
+        {
+          "id": "hinekoras-lock",
+          "name": "Hinekora's Lock"
+        },
+        {
+          "id": "jewellers-orb",
+          "name": "Jeweller's Orb"
+        },
+        {
+          "id": "mirror-of-kalandra",
+          "name": "Mirror of Kalandra"
+        },
+        {
+          "id": "orb-of-alchemy",
+          "name": "Orb of Alchemy"
+        },
+        {
+          "id": "orb-of-alteration",
+          "name": "Orb of Alteration"
+        },
+        {
+          "id": "orb-of-annulment",
+          "name": "Orb of Annulment"
+        },
+        {
+          "id": "orb-of-chance",
+          "name": "Orb of Chance"
+        },
+        {
+          "id": "orb-of-fusing",
+          "name": "Orb of Fusing"
+        },
+        {
+          "id": "orb-of-horizons",
+          "name": "Orb of Horizons"
+        },
+        {
+          "id": "orb-of-regret",
+          "name": "Orb of Regret"
+        },
+        {
+          "id": "orb-of-scouring",
+          "name": "Orb of Scouring"
+        },
+        {
+          "id": "regal-orb",
+          "name": "Regal Orb"
+        },
+        {
+          "id": "vaal-orb",
+          "name": "Vaal Orb"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

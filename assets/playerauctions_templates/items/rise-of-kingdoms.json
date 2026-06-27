@@ -1,0 +1,152 @@
+{
+  "game_id": 8822,
+  "game": "rise-of-kingdoms",
+  "game_name": "Rise of Kingdoms",
+  "seo_name": "Rise-of-Kingdoms",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1017,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 4933,
+          "name": "Mixed Resources",
+          "seoName": "Mixed Resources"
+        },
+        {
+          "id": 6246,
+          "name": "Decorations",
+          "seoName": "Decorations"
+        },
+        {
+          "id": 6247,
+          "name": "Resource Pack",
+          "seoName": "Resource Pack"
+        },
+        {
+          "id": 6248,
+          "name": "Speedups",
+          "seoName": "Speedups"
+        },
+        {
+          "id": 6249,
+          "name": "Boosts",
+          "seoName": "Boosts"
+        },
+        {
+          "id": 6250,
+          "name": "VIP Points",
+          "seoName": "VIP Points"
+        },
+        {
+          "id": 6251,
+          "name": "Gems",
+          "seoName": "Gems"
+        },
+        {
+          "id": 6252,
+          "name": "Food",
+          "seoName": "Food"
+        },
+        {
+          "id": 6253,
+          "name": "Ores and Gems",
+          "seoName": "Ores and Gems"
+        },
+        {
+          "id": 6254,
+          "name": "Other Materials",
+          "seoName": "Other Materials"
+        }
+      ]
+    },
+    {
+      "id": 1373,
+      "name": "Commanders",
+      "seoName": "Commanders",
+      "subCategories": [
+        {
+          "id": 6242,
+          "name": "Unreleased",
+          "seoName": "Unreleased"
+        },
+        {
+          "id": 6243,
+          "name": "Elite",
+          "seoName": "Elite"
+        },
+        {
+          "id": 6244,
+          "name": "Epic",
+          "seoName": "Epic"
+        },
+        {
+          "id": 6245,
+          "name": "Legendary",
+          "seoName": "Legendary"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 8823,
+      "name": "Android"
+    },
+    {
+      "id": 8824,
+      "name": "IOS"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

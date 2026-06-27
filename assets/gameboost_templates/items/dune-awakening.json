@@ -59,18 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Weapons",
-        "Armor & Clothing",
-        "Consumables",
-        "Crafting Materials & Resources",
-        "Tools & Equipment",
-        "Accessories",
-        "Cosmetics & Skins",
-        "Vehicles & Mounts",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

@@ -1,0 +1,868 @@
+{
+  "game_id": 9119,
+  "game": "animal-crossing-nh",
+  "game_name": "Animal Crossing: New Horizons",
+  "seo_name": "Animal-Crossing-NH",
+  "currencyName": "Bells",
+  "categories": [
+    {
+      "id": 971,
+      "name": "Furniture",
+      "seoName": "Furniture",
+      "subCategories": [
+        {
+          "id": 4683,
+          "name": "Fencing",
+          "seoName": "Fencing"
+        },
+        {
+          "id": 4684,
+          "name": "Floors",
+          "seoName": "Floors"
+        },
+        {
+          "id": 4685,
+          "name": "Housewares",
+          "seoName": "Housewares"
+        },
+        {
+          "id": 4687,
+          "name": "Misc",
+          "seoName": "Misc"
+        },
+        {
+          "id": 4688,
+          "name": "Model",
+          "seoName": "Model"
+        },
+        {
+          "id": 4689,
+          "name": "Music",
+          "seoName": "Music"
+        },
+        {
+          "id": 4690,
+          "name": "Photos",
+          "seoName": "Photos"
+        },
+        {
+          "id": 4691,
+          "name": "Posters",
+          "seoName": "Posters"
+        },
+        {
+          "id": 4692,
+          "name": "Rugs",
+          "seoName": "Rugs"
+        },
+        {
+          "id": 4693,
+          "name": "Wall-Mounted",
+          "seoName": "Wall-Mounted"
+        },
+        {
+          "id": 4694,
+          "name": "Wallpapers",
+          "seoName": "Wallpapers"
+        },
+        {
+          "id": 5915,
+          "name": "Furniture Pack",
+          "seoName": "Furniture Pack"
+        }
+      ]
+    },
+    {
+      "id": 972,
+      "name": "Clothing",
+      "seoName": "Clothing",
+      "subCategories": [
+        {
+          "id": 4695,
+          "name": "Accessories",
+          "seoName": "Accessories"
+        },
+        {
+          "id": 4696,
+          "name": "Bags",
+          "seoName": "Bags"
+        },
+        {
+          "id": 4697,
+          "name": "Bottoms",
+          "seoName": "Bottoms"
+        },
+        {
+          "id": 4698,
+          "name": "Dress-Up",
+          "seoName": "Dress-Up"
+        },
+        {
+          "id": 4699,
+          "name": "Headwear",
+          "seoName": "Headwear"
+        },
+        {
+          "id": 4700,
+          "name": "Shoes",
+          "seoName": "Shoes"
+        },
+        {
+          "id": 4701,
+          "name": "Socks",
+          "seoName": "Socks"
+        },
+        {
+          "id": 4702,
+          "name": "Tops",
+          "seoName": "Tops"
+        },
+        {
+          "id": 4703,
+          "name": "Umbrellas",
+          "seoName": "Umbrellas"
+        }
+      ]
+    },
+    {
+      "id": 973,
+      "name": "DIY Recipe",
+      "seoName": "DIY Recipe",
+      "subCategories": [
+        {
+          "id": 4704,
+          "name": "DIY Recipe",
+          "seoName": "DIY Recipe"
+        },
+        {
+          "id": 5123,
+          "name": "Recipe Sets",
+          "seoName": "Recipe Sets"
+        }
+      ]
+    },
+    {
+      "id": 974,
+      "name": "Flower and Fruit",
+      "seoName": "Flower and Fruit",
+      "subCategories": [
+        {
+          "id": 4705,
+          "name": "Plant",
+          "seoName": "Plant"
+        },
+        {
+          "id": 4706,
+          "name": "Fruit",
+          "seoName": "Fruit"
+        },
+        {
+          "id": 4707,
+          "name": "Decorations",
+          "seoName": "Decorations"
+        },
+        {
+          "id": 4708,
+          "name": "Flower Bag",
+          "seoName": "Flower Bag"
+        }
+      ]
+    },
+    {
+      "id": 975,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 4709,
+          "name": "Fishing Rod",
+          "seoName": "Fishing Rod"
+        },
+        {
+          "id": 4710,
+          "name": "Axe",
+          "seoName": "Axe"
+        },
+        {
+          "id": 4711,
+          "name": "Net",
+          "seoName": "Net"
+        },
+        {
+          "id": 4712,
+          "name": "Shovel",
+          "seoName": "Shovel"
+        },
+        {
+          "id": 4713,
+          "name": "Slingshot",
+          "seoName": "Slingshot"
+        },
+        {
+          "id": 4714,
+          "name": "Navigation Tool",
+          "seoName": "Navigation Tool"
+        },
+        {
+          "id": 4715,
+          "name": "Watering Can",
+          "seoName": "Watering Can"
+        },
+        {
+          "id": 4716,
+          "name": "Wand",
+          "seoName": "Wand"
+        }
+      ]
+    },
+    {
+      "id": 976,
+      "name": "Usables",
+      "seoName": "Usables",
+      "subCategories": [
+        {
+          "id": 4717,
+          "name": "Fragment",
+          "seoName": "Fragment"
+        },
+        {
+          "id": 4718,
+          "name": "Eats",
+          "seoName": "Eats"
+        },
+        {
+          "id": 4719,
+          "name": "Bamboo",
+          "seoName": "Bamboo"
+        },
+        {
+          "id": 4720,
+          "name": "Egg",
+          "seoName": "Egg"
+        },
+        {
+          "id": 4721,
+          "name": "Birthday Cupcake",
+          "seoName": "Birthday Cupcake"
+        },
+        {
+          "id": 4722,
+          "name": "Wrapping Paper",
+          "seoName": "Wrapping Paper"
+        },
+        {
+          "id": 4723,
+          "name": "Clay",
+          "seoName": "Clay"
+        },
+        {
+          "id": 4724,
+          "name": "Mushroom",
+          "seoName": "Mushroom"
+        },
+        {
+          "id": 4725,
+          "name": "Wood",
+          "seoName": "Wood"
+        },
+        {
+          "id": 4726,
+          "name": "Stone",
+          "seoName": "Stone"
+        },
+        {
+          "id": 4727,
+          "name": "Gold Nugget",
+          "seoName": "Gold Nugget"
+        },
+        {
+          "id": 4728,
+          "name": "Pearl",
+          "seoName": "Pearl"
+        },
+        {
+          "id": 4729,
+          "name": "Bait and Kit",
+          "seoName": "Bait and Kit"
+        },
+        {
+          "id": 4730,
+          "name": "Ornament",
+          "seoName": "Ornament"
+        },
+        {
+          "id": 4731,
+          "name": "Ticket",
+          "seoName": "Ticket"
+        },
+        {
+          "id": 4732,
+          "name": "Iron Nugget",
+          "seoName": "Iron Nugget"
+        },
+        {
+          "id": 4733,
+          "name": "Hardwood",
+          "seoName": "Hardwood"
+        },
+        {
+          "id": 4734,
+          "name": "Softwood",
+          "seoName": "Softwood"
+        },
+        {
+          "id": 5916,
+          "name": "Material Pack",
+          "seoName": "Material Pack"
+        }
+      ]
+    },
+    {
+      "id": 977,
+      "name": "Styles",
+      "seoName": "Styles",
+      "subCategories": [
+        {
+          "id": 4735,
+          "name": "Active",
+          "seoName": "Active"
+        },
+        {
+          "id": 4736,
+          "name": "Bathroom",
+          "seoName": "Bathroom"
+        },
+        {
+          "id": 4737,
+          "name": "Child's Room",
+          "seoName": "Child's Room"
+        },
+        {
+          "id": 4738,
+          "name": "Comfy",
+          "seoName": "Comfy"
+        },
+        {
+          "id": 4739,
+          "name": "Cool",
+          "seoName": "Cool"
+        },
+        {
+          "id": 4740,
+          "name": "Cute",
+          "seoName": "Cute"
+        },
+        {
+          "id": 4741,
+          "name": "Elegant",
+          "seoName": "Elegant"
+        },
+        {
+          "id": 4742,
+          "name": "Everyday",
+          "seoName": "Everyday"
+        },
+        {
+          "id": 4743,
+          "name": "Expensive",
+          "seoName": "Expensive"
+        },
+        {
+          "id": 4764,
+          "name": "Facility",
+          "seoName": "Facility"
+        },
+        {
+          "id": 4766,
+          "name": "Fairy Tale",
+          "seoName": "Fairy Tale"
+        },
+        {
+          "id": 4768,
+          "name": "Fancy",
+          "seoName": "Fancy"
+        },
+        {
+          "id": 4769,
+          "name": "Formal",
+          "seoName": "Formal"
+        },
+        {
+          "id": 4771,
+          "name": "Garage",
+          "seoName": "Garage"
+        },
+        {
+          "id": 4772,
+          "name": "Garden",
+          "seoName": "Garden"
+        },
+        {
+          "id": 4773,
+          "name": "Gorgeous",
+          "seoName": "Gorgeous"
+        },
+        {
+          "id": 4775,
+          "name": "Goth",
+          "seoName": "Goth"
+        },
+        {
+          "id": 4776,
+          "name": "Horror",
+          "seoName": "Horror"
+        },
+        {
+          "id": 4778,
+          "name": "Kitchen",
+          "seoName": "Kitchen"
+        },
+        {
+          "id": 4780,
+          "name": "Living Room Styles",
+          "seoName": "Living Room Styles"
+        },
+        {
+          "id": 4782,
+          "name": "Outdoorsy",
+          "seoName": "Outdoorsy"
+        },
+        {
+          "id": 4785,
+          "name": "Party",
+          "seoName": "Party"
+        },
+        {
+          "id": 4786,
+          "name": "School Style",
+          "seoName": "School Style"
+        },
+        {
+          "id": 4788,
+          "name": "Shop",
+          "seoName": "Shop"
+        },
+        {
+          "id": 4789,
+          "name": "Sporty",
+          "seoName": "Sporty"
+        },
+        {
+          "id": 4790,
+          "name": "Theatrical",
+          "seoName": "Theatrical"
+        },
+        {
+          "id": 4791,
+          "name": "Vacation",
+          "seoName": "Vacation"
+        },
+        {
+          "id": 4792,
+          "name": "Work",
+          "seoName": "Work"
+        },
+        {
+          "id": 4793,
+          "name": "Writing Style",
+          "seoName": "Writing Style"
+        },
+        {
+          "id": 4794,
+          "name": "Zen-style",
+          "seoName": "Zen-style"
+        }
+      ]
+    },
+    {
+      "id": 978,
+      "name": "Art",
+      "seoName": "Art",
+      "subCategories": [
+        {
+          "id": 4745,
+          "name": "Statue",
+          "seoName": "Statue"
+        }
+      ]
+    },
+    {
+      "id": 979,
+      "name": "Bushes and Trees",
+      "seoName": "Bushes and Trees",
+      "subCategories": [
+        {
+          "id": 4677,
+          "name": "Azalea",
+          "seoName": "Azalea"
+        },
+        {
+          "id": 4678,
+          "name": "Camellia",
+          "seoName": "Camellia"
+        },
+        {
+          "id": 4679,
+          "name": "Hibiscus",
+          "seoName": "Hibiscus"
+        },
+        {
+          "id": 4680,
+          "name": "Holly",
+          "seoName": "Holly"
+        },
+        {
+          "id": 4681,
+          "name": "Hydrangea",
+          "seoName": "Hydrangea"
+        },
+        {
+          "id": 4682,
+          "name": "Olive",
+          "seoName": "Olive"
+        }
+      ]
+    },
+    {
+      "id": 980,
+      "name": "Theme Packs",
+      "seoName": "Theme Packs",
+      "subCategories": [
+        {
+          "id": 4746,
+          "name": "Beach",
+          "seoName": "Beach"
+        },
+        {
+          "id": 4747,
+          "name": "Birthday",
+          "seoName": "Birthday"
+        },
+        {
+          "id": 4748,
+          "name": "Outdoor Design",
+          "seoName": "Outdoor Design"
+        },
+        {
+          "id": 4749,
+          "name": "Park",
+          "seoName": "Park"
+        },
+        {
+          "id": 4750,
+          "name": "Bar",
+          "seoName": "Bar"
+        },
+        {
+          "id": 4751,
+          "name": "Basement",
+          "seoName": "Basement"
+        },
+        {
+          "id": 4752,
+          "name": "Boiler Room",
+          "seoName": "Boiler Room"
+        },
+        {
+          "id": 4753,
+          "name": "Children Room",
+          "seoName": "Children Room"
+        },
+        {
+          "id": 4754,
+          "name": "Chinese",
+          "seoName": "Chinese"
+        },
+        {
+          "id": 4754,
+          "name": "Chinese",
+          "seoName": "Chinese"
+        },
+        {
+          "id": 4755,
+          "name": "Divination",
+          "seoName": "Divination"
+        },
+        {
+          "id": 4756,
+          "name": "Living Room",
+          "seoName": "Living Room"
+        },
+        {
+          "id": 4757,
+          "name": "Mermaid Theme",
+          "seoName": "Mermaid Theme"
+        },
+        {
+          "id": 4758,
+          "name": "Modern Kitchen",
+          "seoName": "Modern Kitchen"
+        },
+        {
+          "id": 4759,
+          "name": "Ocean",
+          "seoName": "Ocean"
+        },
+        {
+          "id": 4760,
+          "name": "Pirate Theme",
+          "seoName": "Pirate Theme"
+        },
+        {
+          "id": 4761,
+          "name": "Rainbow",
+          "seoName": "Rainbow"
+        },
+        {
+          "id": 4762,
+          "name": "Spa",
+          "seoName": "Spa"
+        },
+        {
+          "id": 4763,
+          "name": "Star",
+          "seoName": "Star"
+        },
+        {
+          "id": 4765,
+          "name": "Wedding",
+          "seoName": "Wedding"
+        },
+        {
+          "id": 4767,
+          "name": "Shower Room",
+          "seoName": "Shower Room"
+        },
+        {
+          "id": 4770,
+          "name": "American Kitchen",
+          "seoName": "American Kitchen"
+        },
+        {
+          "id": 4774,
+          "name": "Cast Iron",
+          "seoName": "Cast Iron"
+        },
+        {
+          "id": 4777,
+          "name": "Gaming Room",
+          "seoName": "Gaming Room"
+        },
+        {
+          "id": 4779,
+          "name": "Gym",
+          "seoName": "Gym"
+        },
+        {
+          "id": 4781,
+          "name": "Restaurant",
+          "seoName": "Restaurant"
+        },
+        {
+          "id": 4783,
+          "name": "Underwater World",
+          "seoName": "Underwater World"
+        },
+        {
+          "id": 4784,
+          "name": "Retro",
+          "seoName": "Retro"
+        },
+        {
+          "id": 4787,
+          "name": "Pink princess",
+          "seoName": "Pink princess"
+        }
+      ]
+    },
+    {
+      "id": 1069,
+      "name": "Currency",
+      "seoName": "Currency",
+      "subCategories": [
+        {
+          "id": 5120,
+          "name": "Nook Miles Ticket",
+          "seoName": "Nook Miles Ticket"
+        },
+        {
+          "id": 5834,
+          "name": "Poki",
+          "seoName": "Poki"
+        }
+      ]
+    },
+    {
+      "id": 1071,
+      "name": "Seasonal",
+      "seoName": "Seasonal",
+      "subCategories": [
+        {
+          "id": 5121,
+          "name": "Super Mario",
+          "seoName": "Super Mario"
+        },
+        {
+          "id": 5122,
+          "name": "Saint Patrick's Day",
+          "seoName": "Saint Patrick's Day"
+        },
+        {
+          "id": 5125,
+          "name": "Sanrio Items",
+          "seoName": "Sanrio Items"
+        },
+        {
+          "id": 5422,
+          "name": "Mothers Day Items",
+          "seoName": "Mothers Day Items"
+        },
+        {
+          "id": 5423,
+          "name": "Double Gloucester Cheese",
+          "seoName": "Double Gloucester Cheese"
+        },
+        {
+          "id": 5913,
+          "name": "Toy Day",
+          "seoName": "Toy Day"
+        },
+        {
+          "id": 5914,
+          "name": "Christmas",
+          "seoName": "Christmas"
+        }
+      ]
+    },
+    {
+      "id": 1084,
+      "name": "Island Design Ideas",
+      "seoName": "Island Design Ideas",
+      "subCategories": [
+        {
+          "id": 5124,
+          "name": "Island Design",
+          "seoName": "Island Design"
+        }
+      ]
+    },
+    {
+      "id": 1085,
+      "name": "Fossils",
+      "seoName": "Fossils",
+      "subCategories": [
+        {
+          "id": 5162,
+          "name": "Fossils",
+          "seoName": "Fossils"
+        }
+      ]
+    },
+    {
+      "id": 1086,
+      "name": "Villagers",
+      "seoName": "Villagers",
+      "subCategories": [
+        {
+          "id": 5126,
+          "name": "Normal Villagers",
+          "seoName": "Normal Villagers"
+        },
+        {
+          "id": 5127,
+          "name": "Amiibo Villagers",
+          "seoName": "Amiibo Villagers"
+        }
+      ]
+    },
+    {
+      "id": 1095,
+      "name": "Critters",
+      "seoName": "Critters",
+      "subCategories": [
+        {
+          "id": 5163,
+          "name": "Fish",
+          "seoName": "Fish"
+        },
+        {
+          "id": 5164,
+          "name": "Bugs",
+          "seoName": "Bugs"
+        },
+        {
+          "id": 5165,
+          "name": "Sea Creatures",
+          "seoName": "Sea Creatures"
+        }
+      ]
+    },
+    {
+      "id": 1096,
+      "name": "Bundles",
+      "seoName": "Bundles",
+      "subCategories": [
+        {
+          "id": 5166,
+          "name": "Bundles",
+          "seoName": "Bundles"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 9120,
+      "name": "Nintendo Switch"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

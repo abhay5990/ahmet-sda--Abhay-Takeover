@@ -59,34 +59,15 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Fruits",
-        "Gamepass",
-        "Other"
-      ]
+      "required": false
     },
     "fruit_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Beast",
-        "Elemental",
-        "Natural",
-        "Other"
-      ]
+      "required": false
     },
     "rarity": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Uncommon",
-        "Common",
-        "Rare",
-        "Mythical",
-        "Legendary",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

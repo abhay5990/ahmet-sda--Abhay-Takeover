@@ -1,0 +1,88 @@
+{
+  "game_id": 9078,
+  "game": "valorant",
+  "game_name": "Valorant",
+  "seo_name": "Valorant",
+  "currencyName": "Points",
+  "categories": [
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 9089,
+      "name": "NA"
+    },
+    {
+      "id": 9128,
+      "name": "EU"
+    },
+    {
+      "id": 9207,
+      "name": "LATAM"
+    },
+    {
+      "id": 9309,
+      "name": "APAC"
+    },
+    {
+      "id": 9208,
+      "name": "BR"
+    },
+    {
+      "id": 9206,
+      "name": "KR"
+    },
+    {
+      "id": 14995,
+      "name": "TR"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

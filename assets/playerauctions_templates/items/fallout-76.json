@@ -1,0 +1,434 @@
+{
+  "game_id": 8443,
+  "game": "fallout-76",
+  "game_name": "Fallout 76",
+  "seo_name": "Fallout-76",
+  "currencyName": "Caps",
+  "categories": [
+    {
+      "id": 956,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 4550,
+          "name": "Pistol",
+          "seoName": "Pistol"
+        },
+        {
+          "id": 4551,
+          "name": "Automatic pistol",
+          "seoName": "Automatic pistol"
+        },
+        {
+          "id": 4552,
+          "name": "Rifle",
+          "seoName": "Rifle"
+        },
+        {
+          "id": 4553,
+          "name": "Automatic rifle",
+          "seoName": "Automatic rifle"
+        },
+        {
+          "id": 4554,
+          "name": "Shotgun",
+          "seoName": "Shotgun"
+        },
+        {
+          "id": 4555,
+          "name": "Bows",
+          "seoName": "Bows"
+        },
+        {
+          "id": 4556,
+          "name": "Explosives",
+          "seoName": "Explosives"
+        },
+        {
+          "id": 4558,
+          "name": "1H melee weapon",
+          "seoName": "1H melee weapon"
+        },
+        {
+          "id": 4559,
+          "name": "2H melee weapon",
+          "seoName": "2H melee weapon"
+        },
+        {
+          "id": 4560,
+          "name": "Unarmed weapon",
+          "seoName": "Unarmed weapon"
+        },
+        {
+          "id": 4561,
+          "name": "Thrown",
+          "seoName": "Thrown"
+        },
+        {
+          "id": 5517,
+          "name": "Energy Weapons",
+          "seoName": "Energy Weapons"
+        },
+        {
+          "id": 5518,
+          "name": "Pipe Weapons",
+          "seoName": "Pipe Weapons"
+        },
+        {
+          "id": 5519,
+          "name": "Melee Weapons",
+          "seoName": "Melee Weapons"
+        },
+        {
+          "id": 5520,
+          "name": "Heavy Guns",
+          "seoName": "Heavy Guns"
+        },
+        {
+          "id": 5671,
+          "name": "Ripper",
+          "seoName": "Ripper"
+        }
+      ]
+    },
+    {
+      "id": 957,
+      "name": "Armors",
+      "seoName": "Armors",
+      "subCategories": [
+        {
+          "id": 4562,
+          "name": "Underarmor",
+          "seoName": "Underarmor"
+        },
+        {
+          "id": 4563,
+          "name": "Outfits",
+          "seoName": "Outfits"
+        },
+        {
+          "id": 4564,
+          "name": "Full headwear",
+          "seoName": "Full headwear"
+        },
+        {
+          "id": 4565,
+          "name": "Hats",
+          "seoName": "Hats"
+        },
+        {
+          "id": 4566,
+          "name": "Eyewear",
+          "seoName": "Eyewear"
+        },
+        {
+          "id": 4567,
+          "name": "Masks",
+          "seoName": "Masks"
+        },
+        {
+          "id": 4568,
+          "name": "Power Armor",
+          "seoName": "Power Armor"
+        },
+        {
+          "id": 4569,
+          "name": "Body Armor",
+          "seoName": "Body Armor"
+        },
+        {
+          "id": 4570,
+          "name": "Backpack",
+          "seoName": "Backpack"
+        }
+      ]
+    },
+    {
+      "id": 958,
+      "name": "Ammunitions",
+      "seoName": "Ammunitions",
+      "subCategories": [
+        {
+          "id": 4584,
+          "name": "Ballistic",
+          "seoName": "Ballistic"
+        },
+        {
+          "id": 4585,
+          "name": "Camera",
+          "seoName": "Camera"
+        },
+        {
+          "id": 4586,
+          "name": "Energy",
+          "seoName": "Energy"
+        },
+        {
+          "id": 4587,
+          "name": "Explosive",
+          "seoName": "Explosive"
+        }
+      ]
+    },
+    {
+      "id": 959,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 4512,
+          "name": "Aid",
+          "seoName": "Aid"
+        },
+        {
+          "id": 4588,
+          "name": "Food",
+          "seoName": "Food"
+        },
+        {
+          "id": 4589,
+          "name": "Soups",
+          "seoName": "Soups"
+        },
+        {
+          "id": 4590,
+          "name": "Drinks",
+          "seoName": "Drinks"
+        },
+        {
+          "id": 4591,
+          "name": "Chems",
+          "seoName": "Chems"
+        },
+        {
+          "id": 4592,
+          "name": "Miscellaneous",
+          "seoName": "Miscellaneous"
+        },
+        {
+          "id": 6680,
+          "name": "Vault-Tec Bobbleheads",
+          "seoName": "Vault-Tec Bobbleheads"
+        },
+        {
+          "id": 6681,
+          "name": "Magazines",
+          "seoName": "Magazines"
+        }
+      ]
+    },
+    {
+      "id": 960,
+      "name": "Junk Items",
+      "seoName": "Junk Items",
+      "subCategories": [
+        {
+          "id": 4513,
+          "name": "Junk Items",
+          "seoName": "Junk Items"
+        },
+        {
+          "id": 4593,
+          "name": "Crafting components",
+          "seoName": "Crafting components"
+        },
+        {
+          "id": 4594,
+          "name": "Bulk",
+          "seoName": "Bulk"
+        },
+        {
+          "id": 4595,
+          "name": "Component sources",
+          "seoName": "Component sources"
+        },
+        {
+          "id": 4596,
+          "name": "Other junk items",
+          "seoName": "Other junk items"
+        }
+      ]
+    },
+    {
+      "id": 1016,
+      "name": "Serum",
+      "seoName": "Serum",
+      "subCategories": [
+        {
+          "id": 4932,
+          "name": "Serum",
+          "seoName": "Serum"
+        }
+      ]
+    },
+    {
+      "id": 1176,
+      "name": "Plans",
+      "seoName": "Plans",
+      "subCategories": [
+        {
+          "id": 5516,
+          "name": "Plans",
+          "seoName": "Plans"
+        }
+      ]
+    },
+    {
+      "id": 1431,
+      "name": "CAMP and World Items",
+      "seoName": "CAMP and World Items",
+      "subCategories": [
+        {
+          "id": 6682,
+          "name": "CAMP and World Items",
+          "seoName": "CAMP and World Items"
+        }
+      ]
+    },
+    {
+      "id": 1842,
+      "name": "Treasure map",
+      "seoName": "Treasure map",
+      "subCategories": [
+        {
+          "id": 8684,
+          "name": "Ash Heap",
+          "seoName": "Ash Heap"
+        },
+        {
+          "id": 8685,
+          "name": "Forest",
+          "seoName": "Forest"
+        },
+        {
+          "id": 8686,
+          "name": "Toxis Valley",
+          "seoName": "Toxis Valley"
+        },
+        {
+          "id": 8687,
+          "name": "Savage Divide",
+          "seoName": "Savage Divide"
+        },
+        {
+          "id": 8688,
+          "name": "The Mire",
+          "seoName": "The Mire"
+        },
+        {
+          "id": 8689,
+          "name": "Cranberry",
+          "seoName": "Cranberry"
+        }
+      ]
+    },
+    {
+      "id": 1843,
+      "name": "Recipe",
+      "seoName": "Recipe",
+      "subCategories": [
+        {
+          "id": 8690,
+          "name": "Foods",
+          "seoName": "Foods"
+        },
+        {
+          "id": 8691,
+          "name": "Chems",
+          "seoName": "Chems"
+        },
+        {
+          "id": 8692,
+          "name": "Serums",
+          "seoName": "Serums"
+        },
+        {
+          "id": 8693,
+          "name": "Brewing",
+          "seoName": "Brewing"
+        },
+        {
+          "id": 8694,
+          "name": "Junk",
+          "seoName": "Junk"
+        }
+      ]
+    },
+    {
+      "id": 1844,
+      "name": "Mod",
+      "seoName": "Mod",
+      "subCategories": [
+        {
+          "id": 8695,
+          "name": "Mod",
+          "seoName": "Mod"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 8444,
+      "name": "PC"
+    },
+    {
+      "id": 8445,
+      "name": "PS"
+    },
+    {
+      "id": 8446,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

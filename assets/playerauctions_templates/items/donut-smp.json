@@ -1,0 +1,221 @@
+{
+  "game_id": 15120,
+  "game": "donut-smp",
+  "game_name": "Donut SMP",
+  "seo_name": "Donut-SMP",
+  "currencyName": "Money",
+  "categories": [
+    {
+      "id": 2158,
+      "name": "Elytra",
+      "seoName": "Elytra",
+      "subCategories": [
+        {
+          "id": 11009,
+          "name": "Elytra",
+          "seoName": "Elytra"
+        }
+      ]
+    },
+    {
+      "id": 2159,
+      "name": "Spawner",
+      "seoName": "Spawner",
+      "subCategories": [
+        {
+          "id": 11010,
+          "name": "Skeleton Spawner",
+          "seoName": "Skeleton Spawner"
+        },
+        {
+          "id": 11011,
+          "name": "Iron Golem Spwaner",
+          "seoName": "Iron Golem Spwaner"
+        }
+      ]
+    },
+    {
+      "id": 2160,
+      "name": "Farms",
+      "seoName": "Farms",
+      "subCategories": [
+        {
+          "id": 11012,
+          "name": "Kelp Farm",
+          "seoName": "Kelp Farm"
+        },
+        {
+          "id": 11013,
+          "name": "Sugar cane Farm",
+          "seoName": "Sugar cane Farm"
+        },
+        {
+          "id": 11014,
+          "name": "Bamboo Farm",
+          "seoName": "Bamboo Farm"
+        },
+        {
+          "id": 11015,
+          "name": "Bonemeal Farm",
+          "seoName": "Bonemeal Farm"
+        }
+      ]
+    },
+    {
+      "id": 2161,
+      "name": "Netherite",
+      "seoName": "Netherite",
+      "subCategories": [
+        {
+          "id": 11016,
+          "name": "Netherite Ingot",
+          "seoName": "Netherite Ingot"
+        },
+        {
+          "id": 11017,
+          "name": "Netherite Block",
+          "seoName": "Netherite Block"
+        },
+        {
+          "id": 11018,
+          "name": "Netherite Axe",
+          "seoName": "Netherite Axe"
+        },
+        {
+          "id": 11019,
+          "name": "Netherite Sword",
+          "seoName": "Netherite Sword"
+        },
+        {
+          "id": 11020,
+          "name": "Netherite Pickaxe",
+          "seoName": "Netherite Pickaxe"
+        },
+        {
+          "id": 11021,
+          "name": "Netherite Spear",
+          "seoName": "Netherite Spear"
+        },
+        {
+          "id": 11022,
+          "name": "Netherite Set",
+          "seoName": "Netherite Set"
+        },
+        {
+          "id": 11023,
+          "name": "Netherite Helmet",
+          "seoName": "Netherite Helmet"
+        },
+        {
+          "id": 11024,
+          "name": "Netherite Chestplate",
+          "seoName": "Netherite Chestplate"
+        },
+        {
+          "id": 11025,
+          "name": "Netherite Leggings",
+          "seoName": "Netherite Leggings"
+        },
+        {
+          "id": 11026,
+          "name": "Netherite Boots",
+          "seoName": "Netherite Boots"
+        },
+        {
+          "id": 11027,
+          "name": "Netherite Mace",
+          "seoName": "Netherite Mace"
+        }
+      ]
+    },
+    {
+      "id": 2162,
+      "name": "Amethyst",
+      "seoName": "Amethyst",
+      "subCategories": [
+        {
+          "id": 11028,
+          "name": "Amethyst Pickaxe",
+          "seoName": "Amethyst Pickaxe"
+        },
+        {
+          "id": 11029,
+          "name": "Amethyst Axe",
+          "seoName": "Amethyst Axe"
+        },
+        {
+          "id": 11030,
+          "name": "Amethyst Shovel",
+          "seoName": "Amethyst Shovel"
+        }
+      ]
+    },
+    {
+      "id": 2163,
+      "name": "Bases and Stashes",
+      "seoName": "Bases and Stashes",
+      "subCategories": [
+        {
+          "id": 11031,
+          "name": "Bases and Stashes",
+          "seoName": "Bases and Stashes"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15121,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

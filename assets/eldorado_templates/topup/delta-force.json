@@ -1,0 +1,125 @@
+{
+  "game_id": "233",
+  "game": "delta-force",
+  "game_name": "Delta Force",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "delta-force-delta-coins": {
+      "name": "Delta Coins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "60-delta-coins",
+          "name": "60 Delta Coins"
+        },
+        {
+          "id": "320-delta-coins",
+          "name": "320 Delta Coins"
+        },
+        {
+          "id": "750-delta-coins",
+          "name": "750 Delta Coins"
+        },
+        {
+          "id": "1480-delta-coins",
+          "name": "1480 Delta Coins"
+        },
+        {
+          "id": "1980-delta-coins",
+          "name": "1980 Delta Coins"
+        },
+        {
+          "id": "3950-delta-coins",
+          "name": "3950 Delta Coins"
+        },
+        {
+          "id": "8100-delta-coins",
+          "name": "8100 Delta Coins"
+        },
+        {
+          "id": "16200-delta-coins",
+          "name": "16200 Delta Coins"
+        },
+        {
+          "id": "24300-delta-coins",
+          "name": "24300 Delta Coins"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

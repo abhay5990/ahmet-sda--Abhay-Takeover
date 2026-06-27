@@ -59,28 +59,11 @@
   "item_data": {
     "platform": {
       "type": "string",
-      "required": true,
-      "values": [
-        "PC",
-        "PlayStation",
-        "Xbox"
-      ]
+      "required": false
     },
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Ammo",
-        "Treasure Maps",
-        "Weapons",
-        "Glitched Weapons",
-        "Armor",
-        "Consumables",
-        "Junk",
-        "Plans",
-        "Recipes",
-        "Mods"
-      ]
+      "required": false
     }
   }
 }

@@ -59,15 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Heroes",
-        "Skins",
-        "Accessories",
-        "Consumables",
-        "Game Pass",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

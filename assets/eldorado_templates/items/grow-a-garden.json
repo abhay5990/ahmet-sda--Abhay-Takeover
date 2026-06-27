@@ -1,0 +1,486 @@
+{
+  "game_id": "243",
+  "game": "grow-a-garden",
+  "game_name": "Grow a Garden",
+  "category": "CustomItem",
+  "tradeEnvironments": [
+    {
+      "id": "10",
+      "name": "Pets",
+      "group": "Item Type",
+      "children": [
+        {
+          "id": "10-0",
+          "name": "Raccoon"
+        },
+        {
+          "id": "10-1",
+          "name": "Mimic Octopus"
+        },
+        {
+          "id": "10-10",
+          "name": "Ostrich"
+        },
+        {
+          "id": "10-11",
+          "name": "Peacock"
+        },
+        {
+          "id": "10-12",
+          "name": "Queen Bee"
+        },
+        {
+          "id": "10-13",
+          "name": "Capybara"
+        },
+        {
+          "id": "10-14",
+          "name": "Sea Turtle"
+        },
+        {
+          "id": "10-15",
+          "name": "Orange Tabby"
+        },
+        {
+          "id": "10-16",
+          "name": "Kitsune"
+        },
+        {
+          "id": "10-17",
+          "name": "Phoenix"
+        },
+        {
+          "id": "10-18",
+          "name": "Corrupted Kitsune"
+        },
+        {
+          "id": "10-19",
+          "name": "Disco Bee"
+        },
+        {
+          "id": "10-2",
+          "name": "Blood Owl"
+        },
+        {
+          "id": "10-20",
+          "name": "Golden Goose"
+        },
+        {
+          "id": "10-21",
+          "name": "Butterfly"
+        },
+        {
+          "id": "10-22",
+          "name": "T-Rex"
+        },
+        {
+          "id": "10-23",
+          "name": "Red Fox"
+        },
+        {
+          "id": "10-24",
+          "name": "Spinosaurus"
+        },
+        {
+          "id": "10-25",
+          "name": "Griffin"
+        },
+        {
+          "id": "10-26",
+          "name": "Lobster Thermidor"
+        },
+        {
+          "id": "10-27",
+          "name": "Fennec Fox"
+        },
+        {
+          "id": "10-28",
+          "name": "French Fry Ferret"
+        },
+        {
+          "id": "10-29",
+          "name": "Cockatrice"
+        },
+        {
+          "id": "10-3",
+          "name": "Echo Frog"
+        },
+        {
+          "id": "10-30",
+          "name": "Other"
+        },
+        {
+          "id": "10-31",
+          "name": "Swan"
+        },
+        {
+          "id": "10-32",
+          "name": "Elephant"
+        },
+        {
+          "id": "10-33",
+          "name": "Hydra"
+        },
+        {
+          "id": "10-34",
+          "name": "Giraffe"
+        },
+        {
+          "id": "10-35",
+          "name": "Bearded Dragon"
+        },
+        {
+          "id": "10-36",
+          "name": "Ruby Squid"
+        },
+        {
+          "id": "10-37",
+          "name": "Chimera"
+        },
+        {
+          "id": "10-38",
+          "name": "Headless Horseman"
+        },
+        {
+          "id": "10-39",
+          "name": "Mummy"
+        },
+        {
+          "id": "10-4",
+          "name": "Dragonfly"
+        },
+        {
+          "id": "10-40",
+          "name": "Chinchilla"
+        },
+        {
+          "id": "10-41",
+          "name": "Diamond Panther"
+        },
+        {
+          "id": "10-42",
+          "name": "Penguin"
+        },
+        {
+          "id": "10-43",
+          "name": "Snowman Soldier"
+        },
+        {
+          "id": "10-44",
+          "name": "Snowman Builder"
+        },
+        {
+          "id": "10-45",
+          "name": "Snow Bunny"
+        },
+        {
+          "id": "10-46",
+          "name": "Mistletoad"
+        },
+        {
+          "id": "10-47",
+          "name": "Krampus"
+        },
+        {
+          "id": "10-48",
+          "name": "Gift Rat"
+        },
+        {
+          "id": "10-49",
+          "name": "Arctic Fox"
+        },
+        {
+          "id": "10-5",
+          "name": "Dilophosaurus"
+        },
+        {
+          "id": "10-50",
+          "name": "Frost Dragon"
+        },
+        {
+          "id": "10-51",
+          "name": "French Hen"
+        },
+        {
+          "id": "10-52",
+          "name": "Christmas Gorilla"
+        },
+        {
+          "id": "10-53",
+          "name": "Turtle Dove"
+        },
+        {
+          "id": "10-54",
+          "name": "Reindeer"
+        },
+        {
+          "id": "10-55",
+          "name": "Nutcracker"
+        },
+        {
+          "id": "10-56",
+          "name": "Yeti"
+        },
+        {
+          "id": "10-57",
+          "name": "Ice Golem"
+        },
+        {
+          "id": "10-58",
+          "name": "Cocoa Cat"
+        },
+        {
+          "id": "10-59",
+          "name": "Eggnog Chick"
+        },
+        {
+          "id": "10-6",
+          "name": "Brontosaurus"
+        },
+        {
+          "id": "10-60",
+          "name": "Pine Beetle"
+        },
+        {
+          "id": "10-61",
+          "name": "Red-Nosed Reindeer"
+        },
+        {
+          "id": "10-62",
+          "name": "Summer Kiwi"
+        },
+        {
+          "id": "10-63",
+          "name": "Partridge"
+        },
+        {
+          "id": "10-64",
+          "name": "Santa Bear"
+        },
+        {
+          "id": "10-65",
+          "name": "Moose"
+        },
+        {
+          "id": "10-66",
+          "name": "Frost Squirrel"
+        },
+        {
+          "id": "10-67",
+          "name": "Wendigo"
+        },
+        {
+          "id": "10-68",
+          "name": "Christmas Spirit"
+        },
+        {
+          "id": "10-69",
+          "name": "New Year's Bird"
+        },
+        {
+          "id": "10-7",
+          "name": "Moon Cat"
+        },
+        {
+          "id": "10-70",
+          "name": "Firework Sprite"
+        },
+        {
+          "id": "10-71",
+          "name": "Celebration Puppy"
+        },
+        {
+          "id": "10-72",
+          "name": "New Year's Chimp"
+        },
+        {
+          "id": "10-73",
+          "name": "Star Wolf"
+        },
+        {
+          "id": "10-74",
+          "name": "New Year's Dragon"
+        },
+        {
+          "id": "10-75",
+          "name": "Cooked Owl"
+        },
+        {
+          "id": "10-76",
+          "name": "Kodama"
+        },
+        {
+          "id": "10-77",
+          "name": "Hyacinth Macaw"
+        },
+        {
+          "id": "10-78",
+          "name": "Unicycle Monkey"
+        },
+        {
+          "id": "10-79",
+          "name": "Performer Seal"
+        },
+        {
+          "id": "10-8",
+          "name": "Triceratops"
+        },
+        {
+          "id": "10-80",
+          "name": "Bear on Bike"
+        },
+        {
+          "id": "10-81",
+          "name": "Show Pony"
+        },
+        {
+          "id": "10-82",
+          "name": "Carnival Elephant"
+        },
+        {
+          "id": "10-83",
+          "name": "Birb"
+        },
+        {
+          "id": "10-84",
+          "name": "Brown Owl"
+        },
+        {
+          "id": "10-85",
+          "name": "Cuckoo"
+        },
+        {
+          "id": "10-86",
+          "name": "Black Bird"
+        },
+        {
+          "id": "10-87",
+          "name": "Gold Finch"
+        },
+        {
+          "id": "10-88",
+          "name": "Peryton"
+        },
+        {
+          "id": "10-89",
+          "name": "Gilded Choc Peryton"
+        },
+        {
+          "id": "10-9",
+          "name": "Moth"
+        },
+        {
+          "id": "10-90",
+          "name": "Elemental Bee"
+        },
+        {
+          "id": "10-91",
+          "name": "Empress Bee"
+        },
+        {
+          "id": "10-92",
+          "name": "Fire Wisp"
+        }
+      ]
+    },
+    {
+      "id": "15",
+      "name": "Honey Coins",
+      "group": "Item Type"
+    },
+    {
+      "id": "11",
+      "name": "Sheckles",
+      "group": "Item Type"
+    },
+    {
+      "id": "12",
+      "name": "Seeds",
+      "group": "Item Type"
+    },
+    {
+      "id": "13",
+      "name": "Eggs",
+      "group": "Item Type"
+    },
+    {
+      "id": "14",
+      "name": "Other",
+      "group": "Item Type"
+    }
+  ],
+  "attributes": {},
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

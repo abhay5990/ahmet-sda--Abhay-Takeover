@@ -1,0 +1,182 @@
+{
+  "game_id": "39",
+  "game": "genshin-impact",
+  "game_name": "Genshin Impact",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "EU",
+      "group": "Region"
+    },
+    {
+      "id": "1",
+      "name": "NA",
+      "group": "Region"
+    },
+    {
+      "id": "2",
+      "name": "Asia",
+      "group": "Region"
+    },
+    {
+      "id": "3",
+      "name": "TW, HK, MO",
+      "group": "Region"
+    }
+  ],
+  "attributes": {
+    "genshin-impact-genesis-crystals": {
+      "name": "Genesis Crystals",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "1090-genesis-crystals",
+          "name": "1090 Genesis Crystals"
+        },
+        {
+          "id": "16160-genesis-crystals",
+          "name": "16160 Genesis Crystals"
+        },
+        {
+          "id": "2240-genesis-crystals",
+          "name": "2240 Genesis Crystals"
+        },
+        {
+          "id": "24240-genesis-crystals",
+          "name": "24240 Genesis Crystals"
+        },
+        {
+          "id": "32320-genesis-crystals",
+          "name": "32320 Genesis Crystals"
+        },
+        {
+          "id": "330-genesis-crystals",
+          "name": "330 Genesis Crystals"
+        },
+        {
+          "id": "3880-genesis-crystals",
+          "name": "3880 Genesis Crystals"
+        },
+        {
+          "id": "60-genesis-crystals",
+          "name": "60 Genesis Crystals"
+        },
+        {
+          "id": "8080-genesis-crystals",
+          "name": "8080 Genesis Crystals"
+        },
+        {
+          "id": "80800-genesis-crystals",
+          "name": "80800 Genesis Crystals"
+        },
+        {
+          "id": "all-in-one-bundle",
+          "name": "All-In-One Bundle"
+        },
+        {
+          "id": "blessing-of-the-welkin-moon-180-days",
+          "name": "Blessing of the Welkin Moon - 180 Days"
+        },
+        {
+          "id": "blessing-of-the-welkin-moon-30-days",
+          "name": "Blessing of the Welkin Moon - 30 Days"
+        },
+        {
+          "id": "blessing-of-the-welkin-moon-90-days",
+          "name": "Blessing of the Welkin Moon - 90 Days"
+        },
+        {
+          "id": "blessing-of-the-welkin-moon-and-1090-genesis-crystals",
+          "name": "Blessing of the Welkin Moon + 1090 Genesis Crystals"
+        },
+        {
+          "id": "blessing-of-the-welkin-moon-and-8080-genesis-crystals",
+          "name": "Blessing of the Welkin Moon + 8080 Genesis Crystals"
+        },
+        {
+          "id": "gnostic-chorus-battle-pass",
+          "name": "Gnostic Chorus - Battle Pass"
+        },
+        {
+          "id": "gnostic-hymn-battle-pass",
+          "name": "Gnostic Hymn - Battle Pass"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

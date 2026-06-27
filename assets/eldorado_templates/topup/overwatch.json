@@ -1,0 +1,154 @@
+{
+  "game_id": "27",
+  "game": "overwatch",
+  "game_name": "Overwatch",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Battlenet",
+      "group": "Platform"
+    },
+    {
+      "id": "1",
+      "name": "PlayStation",
+      "group": "Platform"
+    },
+    {
+      "id": "2",
+      "name": "Xbox",
+      "group": "Platform"
+    },
+    {
+      "id": "3",
+      "name": "Steam",
+      "group": "Platform"
+    }
+  ],
+  "attributes": {
+    "overwatch-2-coins": {
+      "name": "Coins",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "500-coins",
+          "name": "500 Coins"
+        },
+        {
+          "id": "1000-coins",
+          "name": "1000 Coins"
+        },
+        {
+          "id": "2200-coins",
+          "name": "2200 Coins"
+        },
+        {
+          "id": "4500-coins",
+          "name": "4500 Coins"
+        },
+        {
+          "id": "6900-coins",
+          "name": "6900 Coins"
+        },
+        {
+          "id": "11800-coins",
+          "name": "11800 Coins"
+        },
+        {
+          "id": "23600-coins",
+          "name": "23600 Coins"
+        },
+        {
+          "id": "35400-coins",
+          "name": "35400 Coins"
+        },
+        {
+          "id": "mythic-weapon-skin-bundle",
+          "name": "Mythic Weapon Skin Bundle"
+        },
+        {
+          "id": "starter-pack",
+          "name": "Starter Pack"
+        },
+        {
+          "id": "ultimate-battle-pass-bundle",
+          "name": "Ultimate Battle Pass Bundle"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

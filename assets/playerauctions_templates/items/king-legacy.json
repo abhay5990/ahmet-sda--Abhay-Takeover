@@ -1,0 +1,148 @@
+{
+  "game_id": 13904,
+  "game": "king-legacy",
+  "game_name": "King Legacy",
+  "seo_name": "King-Legacy",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 1920,
+      "name": "Styles",
+      "seoName": "Styles",
+      "subCategories": [
+        {
+          "id": 9554,
+          "name": "Styles",
+          "seoName": "Styles"
+        }
+      ]
+    },
+    {
+      "id": 1921,
+      "name": "Swords",
+      "seoName": "Swords",
+      "subCategories": [
+        {
+          "id": 9555,
+          "name": "Swords",
+          "seoName": "Swords"
+        }
+      ]
+    },
+    {
+      "id": 1922,
+      "name": "Fruits",
+      "seoName": "Fruits",
+      "subCategories": [
+        {
+          "id": 9556,
+          "name": "Fruits",
+          "seoName": "Fruits"
+        }
+      ]
+    },
+    {
+      "id": 1923,
+      "name": "Gem",
+      "seoName": "Gem",
+      "subCategories": [
+        {
+          "id": 9557,
+          "name": "Gem",
+          "seoName": "Gem"
+        }
+      ]
+    },
+    {
+      "id": 1924,
+      "name": "Money",
+      "seoName": "Money",
+      "subCategories": [
+        {
+          "id": 9558,
+          "name": "Money",
+          "seoName": "Money"
+        }
+      ]
+    },
+    {
+      "id": 1925,
+      "name": "Products",
+      "seoName": "Products",
+      "subCategories": [
+        {
+          "id": 9559,
+          "name": "Products",
+          "seoName": "Products"
+        }
+      ]
+    },
+    {
+      "id": 1926,
+      "name": "Gamepasses",
+      "seoName": "Gamepasses",
+      "subCategories": [
+        {
+          "id": 9560,
+          "name": "Gamepasses",
+          "seoName": "Gamepasses"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13906,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "game_id": 15028,
+  "game": "the-midnight-walkers",
+  "game_name": "The Midnight Walkers",
+  "seo_name": "The-Midnight-Walkers",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 2104,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 10523,
+          "name": "Dagger",
+          "seoName": "Dagger"
+        },
+        {
+          "id": 10524,
+          "name": "Katana",
+          "seoName": "Katana"
+        },
+        {
+          "id": 10525,
+          "name": "Sledgehammer",
+          "seoName": "Sledgehammer"
+        }
+      ]
+    },
+    {
+      "id": 2105,
+      "name": "Ranged Weapons",
+      "seoName": "Ranged Weapons",
+      "subCategories": [
+        {
+          "id": 10526,
+          "name": "Bow",
+          "seoName": "Bow"
+        },
+        {
+          "id": 10527,
+          "name": "Assault Rifles",
+          "seoName": "Assault Rifles"
+        },
+        {
+          "id": 10528,
+          "name": "Pistols",
+          "seoName": "Pistols"
+        }
+      ]
+    },
+    {
+      "id": 2106,
+      "name": "Armors",
+      "seoName": "Armors",
+      "subCategories": [
+        {
+          "id": 10529,
+          "name": "Heavy Armor",
+          "seoName": "Heavy Armor"
+        },
+        {
+          "id": 10530,
+          "name": "Medium Armor",
+          "seoName": "Medium Armor"
+        },
+        {
+          "id": 10531,
+          "name": "Light Armor",
+          "seoName": "Light Armor"
+        }
+      ]
+    },
+    {
+      "id": 2107,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 10532,
+          "name": "Materials",
+          "seoName": "Materials"
+        }
+      ]
+    },
+    {
+      "id": 2108,
+      "name": "Key Items",
+      "seoName": "Key Items",
+      "subCategories": [
+        {
+          "id": 10533,
+          "name": "Key Items",
+          "seoName": "Key Items"
+        }
+      ]
+    },
+    {
+      "id": 2109,
+      "name": "Others",
+      "seoName": "Others",
+      "subCategories": [
+        {
+          "id": 10534,
+          "name": "Others",
+          "seoName": "Others"
+        }
+      ]
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15029,
+      "name": "PC"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

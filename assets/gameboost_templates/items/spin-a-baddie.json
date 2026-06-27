@@ -59,15 +59,7 @@
   "item_data": {
     "item_types": {
       "type": "string",
-      "required": true,
-      "values": [
-        "VIP",
-        "Gamepasses",
-        "Tokens",
-        "Baddies",
-        "Boosts",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

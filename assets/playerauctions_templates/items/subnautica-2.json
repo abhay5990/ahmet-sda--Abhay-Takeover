@@ -1,0 +1,124 @@
+{
+  "game_id": 15143,
+  "game": "subnautica-2",
+  "game_name": "Subnautica 2",
+  "seo_name": "Subnautica-2",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 2174,
+      "name": "Tools",
+      "seoName": "Tools",
+      "subCategories": [
+        {
+          "id": 11244,
+          "name": "Tools",
+          "seoName": "Tools"
+        }
+      ]
+    },
+    {
+      "id": 2175,
+      "name": "Base Parts",
+      "seoName": "Base Parts",
+      "subCategories": [
+        {
+          "id": 11245,
+          "name": "Base Parts",
+          "seoName": "Base Parts"
+        }
+      ]
+    },
+    {
+      "id": 2176,
+      "name": "Resources",
+      "seoName": "Resources",
+      "subCategories": [
+        {
+          "id": 11246,
+          "name": "Resources",
+          "seoName": "Resources"
+        }
+      ]
+    },
+    {
+      "id": 2177,
+      "name": "Equipment",
+      "seoName": "Equipment",
+      "subCategories": [
+        {
+          "id": 11247,
+          "name": "Equipment",
+          "seoName": "Equipment"
+        }
+      ]
+    },
+    {
+      "id": 2178,
+      "name": "Blueprints",
+      "seoName": "Blueprints",
+      "subCategories": [
+        {
+          "id": 11248,
+          "name": "Blueprints",
+          "seoName": "Blueprints"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15144,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -59,14 +59,7 @@
   "item_data": {
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Scrolls",
-        "Spins",
-        "Notifiers",
-        "Equipment",
-        "Other"
-      ]
+      "required": false
     }
   }
 }

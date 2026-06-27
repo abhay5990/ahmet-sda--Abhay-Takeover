@@ -1,0 +1,250 @@
+{
+  "game_id": 5583,
+  "game": "never-winter",
+  "game_name": "NeverWinter",
+  "seo_name": "Never-Winter",
+  "currencyName": "Astral Diamond",
+  "categories": [
+    {
+      "id": 804,
+      "name": "Enchantments",
+      "seoName": "Enchantments",
+      "subCategories": [
+        {
+          "id": 2372,
+          "name": "Enchantments",
+          "seoName": "Enchantments"
+        },
+        {
+          "id": 6686,
+          "name": "Armor Enchantment",
+          "seoName": "Armor Enchantment"
+        },
+        {
+          "id": 6687,
+          "name": "Insignia",
+          "seoName": "Insignia"
+        },
+        {
+          "id": 6688,
+          "name": "Overload Enchantment",
+          "seoName": "Overload Enchantment"
+        },
+        {
+          "id": 6689,
+          "name": "Shard",
+          "seoName": "Shard"
+        },
+        {
+          "id": 6690,
+          "name": "Weapon Enchantment",
+          "seoName": "Weapon Enchantment"
+        }
+      ]
+    },
+    {
+      "id": 805,
+      "name": "Runestones",
+      "seoName": "Runestones",
+      "subCategories": [
+        {
+          "id": 2373,
+          "name": "Runestones",
+          "seoName": "Runestones"
+        }
+      ]
+    },
+    {
+      "id": 806,
+      "name": "Wards",
+      "seoName": "Wards",
+      "subCategories": [
+        {
+          "id": 2374,
+          "name": "Wards",
+          "seoName": "Wards"
+        }
+      ]
+    },
+    {
+      "id": 807,
+      "name": "Refining Stones",
+      "seoName": "Refining Stones",
+      "subCategories": [
+        {
+          "id": 2375,
+          "name": "Refining Stones",
+          "seoName": "Refining Stones"
+        }
+      ]
+    },
+    {
+      "id": 808,
+      "name": "Gold",
+      "seoName": "Gold",
+      "subCategories": [
+        {
+          "id": 2376,
+          "name": "Gold",
+          "seoName": "Gold"
+        }
+      ]
+    },
+    {
+      "id": 1160,
+      "name": "Artifacts",
+      "seoName": "Artifacts",
+      "subCategories": [
+        {
+          "id": 5463,
+          "name": "Sparkling Fey Emblem",
+          "seoName": "Sparkling Fey Emblem"
+        },
+        {
+          "id": 5464,
+          "name": "Union",
+          "seoName": "Union"
+        },
+        {
+          "id": 5465,
+          "name": "Power",
+          "seoName": "Power"
+        },
+        {
+          "id": 5466,
+          "name": "Staff of Flowers",
+          "seoName": "Staff of Flowers"
+        },
+        {
+          "id": 5474,
+          "name": "Stability",
+          "seoName": "Stability"
+        }
+      ]
+    },
+    {
+      "id": 1161,
+      "name": "Bags",
+      "seoName": "Bags",
+      "subCategories": [
+        {
+          "id": 5462,
+          "name": "Bags",
+          "seoName": "Bags"
+        }
+      ]
+    },
+    {
+      "id": 1162,
+      "name": "Companions",
+      "seoName": "Companions",
+      "subCategories": [
+        {
+          "id": 5467,
+          "name": "Companions",
+          "seoName": "Companions"
+        }
+      ]
+    },
+    {
+      "id": 1163,
+      "name": "Mounts",
+      "seoName": "Mounts",
+      "subCategories": [
+        {
+          "id": 5468,
+          "name": "Common Mounts",
+          "seoName": "Common Mounts"
+        },
+        {
+          "id": 5469,
+          "name": "Uncommon Mounts",
+          "seoName": "Uncommon Mounts"
+        },
+        {
+          "id": 5470,
+          "name": "Rare Mounts",
+          "seoName": "Rare Mounts"
+        },
+        {
+          "id": 5471,
+          "name": "Epic Mounts",
+          "seoName": "Epic Mounts"
+        },
+        {
+          "id": 5472,
+          "name": "Legendary Mounts",
+          "seoName": "Legendary Mounts"
+        },
+        {
+          "id": 5473,
+          "name": "Mythic Mounts",
+          "seoName": "Mythic Mounts"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 5585,
+      "name": "PC"
+    },
+    {
+      "id": 7492,
+      "name": "PS"
+    },
+    {
+      "id": 6915,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

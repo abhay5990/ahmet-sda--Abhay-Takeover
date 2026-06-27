@@ -1,0 +1,195 @@
+{
+  "game_id": "199",
+  "game": "pet-simulator-99",
+  "game_name": "Pet Simulator 99",
+  "category": "CustomItem",
+  "tradeEnvironments": [],
+  "attributes": {
+    "pet-simulator-99-item-type": {
+      "name": "Item Type",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "eggs",
+          "name": "Eggs"
+        },
+        {
+          "id": "enchants",
+          "name": "Enchants"
+        },
+        {
+          "id": "pets",
+          "name": "Pets"
+        },
+        {
+          "id": "potions",
+          "name": "Potions"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "pet-simulator-99-items-rarity": {
+      "name": "Items Rarity",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "basic",
+          "name": "Basic"
+        },
+        {
+          "id": "celestial",
+          "name": "Celestial"
+        },
+        {
+          "id": "divine",
+          "name": "Divine"
+        },
+        {
+          "id": "epic",
+          "name": "Epic"
+        },
+        {
+          "id": "exclusive",
+          "name": "Exclusive"
+        },
+        {
+          "id": "exotic",
+          "name": "Exotic"
+        },
+        {
+          "id": "legendary",
+          "name": "Legendary"
+        },
+        {
+          "id": "mythical",
+          "name": "Mythical"
+        },
+        {
+          "id": "rare",
+          "name": "Rare"
+        },
+        {
+          "id": "secret",
+          "name": "Secret"
+        },
+        {
+          "id": "superior",
+          "name": "Superior"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    },
+    "pet-simulator-99-pet-power": {
+      "name": "Pet Power",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "evolved-huge",
+          "name": "Evolved Huge"
+        },
+        {
+          "id": "golden-huge",
+          "name": "Golden Huge"
+        },
+        {
+          "id": "huge",
+          "name": "Huge"
+        },
+        {
+          "id": "rainbow-huge",
+          "name": "Rainbow Huge"
+        },
+        {
+          "id": "shiny-huge",
+          "name": "Shiny Huge"
+        },
+        {
+          "id": "other",
+          "name": "Other"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

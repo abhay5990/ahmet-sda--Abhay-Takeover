@@ -1,0 +1,170 @@
+{
+  "game_id": 13619,
+  "game": "palworld",
+  "game_name": "Palworld",
+  "seo_name": "Palworld",
+  "currencyName": "Gold",
+  "categories": [
+    {
+      "id": 1828,
+      "name": "Pals",
+      "seoName": "Pals",
+      "subCategories": [
+        {
+          "id": 8633,
+          "name": "Other Pals",
+          "seoName": "Other Pals"
+        },
+        {
+          "id": 8636,
+          "name": "Digtoise",
+          "seoName": "Digtoise"
+        },
+        {
+          "id": 8637,
+          "name": "Loupmoon",
+          "seoName": "Loupmoon"
+        },
+        {
+          "id": 8638,
+          "name": "Lovander",
+          "seoName": "Lovander"
+        },
+        {
+          "id": 8639,
+          "name": "Grizzbolt",
+          "seoName": "Grizzbolt"
+        },
+        {
+          "id": 8640,
+          "name": "Kitsun",
+          "seoName": "Kitsun"
+        },
+        {
+          "id": 8641,
+          "name": "Vaelet",
+          "seoName": "Vaelet"
+        }
+      ]
+    },
+    {
+      "id": 1829,
+      "name": "Items",
+      "seoName": "Items",
+      "subCategories": [
+        {
+          "id": 8634,
+          "name": "Items",
+          "seoName": "Items"
+        }
+      ]
+    },
+    {
+      "id": 1830,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 8635,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        }
+      ]
+    },
+    {
+      "id": 2015,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 10102,
+          "name": "materials",
+          "seoName": "materials"
+        }
+      ]
+    },
+    {
+      "id": 2016,
+      "name": "Points",
+      "seoName": "Points",
+      "subCategories": [
+        {
+          "id": 10103,
+          "name": "Points",
+          "seoName": "Points"
+        }
+      ]
+    },
+    {
+      "id": 2017,
+      "name": "Blueprint",
+      "seoName": "Blueprint",
+      "subCategories": [
+        {
+          "id": 10104,
+          "name": "Blueprint",
+          "seoName": "Blueprint"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13622,
+      "name": "Steam"
+    },
+    {
+      "id": 13623,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

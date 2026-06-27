@@ -1,0 +1,113 @@
+{
+  "game_id": "99",
+  "game": "growtopia",
+  "game_name": "Growtopia",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "growtopia-gems": {
+      "name": "Gems",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "922500-gems",
+          "name": "922500 Gems"
+        },
+        {
+          "id": "2730000-gems",
+          "name": "2730000 Gems"
+        },
+        {
+          "id": "10080000-gems",
+          "name": "10080000 Gems"
+        },
+        {
+          "id": "19680000-gems",
+          "name": "19680000 Gems"
+        },
+        {
+          "id": "one-year-subscription-token",
+          "name": "One Year Subscription Token"
+        },
+        {
+          "id": "royal-grow-pass",
+          "name": "Royal Grow Pass"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

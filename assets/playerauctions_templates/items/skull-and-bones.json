@@ -1,0 +1,160 @@
+{
+  "game_id": 13652,
+  "game": "skull-and-bones",
+  "game_name": "Skull and Bones",
+  "seo_name": "Skull-and-Bones",
+  "currencyName": "Silver",
+  "categories": [
+    {
+      "id": 1836,
+      "name": "Ship Weapons",
+      "seoName": "Ship Weapons",
+      "subCategories": [
+        {
+          "id": 8665,
+          "name": "Culverin",
+          "seoName": "Culverin"
+        },
+        {
+          "id": 8666,
+          "name": "Demicannon",
+          "seoName": "Demicannon"
+        },
+        {
+          "id": 8667,
+          "name": "Long Gun",
+          "seoName": "Long Gun"
+        },
+        {
+          "id": 8668,
+          "name": "Bombard",
+          "seoName": "Bombard"
+        },
+        {
+          "id": 8669,
+          "name": "Torpedo",
+          "seoName": "Torpedo"
+        },
+        {
+          "id": 8670,
+          "name": "Ballista",
+          "seoName": "Ballista"
+        },
+        {
+          "id": 8671,
+          "name": "Sea Fire",
+          "seoName": "Sea Fire"
+        },
+        {
+          "id": 8672,
+          "name": "Mortar",
+          "seoName": "Mortar"
+        },
+        {
+          "id": 8673,
+          "name": "Rocket",
+          "seoName": "Rocket"
+        }
+      ]
+    },
+    {
+      "id": 1837,
+      "name": "Ship Armors",
+      "seoName": "Ship Armors",
+      "subCategories": [
+        {
+          "id": 8674,
+          "name": "Ship Armors",
+          "seoName": "Ship Armors"
+        }
+      ]
+    },
+    {
+      "id": 1838,
+      "name": "Ship Furnitures",
+      "seoName": "Ship Furnitures",
+      "subCategories": [
+        {
+          "id": 8675,
+          "name": "Ship Furnitures",
+          "seoName": "Ship Furnitures"
+        }
+      ]
+    },
+    {
+      "id": 1839,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 8676,
+          "name": "Materials",
+          "seoName": "Materials"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13653,
+      "name": "PC"
+    },
+    {
+      "id": 13655,
+      "name": "PS"
+    },
+    {
+      "id": 13654,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

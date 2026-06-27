@@ -202,34 +202,34 @@
   },
   "game_items": {
     "agents": [
-      "Vyse",
-      "Jett",
-      "Skye"
+      "Cypher",
+      "Killjoy",
+      "Sage"
     ],
     "weapon-skins": [
-      "VCT25 x 100T Classic",
-      "VCT25 x BOOM Classic",
-      "Storm Maw Vandal"
+      "ORA by OneTap Sheriff",
+      "Monstrocity Ares",
+      "Aero Guardian"
     ],
     "buddies": [
-      "BigBrain",
-      "Ego Buddy",
-      "ChibiSage"
+      "GiveBackBundle",
+      "EP5: Ascendant Buddy",
+      "Ruination Buddy"
     ],
     "cards": [
-      "VCT x MIBR Card",
-      "VCT 2026 Americas Card",
-      "Epilogue: KAY/O K.O. Card"
+      "VALORANT Skye Card",
+      "Meet Your Main Card",
+      "Showdown Watch Card"
     ],
     "sprays": [
-      "Box Hijinks Spray",
-      "Choose my Weapon Spray",
-      "Duo's Day: Left Spray"
+      "I'm Outta Here Spray",
+      "Whaaat? Spray",
+      "Sheeeeesh Spray"
     ],
     "titles": [
-      "Polar Clutch Title",
-      "PREMIER V25A4 CHAMPION // OPN Title",
-      "All Star Title"
+      "Default Title",
+      "PREMIER E9A2 GRAND CHAMP Title",
+      "PREMIER E9A1 CHAMPION // ADV Title"
     ]
   }
 }

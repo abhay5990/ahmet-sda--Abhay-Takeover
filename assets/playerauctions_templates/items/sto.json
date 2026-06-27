@@ -1,0 +1,237 @@
+{
+  "game_id": 3507,
+  "game": "sto",
+  "game_name": "Star Trek Online",
+  "seo_name": "STO",
+  "currencyName": "Credits",
+  "categories": [
+    {
+      "id": 981,
+      "name": "Accessory",
+      "seoName": "Accessory",
+      "subCategories": [
+        {
+          "id": 5082,
+          "name": "Accessory",
+          "seoName": "Accessory"
+        }
+      ]
+    },
+    {
+      "id": 982,
+      "name": "Armor",
+      "seoName": "Armor",
+      "subCategories": [
+        {
+          "id": 5083,
+          "name": "Armor",
+          "seoName": "Armor"
+        }
+      ]
+    },
+    {
+      "id": 983,
+      "name": "Weapon",
+      "seoName": "Weapon",
+      "subCategories": [
+        {
+          "id": 5084,
+          "name": "Weapon",
+          "seoName": "Weapon"
+        }
+      ]
+    },
+    {
+      "id": 1064,
+      "name": "Ships",
+      "seoName": "Ships",
+      "subCategories": [
+        {
+          "id": 5252,
+          "name": "Escorts",
+          "seoName": "Escorts"
+        },
+        {
+          "id": 5253,
+          "name": "Raptors",
+          "seoName": "Raptors"
+        },
+        {
+          "id": 5254,
+          "name": "Science Vessels",
+          "seoName": "Science Vessels"
+        },
+        {
+          "id": 5255,
+          "name": "Carriers",
+          "seoName": "Carriers"
+        },
+        {
+          "id": 5256,
+          "name": "Dreadnoughts",
+          "seoName": "Dreadnoughts"
+        },
+        {
+          "id": 5260,
+          "name": "Warbirds",
+          "seoName": "Warbirds"
+        },
+        {
+          "id": 6070,
+          "name": "Cruisers",
+          "seoName": "Cruisers"
+        }
+      ]
+    },
+    {
+      "id": 1065,
+      "name": "Master Keys",
+      "seoName": "Master Keys",
+      "subCategories": [
+        {
+          "id": 5248,
+          "name": "Master Key",
+          "seoName": "Master Key"
+        }
+      ]
+    },
+    {
+      "id": 1066,
+      "name": "Shields",
+      "seoName": "Shields",
+      "subCategories": [
+        {
+          "id": 5249,
+          "name": "Ship Shields",
+          "seoName": "Ship Shields"
+        },
+        {
+          "id": 5250,
+          "name": "Personal Shields",
+          "seoName": "Personal Shields"
+        }
+      ]
+    },
+    {
+      "id": 1125,
+      "name": "Lockbox Ships",
+      "seoName": "Lockbox Ships",
+      "subCategories": [
+        {
+          "id": 5257,
+          "name": "Lockbox Ships",
+          "seoName": "Lockbox Ships"
+        }
+      ]
+    },
+    {
+      "id": 1126,
+      "name": "Promo Ships",
+      "seoName": "Promo Ships",
+      "subCategories": [
+        {
+          "id": 5259,
+          "name": "Promo Ships",
+          "seoName": "Promo Ships"
+        },
+        {
+          "id": 5827,
+          "name": "Kirk Class",
+          "seoName": "Kirk Class"
+        }
+      ]
+    },
+    {
+      "id": 1127,
+      "name": "Lobi Ships",
+      "seoName": "Lobi Ships",
+      "subCategories": [
+        {
+          "id": 5258,
+          "name": "Lobi Ships",
+          "seoName": "Lobi Ships"
+        }
+      ]
+    },
+    {
+      "id": 1340,
+      "name": "Infinity Promo",
+      "seoName": "Infinity Promo",
+      "subCategories": [
+        {
+          "id": 6063,
+          "name": "Research Development Pack",
+          "seoName": "Research Development Pack"
+        },
+        {
+          "id": 6064,
+          "name": "Prize Pack",
+          "seoName": "Prize Pack"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 3520,
+      "name": "PC"
+    },
+    {
+      "id": 7516,
+      "name": "PS"
+    },
+    {
+      "id": 7517,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

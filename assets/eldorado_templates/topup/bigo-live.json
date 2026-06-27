@@ -1,0 +1,149 @@
+{
+  "game_id": "281",
+  "game": "bigo-live",
+  "game_name": "Bigo Live",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "bigo-live-diamonds": {
+      "name": "Diamonds",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "80-diamonds",
+          "name": "80 Diamonds"
+        },
+        {
+          "id": "160-diamonds",
+          "name": "160 Diamonds"
+        },
+        {
+          "id": "240-diamonds",
+          "name": "240 Diamonds"
+        },
+        {
+          "id": "400-diamonds",
+          "name": "400 Diamonds"
+        },
+        {
+          "id": "500-diamonds",
+          "name": "500 Diamonds"
+        },
+        {
+          "id": "800-diamonds",
+          "name": "800 Diamonds"
+        },
+        {
+          "id": "1000-diamonds",
+          "name": "1000 Diamonds"
+        },
+        {
+          "id": "1600-diamonds",
+          "name": "1600 Diamonds"
+        },
+        {
+          "id": "2000-diamonds",
+          "name": "2000 Diamonds"
+        },
+        {
+          "id": "2400-diamonds",
+          "name": "2400 Diamonds"
+        },
+        {
+          "id": "4000-diamonds",
+          "name": "4000 Diamonds"
+        },
+        {
+          "id": "8000-diamonds",
+          "name": "8000 Diamonds"
+        },
+        {
+          "id": "10000-diamonds",
+          "name": "10000 Diamonds"
+        },
+        {
+          "id": "16000-diamonds",
+          "name": "16000 Diamonds"
+        },
+        {
+          "id": "24000-diamonds",
+          "name": "24000 Diamonds"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

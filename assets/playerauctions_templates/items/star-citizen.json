@@ -1,0 +1,160 @@
+{
+  "game_id": 5774,
+  "game": "star-citizen",
+  "game_name": "Star Citizen",
+  "seo_name": "Star-Citizen",
+  "currencyName": "aUEC",
+  "categories": [
+    {
+      "id": 1305,
+      "name": "Ships",
+      "seoName": "Ships",
+      "subCategories": [
+        {
+          "id": 5924,
+          "name": "Aegis Dynamics",
+          "seoName": "Aegis Dynamics"
+        },
+        {
+          "id": 5925,
+          "name": "Anvil Aerospace",
+          "seoName": "Anvil Aerospace"
+        },
+        {
+          "id": 5926,
+          "name": "Aopoa",
+          "seoName": "Aopoa"
+        },
+        {
+          "id": 5927,
+          "name": "Argo Astronautics",
+          "seoName": "Argo Astronautics"
+        },
+        {
+          "id": 5928,
+          "name": "Banu",
+          "seoName": "Banu"
+        },
+        {
+          "id": 5929,
+          "name": "Consolidated Outland",
+          "seoName": "Consolidated Outland"
+        },
+        {
+          "id": 5930,
+          "name": "Crusader Industries",
+          "seoName": "Crusader Industries"
+        },
+        {
+          "id": 5931,
+          "name": "Drake Interplanetary",
+          "seoName": "Drake Interplanetary"
+        },
+        {
+          "id": 5932,
+          "name": "Esperia",
+          "seoName": "Esperia"
+        },
+        {
+          "id": 5934,
+          "name": "Kruger Intergalactic",
+          "seoName": "Kruger Intergalactic"
+        },
+        {
+          "id": 5935,
+          "name": "Musashi Industrial",
+          "seoName": "Musashi Industrial"
+        },
+        {
+          "id": 5936,
+          "name": "Origin Jumpworks",
+          "seoName": "Origin Jumpworks"
+        },
+        {
+          "id": 5937,
+          "name": "Robert Space Industries",
+          "seoName": "Robert Space Industries"
+        }
+      ]
+    },
+    {
+      "id": 1821,
+      "name": "CCU",
+      "seoName": "CCU",
+      "subCategories": [
+        {
+          "id": 8599,
+          "name": "CCU",
+          "seoName": "CCU"
+        }
+      ]
+    },
+    {
+      "id": 1822,
+      "name": "Store Credit",
+      "seoName": "Store Credit",
+      "subCategories": [
+        {
+          "id": 8600,
+          "name": "Store Credit",
+          "seoName": "Store Credit"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 5775,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -36,6 +36,87 @@
         }
       ]
     },
+    "raid-shadow-legends-legendary-champions": {
+      "name": "Legendary Champions",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "legendary-019",
+          "name": "0-19"
+        },
+        {
+          "id": "legendary-2049",
+          "name": "20-49"
+        },
+        {
+          "id": "legendary-5099",
+          "name": "50-99"
+        },
+        {
+          "id": "legendary-100plus",
+          "name": "100+"
+        },
+        {
+          "id": "legendary-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "raid-shadow-legends-level": {
+      "name": "Level",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "level-05",
+          "name": "0-5"
+        },
+        {
+          "id": "level-639",
+          "name": "6-39"
+        },
+        {
+          "id": "level-4069",
+          "name": "40-69"
+        },
+        {
+          "id": "level-70plus",
+          "name": "70+"
+        },
+        {
+          "id": "level-other",
+          "name": "Other"
+        }
+      ]
+    },
+    "raid-shadow-legends-mythical-champions": {
+      "name": "Mythical Champions",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "mythical-04",
+          "name": "0-4"
+        },
+        {
+          "id": "mythical-59",
+          "name": "5-9"
+        },
+        {
+          "id": "mythical-1029",
+          "name": "10-29"
+        },
+        {
+          "id": "mythical-30plus",
+          "name": "30+"
+        },
+        {
+          "id": "mythical-other",
+          "name": "Other"
+        }
+      ]
+    },
     "raid-shadow-legends-power": {
       "name": "Power",
       "type": "Select",

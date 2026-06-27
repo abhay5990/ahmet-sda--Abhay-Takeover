@@ -1,0 +1,147 @@
+{
+  "game_id": 13889,
+  "game": "mm2",
+  "game_name": "Murder Mystery 2",
+  "seo_name": "MM2",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 1884,
+      "name": "Godlys",
+      "seoName": "Godlys",
+      "subCategories": [
+        {
+          "id": 9436,
+          "name": "Godlly Knives",
+          "seoName": "Godlly Knives"
+        },
+        {
+          "id": 9437,
+          "name": "Godly Guns",
+          "seoName": "Godly Guns"
+        },
+        {
+          "id": 9438,
+          "name": "Pets",
+          "seoName": "Pets"
+        }
+      ]
+    },
+    {
+      "id": 1885,
+      "name": "Ancient",
+      "seoName": "Ancient",
+      "subCategories": [
+        {
+          "id": 9439,
+          "name": "Knives",
+          "seoName": "Knives"
+        },
+        {
+          "id": 9440,
+          "name": "Guns",
+          "seoName": "Guns"
+        },
+        {
+          "id": 9441,
+          "name": "Pets",
+          "seoName": "Pets"
+        }
+      ]
+    },
+    {
+      "id": 1886,
+      "name": "Chromas",
+      "seoName": "Chromas",
+      "subCategories": [
+        {
+          "id": 9442,
+          "name": "Knives",
+          "seoName": "Knives"
+        },
+        {
+          "id": 9443,
+          "name": "Guns",
+          "seoName": "Guns"
+        },
+        {
+          "id": 9444,
+          "name": "Pets",
+          "seoName": "Pets"
+        }
+      ]
+    },
+    {
+      "id": 1887,
+      "name": "Uniques",
+      "seoName": "Uniques",
+      "subCategories": [
+        {
+          "id": 9445,
+          "name": "Knives",
+          "seoName": "Knives"
+        },
+        {
+          "id": 9446,
+          "name": "Guns",
+          "seoName": "Guns"
+        },
+        {
+          "id": 9447,
+          "name": "Pets",
+          "seoName": "Pets"
+        }
+      ]
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 13897,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

@@ -59,29 +59,11 @@
   "item_data": {
     "realm": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Seasonal Realm Softcore",
-        "Seasonal Realm Hardcore",
-        "Eternal Softcore",
-        "Eternal Hardcore"
-      ]
+      "required": false
     },
     "item_type": {
       "type": "string",
-      "required": true,
-      "values": [
-        "Boss Summons",
-        "Elixirs",
-        "Legendaries",
-        "Junk for Salvage",
-        "Uniques",
-        "Greater Uniques",
-        "Incense",
-        "Gems",
-        "Full Unique Affixes",
-        "Full Roll Aspects"
-      ]
+      "required": false
     }
   }
 }

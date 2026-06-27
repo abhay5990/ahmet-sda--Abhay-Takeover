@@ -1,0 +1,147 @@
+{
+  "game_id": "47",
+  "game": "dead-by-daylight",
+  "game_name": "Dead By Daylight",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Epic Games",
+      "group": "Platform"
+    },
+    {
+      "id": "1",
+      "name": "Microsoft Store",
+      "group": "Platform"
+    },
+    {
+      "id": "2",
+      "name": "Steam",
+      "group": "Platform"
+    },
+    {
+      "id": "3",
+      "name": "Xbox",
+      "group": "Platform"
+    },
+    {
+      "id": "4",
+      "name": "PlayStation",
+      "group": "Platform"
+    }
+  ],
+  "attributes": {
+    "dead-by-daylight-auric-cells": {
+      "name": "Auric Cells",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "500-auric-cells",
+          "name": "500 Auric Cells"
+        },
+        {
+          "id": "1100-auric-cells",
+          "name": "1100 Auric Cells"
+        },
+        {
+          "id": "2250-auric-cells",
+          "name": "2250 Auric Cells"
+        },
+        {
+          "id": "4025-auric-cells",
+          "name": "4025 Auric Cells"
+        },
+        {
+          "id": "6000-auric-cells",
+          "name": "6000 Auric Cells"
+        },
+        {
+          "id": "12500-auric-cells",
+          "name": "12500 Auric Cells"
+        },
+        {
+          "id": "12000-auric-cells",
+          "name": "12000 Auric Cells"
+        },
+        {
+          "id": "2200-auric-cells",
+          "name": "2200 Auric Cells"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

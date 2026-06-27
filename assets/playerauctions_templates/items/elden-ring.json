@@ -1,0 +1,643 @@
+{
+  "game_id": 12410,
+  "game": "elden-ring",
+  "game_name": "Elden Ring",
+  "seo_name": "Elden-Ring",
+  "currencyName": "Runes",
+  "categories": [
+    {
+      "id": 1345,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 6076,
+          "name": "Dark Moon Greatsword",
+          "seoName": "Dark Moon Greatsword"
+        },
+        {
+          "id": 6077,
+          "name": "Moonveil",
+          "seoName": "Moonveil"
+        },
+        {
+          "id": 6078,
+          "name": "Eleonora's Poleblade",
+          "seoName": "Eleonora's Poleblade"
+        },
+        {
+          "id": 6079,
+          "name": "Sword of Night and Flame",
+          "seoName": "Sword of Night and Flame"
+        },
+        {
+          "id": 6080,
+          "name": "Rivers of Blood",
+          "seoName": "Rivers of Blood"
+        },
+        {
+          "id": 6081,
+          "name": "Blasphemous Blade",
+          "seoName": "Blasphemous Blade"
+        },
+        {
+          "id": 6082,
+          "name": "Bloodhound's Fang",
+          "seoName": "Bloodhound's Fang"
+        },
+        {
+          "id": 6083,
+          "name": "Starscourge Greatsword",
+          "seoName": "Starscourge Greatsword"
+        },
+        {
+          "id": 6084,
+          "name": "Reduvia",
+          "seoName": "Reduvia"
+        },
+        {
+          "id": 6085,
+          "name": "Meteorite Staff",
+          "seoName": "Meteorite Staff"
+        },
+        {
+          "id": 6086,
+          "name": "Carian Regal Scepter",
+          "seoName": "Carian Regal Scepter"
+        },
+        {
+          "id": 6117,
+          "name": "Other Weapons",
+          "seoName": "Other Weapons"
+        }
+      ]
+    },
+    {
+      "id": 1346,
+      "name": "Armors",
+      "seoName": "Armors",
+      "subCategories": [
+        {
+          "id": 6072,
+          "name": "Helms",
+          "seoName": "Helms"
+        },
+        {
+          "id": 6073,
+          "name": "Gauntlets",
+          "seoName": "Gauntlets"
+        },
+        {
+          "id": 6074,
+          "name": "Leg",
+          "seoName": "Leg"
+        },
+        {
+          "id": 6075,
+          "name": "Chest",
+          "seoName": "Chest"
+        }
+      ]
+    },
+    {
+      "id": 1347,
+      "name": "Talismans",
+      "seoName": "Talismans",
+      "subCategories": [
+        {
+          "id": 6100,
+          "name": "Legendary Talismans",
+          "seoName": "Legendary Talismans"
+        },
+        {
+          "id": 6101,
+          "name": "Other Talismans",
+          "seoName": "Other Talismans"
+        }
+      ]
+    },
+    {
+      "id": 1348,
+      "name": "Ashes of War",
+      "seoName": "Ashes of War",
+      "subCategories": [
+        {
+          "id": 6087,
+          "name": "Standard",
+          "seoName": "Standard"
+        },
+        {
+          "id": 6088,
+          "name": "Keen",
+          "seoName": "Keen"
+        },
+        {
+          "id": 6089,
+          "name": "Quality",
+          "seoName": "Quality"
+        },
+        {
+          "id": 6090,
+          "name": "Lightning",
+          "seoName": "Lightning"
+        },
+        {
+          "id": 6091,
+          "name": "Magic",
+          "seoName": "Magic"
+        },
+        {
+          "id": 6092,
+          "name": "Sacred",
+          "seoName": "Sacred"
+        },
+        {
+          "id": 6093,
+          "name": "Heavy",
+          "seoName": "Heavy"
+        },
+        {
+          "id": 6094,
+          "name": "Fire",
+          "seoName": "Fire"
+        },
+        {
+          "id": 6095,
+          "name": "Flame Art",
+          "seoName": "Flame Art"
+        },
+        {
+          "id": 6096,
+          "name": "Poison",
+          "seoName": "Poison"
+        },
+        {
+          "id": 6097,
+          "name": "Cold",
+          "seoName": "Cold"
+        },
+        {
+          "id": 6098,
+          "name": "Blood",
+          "seoName": "Blood"
+        },
+        {
+          "id": 6099,
+          "name": "Occult",
+          "seoName": "Occult"
+        }
+      ]
+    },
+    {
+      "id": 1349,
+      "name": "Crafting Materials",
+      "seoName": "Crafting Materials",
+      "subCategories": [
+        {
+          "id": 6102,
+          "name": "Crafting Materials",
+          "seoName": "Crafting Materials"
+        }
+      ]
+    },
+    {
+      "id": 1350,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 6103,
+          "name": "Consumables",
+          "seoName": "Consumables"
+        },
+        {
+          "id": 6104,
+          "name": "Damage Negation",
+          "seoName": "Damage Negation"
+        },
+        {
+          "id": 6105,
+          "name": "Drawstring Grease",
+          "seoName": "Drawstring Grease"
+        },
+        {
+          "id": 6106,
+          "name": "Grease",
+          "seoName": "Grease"
+        },
+        {
+          "id": 6107,
+          "name": "Healing",
+          "seoName": "Healing"
+        },
+        {
+          "id": 6108,
+          "name": "Medicine",
+          "seoName": "Medicine"
+        },
+        {
+          "id": 6109,
+          "name": "Multiplayer",
+          "seoName": "Multiplayer"
+        },
+        {
+          "id": 6110,
+          "name": "Perfume Arts",
+          "seoName": "Perfume Arts"
+        },
+        {
+          "id": 6111,
+          "name": "Quest",
+          "seoName": "Quest"
+        },
+        {
+          "id": 6112,
+          "name": "Resistance",
+          "seoName": "Resistance"
+        },
+        {
+          "id": 6113,
+          "name": "Runes",
+          "seoName": "Runes"
+        },
+        {
+          "id": 6114,
+          "name": "Throwing Knife",
+          "seoName": "Throwing Knife"
+        },
+        {
+          "id": 6115,
+          "name": "Throwing Pot",
+          "seoName": "Throwing Pot"
+        },
+        {
+          "id": 6116,
+          "name": "Throwing Stone",
+          "seoName": "Throwing Stone"
+        }
+      ]
+    },
+    {
+      "id": 1351,
+      "name": "Shields",
+      "seoName": "Shields",
+      "subCategories": [
+        {
+          "id": 6118,
+          "name": "Ant's Skull Plate",
+          "seoName": "Ant's Skull Plate"
+        },
+        {
+          "id": 6119,
+          "name": "Coil Shield",
+          "seoName": "Coil Shield"
+        },
+        {
+          "id": 6120,
+          "name": "Crucible Hornshield",
+          "seoName": "Crucible Hornshield"
+        },
+        {
+          "id": 6121,
+          "name": "Dragonclaw Shield",
+          "seoName": "Dragonclaw Shield"
+        },
+        {
+          "id": 6122,
+          "name": "Erdtree Greatshield",
+          "seoName": "Erdtree Greatshield"
+        },
+        {
+          "id": 6123,
+          "name": "Icon Shield",
+          "seoName": "Icon Shield"
+        },
+        {
+          "id": 6124,
+          "name": "Jellyfish Shield",
+          "seoName": "Jellyfish Shield"
+        },
+        {
+          "id": 6125,
+          "name": "One-Eyed Shield",
+          "seoName": "One-Eyed Shield"
+        },
+        {
+          "id": 6126,
+          "name": "Silver Mirrorshield",
+          "seoName": "Silver Mirrorshield"
+        },
+        {
+          "id": 6127,
+          "name": "Visage Shield",
+          "seoName": "Visage Shield"
+        },
+        {
+          "id": 6128,
+          "name": "Normal Shields",
+          "seoName": "Normal Shields"
+        }
+      ]
+    },
+    {
+      "id": 1352,
+      "name": "Sets",
+      "seoName": "Sets",
+      "subCategories": [
+        {
+          "id": 6071,
+          "name": "Other Armor Sets",
+          "seoName": "Other Armor Sets"
+        },
+        {
+          "id": 6129,
+          "name": "Lionel's Set",
+          "seoName": "Lionel's Set"
+        },
+        {
+          "id": 6130,
+          "name": "Black Knife Set",
+          "seoName": "Black Knife Set"
+        },
+        {
+          "id": 6131,
+          "name": "Spellblade Set",
+          "seoName": "Spellblade Set"
+        },
+        {
+          "id": 6132,
+          "name": "The Omen Set",
+          "seoName": "The Omen Set"
+        },
+        {
+          "id": 6133,
+          "name": "Crucible Tree Set",
+          "seoName": "Crucible Tree Set"
+        },
+        {
+          "id": 6134,
+          "name": "Cleanrot Set",
+          "seoName": "Cleanrot Set"
+        },
+        {
+          "id": 6135,
+          "name": "Royal Remains Set",
+          "seoName": "Royal Remains Set"
+        },
+        {
+          "id": 6136,
+          "name": "Radahn's Lion Set",
+          "seoName": "Radahn's Lion Set"
+        },
+        {
+          "id": 6137,
+          "name": "Blaidd's Set",
+          "seoName": "Blaidd's Set"
+        },
+        {
+          "id": 6138,
+          "name": "The Deathbed Dress Set",
+          "seoName": "The Deathbed Dress Set"
+        },
+        {
+          "id": 6139,
+          "name": "Queen Of The Full Moon Set",
+          "seoName": "Queen Of The Full Moon Set"
+        },
+        {
+          "id": 6140,
+          "name": "Noble's Travelling Set",
+          "seoName": "Noble's Travelling Set"
+        },
+        {
+          "id": 6141,
+          "name": "Bull Goat Set",
+          "seoName": "Bull Goat Set"
+        },
+        {
+          "id": 7135,
+          "name": "Mushroom Set",
+          "seoName": "Mushroom Set"
+        },
+        {
+          "id": 7136,
+          "name": "Zamor Set",
+          "seoName": "Zamor Set"
+        },
+        {
+          "id": 7137,
+          "name": "White Reed Set",
+          "seoName": "White Reed Set"
+        },
+        {
+          "id": 7138,
+          "name": "Veteran's Set",
+          "seoName": "Veteran's Set"
+        },
+        {
+          "id": 7139,
+          "name": "Twinned Set",
+          "seoName": "Twinned Set"
+        },
+        {
+          "id": 7140,
+          "name": "Scaled Set",
+          "seoName": "Scaled Set"
+        },
+        {
+          "id": 7141,
+          "name": "Sanguine Noble Set",
+          "seoName": "Sanguine Noble Set"
+        },
+        {
+          "id": 7142,
+          "name": "Sage Set",
+          "seoName": "Sage Set"
+        },
+        {
+          "id": 7143,
+          "name": "Tree Sentinel Set",
+          "seoName": "Tree Sentinel Set"
+        },
+        {
+          "id": 7144,
+          "name": "Royal Knight Set",
+          "seoName": "Royal Knight Set"
+        },
+        {
+          "id": 7145,
+          "name": "Ronin's Set",
+          "seoName": "Ronin's Set"
+        },
+        {
+          "id": 7146,
+          "name": "Raging Wolf Set",
+          "seoName": "Raging Wolf Set"
+        },
+        {
+          "id": 7147,
+          "name": "Queen of the Full Moon Set",
+          "seoName": "Queen of the Full Moon Set"
+        },
+        {
+          "id": 7148,
+          "name": "Preceptor's Set",
+          "seoName": "Preceptor's Set"
+        },
+        {
+          "id": 7149,
+          "name": "Page Set",
+          "seoName": "Page Set"
+        },
+        {
+          "id": 7150,
+          "name": "Omenkiller's Set",
+          "seoName": "Omenkiller's Set"
+        },
+        {
+          "id": 7151,
+          "name": "Omen Set",
+          "seoName": "Omen Set"
+        },
+        {
+          "id": 7152,
+          "name": "Noble's Set",
+          "seoName": "Noble's Set"
+        },
+        {
+          "id": 7153,
+          "name": "Night's Calvary Set",
+          "seoName": "Night's Calvary Set"
+        },
+        {
+          "id": 7154,
+          "name": "Maliketh's Set",
+          "seoName": "Maliketh's Set"
+        },
+        {
+          "id": 7155,
+          "name": "Malformed Dragon Set",
+          "seoName": "Malformed Dragon Set"
+        },
+        {
+          "id": 7156,
+          "name": "Malenia's Set",
+          "seoName": "Malenia's Set"
+        },
+        {
+          "id": 7157,
+          "name": "Lusat's Set",
+          "seoName": "Lusat's Set"
+        },
+        {
+          "id": 7158,
+          "name": "Leyndell Knight Set",
+          "seoName": "Leyndell Knight Set"
+        },
+        {
+          "id": 7159,
+          "name": "Land of Reeds Set",
+          "seoName": "Land of Reeds Set"
+        },
+        {
+          "id": 7160,
+          "name": "Kaidan Set",
+          "seoName": "Kaidan Set"
+        },
+        {
+          "id": 7161,
+          "name": "House Marais Set",
+          "seoName": "House Marais Set"
+        },
+        {
+          "id": 7162,
+          "name": "Goldmask's Set",
+          "seoName": "Goldmask's Set"
+        },
+        {
+          "id": 7163,
+          "name": "Fire Monk Set",
+          "seoName": "Fire Monk Set"
+        },
+        {
+          "id": 7164,
+          "name": "Drake Knight Set",
+          "seoName": "Drake Knight Set"
+        },
+        {
+          "id": 7165,
+          "name": "Cuckoo Knight Set",
+          "seoName": "Cuckoo Knight Set"
+        },
+        {
+          "id": 7166,
+          "name": "Bloodhound Knight Set",
+          "seoName": "Bloodhound Knight Set"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 12411,
+      "name": "PC"
+    },
+    {
+      "id": 12413,
+      "name": "PS"
+    },
+    {
+      "id": 12412,
+      "name": "Xbox"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

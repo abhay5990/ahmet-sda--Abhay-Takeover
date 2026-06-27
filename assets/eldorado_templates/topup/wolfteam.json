@@ -1,0 +1,145 @@
+{
+  "game_id": "343",
+  "game": "wolfteam",
+  "game_name": "WolfTeam",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "TR",
+      "group": "Region"
+    },
+    {
+      "id": "1",
+      "name": "EU",
+      "group": "Region"
+    },
+    {
+      "id": "2",
+      "name": "South America",
+      "group": "Region"
+    }
+  ],
+  "attributes": {
+    "wolfteam-cash": {
+      "name": "Cash",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "350-cash",
+          "name": "350 Cash"
+        },
+        {
+          "id": "1000-cash",
+          "name": "1000 Cash"
+        },
+        {
+          "id": "1875-cash",
+          "name": "1875 Cash"
+        },
+        {
+          "id": "3850-cash",
+          "name": "3850 Cash"
+        },
+        {
+          "id": "5000-cash",
+          "name": "5000 Cash"
+        },
+        {
+          "id": "8000-cash",
+          "name": "8000 Cash"
+        },
+        {
+          "id": "12250-cash",
+          "name": "12250 Cash"
+        },
+        {
+          "id": "21250-cash",
+          "name": "21250 Cash"
+        },
+        {
+          "id": "35000-cash",
+          "name": "35000 Cash"
+        },
+        {
+          "id": "45000-cash",
+          "name": "45000 Cash"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

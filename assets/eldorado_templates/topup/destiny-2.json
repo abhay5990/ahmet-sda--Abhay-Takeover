@@ -1,0 +1,146 @@
+{
+  "game_id": "44",
+  "game": "destiny-2",
+  "game_name": "Destiny 2",
+  "category": "TopUp",
+  "tradeEnvironments": [
+    {
+      "id": "0",
+      "name": "Epic Games",
+      "group": "Platform"
+    },
+    {
+      "id": "1",
+      "name": "Microsoft Store",
+      "group": "Platform"
+    },
+    {
+      "id": "2",
+      "name": "Xbox",
+      "group": "Platform"
+    },
+    {
+      "id": "3",
+      "name": "PlayStation",
+      "group": "Platform"
+    }
+  ],
+  "attributes": {
+    "destiny-2-silver": {
+      "name": "Silver",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "500-silver",
+          "name": "500 Silver"
+        },
+        {
+          "id": "1100-silver",
+          "name": "1100 Silver"
+        },
+        {
+          "id": "2300-silver",
+          "name": "2300 Silver"
+        },
+        {
+          "id": "3500-silver",
+          "name": "3500 Silver"
+        },
+        {
+          "id": "6000-silver",
+          "name": "6000 Silver"
+        },
+        {
+          "id": "7000-silver",
+          "name": "7000 Silver"
+        },
+        {
+          "id": "10500-silver",
+          "name": "10500 Silver"
+        },
+        {
+          "id": "12000-silver",
+          "name": "12000 Silver"
+        },
+        {
+          "id": "14000-silver",
+          "name": "14000 Silver"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

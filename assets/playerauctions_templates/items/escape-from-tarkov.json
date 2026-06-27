@@ -1,0 +1,502 @@
+{
+  "game_id": 7510,
+  "game": "escape-from-tarkov",
+  "game_name": "Escape From Tarkov",
+  "seo_name": "Escape-From-Tarkov",
+  "currencyName": "Roubles",
+  "categories": [
+    {
+      "id": 832,
+      "name": "Keys",
+      "seoName": "Keys",
+      "subCategories": [
+        {
+          "id": 2587,
+          "name": "Marked key",
+          "seoName": "Marked key"
+        },
+        {
+          "id": 2588,
+          "name": "Dorm guard desk key",
+          "seoName": "Dorm guard desk key"
+        },
+        {
+          "id": 3640,
+          "name": "Customs office key",
+          "seoName": "Customs office key"
+        },
+        {
+          "id": 3641,
+          "name": "Door key",
+          "seoName": "Door key"
+        },
+        {
+          "id": 3653,
+          "name": "Dorm Room 214 Key",
+          "seoName": "Dorm Room 214 Key"
+        },
+        {
+          "id": 3656,
+          "name": "Dorm room 303 Key",
+          "seoName": "Dorm room 303 Key"
+        },
+        {
+          "id": 3675,
+          "name": "Factory Exit Key",
+          "seoName": "Factory Exit Key"
+        },
+        {
+          "id": 3698,
+          "name": "Military base checkpoint key",
+          "seoName": "Military base checkpoint key"
+        },
+        {
+          "id": 3703,
+          "name": "Portable cabin key",
+          "seoName": "Portable cabin key"
+        },
+        {
+          "id": 3711,
+          "name": "Weapon safe key",
+          "seoName": "Weapon safe key"
+        },
+        {
+          "id": 4337,
+          "name": "USEC stash on Customs key",
+          "seoName": "USEC stash on Customs key"
+        },
+        {
+          "id": 4338,
+          "name": "Shturman key",
+          "seoName": "Shturman key"
+        },
+        {
+          "id": 4340,
+          "name": "ULTRA Medical Storage Key",
+          "seoName": "ULTRA Medical Storage Key"
+        },
+        {
+          "id": 4352,
+          "name": "RB-AK key",
+          "seoName": "RB-AK key"
+        },
+        {
+          "id": 5088,
+          "name": "Customs Keys",
+          "seoName": "Customs Keys"
+        },
+        {
+          "id": 5089,
+          "name": "Shoreline Keys",
+          "seoName": "Shoreline Keys"
+        },
+        {
+          "id": 5090,
+          "name": "Interchange Keys",
+          "seoName": "Interchange Keys"
+        },
+        {
+          "id": 5091,
+          "name": "The Lab Keys",
+          "seoName": "The Lab Keys"
+        },
+        {
+          "id": 5092,
+          "name": "Reserve Keys",
+          "seoName": "Reserve Keys"
+        },
+        {
+          "id": 5093,
+          "name": "Other Keys",
+          "seoName": "Other Keys"
+        },
+        {
+          "id": 6000,
+          "name": "Merin Car Trunk Key",
+          "seoName": "Merin Car Trunk Key"
+        },
+        {
+          "id": 7062,
+          "name": "Shared Bedroom Marked Key",
+          "seoName": "Shared Bedroom Marked Key"
+        },
+        {
+          "id": 7063,
+          "name": "OLDPortable Cabin Key",
+          "seoName": "OLDPortable Cabin Key"
+        },
+        {
+          "id": 7064,
+          "name": "Hillside House Key",
+          "seoName": "Hillside House Key"
+        },
+        {
+          "id": 7065,
+          "name": "Radar Station Commandant Room Key",
+          "seoName": "Radar Station Commandant Room Key"
+        },
+        {
+          "id": 7066,
+          "name": "Weapon Safe Key",
+          "seoName": "Weapon Safe Key"
+        },
+        {
+          "id": 7067,
+          "name": "Military Checkpoint Key",
+          "seoName": "Military Checkpoint Key"
+        },
+        {
+          "id": 7068,
+          "name": "Operating Room Key",
+          "seoName": "Operating Room Key"
+        },
+        {
+          "id": 7069,
+          "name": "RB-VO Marked Key",
+          "seoName": "RB-VO Marked Key"
+        },
+        {
+          "id": 7070,
+          "name": "RB-BK Marked Key",
+          "seoName": "RB-BK Marked Key"
+        },
+        {
+          "id": 7071,
+          "name": "West Wing 301 Key",
+          "seoName": "West Wing 301 Key"
+        },
+        {
+          "id": 7072,
+          "name": "Villa Back Door Key",
+          "seoName": "Villa Back Door Key"
+        },
+        {
+          "id": 7075,
+          "name": "RB-ST Marked Key",
+          "seoName": "RB-ST Marked Key"
+        }
+      ]
+    },
+    {
+      "id": 1067,
+      "name": "Weapons",
+      "seoName": "Weapons",
+      "subCategories": [
+        {
+          "id": 5096,
+          "name": "Weapons",
+          "seoName": "Weapons"
+        },
+        {
+          "id": 5097,
+          "name": "Red Rebel Ice Pick",
+          "seoName": "Red Rebel Ice Pick"
+        },
+        {
+          "id": 5481,
+          "name": "Grenades",
+          "seoName": "Grenades"
+        },
+        {
+          "id": 5482,
+          "name": "Machine Guns",
+          "seoName": "Machine Guns"
+        },
+        {
+          "id": 5483,
+          "name": "Rifles",
+          "seoName": "Rifles"
+        },
+        {
+          "id": 5484,
+          "name": "Pistols",
+          "seoName": "Pistols"
+        },
+        {
+          "id": 7059,
+          "name": "UVSR Taiga-1",
+          "seoName": "UVSR Taiga-1"
+        },
+        {
+          "id": 7073,
+          "name": "Rivals 2020 Armband",
+          "seoName": "Rivals 2020 Armband"
+        },
+        {
+          "id": 7074,
+          "name": "Ammo",
+          "seoName": "Ammo"
+        },
+        {
+          "id": 8279,
+          "name": "Altyn Helmet",
+          "seoName": "Altyn Helmet"
+        }
+      ]
+    },
+    {
+      "id": 1165,
+      "name": "Quest Items",
+      "seoName": "Quest Items",
+      "subCategories": [
+        {
+          "id": 5485,
+          "name": "Graphics Card",
+          "seoName": "Graphics Card"
+        },
+        {
+          "id": 5486,
+          "name": "Materials",
+          "seoName": "Materials"
+        },
+        {
+          "id": 5487,
+          "name": "Tools",
+          "seoName": "Tools"
+        },
+        {
+          "id": 8626,
+          "name": "Flash drive",
+          "seoName": "Flash drive"
+        },
+        {
+          "id": 8627,
+          "name": "Gas analyzer",
+          "seoName": "Gas analyzer"
+        },
+        {
+          "id": 8628,
+          "name": "Salewa",
+          "seoName": "Salewa"
+        },
+        {
+          "id": 8632,
+          "name": "GPSA",
+          "seoName": "GPSA"
+        }
+      ]
+    },
+    {
+      "id": 1216,
+      "name": "LEDX Skin Transilluminator",
+      "seoName": "LEDX Skin Transilluminator",
+      "subCategories": [
+        {
+          "id": 5662,
+          "name": "LEDX Skin Transilluminator",
+          "seoName": "LEDX Skin Transilluminator"
+        }
+      ]
+    },
+    {
+      "id": 1217,
+      "name": "Keycards",
+      "seoName": "Keycards",
+      "subCategories": [
+        {
+          "id": 5663,
+          "name": "Black Keycard",
+          "seoName": "Black Keycard"
+        },
+        {
+          "id": 5664,
+          "name": "Violet Keycard",
+          "seoName": "Violet Keycard"
+        },
+        {
+          "id": 5665,
+          "name": "Green Keycard",
+          "seoName": "Green Keycard"
+        },
+        {
+          "id": 5666,
+          "name": "Blue Keycard",
+          "seoName": "Blue Keycard"
+        },
+        {
+          "id": 5667,
+          "name": "Yellow Keycard",
+          "seoName": "Yellow Keycard"
+        },
+        {
+          "id": 5668,
+          "name": "Red Keycard",
+          "seoName": "Red Keycard"
+        }
+      ]
+    },
+    {
+      "id": 1430,
+      "name": "Armband",
+      "seoName": "Armband",
+      "subCategories": [
+        {
+          "id": 6663,
+          "name": "White",
+          "seoName": "White"
+        },
+        {
+          "id": 6664,
+          "name": "Red",
+          "seoName": "Red"
+        },
+        {
+          "id": 6665,
+          "name": "Blue",
+          "seoName": "Blue"
+        },
+        {
+          "id": 6666,
+          "name": "Green",
+          "seoName": "Green"
+        },
+        {
+          "id": 6667,
+          "name": "Yellow",
+          "seoName": "Yellow"
+        },
+        {
+          "id": 6668,
+          "name": "Rivals 2020 Armband",
+          "seoName": "Rivals 2020 Armband"
+        },
+        {
+          "id": 6669,
+          "name": "Evasion Armband",
+          "seoName": "Evasion Armband"
+        },
+        {
+          "id": 6670,
+          "name": "Alpha Armband",
+          "seoName": "Alpha Armband"
+        },
+        {
+          "id": 6671,
+          "name": "BEAR Armband",
+          "seoName": "BEAR Armband"
+        },
+        {
+          "id": 6672,
+          "name": "DEADSKUL Armband",
+          "seoName": "DEADSKUL Armband"
+        },
+        {
+          "id": 6673,
+          "name": "Kiba Arms Armband",
+          "seoName": "Kiba Arms Armband"
+        },
+        {
+          "id": 6674,
+          "name": "Labs Armband",
+          "seoName": "Labs Armband"
+        },
+        {
+          "id": 6675,
+          "name": "TerraGroup Armband",
+          "seoName": "TerraGroup Armband"
+        },
+        {
+          "id": 6676,
+          "name": "Train Hard Armband",
+          "seoName": "Train Hard Armband"
+        },
+        {
+          "id": 6677,
+          "name": "UNTAR Armband",
+          "seoName": "UNTAR Armband"
+        },
+        {
+          "id": 6678,
+          "name": "USEC Armband",
+          "seoName": "USEC Armband"
+        },
+        {
+          "id": 6679,
+          "name": "RFARMY Armband",
+          "seoName": "RFARMY Armband"
+        }
+      ]
+    },
+    {
+      "id": 1827,
+      "name": "Gear",
+      "seoName": "Gear",
+      "subCategories": [
+        {
+          "id": 8629,
+          "name": "Helmets",
+          "seoName": "Helmets"
+        },
+        {
+          "id": 8630,
+          "name": "Armor",
+          "seoName": "Armor"
+        },
+        {
+          "id": 8631,
+          "name": "Backpack",
+          "seoName": "Backpack"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7511,
+      "name": "PC PvP"
+    },
+    {
+      "id": 13791,
+      "name": "PC PvE"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

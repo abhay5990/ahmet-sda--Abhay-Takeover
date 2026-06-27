@@ -1,0 +1,106 @@
+{
+  "game_id": 7388,
+  "game": "8-ball-pool",
+  "game_name": "8 Ball Pool",
+  "seo_name": "8-Ball-Pool",
+  "currencyName": "Coins",
+  "categories": [
+    {
+      "id": 1989,
+      "name": "Coins",
+      "seoName": "Coins",
+      "subCategories": [
+        {
+          "id": 9901,
+          "name": "Coins",
+          "seoName": "Coins"
+        },
+        {
+          "id": 9946,
+          "name": "20,000 Coins",
+          "seoName": "20,000 Coins"
+        },
+        {
+          "id": 9947,
+          "name": "52,000 Coins",
+          "seoName": "52,000 Coins"
+        },
+        {
+          "id": 9948,
+          "name": "112,000 Coins",
+          "seoName": "112,000 Coins"
+        },
+        {
+          "id": 9949,
+          "name": "256,000 Coins",
+          "seoName": "256,000 Coins"
+        },
+        {
+          "id": 9950,
+          "name": "800,000 Coins",
+          "seoName": "800,000 Coins"
+        },
+        {
+          "id": 9951,
+          "name": "2,000,000 Coins",
+          "seoName": "2,000,000 Coins"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 7389,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

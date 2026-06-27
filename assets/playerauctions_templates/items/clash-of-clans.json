@@ -1,0 +1,124 @@
+{
+  "game_id": 6156,
+  "game": "clash-of-clans",
+  "game_name": "Clash of Clans",
+  "seo_name": "Clash-of-Clans",
+  "currencyName": "Gems",
+  "categories": [
+    {
+      "id": 1260,
+      "name": "Clan Level 5-10",
+      "seoName": "Clan Level 5-10",
+      "subCategories": [
+        {
+          "id": 5802,
+          "name": "Clan Level 5-10",
+          "seoName": "Clan Level 5-10"
+        }
+      ]
+    },
+    {
+      "id": 1261,
+      "name": "Clan Level 11-15",
+      "seoName": "Clan Level 11-15",
+      "subCategories": [
+        {
+          "id": 5803,
+          "name": "Clan Level 11-15",
+          "seoName": "Clan Level 11-15"
+        }
+      ]
+    },
+    {
+      "id": 1262,
+      "name": "Clan Level 16-20",
+      "seoName": "Clan Level 16-20",
+      "subCategories": [
+        {
+          "id": 5804,
+          "name": "Clan Level 16-20",
+          "seoName": "Clan Level 16-20"
+        }
+      ]
+    },
+    {
+      "id": 1263,
+      "name": "Clan Level 21-25",
+      "seoName": "Clan Level 21-25",
+      "subCategories": [
+        {
+          "id": 5805,
+          "name": "Clan Level 21-25",
+          "seoName": "Clan Level 21-25"
+        }
+      ]
+    },
+    {
+      "id": 2070,
+      "name": "Clan Level 25+",
+      "seoName": "Clan Level 25+",
+      "subCategories": [
+        {
+          "id": 10360,
+          "name": "Clan Level 25+",
+          "seoName": "Clan Level 25+"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 6157,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

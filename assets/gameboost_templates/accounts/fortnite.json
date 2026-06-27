@@ -165,8 +165,7 @@
     },
     "v_bucks_count": {
       "type": "integer",
-      "required": false,
-      "min": 0
+      "required": false
     }
   }
 }

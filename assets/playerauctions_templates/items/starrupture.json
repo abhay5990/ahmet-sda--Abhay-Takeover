@@ -1,0 +1,130 @@
+{
+  "game_id": 15000,
+  "game": "starrupture",
+  "game_name": "StarRupture",
+  "seo_name": "StarRupture",
+  "currencyName": "NA",
+  "categories": [
+    {
+      "id": 2100,
+      "name": "Materials",
+      "seoName": "Materials",
+      "subCategories": [
+        {
+          "id": 10509,
+          "name": "Ores",
+          "seoName": "Ores"
+        },
+        {
+          "id": 10510,
+          "name": "Refined Metals",
+          "seoName": "Refined Metals"
+        },
+        {
+          "id": 10511,
+          "name": "Scraps",
+          "seoName": "Scraps"
+        },
+        {
+          "id": 10512,
+          "name": "Industrial Components",
+          "seoName": "Industrial Components"
+        }
+      ]
+    },
+    {
+      "id": 2101,
+      "name": "Consumables",
+      "seoName": "Consumables",
+      "subCategories": [
+        {
+          "id": 10513,
+          "name": "Ammo",
+          "seoName": "Ammo"
+        },
+        {
+          "id": 10514,
+          "name": "Medical",
+          "seoName": "Medical"
+        },
+        {
+          "id": 10515,
+          "name": "Food",
+          "seoName": "Food"
+        },
+        {
+          "id": 10516,
+          "name": "Power Cells",
+          "seoName": "Power Cells"
+        }
+      ]
+    },
+    {
+      "id": 2102,
+      "name": "Blueprints",
+      "seoName": "Blueprints",
+      "subCategories": [
+        {
+          "id": 10517,
+          "name": "Blueprints",
+          "seoName": "Blueprints"
+        }
+      ]
+    },
+    {
+      "id": -1,
+      "name": "Others",
+      "seoName": "Others"
+    }
+  ],
+  "servers": [
+    {
+      "id": 0,
+      "name": "All Server"
+    },
+    {
+      "id": 15001,
+      "name": "Main Server"
+    }
+  ],
+  "details": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "offerDesc": {
+      "type": "string",
+      "required": true,
+      "description": "HTML formatted description"
+    },
+    "price": {
+      "type": "number",
+      "required": true,
+      "description": "Price per unit"
+    },
+    "quantity": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "description": "Stock quantity"
+    },
+    "minUnit": {
+      "type": "integer",
+      "required": false,
+      "default": 1,
+      "description": "Minimum units per purchase"
+    },
+    "offerDuration": {
+      "type": "integer",
+      "required": true,
+      "default": 30,
+      "description": "Offer duration in days"
+    },
+    "deliveryGuarantee": {
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "description": "Delivery guarantee in hours"
+    }
+  }
+}

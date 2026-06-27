@@ -1,0 +1,137 @@
+{
+  "game_id": "16",
+  "game": "fortnite",
+  "game_name": "Fortnite",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "fortnite-v-bucks": {
+      "name": "V-Bucks",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "fortnite-crew-1-month",
+          "name": "Fortnite Crew - 1 Month"
+        },
+        {
+          "id": "800vbucks",
+          "name": "800 V-Bucks"
+        },
+        {
+          "id": "2400vbucks",
+          "name": "2400 V-Bucks"
+        },
+        {
+          "id": "4500vbucks",
+          "name": "4500 V-Bucks"
+        },
+        {
+          "id": "9000vbucks",
+          "name": "9000 V-Bucks"
+        },
+        {
+          "id": "12500vbucks",
+          "name": "12500 V-Bucks"
+        },
+        {
+          "id": "25000vbucks",
+          "name": "25000 V-Bucks"
+        },
+        {
+          "id": "50000vbucks",
+          "name": "50000 V-Bucks"
+        },
+        {
+          "id": "62500vbucks",
+          "name": "62500 V-Bucks"
+        },
+        {
+          "id": "125000vbucks",
+          "name": "125000 V-Bucks"
+        },
+        {
+          "id": "fortnite-crew-3-months",
+          "name": "Fortnite Crew - 3 Months"
+        },
+        {
+          "id": "fortnite-crew-6-months",
+          "name": "Fortnite Crew - 6 Months"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

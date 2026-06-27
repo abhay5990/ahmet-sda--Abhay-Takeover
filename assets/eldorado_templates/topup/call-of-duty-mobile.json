@@ -1,0 +1,133 @@
+{
+  "game_id": "59",
+  "game": "call-of-duty-mobile",
+  "game_name": "Call of Duty Mobile",
+  "category": "TopUp",
+  "tradeEnvironments": [],
+  "attributes": {
+    "call-of-duty-mobile-cp": {
+      "name": "CP",
+      "type": "Select",
+      "required": true,
+      "values": [
+        {
+          "id": "30-cp",
+          "name": "30 CP"
+        },
+        {
+          "id": "80-cp",
+          "name": "80 CP"
+        },
+        {
+          "id": "420-cp",
+          "name": "420 CP"
+        },
+        {
+          "id": "880-cp",
+          "name": "880 CP"
+        },
+        {
+          "id": "2400-cp",
+          "name": "2400 CP"
+        },
+        {
+          "id": "5000-cp",
+          "name": "5000 CP"
+        },
+        {
+          "id": "10800-cp",
+          "name": "10800 CP"
+        },
+        {
+          "id": "21600-cp",
+          "name": "21600 CP"
+        },
+        {
+          "id": "32400-cp",
+          "name": "32400 CP"
+        },
+        {
+          "id": "43200-cp",
+          "name": "43200 CP"
+        },
+        {
+          "id": "54000-cp",
+          "name": "54000 CP"
+        }
+      ]
+    }
+  },
+  "details": {
+    "offerTitle": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "pricing": {
+      "type": "object",
+      "required": true,
+      "fields": {
+        "quantity": {
+          "type": "integer",
+          "default": 1
+        },
+        "pricePerUnit": {
+          "type": "object",
+          "fields": {
+            "amount": {
+              "type": "number",
+              "required": true
+            },
+            "currency": {
+              "type": "string",
+              "default": "USD"
+            }
+          }
+        }
+      }
+    },
+    "guaranteedDeliveryTime": {
+      "type": "string",
+      "required": true,
+      "values": [
+        "Instant",
+        "Minute20",
+        "Day1"
+      ],
+      "default": "Instant"
+    },
+    "mainOfferImage": {
+      "type": "object",
+      "required": false,
+      "fields": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    },
+    "offerImages": {
+      "type": "array",
+      "required": false,
+      "items": {
+        "smallImage": {
+          "type": "string"
+        },
+        "largeImage": {
+          "type": "string"
+        },
+        "originalSizeImage": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
