@@ -140,6 +140,71 @@
                         </div>
                     </div>
 
+                    <!-- Game Data (Dynamic fields from ManualFieldRegistry) -->
+                    <div x-show="!isGtaGame && manualFieldSpecs.length > 0" class="border-t border-gray-200 p-4 bg-gray-50">
+                        <template x-for="group in manualFieldGroups" :key="group">
+                            <div class="mb-4 last:mb-0">
+                                <label x-show="group" class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2" x-text="group"></label>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                    <template x-for="spec in manualScalarFieldsByGroup(group)" :key="spec.key">
+                                        <div>
+                                            <label class="block text-xs text-gray-500 mb-1">
+                                                <span x-text="spec.label"></span>
+                                                <span x-show="spec.required" class="text-red-400">*</span>
+                                            </label>
+                                            <!-- text -->
+                                            <template x-if="spec.type === 'text'">
+                                                <input type="text" x-model="manualFields[spec.key]"
+                                                       class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
+                                                       :placeholder="spec.help_text || ''">
+                                            </template>
+                                            <!-- number -->
+                                            <template x-if="spec.type === 'number'">
+                                                <input type="number" :min="spec.min_value ?? 0" x-model.number="manualFields[spec.key]"
+                                                       class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
+                                                       placeholder="0">
+                                            </template>
+                                            <!-- select -->
+                                            <template x-if="spec.type === 'select'">
+                                                <select x-model="manualFields[spec.key]"
+                                                        class="w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                                    <option value="">Select...</option>
+                                                    <template x-for="opt in spec.options" :key="opt.value">
+                                                        <option :value="opt.value" x-text="opt.label"></option>
+                                                    </template>
+                                                </select>
+                                            </template>
+                                            <!-- boolean -->
+                                            <template x-if="spec.type === 'boolean'">
+                                                <label class="flex items-center space-x-2 cursor-pointer mt-1">
+                                                    <input type="checkbox" x-model="manualFields[spec.key]"
+                                                           class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                                    <span class="text-xs text-gray-600" x-text="spec.label"></span>
+                                                </label>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                                <!-- multiselect: tag-style toggle buttons (separate row) -->
+                                <template x-for="spec in manualMultiselectFieldsByGroup(group)" :key="'ms-' + spec.key">
+                                    <div class="mt-3">
+                                        <label class="block text-xs text-gray-500 mb-1.5" x-text="spec.label"></label>
+                                        <div class="flex flex-wrap gap-2">
+                                            <template x-for="opt in spec.options" :key="opt.value">
+                                                <button type="button" @click="toggleManualFieldTag(spec.key, opt.value)"
+                                                        class="px-2.5 py-1 text-xs font-medium rounded-full border transition-colors"
+                                                        :class="(manualFields[spec.key] || []).includes(opt.value)
+                                                            ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
+                                                            : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'"
+                                                        x-text="opt.label"></button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+
                     <!-- Game Data (GTA-specific, connected via border) -->
                     <div x-show="isGtaGame" class="border-t border-gray-200 p-4 bg-gray-50">
                         <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Game Data</label>
@@ -203,145 +268,7 @@
                                 <span class="text-xs text-gray-600">Has Dual Characters</span>
                             </label>
                         </div>
-                        <!-- Posting Image -->
-                        <div class="mt-4">
-                            <label class="block text-xs text-gray-500 mb-2">Posting Image</label>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                <!-- Auto Generated option -->
-                                <button type="button"
-                                        @click="selectedGtavImagePresetId = 'auto'"
-                                        class="relative flex flex-col items-center justify-center h-28 rounded-lg border-2 bg-white transition-all"
-                                        :class="selectedGtavImagePresetId === 'auto'
-                                            ? 'border-emerald-500 ring-2 ring-emerald-100 shadow-sm'
-                                            : 'border-gray-200 hover:border-gray-300'">
-                                    <svg class="w-8 h-8 mb-1.5" :class="selectedGtavImagePresetId === 'auto' ? 'text-emerald-500' : 'text-gray-400'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"/>
-                                    </svg>
-                                    <span class="text-xs font-medium" :class="selectedGtavImagePresetId === 'auto' ? 'text-emerald-700' : 'text-gray-700'">Auto Generated</span>
-                                    <span class="text-[10px] text-gray-400 mt-0.5">GTAV card</span>
-                                    <!-- Checkmark -->
-                                    <div x-show="selectedGtavImagePresetId === 'auto'"
-                                         class="absolute top-1.5 right-1.5 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
-                                        <svg class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-                                        </svg>
-                                    </div>
-                                </button>
-
-                                <!-- Upload new image option -->
-                                <button type="button"
-                                        @click="$refs.gtavImageInput.click()"
-                                        :disabled="gtavImageUploading"
-                                        class="relative flex flex-col items-center justify-center h-28 rounded-lg border-2 border-dashed bg-white transition-all disabled:opacity-50"
-                                        :class="gtavImageUploading ? 'border-gray-300' : 'border-gray-300 hover:border-emerald-400 hover:bg-emerald-50'">
-                                    <template x-if="!gtavImageUploading">
-                                        <div class="flex flex-col items-center">
-                                            <svg class="w-8 h-8 text-gray-400 mb-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
-                                            </svg>
-                                            <span class="text-xs font-medium text-gray-600">Upload Image</span>
-                                            <span class="text-[10px] text-gray-400 mt-0.5">PNG, JPEG</span>
-                                        </div>
-                                    </template>
-                                    <template x-if="gtavImageUploading">
-                                        <div class="flex flex-col items-center">
-                                            <svg class="w-6 h-6 text-emerald-500 animate-spin mb-1.5" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                                            </svg>
-                                            <span class="text-xs text-gray-500">Uploading...</span>
-                                        </div>
-                                    </template>
-                                </button>
-                                <input x-ref="gtavImageInput"
-                                       type="file"
-                                       accept="image/png,image/jpeg"
-                                       class="hidden"
-                                       @change="uploadGtavImage($event)">
-
-                                <!-- Saved presets -->
-                                <template x-for="preset in gtavImagePresets" :key="preset.id">
-                                    <button type="button"
-                                            @click="selectedGtavImagePresetId = String(preset.id)"
-                                            class="relative h-28 rounded-lg border-2 overflow-hidden bg-gray-100 transition-all group"
-                                            :class="selectedGtavImagePresetId === String(preset.id)
-                                                ? 'border-emerald-500 ring-2 ring-emerald-100 shadow-sm'
-                                                : 'border-gray-200 hover:border-gray-300'">
-                                        <img :src="preset.url" :alt="preset.name || 'GTAV image'"
-                                             class="absolute inset-0 w-full h-full object-cover">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                                        <span class="absolute left-0 right-0 bottom-0 text-white text-[10px] font-medium px-2 py-1.5 truncate"
-                                              x-text="preset.name || 'Saved Image'"></span>
-                                        <!-- Checkmark -->
-                                        <div x-show="selectedGtavImagePresetId === String(preset.id)"
-                                             class="absolute top-1.5 right-1.5 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
-                                            <svg class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-                                            </svg>
-                                        </div>
-                                    </button>
-                                </template>
-                            </div>
-                            <span class="text-xs text-gray-400 mt-1.5 block" x-show="gtavImageLoading">Loading saved images...</span>
-                            <p x-show="gtavImageError" class="mt-2 text-xs text-red-600" x-text="gtavImageError"></p>
-                        </div>
                     </div>
-                </div>
-
-                <!-- Image Selection (all non-GTA games) -->
-                <div x-show="!isGtaGame" class="bg-white rounded-lg shadow p-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Posting Image</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <!-- Upload new image option -->
-                        <button type="button"
-                                @click="$refs.gtavImageInput.click()"
-                                :disabled="gtavImageUploading"
-                                class="relative flex flex-col items-center justify-center h-28 rounded-lg border-2 border-dashed bg-white transition-all disabled:opacity-50"
-                                :class="gtavImageUploading ? 'border-gray-300' : 'border-gray-300 hover:border-emerald-400 hover:bg-emerald-50'">
-                            <template x-if="!gtavImageUploading">
-                                <div class="flex flex-col items-center">
-                                    <svg class="w-8 h-8 text-gray-400 mb-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
-                                    </svg>
-                                    <span class="text-xs font-medium text-gray-600">Upload Image</span>
-                                    <span class="text-[10px] text-gray-400 mt-0.5">PNG, JPEG</span>
-                                </div>
-                            </template>
-                            <template x-if="gtavImageUploading">
-                                <div class="flex flex-col items-center">
-                                    <svg class="w-6 h-6 text-emerald-500 animate-spin mb-1.5" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                                    </svg>
-                                    <span class="text-xs text-gray-500">Uploading...</span>
-                                </div>
-                            </template>
-                        </button>
-
-                        <!-- Saved presets -->
-                        <template x-for="preset in gtavImagePresets" :key="preset.id">
-                            <button type="button"
-                                    @click="selectedGtavImagePresetId = String(preset.id)"
-                                    class="relative h-28 rounded-lg border-2 overflow-hidden bg-gray-100 transition-all group"
-                                    :class="selectedGtavImagePresetId === String(preset.id)
-                                        ? 'border-emerald-500 ring-2 ring-emerald-100 shadow-sm'
-                                        : 'border-gray-200 hover:border-gray-300'">
-                                <img :src="preset.url" :alt="preset.name || 'Forza image'"
-                                     class="absolute inset-0 w-full h-full object-cover">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                                <span class="absolute left-0 right-0 bottom-0 text-white text-[10px] font-medium px-2 py-1.5 truncate"
-                                      x-text="preset.name || 'Saved Image'"></span>
-                                <div x-show="selectedGtavImagePresetId === String(preset.id)"
-                                     class="absolute top-1.5 right-1.5 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
-                                    <svg class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-                                    </svg>
-                                </div>
-                            </button>
-                        </template>
-                    </div>
-                    <span class="text-xs text-gray-400 mt-1.5 block" x-show="gtavImageLoading">Loading saved images...</span>
-                    <p x-show="gtavImageError" class="mt-2 text-xs text-red-600" x-text="gtavImageError"></p>
                 </div>
 
                 <!-- ===== CREDENTIALS ===== -->
@@ -576,6 +503,153 @@
                         </template>
                     </div>
                 </template>
+            </div>
+        </template>
+
+        <!-- ===== POSTING IMAGE (job-level, capabilities-driven) ===== -->
+        <div x-show="selectedGame && mediaCapabilities.supports_override" class="bg-white rounded-lg shadow p-4">
+            <label class="block text-sm font-medium text-gray-700 mb-3">Posting Image</label>
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- Auto Generated option (manual mode only) -->
+                <button x-show="canAutoGenerateMedia" type="button"
+                        @click="selectedImagePresetId = 'auto'"
+                        class="flex items-center gap-2 px-3 py-2 rounded-lg border-2 text-sm transition-all"
+                        :class="selectedImagePresetId === 'auto'
+                            ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
+                            : 'border-gray-200 text-gray-600 hover:border-gray-300'">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"/>
+                    </svg>
+                    Auto Generated
+                </button>
+
+                <!-- Selected image preview (when a preset is selected) -->
+                <template x-if="selectedImagePresetId !== 'auto' && selectedImagePresetId !== ''">
+                    <div class="flex items-center gap-2 px-2 py-1.5 rounded-lg border-2 border-emerald-500 bg-emerald-50">
+                        <img :src="previewImageUrl" class="w-10 h-10 rounded object-cover" alt="">
+                        <span class="text-xs font-medium text-emerald-700 max-w-[120px] truncate" x-text="previewImageLabel"></span>
+                        <button type="button" @click="selectedImagePresetId = defaultImageSelection()"
+                                class="ml-1 text-gray-400 hover:text-red-500 transition-colors" title="Remove selection">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </template>
+
+                <!-- Choose from Gallery button -->
+                <button type="button" @click="imageGalleryOpen = true"
+                        class="flex items-center gap-2 px-3 py-2 rounded-lg border-2 border-dashed text-sm transition-all"
+                        :class="!canAutoGenerateMedia && selectedImagePresetId === ''
+                            ? 'border-amber-300 bg-amber-50 text-amber-700'
+                            : 'border-gray-300 text-gray-600 hover:border-emerald-400 hover:bg-emerald-50'">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z"/>
+                    </svg>
+                    Choose from Gallery
+                    <span class="text-[10px] text-gray-400" x-text="'(' + imagePresets.length + '/50)'"></span>
+                </button>
+            </div>
+            <span class="text-xs text-gray-400 mt-2 block" x-show="imageLoading">Loading saved images...</span>
+            <p x-show="imageError" class="mt-2 text-xs text-red-600" x-text="imageError"></p>
+            <p x-show="!canAutoGenerateMedia && selectedImagePresetId === '' && !imageLoading"
+               class="mt-2 text-xs text-amber-600">No image selected. Choose one from the gallery or upload a new one.</p>
+
+            <!-- Hidden file input -->
+            <input x-ref="imageInput" type="file" accept="image/png,image/jpeg,image/webp" class="hidden" @change="uploadImage($event)">
+        </div>
+
+        <!-- ===== IMAGE GALLERY MODAL ===== -->
+        <template x-teleport="body">
+            <div x-show="imageGalleryOpen" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+                 @keydown.escape.window="imageGalleryOpen = false">
+                <div @click.outside="imageGalleryOpen = false"
+                     class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between px-5 py-4 border-b">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Image Gallery</h3>
+                            <p class="text-xs text-gray-500 mt-0.5" x-text="imagePresets.length + ' of 50 images'"></p>
+                        </div>
+                        <button @click="imageGalleryOpen = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="p-5 overflow-y-auto flex-1">
+                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                            <!-- Upload tile -->
+                            <button type="button"
+                                    @click="$refs.imageInput.click()"
+                                    :disabled="imageUploading || imagePresets.length >= 50"
+                                    class="relative flex flex-col items-center justify-center h-32 rounded-lg border-2 border-dashed bg-white transition-all disabled:opacity-40"
+                                    :class="imageUploading ? 'border-gray-300' : 'border-gray-300 hover:border-emerald-400 hover:bg-emerald-50'">
+                                <template x-if="!imageUploading">
+                                    <div class="flex flex-col items-center">
+                                        <svg class="w-8 h-8 text-gray-400 mb-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                                        </svg>
+                                        <span class="text-xs font-medium text-gray-600">Upload</span>
+                                        <span class="text-[10px] text-gray-400 mt-0.5">PNG, JPEG, WebP</span>
+                                        <span class="text-[10px] text-gray-400">Max 100 MB</span>
+                                    </div>
+                                </template>
+                                <template x-if="imageUploading">
+                                    <div class="flex flex-col items-center">
+                                        <svg class="w-6 h-6 text-emerald-500 animate-spin mb-1.5" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                        </svg>
+                                        <span class="text-xs text-gray-500">Uploading...</span>
+                                    </div>
+                                </template>
+                            </button>
+
+                            <!-- Preset tiles -->
+                            <template x-for="preset in imagePresets" :key="preset.id">
+                                <div class="relative h-32 rounded-lg border-2 overflow-hidden bg-gray-100 transition-all group cursor-pointer"
+                                     @click="selectedImagePresetId = String(preset.id); imageGalleryOpen = false"
+                                     :class="selectedImagePresetId === String(preset.id)
+                                         ? 'border-emerald-500 ring-2 ring-emerald-100 shadow-sm'
+                                         : 'border-gray-200 hover:border-gray-300'">
+                                    <img :src="preset.url" :alt="preset.name || 'Saved Image'"
+                                         class="absolute inset-0 w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                                    <span class="absolute left-0 right-0 bottom-0 text-white text-[10px] font-medium px-2 py-1.5 truncate"
+                                          x-text="preset.name || 'Saved Image'"></span>
+                                    <!-- Size badge -->
+                                    <span x-show="preset.size_bytes"
+                                          class="absolute top-1.5 left-1.5 bg-black/50 text-white text-[9px] px-1.5 py-0.5 rounded"
+                                          x-text="preset.size_bytes > 1048576 ? (preset.size_bytes / 1048576).toFixed(1) + ' MB' : (preset.size_bytes / 1024).toFixed(0) + ' KB'"></span>
+                                    <!-- Checkmark -->
+                                    <div x-show="selectedImagePresetId === String(preset.id)"
+                                         class="absolute top-1.5 right-1.5 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                                        <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                    <!-- Delete button -->
+                                    <button type="button"
+                                            @click.stop="deleteImagePreset(preset.id)"
+                                            class="absolute top-1.5 right-1.5 w-5 h-5 bg-red-500 rounded-full items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                            :class="selectedImagePresetId === String(preset.id) ? 'hidden' : 'flex'"
+                                            title="Delete image">
+                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+                        <p x-show="imagePresets.length === 0 && !imageLoading" class="text-center text-sm text-gray-400 mt-6">
+                            No images yet. Upload one to get started.
+                        </p>
+                        <span class="text-xs text-gray-400 mt-3 block" x-show="imageLoading">Loading saved images...</span>
+                        <p x-show="imageError" class="mt-2 text-xs text-red-600" x-text="imageError"></p>
+                    </div>
+                </div>
             </div>
         </template>
 
@@ -947,7 +1021,7 @@ function stockStart() {
         manualTitle: '',
         manualDescription: '',
         manualPurchasedPrice: 0,
-        // Manual mode — game data
+        // Manual mode — game data (GTA-specific legacy)
         manualPlatform: '',
         manualLevel: 0,
         manualCashAmount: 0,
@@ -955,11 +1029,16 @@ function stockStart() {
         manualCarsCount: 0,
         manualAccountTags: [],
         manualHasDualCharacters: false,
-        selectedGtavImagePresetId: 'auto',
-        gtavImagePresets: [],
-        gtavImageLoading: false,
-        gtavImageUploading: false,
-        gtavImageError: '',
+        // Manual mode — dynamic game fields (non-GTA)
+        manualFieldSpecs: [],
+        manualFields: {},
+        selectedImagePresetId: '',
+        imagePresets: [],
+        imageLoading: false,
+        imageUploading: false,
+        imageError: '',
+        mediaCapabilities: { auto_generate_manual: false, supports_override: true },
+        imageGalleryOpen: false,
         // Manual mode — credentials & distribution
         distributionMode: 'cross_platform',
         credentials: [],
@@ -1014,6 +1093,18 @@ function stockStart() {
             }
             // Manual mode
             if (this.isGtaGame && !this.manualPlatform) return false;
+            // Validate required dynamic fields
+            if (!this.isGtaGame) {
+                for (const spec of this.manualFieldSpecs) {
+                    const value = this.manualFields[spec.key];
+                    const empty = Array.isArray(value)
+                        ? value.length === 0
+                        : value === undefined || value === null || value === '';
+                    if (spec.required && empty) return false;
+                    // Enforce min_value for number fields
+                    if (spec.type === 'number' && spec.min_value != null && typeof value === 'number' && value < spec.min_value) return false;
+                }
+            }
             if (!this.manualPurchasedPrice || this.manualPurchasedPrice <= 0) return false;
             if (this.credentials.length === 0) return false;
             const cols = this.credentialColumns;
@@ -1047,6 +1138,43 @@ function stockStart() {
         get isFortniteGame() {
             const slug = (GAME_SLUGS[this.selectedGame] || '').toLowerCase();
             return slug === 'fortnite' || slug === 'fn';
+        },
+
+        get manualFieldGroups() {
+            const seen = new Set();
+            const groups = [];
+            for (const spec of this.manualFieldSpecs) {
+                const g = spec.group || '';
+                if (!seen.has(g)) { seen.add(g); groups.push(g); }
+            }
+            return groups;
+        },
+
+        manualScalarFieldsByGroup(group) {
+            return this.manualFieldSpecs.filter(s => (s.group || '') === group && s.type !== 'multiselect');
+        },
+
+        manualMultiselectFieldsByGroup(group) {
+            return this.manualFieldSpecs.filter(s => (s.group || '') === group && s.type === 'multiselect');
+        },
+
+        toggleManualFieldTag(key, value) {
+            if (!this.manualFields[key]) this.manualFields[key] = [];
+            const arr = this.manualFields[key];
+            const idx = arr.indexOf(value);
+            if (idx === -1) arr.push(value);
+            else arr.splice(idx, 1);
+        },
+
+        get canAutoGenerateMedia() {
+            return this.sourceType === 'manual' && Boolean(this.mediaCapabilities.auto_generate_manual);
+        },
+
+        get selectedImagePresetPayload() {
+            if (!this.mediaCapabilities.supports_override) return null;
+            if (!this.selectedImagePresetId || this.selectedImagePresetId === 'auto') return null;
+            const presetId = Number(this.selectedImagePresetId);
+            return Number.isInteger(presetId) && presetId > 0 ? presetId : null;
         },
 
         // --- GTA Live Preview computed properties ---
@@ -1083,14 +1211,14 @@ function stockStart() {
         },
 
         get previewImageLabel() {
-            if (this.selectedGtavImagePresetId === 'auto') return 'Auto Generated (GTAV card)';
-            const preset = this.gtavImagePresets.find(p => String(p.id) === this.selectedGtavImagePresetId);
-            return preset ? (preset.name || 'Saved Image') : 'Auto Generated (GTAV card)';
+            if (this.selectedImagePresetId === 'auto') return 'Auto Generated';
+            const preset = this.imagePresets.find(p => String(p.id) === this.selectedImagePresetId);
+            return preset ? (preset.name || 'Saved Image') : 'No image selected';
         },
 
         get previewImageUrl() {
-            if (this.selectedGtavImagePresetId === 'auto') return '';
-            const preset = this.gtavImagePresets.find(p => String(p.id) === this.selectedGtavImagePresetId);
+            if (this.selectedImagePresetId === 'auto' || this.selectedImagePresetId === '') return '';
+            const preset = this.imagePresets.find(p => String(p.id) === this.selectedImagePresetId);
             return preset ? preset.url : '';
         },
 
@@ -1135,6 +1263,13 @@ function stockStart() {
                     this._forceSheetMultipliers();
                 }
             });
+            this.$watch('sourceType', () => {
+                if (this.selectedImagePresetId === 'auto' && !this.canAutoGenerateMedia) {
+                    this.selectedImagePresetId = '';
+                } else if (!this.selectedImagePresetId && this.canAutoGenerateMedia) {
+                    this.selectedImagePresetId = 'auto';
+                }
+            });
         },
 
         async onGameChange() {
@@ -1152,11 +1287,16 @@ function stockStart() {
                 this.sourceType = 'account';
             }
             if (!this.selectedGame) {
-                this.selectedGtavImagePresetId = 'auto';
-                this.gtavImagePresets = [];
-                this.gtavImageError = '';
+                this.selectedImagePresetId = '';
+                this.imagePresets = [];
+                this.imageError = '';
+                this.manualFieldSpecs = [];
+                this.manualFields = {};
                 return;
             }
+            // Reset dynamic manual fields
+            this.manualFieldSpecs = [];
+            this.manualFields = {};
             for (const slug of Object.keys(this.defaults)) {
                 this.defaults[slug].variant = '';
                 this.defaults[slug].title_template_id = null;
@@ -1199,19 +1339,55 @@ function stockStart() {
                 } catch (e) {}
             })();
 
-            await Promise.all([...defaultsPromises, templatesPromise]);
+            const manualFieldsPromise = (async () => {
+                if (this.isGtaGame) return;  // GTA uses legacy hardcoded fields
+                try {
+                    const resp = await fetch(`/posting/api/manual-fields/?game_id=${encodeURIComponent(this.selectedGame)}`);
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        this.manualFieldSpecs = data.fields || [];
+                        // Initialize manualFields with defaults
+                        const fields = {};
+                        for (const spec of this.manualFieldSpecs) {
+                            if (spec.type === 'multiselect') {
+                                fields[spec.key] = Array.isArray(spec.default) ? [...spec.default] : [];
+                            } else if (spec.default !== undefined && spec.default !== null) {
+                                fields[spec.key] = spec.default;
+                            } else {
+                                fields[spec.key] = spec.type === 'number' ? 0 : spec.type === 'boolean' ? false : '';
+                            }
+                        }
+                        this.manualFields = fields;
+                    }
+                } catch (e) {}
+            })();
+
+            await Promise.all([...defaultsPromises, templatesPromise, manualFieldsPromise]);
 
             // Re-apply forced multipliers if sheet mode with sales_price
             if (this.sheetHasSalesPrice) {
                 this._forceSheetMultipliers();
             }
-            this.selectedGtavImagePresetId = 'auto';
-            this.gtavImageError = '';
+            this.imageError = '';
+            this.mediaCapabilities = { auto_generate_manual: false, supports_override: true };
+            this.selectedImagePresetId = '';
             if (this.selectedGame) {
-                await this.loadGtavImagePresets();
+                // Fetch capabilities and presets in parallel
+                const [, capsResp] = await Promise.all([
+                    this.loadImagePresets(),
+                    fetch(`/posting/api/media-capabilities/?game_id=${encodeURIComponent(this.selectedGame)}`).then(r => r.ok ? r.json() : null).catch(() => null),
+                ]);
+                if (capsResp) {
+                    this.mediaCapabilities = capsResp;
+                }
+                this.selectedImagePresetId = this.defaultImageSelection();
             } else {
-                this.gtavImagePresets = [];
+                this.imagePresets = [];
             }
+        },
+
+        defaultImageSelection() {
+            return this.canAutoGenerateMedia ? 'auto' : '';
         },
 
         _forceSheetMultipliers() {
@@ -1234,31 +1410,31 @@ function stockStart() {
             this.showSettings[slug] = !this.showSettings[slug];
         },
 
-        async loadGtavImagePresets() {
+        async loadImagePresets() {
             if (!this.selectedGame) return;
-            this.gtavImageLoading = true;
-            this.gtavImageError = '';
+            this.imageLoading = true;
+            this.imageError = '';
             try {
                 const resp = await fetch(`/posting/api/image-presets/?game_id=${encodeURIComponent(this.selectedGame)}`);
                 const data = await resp.json();
                 if (!resp.ok) {
-                    this.gtavImageError = data.error || 'Failed to load images';
+                    this.imageError = data.error || 'Failed to load images';
                     return;
                 }
-                this.gtavImagePresets = data.presets || [];
+                this.imagePresets = data.presets || [];
             } catch (e) {
-                this.gtavImageError = 'Network error: ' + e.message;
+                this.imageError = 'Network error: ' + e.message;
             } finally {
-                this.gtavImageLoading = false;
+                this.imageLoading = false;
             }
         },
 
-        async uploadGtavImage(event) {
+        async uploadImage(event) {
             const file = event.target.files && event.target.files[0];
             if (!file || !this.selectedGame) return;
 
-            this.gtavImageUploading = true;
-            this.gtavImageError = '';
+            this.imageUploading = true;
+            this.imageError = '';
             const form = new FormData();
             form.append('game_id', this.selectedGame);
             form.append('image', file);
@@ -1272,22 +1448,44 @@ function stockStart() {
                 });
                 const data = await resp.json();
                 if (!resp.ok) {
-                    this.gtavImageError = data.error || 'Failed to upload image';
+                    this.imageError = data.error || 'Failed to upload image';
                     return;
                 }
 
                 const preset = data.preset;
                 if (preset) {
-                    const idx = this.gtavImagePresets.findIndex(p => p.id === preset.id);
-                    if (idx >= 0) this.gtavImagePresets.splice(idx, 1, preset);
-                    else this.gtavImagePresets.unshift(preset);
-                    this.selectedGtavImagePresetId = String(preset.id);
+                    const idx = this.imagePresets.findIndex(p => p.id === preset.id);
+                    if (idx >= 0) this.imagePresets.splice(idx, 1, preset);
+                    else this.imagePresets.unshift(preset);
+                    this.selectedImagePresetId = String(preset.id);
                 }
             } catch (e) {
-                this.gtavImageError = 'Network error: ' + e.message;
+                this.imageError = 'Network error: ' + e.message;
             } finally {
-                this.gtavImageUploading = false;
+                this.imageUploading = false;
                 event.target.value = '';
+            }
+        },
+
+        async deleteImagePreset(presetId) {
+            if (!confirm('Delete this image?')) return;
+            this.imageError = '';
+            try {
+                const resp = await fetch(`/posting/api/image-presets/${presetId}/delete/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                });
+                if (!resp.ok) {
+                    const data = await resp.json();
+                    this.imageError = data.error || 'Failed to delete image';
+                    return;
+                }
+                this.imagePresets = this.imagePresets.filter(p => p.id !== presetId);
+                if (this.selectedImagePresetId === String(presetId)) {
+                    this.selectedImagePresetId = this.defaultImageSelection();
+                }
+            } catch (e) {
+                this.imageError = 'Network error: ' + e.message;
             }
         },
 
@@ -1404,6 +1602,7 @@ function stockStart() {
                     stores: storeIds,
                     defaults: defaultsPayload,
                     source_account_id: this.sourceAccountId ? Number(this.sourceAccountId) : null,
+                    selected_image_preset_id: this.selectedImagePresetPayload,
                 };
             }
 
@@ -1415,6 +1614,7 @@ function stockStart() {
                     defaults: defaultsPayload,
                     accounts: this.sheetAccounts,
                     has_sales_price: this.sheetHasSalesPrice,
+                    selected_image_preset_id: this.selectedImagePresetPayload,
                 };
             }
 
@@ -1427,7 +1627,7 @@ function stockStart() {
                 }
                 {% endfor %}
             }
-            return {
+            const payload = {
                 source_type: 'manual',
                 game_id: Number(this.selectedGame),
                 stores: storeIds,
@@ -1442,13 +1642,16 @@ function stockStart() {
                 cars_count: this.manualCarsCount,
                 account_tags: this.manualAccountTags,
                 has_dual_characters: this.manualHasDualCharacters,
-                selected_image_preset_id: this.selectedGtavImagePresetId !== 'auto'
-                    ? Number(this.selectedGtavImagePresetId)
-                    : null,
+                selected_image_preset_id: this.selectedImagePresetPayload,
                 credentials: this.credentials,
                 distribution_mode: this.distributionMode,
                 distribution: distrib,
             };
+            // Include dynamic game-specific fields (non-GTA)
+            if (!this.isGtaGame && Object.keys(this.manualFields).length > 0) {
+                payload.manual_fields = { ...this.manualFields };
+            }
+            return payload;
         },
 
         // --- Google Sheet (Fortnite) methods ---

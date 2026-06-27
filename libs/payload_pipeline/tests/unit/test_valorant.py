@@ -6,11 +6,13 @@ from pathlib import Path
 from payload_pipeline.core import context_keys as ctx
 from payload_pipeline import PayloadPipeline, build_default_registry
 from payload_pipeline.core.contracts import BuildContext, MediaBundle, PipelineRequest
+from payload_pipeline.core.manual_fields import manual_field_registry
 from payload_pipeline.marketplaces.eldorado import EldoradoConfig
 from payload_pipeline.marketplaces.g2g import G2GConfig
 from payload_pipeline.shared.paths import default_media_output_dir
 from payload_pipeline.games.val.account import (
     ValorantComposer,
+    ValorantEldoradoBuilder,
     ValorantG2GBuilder,
     ValorantGameBoostBuilder,
     ValorantLztSourceAdapter,
@@ -24,6 +26,119 @@ from _variant_ctx import (
     valorant_gameboost,
     valorant_playerauctions,
 )
+
+
+def test_valorant_manual_field_specs_use_minimum_game_data() -> None:
+    build_default_registry()
+    fields = manual_field_registry.serialize("valorant")
+    by_key = {field["key"]: field for field in fields}
+
+    assert set(by_key) == {
+        "region",
+        "level",
+        "current_rank",
+        "peak_rank",
+        "valorant_points",
+        "radianite_points",
+        "agent_count",
+        "weapon_skin_count",
+        "knife_count",
+        "inventory_value",
+        "account_tags",
+    }
+    assert "platform" not in by_key
+    assert {option["value"] for option in by_key["region"]["options"]} >= {
+        "na", "eu", "la", "br", "ap", "kr", "tr",
+    }
+
+
+def test_valorant_manual_fields_drive_marketplace_payloads() -> None:
+    raw = {
+        "source": "manual",
+        "price": 12.5,
+        "loginData": {"login": "valorant-user", "password": "secret-pass"},
+        "manual_fields": {
+            "region": "la",
+            "level": 25,
+            "current_rank": "gold",
+            "peak_rank": "diamond",
+            "valorant_points": 1200,
+            "radianite_points": 80,
+            "agent_count": 26,
+            "weapon_skin_count": 100,
+            "knife_count": 20,
+            "inventory_value": 35000,
+            "account_tags": ["rare_skins"],
+        },
+    }
+    request = PipelineRequest(
+        game="valorant",
+        category="account",
+        kind="stock",
+        sources={"manual": raw},
+    )
+
+    account = ValorantResolver().resolve(request)
+    listing = ValorantComposer().compose(account, request, MediaBundle())
+
+    assert account.region == "la"
+    assert account.level == 25
+    assert account.current_rank == "Gold"
+    assert account.last_rank == "Diamond"
+    assert account.rank_type == "ranked"
+    assert account.agent_count == 26
+    assert account.skin_count == 100
+    assert account.knife_count == 20
+    assert account.inventory_value == 35000
+
+    eldorado_payload = ValorantEldoradoBuilder().build_payload(
+        account,
+        listing,
+        BuildContext(
+            kind="stock",
+            marketplace="eldorado",
+            variant_context=valorant_eldorado(),
+            selected_variants={"platform": "pc"},
+        ),
+    )
+    attrs = {
+        item["id"]: item["value"]
+        for item in eldorado_payload["augmentedGame"]["offerAttributes"]
+    }
+    assert eldorado_payload["augmentedGame"]["tradeEnvironmentId"] == "2-0"
+    assert attrs["valorant-rank"] == "gold"
+    assert attrs["valorant-agents"] == "agents-26plus"
+    assert attrs["valorant-weapon-skins"] == "100-plus-skins"
+    assert attrs["valorant-knives"] == "knives-20plus"
+    assert attrs["valorant-spent-points"] == "spent-35plus"
+
+    gameboost_payload = ValorantGameBoostBuilder().build_payload(
+        account,
+        listing,
+        BuildContext(
+            kind="stock",
+            marketplace="gameboost",
+            variant_context=valorant_gameboost(),
+        ),
+    )
+    assert gameboost_payload["account_data"]["server"] == "Latin America"
+    assert gameboost_payload["account_data"]["current_tier"] == "Gold"
+    assert gameboost_payload["account_data"]["peak_tier"] == "Diamond"
+    assert gameboost_payload["account_data"]["level"] == 25
+    assert gameboost_payload["account_data"]["valorant_points"] == 1200
+    assert gameboost_payload["account_data"]["radianite_points"] == 80
+
+    pa_payload = ValorantPlayerAuctionsBuilder().build_payload(
+        account,
+        listing,
+        BuildContext(
+            kind="stock",
+            marketplace="playerauctions",
+            variant_context=valorant_playerauctions(),
+        ),
+    )
+    assert pa_payload["serverId"] == 9207
+    assert pa_payload["autoDelivery"]["loginName"] == "valorant-user"
 
 
 def test_valorant_lzt_source_normalization_resolves_catalog_titles(load_fixture) -> None:
@@ -344,6 +459,39 @@ def test_valorant_pipeline_builds_playerauctions_payload(load_fixture) -> None:
     assert result.payload["isAuto"] is True
     assert result.payload["autoDelivery"]["loginName"]
     assert result.payload["autoDelivery"]["password"]
+
+
+def test_valorant_playerauctions_description_includes_album_url(load_fixture) -> None:
+    """PA uses description-hosted image links instead of screenshot fields."""
+    raw = load_fixture("lzt_val.json")
+    request = PipelineRequest(
+        game="valorant",
+        category="account",
+        kind="stock",
+        sources={"lzt": raw},
+    )
+    account = ValorantResolver().resolve(request)
+    listing = ValorantComposer().compose(
+        account,
+        request,
+        MediaBundle(album_url="https://imageshack.com/a/test-album"),
+    )
+    build_ctx = BuildContext(
+        kind="stock",
+        marketplace="playerauctions",
+        variant_context=valorant_playerauctions(),
+    )
+
+    builder = ValorantPlayerAuctionsBuilder()
+    payload = builder.build_payload(account, listing, build_ctx)
+    row = builder.build_bulk_payload(account, listing, build_ctx)
+
+    assert "Images Link" in payload["offerDesc"]
+    assert "imageshack.com/a/test-album" in payload["offerDesc"]
+    assert "Images Link" in row["Description"]
+    assert "imageshack.com/a/test-album" in row["Description"]
+    assert payload["screenShot"] == ""
+    assert row["Cover image (PA hosted)"] == ""
 
 
 def test_valorant_pipeline_builds_playerauctions_bulk_payload(load_fixture) -> None:

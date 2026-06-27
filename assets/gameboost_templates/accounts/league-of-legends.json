@@ -206,17 +206,17 @@
   },
   "game_items": {
     "champions": [
-      "Volibear",
-      "Udyr",
-      "Brand"
+      "LeBlanc",
+      "Caitlyn",
+      "Yorick"
     ],
     "skins": [
-      "Space Groove Nasus",
-      "Spirit Blossom Nidalee (Pearl)",
-      "Coven Elise (Tanzanite)"
+      "Sentinel Diana (Emerald)",
+      "Admiral Glasc (Sapphire)",
+      "Star Guardian Seraphine (Obsidian)"
     ],
     "roles": [
-      "Jungle",
+      "Top",
       "Mid",
       "Support"
     ]

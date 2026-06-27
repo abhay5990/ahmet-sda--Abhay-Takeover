@@ -1,13 +1,21 @@
-"""No-op media strategy for Xbox accounts."""
+"""Media strategy for Xbox accounts — override-only, no auto-generation."""
 
 from __future__ import annotations
 
 from ..models import XboxResolvedAccount
+from .....core.capabilities import OVERRIDE_ONLY, MediaCapabilities
+from .....core import context_keys as ctx
 from .....core.contracts import PipelineRequest
+from .....shared.media_override import MediaOverrideMixin
 
 
-class XboxMediaStrategy:
-    """Xbox has no generated media — returns an empty list."""
+class XboxMediaStrategy(MediaOverrideMixin):
+    """Xbox has no generated media but supports user-selected image overrides."""
+
+    capabilities: MediaCapabilities = OVERRIDE_ONLY
 
     def prepare(self, subject: XboxResolvedAccount, request: PipelineRequest) -> list[str]:
-        return []
+        if bool(request.context.get(ctx.DISABLE_MEDIA)):
+            return []
+
+        return self._check_override(request) or []

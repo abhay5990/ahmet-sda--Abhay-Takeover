@@ -5,16 +5,20 @@ from __future__ import annotations
 import logging
 
 from ..models import SteamResolvedAccount
+from .....core.capabilities import OVERRIDE_ONLY, MediaCapabilities
 from .....core import context_keys as ctx
 from .....core.contracts import PipelineRequest
+from .....shared.media_override import MediaOverrideMixin
 from .....shared.paths import default_cache_base_dir, default_media_output_dir
 from .....shared.steam_game_grid import SteamGameGridRenderer
 
 logger = logging.getLogger(__name__)
 
 
-class SteamMediaStrategy:
+class SteamMediaStrategy(MediaOverrideMixin):
     """Generate a local game-list grid image from resolved Steam data."""
+
+    capabilities: MediaCapabilities = OVERRIDE_ONLY
 
     def __init__(self, renderer: SteamGameGridRenderer | None = None) -> None:
         self._renderer = renderer
@@ -24,6 +28,11 @@ class SteamMediaStrategy:
     ) -> list[str]:
         if bool(request.context.get(ctx.DISABLE_MEDIA)):
             return []
+
+        override = self._check_override(request)
+        if override is not None:
+            return override
+
         if not subject.games:
             return []
 

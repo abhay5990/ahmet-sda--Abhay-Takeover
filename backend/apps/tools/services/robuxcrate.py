@@ -276,13 +276,16 @@ def _update_batch_status(batch: RobuxCrateBatch) -> None:
 def _attempt_delivery(batch: RobuxCrateBatch, success_count: int, total: int) -> None:
     """Attempt to deliver the marketplace order.
 
-    Success → COMPLETED.  Failure → stay PROCESSING (scheduler retries next cycle).
+    Success → COMPLETED.
+    Retryable error → stay PROCESSING (scheduler retries next cycle).
+    Permanent error → ERROR (no further retries).
     """
     if batch.marketplace == RobuxCrateBatch.Marketplace.ELDORADO:
-        ok, error = _deliver_eldorado(batch)
+        ok, error, retryable = _deliver_eldorado(batch)
+    elif batch.marketplace == RobuxCrateBatch.Marketplace.GAMEBOOST:
+        ok, error, retryable = _deliver_gameboost(batch)
     else:
-        ok = False
-        error = f'Marketplace {batch.marketplace} delivery not yet implemented'
+        ok, error, retryable = False, f'Marketplace {batch.marketplace} delivery not implemented', False
 
     now = timezone.now()
     batch.delivery_attempted_at = now
@@ -294,12 +297,18 @@ def _attempt_delivery(batch: RobuxCrateBatch, success_count: int, total: int) ->
             'Batch %s delivered (%d/%d orders completed)',
             batch.id, success_count, total,
         )
-    else:
-        # Stay PROCESSING so scheduler picks it up again
+    elif retryable:
         batch.status = RobuxCrateBatch.Status.PROCESSING
-        batch.delivery_error = error or 'Delivery failed'
+        batch.delivery_error = error or 'Delivery failed (will retry)'
         logger.warning(
-            'Batch %s delivery failed (%d/%d completed): %s — will retry',
+            'Batch %s delivery failed (%d/%d), retryable: %s',
+            batch.id, success_count, total, error,
+        )
+    else:
+        batch.status = RobuxCrateBatch.Status.ERROR
+        batch.delivery_error = error or 'Delivery failed (permanent)'
+        logger.error(
+            'Batch %s delivery PERMANENTLY failed (%d/%d): %s',
             batch.id, success_count, total, error,
         )
 
@@ -308,29 +317,74 @@ def _attempt_delivery(batch: RobuxCrateBatch, success_count: int, total: int) ->
     ])
 
 
-def _deliver_eldorado(batch: RobuxCrateBatch) -> tuple[bool, str]:
-    """Send PUT deliver request to Eldorado for the batch's marketplace order."""
+def _deliver_eldorado(batch: RobuxCrateBatch) -> tuple[bool, str, bool]:
+    """Send PUT deliver request to Eldorado for the batch's marketplace order.
+
+    Returns: (ok, error_message, retryable)
+    """
     store_cred = batch.marketplace_store
     if not store_cred:
-        return False, 'No marketplace store credential assigned'
+        return False, 'No marketplace store credential assigned', False
 
     try:
         from apps.integrations.providers.eldorado import EldoradoProvider
         provider = EldoradoProvider()
         client = provider.build_client(store_cred)
     except Exception as exc:
-        return False, f'Failed to build Eldorado client: {exc}'
+        return False, f'Failed to build Eldorado client: {exc}', True
 
     try:
         result = client.deliver_order(batch.marketplace_order_id)
     except Exception as exc:
-        return False, f'Unexpected error calling deliver: {exc}'
+        return False, f'Unexpected error calling deliver: {exc}', True
 
     if result.ok:
-        return True, ''
+        return True, '', False
 
-    error_msg = result.error.message if result.error else 'Unknown error'
-    return False, error_msg
+    err = result.error
+    if err is None:
+        return False, 'Unknown delivery error', True
+
+    detail = f' — {err.details}' if err.details else ''
+    message = f'{err.message}{detail}'
+    retryable = bool(err.is_retryable) or (err.category in _UNCERTAIN_CATEGORIES)
+    return False, message, retryable
+
+
+def _deliver_gameboost(batch: RobuxCrateBatch) -> tuple[bool, str, bool]:
+    """Complete a currency order on GameBoost.
+
+    POST /currency-orders/{order_id}/complete
+
+    Returns: (ok, error_message, retryable)
+    """
+    store_cred = batch.marketplace_store
+    if not store_cred:
+        return False, 'No marketplace store credential assigned', False
+
+    try:
+        from apps.integrations.providers.gameboost import GameboostProvider
+        provider = GameboostProvider()
+        client = provider.build_client(store_cred)
+    except Exception as exc:
+        return False, f'Failed to build GameBoost client: {exc}', True
+
+    try:
+        result = client.complete_currency_order(batch.marketplace_order_id)
+    except Exception as exc:
+        return False, f'Unexpected error calling complete_currency_order: {exc}', True
+
+    if result.ok:
+        return True, '', False
+
+    err = result.error
+    if err is None:
+        return False, 'Unknown delivery error', True
+
+    detail = f' — {err.details}' if err.details else ''
+    message = f'{err.message}{detail}'
+    retryable = bool(err.is_retryable) or (err.category in _UNCERTAIN_CATEGORIES)
+    return False, message, retryable
 
 
 # ── Cancel order ──────────────────────────────────────────────────

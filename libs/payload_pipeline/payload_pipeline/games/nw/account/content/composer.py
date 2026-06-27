@@ -20,6 +20,18 @@ class NwAccountComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        # Manual entries have pre-defined title/description
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title,
+                    description=account.manual_description or "",
+                    tags=["new-world", "account"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         parts = [
             "New World Account",
             account.region if account.region else "",

@@ -16,6 +16,8 @@ class XboxManualSource:
     category_id: int = 1
     price: float = 0.0
     credentials: CredentialBundle = field(default_factory=CredentialBundle)
+    title: str = ""
+    description: str = ""
 
 
 class XboxManualSourceAdapter:
@@ -35,6 +37,8 @@ class XboxManualSourceAdapter:
             item_id=str(payload.get("item_id") or "").strip(),
             category_id=self._to_int(payload.get("category_id"), default=1),
             price=price,
+            title=str(payload.get("title") or "").strip(),
+            description=str(payload.get("description") or "").strip(),
             credentials=CredentialBundle(
                 login=str(login_data.get("login") or payload.get("login") or "").strip(),
                 password=str(login_data.get("password") or payload.get("password") or "").strip(),

@@ -3,6 +3,7 @@
 from .resolver import RobloxResolver
 from .content import RobloxComposer
 from .media import RobloxMediaStrategy
+from .manual_fields import ROBLOX_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .sources import RobloxLztSourceAdapter
 from .marketplaces import RobloxEldoradoBuilder, RobloxGameBoostBuilder, RobloxG2GBuilder, RobloxPlayerAuctionsBuilder
 from ....core.enums import ListingCategory

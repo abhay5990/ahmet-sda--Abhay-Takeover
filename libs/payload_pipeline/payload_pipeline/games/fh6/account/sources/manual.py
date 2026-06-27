@@ -16,6 +16,8 @@ class Fh6ManualSource:
     category_id: int = 1
     price: float = 0.0
     credentials: CredentialBundle = field(default_factory=CredentialBundle)
+    title: str = ""
+    description: str = ""
 
 
 class Fh6ManualSourceAdapter:
@@ -40,6 +42,8 @@ class Fh6ManualSourceAdapter:
                 email_password=str(email_data.get("password") or "").strip(),
                 email_login_link=str(payload.get("emailLoginUrl") or "").strip(),
             ),
+            title=str(payload.get("title") or "").strip(),
+            description=str(payload.get("description") or "").strip(),
         )
 
     def _to_int(self, value: Any, default: int) -> int:

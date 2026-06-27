@@ -31,6 +31,7 @@ class RustResolvedAccount(ResolvedAccountBase):
     # GameBoost numeric values
     real_hours: int = 0
     skins_count: int = 0
+    steam_level: int = 0
 
     FIELD_META: ClassVar[dict[str, FieldMeta]] = {
         **ResolvedAccountBase.FIELD_META,
@@ -41,6 +42,7 @@ class RustResolvedAccount(ResolvedAccountBase):
         "steam_level_range": FieldMeta("Steam account level range attribute ID.", "level-05"),
         "real_hours": FieldMeta("Real hours played (for GameBoost).", 100),
         "skins_count": FieldMeta("Number of skins (for GameBoost).", 0),
+        "steam_level": FieldMeta("Steam account level.", 10),
     }
 
     COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {

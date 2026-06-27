@@ -21,6 +21,17 @@ class UbisoftComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title,
+                    description=account.manual_description,
+                    tags=["ubisoft", "uplay", "ubisoft-connect", "account"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         parts = [
             "Ubisoft Connect",
             f"{account.game_count} Games" if account.game_count else "",

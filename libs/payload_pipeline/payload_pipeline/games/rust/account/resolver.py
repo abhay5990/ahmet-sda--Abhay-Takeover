@@ -29,6 +29,8 @@ class RustResolver:
             price=parsed.price,
             kind=request.kind,
             credentials=credentials,
+            manual_title=parsed.title,
+            manual_description=parsed.description,
             platform=parsed.platform,
             premium_status=parsed.premium_status,
             hours_range=parsed.hours_range,
@@ -36,4 +38,5 @@ class RustResolver:
             steam_level_range=parsed.steam_level_range,
             real_hours=parsed.real_hours,
             skins_count=parsed.skins_count,
+            steam_level=parsed.steam_level,
         )

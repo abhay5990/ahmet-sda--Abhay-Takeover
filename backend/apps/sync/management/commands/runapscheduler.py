@@ -222,10 +222,10 @@ class Command(BaseCommand):
             replace_existing=True,
         )
 
-        # RobuxCrate batch processor — runs every 30 seconds
+        # RobuxCrate batch processor — runs every 5 minutes
         scheduler.add_job(
             run_robuxcrate_batch_processor_job,
-            trigger=IntervalTrigger(seconds=30),
+            trigger=IntervalTrigger(minutes=5),
             id='robuxcrate_batch_processor',
             name='RobuxCrate Batch Order Processor',
             max_instances=1,

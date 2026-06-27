@@ -2,6 +2,7 @@
 
 from .resolver import Fh6Resolver
 from .content import Fh6Composer
+from .manual_fields import FH6_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .media import Fh6MediaStrategy
 from .sources import Fh6ManualSourceAdapter
 from .marketplaces import Fh6EldoradoBuilder

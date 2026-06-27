@@ -46,6 +46,16 @@ class GenshinResolvedAccount(ResolvedAccountBase):
 
     has_email_access: bool = False
 
+    # Manual entry integer counts
+    adventure_rank_level: int = 0
+    character_count: int = 0
+    legendary_weapon_count: int = 0
+    primogem_count: int = 0
+    events_count: int = 0
+
+    # Attribute slug overrides (from manual entry — Eldorado select IDs)
+    account_type_attr: str = ""
+
     FIELD_META: ClassVar[dict[str, FieldMeta]] = {
         **ResolvedAccountBase.FIELD_META,
         "region": FieldMeta("Account region.", "Europe"),
@@ -77,6 +87,12 @@ class GenshinResolvedAccount(ResolvedAccountBase):
         "zenless_achievement_count": FieldMeta("ZZZ achievement count.", 200),
         "zenless_abyss_progress": FieldMeta("Shiyu Defense progress.", "8"),
         "has_email_access": FieldMeta("Email access status.", True),
+        # Manual entry integer counts
+        "adventure_rank_level": FieldMeta("Adventure rank from manual entry.", 55),
+        "character_count": FieldMeta("5-star character count from manual entry.", 12),
+        "legendary_weapon_count": FieldMeta("5-star weapon count from manual entry.", 5),
+        "primogem_count": FieldMeta("Primogem count from manual entry.", 15000),
+        "events_count": FieldMeta("Limited events count from manual entry.", 10),
     }
 
     COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {

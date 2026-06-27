@@ -27,6 +27,18 @@ class GenshinComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        # Manual entries have pre-defined title/description
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title,
+                    description=account.manual_description,
+                    tags=["genshin-impact", "mihoyo", "hoyoverse", "account"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         title = self.title_generator.generate(account, marketplace="default")
         g2g_title = self.title_generator.generate(account, marketplace="g2g")
         description = self.description_generator.generate(account, media=media, marketplace="default")

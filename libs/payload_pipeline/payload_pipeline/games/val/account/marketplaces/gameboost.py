@@ -10,6 +10,17 @@ from .....core.variant_mapping import get_external_id
 from .....marketplaces.gameboost import BaseGameBoostBuilder
 
 _UNRANKED_VALUES = {"Unranked", "Ranked Ready", "No rank", "No Rank", "Unrated", ""}
+_SERVER_FALLBACKS = {
+    "na": "North America",
+    "eu": "Europe",
+    "la": "Latin America",
+    "latam": "Latin America",
+    "br": "Brazil",
+    "ap": "Asia Pacific",
+    "apac": "Asia Pacific",
+    "kr": "Asia Pacific",
+    "tr": "Turkey",
+}
 
 
 class ValorantGameBoostBuilder(BaseGameBoostBuilder):
@@ -28,7 +39,7 @@ class ValorantGameBoostBuilder(BaseGameBoostBuilder):
     ) -> dict[str, Any]:
         server = get_external_id(
             ctx.variant_context if ctx else None, "region", account.region,
-        ) or "Asia Pacific"
+        ) or _SERVER_FALLBACKS.get(str(account.region or "").strip().lower()) or "Asia Pacific"
         return {
             "server": server,
             "current_tier": self._extract_rank(account.current_rank),

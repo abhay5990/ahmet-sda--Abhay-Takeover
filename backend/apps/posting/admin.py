@@ -58,11 +58,11 @@ class ContentTemplateAdmin(admin.ModelAdmin):
 
 @admin.register(PostingImagePreset)
 class PostingImagePresetAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'game', 'user', 'is_active', 'width', 'height', 'created_at', 'last_used_at']
+    list_display = ['id', 'name', 'game', 'uploaded_by', 'is_active', 'width', 'height', 'created_at', 'last_used_at']
     list_filter = ['game', 'is_active']
-    search_fields = ['name', 'sha256', 'user__username']
+    search_fields = ['name', 'sha256', 'uploaded_by__username']
     readonly_fields = ['sha256', 'mime_type', 'size_bytes', 'width', 'height', 'created_at', 'updated_at', 'last_used_at']
-    raw_id_fields = ['user', 'game']
+    raw_id_fields = ['uploaded_by', 'game']
 
 
 # ── Game Variant System ──────────────────────────────────────────

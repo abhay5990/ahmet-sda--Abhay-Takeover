@@ -9,6 +9,7 @@ from .marketplaces import (
 from .resolver import BSResolver
 from .content import BrawlStarsComposer
 from .media import BSMediaStrategy
+from .manual_fields import BS_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .sources import BSLztSourceAdapter
 from ....core.enums import ListingCategory
 from ....core.registry import GameDefinition

@@ -1,5 +1,6 @@
 """PSN account slice."""
 
+from .manual_fields import PSN_MANUAL_FIELDS  # noqa: F401
 from .resolver import PsnResolver
 from .content import PsnComposer
 from .media import PsnMediaStrategy

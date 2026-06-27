@@ -16,18 +16,26 @@ from .contracts import (
     PreparedListing,
     ResolvedAccountBase,
 )
+from .capabilities import MediaCapabilities, AUTO_GEN_AND_OVERRIDE, OVERRIDE_ONLY, NO_MEDIA
 from .enums import GameSlug, ListingCategory, ListingKind, Marketplace
 from .pipeline import PayloadPipeline
 from .exceptions import PayloadPipelineError, RegistryConflictError, RegistryLookupError, SourceValidationError
 from .registry import GameDefinition, PipelineRegistry
+from .manual_fields import ManualFieldSpec, FieldOption, ManualFieldRegistry, manual_field_registry
 from .validation import validate_resolved
 
 __all__ = [
+    "AUTO_GEN_AND_OVERRIDE",
     "BuildContext",
     "CredentialBundle",
     "FieldMeta",
+    "FieldOption",
     "GameDefinition",
     "GameSlug",
+    "ManualFieldRegistry",
+    "ManualFieldSpec",
+    "manual_field_registry",
+    "MediaCapabilities",
     "PayloadPipelineError",
     "RegistryConflictError",
     "RegistryLookupError",
@@ -41,6 +49,8 @@ __all__ = [
     "MarketplaceImageUploader",
     "MarketplaceListingOverride",
     "MediaBundle",
+    "NO_MEDIA",
+    "OVERRIDE_ONLY",
     "PayloadPipeline",
     "PipelineRegistry",
     "PipelineRequest",

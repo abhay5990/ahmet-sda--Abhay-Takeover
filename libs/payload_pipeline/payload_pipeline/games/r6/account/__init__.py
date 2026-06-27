@@ -4,6 +4,7 @@ from .content import R6Composer
 from .marketplaces import R6EldoradoBuilder, R6GameBoostBuilder, R6PlayerAuctionsBuilder
 from .media import R6MediaStrategy
 from .resolver import R6Resolver
+from .manual_fields import R6_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .sources import R6LztSourceAdapter, R6TrackerSourceAdapter
 from ....core.enums import ListingCategory
 from ....core.registry import GameDefinition

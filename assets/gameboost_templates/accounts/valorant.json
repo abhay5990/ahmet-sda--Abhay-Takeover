@@ -202,34 +202,34 @@
   },
   "game_items": {
     "agents": [
-      "Cypher",
-      "Killjoy",
-      "Sage"
+      "Miks",
+      "Sova",
+      "Raze"
     ],
     "weapon-skins": [
-      "ORA by OneTap Sheriff",
-      "Monstrocity Ares",
-      "Aero Guardian"
+      "VCT26 x RRQ Classic",
+      "Neptune Spectre",
+      "Personal Administrative Melee Unit"
     ],
     "buddies": [
-      "GiveBackBundle",
-      "EP5: Ascendant Buddy",
-      "Ruination Buddy"
+      "EP1: Iron Buddy",
+      "EP3: Platinum Buddy",
+      "PREMIER V25A3 CHAMPION // INT Buddy"
     ],
     "cards": [
-      "VALORANT Skye Card",
-      "Meet Your Main Card",
-      "Showdown Watch Card"
+      "Tactical Knife Schema Card",
+      "The Way Forward Card",
+      "VALORANT Breach Card"
     ],
     "sprays": [
-      "I'm Outta Here Spray",
-      "Whaaat? Spray",
-      "Sheeeeesh Spray"
+      "SplashX Spray",
+      "Bad Hair Day Spray",
+      "No Bullets Spray"
     ],
     "titles": [
-      "Default Title",
-      "PREMIER E9A2 GRAND CHAMP Title",
-      "PREMIER E9A1 CHAMPION // ADV Title"
+      "WNGMN Title",
+      "Aura Title",
+      "PREMIER E8A3 CHAMPION // OPN Title"
     ]
   }
 }

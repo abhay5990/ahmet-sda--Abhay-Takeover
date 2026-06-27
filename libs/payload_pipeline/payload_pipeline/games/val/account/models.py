@@ -30,6 +30,7 @@ class ValorantResolvedAccount(ResolvedAccountBase):
     buddy_count: int = 0
     knife_count: int = 0
     inventory_value: int = 0
+    account_tags: list[str] = field(default_factory=list)
 
     @property
     def has_email_access(self) -> bool:
@@ -65,6 +66,7 @@ class ValorantResolvedAccount(ResolvedAccountBase):
         "buddy_count": FieldMeta("Buddy count.", 15),
         "knife_count": FieldMeta("Knife skin count.", 8),
         "inventory_value": FieldMeta("Total inventory value in VP.", 12500),
+        "account_tags": FieldMeta("Manual account tags.", ["rare_skins"]),
     }
 
     COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {

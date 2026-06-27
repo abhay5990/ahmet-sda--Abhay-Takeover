@@ -3,23 +3,58 @@
 from __future__ import annotations
 
 from .models import BSResolvedAccount
-from .sources import BSLztSourceAdapter
+from .sources import BSLztSourceAdapter, BsManualSourceAdapter
 from ....core.contracts import PipelineRequest
 from ....core.exceptions import SourceValidationError
 from ....shared.credentials import resolve_credentials
 
 
 class BSResolver:
-    """Single-source resolver for Brawl Stars."""
+    """Multi-source resolver for Brawl Stars (LZT + manual)."""
 
     def __init__(self) -> None:
-        self.lzt = BSLztSourceAdapter()
+        self._lzt = BSLztSourceAdapter()
+        self._manual = BsManualSourceAdapter()
 
     def resolve(self, request: PipelineRequest) -> BSResolvedAccount:
-        lzt = self.lzt.parse(request.source("lzt"))
-        if lzt is None:
-            raise SourceValidationError("Brawl Stars requires the 'lzt' source.")
+        # Try manual source first
+        manual = self._manual.parse(request.source("manual"))
+        if manual is not None:
+            return self._resolve_manual(manual, request)
 
+        # Fall back to LZT source
+        lzt = self._lzt.parse(request.source("lzt"))
+        if lzt is None:
+            raise SourceValidationError("Brawl Stars requires a 'manual' or 'lzt' source.")
+
+        return self._resolve_lzt(lzt, request)
+
+    def _resolve_manual(self, manual, request: PipelineRequest) -> BSResolvedAccount:
+        credentials = resolve_credentials(manual, kind=request.kind, game_name="Brawl Stars")
+
+        return BSResolvedAccount(
+            item_id=manual.item_id,
+            category_id=manual.category_id,
+            price=manual.price,
+            kind=request.kind,
+            credentials=credentials,
+            has_email_access=not manual.credentials.is_empty and bool(manual.credentials.email_login),
+            manual_title=manual.title,
+            manual_description=manual.description,
+            # Categorical slug (rank stays as select)
+            rank_attr=manual.rank if manual.rank != "other" else "",
+            # Integer counts — Eldorado builder resolves these to slugs
+            trophies=manual.trophies,
+            brawler_count=manual.brawlers,
+            max_level_brawlers_count=manual.maxed_brawlers,
+            hypercharge_count=manual.hypercharge,
+            skin_count=manual.skins,
+            prestige_count=manual.prestige,
+            buffies_count=manual.buffies,
+            gems_count=manual.gems,
+        )
+
+    def _resolve_lzt(self, lzt, request: PipelineRequest) -> BSResolvedAccount:
         credentials = resolve_credentials(lzt, kind=request.kind, game_name="Brawl Stars")
 
         return BSResolvedAccount(

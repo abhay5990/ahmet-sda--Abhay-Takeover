@@ -3,6 +3,7 @@
 from .resolver import LolResolver
 from .content import LolComposer
 from .media import LolMediaStrategy
+from .manual_fields import LOL_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .sources import LolLztSourceAdapter
 from .marketplaces import (
     LolEldoradoBuilder,

@@ -828,11 +828,10 @@ class BatchStatusAggregationTests(_BaseTestCase):
         return batch
 
     def test_all_completed_without_store(self):
-        """All completed but no marketplace store → delivery fails → PROCESSING."""
+        """All completed but no marketplace store → delivery fails permanently → ERROR."""
         batch = self._make_batch_with_orders(['completed', 'completed'])
         _update_batch_status(batch)
-        # Without marketplace store, delivery fails → stays PROCESSING
-        self.assertEqual(batch.status, RobuxCrateBatch.Status.PROCESSING)
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.ERROR)
 
     def test_all_error(self):
         batch = self._make_batch_with_orders(['error', 'error'])
@@ -840,26 +839,121 @@ class BatchStatusAggregationTests(_BaseTestCase):
         self.assertEqual(batch.status, RobuxCrateBatch.Status.ERROR)
 
     def test_mixed_completed_and_error_triggers_delivery(self):
-        """At least 1 completed → delivery attempted, stays PROCESSING on fail."""
+        """At least 1 completed → delivery attempted, permanent fail → ERROR."""
         batch = self._make_batch_with_orders(['completed', 'error'])
         _update_batch_status(batch)
-        # Without marketplace store, delivery fails → stays PROCESSING
-        self.assertEqual(batch.status, RobuxCrateBatch.Status.PROCESSING)
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.ERROR)
 
     def test_has_pending(self):
+        """1 completed + 1 pending → delivery attempted, no store → ERROR."""
         batch = self._make_batch_with_orders(['completed', 'pending'])
         _update_batch_status(batch)
-        self.assertEqual(batch.status, RobuxCrateBatch.Status.PROCESSING)
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.ERROR)
 
     def test_has_queued(self):
         batch = self._make_batch_with_orders(['queued', 'completed'])
         _update_batch_status(batch)
-        self.assertEqual(batch.status, RobuxCrateBatch.Status.PROCESSING)
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.ERROR)
 
     def test_has_unknown(self):
         batch = self._make_batch_with_orders(['unknown', 'completed'])
         _update_batch_status(batch)
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.ERROR)
+
+    def test_no_completed_still_processing(self):
+        """Only non-final orders, none completed → stays PROCESSING."""
+        batch = self._make_batch_with_orders(['queued', 'pending'])
+        _update_batch_status(batch)
         self.assertEqual(batch.status, RobuxCrateBatch.Status.PROCESSING)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# 9b. DELIVERY — RETRYABLE vs PERMANENT ERRORS
+# ═══════════════════════════════════════════════════════════════════
+
+class DeliveryErrorHandlingTests(_BaseTestCase):
+    """Delivery: permanent errors → ERROR, retryable errors → PROCESSING."""
+
+    def _make_delivery_batch(self, marketplace='eldorado', order_statuses=None):
+        from apps.integrations.models import IntegrationAccount, IntegrationCredential
+        account = IntegrationAccount.objects.create(
+            name='Test Store', provider=marketplace, slug=f'test-{marketplace}',
+        )
+        store_cred = IntegrationCredential.objects.create(
+            account=account, credentials={}, is_active=True,
+        )
+        batch = RobuxCrateBatch.objects.create(
+            client_request_id=uuid.uuid4(),
+            created_by=self.user,
+            roblox_username='test',
+            place_id=111,
+            robux_amount=1000,
+            quantity=len(order_statuses or ['completed']),
+            status=RobuxCrateBatch.Status.PROCESSING,
+            marketplace=marketplace,
+            marketplace_order_id='test-order-123',
+            marketplace_store=store_cred,
+        )
+        for s in (order_statuses or ['completed']):
+            RobuxCrateOrder.objects.create(batch=batch, created_by=self.user, status=s)
+        return batch
+
+    @patch('apps.tools.services.robuxcrate._deliver_eldorado')
+    def test_eldorado_permanent_error_goes_to_error(self, mock_deliver):
+        """HTTP 400 (VALIDATION) → permanent → batch ERROR, no retry."""
+        mock_deliver.return_value = (False, 'HTTP 400 — order already delivered', False)
+        batch = self._make_delivery_batch(marketplace='eldorado')
+        _update_batch_status(batch)
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.ERROR)
+        self.assertIn('already delivered', batch.delivery_error)
+
+    @patch('apps.tools.services.robuxcrate._deliver_eldorado')
+    def test_eldorado_retryable_error_stays_processing(self, mock_deliver):
+        """HTTP 503 (SERVER_ERROR) → retryable → batch stays PROCESSING."""
+        mock_deliver.return_value = (False, 'HTTP 503 — service unavailable', True)
+        batch = self._make_delivery_batch(marketplace='eldorado')
+        _update_batch_status(batch)
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.PROCESSING)
+
+    @patch('apps.tools.services.robuxcrate._deliver_eldorado')
+    def test_eldorado_success_completes_batch(self, mock_deliver):
+        """Successful delivery → COMPLETED."""
+        mock_deliver.return_value = (True, '', False)
+        batch = self._make_delivery_batch(marketplace='eldorado')
+        _update_batch_status(batch)
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.COMPLETED)
+
+    @patch('apps.tools.services.robuxcrate._deliver_gameboost')
+    def test_gameboost_success_completes_batch(self, mock_deliver):
+        """GameBoost delivery success → COMPLETED."""
+        mock_deliver.return_value = (True, '', False)
+        batch = self._make_delivery_batch(marketplace='gameboost')
+        _update_batch_status(batch)
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.COMPLETED)
+
+    @patch('apps.tools.services.robuxcrate._deliver_gameboost')
+    def test_gameboost_permanent_error(self, mock_deliver):
+        """GameBoost permanent error → ERROR."""
+        mock_deliver.return_value = (False, 'Order not found', False)
+        batch = self._make_delivery_batch(marketplace='gameboost')
+        _update_batch_status(batch)
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.ERROR)
+
+    def test_unsupported_marketplace_goes_to_error(self):
+        """Unknown marketplace → permanent ERROR (not infinite retry)."""
+        batch = self._make_delivery_batch(marketplace='eldorado')
+        batch.marketplace = 'unknown_mp'
+        batch.save()
+        _update_batch_status(batch)
+        self.assertEqual(batch.status, RobuxCrateBatch.Status.ERROR)
+        self.assertIn('not implemented', batch.delivery_error)
+
+    @patch('apps.tools.services.robuxcrate._deliver_eldorado')
+    def test_error_batch_not_retried(self, mock_deliver):
+        """Once in ERROR, scheduler should NOT pick it up (not in _NON_FINAL_BATCH_STATUSES)."""
+        from apps.tools.services.robuxcrate import _NON_FINAL_BATCH_STATUSES
+        self.assertNotIn(RobuxCrateBatch.Status.ERROR, _NON_FINAL_BATCH_STATUSES)
+        self.assertNotIn(RobuxCrateBatch.Status.COMPLETED, _NON_FINAL_BATCH_STATUSES)
 
 
 # ═══════════════════════════════════════════════════════════════════

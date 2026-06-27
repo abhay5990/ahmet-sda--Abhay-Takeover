@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 
-from ..models import CS2ResolvedAccount
+from .....core.capabilities import AUTO_GEN_AND_OVERRIDE, MediaCapabilities
 from .....core import context_keys as ctx
 from .....core.contracts import PipelineRequest
+from .....shared.media_override import MediaOverrideMixin
 from .....shared.paths import default_cache_base_dir, default_media_output_dir
 from .....shared.steam_game_grid import SteamGameGridRenderer
+from ..models import CS2ResolvedAccount
 
 logger = logging.getLogger(__name__)
 
@@ -22,8 +23,10 @@ _CS2_FALLBACK = {
 }
 
 
-class CS2MediaStrategy:
+class CS2MediaStrategy(MediaOverrideMixin):
     """Generate a local game-list grid image from resolved CS2 data."""
+
+    capabilities: MediaCapabilities = AUTO_GEN_AND_OVERRIDE
 
     def __init__(self, renderer: SteamGameGridRenderer | None = None) -> None:
         self._renderer = renderer
@@ -34,12 +37,10 @@ class CS2MediaStrategy:
         if bool(request.context.get(ctx.DISABLE_MEDIA)):
             return []
 
-        # Manual entry: use user-selected override image
-        override_path = self._media_override_path(request)
-        if override_path:
-            return [override_path]
+        override = self._check_override(request)
+        if override is not None:
+            return override
 
-        # Platform import: generate grid image
         renderer = self._renderer or SteamGameGridRenderer(
             cache_dir=default_cache_base_dir("counter-strike-2"),
         )
@@ -57,18 +58,6 @@ class CS2MediaStrategy:
         except Exception as exc:
             logger.warning("CS2 media generation failed for item %s: %s", subject.item_id, exc)
             return []
-
-    def _media_override_path(self, request: PipelineRequest) -> str:
-        configured = request.context.get(ctx.MEDIA_OVERRIDE_PATH)
-        if not isinstance(configured, str) or not configured.strip():
-            return ""
-
-        path = Path(configured)
-        if path.is_file():
-            return str(path)
-
-        logger.warning("CS2 media override path does not exist: %s", configured)
-        return ""
 
     def _resolve_output_dir(self, request: PipelineRequest, item_id: str) -> str:
         configured = request.context.get(ctx.MEDIA_OUTPUT_DIR)

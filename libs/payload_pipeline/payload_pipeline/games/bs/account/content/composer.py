@@ -32,6 +32,18 @@ class BrawlStarsComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        # Manual entries have pre-defined title/description
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title,
+                    description=account.manual_description,
+                    tags=["brawl-stars", "supercell", "account"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         title = self.title_generator.generate(account, site="default")
         g2g_title = self.title_generator.generate(account, site="g2g")
 

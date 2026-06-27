@@ -29,4 +29,6 @@ class PsnResolver:
             price=parsed.price,
             kind=request.kind,
             credentials=credentials,
+            manual_title=parsed.title,
+            manual_description=parsed.description,
         )

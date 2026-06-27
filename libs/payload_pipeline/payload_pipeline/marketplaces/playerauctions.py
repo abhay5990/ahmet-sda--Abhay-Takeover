@@ -170,6 +170,26 @@ def _strip_url_schemes(text: str) -> str:
     return re.sub(r"https?://", "", text)
 
 
+def _append_album_link(description: str, listing: ListingDraft) -> str:
+    """Ensure PA descriptions include the hosted album link when available."""
+
+    album_url = (listing.media.album_url or "").strip()
+    if not album_url:
+        return description
+
+    clean_url = _strip_url_schemes(album_url).strip()
+    if not clean_url:
+        return description
+
+    if clean_url in _strip_url_schemes(description or ""):
+        return description
+
+    image_block = f"Images Link:\n{clean_url}"
+    if not description:
+        return image_block
+    return f"{image_block}\n\n{description}"
+
+
 def _stable_index(seed: str, salt: str, length: int) -> int:
     digest = hashlib.sha256(f"{salt}|{seed}".encode("utf-8")).hexdigest()
     return int(digest[:8], 16) % length
@@ -328,7 +348,9 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
             "freeInsurance": 7,
             "offerDuration": 30,
             "title": _strip_banned_segments(_sanitize_text(_strip_url_schemes(content.title))),
-            "offerDesc": _strip_banned_segments(_sanitize_text(_strip_url_schemes(content.description))).replace("\n", "<br>"),
+            "offerDesc": _strip_banned_segments(_sanitize_text(
+                _strip_url_schemes(_append_album_link(content.description, listing)),
+            )).replace("\n", "<br>"),
             "screenShot": "",
             "agreeCheck": True,
             "isAuto": is_stock,
@@ -374,7 +396,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
 
         title = _strip_banned_segments(_sanitize_text(_strip_url_schemes(content.title)))
         description = _strip_banned_segments(_sanitize_text(
-            _strip_url_schemes(content.description),
+            _strip_url_schemes(_append_album_link(content.description, listing)),
         )).replace("\n", "<br>")
 
         delivery_instructions = _sanitize_text(

@@ -1,5 +1,6 @@
 """GTA V account slice."""
 
+from .manual_fields import GTAV_MANUAL_FIELDS  # noqa: F401
 from .resolver import GtavResolver
 from .content import GtavComposer
 from .media import GtavMediaStrategy

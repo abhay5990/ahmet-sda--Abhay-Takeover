@@ -5,16 +5,20 @@ from __future__ import annotations
 import logging
 
 from ..models import CocResolvedAccount
+from .....core.capabilities import OVERRIDE_ONLY, MediaCapabilities
 from .....core import context_keys as ctx
 from .....core.contracts import PipelineRequest
+from .....shared.media_override import MediaOverrideMixin
 from .....shared.paths import default_media_output_dir
 from .image_renderer import CocImageRenderer
 
 logger = logging.getLogger(__name__)
 
 
-class CocMediaStrategy:
+class CocMediaStrategy(MediaOverrideMixin):
     """Generate CoC account images from resolved data."""
+
+    capabilities: MediaCapabilities = OVERRIDE_ONLY
 
     def __init__(self, renderer: CocImageRenderer | None = None) -> None:
         self._renderer = renderer
@@ -24,6 +28,11 @@ class CocMediaStrategy:
     ) -> list[str]:
         if bool(request.context.get(ctx.DISABLE_MEDIA)):
             return []
+
+        override = self._check_override(request)
+        if override is not None:
+            return override
+
         if (
             not subject.heroes
             and not subject.troops

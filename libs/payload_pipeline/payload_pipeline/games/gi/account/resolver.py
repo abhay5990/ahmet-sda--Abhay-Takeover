@@ -3,23 +3,60 @@
 from __future__ import annotations
 
 from .models import GenshinResolvedAccount
-from .sources import GenshinLztSourceAdapter
+from .sources import GenshinLztSourceAdapter, GiManualSourceAdapter
 from ....core.contracts import PipelineRequest
 from ....core.exceptions import SourceValidationError
 from ....shared.credentials import resolve_credentials
 
 
 class GenshinResolver:
-    """Single-source resolver for Genshin Impact / miHoYo."""
+    """Multi-source resolver for Genshin Impact / miHoYo (LZT + manual)."""
 
     def __init__(self) -> None:
-        self.lzt = GenshinLztSourceAdapter()
+        self._lzt = GenshinLztSourceAdapter()
+        self._manual = GiManualSourceAdapter()
 
     def resolve(self, request: PipelineRequest) -> GenshinResolvedAccount:
-        lzt = self.lzt.parse(request.source("lzt"))
-        if lzt is None:
-            raise SourceValidationError("Genshin Impact requires the 'lzt' source.")
+        # Try manual source first
+        manual = self._manual.parse(request.source("manual"))
+        if manual is not None:
+            return self._resolve_manual(manual, request)
 
+        # Fall back to LZT source
+        lzt = self._lzt.parse(request.source("lzt"))
+        if lzt is None:
+            raise SourceValidationError("Genshin Impact requires a 'manual' or 'lzt' source.")
+
+        return self._resolve_lzt(lzt, request)
+
+    def _resolve_manual(self, manual, request: PipelineRequest) -> GenshinResolvedAccount:
+        credentials = resolve_credentials(manual, kind=request.kind, game_name="Genshin Impact")
+
+        return GenshinResolvedAccount(
+            item_id=manual.item_id,
+            category_id=manual.category_id,
+            price=manual.price,
+            kind=request.kind,
+            credentials=credentials,
+            region=manual.region,
+            has_email_access=not manual.credentials.is_empty and bool(manual.credentials.email_login),
+            manual_title=manual.title,
+            manual_description=manual.description,
+            # Integer counts from manual entry
+            adventure_rank_level=manual.adventure_rank,
+            genshin_level=manual.adventure_rank,
+            character_count=manual.characters,
+            genshin_character_count=manual.characters,
+            legendary_weapon_count=manual.legendary_weapons,
+            genshin_legendary_weapons=manual.legendary_weapons,
+            primogem_count=manual.primogems,
+            genshin_currency=manual.primogems,
+            events_count=manual.events_count,
+            # Pass manual attribute slugs for marketplace builders
+            account_type_attr=manual.account_type if manual.account_type != "other" else "",
+        )
+
+    def _resolve_lzt(self, lzt, request: PipelineRequest) -> GenshinResolvedAccount:
         credentials = resolve_credentials(lzt, kind=request.kind, game_name="Genshin Impact")
 
         return GenshinResolvedAccount(

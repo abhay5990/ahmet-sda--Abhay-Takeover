@@ -31,10 +31,10 @@ class GenshinImpactEldoradoBuilder(BaseEldoradoBuilder):
             credentials=account.credentials,
             trade_environment_id=trade_env,
             attributes={
-                "genshin-account-type": self._resolve_account_type(account),
+                "genshin-account-type": account.account_type_attr or self._resolve_account_type(account),
                 "genshin-adventure-rank": self._resolve_adventure_rank(account.genshin_level),
                 "genshin-characters": self._resolve_characters(account.genshin_character_count),
-                "genshin-events-count": "events-other",
+                "genshin-events-count": self._resolve_events(account.events_count),
                 "genshin-legendary-weapons": self._resolve_legendary_weapons(account.genshin_legendary_weapons),
                 "genshin-primogems-count": self._resolve_primogems(account.genshin_currency),
             },
@@ -106,3 +106,17 @@ class GenshinImpactEldoradoBuilder(BaseEldoradoBuilder):
         if primogems <= 59999:
             return "primogems-4059k"
         return "primogems-60kplus"
+
+    @staticmethod
+    def _resolve_events(count: int) -> str:
+        if count <= 4:
+            return "events-04"
+        if count <= 9:
+            return "events-59"
+        if count <= 14:
+            return "events-1014"
+        if count <= 19:
+            return "events-1519"
+        if count >= 20:
+            return "events-20plus"
+        return "events-other"

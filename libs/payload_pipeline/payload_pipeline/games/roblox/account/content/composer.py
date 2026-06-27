@@ -37,6 +37,18 @@ class RobloxComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        # Manual entries have pre-defined title/description
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title,
+                    description=account.manual_description,
+                    tags=["roblox", "account"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         # Always build legacy draft first
         is_dropshipping = request.kind == ListingKind.DROPSHIPPING
         title = self.title_generator.generate(account, marketplace="default")

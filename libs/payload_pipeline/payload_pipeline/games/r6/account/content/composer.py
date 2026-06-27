@@ -37,6 +37,21 @@ class R6Composer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        # Manual entries have pre-defined title/description
+        if account.manual_title:
+            draft = ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title[:160],
+                    description=account.manual_description or "",
+                    tags=["r6", "rainbow-six", "account"],
+                ),
+                media=media,
+                marketplace_overrides={
+                    "g2g": MarketplaceListingOverride(title=account.manual_title[:120]),
+                },
+            )
+            return draft
+
         # Always build legacy draft first
         title = self.title_generator.generate(account, site="default")
         g2g_title = self.title_generator.generate(account, site="g2g")

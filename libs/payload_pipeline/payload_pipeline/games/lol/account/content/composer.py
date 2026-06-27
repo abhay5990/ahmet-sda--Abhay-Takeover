@@ -36,6 +36,21 @@ class LolComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        # Manual entries have pre-defined title/description
+        if account.manual_title:
+            draft = ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title[:160],
+                    description=account.manual_description or "",
+                    tags=["league-of-legends", "lol", "riot", "account"],
+                ),
+                media=media,
+                marketplace_overrides={
+                    "g2g": MarketplaceListingOverride(title=account.manual_title[:120]),
+                },
+            )
+            return draft
+
         title = self.title_generator.generate(account, marketplace="default")
         g2g_title = self.title_generator.generate(account, marketplace="g2g")
         description = self.description_generator.generate(

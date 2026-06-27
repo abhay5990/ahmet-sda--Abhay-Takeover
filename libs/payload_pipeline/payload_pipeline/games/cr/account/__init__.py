@@ -6,6 +6,7 @@ from .marketplaces import (
     CrGameBoostBuilder,
     CrPlayerAuctionsBuilder,
 )
+from .manual_fields import CR_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .resolver import CrResolver
 from .content import CrComposer
 from .media import CrMediaStrategy

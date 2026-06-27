@@ -2,6 +2,7 @@
 
 from .resolver import NwAccountResolver
 from .content import NwAccountComposer
+from .manual_fields import NW_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .media import NwAccountMediaStrategy
 from .sources import NwManualSourceAdapter
 from .marketplaces import NwEldoradoBuilder, NwPlayerAuctionsBuilder

@@ -2,28 +2,20 @@
 
 from __future__ import annotations
 
-import logging
-from pathlib import Path
-
-from ..models import RustResolvedAccount
-from .....core.contracts import PipelineRequest
+from .....core.capabilities import OVERRIDE_ONLY, MediaCapabilities
 from .....core import context_keys as ctx
+from .....core.contracts import PipelineRequest
+from .....shared.media_override import MediaOverrideMixin
+from ..models import RustResolvedAccount
 
-logger = logging.getLogger(__name__)
 
-
-class RustMediaStrategy:
+class RustMediaStrategy(MediaOverrideMixin):
     """Rust has no generated media, but supports user-selected image overrides."""
+
+    capabilities: MediaCapabilities = OVERRIDE_ONLY
 
     def prepare(self, subject: RustResolvedAccount, request: PipelineRequest) -> list[str]:
         if bool(request.context.get(ctx.DISABLE_MEDIA)):
             return []
 
-        override = request.context.get(ctx.MEDIA_OVERRIDE_PATH)
-        if isinstance(override, str) and override.strip():
-            path = Path(override)
-            if path.is_file():
-                return [str(path)]
-            logger.warning("Rust media override path does not exist: %s", override)
-
-        return []
+        return self._check_override(request) or []

@@ -12,15 +12,19 @@ from .tracker_image_generator import R6TrackerImageGenerator, R6TrackerImageInpu
 from ..models import R6ResolvedAccount
 from ..sources.lzt import R6LztSourceAdapter
 from ..sources.tracker import R6TrackerSourceAdapter
+from .....core.capabilities import OVERRIDE_ONLY, MediaCapabilities
 from .....core.contracts import PipelineRequest
 from .....core import context_keys as ctx
+from .....shared.media_override import MediaOverrideMixin
 
 
 logger = logging.getLogger(__name__)
 
 
-class R6MediaStrategy:
+class R6MediaStrategy(MediaOverrideMixin):
     """Prepare local preview images before any optional external publication."""
+
+    capabilities: MediaCapabilities = OVERRIDE_ONLY
 
     def __init__(self) -> None:
         self.lzt_source = R6LztSourceAdapter()
@@ -31,6 +35,10 @@ class R6MediaStrategy:
     def prepare(self, subject: R6ResolvedAccount, request: PipelineRequest) -> list[str]:
         if bool(request.context.get(ctx.DISABLE_MEDIA)):
             return []
+
+        override = self._check_override(request)
+        if override is not None:
+            return override
 
         output_dir = self._resolve_output_dir(request)
 

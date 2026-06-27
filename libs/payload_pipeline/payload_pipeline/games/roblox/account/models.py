@@ -34,6 +34,11 @@ class RobloxResolvedAccount(ResolvedAccountBase):
     game_pass_total_robux: int = 0
     has_email_access: bool = False
 
+    # Attribute slug overrides (from manual entry — Eldorado select IDs)
+    account_type_attr: str = ""
+    game_attr: str = ""
+    age_verified_attr: str = ""
+
     FIELD_META: ClassVar[dict[str, FieldMeta]] = {
         **ResolvedAccountBase.FIELD_META,
         "roblox_id": FieldMeta("Roblox numeric user ID.", 123456789),

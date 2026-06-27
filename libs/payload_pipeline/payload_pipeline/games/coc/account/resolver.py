@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from .models import CocResolvedAccount
-from .sources import CocLztSourceAdapter, CocTrackerSourceAdapter
+from .sources import CocLztSourceAdapter, CocManualSourceAdapter, CocTrackerSourceAdapter
 from .sources.lzt import CocLztSource
 from .sources.tracker import CocTrackerSource
 from ....core.contracts import PipelineRequest
@@ -15,24 +15,60 @@ class CocResolver:
     """Multi-source resolver for Clash of Clans.
 
     Merge strategy:
+    - Manual source takes priority when present
     - Credentials: LZT preferred, tracker fallback
     - Stats (TH, trophies, heroes): tracker preferred (more up-to-date), LZT fallback
     - Metadata (price, item_id, category_id): always from LZT
     """
 
     def __init__(self) -> None:
-        self.lzt = CocLztSourceAdapter()
-        self.tracker = CocTrackerSourceAdapter()
+        self._lzt = CocLztSourceAdapter()
+        self._tracker = CocTrackerSourceAdapter()
+        self._manual = CocManualSourceAdapter()
 
     def resolve(self, request: PipelineRequest) -> CocResolvedAccount:
-        lzt = self.lzt.parse(request.source("lzt"))
-        tracker = self.tracker.parse(request.source("tracker"))
+        # Try manual source first
+        manual = self._manual.parse(request.source("manual"))
+        if manual is not None:
+            return self._resolve_manual(manual, request)
+
+        # Fall back to LZT + tracker
+        lzt = self._lzt.parse(request.source("lzt"))
+        tracker = self._tracker.parse(request.source("tracker"))
 
         if lzt is None and tracker is None:
             raise SourceValidationError(
-                "Clash of Clans requires at least one source: 'lzt' or 'tracker'."
+                "Clash of Clans requires at least one source: 'manual', 'lzt', or 'tracker'."
             )
 
+        return self._resolve_lzt(lzt, tracker, request)
+
+    def _resolve_manual(self, manual, request: PipelineRequest) -> CocResolvedAccount:
+        credentials = resolve_credentials(manual, kind=request.kind, game_name="Clash of Clans")
+
+        return CocResolvedAccount(
+            item_id=manual.item_id,
+            category_id=manual.category_id,
+            price=manual.price,
+            kind=request.kind,
+            credentials=credentials,
+            has_email_access=not manual.credentials.is_empty and bool(manual.credentials.email_login),
+            manual_title=manual.title,
+            manual_description=manual.description,
+            # Categorical slugs (stays as select)
+            current_rank_attr=manual.current_rank if manual.current_rank != "other" else "",
+            maxed_account_attr=manual.maxed_account if manual.maxed_account != "other" else "",
+            # Integer counts — Eldorado builder resolves these to slugs
+            town_hall_level=manual.town_hall,
+            gems_count=manual.gems,
+        )
+
+    def _resolve_lzt(
+        self,
+        lzt: CocLztSource | None,
+        tracker: CocTrackerSource | None,
+        request: PipelineRequest,
+    ) -> CocResolvedAccount:
         credentials = self._resolve_credentials(request.kind, lzt, tracker)
 
         # Stats: tracker preferred when available

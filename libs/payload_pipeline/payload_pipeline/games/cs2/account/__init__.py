@@ -4,6 +4,7 @@ from .content import CS2Composer
 from .marketplaces import CS2EldoradoBuilder, CS2G2GBuilder, CS2GameBoostBuilder, CS2PlayerAuctionsBuilder
 from .media import CS2MediaStrategy
 from .resolver import CS2Resolver
+from .manual_fields import CS2_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .sources import CS2LztSourceAdapter
 from ....core.enums import ListingCategory
 from ....core.registry import GameDefinition

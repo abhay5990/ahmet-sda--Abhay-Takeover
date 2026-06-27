@@ -5,16 +5,20 @@ from __future__ import annotations
 import logging
 
 from ..models import LolResolvedAccount
+from .....core.capabilities import OVERRIDE_ONLY, MediaCapabilities
 from .....core import context_keys as ctx
 from .....core.contracts import PipelineRequest
+from .....shared.media_override import MediaOverrideMixin
 from .....shared.paths import default_media_output_dir
 from .image_renderer import LolImageRenderer
 
 logger = logging.getLogger(__name__)
 
 
-class LolMediaStrategy:
+class LolMediaStrategy(MediaOverrideMixin):
     """Generate local champion and skin grid images from resolved LoL data."""
+
+    capabilities: MediaCapabilities = OVERRIDE_ONLY
 
     def __init__(self, renderer: LolImageRenderer | None = None) -> None:
         self._renderer = renderer
@@ -24,6 +28,11 @@ class LolMediaStrategy:
     ) -> list[str]:
         if bool(request.context.get(ctx.DISABLE_MEDIA)):
             return []
+
+        override = self._check_override(request)
+        if override is not None:
+            return override
+
         if not subject.champion_ids and not subject.skin_ids:
             return []
 

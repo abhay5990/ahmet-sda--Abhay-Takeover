@@ -40,6 +40,13 @@ class CocResolvedAccount(ResolvedAccountBase):
     battle_pass_active: bool = False
     player_tag: str = ""
     has_email_access: bool = False
+    gems_count: int = 0
+
+    # Attribute slug overrides (from manual entry — Eldorado select IDs)
+    current_rank_attr: str = ""
+    maxed_account_attr: str = ""
+    town_hall_attr: str = ""
+    gems_attr: str = ""
 
     FIELD_META: ClassVar[dict[str, FieldMeta]] = {
         **ResolvedAccountBase.FIELD_META,
@@ -63,6 +70,7 @@ class CocResolvedAccount(ResolvedAccountBase):
         "battle_pass_active": FieldMeta("Gold Pass active.", True),
         "player_tag": FieldMeta("Supercell player tag.", "#ABC123DEF"),
         "has_email_access": FieldMeta("Email access status.", True),
+        "gems_count": FieldMeta("Gem balance.", 5000),
     }
 
     COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {

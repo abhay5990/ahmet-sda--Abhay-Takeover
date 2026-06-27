@@ -20,6 +20,28 @@ _COVER_IMAGE_URL = (
 
 _FALLBACK_REGION = "KR"
 _FALLBACK_SERVER_ID = "9206"
+_SERVER_NAME_FALLBACKS = {
+    "na": "NA",
+    "eu": "EU",
+    "la": "LATAM",
+    "latam": "LATAM",
+    "br": "BR",
+    "ap": "APAC",
+    "apac": "APAC",
+    "kr": "KR",
+    "tr": "TR",
+}
+_SERVER_ID_FALLBACKS = {
+    "na": "9089",
+    "eu": "9128",
+    "la": "9207",
+    "latam": "9207",
+    "br": "9208",
+    "ap": "9309",
+    "apac": "9309",
+    "kr": "9206",
+    "tr": "14995",
+}
 
 
 class ValorantPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
@@ -51,7 +73,8 @@ class ValorantPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
         name = get_external_name(
             ctx.variant_context if ctx else None, "region", region,
         )
-        return [name or _FALLBACK_REGION]
+        fallback = _SERVER_NAME_FALLBACKS.get(region.strip().lower())
+        return [name or fallback or _FALLBACK_REGION]
 
     def _get_server_id(
         self, account: ValorantResolvedAccount, ctx: BuildContext | None = None,
@@ -60,4 +83,5 @@ class ValorantPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
         eid = get_external_id(
             ctx.variant_context if ctx else None, "region", region,
         )
-        return [eid or _FALLBACK_SERVER_ID]
+        fallback = _SERVER_ID_FALLBACKS.get(region.strip().lower())
+        return [eid or fallback or _FALLBACK_SERVER_ID]

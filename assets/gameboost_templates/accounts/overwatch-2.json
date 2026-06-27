@@ -216,14 +216,14 @@
   },
   "game_items": {
     "heroes": [
-      "Wrecking Ball",
-      "Reinhardt",
-      "Orisa"
+      "Reaper",
+      "Roadhog",
+      "Mercy"
     ],
     "roles": [
-      "Tank",
+      "Damage",
       "Support",
-      "Damage"
+      "Tank"
     ]
   }
 }

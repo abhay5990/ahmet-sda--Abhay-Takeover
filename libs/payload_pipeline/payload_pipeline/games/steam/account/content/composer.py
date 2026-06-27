@@ -21,6 +21,17 @@ class SteamComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title,
+                    description=account.manual_description,
+                    tags=["steam", "account"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         parts = [
             "Steam",
             f"{account.total_games} Games" if account.total_games else "",

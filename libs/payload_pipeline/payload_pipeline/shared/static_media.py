@@ -7,8 +7,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from ..core.capabilities import OVERRIDE_ONLY, MediaCapabilities
 from ..core import context_keys as ctx
 from ..core.contracts import PipelineRequest
+from .media_override import MediaOverrideMixin
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +22,10 @@ class StaticMediaSpec:
     resource_path: Path
 
 
-class StaticAccountMediaStrategy:
+class StaticAccountMediaStrategy(MediaOverrideMixin):
     """Expose one bundled account image without per-item output copies."""
+
+    capabilities: MediaCapabilities = OVERRIDE_ONLY
 
     def __init__(self, spec: StaticMediaSpec) -> None:
         self._spec = spec
@@ -29,6 +33,10 @@ class StaticAccountMediaStrategy:
     def prepare(self, subject: Any, request: PipelineRequest) -> list[str]:
         if bool(request.context.get(ctx.DISABLE_MEDIA)):
             return []
+
+        override = self._check_override(request)
+        if override is not None:
+            return override
 
         resource_path = resolve_static_media_resource(self._spec.resource_path)
         return [resource_path] if resource_path else []

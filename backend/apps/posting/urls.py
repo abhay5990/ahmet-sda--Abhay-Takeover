@@ -9,6 +9,7 @@ from .api import credential_specs as credential_spec_api
 from .api import content_templates as content_template_api
 from .api import cosmetic_lists as cosmetic_list_api
 from .api import manual as manual_api
+from .api import manual_fields as manual_fields_api
 
 app_name = 'posting'
 
@@ -48,6 +49,7 @@ urlpatterns = [
     path('api/image-presets/', image_presets_api.list_image_presets, name='api_image_presets'),
     path('api/image-presets/upload/', image_presets_api.upload_image_preset, name='api_upload_image_preset'),
     path('api/image-presets/<int:preset_id>/delete/', image_presets_api.delete_image_preset, name='api_delete_image_preset'),
+    path('api/media-capabilities/', image_presets_api.media_capabilities, name='api_media_capabilities'),
 
     # API — content templates
     path('api/content-templates/', content_template_api.list_content_templates, name='api_content_templates'),
@@ -101,6 +103,9 @@ urlpatterns = [
     # API — manual posting (Fortnite Google Sheets)
     path('api/manual/fortnite/sheet/', manual_api.open_sheet, name='api_manual_fortnite_sheet'),
     path('api/manual/fortnite/accounts/', manual_api.fetch_accounts, name='api_manual_fortnite_accounts'),
+
+    # API — manual field specs (game-specific dynamic form fields)
+    path('api/manual-fields/', manual_fields_api.manual_field_specs, name='api_manual_field_specs'),
 
     # API — credential specs
     path('api/credential-specs/', credential_spec_api.list_specs, name='api_list_credential_specs'),

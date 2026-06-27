@@ -460,6 +460,12 @@ class StockOrchestrator:
 
     @staticmethod
     def _media_override_path(job: PostingJob) -> str:
+        media_settings = job.settings.get('_media', {})
+        if isinstance(media_settings, dict):
+            path = media_settings.get('selected_image_path', '')
+            if path:
+                return str(path)
+
         manual_settings = job.settings.get('_manual', {})
         if not isinstance(manual_settings, dict):
             return ''

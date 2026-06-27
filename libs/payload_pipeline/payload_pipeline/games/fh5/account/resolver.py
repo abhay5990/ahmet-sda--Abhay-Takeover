@@ -33,4 +33,6 @@ class Fh5Resolver:
             edition=parsed.edition,
             cars_count=parsed.cars_count,
             credits_count=parsed.credits_count,
+            manual_title=parsed.title,
+            manual_description=parsed.description,
         )

@@ -8,19 +8,21 @@ import logging
 import threading
 import uuid
 from decimal import Decimal
-from pathlib import Path
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.utils import timezone
 from django.views.decorators.http import require_POST, require_GET
 
 from apps.integrations.models import IntegrationAccount
 from apps.inventory.models import Game, OwnedProduct
+from apps.posting.api.manual_fields import validate_manual_fields_for_game
+from apps.posting.api.media_override import (
+    mark_image_override_used,
+    resolve_image_override_settings,
+)
 from apps.posting.models import (
     ContentTemplate,
     PostingDefault,
-    PostingImagePreset,
     PostingJob,
     PostingJobItem,
     PostingJobItemStatus,
@@ -154,6 +156,12 @@ def create_job(request):
                 defaults=update_fields,
             )
 
+    media_settings, media_error = resolve_image_override_settings(body, game)
+    if media_error is not None:
+        return media_error
+    if media_settings:
+        job_settings['_media'] = media_settings
+
     if source_type == 'manual':
         return _create_manual_job(body, game, stores, job_settings, request.user)
 
@@ -205,6 +213,7 @@ def _create_account_job(body: dict, game: Game, stores: list, job_settings: dict
         settings=job_settings,
         total_count=total,
     )
+    mark_image_override_used(job_settings)
 
     items = []
     for login in clean_logins:
@@ -270,35 +279,12 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
 
     # Batch-level fields from UI
     is_gta = _is_gtav_game(game)
-    selected_image_preset = None
-    selected_image_path = ''
+    media_settings = job_settings.get('_media', {})
+    if not isinstance(media_settings, dict):
+        media_settings = {}
 
     if is_gta and not platform:
         return JsonResponse({'error': 'platform is required for GTA V manual mode'}, status=400)
-
-    selected_image_preset_id = body.get('selected_image_preset_id')
-    if selected_image_preset_id not in (None, '', 'auto'):
-        try:
-            selected_image_preset_id = int(selected_image_preset_id)
-        except (TypeError, ValueError):
-            return JsonResponse({'error': 'selected_image_preset_id must be a number'}, status=400)
-
-        selected_image_preset = PostingImagePreset.objects.filter(
-            id=selected_image_preset_id,
-            user=user,
-            game=game,
-            is_active=True,
-        ).first()
-        if selected_image_preset is None:
-            return JsonResponse({'error': 'Selected image preset not found'}, status=404)
-
-        try:
-            selected_image_path = selected_image_preset.image.path
-        except (ValueError, NotImplementedError):
-            return JsonResponse({'error': 'Selected image preset has no local file'}, status=400)
-
-        if not Path(selected_image_path).is_file():
-            return JsonResponse({'error': 'Selected image preset file is missing'}, status=400)
 
     # GTA-specific fields only accepted for GTA games
     if is_gta:
@@ -313,10 +299,10 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
             'has_dual_characters': bool(body.get('has_dual_characters', False)),
             'title': body.get('title') or '',
             'description': body.get('description') or '',
-            'selected_image_preset_id': selected_image_preset.id if selected_image_preset else None,
-            'selected_image_path': selected_image_path,
-            'selected_image_url': selected_image_preset.image.url if selected_image_preset else '',
-            'selected_image_name': selected_image_preset.name if selected_image_preset else '',
+            'selected_image_preset_id': media_settings.get('selected_image_preset_id'),
+            'selected_image_path': media_settings.get('selected_image_path', ''),
+            'selected_image_url': media_settings.get('selected_image_url', ''),
+            'selected_image_name': media_settings.get('selected_image_name', ''),
         }
     else:
         batch_data = {
@@ -324,7 +310,20 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
             'purchased_price': purchased_price,
             'title': body.get('title') or '',
             'description': body.get('description') or '',
+            'selected_image_preset_id': media_settings.get('selected_image_preset_id'),
+            'selected_image_path': media_settings.get('selected_image_path', ''),
+            'selected_image_url': media_settings.get('selected_image_url', ''),
+            'selected_image_name': media_settings.get('selected_image_name', ''),
         }
+        # Dynamic game-specific fields from ManualFieldRegistry
+        manual_fields, manual_fields_error = validate_manual_fields_for_game(
+            game,
+            body.get('manual_fields'),
+        )
+        if manual_fields_error is not None:
+            return manual_fields_error
+        if manual_fields:
+            batch_data['manual_fields'] = manual_fields
 
     # Create OwnedProducts with LZT-compatible raw_data
     owned_products = _create_manual_owned_products(credentials, batch_data, game)
@@ -344,8 +343,8 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
         'platform': platform,
         'distribution_mode': distribution_mode,
         'purchased_price': purchased_price,
-        'selected_image_preset_id': selected_image_preset.id if selected_image_preset else None,
-        'selected_image_path': selected_image_path,
+        'selected_image_preset_id': media_settings.get('selected_image_preset_id'),
+        'selected_image_path': media_settings.get('selected_image_path', ''),
         'batch_data': batch_data,
     }
 
@@ -355,10 +354,7 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
         settings=job_settings,
         total_count=len(items_data),
     )
-
-    if selected_image_preset:
-        selected_image_preset.last_used_at = timezone.now()
-        selected_image_preset.save(update_fields=['last_used_at', 'updated_at'])
+    mark_image_override_used(job_settings)
 
     items = []
     for login, owned, store in items_data:
@@ -466,6 +462,10 @@ def _create_manual_owned_products(
                 'tags': batch_data.get('account_tags') or ['modded'],
                 'has_dual_characters': batch_data.get('has_dual_characters', False),
             })
+
+        # Dynamic game-specific fields from ManualFieldRegistry
+        if 'manual_fields' in batch_data:
+            raw_data['manual_fields'] = batch_data['manual_fields']
 
         # Upsert OwnedProduct (canonical key: category + login)
         owned, created = OwnedProduct.objects.update_or_create(

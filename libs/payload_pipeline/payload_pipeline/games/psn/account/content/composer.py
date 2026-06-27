@@ -20,6 +20,17 @@ class PsnComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title,
+                    description=account.manual_description or "",
+                    tags=["psn", "playstation", "account"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         title = "PSN Account"
         description = "PSN Account\n---------------------------\nFull access included."
 

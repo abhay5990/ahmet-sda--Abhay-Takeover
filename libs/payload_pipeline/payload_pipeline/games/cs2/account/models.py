@@ -21,9 +21,20 @@ class CS2ResolvedAccount(ResolvedAccountBase):
     hours_played: int = 0
     games: list[dict[str, Any]] = field(default_factory=list)
 
+    # Manual numeric override for medal count (when no medals list available)
+    medal_count_manual: int = 0
+
+    # Attribute slug overrides (from manual entry — Eldorado select IDs)
+    prime_attr: str = ""
+    veteran_coin_attr: str = ""
+    esea_attr: str = ""
+    faceit_attr: str = ""
+
     @property
     def medal_count(self) -> int:
-        return len(self.medals)
+        if self.medals:
+            return len(self.medals)
+        return self.medal_count_manual
 
     FIELD_META: ClassVar[dict[str, FieldMeta]] = {
         **ResolvedAccountBase.FIELD_META,

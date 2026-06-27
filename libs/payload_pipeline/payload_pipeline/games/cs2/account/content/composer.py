@@ -21,6 +21,20 @@ class CS2Composer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        # Manual entries have pre-defined title/description
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title[:160],
+                    description=account.manual_description or "",
+                    tags=["cs2", "counter-strike-2", "account"],
+                ),
+                media=media,
+                marketplace_overrides={
+                    "g2g": MarketplaceListingOverride(title=account.manual_title[:120]),
+                },
+            )
+
         parts = [
             "CS2",
             account.rank,

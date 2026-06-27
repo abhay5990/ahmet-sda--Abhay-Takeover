@@ -28,6 +28,15 @@ class LolResolvedAccount(ResolvedAccountBase):
     skin_names: list[str] = field(default_factory=list)
     has_email_access: bool = False
 
+    # Attribute slug overrides (from manual entry — Eldorado select IDs)
+    current_rank_attr: str = ""
+    previous_rank_attr: str = ""
+    ranked_ready_attr: str = ""
+    champion_count_attr: str = ""
+    skins_attr: str = ""
+    blue_essence_attr: str = ""
+    riot_points_attr: str = ""
+
     FIELD_META: ClassVar[dict[str, FieldMeta]] = {
         **ResolvedAccountBase.FIELD_META,
         "region": FieldMeta("Account region.", "EUW"),

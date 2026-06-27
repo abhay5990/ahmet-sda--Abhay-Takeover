@@ -1,5 +1,6 @@
 """Xbox account slice."""
 
+from .manual_fields import XBOX_MANUAL_FIELDS  # noqa: F401
 from .resolver import XboxResolver
 from .content import XboxComposer
 from .media import XboxMediaStrategy

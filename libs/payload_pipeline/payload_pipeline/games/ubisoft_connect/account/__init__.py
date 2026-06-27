@@ -1,5 +1,6 @@
 """Ubisoft Connect account slice."""
 
+from .manual_fields import UBISOFT_MANUAL_FIELDS  # noqa: F401
 from .resolver import UbisoftResolver
 from .content import UbisoftComposer
 from .media import UbisoftMediaStrategy

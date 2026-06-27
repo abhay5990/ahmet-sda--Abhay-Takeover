@@ -4,6 +4,7 @@ from .resolver import FortniteResolver
 from .content import FortniteComposer
 from .media import FortniteMediaStrategy
 from .sources import FortniteLztSourceAdapter, FortniteManualSourceAdapter
+from .manual_fields import FN_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .marketplaces import FortniteEldoradoBuilder, FortniteGameBoostBuilder, FortniteG2GBuilder, FortnitePlayerAuctionsBuilder
 from ....core.enums import ListingCategory
 from ....core.registry import GameDefinition

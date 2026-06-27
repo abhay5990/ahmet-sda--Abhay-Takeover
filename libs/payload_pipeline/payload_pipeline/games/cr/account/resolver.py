@@ -5,8 +5,9 @@ from __future__ import annotations
 from typing import Any
 
 from .models import CrResolvedAccount
-from .sources import CrLztSourceAdapter, CrTrackerSourceAdapter
+from .sources import CrLztSourceAdapter, CrManualSourceAdapter, CrTrackerSourceAdapter
 from .sources.lzt import CrLztSource
+from .sources.manual import CrManualSource
 from .sources.tracker import CrTrackerSource
 from ....core.contracts import PipelineRequest
 from ....core.exceptions import SourceValidationError
@@ -17,24 +18,54 @@ class CrResolver:
     """Multi-source resolver for Clash Royale.
 
     Merge strategy:
+    - Manual source: highest priority, returns immediately
     - Credentials: LZT preferred, tracker fallback
     - Stats (trophies, cards, wins/losses): tracker preferred, LZT fallback
     - Metadata (price, item_id, category_id): always from LZT
     """
 
     def __init__(self) -> None:
+        self._manual = CrManualSourceAdapter()
         self.lzt = CrLztSourceAdapter()
         self.tracker = CrTrackerSourceAdapter()
 
     def resolve(self, request: PipelineRequest) -> CrResolvedAccount:
+        manual = self._manual.parse(request.source("manual"))
+        if manual is not None:
+            return self._resolve_manual(manual, request)
+
         lzt = self.lzt.parse(request.source("lzt"))
         tracker = self.tracker.parse(request.source("tracker"))
 
         if lzt is None and tracker is None:
             raise SourceValidationError(
-                "Clash Royale requires at least one source: 'lzt' or 'tracker'."
+                "Clash Royale requires the 'manual', 'lzt', or 'tracker' source."
             )
 
+        return self._resolve_lzt(lzt, tracker, request)
+
+    def _resolve_manual(
+        self,
+        src: CrManualSource,
+        request: PipelineRequest,
+    ) -> CrResolvedAccount:
+        credentials = resolve_credentials(src, kind=request.kind, game_name="Clash Royale")
+        return CrResolvedAccount(
+            item_id=src.item_id,
+            category_id=src.category_id,
+            price=src.price,
+            kind=request.kind,
+            credentials=credentials,
+            manual_title=src.title,
+            manual_description=src.description,
+        )
+
+    def _resolve_lzt(
+        self,
+        lzt: CrLztSource | None,
+        tracker: CrTrackerSource | None,
+        request: PipelineRequest,
+    ) -> CrResolvedAccount:
         credentials = self._resolve_credentials(request.kind, lzt, tracker)
 
         # Tracker-derived aggregate stats

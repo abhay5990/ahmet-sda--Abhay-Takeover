@@ -20,6 +20,18 @@ class NwItemComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        # Manual entries have pre-defined title/description
+        if item.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=item.manual_title,
+                    description=item.manual_description or "",
+                    tags=["new-world", "item"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         parts = [
             "New World",
             item.region if item.region else "",

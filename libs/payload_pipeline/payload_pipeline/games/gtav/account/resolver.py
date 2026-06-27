@@ -35,6 +35,8 @@ class GtavResolver:
             price=parsed.price,
             kind=request.kind,
             credentials=credentials,
+            manual_title=parsed.title,
+            manual_description=parsed.description,
             main_platform=parsed.main_platform,
             level=parsed.level,
             cash_amount=parsed.cash_amount,

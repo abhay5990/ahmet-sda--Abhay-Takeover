@@ -9,6 +9,7 @@ from .marketplaces import (
 from .resolver import CocResolver
 from .content import CocComposer
 from .media import CocMediaStrategy
+from .manual_fields import COC_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .sources import CocLztSourceAdapter, CocTrackerSourceAdapter
 from ....core.enums import ListingCategory
 from ....core.registry import GameDefinition

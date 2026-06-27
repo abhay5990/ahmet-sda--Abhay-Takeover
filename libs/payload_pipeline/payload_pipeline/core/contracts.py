@@ -139,6 +139,10 @@ class ResolvedAccountBase:
     ref_key: str = ""
     credentials: CredentialBundle = field(default_factory=CredentialBundle)
 
+    # Manual entry pass-through: when set, composers use these instead of generating.
+    manual_title: str = ""
+    manual_description: str = ""
+
     FIELD_META: ClassVar[dict[str, FieldMeta]] = {
         "item_id": FieldMeta("Source item ID.", "sample-item-123"),
         "category_id": FieldMeta("Listing category ID.", 1),

@@ -97,6 +97,12 @@ class R6ResolvedAccount(ResolvedAccountBase):
     psn_connected: bool = False
     xbox_connected: bool = False
 
+    # Attribute slug overrides (from manual entry — Eldorado select IDs)
+    current_rank_attr: str = ""
+    previous_rank_attr: str = ""
+    game_purchased_attr: str = ""
+    ranked_unlocked_attr: str = ""
+
     @property
     def ranked_ready(self) -> bool:
         return self.level >= 50

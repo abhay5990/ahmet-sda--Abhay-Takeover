@@ -2,6 +2,7 @@
 
 from .resolver import RustResolver
 from .content import RustComposer
+from .manual_fields import RUST_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .media import RustMediaStrategy
 from .sources import RustManualSourceAdapter
 from .marketplaces import RustEldoradoBuilder, RustGameBoostBuilder, RustPlayerAuctionsBuilder

@@ -28,6 +28,17 @@ class CrComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title,
+                    description=account.manual_description,
+                    tags=["clash-royale", "cr", "supercell", "account"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         is_dropshipping = request.kind == ListingKind.DROPSHIPPING
         title = self.title_generator.generate(account, marketplace="default")
         g2g_title = self.title_generator.generate(account, marketplace="g2g")

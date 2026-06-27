@@ -123,19 +123,21 @@ class FortniteComposer:
             },
         )
 
-        # Overlay templates as per-marketplace overrides (draft.default untouched)
-        title_templates = ctx.TITLE_TEMPLATES.get(request)
-        desc_templates = ctx.DESCRIPTION_TEMPLATES.get(request)
-        if title_templates or desc_templates:
-            cosmetic_lists = ctx.COSMETIC_LISTS.get(request)
-            apply_template_overrides(
-                draft,
-                build_fortnite_context(
-                    account, request, media,
-                    cosmetic_lists=cosmetic_lists,
-                ),
-                title_templates=title_templates,
-                description_templates=desc_templates,
-            )
+        # Overlay templates as per-marketplace overrides (draft.default untouched).
+        # Skip when user provided manual title/description — those take priority.
+        if not account.manual_title:
+            title_templates = ctx.TITLE_TEMPLATES.get(request)
+            desc_templates = ctx.DESCRIPTION_TEMPLATES.get(request)
+            if title_templates or desc_templates:
+                cosmetic_lists = ctx.COSMETIC_LISTS.get(request)
+                apply_template_overrides(
+                    draft,
+                    build_fortnite_context(
+                        account, request, media,
+                        cosmetic_lists=cosmetic_lists,
+                    ),
+                    title_templates=title_templates,
+                    description_templates=desc_templates,
+                )
 
         return draft

@@ -23,12 +23,12 @@ class RobloxEldoradoBuilder(BaseEldoradoBuilder):
             price=account.price,
             credentials=account.credentials,
             attributes={
-                "roblox-account-type": self._resolve_account_type(account),
-                "roblox-game": "game-other",
+                "roblox-account-type": account.account_type_attr or self._resolve_account_type(account),
+                "roblox-game": account.game_attr or "game-other",
                 "roblox-inventory-value": self._resolve_inventory_value(account.inventory_price),
                 "roblox-offsale-items": self._resolve_offsale(account.offsale_count),
                 "roblox-robux-value": self._resolve_robux(account.robux),
-                "roblox-verified": "verified-yes" if account.age_verified else "verified-no",
+                "roblox-verified": account.age_verified_attr or ("verified-yes" if account.age_verified else "verified-no"),
             },
             ref_key=account.ref_key,
         )

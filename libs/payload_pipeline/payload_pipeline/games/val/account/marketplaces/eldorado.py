@@ -14,6 +14,19 @@ _ATTR_SKINS = "valorant-weapon-skins"
 _ATTR_KNIVES = "valorant-knives"
 _ATTR_SPENT = "valorant-spent-points"
 
+_REGION_ID_FALLBACKS: dict[str, str] = {
+    "na": "0",
+    "eu": "1",
+    "la": "2",
+    "latam": "2",
+    "br": "3",
+    "ap": "5",
+    "apac": "5",
+    "kr": "6",
+    "tr": "1",
+    "turkey": "1",
+}
+
 _RANK_IDS: dict[str, str] = {
     "iron": "iron",
     "bronze": "bronze",
@@ -58,9 +71,10 @@ class ValorantEldoradoBuilder(BaseEldoradoBuilder):
     @staticmethod
     def _resolve_trade_environment_id(region: str, ctx: BuildContext) -> str:
         """Build composite trade_env_id: ``"{region_id}-{platform_id}"``."""
+        region_key = str(region or "").strip()
         region_id = get_external_id(
-            ctx.variant_context, "region", region.upper(),
-        ) or "1-999"
+            ctx.variant_context, "region", region_key.upper(),
+        ) or _REGION_ID_FALLBACKS.get(region_key.lower()) or "1-999"
         if region_id == "1-999":
             return region_id
 

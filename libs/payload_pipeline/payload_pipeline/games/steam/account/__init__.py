@@ -1,5 +1,6 @@
 """Steam account slice."""
 
+from .manual_fields import STEAM_MANUAL_FIELDS  # noqa: F401
 from .resolver import SteamResolver
 from .content import SteamComposer
 from .media import SteamMediaStrategy

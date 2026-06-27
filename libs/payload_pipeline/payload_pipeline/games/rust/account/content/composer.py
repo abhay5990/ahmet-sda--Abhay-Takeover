@@ -35,6 +35,18 @@ class RustComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        # Manual entries have pre-defined title/description
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title,
+                    description=account.manual_description or "",
+                    tags=["rust", "steam", "account"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         parts = [
             "Rust Account",
             account.platform if account.platform else "",

@@ -20,6 +20,17 @@ class Fh6Composer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title,
+                    description=account.manual_description or "",
+                    tags=["forza-horizon-6", "forza", "xbox", "account"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         title = "Forza Horizon 6 Account"
         description = "Forza Horizon 6 Account\n---------------------------\nFull access included."
 

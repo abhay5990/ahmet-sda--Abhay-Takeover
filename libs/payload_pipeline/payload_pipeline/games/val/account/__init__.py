@@ -7,6 +7,7 @@ from .marketplaces import (
     ValorantGameBoostBuilder,
     ValorantPlayerAuctionsBuilder,
 )
+from .manual_fields import VALORANT_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .media import ValorantMediaStrategy
 from .resolver import ValorantResolver
 from .sources import ValorantLztSourceAdapter

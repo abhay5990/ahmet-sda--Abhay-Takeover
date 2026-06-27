@@ -22,13 +22,13 @@ class CS2EldoradoBuilder(BaseEldoradoBuilder):
             ctx=ctx,
             price=account.price,
             credentials=account.credentials,
-            trade_environment_id=self._resolve_trade_environment_id(account.premier_elo),
+            trade_environment_id=self._resolve_trade_environment(account),
             attributes={
-                "counter-strike-2-prime-status": "active-prime" if account.is_prime else "non-prime",
+                "counter-strike-2-prime-status": account.prime_attr or ("active-prime" if account.is_prime else "non-prime"),
                 "counter-strike-2-medals": self._medal_bucket(account.medal_count),
-                "counter-strike-2-coin": self._resolve_coin(account.medals),
-                "counter-strike-2-esea": "esea-other",
-                "counter-strike-2-faceit": "faceit-other",
+                "counter-strike-2-coin": account.veteran_coin_attr or self._resolve_coin(account.medals),
+                "counter-strike-2-esea": account.esea_attr or "esea-other",
+                "counter-strike-2-faceit": account.faceit_attr or "faceit-other",
             },
             ref_key=account.ref_key,
         )
@@ -50,7 +50,11 @@ class CS2EldoradoBuilder(BaseEldoradoBuilder):
             return "5year-coin"
         return "other-coin"
 
-    def _resolve_trade_environment_id(self, premier_elo: int) -> str:
+    def _resolve_trade_environment(self, account: CS2ResolvedAccount) -> str:
+        return self._premier_elo_to_env_id(account.premier_elo)
+
+    @staticmethod
+    def _premier_elo_to_env_id(premier_elo: int) -> str:
         if premier_elo <= 0:
             return "0"
         if premier_elo < 5000:

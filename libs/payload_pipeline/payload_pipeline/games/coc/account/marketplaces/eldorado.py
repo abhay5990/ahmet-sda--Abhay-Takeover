@@ -23,10 +23,10 @@ class CocEldoradoBuilder(BaseEldoradoBuilder):
             price=account.price,
             credentials=account.credentials,
             attributes={
-                "clash-of-clans-current-rank": self._resolve_rank(account.trophies),
-                "clash-of-clans-maxed-account": "maxed-yes" if account.town_hall_level >= 18 else "maxed-no",
+                "clash-of-clans-current-rank": account.current_rank_attr or self._resolve_rank(account.trophies),
+                "clash-of-clans-maxed-account": account.maxed_account_attr or ("maxed-yes" if account.town_hall_level >= 18 else "maxed-no"),
                 "clash-of-clans-town-hall": self._resolve_town_hall(account.town_hall_level),
-                "coc-gems": "gems-other",
+                "coc-gems": self._resolve_gems(account.gems_count),
             },
             ref_key=account.ref_key,
         )
@@ -78,3 +78,21 @@ class CocEldoradoBuilder(BaseEldoradoBuilder):
         if level >= 18:
             return "hall-18"
         return "hall-other"
+
+    @staticmethod
+    def _resolve_gems(count: int) -> str:
+        if count <= 0:
+            return "gems-other"
+        if count <= 499:
+            return "gems-0499"
+        if count <= 999:
+            return "gems-500999"
+        if count <= 2499:
+            return "gems-1249"
+        if count <= 4999:
+            return "gems-25499"
+        if count <= 9999:
+            return "gems-5999"
+        if count <= 24999:
+            return "gems-102499"
+        return "gems-25plus"

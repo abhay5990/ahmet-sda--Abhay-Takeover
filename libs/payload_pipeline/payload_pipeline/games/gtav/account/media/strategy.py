@@ -5,9 +5,11 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
+from .....core.capabilities import AUTO_GEN_AND_OVERRIDE, MediaCapabilities
 from .....core.contracts import PipelineRequest
 from .....core import context_keys as ctx
 from .....core.enums import ListingKind
+from .....shared.media_override import MediaOverrideMixin
 from .....shared.paths import default_media_output_dir
 from ..models import GtavResolvedAccount
 from .image_renderer import GtavAccountCardRenderer, GtavCardData
@@ -15,8 +17,10 @@ from .image_renderer import GtavAccountCardRenderer, GtavCardData
 logger = logging.getLogger(__name__)
 
 
-class GtavMediaStrategy:
+class GtavMediaStrategy(MediaOverrideMixin):
     """Prepare one deterministic generated GTA V account card."""
+
+    capabilities: MediaCapabilities = AUTO_GEN_AND_OVERRIDE
 
     def __init__(self, renderer: GtavAccountCardRenderer | None = None) -> None:
         self._renderer = renderer
@@ -25,9 +29,9 @@ class GtavMediaStrategy:
         if bool(request.context.get(ctx.DISABLE_MEDIA)):
             return []
 
-        override_path = self._media_override_path(request)
-        if override_path:
-            return [override_path]
+        override = self._check_override(request)
+        if override is not None:
+            return override
 
         renderer = self._renderer or GtavAccountCardRenderer()
         card_data = GtavCardData.from_account(
@@ -51,18 +55,6 @@ class GtavMediaStrategy:
         if isinstance(configured, str) and configured.strip():
             return configured
         return default_media_output_dir("grand-theft-auto-5", suffix="cards")
-
-    def _media_override_path(self, request: PipelineRequest) -> str:
-        configured = request.context.get(ctx.MEDIA_OVERRIDE_PATH)
-        if not isinstance(configured, str) or not configured.strip():
-            return ""
-
-        path = Path(configured)
-        if path.is_file():
-            return str(path)
-
-        logger.warning("GTA V media override path does not exist: %s", configured)
-        return ""
 
     def _delivery_text(self, request: PipelineRequest) -> str:
         return "MANUAL DELIVERY" if request.kind == ListingKind.DROPSHIPPING else "INSTANT DELIVERY"

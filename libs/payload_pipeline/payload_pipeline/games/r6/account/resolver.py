@@ -6,7 +6,7 @@ from . import skin_lookup
 from .models import R6InventoryBreakdown, R6InventoryCategory, R6ResolvedAccount
 from .rank_parsing import normalize_rank, pick_best_rank
 from .source_normalization import R6RankSignal, R6WeaponSkin
-from .sources import R6LztSourceAdapter, R6TrackerSourceAdapter
+from .sources import R6LztSourceAdapter, R6ManualSourceAdapter, R6TrackerSourceAdapter
 from .sources.lzt import R6LztSource
 from .sources.tracker import R6TrackerSource, TrackerItem
 from ....core.contracts import PipelineRequest
@@ -21,13 +21,19 @@ class R6Resolver:
     def __init__(self) -> None:
         self.lzt = R6LztSourceAdapter()
         self.tracker = R6TrackerSourceAdapter()
+        self._manual = R6ManualSourceAdapter()
 
     def resolve(self, request: PipelineRequest) -> R6ResolvedAccount:
+        # Try manual source first
+        manual = self._manual.parse(request.source("manual"))
+        if manual is not None:
+            return self._resolve_manual(manual, request)
+
         lzt = self.lzt.parse(request.source("lzt"))
         tracker = self.tracker.parse(request.source("tracker"))
 
         if lzt is None and tracker is None:
-            raise SourceValidationError("R6 requires at least one source: 'lzt' or 'tracker'.")
+            raise SourceValidationError("R6 requires at least one source: 'manual', 'lzt', or 'tracker'.")
 
         credentials = self._resolve_credentials(request.kind, lzt, tracker)
         level = tracker.level if tracker and tracker.level > 0 else (lzt.level if lzt else 0)
@@ -75,6 +81,36 @@ class R6Resolver:
             inventory=self._build_inventory_breakdown(tracker),
             psn_connected=psn_connected,
             xbox_connected=xbox_connected,
+        )
+
+    def _resolve_manual(self, src, request: PipelineRequest) -> R6ResolvedAccount:
+        credentials = resolve_credentials(src, kind=request.kind, game_name="R6")
+
+        ownership = "unknown"
+        if src.game_purchased in ("yes", "purchased-yes"):
+            ownership = "owned"
+        elif src.game_purchased in ("no", "purchased-no"):
+            ownership = "external"
+
+        return R6ResolvedAccount(
+            item_id=src.item_id,
+            category_id=src.category_id,
+            price=src.price,
+            kind=request.kind,
+            credentials=credentials,
+            manual_title=src.title,
+            manual_description=src.description,
+            ownership_state=ownership,
+            has_game=src.game_purchased in ("yes", "purchased-yes") if src.game_purchased != "other" else None,
+            # Integer counts from manual entry
+            operator_count=src.operators,
+            renown=src.renown,
+            black_ice_count=src.black_ice_skins,
+            # Pass manual attribute slugs for marketplace builders
+            current_rank_attr=src.current_rank if src.current_rank != "other" else "",
+            previous_rank_attr=src.previous_rank if src.previous_rank != "other" else "",
+            game_purchased_attr=src.game_purchased if src.game_purchased != "other" else "",
+            ranked_unlocked_attr=src.ranked_unlocked if src.ranked_unlocked != "other" else "",
         )
 
     def _resolve_credentials(self, kind, lzt, tracker):

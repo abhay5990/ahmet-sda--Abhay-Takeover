@@ -20,6 +20,17 @@ class Fh5Composer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title,
+                    description=account.manual_description or "",
+                    tags=["forza-horizon-5", "forza", "xbox", "account"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         parts = [
             "Forza Horizon 5",
             account.platform if account.platform else "",

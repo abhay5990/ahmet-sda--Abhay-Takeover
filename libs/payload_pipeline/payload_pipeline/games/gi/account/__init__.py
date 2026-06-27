@@ -3,6 +3,7 @@
 from .resolver import GenshinResolver
 from .content import GenshinComposer
 from .media import GenshinMediaStrategy
+from .manual_fields import GI_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .sources import GenshinLztSourceAdapter
 from .marketplaces import (
     GenshinImpactEldoradoBuilder,

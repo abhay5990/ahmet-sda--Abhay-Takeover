@@ -2,6 +2,7 @@
 
 from .resolver import Fh5Resolver
 from .content import Fh5Composer
+from .manual_fields import FH5_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .media import Fh5MediaStrategy
 from .sources import Fh5ManualSourceAdapter
 from .marketplaces import Fh5EldoradoBuilder, Fh5GameBoostBuilder, Fh5PlayerAuctionsBuilder

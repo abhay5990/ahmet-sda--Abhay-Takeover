@@ -12,6 +12,7 @@ from .contracts import (
     SubjectResolver,
     TSubject,
 )
+from .capabilities import MediaCapabilities, OVERRIDE_ONLY
 from .enums import ListingCategory
 from .exceptions import RegistryConflictError, RegistryLookupError
 
@@ -69,6 +70,22 @@ class PipelineRegistry:
 
     def list_games(self) -> list[str]:
         return sorted(self._definitions.keys())
+
+    def get_media_capabilities(
+        self,
+        game: str,
+        category: ListingCategory = ListingCategory.ACCOUNT,
+    ) -> MediaCapabilities:
+        """Return media capabilities for a registered game slice.
+
+        Falls back to ``OVERRIDE_ONLY`` when the strategy does not
+        declare a ``capabilities`` attribute.
+        """
+        definition = self._definitions.get(self._make_key(game, category))
+        if definition is None or definition.media_strategy is None:
+            return OVERRIDE_ONLY
+
+        return getattr(definition.media_strategy, "capabilities", OVERRIDE_ONLY)
 
     def _make_key(self, game: str, category: ListingCategory) -> str:
         return f"{game.lower()}:{category.lower()}"

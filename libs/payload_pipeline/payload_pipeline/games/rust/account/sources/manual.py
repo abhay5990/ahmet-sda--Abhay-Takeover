@@ -16,6 +16,8 @@ class RustManualSource:
     category_id: int = 1
     price: float = 0.0
     credentials: CredentialBundle = field(default_factory=CredentialBundle)
+    title: str = ""
+    description: str = ""
 
     platform: str = ""
 
@@ -28,6 +30,7 @@ class RustManualSource:
     # GameBoost numeric fields
     real_hours: int = 0
     skins_count: int = 0
+    steam_level: int = 0
 
 
 class RustManualSourceAdapter:
@@ -57,6 +60,8 @@ class RustManualSourceAdapter:
                 email_password=str(email_data.get("password") or "").strip(),
                 email_login_link=str(payload.get("emailLoginUrl") or "").strip(),
             ),
+            title=str(payload.get("title") or "").strip(),
+            description=str(payload.get("description") or "").strip(),
             platform=str(platform).strip(),
             premium_status=str(offer_details.get("premium_status") or payload.get("premium_status") or "premium-no").strip(),
             hours_range=str(offer_details.get("hours_range") or payload.get("hours_range") or "hours-099").strip(),
@@ -64,6 +69,7 @@ class RustManualSourceAdapter:
             steam_level_range=str(offer_details.get("steam_level_range") or payload.get("steam_level_range") or "level-05").strip(),
             real_hours=self._to_int(offer_details.get("real_hours") or payload.get("real_hours"), default=0),
             skins_count=self._to_int(offer_details.get("skins_count") or payload.get("skins_count"), default=0),
+            steam_level=self._to_int(offer_details.get("steam_level") or payload.get("steam_level"), default=0),
         )
 
     def _to_int(self, value: Any, default: int) -> int:

@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
 
 from apps.integrations.models import ServiceCredential, ServiceType
+from apps.posting.api.media_override import mark_image_override_used
 
 logger = logging.getLogger(__name__)
 
@@ -493,6 +494,7 @@ def _create_sheet_job(body: dict, game, stores: list, job_settings: dict):
         settings=job_settings,
         total_count=total,
     )
+    mark_image_override_used(job_settings)
 
     items = []
     for login, owned, store in items_data:

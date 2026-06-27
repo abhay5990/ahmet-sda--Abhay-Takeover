@@ -375,11 +375,13 @@ class ContentTemplate(models.Model):
 
 
 class PostingImagePreset(models.Model):
-    """Reusable marketplace media chosen during manual posting."""
+    """Reusable marketplace media shared per game for posting flows."""
 
-    user = models.ForeignKey(
+    uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name='posting_image_presets',
     )
     game = models.ForeignKey(
@@ -405,14 +407,14 @@ class PostingImagePreset(models.Model):
         ordering = ['-last_used_at', '-created_at']
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'game', 'sha256'],
-                name='unique_posting_image_preset_hash',
+                fields=['game', 'sha256'],
+                name='unique_posting_image_preset_game_hash',
             ),
         ]
         indexes = [
             models.Index(
-                fields=['user', 'game', 'is_active'],
-                name='posting_img_user_game_idx',
+                fields=['game', 'is_active'],
+                name='posting_img_game_active_idx',
             ),
         ]
 

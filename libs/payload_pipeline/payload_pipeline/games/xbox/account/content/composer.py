@@ -20,6 +20,17 @@ class XboxComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
+        if account.manual_title:
+            return ListingDraft(
+                default=ListingContent(
+                    title=account.manual_title,
+                    description=account.manual_description or "",
+                    tags=["xbox", "microsoft", "account"],
+                ),
+                media=media,
+                marketplace_overrides={},
+            )
+
         title = "Xbox Account"
         description = "Xbox Account\n---------------------------\nFull access included."
 

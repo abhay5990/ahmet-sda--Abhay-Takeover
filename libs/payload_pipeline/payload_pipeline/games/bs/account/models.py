@@ -21,12 +21,27 @@ class BSResolvedAccount(ResolvedAccountBase):
     mythic_count: int = 0
     battle_pass_active: bool = False
     hypercharge_count: int = 0
+    skin_count: int = 0
+    prestige_count: int = 0
+    buffies_count: int = 0
+    gems_count: int = 0
     highest_trophies: int = 0
     victories: int = 0
     creation_year: int = 0
     brawler_names: list[str] = field(default_factory=list)
     brawlers: dict[str, Any] = field(default_factory=dict)
     has_email_access: bool = False
+
+    # Attribute slug overrides (from manual entry — Eldorado select IDs)
+    rank_attr: str = ""
+    trophies_attr: str = ""
+    prestige_attr: str = ""
+    brawlers_attr: str = ""
+    maxed_brawlers_attr: str = ""
+    skins_attr: str = ""
+    hypercharge_attr: str = ""
+    buffies_attr: str = ""
+    gems_attr: str = ""
 
     FIELD_META: ClassVar[dict[str, FieldMeta]] = {
         **ResolvedAccountBase.FIELD_META,
@@ -39,6 +54,10 @@ class BSResolvedAccount(ResolvedAccountBase):
         "mythic_count": FieldMeta("Mythic brawler count.", 12),
         "battle_pass_active": FieldMeta("Brawl Pass active.", True),
         "hypercharge_count": FieldMeta("Hypercharged brawler count.", 40),
+        "skin_count": FieldMeta("Total skin count.", 150),
+        "prestige_count": FieldMeta("Total prestige count.", 50),
+        "buffies_count": FieldMeta("Total buffies count.", 30),
+        "gems_count": FieldMeta("Gem balance.", 200),
         "highest_trophies": FieldMeta("All-time highest trophy count.", 35000),
         "victories": FieldMeta("Total victories.", 3370),
         "creation_year": FieldMeta("Account creation year.", 2023),

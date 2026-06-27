@@ -15,11 +15,14 @@ from PIL import Image, UnidentifiedImageError
 
 from apps.inventory.models import Game
 from apps.posting.models import PostingImagePreset
+from payload_pipeline import build_default_registry
 
-_MAX_UPLOAD_BYTES = 8 * 1024 * 1024
+_MAX_UPLOAD_BYTES = 100 * 1024 * 1024  # 100 MB
+_MAX_PRESETS_PER_GAME = 50
 _ALLOWED_IMAGE_FORMATS = {
     'PNG': ('image/png', '.png'),
     'JPEG': ('image/jpeg', '.jpg'),
+    'WEBP': ('image/webp', '.webp'),
 }
 
 
@@ -30,6 +33,7 @@ def _serialize_preset(preset: PostingImagePreset) -> dict:
         'url': preset.image.url if preset.image else '',
         'width': preset.width,
         'height': preset.height,
+        'size_bytes': preset.size_bytes,
         'sha256': preset.sha256,
         'created_at': preset.created_at.isoformat(),
         'last_used_at': preset.last_used_at.isoformat() if preset.last_used_at else None,
@@ -47,7 +51,7 @@ def _read_and_validate_image(uploaded) -> tuple[bytes, str, str, int, int, str |
     if not uploaded:
         return b'', '', '', 0, 0, 'image is required'
     if uploaded.size > _MAX_UPLOAD_BYTES:
-        return b'', '', '', 0, 0, 'image must be 8 MB or smaller'
+        return b'', '', '', 0, 0, f'image must be {_MAX_UPLOAD_BYTES // (1024 * 1024)} MB or smaller'
 
     chunks: list[bytes] = []
     digest = hashlib.sha256()
@@ -62,10 +66,10 @@ def _read_and_validate_image(uploaded) -> tuple[bytes, str, str, int, int, str |
             width, height = img.size
             img.verify()
     except (UnidentifiedImageError, OSError, ValueError):
-        return b'', '', '', 0, 0, 'image must be a valid PNG or JPEG file'
+        return b'', '', '', 0, 0, 'image must be a valid PNG, JPEG, or WebP file'
 
     if image_format not in _ALLOWED_IMAGE_FORMATS:
-        return b'', '', '', 0, 0, 'only PNG and JPEG images are supported'
+        return b'', '', '', 0, 0, 'only PNG, JPEG, and WebP images are supported'
 
     mime_type, ext = _ALLOWED_IMAGE_FORMATS[image_format]
     return data, digest.hexdigest(), mime_type, width, height, None
@@ -79,11 +83,13 @@ def list_image_presets(request):
         return JsonResponse({'error': 'game_id is required'}, status=400)
 
     presets = PostingImagePreset.objects.filter(
-        user=request.user,
         game=game,
         is_active=True,
     )
-    return JsonResponse({'presets': [_serialize_preset(preset) for preset in presets]})
+    return JsonResponse({
+        'presets': [_serialize_preset(preset) for preset in presets],
+        'limit': _MAX_PRESETS_PER_GAME,
+    })
 
 
 @login_required
@@ -92,6 +98,17 @@ def upload_image_preset(request):
     game = _get_game(request.POST.get('game_id'))
     if game is None:
         return JsonResponse({'error': 'game_id is required'}, status=400)
+
+    # Check per-game limit
+    active_count = PostingImagePreset.objects.filter(
+        game=game,
+        is_active=True,
+    ).count()
+    if active_count >= _MAX_PRESETS_PER_GAME:
+        return JsonResponse({
+            'error': f'Maximum {_MAX_PRESETS_PER_GAME} images per game reached. '
+                     'Delete some images before uploading new ones.',
+        }, status=400)
 
     uploaded = request.FILES.get('image')
     data, digest, mime_type, width, height, error = _read_and_validate_image(uploaded)
@@ -104,7 +121,6 @@ def upload_image_preset(request):
     name = name[:120]
 
     existing = PostingImagePreset.objects.filter(
-        user=request.user,
         game=game,
         sha256=digest,
     ).first()
@@ -123,9 +139,10 @@ def upload_image_preset(request):
             'deduplicated': True,
         })
 
-    _, ext = _ALLOWED_IMAGE_FORMATS['PNG' if mime_type == 'image/png' else 'JPEG']
+    fmt_key = next((k for k, v in _ALLOWED_IMAGE_FORMATS.items() if v[0] == mime_type), 'JPEG')
+    _, ext = _ALLOWED_IMAGE_FORMATS[fmt_key]
     preset = PostingImagePreset(
-        user=request.user,
+        uploaded_by=request.user,
         game=game,
         name=name,
         sha256=digest,
@@ -149,7 +166,6 @@ def upload_image_preset(request):
 def delete_image_preset(request, preset_id: int):
     preset = PostingImagePreset.objects.filter(
         id=preset_id,
-        user=request.user,
         is_active=True,
     ).first()
     if not preset:
@@ -158,3 +174,30 @@ def delete_image_preset(request, preset_id: int):
     preset.is_active = False
     preset.save(update_fields=['is_active', 'updated_at'])
     return JsonResponse({'ok': True})
+
+
+# ── Lazy singleton for the pipeline registry (avoid re-creating per request)
+_registry = None
+
+
+def _get_registry():
+    global _registry
+    if _registry is None:
+        _registry = build_default_registry()
+    return _registry
+
+
+@login_required
+@require_GET
+def media_capabilities(request):
+    """Return media capabilities for a game (auto-gen, override support)."""
+    game = _get_game(request.GET.get('game_id'))
+    if game is None:
+        return JsonResponse({'error': 'game_id is required'}, status=400)
+
+    registry = _get_registry()
+    caps = registry.get_media_capabilities(game.slug)
+    return JsonResponse({
+        'auto_generate_manual': caps.auto_generate_manual,
+        'supports_override': caps.supports_override,
+    })
