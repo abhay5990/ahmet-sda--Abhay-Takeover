@@ -693,12 +693,29 @@ class DropshipTargetURL(models.Model):
         help_text='USD→EUR conversion rate for Gameboost. Null = no conversion.',
     )
 
-    # Stats
+    # --- Processing state (UI: hangi URL su an isleniyor) ---
+    PROC_IDLE = 'idle'
+    PROC_FETCHING = 'fetching'
+    PROC_POSTING = 'posting'
+    PROC_CHOICES = [
+        (PROC_IDLE, 'Idle'),
+        (PROC_FETCHING, 'Fetching'),
+        (PROC_POSTING, 'Posting'),
+    ]
+    processing_state = models.CharField(
+        max_length=10, choices=PROC_CHOICES, default=PROC_IDLE,
+        help_text='Poster bu URL uzerinde su an ne yapiyor (canli gosterge)',
+    )
+
+    # --- Stats ---
     last_fetched_at = models.DateTimeField(null=True, blank=True)
     last_error = models.TextField(blank=True)
     error_count = models.IntegerField(default=0)
-    items_found = models.IntegerField(default=0)
-    items_posted = models.IntegerField(default=0)
+
+    # Son cycle kirilimi: found = (found - new) + new ; new >= posted
+    cycle_found = models.IntegerField(default=0, help_text='Son cycle filtrede gorulen toplam (duplicate dahil)')
+    cycle_new = models.IntegerField(default=0, help_text='Son cycle yeni (duplicate olmayan) item')
+    cycle_posted = models.IntegerField(default=0, help_text='Son cycle gercekten basilan')
 
     created_at = models.DateTimeField(auto_now_add=True)
 

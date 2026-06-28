@@ -225,11 +225,14 @@ def dropship_configs(request):
                     'forced_ending': str(u.forced_ending) if u.forced_ending is not None else None,
                     'last_fetched_at': u.last_fetched_at.isoformat() if u.last_fetched_at else None,
                     'last_error': u.last_error,
-                    'items_found': u.items_found,
-                    'items_posted': u.items_posted,
+                    'processing_state': u.processing_state,
+                    'cycle_found': u.cycle_found,
+                    'cycle_new': u.cycle_new,
+                    'cycle_posted': u.cycle_posted,
                 }
                 for u in c.target_urls.all()
             ],
+            'active_total': sum(active_counts_map.get((c.store_id, c.game_id), {}).values()),
         }
         for c in configs
     ]})

@@ -3,7 +3,9 @@ import logging
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from apps.inventory.enums import OwnedProductStatus
+from django.utils import timezone
+
+from apps.inventory.enums import DropshipProductStatus, OwnedProductStatus
 from .enums import ListingStatus
 from .models import Listing, ListingOwnedProduct
 
@@ -92,6 +94,11 @@ def listing_deactivated(sender, instance, **kwargs):
         status=OfferPoolActiveOfferStatus.ACTIVE,
     ).update(status=OfferPoolActiveOfferStatus.DELISTED)
 
+    # ── Dropship cascade ──────────────────────────────────────────────
+    # If this listing was tied to a DropshipProduct, mark it DELETED
+    # when no other LISTED listing remains for that DP.
+    _cascade_dropship_product(instance)
+
     owned_products = [
         lop.owned_product
         for lop in instance.listing_owned_products.select_related('owned_product').all()
@@ -113,3 +120,27 @@ def listing_deactivated(sender, instance, **kwargs):
                 "OwnedProduct #%d -> draft (Listing #%d deactivated, no other active)",
                 owned.pk, instance.pk,
             )
+
+
+# ---------------------------------------------------------------------------
+# Helper: cascade listing deactivation to DropshipProduct
+# ---------------------------------------------------------------------------
+def _cascade_dropship_product(listing: Listing) -> None:
+    """Mark the linked DropshipProduct as DELETED when no LISTED listing remains."""
+    dp = listing.dropship_product
+    if dp is None or dp.status != DropshipProductStatus.LISTED:
+        return
+
+    has_other_listed = Listing.objects.filter(
+        dropship_product=dp,
+        status=ListingStatus.LISTED,
+    ).exclude(pk=listing.pk).exists()
+
+    if not has_other_listed:
+        dp.status = DropshipProductStatus.DELETED
+        dp.deleted_at = timezone.now()
+        dp.save(update_fields=['status', 'deleted_at', 'updated_at'])
+        logger.info(
+            "DropshipProduct #%d -> deleted (Listing #%d deactivated, no other active)",
+            dp.pk, listing.pk,
+        )

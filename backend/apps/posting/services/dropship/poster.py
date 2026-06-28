@@ -220,193 +220,209 @@ def _process_target_url(
         )
         return
 
-    # === Phase 1: Fetch + filter ===
-    new_items: list[dict] = []
-    total_found = 0
+    try:
+        # === Phase 1: Fetch + filter ===
+        target_url.processing_state = DropshipTargetURL.PROC_FETCHING
+        target_url.save(update_fields=['processing_state'])
 
-    for page_items in source_provider.fetch_items(target_url.url, proxy_group=source_proxy_group):
-        if stop_event.is_set():
-            break
-        for item in page_items:
-            total_found += 1
-            try:
-                resolver.resolve(item, source_provider)
-                new_items.append(item)
-            except DuplicateItem:
-                continue
-        stop_event.wait(timeout=float(config.source_delay))
+        new_items: list[dict] = []
+        cycle_found = 0
 
-    # === Phase 2: Post new items (with stop checks + backoff) ===
-    pricing = build_pricing_rule(PricingDefaults.from_model(target_url))
-    posted_count = 0
-
-    for item in new_items:
-        if stop_event.is_set():
-            break
-
-        # DB stop check before each item
-        config.refresh_from_db(fields=['enabled'])
-        if not config.enabled:
-            stop_event.set()
-            break
-
-        try:
-            posted = _attempt_post(
-                item=item,
-                config=config,
-                target_url=target_url,
-                source_provider=source_provider,
-                source_type=source_type,
-                pricing=pricing,
-                variant_router=variant_router,
-                variant_ctx=variant_ctx,
-                target_facade=target_facade,
-                target_provider=target_provider,
-                target_proxy_group=target_proxy_group,
-                lzt_image_fetcher=lzt_image_fetcher,
-                stop_event=stop_event,
-            )
-            if posted:
-                tracker.on_success()
-                posted_count += 1
-
-        except _MaxOfferError as e:
-            # Variant fallback: try remaining variants
-            _item_id = source_provider.extract_item_id(item)
-            excluded = [e.variant_slug] if e.variant_slug else []
-            tiers = PLATFORM_PRIORITY.get(config.game.slug, [])
-            all_variants = [slug for tier in tiers for slug in tier]
-            available = [v for v in all_variants if v not in excluded]
-
-            # Build context once — it's variant-independent (DB counts + limits)
-            fresh_ctx = build_variant_context(
-                store=config.store, game=config.game, marketplace=marketplace,
-            )
-
-            fallback_posted = False
-            for candidate in available:
-                fresh_router = VariantRouter(fresh_ctx, mode='dropship')
-                # Force variant by setting manual override on the router
+        for page_items in source_provider.fetch_items(target_url.url, proxy_group=source_proxy_group):
+            if stop_event.is_set():
+                break
+            for item in page_items:
+                cycle_found += 1
                 try:
-                    posted = _attempt_post(
-                        item=item,
-                        config=config,
-                        target_url=target_url,
-                        source_provider=source_provider,
-                        source_type=source_type,
-                        pricing=pricing,
-                        variant_router=fresh_router,
-                        variant_ctx=fresh_ctx,
-                        target_facade=target_facade,
-                        target_provider=target_provider,
-                        target_proxy_group=target_proxy_group,
-                        lzt_image_fetcher=lzt_image_fetcher,
-                        stop_event=stop_event,
-                    )
-                    if posted:
-                        tracker.on_success()
-                        posted_count += 1
-                        fallback_posted = True
-                        break
-                except _MaxOfferError as inner:
-                    excluded.append(inner.variant_slug)
+                    resolver.resolve(item, source_provider)
+                    new_items.append(item)
+                except DuplicateItem:
                     continue
-                except (_ValidationError, _RateLimitError, _ServerError):
-                    break
-                except Exception as exc:
-                    logger.warning(
-                        "Unexpected error during variant fallback for %s/%s: %s",
-                        config.game.slug, config.store.name, exc,
-                    )
-                    break
+            stop_event.wait(timeout=float(config.source_delay))
 
-            if not fallback_posted:
-                logger.warning(
-                    "All variants exhausted for item %s (%s/%s) — stopping posts this cycle",
-                    _item_id, config.game.slug, config.store.name,
+        cycle_new = len(new_items)
+
+        # === Phase 2: Post new items (with stop checks + backoff) ===
+        target_url.processing_state = DropshipTargetURL.PROC_POSTING
+        target_url.save(update_fields=['processing_state'])
+
+        pricing = build_pricing_rule(PricingDefaults.from_model(target_url))
+        posted_count = 0
+
+        for item in new_items:
+            if stop_event.is_set():
+                break
+
+            # DB stop check before each item
+            config.refresh_from_db(fields=['enabled'])
+            if not config.enabled:
+                stop_event.set()
+                break
+
+            try:
+                posted = _attempt_post(
+                    item=item,
+                    config=config,
+                    target_url=target_url,
+                    source_provider=source_provider,
+                    source_type=source_type,
+                    pricing=pricing,
+                    variant_router=variant_router,
+                    variant_ctx=variant_ctx,
+                    target_facade=target_facade,
+                    target_provider=target_provider,
+                    target_proxy_group=target_proxy_group,
+                    lzt_image_fetcher=lzt_image_fetcher,
+                    stop_event=stop_event,
                 )
-                break  # API confirmed all slots full; no point trying remaining items
+                if posted:
+                    tracker.on_success()
+                    posted_count += 1
 
-        except _StoreFullError as e:
-            _item_id = source_provider.extract_item_id(item)
-            logger.info(
-                "Store full for %s/%s (%s) — stopping posts this cycle",
-                config.game.slug, config.store.name, e,
-            )
+            except _MaxOfferError as e:
+                # Variant fallback: try remaining variants
+                _item_id = source_provider.extract_item_id(item)
+                excluded = [e.variant_slug] if e.variant_slug else []
+                tiers = PLATFORM_PRIORITY.get(config.game.slug, [])
+                all_variants = [slug for tier in tiers for slug in tier]
+                available = [v for v in all_variants if v not in excluded]
+
+                # Build context once — it's variant-independent (DB counts + limits)
+                fresh_ctx = build_variant_context(
+                    store=config.store, game=config.game, marketplace=marketplace,
+                )
+
+                fallback_posted = False
+                for candidate in available:
+                    fresh_router = VariantRouter(fresh_ctx, mode='dropship')
+                    # Force variant by setting manual override on the router
+                    try:
+                        posted = _attempt_post(
+                            item=item,
+                            config=config,
+                            target_url=target_url,
+                            source_provider=source_provider,
+                            source_type=source_type,
+                            pricing=pricing,
+                            variant_router=fresh_router,
+                            variant_ctx=fresh_ctx,
+                            target_facade=target_facade,
+                            target_provider=target_provider,
+                            target_proxy_group=target_proxy_group,
+                            lzt_image_fetcher=lzt_image_fetcher,
+                            stop_event=stop_event,
+                        )
+                        if posted:
+                            tracker.on_success()
+                            posted_count += 1
+                            fallback_posted = True
+                            break
+                    except _MaxOfferError as inner:
+                        excluded.append(inner.variant_slug)
+                        continue
+                    except (_ValidationError, _RateLimitError, _ServerError):
+                        break
+                    except Exception as exc:
+                        logger.warning(
+                            "Unexpected error during variant fallback for %s/%s: %s",
+                            config.game.slug, config.store.name, exc,
+                        )
+                        break
+
+                if not fallback_posted:
+                    logger.warning(
+                        "All variants exhausted for item %s (%s/%s) — stopping posts this cycle",
+                        _item_id, config.game.slug, config.store.name,
+                    )
+                    break  # API confirmed all slots full; no point trying remaining items
+
+            except _StoreFullError as e:
+                _item_id = source_provider.extract_item_id(item)
+                logger.info(
+                    "Store full for %s/%s (%s) — stopping posts this cycle",
+                    config.game.slug, config.store.name, e,
+                )
+                PostingLog.objects.create(
+                    task_name='dropship_poster',
+                    level=PostingLogLevel.WARNING,
+                    message=f"Store full — posting paused this cycle: {config.store.name}",
+                    detail={'config_id': config.id, 'item_id': _item_id, 'error': str(e)},
+                    integration_account=config.store,
+                )
+                break  # exit items loop; cycle retries next interval
+
+            except _RateLimitError:
+                tracker.on_rate_limit()  # backoff or PauseRequired
+
+            except _ValidationError as e:
+                _item_id = source_provider.extract_item_id(item)
+                logger.warning(
+                    "Validation error for item %s (config #%d): %s",
+                    _item_id, config.id, e,
+                )
+                PostingLog.objects.create(
+                    task_name='dropship_poster',
+                    level=PostingLogLevel.WARNING,
+                    message=f"Validation error, item skipped: {_item_id}",
+                    detail={
+                        'item_id': _item_id,
+                        'config_id': config.id,
+                        'error': str(e),
+                    },
+                    integration_account=config.store,
+                )
+                tracker.on_validation_error(_item_id, last_error=str(e))  # may raise PauseRequired
+
+            except _ServerError:
+                tracker.on_server_error()  # backoff or PauseRequired
+
+            except Exception as e:
+                _item_id = source_provider.extract_item_id(item)
+                logger.warning("Post failed for item %s: %s", _item_id, e)
+                PostingLog.objects.create(
+                    task_name='dropship_poster',
+                    level=PostingLogLevel.ERROR,
+                    message=f"Post failed: item {_item_id}",
+                    detail={
+                        'item_id': _item_id,
+                        'config_id': config.id,
+                        'error': str(e),
+                    },
+                    integration_account=config.store,
+                )
+
+            stop_event.wait(timeout=float(config.item_delay))
+
+        # Update URL stats
+        target_url.last_fetched_at = timezone.now()
+        target_url.cycle_found = cycle_found
+        target_url.cycle_new = cycle_new
+        target_url.cycle_posted = posted_count
+        target_url.last_error = ''
+        target_url.error_count = 0
+        target_url.save(update_fields=[
+            'last_fetched_at', 'cycle_found', 'cycle_new', 'cycle_posted',
+            'last_error', 'error_count',
+        ])
+
+        if posted_count:
             PostingLog.objects.create(
                 task_name='dropship_poster',
-                level=PostingLogLevel.WARNING,
-                message=f"Store full — posting paused this cycle: {config.store.name}",
-                detail={'config_id': config.id, 'item_id': _item_id, 'error': str(e)},
-                integration_account=config.store,
-            )
-            break  # exit items loop; cycle retries next interval
-
-        except _RateLimitError:
-            tracker.on_rate_limit()  # backoff or PauseRequired
-
-        except _ValidationError as e:
-            _item_id = source_provider.extract_item_id(item)
-            logger.warning(
-                "Validation error for item %s (config #%d): %s",
-                _item_id, config.id, e,
-            )
-            PostingLog.objects.create(
-                task_name='dropship_poster',
-                level=PostingLogLevel.WARNING,
-                message=f"Validation error, item skipped: {_item_id}",
+                level=PostingLogLevel.SUCCESS,
+                message=f"Posted {posted_count}/{cycle_found} items from {target_url.url[:60]}",
                 detail={
-                    'item_id': _item_id,
                     'config_id': config.id,
-                    'error': str(e),
+                    'target_url_id': target_url.id,
+                    'cycle_found': cycle_found,
+                    'cycle_new': cycle_new,
+                    'cycle_posted': posted_count,
                 },
                 integration_account=config.store,
             )
-            tracker.on_validation_error(_item_id, last_error=str(e))  # may raise PauseRequired
-
-        except _ServerError:
-            tracker.on_server_error()  # backoff or PauseRequired
-
-        except Exception as e:
-            _item_id = source_provider.extract_item_id(item)
-            logger.warning("Post failed for item %s: %s", _item_id, e)
-            PostingLog.objects.create(
-                task_name='dropship_poster',
-                level=PostingLogLevel.ERROR,
-                message=f"Post failed: item {_item_id}",
-                detail={
-                    'item_id': _item_id,
-                    'config_id': config.id,
-                    'error': str(e),
-                },
-                integration_account=config.store,
-            )
-
-        stop_event.wait(timeout=float(config.item_delay))
-
-    # Update URL stats
-    target_url.last_fetched_at = timezone.now()
-    target_url.items_found = total_found
-    target_url.items_posted = posted_count
-    target_url.last_error = ''
-    target_url.error_count = 0
-    target_url.save(update_fields=[
-        'last_fetched_at', 'items_found', 'items_posted',
-        'last_error', 'error_count',
-    ])
-
-    if posted_count:
-        PostingLog.objects.create(
-            task_name='dropship_poster',
-            level=PostingLogLevel.SUCCESS,
-            message=f"Posted {posted_count}/{total_found} items from {target_url.url[:60]}",
-            detail={
-                'config_id': config.id,
-                'target_url_id': target_url.id,
-                'total_found': total_found,
-                'posted': posted_count,
-            },
-            integration_account=config.store,
+    finally:
+        # Reset processing state regardless of exit path (exception, early return, etc.)
+        DropshipTargetURL.objects.filter(pk=target_url.pk).update(
+            processing_state=DropshipTargetURL.PROC_IDLE,
         )
 
 

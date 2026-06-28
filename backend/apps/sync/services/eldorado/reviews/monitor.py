@@ -7,34 +7,34 @@ Telegram notifications for newly seen negative reviews.
 State strategy
 --------------
 Uses ``SyncCheckpoint(resource_type='reviews', mode='incremental')`` per
-account.  The ``last_seen_remote_id`` field stores the review ID of the most
-recently seen review (newest-first ordering).
+account.  The ``meta`` JSON field stores a ``seen_ids`` set — the IDs of
+all negative reviews we have already processed.
 
-Why NOT cursor-based:
-  The API cursor goes *backward* in time (pageDirection=Next → older reviews).
-  There is no reliable way to reconstruct a "forward" cursor without the
-  opaque value from the API response.  Storing last_seen_remote_id and always
-  fetching the first page (newest) is simpler and correct.
+Why seen-IDs instead of a watermark:
+  Buyers can change their rating from Positive/Neutral → Negative *after*
+  the original review date.  A date-based watermark misses these because
+  the review keeps its original (old) date and appears below the watermark
+  in the newest-first API response.  Tracking seen IDs catches every new
+  appearance regardless of date ordering.
 
 Poll logic:
-  1. Fetch first page (newest → oldest) with sentinel cursor.
-  2. Collect every result that appears BEFORE last_seen_remote_id in the list.
-     These are reviews newer than what we last saw.
-  3. Bootstrap (no stored ID): save first result's ID, do NOT notify.
-  4. Normal run: notify new reviews, update last_seen_remote_id to the
-     first (most recent) result's ID.
-
-Edge case: if more than PAGE_SIZE new reviews arrive between polls, the
-extras are missed until the next run.  At a 10-min interval this is
-acceptable; escalation to multi-page sweep can be added later.
+  1. Fetch up to MAX_PAGES pages (newest → oldest) of negative reviews.
+  2. Compare every review ID against ``seen_ids``.
+  3. IDs not in ``seen_ids`` → new negative reviews → notify via Telegram.
+  4. Replace ``seen_ids`` with the full set of IDs from the current fetch
+     so that reviews whose rating changed back to positive are naturally
+     pruned from the set.
+  5. Bootstrap (empty ``seen_ids``): save all current IDs, do NOT notify.
 """
 
 import logging
+from typing import Any
 
 from django.utils import timezone
 
 from apps.integrations.models import IntegrationAccount
 from apps.integrations.providers.registry import get_or_build_client
+from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
 from apps.sync.enums import ResourceType, SyncMode
 from apps.sync.models import SyncCheckpoint
 from apps.sync.services.eldorado.reviews.notifier import TelegramNotifier
@@ -43,6 +43,7 @@ logger = logging.getLogger(__name__)
 
 _PROVIDER = "eldorado"
 _PAGE_SIZE = 7
+_MAX_PAGES = 3
 _CURSOR_TOP = "9999-99-99 99:99:99.999999999999999-9999-9999-9999-999999999999"
 
 
@@ -61,17 +62,27 @@ class EldoradoReviewMonitor:
         if first_run:
             self._send_startup_message()
 
-        accounts = (
+        accounts = list(
             IntegrationAccount.objects
             .select_related("credential")
-            .filter(provider=_PROVIDER, is_active=True)
+            .filter(
+                provider=_PROVIDER,
+                is_active=True,
+                credential__is_active=True,
+            )
         )
+        if not accounts:
+            logger.debug("review_monitor: no active Eldorado accounts")
+            return
+
+        proxy_pool = build_proxy_pool()
+
         for account in accounts:
             try:
-                self._check_account(account)
+                self._check_account(account, proxy_pool)
             except Exception:
                 logger.exception(
-                    "Unexpected error in review monitor for account %s",
+                    "review_monitor: unhandled error for account %s",
                     account.slug,
                 )
 
@@ -95,7 +106,11 @@ class EldoradoReviewMonitor:
         else:
             logger.error("Failed to send startup message: %s", result.error)
 
-    def _check_account(self, account: IntegrationAccount) -> None:
+    def _check_account(
+        self,
+        account: IntegrationAccount,
+        proxy_pool: Any,
+    ) -> None:
         checkpoint, _ = SyncCheckpoint.objects.get_or_create(
             integration_account=account,
             resource_type=ResourceType.REVIEWS,
@@ -103,89 +118,101 @@ class EldoradoReviewMonitor:
             defaults={"last_seen_remote_id": "", "cursor": ""},
         )
 
-        facade = get_or_build_client(_PROVIDER, account.credential)
-        result = facade.get_seller_reviews(
-            params={
-                "cursorValue": _CURSOR_TOP,
-                "pageDirection": "Next",
-                "pageSize": str(_PAGE_SIZE),
-                "feedbackRating": "Negative",
-            },
+        facade = get_or_build_client(
+            _PROVIDER,
+            account.credential,
+            proxy_pool=proxy_pool,
+            proxy_group=get_group_name(account),
         )
 
-        if not result.ok:
-            logger.error(
-                "Reviews fetch failed for %s: %s", account.slug, result.error
-            )
-            return
+        # Fetch up to _MAX_PAGES pages of negative reviews
+        all_items = self._fetch_negative_reviews(facade, account.slug)
+        if all_items is None:
+            return  # API error — already logged
 
-        results = result.data.reviews.results
-        if not results:
-            logger.debug("No negative reviews found for %s", account.slug)
-            return
+        current_ids = {item.orderReview.id for item in all_items}
+        meta = checkpoint.meta or {}
+        seen_ids = set(meta.get("seen_ids", []))
 
-        last_seen_id = checkpoint.last_seen_remote_id
-        last_seen_date = (checkpoint.meta or {}).get("last_seen_date", "")
-        most_recent = results[0].orderReview
-
-        # Bootstrap — first run, just save the watermark, don't notify
-        if not last_seen_id:
-            checkpoint.last_seen_remote_id = most_recent.id
-            checkpoint.meta = {**(checkpoint.meta or {}), "last_seen_date": most_recent.date}
+        # Bootstrap — first run, save all IDs, don't notify
+        if not seen_ids and not checkpoint.last_seen_remote_id:
+            meta["seen_ids"] = list(current_ids)
+            checkpoint.meta = meta
             checkpoint.last_run_at = timezone.now()
-            checkpoint.save(update_fields=["last_seen_remote_id", "meta", "last_run_at", "updated_at"])
+            checkpoint.save(update_fields=["meta", "last_run_at", "updated_at"])
             logger.info(
-                "Review monitor bootstrap for %s — watermark set to %s (%d reviews on page)",
-                account.slug, most_recent.id, len(results),
+                "review_monitor: bootstrap for %s — %d review(s) saved",
+                account.slug, len(current_ids),
             )
             return
 
-        # Collect reviews newer than last_seen_id (they appear before it in the list)
-        new_reviews = []
-        found_watermark = False
-        for item in results:
-            if item.orderReview.id == last_seen_id:
-                found_watermark = True
-                break
-            new_reviews.append(item)
+        # Migration: if old checkpoint has last_seen_remote_id but no seen_ids,
+        # treat all current IDs as already seen to avoid a flood of notifications.
+        if not seen_ids and checkpoint.last_seen_remote_id:
+            seen_ids = current_ids.copy()
+            logger.info(
+                "review_monitor: migrated %s from watermark to seen_ids (%d ids)",
+                account.slug, len(seen_ids),
+            )
 
-        if not found_watermark:
-            # Watermark review is no longer in the Negative list — the buyer likely
-            # changed their rating from Negative to Neutral/Positive, or an admin
-            # removed it. Fall back to date comparison to avoid sending 20 notifications.
-            if last_seen_date:
-                new_reviews = [
-                    item for item in results
-                    if item.orderReview.date > last_seen_date
-                ]
-                logger.warning(
-                    "Watermark review %s not found for %s (rating probably changed) "
-                    "— date fallback: %d new review(s)",
-                    last_seen_id, account.slug, len(new_reviews),
-                )
-            else:
-                logger.warning(
-                    "Watermark review %s not found for %s, no date fallback — skipping "
-                    "to avoid duplicate notifications",
-                    last_seen_id, account.slug,
-                )
-                # Do NOT advance watermark — we can't be sure what was missed.
-                checkpoint.last_run_at = timezone.now()
-                checkpoint.save(update_fields=["last_run_at", "updated_at"])
-                return
+        # Find new reviews — IDs in current fetch that we haven't seen before
+        new_ids = current_ids - seen_ids
+        new_items = [
+            item for item in all_items
+            if item.orderReview.id in new_ids
+        ]
 
-        if not new_reviews:
-            logger.debug("No new negative reviews for %s", account.slug)
+        if not new_items:
+            logger.debug("review_monitor: no new negative reviews for %s", account.slug)
         else:
-            logger.info("%d new negative review(s) for %s", len(new_reviews), account.slug)
-            for item in new_reviews:
+            logger.info(
+                "review_monitor: %d new negative review(s) for %s",
+                len(new_items), account.slug,
+            )
+            for item in new_items:
                 self._notifier.send_negative_review(
                     account_slug=account.slug,
                     review_item=item,
                 )
 
-        # Advance watermark to the most recent review on this page
-        checkpoint.last_seen_remote_id = most_recent.id
-        checkpoint.meta = {**(checkpoint.meta or {}), "last_seen_date": most_recent.date}
+        # Update seen_ids to current set (naturally prunes changed-back reviews)
+        meta["seen_ids"] = list(current_ids)
+        checkpoint.meta = meta
         checkpoint.last_run_at = timezone.now()
-        checkpoint.save(update_fields=["last_seen_remote_id", "meta", "last_run_at", "updated_at"])
+        checkpoint.save(update_fields=["meta", "last_run_at", "updated_at"])
+
+    def _fetch_negative_reviews(self, facade: Any, account_slug: str) -> list | None:
+        """Fetch up to _MAX_PAGES of negative reviews. Returns None on API error."""
+        all_items: list = []
+        cursor = _CURSOR_TOP
+
+        for page_num in range(1, _MAX_PAGES + 1):
+            result = facade.get_seller_reviews(
+                params={
+                    "cursorValue": cursor,
+                    "pageDirection": "Next",
+                    "pageSize": str(_PAGE_SIZE),
+                    "feedbackRating": "Negative",
+                },
+            )
+
+            if not result.ok:
+                logger.error(
+                    "review_monitor: reviews fetch failed for %s (page %d): %s",
+                    account_slug, page_num, result.error,
+                )
+                # Return what we have so far if first page fails, abort entirely
+                return None if page_num == 1 else all_items
+
+            page = result.data.reviews
+            if not page.results:
+                break
+
+            all_items.extend(page.results)
+
+            if not page.nextPageCursor:
+                break
+
+            cursor = page.nextPageCursor
+
+        return all_items

@@ -128,6 +128,11 @@
                                   'bg-gray-100 text-gray-500': !config.poster_running && config.enabled,
                               }"
                               x-text="config.poster_running ? 'RUNNING' : (config.enabled ? 'IDLE' : 'DISABLED')"></span>
+                        <template x-if="config.active_total > 0">
+                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">
+                                Canlı: <span x-text="config.active_total"></span>
+                            </span>
+                        </template>
                     </div>
 
                     <div class="flex items-center gap-3 text-sm text-gray-500">
@@ -301,7 +306,12 @@
 
                     <div class="space-y-2">
                         <template x-for="url in config.urls" :key="url.id">
-                            <div class="flex items-start justify-between p-3 bg-gray-50 rounded-lg text-sm">
+                            <div class="flex items-start justify-between p-3 rounded-lg text-sm transition-colors"
+                                 :class="{
+                                    'bg-amber-50 ring-1 ring-amber-300': url.processing_state === 'fetching',
+                                    'bg-blue-50 ring-1 ring-blue-300': url.processing_state === 'posting',
+                                    'bg-gray-50': url.processing_state === 'idle' || !url.processing_state,
+                                 }">
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2 mb-1">
                                         <span class="inline-block w-2 h-2 rounded-full"
@@ -309,6 +319,11 @@
                                         <a :href="url.url" target="_blank"
                                            class="text-indigo-600 hover:underline truncate block max-w-md"
                                            x-text="url.url"></a>
+                                        <template x-if="url.processing_state && url.processing_state !== 'idle'">
+                                            <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                                                  :class="url.processing_state === 'fetching' ? 'bg-amber-200 text-amber-800' : 'bg-blue-200 text-blue-800'"
+                                                  x-text="url.processing_state === 'fetching' ? 'Çekiliyor…' : 'Basılıyor…'"></span>
+                                        </template>
                                     </div>
                                     <div class="flex gap-4 text-xs text-gray-500 ml-4">
                                         <span>low: <span x-text="url.multiplier_low"></span>x</span>
@@ -320,10 +335,12 @@
                                         </template>
                                     </div>
                                     <div class="flex gap-4 text-xs text-gray-400 ml-4 mt-1">
-                                        <span>Found: <span x-text="url.items_found"></span></span>
-                                        <span>Posted: <span x-text="url.items_posted"></span></span>
+                                        <span>Bulunan: <span class="text-gray-600" x-text="url.cycle_found"></span></span>
+                                        <span>Yeni: <span class="text-emerald-600" x-text="url.cycle_new"></span></span>
+                                        <span>Zaten var: <span x-text="url.cycle_found - url.cycle_new"></span></span>
+                                        <span>Basılan: <span class="text-blue-600" x-text="url.cycle_posted"></span></span>
                                         <template x-if="url.last_fetched_at">
-                                            <span>Last: <span x-text="formatTime(url.last_fetched_at)"></span></span>
+                                            <span>Son: <span x-text="formatTime(url.last_fetched_at)"></span></span>
                                         </template>
                                         <template x-if="url.last_error">
                                             <span class="text-red-500" x-text="url.last_error"></span>

@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from .....core.contracts import CredentialBundle
+from ..models import GenshinCharacter, HonkaiCharacter, ZenlessCharacter
 
 
 @dataclass(slots=True)
@@ -44,6 +45,11 @@ class GenshinLztSource:
     zenless_cinemas: int = 0
     zenless_achievement_count: int = 0
     zenless_abyss_progress: str = ""
+
+    # Character detail lists
+    genshin_characters: list[GenshinCharacter] = field(default_factory=list)
+    honkai_characters: list[HonkaiCharacter] = field(default_factory=list)
+    zenless_characters: list[ZenlessCharacter] = field(default_factory=list)
 
 
 class GenshinLztSourceAdapter:
@@ -93,6 +99,9 @@ class GenshinLztSourceAdapter:
             zenless_cinemas=self._to_int(payload.get("mihoyo_zenless_cinemas_count"), default=0),
             zenless_achievement_count=self._to_int(payload.get("mihoyo_zenless_achievement_count"), default=0),
             zenless_abyss_progress=str(payload.get("mihoyo_zenless_abyss_process") or "").strip(),
+            genshin_characters=self._parse_genshin_characters(payload.get("genshinCharacters")),
+            honkai_characters=self._parse_honkai_characters(payload.get("honkaiCharacters")),
+            zenless_characters=self._parse_zenless_characters(payload.get("zenlessCharacters")),
         )
 
     def _to_int(self, value: Any, default: int) -> int:
@@ -110,3 +119,70 @@ class GenshinLztSourceAdapter:
             return float(value)
         except (TypeError, ValueError):
             return default
+
+    def _parse_genshin_characters(self, raw: Any) -> list[GenshinCharacter]:
+        if not isinstance(raw, list):
+            return []
+        result: list[GenshinCharacter] = []
+        for entry in raw:
+            if not isinstance(entry, dict):
+                continue
+            name = str(entry.get("name") or "").strip()
+            if not name:
+                continue
+            weapon = entry.get("weapon") or {}
+            if not isinstance(weapon, dict):
+                weapon = {}
+            result.append(GenshinCharacter(
+                name=name,
+                rarity=self._to_int(entry.get("rarity"), default=4),
+                element=str(entry.get("element") or "").strip(),
+                level=self._to_int(entry.get("level"), default=0),
+                constellation=self._to_int(entry.get("actived_constellation_num"), default=0),
+                weapon_name=str(weapon.get("name") or "").strip(),
+                weapon_rarity=self._to_int(weapon.get("rarity"), default=0),
+            ))
+        return result
+
+    def _parse_honkai_characters(self, raw: Any) -> list[HonkaiCharacter]:
+        if not isinstance(raw, list):
+            return []
+        result: list[HonkaiCharacter] = []
+        for entry in raw:
+            if not isinstance(entry, dict):
+                continue
+            name = str(entry.get("name") or "").strip()
+            if not name:
+                continue
+            equip = entry.get("equip") or {}
+            if not isinstance(equip, dict):
+                equip = {}
+            result.append(HonkaiCharacter(
+                name=name,
+                rarity=self._to_int(entry.get("rarity"), default=4),
+                element=str(entry.get("element") or "").strip(),
+                level=self._to_int(entry.get("level"), default=0),
+                eidolon=self._to_int(entry.get("rank"), default=0),
+                weapon_name=str(equip.get("name") or "").strip(),
+                weapon_rarity=self._to_int(equip.get("rarity"), default=0),
+            ))
+        return result
+
+    def _parse_zenless_characters(self, raw: Any) -> list[ZenlessCharacter]:
+        if not isinstance(raw, list):
+            return []
+        result: list[ZenlessCharacter] = []
+        for entry in raw:
+            if not isinstance(entry, dict):
+                continue
+            name = str(entry.get("name") or "").strip()
+            if not name:
+                continue
+            result.append(ZenlessCharacter(
+                name=name,
+                rarity=self._to_int(entry.get("rarity"), default=4),
+                element=str(entry.get("element") or "").strip(),
+                level=self._to_int(entry.get("level"), default=0),
+                cinema=self._to_int(entry.get("rank") or entry.get("cinema"), default=0),
+            ))
+        return result

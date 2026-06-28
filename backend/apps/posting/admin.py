@@ -108,8 +108,8 @@ class PostingLogAdmin(admin.ModelAdmin):
 class DropshipTargetURLInline(admin.TabularInline):
     model = DropshipTargetURL
     extra = 0
-    fields = ['url', 'enabled', 'multiplier_low', 'multiplier_mid', 'multiplier_high', 'min_price', 'forced_ending', 'exchange_rate', 'items_found', 'items_posted']
-    readonly_fields = ['items_found', 'items_posted']
+    fields = ['url', 'enabled', 'multiplier_low', 'multiplier_mid', 'multiplier_high', 'min_price', 'forced_ending', 'exchange_rate', 'processing_state', 'cycle_found', 'cycle_new', 'cycle_posted']
+    readonly_fields = ['processing_state', 'cycle_found', 'cycle_new', 'cycle_posted']
 
 
 @admin.register(DropshippingJobConfig)
@@ -122,10 +122,10 @@ class DropshippingJobConfigAdmin(admin.ModelAdmin):
 
 @admin.register(DropshipTargetURL)
 class DropshipTargetURLAdmin(admin.ModelAdmin):
-    list_display = ['config', 'url', 'enabled', 'items_found', 'items_posted', 'last_fetched_at', 'error_count']
-    list_filter = ['enabled']
+    list_display = ['config', 'url', 'enabled', 'processing_state', 'cycle_found', 'cycle_new', 'cycle_posted', 'last_fetched_at', 'error_count']
+    list_filter = ['enabled', 'processing_state']
     raw_id_fields = ['config']
-    readonly_fields = ['last_fetched_at', 'items_found', 'items_posted', 'error_count', 'last_error', 'created_at']
+    readonly_fields = ['last_fetched_at', 'processing_state', 'cycle_found', 'cycle_new', 'cycle_posted', 'error_count', 'last_error', 'created_at']
 
 
 @admin.register(CleanerConfig)

@@ -72,6 +72,29 @@ def test_lzt_source_parses_credentials(load_fixture) -> None:
     assert source.credentials.email_password == "yd2YFsI8fsuY"
 
 
+def test_lzt_source_parses_genshin_characters(load_fixture) -> None:
+    source = GenshinLztSourceAdapter().parse(load_fixture("lzt_gi.json"))
+
+    assert source is not None
+    assert len(source.genshin_characters) == 42
+    five_stars = [c for c in source.genshin_characters if c.rarity == 5]
+    assert len(five_stars) == 8  # includes Traveler
+    yoimiya = next(c for c in source.genshin_characters if c.name == "Yoimiya")
+    assert yoimiya.constellation == 1
+    assert yoimiya.rarity == 5
+
+
+def test_lzt_source_parses_honkai_characters(load_fixture) -> None:
+    source = GenshinLztSourceAdapter().parse(load_fixture("lzt_gi.json"))
+
+    assert source is not None
+    assert len(source.honkai_characters) == 25
+    gepard = next(c for c in source.honkai_characters if c.name == "Gepard")
+    assert gepard.rarity == 5
+    assert gepard.weapon_name == "Moment of Victory"
+    assert gepard.weapon_rarity == 5
+
+
 def test_lzt_source_returns_none_for_empty_data() -> None:
     assert GenshinLztSourceAdapter().parse(None) is None
     assert GenshinLztSourceAdapter().parse({}) is None
@@ -99,7 +122,7 @@ def test_resolver_produces_resolved_account(load_fixture) -> None:
     assert account.honkai_level == 54
     assert account.zenless_level == 0
     assert account.has_email_access is True
-    assert account.price == 10.64
+    assert account.price == 11.13
     assert account.credentials.login == "popatemaran2dk7@outlook.com"
 
 
@@ -119,12 +142,12 @@ def test_composer_generates_title_and_description(load_fixture) -> None:
     listing = GenshinComposer().compose(account, request, MediaBundle())
 
     assert "AR50" in listing.default.title
-    assert "7 Legendary" in listing.default.title
-    assert "S4G" not in listing.default.title
-    assert "Adventure Experience: 50" in listing.default.description
-    assert "Legendary Characters: 7" in listing.default.description
+    assert "7x5*" in listing.default.title
+    assert "Yoimiya" in listing.default.title
+    assert "AR 50" in listing.default.description
+    assert "5-Star Characters (7)" in listing.default.description
     assert "Honkai Star Rail" in listing.default.description
-    assert "Trailblaze Level: 54" in listing.default.description
+    assert "TL 54" in listing.default.description
 
 
 # ── Eldorado builder ─────────────────────────────────────────────

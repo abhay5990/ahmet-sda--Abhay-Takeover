@@ -82,7 +82,13 @@
                                    @change="toggleOne({{ order.id }})"
                                    class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
                         </td>
-                        <td class="px-4 py-3 text-sm font-mono text-gray-900">{{ order.store_order_id|truncatechars:20 }}</td>
+                        <td class="px-4 py-3 text-sm font-mono text-gray-900">
+                            <span class="cursor-pointer hover:text-emerald-600 transition-colors"
+                                  title="{{ order.store_order_id }} — click to copy"
+                                  @click="navigator.clipboard.writeText('{{ order.store_order_id }}').then(() => { $el.dataset.orig = $el.textContent; $el.textContent = 'Copied!'; setTimeout(() => $el.textContent = $el.dataset.orig, 1000) })">
+                                {{ order.store_order_id|truncatechars:20 }}
+                            </span>
+                        </td>
                         <td class="px-4 py-3 text-sm">
                             {% if order.integration_account %}
                             <span class="px-2 py-0.5 rounded text-xs font-medium

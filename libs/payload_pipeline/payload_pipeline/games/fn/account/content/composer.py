@@ -87,10 +87,8 @@ class FortniteComposer:
         request: PipelineRequest,
         media: MediaBundle,
     ) -> ListingDraft:
-        # Manual entries have pre-defined title/description from Google Sheet
+        # Manual entries: early return, no template overlay
         if account.manual_title:
-            # Carry the original Imgur album URL so the description generator
-            # can include it at the top of the listing description.
             if not media.album_url and account.manual_images:
                 media.album_url = account.manual_images
 
@@ -99,17 +97,28 @@ class FortniteComposer:
             description = account.manual_description or self.description_generator.generate(
                 account, media=media, marketplace="default"
             )
-            # Generator adds the album link automatically; manual descriptions bypass
-            # the generator so we prepend it here (protocol stripped, all marketplaces).
             if account.manual_description and media.album_url:
                 clean_url = media.album_url.removeprefix("https://").removeprefix("http://")
                 description = f"Images:\n{clean_url}\n{description}"
-        else:
-            title = self.title_generator.generate(account, marketplace="default")
-            g2g_title = self.title_generator.generate(account, marketplace="g2g")
-            description = self.description_generator.generate(
-                account, media=media, marketplace="default",
+
+            return ListingDraft(
+                default=ListingContent(
+                    title=title,
+                    description=description,
+                    tags=["fortnite", "epic-games", "account"],
+                ),
+                media=media,
+                marketplace_overrides={
+                    "g2g": MarketplaceListingOverride(title=g2g_title),
+                },
             )
+
+        # Generated content path
+        title = self.title_generator.generate(account, marketplace="default")
+        g2g_title = self.title_generator.generate(account, marketplace="g2g")
+        description = self.description_generator.generate(
+            account, media=media, marketplace="default",
+        )
 
         draft = ListingDraft(
             default=ListingContent(
@@ -123,21 +132,19 @@ class FortniteComposer:
             },
         )
 
-        # Overlay templates as per-marketplace overrides (draft.default untouched).
-        # Skip when user provided manual title/description — those take priority.
-        if not account.manual_title:
-            title_templates = ctx.TITLE_TEMPLATES.get(request)
-            desc_templates = ctx.DESCRIPTION_TEMPLATES.get(request)
-            if title_templates or desc_templates:
-                cosmetic_lists = ctx.COSMETIC_LISTS.get(request)
-                apply_template_overrides(
-                    draft,
-                    build_fortnite_context(
-                        account, request, media,
-                        cosmetic_lists=cosmetic_lists,
-                    ),
-                    title_templates=title_templates,
-                    description_templates=desc_templates,
-                )
+        # Overlay templates as per-marketplace overrides (draft.default untouched)
+        title_templates = ctx.TITLE_TEMPLATES.get(request)
+        desc_templates = ctx.DESCRIPTION_TEMPLATES.get(request)
+        if title_templates or desc_templates:
+            cosmetic_lists = ctx.COSMETIC_LISTS.get(request)
+            apply_template_overrides(
+                draft,
+                build_fortnite_context(
+                    account, request, media,
+                    cosmetic_lists=cosmetic_lists,
+                ),
+                title_templates=title_templates,
+                description_templates=desc_templates,
+            )
 
         return draft

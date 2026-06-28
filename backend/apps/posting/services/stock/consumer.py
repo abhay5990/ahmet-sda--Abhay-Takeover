@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 # PA batch size — flush the accumulator once it reaches this count.
 _PA_BATCH_SIZE = 10
-_MULTI_CRED_GAMES: frozenset[str] = frozenset({'grand-theft-auto-5'})
+_MULTI_CRED_MARKETPLACES: frozenset[str] = frozenset({'eldorado', 'gameboost'})
 
 
 class StockConsumer:
@@ -85,17 +85,24 @@ class StockConsumer:
     ) -> None:
         """Consumer thread: pull items from queue, build + POST one by one.
 
-        For GTA V manual jobs (source_type='manual'), all items are drained
-        first and posted as a single multi-credential offer. For all other
-        jobs, items are processed one by one as they arrive (streaming).
+        For manual jobs to multi-cred marketplaces (Eldorado, GameBoost),
+        all items are drained first and posted as a single multi-credential
+        offer.  For all other jobs (including PA), items are processed one
+        by one as they arrive (streaming).
         """
         try:
             close_old_connections()
 
-            # Multi-cred intent is known upfront from job settings — no need
-            # to drain the queue first for non-GTA-manual jobs.
-            if self._is_multi_cred_job(job):
-                entries: list[tuple[PostingJobItem, dict]] = []
+            # Multi-cred: manual jobs to marketplaces that accept multiple
+            # credentials in a single offer (Eldorado, GameBoost).  Peek the
+            # first entry to learn the marketplace; if sentinel comes first
+            # the queue is empty — nothing to do.
+            first_entry = queue.get()
+            if first_entry is self._sentinel:
+                return
+            first_marketplace = first_entry[0].marketplace
+            if self._is_multi_cred_job(job, first_marketplace):
+                entries: list[tuple[PostingJobItem, dict]] = [first_entry]
                 while True:
                     entry = queue.get()
                     if entry is self._sentinel:
@@ -104,17 +111,24 @@ class StockConsumer:
                 if entries:
                     self._process_multi_cred_batch(entries, job)
                 return
+            # Not multi-cred — put the first entry back into processing below
+            remaining_first = first_entry
 
             # ── Standard streaming path — process each item as it arrives ──
             variant_ctx: dict | None = None
             router: VariantRouter | None = None
             _routing_init = False
 
-            while True:
-                entry = queue.get()
-                if entry is self._sentinel:
-                    break
+            # Process the already-dequeued first entry, then continue draining
+            def _drain():
+                yield remaining_first
+                while True:
+                    entry = queue.get()
+                    if entry is self._sentinel:
+                        return
+                    yield entry
 
+            for entry in _drain():
                 item, prepared_data = entry
 
                 if self._is_cancelled(job):
@@ -265,13 +279,18 @@ class StockConsumer:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _is_multi_cred_job(job: PostingJob) -> bool:
-        """Return True when all credentials should be merged into one offer."""
+    def _is_multi_cred_job(job: PostingJob, marketplace: str) -> bool:
+        """Return True when all credentials should be merged into one offer.
+
+        Multi-cred is enabled for manual jobs targeting marketplaces that
+        accept multiple credentials per offer (Eldorado, GameBoost).
+        PlayerAuctions requires one offer per credential.
+        """
         manual = job.settings.get('_manual', {})
         return (
             isinstance(manual, dict)
             and manual.get('source_type') == 'manual'
-            and job.game.slug in _MULTI_CRED_GAMES
+            and marketplace in _MULTI_CRED_MARKETPLACES
         )
 
     def _process_multi_cred_batch(

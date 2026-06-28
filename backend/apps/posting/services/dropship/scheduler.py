@@ -159,6 +159,14 @@ class DropshipScheduler:
             logger.warning("Cleaner stale lock recovered: source #%d", cc.source_account_id)
             count += 1
 
+        # Processing state flags (poster crash may leave fetching/posting stuck)
+        stale_urls = DropshipTargetURL.objects.exclude(
+            processing_state=DropshipTargetURL.PROC_IDLE,
+        ).update(processing_state=DropshipTargetURL.PROC_IDLE)
+        if stale_urls:
+            logger.warning("Reset processing_state on %d target URL(s)", stale_urls)
+            count += stale_urls
+
         logger.info("Stale lock recovery complete: %d worker(s) reset", count)
 
     # -------------------------------------------------------------------

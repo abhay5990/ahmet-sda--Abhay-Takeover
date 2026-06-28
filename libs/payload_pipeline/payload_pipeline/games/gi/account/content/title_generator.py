@@ -5,7 +5,7 @@ from __future__ import annotations
 from ..models import GenshinResolvedAccount
 
 
-_REGION_MAP = {
+REGION_MAP = {
     "North America": "NA",
     "Europe": "EU",
     "Asia": "Asia",
@@ -15,7 +15,18 @@ _REGION_MAP = {
     "TW, HK, MO": "TW",
     "China": "CN",
     "Global": "GL",
+    # LZT sometimes returns short codes directly
+    "na": "NA",
+    "eu": "EU",
+    "asia": "Asia",
 }
+
+
+def _char_label(name: str, constellation: int) -> str:
+    """Format character name with constellation if > 0."""
+    if constellation > 0:
+        return f"{name} C{constellation}"
+    return name
 
 
 class GenshinTitleGenerator:
@@ -37,23 +48,45 @@ class GenshinTitleGenerator:
         *,
         max_length: int,
     ) -> str:
-        region = _REGION_MAP.get(account.region, "UNK")
+        region = REGION_MAP.get(account.region, account.region.upper() or "UNK")
         parts: list[str] = [f"[{region}]"]
 
         if account.genshin_level > 0:
             parts.append(f"AR{account.genshin_level}")
-        if account.genshin_character_count > 0:
-            parts.append(f"{account.genshin_character_count} Characters")
+
+        # 5-star count summary
         if account.genshin_legendary_characters > 0:
-            parts.append(f"{account.genshin_legendary_characters} Legendary")
+            parts.append(f"{account.genshin_legendary_characters}x5*")
+
+        # 5-star character names with constellation
+        for char in account.genshin_characters:
+            if char.rarity == 5 and char.name != "Traveler":
+                parts.append(_char_label(char.name, char.constellation))
+
+        # 5-star weapons count
         if account.genshin_legendary_weapons > 0:
-            parts.append(f"{account.genshin_legendary_weapons} 5\u2605Weapons")
-        if account.genshin_constellations > 0:
-            parts.append(f"TC{account.genshin_constellations}")
+            parts.append(f"{account.genshin_legendary_weapons}x5*Wep")
 
-        base_title = " | ".join(parts)
+        # HSR tag if has data
+        if account.honkai_level > 0:
+            parts.append(f"HSR TL{account.honkai_level}")
 
-        if len(base_title) > max_length:
-            base_title = base_title[:max_length]
+        return _assemble(parts, max_length=max_length)
 
-        return base_title.strip()
+
+def _assemble(parts: list[str], *, max_length: int) -> str:
+    """Join parts with ' | ', dropping middle parts if too long."""
+    separator = " | "
+
+    built: list[str] = []
+    current_length = 0
+    for part in parts:
+        if not part:
+            continue
+        item_len = len(part) + (len(separator) if built else 0)
+        if current_length + item_len > max_length:
+            break
+        built.append(part)
+        current_length += item_len
+
+    return separator.join(built)

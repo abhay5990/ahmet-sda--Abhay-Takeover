@@ -405,7 +405,16 @@ def _run_mini_sync(
         updated_at__gte=grace_cutoff,
     )
 
+    # Collect DP IDs before bulk update (signal won't fire)
+    stale_dp_ids = set(
+        stale_listings.filter(dropship_product__isnull=False)
+        .values_list('dropship_product_id', flat=True)
+    )
     deleted = stale_listings.update(status=ListingStatus.DELETED)
+    # Cascade to orphaned DropshipProducts
+    if stale_dp_ids:
+        from apps.sync.services.base import _reconcile_dropship_products
+        _reconcile_dropship_products(stale_dp_ids)
 
     # Log result
     SyncLog.objects.create(

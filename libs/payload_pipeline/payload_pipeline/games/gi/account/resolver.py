@@ -59,6 +59,23 @@ class GenshinResolver:
     def _resolve_lzt(self, lzt, request: PipelineRequest) -> GenshinResolvedAccount:
         credentials = resolve_credentials(lzt, kind=request.kind, game_name="Genshin Impact")
 
+        # Derive name lists from character details
+        genshin_5star_names = [
+            c.name for c in lzt.genshin_characters
+            if c.rarity == 5 and c.name != "Traveler"
+        ]
+        genshin_5star_weapon_names: list[str] = []
+        seen_weapons: set[str] = set()
+        for c in lzt.genshin_characters:
+            if c.weapon_rarity == 5 and c.weapon_name and c.weapon_name not in seen_weapons:
+                genshin_5star_weapon_names.append(c.weapon_name)
+                seen_weapons.add(c.weapon_name)
+
+        honkai_5star_names = [
+            c.name for c in lzt.honkai_characters
+            if c.rarity == 5 and c.name != "Trailblazer"
+        ]
+
         return GenshinResolvedAccount(
             item_id=lzt.item_id,
             category_id=lzt.category_id,
@@ -91,4 +108,10 @@ class GenshinResolver:
             zenless_achievement_count=lzt.zenless_achievement_count,
             zenless_abyss_progress=lzt.zenless_abyss_progress,
             has_email_access=not lzt.credentials.is_empty and bool(lzt.credentials.email_login),
+            genshin_characters=lzt.genshin_characters,
+            honkai_characters=lzt.honkai_characters,
+            zenless_characters=lzt.zenless_characters,
+            genshin_5star_names=genshin_5star_names,
+            genshin_5star_weapon_names=genshin_5star_weapon_names,
+            honkai_5star_names=honkai_5star_names,
         )

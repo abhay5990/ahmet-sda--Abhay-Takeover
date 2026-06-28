@@ -468,15 +468,24 @@ class BaseSyncService:
         # Mark stale listings as DELETED (not seen during backfill = gone from marketplace)
         deleted_count = 0
         if stale_remote_ids:
-            deleted_count = Listing.objects.filter(
+            stale_listings_qs = Listing.objects.filter(
                 integration_account=account,
                 store_listing_id__in=stale_remote_ids,
             ).exclude(
                 status__in=[ListingStatus.CLOSED, ListingStatus.DELETED],
-            ).update(
+            )
+            # Collect DP IDs before bulk update (signal won't fire)
+            stale_dp_ids = set(
+                stale_listings_qs.filter(dropship_product__isnull=False)
+                .values_list('dropship_product_id', flat=True)
+            )
+            deleted_count = stale_listings_qs.update(
                 status=ListingStatus.DELETED,
                 removed_at=now,
             )
+            # Cascade to orphaned DropshipProducts
+            if stale_dp_ids:
+                _reconcile_dropship_products(stale_dp_ids)
 
         # Hard-delete stale RawPayload rows
         raw_deleted_count, _ = stale_raw_qs.delete()
@@ -711,3 +720,47 @@ class BaseSyncService:
     def _hash_payload(item: Any) -> str:
         serialised = json.dumps(item, sort_keys=True, default=str)
         return hashlib.sha256(serialised.encode()).hexdigest()
+
+
+# ---------------------------------------------------------------------------
+# Shared helper: reconcile DropshipProducts after bulk listing deletion
+# ---------------------------------------------------------------------------
+def _reconcile_dropship_products(dp_ids: set[int]) -> int:
+    """Mark LISTED DropshipProducts as DELETED when they have no remaining
+    LISTED listings. Used after bulk .update() calls that bypass signals.
+
+    Returns the number of DropshipProducts marked as DELETED.
+    """
+    from apps.inventory.enums import DropshipProductStatus
+    from apps.inventory.models import DropshipProduct
+    from apps.listings.enums import ListingStatus
+    from apps.listings.models import Listing
+
+    # Find DPs that still have at least one LISTED listing
+    still_active_dp_ids = set(
+        Listing.objects.filter(
+            dropship_product_id__in=dp_ids,
+            status=ListingStatus.LISTED,
+        ).values_list('dropship_product_id', flat=True)
+    )
+
+    orphaned_dp_ids = dp_ids - still_active_dp_ids
+    if not orphaned_dp_ids:
+        return 0
+
+    now = timezone.now()
+    updated = DropshipProduct.objects.filter(
+        pk__in=orphaned_dp_ids,
+        status=DropshipProductStatus.LISTED,
+    ).update(
+        status=DropshipProductStatus.DELETED,
+        deleted_at=now,
+    )
+
+    if updated:
+        logger.info(
+            "Reconciled %d orphaned DropshipProduct(s) -> DELETED "
+            "(no remaining LISTED listings)",
+            updated,
+        )
+    return updated

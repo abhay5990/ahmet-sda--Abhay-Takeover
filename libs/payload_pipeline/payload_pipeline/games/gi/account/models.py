@@ -2,10 +2,47 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 from ....core.contracts import FieldMeta, ResolvedAccountBase
+
+
+@dataclass(slots=True, frozen=True)
+class GenshinCharacter:
+    """A single Genshin Impact character with optional weapon info."""
+
+    name: str
+    rarity: int = 4
+    element: str = ""
+    level: int = 0
+    constellation: int = 0
+    weapon_name: str = ""
+    weapon_rarity: int = 0
+
+
+@dataclass(slots=True, frozen=True)
+class HonkaiCharacter:
+    """A single Honkai Star Rail character with optional light cone info."""
+
+    name: str
+    rarity: int = 4
+    element: str = ""
+    level: int = 0
+    eidolon: int = 0
+    weapon_name: str = ""
+    weapon_rarity: int = 0
+
+
+@dataclass(slots=True, frozen=True)
+class ZenlessCharacter:
+    """A single Zenless Zone Zero agent."""
+
+    name: str
+    rarity: int = 4
+    element: str = ""
+    level: int = 0
+    cinema: int = 0
 
 
 @dataclass(slots=True)
@@ -45,6 +82,16 @@ class GenshinResolvedAccount(ResolvedAccountBase):
     zenless_abyss_progress: str = ""
 
     has_email_access: bool = False
+
+    # Character detail lists (from LZT API)
+    genshin_characters: list[GenshinCharacter] = field(default_factory=list)
+    honkai_characters: list[HonkaiCharacter] = field(default_factory=list)
+    zenless_characters: list[ZenlessCharacter] = field(default_factory=list)
+
+    # Derived name lists for title generation and template rendering
+    genshin_5star_names: list[str] = field(default_factory=list)
+    genshin_5star_weapon_names: list[str] = field(default_factory=list)
+    honkai_5star_names: list[str] = field(default_factory=list)
 
     # Manual entry integer counts
     adventure_rank_level: int = 0
@@ -87,6 +134,19 @@ class GenshinResolvedAccount(ResolvedAccountBase):
         "zenless_achievement_count": FieldMeta("ZZZ achievement count.", 200),
         "zenless_abyss_progress": FieldMeta("Shiyu Defense progress.", "8"),
         "has_email_access": FieldMeta("Email access status.", True),
+        # Character name lists
+        "genshin_5star_names": FieldMeta(
+            "Genshin 5-star character names.",
+            ["Yoimiya", "Wanderer", "Nilou", "Shenhe"],
+        ),
+        "genshin_5star_weapon_names": FieldMeta(
+            "Genshin 5-star weapon names.",
+            ["Wolf's Gravestone", "Primordial Jade Winged-Spear"],
+        ),
+        "honkai_5star_names": FieldMeta(
+            "Honkai 5-star character names.",
+            ["Aventurine", "Dr. Ratio", "Luocha"],
+        ),
         # Manual entry integer counts
         "adventure_rank_level": FieldMeta("Adventure rank from manual entry.", 55),
         "character_count": FieldMeta("5-star character count from manual entry.", 12),
@@ -97,4 +157,25 @@ class GenshinResolvedAccount(ResolvedAccountBase):
 
     COMPUTED_FIELDS: ClassVar[dict[str, FieldMeta]] = {
         **ResolvedAccountBase.COMPUTED_FIELDS,
+        "region_code": FieldMeta("Short region code (EU, NA, etc.).", "EU", "computed"),
+        "genshin_5star_with_cons": FieldMeta(
+            "5-star characters with constellation notation (e.g. Yoimiya C1).",
+            ["Yoimiya C1", "Mona C1", "Diluc"],
+            "computed",
+        ),
+        "notable_4star_cons": FieldMeta(
+            "Notable 4-star characters with high constellations (C4+).",
+            ["Bennett C5", "Xingqiu C4"],
+            "computed",
+        ),
+        "honkai_5star_with_eidolons": FieldMeta(
+            "HSR 5-star characters with eidolon notation.",
+            ["Aventurine E1", "Dr. Ratio"],
+            "computed",
+        ),
+        "hsr_summary": FieldMeta(
+            "Short HSR summary for title (e.g. HSR TL54).",
+            "HSR TL54",
+            "computed",
+        ),
     }
