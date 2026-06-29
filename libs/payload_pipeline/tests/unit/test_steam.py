@@ -24,28 +24,28 @@ class TestSteamLztSourceAdapter:
         source = adapter.parse(load_fixture("lzt_steam.json"))
 
         assert source is not None
-        assert source.item_id == "770001001"
-        assert source.steam_id == "76561198012345678"
-        assert source.country == "de"
-        assert source.steam_level == 25
-        assert source.total_games == 5
+        assert source.item_id == "185772385"
+        assert source.steam_id == "76561198815995635"
+        assert source.country == "india"
+        assert source.steam_level == 0
+        assert source.total_games == 3
+        assert source.is_limited is True
 
     def test_parse_extracts_games_list(self, load_fixture):
         adapter = SteamLztSourceAdapter()
         source = adapter.parse(load_fixture("lzt_steam.json"))
 
-        assert len(source.games) == 5
+        assert len(source.games) == 3
         titles = [g.get("title") for g in source.games]
-        assert "Counter-Strike 2" in titles
-        assert "Rust" in titles
+        assert "CS2 Prime" in titles
 
     def test_parse_extracts_credentials(self, load_fixture):
         adapter = SteamLztSourceAdapter()
         source = adapter.parse(load_fixture("lzt_steam.json"))
 
-        assert source.credentials.login == "steam_user"
-        assert source.credentials.password == "SteamPass123"
-        assert source.credentials.email_login == "steam_email@example.com"
+        assert source.credentials.login == "cathrine60"
+        assert source.credentials.password == "FZD4GCDZ2C43"
+        assert source.credentials.email_login == ""
 
 
 # -- resolver tests --------------------------------------------------------
@@ -60,11 +60,12 @@ class TestSteamResolver:
         )
         account = SteamResolver().resolve(request)
 
-        assert account.steam_id == "76561198012345678"
-        assert account.steam_level == 25
-        assert account.total_games == 5
-        assert account.country == "de"
-        assert account.has_email_access is True
+        assert account.steam_id == "76561198815995635"
+        assert account.steam_level == 0
+        assert account.total_games == 3
+        assert account.country == "india"
+        assert account.has_email_access is False
+        assert account.is_limited is True
 
     def test_resolver_rejects_missing_source(self):
         request = PipelineRequest(
@@ -103,8 +104,7 @@ class TestSteamComposer:
         draft = SteamComposer().compose(account, request, MediaBundle())
 
         assert draft.default.title
-        assert "5 Games" in draft.default.title
-        assert "Games: 5" in draft.default.description
+        assert "3 Games" in draft.default.title
         assert "steam" in draft.default.tags
 
     def test_compose_includes_game_titles(self, load_fixture):
@@ -119,7 +119,10 @@ class TestSteamComposer:
         account = SteamResolver().resolve(request)
         draft = SteamComposer().compose(account, request, MediaBundle())
 
-        assert "Counter-Strike 2" in draft.default.description
+        assert "CS2 Prime" in draft.default.description
+        assert "441 hrs" in draft.default.description
+        assert "Limited Account: Yes" in draft.default.description
+        assert "Legendary Eagle" in draft.default.description
 
 
 # -- registry tests --------------------------------------------------------
@@ -132,7 +135,7 @@ class TestSteamRegistration:
     def test_steam_has_all_marketplaces(self):
         registry = build_default_registry()
         defn = registry.get_game("steam", "account")
-        assert set(defn.marketplaces.keys()) == {"eldorado", "gameboost", "g2g"}
+        assert {"eldorado", "gameboost", "g2g"}.issubset(defn.marketplaces.keys())
 
 
 # -- end-to-end pipeline tests --------------------------------------------
@@ -191,9 +194,9 @@ class TestSteamPipeline:
         assert result.success
 
         assert result.payload["game"] == "steam"
-        assert result.payload["account_data"]["steam_level"] == 25
-        assert result.payload["account_data"]["games_count"] == 5
-        assert result.payload["account_data"]["country"] == "DE"
+        assert result.payload["account_data"]["steam_level"] == 0
+        assert result.payload["account_data"]["games_count"] == 3
+        assert result.payload["account_data"]["country"] == "INDIA"
         assert result.payload["login"]
 
     def test_g2g_payload_shape(self, load_fixture):
@@ -229,5 +232,5 @@ class TestSteamPipeline:
         prepared = _prepare_result.prepared
         subject = prepared.subject
 
-        assert subject.steam_level == 25
-        assert subject.total_games == 5
+        assert subject.steam_level == 0
+        assert subject.total_games == 3

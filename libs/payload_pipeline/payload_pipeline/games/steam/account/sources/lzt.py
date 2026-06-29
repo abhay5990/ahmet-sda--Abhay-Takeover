@@ -22,6 +22,16 @@ class SteamLztSource:
     steam_level: int = 0
     total_games: int = 0
     games: list[dict[str, Any]] = field(default_factory=list)
+    is_limited: bool = False
+    cs2_rank_id: int = 0
+    cs2_profile_rank: int = 0
+    cs2_win_count: int = 0
+    market_ban_end_date: int = 0
+    dota2_mmr: int = 0
+    dota2_win_count: int = 0
+    dota2_lose_count: int = 0
+    rust_kills: int = 0
+    rust_deaths: int = 0
 
 
 class SteamLztSourceAdapter:
@@ -61,6 +71,16 @@ class SteamLztSourceAdapter:
             steam_level=self._to_int(payload.get("steam_level"), default=0),
             total_games=len(games),
             games=games,
+            is_limited=bool(self._to_int(payload.get("steam_is_limited"), default=0)),
+            cs2_rank_id=self._to_int(payload.get("steam_cs2_rank_id"), default=0),
+            cs2_profile_rank=self._to_int(payload.get("steam_cs2_profile_rank"), default=0),
+            cs2_win_count=self._to_int(payload.get("steam_cs2_win_count"), default=0),
+            market_ban_end_date=self._to_int(payload.get("steam_market_ban_end_date"), default=0),
+            dota2_mmr=self._to_int(payload.get("steam_dota2_solo_mmr"), default=0),
+            dota2_win_count=self._to_int(payload.get("steam_dota2_win_count"), default=0),
+            dota2_lose_count=self._to_int(payload.get("steam_dota2_lose_count"), default=0),
+            rust_kills=self._to_int(payload.get("steam_rust_kill_player"), default=0),
+            rust_deaths=self._to_int(payload.get("steam_rust_deaths"), default=0),
         )
 
     def _to_int(self, value: Any, default: int) -> int:

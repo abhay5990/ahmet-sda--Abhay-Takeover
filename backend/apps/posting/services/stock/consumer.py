@@ -30,7 +30,10 @@ from apps.posting.models import (
     PostingLogLevel,
 )
 from apps.posting.services.shared import persist_success
-from apps.posting.services.shared.listing_writer import persist_multi_cred_success
+from apps.posting.services.shared.listing_writer import (
+    add_failed_owned_products_to_pool,
+    persist_multi_cred_success,
+)
 from apps.posting.services.shared.max_offer_error import is_max_offer_error
 from apps.posting.services.shared.utils import extract_listing_id
 from apps.posting.services.variant_context import build_variant_context
@@ -175,9 +178,27 @@ class StockConsumer:
         variant_ctx: dict | None = None,
         router: VariantRouter | None = None,
     ) -> None:
-        """Process a single non-PA item: build payload → POST → create Listing."""
+        """Process a single non-PA item: build payload → POST → create Listing.
+
+        Failure stages are separated into two try blocks so that
+        release_dispatch_items_for_job can use the correct remote_outcome:
+        - Pre-remote (build fail, API net error): remote_outcome='absent'
+        - Post-remote (persist fail after confirmed API success): remote_outcome='unknown'
+        """
+        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
+
         item.status = PostingJobItemStatus.PROCESSING
         item.save(update_fields=['status', 'updated_at'])
+
+        owned_product = prepared_data.get('owned_product')
+
+        # ── Stage 1: build + remote POST ──────────────────────────────────
+        store_listing_id = None
+        api_data = None
+        payload = None
+        final_price = None
+        variant_slug = None
+        listing_variant_slug = None
 
         try:
             build_result = build_item_payload(
@@ -191,12 +212,11 @@ class StockConsumer:
                 )
 
             payload = build_result['data']['payload']
-            final_price: Decimal = build_result['data']['final_price']
-            variant_slug: str = build_result['data']['variant_slug']
-            listing_variant_slug: str = build_result['data'].get(
+            final_price = build_result['data']['final_price']
+            variant_slug = build_result['data']['variant_slug']
+            listing_variant_slug = build_result['data'].get(
                 'listing_variant_slug', variant_slug,
             )
-            owned_product = prepared_data['owned_product']
 
             api_result = self._post_with_backoff(item, payload)
 
@@ -227,14 +247,46 @@ class StockConsumer:
                 )
 
             store_listing_id = extract_listing_id(api_result.data)
+            api_data = api_result.data
 
             # GameBoost: publish the newly created offer (draft → listed)
             if item.marketplace == 'gameboost':
                 self._list_gameboost_offer(item, store_listing_id)
 
+        except Exception as e:
+            item.status = PostingJobItemStatus.FAILED
+            item.error_message = str(e)
+            logger.exception("Item #%d failed (pre-remote): %s", item.id, e)
+
+            if owned_product:
+                add_failed_owned_products_to_pool(job, [owned_product])
+                release_dispatch_items_for_job(
+                    job, owned_products=[owned_product],
+                    reason=str(e), remote_outcome='absent',
+                )
+
+            PostingLog.objects.create(
+                task_name='stock_post',
+                level=PostingLogLevel.ERROR,
+                message=f"Post failed: {item.login} → {item.store.name}",
+                detail={
+                    'item_id': item.id,
+                    'job_id': job.id,
+                    'stage': f'build_{item.marketplace}',
+                    'error': str(e),
+                },
+                integration_account=item.store,
+            )
+            item.save(update_fields=['status', 'error_message', 'listing', 'updated_at'])
+            return
+
+        # ── Stage 2: persist listing (post-remote) ────────────────────────
+        # At this point the offer EXISTS on the marketplace.
+        # Any failure here → remote_outcome='unknown'.
+        try:
             normalized_raw = self._normalize_raw_data(
                 item,
-                api_result.data,
+                api_data,
                 payload=payload,
             )
 
@@ -246,7 +298,7 @@ class StockConsumer:
                 variant_slug=listing_variant_slug,
                 final_price=final_price,
                 payload=payload,
-                response_data=api_result.data,
+                response_data=api_data,
                 raw_data_override=normalized_raw,
             )
 
@@ -256,17 +308,27 @@ class StockConsumer:
 
         except Exception as e:
             item.status = PostingJobItemStatus.FAILED
-            item.error_message = str(e)
-            logger.exception("Item #%d failed: %s", item.id, e)
+            item.error_message = f'Listing persist failed (offer may exist remotely): {e}'
+            logger.exception(
+                "Item #%d persist failed after successful API call (store_listing_id=%s): %s",
+                item.id, store_listing_id, e,
+            )
+
+            if owned_product:
+                release_dispatch_items_for_job(
+                    job, owned_products=[owned_product],
+                    reason=str(e), remote_outcome='unknown',
+                )
 
             PostingLog.objects.create(
                 task_name='stock_post',
                 level=PostingLogLevel.ERROR,
-                message=f"Post failed: {item.login} → {item.store.name}",
+                message=f"Persist failed after API success: {item.login} → {item.store.name}",
                 detail={
                     'item_id': item.id,
                     'job_id': job.id,
-                    'stage': f'build_{item.marketplace}',
+                    'stage': 'persist_success',
+                    'store_listing_id': store_listing_id,
                     'error': str(e),
                 },
                 integration_account=item.store,
@@ -391,6 +453,11 @@ class StockConsumer:
             len(build_results), marketplace, job.id, base_item.store.name,
         )
 
+        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
+
+        # ── Stage 1: remote POST ───────────────────────────────────────────
+        store_listing_id = None
+        api_data = None
         try:
             api_result = self._post_with_backoff(base_item, base_payload)
 
@@ -407,12 +474,43 @@ class StockConsumer:
                 )
 
             store_listing_id = extract_listing_id(api_result.data)
+            api_data = api_result.data
 
             if marketplace == 'gameboost':
                 self._list_gameboost_offer(base_item, store_listing_id)
 
+        except Exception as e:
+            logger.exception(
+                "Multi-cred POST failed (job=%d, store=%s): %s",
+                job.id, base_item.store.name, e,
+            )
+            for item in all_items:
+                item.status = PostingJobItemStatus.FAILED
+                item.error_message = str(e)
+                item.save(update_fields=['status', 'error_message', 'updated_at'])
+            failed_owned = [pd['owned_product'] for _, pd, _ in build_results if pd.get('owned_product')]
+            add_failed_owned_products_to_pool(job, failed_owned)
+            release_dispatch_items_for_job(
+                job, owned_products=failed_owned,
+                reason=str(e), remote_outcome='absent',
+            )
+            PostingLog.objects.create(
+                task_name='stock_post',
+                level=PostingLogLevel.ERROR,
+                message=f"Multi-cred POST failed → {base_item.store.name}",
+                detail={
+                    'job_id': job.id,
+                    'credential_count': len(all_items),
+                    'error': str(e),
+                },
+                integration_account=base_item.store,
+            )
+            return
+
+        # ── Stage 2: persist listing (post-remote) ────────────────────────
+        try:
             normalized_raw = self._normalize_raw_data(
-                base_item, api_result.data, payload=base_payload,
+                base_item, api_data, payload=base_payload,
             )
 
             # Persist: create ONE listing, link ALL owned_products
@@ -425,7 +523,7 @@ class StockConsumer:
                 variant_slug=listing_variant_slug,
                 final_price=final_price,
                 payload=base_payload,
-                response_data=api_result.data,
+                response_data=api_data,
                 raw_data_override=normalized_raw,
             )
 
@@ -439,20 +537,25 @@ class StockConsumer:
 
         except Exception as e:
             logger.exception(
-                "Multi-cred POST failed (job=%d, store=%s): %s",
-                job.id, base_item.store.name, e,
+                "Multi-cred persist failed after API success (job=%d, store_listing_id=%s): %s",
+                job.id, store_listing_id, e,
             )
             for item in all_items:
                 item.status = PostingJobItemStatus.FAILED
-                item.error_message = str(e)
+                item.error_message = f'Listing persist failed (offer may exist remotely): {e}'
                 item.save(update_fields=['status', 'error_message', 'updated_at'])
+            failed_owned = [pd['owned_product'] for _, pd, _ in build_results if pd.get('owned_product')]
+            release_dispatch_items_for_job(
+                job, owned_products=failed_owned,
+                reason=str(e), remote_outcome='unknown',
+            )
             PostingLog.objects.create(
                 task_name='stock_post',
                 level=PostingLogLevel.ERROR,
-                message=f"Multi-cred POST failed → {base_item.store.name}",
+                message=f"Multi-cred persist failed after API success → {base_item.store.name}",
                 detail={
                     'job_id': job.id,
-                    'credential_count': len(all_items),
+                    'store_listing_id': store_listing_id,
                     'error': str(e),
                 },
                 integration_account=base_item.store,
@@ -733,6 +836,8 @@ class StockConsumer:
             facade, excel_rows, proxy_group=proxy_group,
         )
 
+        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
+
         for idx, item in enumerate(items):
             if idx in batch_result.successful:
                 offer_id = batch_result.successful[idx]
@@ -763,13 +868,25 @@ class StockConsumer:
                         raw_data_override=normalized_raw,
                     )
                 except Exception as exc:
+                    # PA accepted this offer — remote side effect exists.
                     item.status = PostingJobItemStatus.FAILED
-                    item.error_message = f'Listing creation failed: {exc}'
-                    logger.exception("PA listing create failed for item #%d", item.id)
+                    item.error_message = f'Listing persist failed (PA offer may exist): {exc}'
+                    logger.exception("PA listing persist failed for item #%d (offer_id=%s)", item.id, offer_id)
+                    release_dispatch_items_for_job(
+                        job, owned_products=[owned_product],
+                        reason=str(exc), remote_outcome='unknown',
+                    )
             else:
                 error_msg = batch_result.failed.get(idx, 'PA upload failed')
                 item.status = PostingJobItemStatus.FAILED
                 item.error_message = error_msg
+                owned_product = prepared_data_list[idx].get('owned_product')
+                if owned_product:
+                    add_failed_owned_products_to_pool(job, [owned_product])
+                    release_dispatch_items_for_job(
+                        job, owned_products=[owned_product],
+                        reason=error_msg, remote_outcome='absent',
+                    )
                 PostingLog.objects.create(
                     task_name='stock_post',
                     level=PostingLogLevel.ERROR,

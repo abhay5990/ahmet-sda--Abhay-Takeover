@@ -17,6 +17,31 @@ _STATIC_IMAGE_URL = (
     "g-rsel_2025-12-04_085834084.png?rlkey=b84z5cr67r05ykj05yb7eao3e&st=rjxu1pa6&dl=1"
 )
 
+# Maps internal account tags to Gameboost-valid enum values.
+# Tags not present here are silently dropped — Gameboost rejects unknown values.
+_GAMEBOOST_TAG_MAP: dict[str, str] = {
+    "high level": "High Level Account",
+    "high level account": "High Level Account",
+    "billionaire": "Billionaire Account",
+    "billionaire account": "Billionaire Account",
+    "rare": "Rare Account",
+    "rare account": "Rare Account",
+    "starter": "Starter Account",
+    "starter account": "Starter Account",
+}
+
+
+def _map_tags(tags: list[str]) -> list[str]:
+    """Convert internal tags to Gameboost-valid values, dropping unknowns."""
+    seen: set[str] = set()
+    result: list[str] = []
+    for tag in tags:
+        mapped = _GAMEBOOST_TAG_MAP.get(tag.lower())
+        if mapped and mapped not in seen:
+            seen.add(mapped)
+            result.append(mapped)
+    return result
+
 
 class GtavGameBoostBuilder(BaseGameBoostBuilder):
     """Build GameBoost payloads for the GTA V account slice."""
@@ -34,7 +59,7 @@ class GtavGameBoostBuilder(BaseGameBoostBuilder):
         ) or account.main_platform
         return {
             "platform": gb_platform,
-            "account_tags": account.tags or [],
+            "account_tags": _map_tags(account.tags or []),
             "account_level": account.level or 0,
             "cars_count": account.cars_count or 0,
             "cash_amount": cash_display,

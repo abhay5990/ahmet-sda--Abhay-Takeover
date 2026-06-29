@@ -73,14 +73,64 @@
         </div>
     </div>
 
+    <!-- Tab Navigation -->
+    <div class="border-b border-gray-200 mb-6">
+        <nav class="-mb-px flex gap-1">
+            <button @click="activeTab = 'offers'"
+                    :class="activeTab === 'offers' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm transition-colors">
+                Offers
+                <span class="ml-1.5 bg-gray-100 text-gray-600 text-xs rounded-full px-2 py-0.5">{{ pool_offers|length }}</span>
+            </button>
+            <button @click="activeTab = 'items'"
+                    :class="activeTab === 'items' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm transition-colors">
+                Items
+                <span class="ml-1.5 bg-gray-100 text-gray-600 text-xs rounded-full px-2 py-0.5">{{ items|length }}</span>
+            </button>
+            <button @click="activeTab = 'activity'; loadActivity()"
+                    :class="activeTab === 'activity' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm transition-colors">
+                Activity
+            </button>
+        </nav>
+    </div>
+
+    <!-- ═══════════════ OFFERS TAB ═══════════════ -->
+    <div x-show="activeTab === 'offers'">
+
+    <!-- No-offers banner -->
+    {% if not pool_offers %}
+    <div class="bg-amber-50 border border-amber-200 rounded-lg p-5 mb-6 flex items-center gap-4">
+        <svg class="w-8 h-8 text-amber-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01M12 3C6.477 3 2 7.477 2 12s4.477 9 10 9 10-4.477 10-9S17.523 3 12 3z"/>
+        </svg>
+        <div>
+            <p class="font-semibold text-amber-800">No linked offers yet</p>
+            <p class="text-sm text-amber-700">Create your first offer below to start auto-restocking.</p>
+        </div>
+        <button @click="openDispatchDrawer()"
+                class="ml-auto px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 font-medium">
+            + Create First Offer
+        </button>
+    </div>
+    {% endif %}
+
     <!-- Linked Offers -->
     <div class="bg-white rounded-lg shadow mb-6 overflow-hidden">
         <div class="px-6 py-4 border-b flex items-center justify-between">
             <h2 class="text-lg font-semibold text-gray-800">Linked Offers</h2>
-            <button @click="openLinkModal()" type="button"
-                    class="px-3 py-1.5 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700">
-                + Link Offer
-            </button>
+            <div class="flex items-center gap-2">
+                <button @click="openDispatchDrawer()" type="button"
+                        class="px-3 py-1.5 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 font-medium">
+                    + Create Offer
+                </button>
+                <button @click="openLinkModal()" type="button"
+                        class="px-3 py-1.5 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700">
+                    + Link Offer
+                </button>
+            </div>
         </div>
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50"><tr>
@@ -100,9 +150,11 @@
                     <td class="px-4 py-3 text-center text-sm">{{ offer.threshold }} / {{ offer.target_count }}</td>
                     <td class="px-4 py-3 text-center text-sm">{{ offer.get_status_display }}</td>
                     <td class="px-4 py-3 text-right text-xs space-x-1">
+                        <button @click="openOfferDrawer({{ offer.id }}, '{{ offer.marketplace }}', '{{ offer.listing.title|default:offer.listing.store_listing_id|escapejs }}', '{{ offer.strategy }}', {{ offer.target_count }}, {{ offer.threshold }}, {{ offer.max_concurrent|default:'null' }}, '{{ offer.status }}')"
+                                class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200">Edit</button>
                         {% if offer.status != 'detached' %}
                         <button @click="unlinkOffer({{ offer.id }}, 'leave_remote')" class="px-2 py-1 bg-gray-100 rounded">Detach</button>
-                        <button @click="unlinkOffer({{ offer.id }}, 'remove_remote')" class="px-2 py-1 bg-red-100 text-red-700 rounded">Remove Remote</button>
+                        <button @click="unlinkOffer({{ offer.id }}, 'remove_remote')" class="px-2 py-1 bg-red-100 text-red-700 rounded">Remove</button>
                         {% endif %}
                     </td>
                 </tr>
@@ -112,6 +164,203 @@
             </tbody>
         </table>
     </div>
+
+    </div><!-- /OFFERS TAB -->
+
+    <!-- ═══════════════ DISPATCH DRAWER ═══════════════ -->
+    <div x-show="dispatchDrawer.open"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 translate-x-8"
+         x-transition:enter-end="opacity-100 translate-x-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 translate-x-0"
+         x-transition:leave-end="opacity-0 translate-x-8"
+         @keydown.escape.window="closeDispatchDrawer()"
+         style="display:none"
+         class="fixed inset-y-0 right-0 z-50 w-[480px] bg-white shadow-2xl flex flex-col">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b">
+            <h2 class="text-lg font-semibold text-gray-900">Create Offer</h2>
+            <button @click="closeDispatchDrawer()" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Loading state -->
+        <div x-show="dispatchDrawer.loading" class="flex-1 flex items-center justify-center">
+            <svg class="animate-spin h-8 w-8 text-indigo-500" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+        </div>
+
+        <!-- Form -->
+        <div x-show="!dispatchDrawer.loading" class="flex-1 overflow-y-auto px-6 py-4 space-y-5">
+
+            <!-- Error banner -->
+            <div x-show="dispatchDrawer.error" class="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700"
+                 x-text="dispatchDrawer.error"></div>
+
+            <!-- Store selector -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Store</label>
+                <select x-model="dispatchForm.store_id"
+                        @change="onStoreChange()"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="">— Select store —</option>
+                    <template x-for="s in dispatchDrawer.prefill.supported_stores || []" :key="s.id">
+                        <option :value="s.id" x-text="s.name + ' (' + s.provider + ')'"></option>
+                    </template>
+                </select>
+            </div>
+
+            <!-- Count -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Count</label>
+                <div class="flex items-center gap-3">
+                    <input type="number" x-model.number="dispatchForm.count" min="1"
+                           :max="dispatchDrawer.prefill.pending_count || 999"
+                           class="w-28 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <span class="text-xs text-gray-400"
+                          x-text="(dispatchDrawer.prefill.pending_count || 0) + ' pending available'"></span>
+                </div>
+            </div>
+
+            <!-- Listing Info -->
+            <div class="border-t pt-4">
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Listing Info</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">Title</label>
+                        <input type="text" x-model="dispatchForm.batch_data.title"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">Description</label>
+                        <textarea x-model="dispatchForm.batch_data.description" rows="3"
+                                  class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">Purchased $</label>
+                        <input type="number" step="0.01" x-model.number="dispatchForm.batch_data.purchased_price"
+                               class="w-36 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Data (dynamic manual fields) -->
+            <div class="border-t pt-4" x-show="dispatchDrawer.manualFields.length > 0">
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Game Data</h3>
+                <div class="space-y-3">
+                    <template x-for="field in dispatchDrawer.manualFields" :key="field.key">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1" x-text="field.label"></label>
+                            <template x-if="field.type === 'select'">
+                                <select x-model="dispatchForm.batch_data.manual_fields[field.key]"
+                                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                    <template x-for="opt in field.options" :key="opt.value">
+                                        <option :value="opt.value" x-text="opt.label"></option>
+                                    </template>
+                                </select>
+                            </template>
+                            <template x-if="field.type === 'number'">
+                                <input type="number" x-model.number="dispatchForm.batch_data.manual_fields[field.key]"
+                                       class="w-36 border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            </template>
+                            <template x-if="field.type !== 'select' && field.type !== 'number'">
+                                <input type="text" x-model="dispatchForm.batch_data.manual_fields[field.key]"
+                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <div class="border-t pt-4">
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Pricing</h3>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">Low multiplier</label>
+                        <input type="number" step="0.01" x-model="dispatchForm.store_settings.multiplier_low"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">Mid multiplier</label>
+                        <input type="number" step="0.01" x-model="dispatchForm.store_settings.multiplier_mid"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">High multiplier</label>
+                        <input type="number" step="0.01" x-model="dispatchForm.store_settings.multiplier_high"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                </div>
+                <!-- PA mode — only for playerauctions store -->
+                <div x-show="isPA()" class="mt-3">
+                    <label class="block text-xs text-gray-500 mb-1">PA Mode</label>
+                    <select x-model="dispatchForm.store_settings.pa_mode"
+                            class="w-40 border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        <option value="bulk">Bulk</option>
+                        <option value="single">Single</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Pool Config -->
+            <div class="border-t pt-4">
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Pool Config</h3>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">Target Count</label>
+                        <input type="number" x-model.number="dispatchForm.target_count" min="1"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">Threshold</label>
+                        <input type="number" x-model.number="dispatchForm.threshold" min="1"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                    <div x-show="isPA()">
+                        <label class="block text-xs text-gray-500 mb-1">Max Concurrent</label>
+                        <input type="number" x-model.number="dispatchForm.max_concurrent" min="1" max="10"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /Form -->
+
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t bg-gray-50 flex items-center justify-between gap-3">
+            <button @click="closeDispatchDrawer()"
+                    class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-100">
+                Cancel
+            </button>
+            <button @click="submitDispatch()"
+                    :disabled="dispatchDrawer.submitting"
+                    class="px-6 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 flex items-center gap-2">
+                <template x-if="dispatchDrawer.submitting">
+                    <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                    </svg>
+                </template>
+                <span x-text="dispatchDrawer.submitting ? 'Posting...' : 'Post'"></span>
+            </button>
+        </div>
+
+    </div>
+    <!-- Backdrop -->
+    <div x-show="dispatchDrawer.open" @click="closeDispatchDrawer()"
+         style="display:none"
+         class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"></div>
+
+    <!-- ═══════════════ ITEMS TAB ═══════════════ -->
+    <div x-show="activeTab === 'items'">
 
     <!-- Add Accounts -->
     <div class="bg-white rounded-lg shadow mb-6 p-6">
@@ -321,29 +570,42 @@
     </div>
     {% endif %}
 
-    <!-- Logs -->
-    {% if logs %}
+    </div><!-- /ITEMS TAB -->
+
+    <!-- ═══════════════ ACTIVITY TAB ═══════════════ -->
+    <div x-show="activeTab === 'activity'">
     <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="px-4 py-3 bg-gray-50 border-b">
-            <h2 class="font-semibold text-gray-700">Recent Activity</h2>
+        <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
+            <h2 class="font-semibold text-gray-700">Activity Log</h2>
+            <button @click="activityLoaded = false; loadActivity()" class="text-xs text-indigo-600 hover:underline">Refresh</button>
         </div>
-        <div class="divide-y divide-gray-200 max-h-64 overflow-y-auto">
-            {% for log in logs %}
-            <div class="px-4 py-2 text-sm">
-                <span class="inline-flex px-1.5 py-0.5 text-xs rounded
-                    {% if log.level == 'error' %}bg-red-100 text-red-700
-                    {% elif log.level == 'warning' %}bg-yellow-100 text-yellow-700
-                    {% elif log.level == 'success' %}bg-emerald-100 text-emerald-700
-                    {% else %}bg-gray-100 text-gray-600{% endif %}">
-                    {{ log.level }}
-                </span>
-                <span class="ml-2 text-gray-700">{{ log.message }}</span>
-                <span class="ml-2 text-xs text-gray-400">{{ log.created_at|date:"Y-m-d H:i:s" }}</span>
-            </div>
-            {% endfor %}
+        <div x-show="activityLoading" class="px-4 py-8 text-center text-gray-400 text-sm">Loading...</div>
+        <div x-show="!activityLoading && activityLog.length === 0 && activityLoaded" class="px-4 py-8 text-center text-gray-400 text-sm">No activity yet</div>
+        <div x-show="activityLog.length > 0" class="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
+            <template x-for="event in activityLog" :key="event.type + event.id">
+                <div class="px-4 py-3 text-sm flex items-start gap-3">
+                    <span :class="{
+                        'bg-emerald-100 text-emerald-700': event.type === 'sale',
+                        'bg-blue-100 text-blue-700': event.type === 'dispatch' && event.status === 'succeeded',
+                        'bg-red-100 text-red-700': event.type === 'dispatch' && event.status === 'failed',
+                        'bg-orange-100 text-orange-700': event.type === 'dispatch' && event.status === 'unknown',
+                        'bg-gray-100 text-gray-600': !['sale'].includes(event.type) && !['succeeded','failed','unknown'].includes(event.status),
+                    }" class="inline-flex px-1.5 py-0.5 text-xs rounded shrink-0 mt-0.5"
+                          x-text="event.type === 'sale' ? 'sale' : event.operation"></span>
+                    <div class="flex-1 min-w-0">
+                        <span x-show="event.item_login" class="font-mono text-gray-800" x-text="event.item_login"></span>
+                        <span x-show="event.type === 'dispatch'" class="text-gray-500"
+                              x-text="' · ' + (event.status || '')"></span>
+                        <span x-show="event.type === 'sale'" class="text-gray-500"
+                              x-text="event.outcome ? ' · ' + event.outcome : ''"></span>
+                        <span x-show="event.error_message" class="text-red-500 text-xs block truncate" x-text="event.error_message"></span>
+                    </div>
+                    <span class="text-xs text-gray-400 shrink-0" x-text="event.created_at ? event.created_at.slice(0,16).replace('T',' ') : ''"></span>
+                </div>
+            </template>
         </div>
     </div>
-    {% endif %}
+    </div><!-- /ACTIVITY TAB -->
 
     <!-- Link Offer Modal -->
     <div x-show="linkModal.open" x-cloak
@@ -449,6 +711,100 @@
         </div>
     </div>
 
+    <!-- Per-Offer Edit Drawer -->
+    <div x-show="offerDrawer.open" x-cloak class="fixed inset-0 z-40" @keydown.escape.window="offerDrawer.open = false">
+        <!-- Overlay -->
+        <div class="fixed inset-0 bg-black/40" @click="offerDrawer.open = false"></div>
+        <!-- Panel -->
+        <div class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl flex flex-col"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="translate-x-full"
+             x-transition:enter-end="translate-x-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="translate-x-0"
+             x-transition:leave-end="translate-x-full">
+            <!-- Header -->
+            <div class="px-5 py-4 border-b flex items-center justify-between bg-gray-50">
+                <div>
+                    <h3 class="font-semibold text-gray-900 text-sm" x-text="offerDrawer.listingTitle || 'Edit Offer'"></h3>
+                    <p class="text-xs text-gray-400 mt-0.5" x-text="offerDrawer.marketplace + ' · ' + offerDrawer.strategy"></p>
+                </div>
+                <button @click="offerDrawer.open = false" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <!-- Scrollable body -->
+            <div class="flex-1 overflow-y-auto p-5 space-y-6">
+
+                <!-- Section 1: Pool Config -->
+                <div>
+                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Pool Config</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="text-xs text-gray-600">Target Count
+                            <input type="number" min="1" x-model.number="offerDrawer.config.target_count"
+                                   class="mt-1 w-full border-gray-300 rounded px-2 py-1.5 text-sm">
+                        </label>
+                        <label class="text-xs text-gray-600">Threshold
+                            <input type="number" min="1" x-model.number="offerDrawer.config.threshold"
+                                   class="mt-1 w-full border-gray-300 rounded px-2 py-1.5 text-sm">
+                        </label>
+                        <template x-if="offerDrawer.strategy === 'clone'">
+                            <label class="text-xs text-gray-600">PA Max Concurrent
+                                <input type="number" min="1" max="10" x-model.number="offerDrawer.config.max_concurrent"
+                                       class="mt-1 w-full border-gray-300 rounded px-2 py-1.5 text-sm">
+                            </label>
+                        </template>
+                        <label class="text-xs text-gray-600">Status
+                            <select x-model="offerDrawer.config.status" class="mt-1 w-full border-gray-300 rounded px-2 py-1.5 text-sm">
+                                <option value="active">Active</option>
+                                <option value="paused">Paused</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div x-show="offerDrawer.configResult" class="mt-2 text-xs px-3 py-2 rounded"
+                         :class="offerDrawer.configResult?.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'"
+                         x-text="offerDrawer.configResult?.msg"></div>
+                    <button @click="saveOfferConfig()" :disabled="offerDrawer.configSaving"
+                            class="mt-3 w-full px-4 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-900 disabled:opacity-50">
+                        <span x-text="offerDrawer.configSaving ? 'Saving...' : 'Save Config'"></span>
+                    </button>
+                </div>
+
+                <div class="border-t border-gray-200"></div>
+
+                <!-- Section 2: Marketplace Edit -->
+                <div>
+                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Marketplace Offer</h4>
+                    <div class="space-y-3">
+                        <label class="block text-xs text-gray-600">Title
+                            <input type="text" x-model="offerDrawer.edit.title"
+                                   class="mt-1 w-full border-gray-300 rounded px-2 py-1.5 text-sm"
+                                   placeholder="Leave empty to keep current">
+                        </label>
+                        <label class="block text-xs text-gray-600">Description
+                            <textarea x-model="offerDrawer.edit.description" rows="4"
+                                      class="mt-1 w-full border-gray-300 rounded px-2 py-1.5 text-sm"
+                                      placeholder="Leave empty to keep current"></textarea>
+                        </label>
+                        <label class="block text-xs text-gray-600">Price (USD)
+                            <input type="number" step="0.01" min="0" x-model="offerDrawer.edit.price"
+                                   class="mt-1 w-full border-gray-300 rounded px-2 py-1.5 text-sm"
+                                   placeholder="Leave empty to keep current">
+                        </label>
+                    </div>
+                    <div x-show="offerDrawer.editResult" class="mt-2 text-xs px-3 py-2 rounded"
+                         :class="offerDrawer.editResult?.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'"
+                         x-text="offerDrawer.editResult?.msg"></div>
+                    <button @click="saveOfferEdit()" :disabled="offerDrawer.editSaving"
+                            class="mt-3 w-full px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 disabled:opacity-50">
+                        <span x-text="offerDrawer.editSaving ? 'Updating...' : 'Update on Marketplace'"></span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- Toast -->
     <div x-show="toast.show" x-cloak
          x-transition:enter="transition ease-out duration-300"
@@ -546,6 +902,7 @@ function poolDetail() {
         credentialPrimaryKeys: { ..._DEFAULT_PRIMARY_KEYS },
         credentialSpec: null,
         specLoaded: false,
+        activeTab: 'offers',
         replenishing: false,
         linkModal: {
             open: false, query: '', results: [], listing_id: null,
@@ -553,7 +910,54 @@ function poolDetail() {
             max_concurrent: 10, saving: false,
         },
         editModal: { open: false, title: '', description: '', price: '', saving: false },
+        offerDrawer: {
+            open: false,
+            offerId: null,
+            marketplace: '',
+            listingTitle: '',
+            strategy: '',
+            config: { target_count: 5, threshold: 2, max_concurrent: null, status: 'active' },
+            edit: { title: '', description: '', price: '' },
+            configSaving: false,
+            editSaving: false,
+            configResult: null,
+            editResult: null,
+        },
+        activityLog: [],
+        activityLoading: false,
+        activityLoaded: false,
         toast: { show: false, ok: true, msg: '' },
+
+        // ── Dispatch Drawer ──
+        dispatchDrawer: {
+            open: false,
+            loading: false,
+            submitting: false,
+            error: '',
+            prefill: {},
+            manualFields: [],
+            pollTimer: null,
+        },
+        dispatchForm: {
+            store_id: '',
+            count: 1,
+            target_count: 5,
+            threshold: 2,
+            max_concurrent: null,
+            batch_data: {
+                title: '',
+                description: '',
+                purchased_price: '',
+                platform: '',
+                manual_fields: {},
+            },
+            store_settings: {
+                multiplier_low: '2.00',
+                multiplier_mid: '2.00',
+                multiplier_high: '2.00',
+                pa_mode: 'bulk',
+            },
+        },
 
         async init() {
             await this._loadSpec();
@@ -573,6 +977,157 @@ function poolDetail() {
             }
             this.specLoaded = true;
         },
+
+        // ── Dispatch Drawer Methods ──────────────────────────────────
+
+        async openDispatchDrawer() {
+            this.dispatchDrawer.open = true;
+            this.dispatchDrawer.error = '';
+            await this._loadDispatchPrefill();
+        },
+
+        closeDispatchDrawer() {
+            this.dispatchDrawer.open = false;
+            if (this.dispatchDrawer.pollTimer) {
+                clearTimeout(this.dispatchDrawer.pollTimer);
+                this.dispatchDrawer.pollTimer = null;
+            }
+        },
+
+        async _loadDispatchPrefill(storeId) {
+            this.dispatchDrawer.loading = true;
+            try {
+                const url = storeId
+                    ? `/posting/api/pools/${poolId}/dispatch-prefill/?store_id=${storeId}`
+                    : `/posting/api/pools/${poolId}/dispatch-prefill/`;
+                const resp = await fetch(url);
+                if (!resp.ok) throw new Error('Failed to load prefill');
+                const data = await resp.json();
+                this.dispatchDrawer.prefill = data;
+
+                // Apply prefill to form if not yet edited
+                this.dispatchForm.count = Math.min(1, data.pending_count || 1);
+                this.dispatchForm.target_count = data.pool_config?.target_count ?? 5;
+                this.dispatchForm.threshold = data.pool_config?.threshold ?? 2;
+                this.dispatchForm.max_concurrent = data.pool_config?.max_concurrent ?? null;
+
+                this.dispatchForm.batch_data.title = data.title || '';
+                this.dispatchForm.batch_data.description = data.description || '';
+                this.dispatchForm.batch_data.purchased_price = parseFloat(data.purchased_price || 0) || '';
+                this.dispatchForm.batch_data.platform = data.platform || '';
+
+                if (data.batch_data?.manual_fields) {
+                    this.dispatchForm.batch_data.manual_fields = { ...data.batch_data.manual_fields };
+                }
+
+                if (data.store_settings) {
+                    Object.assign(this.dispatchForm.store_settings, data.store_settings);
+                }
+
+                // Load manual fields for game
+                if (data.game_id) {
+                    await this._loadManualFields(data.game_id);
+                }
+            } catch (e) {
+                this.dispatchDrawer.error = 'Failed to load prefill data.';
+            } finally {
+                this.dispatchDrawer.loading = false;
+            }
+        },
+
+        async _loadManualFields(gameId) {
+            try {
+                const resp = await fetch(`/posting/api/manual-fields/?game_id=${gameId}`);
+                if (!resp.ok) return;
+                const data = await resp.json();
+                this.dispatchDrawer.manualFields = data.fields || [];
+            } catch (e) {
+                console.warn('Failed to load manual fields:', e);
+            }
+        },
+
+        async onStoreChange() {
+            if (this.dispatchForm.store_id) {
+                await this._loadDispatchPrefill(this.dispatchForm.store_id);
+            }
+        },
+
+        isPA() {
+            const store = (this.dispatchDrawer.prefill.supported_stores || [])
+                .find(s => String(s.id) === String(this.dispatchForm.store_id));
+            return store?.provider === 'playerauctions';
+        },
+
+        async submitDispatch() {
+            this.dispatchDrawer.error = '';
+            if (!this.dispatchForm.store_id) {
+                this.dispatchDrawer.error = 'Please select a store.'; return;
+            }
+            if (this.dispatchForm.count < 1) {
+                this.dispatchDrawer.error = 'Count must be at least 1.'; return;
+            }
+            const pa = this.isPA();
+            const payload = {
+                store_id: Number(this.dispatchForm.store_id),
+                count: this.dispatchForm.count,
+                target_count: this.dispatchForm.target_count,
+                threshold: this.dispatchForm.threshold,
+                max_concurrent: pa ? this.dispatchForm.max_concurrent : null,
+                batch_data: { ...this.dispatchForm.batch_data },
+                store_settings: { ...this.dispatchForm.store_settings },
+            };
+
+            this.dispatchDrawer.submitting = true;
+            try {
+                const resp = await fetch(`/posting/api/pools/${poolId}/dispatch-offer/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCSRF() },
+                    body: JSON.stringify(payload),
+                });
+                const data = await resp.json();
+                if (!resp.ok) {
+                    this.dispatchDrawer.error = data.error || 'Dispatch failed.';
+                    return;
+                }
+                // Poll job status
+                this._pollDispatchJob(data.job_id);
+            } catch (e) {
+                this.dispatchDrawer.error = 'Network error. Please try again.';
+                this.dispatchDrawer.submitting = false;
+            }
+        },
+
+        _pollDispatchJob(jobId) {
+            const poll = async () => {
+                try {
+                    const resp = await fetch(`/posting/api/jobs/${jobId}/`);
+                    const data = await resp.json();
+                    const status = data.status;
+                    if (status === 'completed') {
+                        this.dispatchDrawer.submitting = false;
+                        this.closeDispatchDrawer();
+                        this._showToast(true, 'Offer created successfully!');
+                        window.location.reload();
+                    } else if (status === 'failed' || status === 'cancelled') {
+                        this.dispatchDrawer.submitting = false;
+                        this.dispatchDrawer.error = `Job ${status}: ${data.fail_count || 0} item(s) failed.`;
+                    } else {
+                        this.dispatchDrawer.pollTimer = setTimeout(poll, 2000);
+                    }
+                } catch (e) {
+                    this.dispatchDrawer.submitting = false;
+                    this.dispatchDrawer.error = 'Failed to poll job status.';
+                }
+            };
+            poll();
+        },
+
+        _showToast(ok, msg) {
+            this.toast = { show: true, ok, msg };
+            setTimeout(() => { this.toast.show = false; }, 4000);
+        },
+
+        // ────────────────────────────────────────────────────────────
 
         getCSRF() {
             return document.querySelector('[name=csrfmiddlewaretoken]')?.value
@@ -837,6 +1392,100 @@ function poolDetail() {
             } catch (e) {
                 m.saving = false;
                 this.showToast(false, 'Request failed: ' + e.message, 6000);
+            }
+        },
+
+        openOfferDrawer(offerId, marketplace, listingTitle, strategy, targetCount, threshold, maxConcurrent, status) {
+            this.offerDrawer = {
+                open: true,
+                offerId,
+                marketplace,
+                listingTitle,
+                strategy,
+                config: {
+                    target_count: targetCount,
+                    threshold: threshold,
+                    max_concurrent: maxConcurrent,
+                    status: status,
+                },
+                edit: { title: '', description: '', price: '' },
+                configSaving: false,
+                editSaving: false,
+                configResult: null,
+                editResult: null,
+            };
+        },
+
+        async saveOfferConfig() {
+            const d = this.offerDrawer;
+            d.configSaving = true;
+            d.configResult = null;
+            try {
+                const resp = await fetch(`/posting/api/pools/${poolId}/offers/${d.offerId}/`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCSRF() },
+                    body: JSON.stringify({
+                        target_count: d.config.target_count,
+                        threshold: d.config.threshold,
+                        max_concurrent: d.config.max_concurrent || null,
+                        status: d.config.status,
+                    }),
+                });
+                const data = await resp.json().catch(() => ({}));
+                if (resp.ok) {
+                    d.configResult = { ok: true, msg: 'Config saved' };
+                } else {
+                    const err = typeof data.error === 'string' ? data.error : JSON.stringify(data.error || data);
+                    d.configResult = { ok: false, msg: 'Error: ' + err };
+                }
+            } catch (e) {
+                d.configResult = { ok: false, msg: 'Request failed: ' + e.message };
+            } finally {
+                d.configSaving = false;
+            }
+        },
+
+        async saveOfferEdit() {
+            const d = this.offerDrawer;
+            const body = {};
+            if (d.edit.title) body.title = d.edit.title;
+            if (d.edit.description) body.description = d.edit.description;
+            if (d.edit.price) body.price = parseFloat(d.edit.price);
+            if (!Object.keys(body).length) {
+                d.editResult = { ok: false, msg: 'Enter at least one field' };
+                return;
+            }
+            d.editSaving = true;
+            d.editResult = null;
+            try {
+                const resp = await fetch(`/posting/api/pools/${poolId}/offers/${d.offerId}/edit/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCSRF() },
+                    body: JSON.stringify(body),
+                });
+                const data = await resp.json().catch(() => ({}));
+                if (resp.ok && data.ok) {
+                    d.editResult = { ok: true, msg: 'Marketplace updated' };
+                } else {
+                    d.editResult = { ok: false, msg: 'Error: ' + (data.error || 'Remote update failed') };
+                }
+            } catch (e) {
+                d.editResult = { ok: false, msg: 'Request failed: ' + e.message };
+            } finally {
+                d.editSaving = false;
+            }
+        },
+
+        async loadActivity() {
+            if (this.activityLoaded) return;
+            this.activityLoading = true;
+            try {
+                const resp = await fetch(`/posting/api/pools/${poolId}/activity/?limit=60`);
+                const data = await resp.json().catch(() => ({}));
+                this.activityLog = data.events || [];
+                this.activityLoaded = true;
+            } finally {
+                this.activityLoading = false;
             }
         },
 

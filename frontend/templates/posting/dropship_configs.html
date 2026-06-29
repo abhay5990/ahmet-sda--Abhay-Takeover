@@ -130,7 +130,7 @@
                               x-text="config.poster_running ? 'RUNNING' : (config.enabled ? 'IDLE' : 'DISABLED')"></span>
                         <template x-if="config.active_total > 0">
                             <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">
-                                Canlı: <span x-text="config.active_total"></span>
+                                Live: <span x-text="config.active_total"></span>
                             </span>
                         </template>
                     </div>
@@ -322,7 +322,7 @@
                                         <template x-if="url.processing_state && url.processing_state !== 'idle'">
                                             <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
                                                   :class="url.processing_state === 'fetching' ? 'bg-amber-200 text-amber-800' : 'bg-blue-200 text-blue-800'"
-                                                  x-text="url.processing_state === 'fetching' ? 'Çekiliyor…' : 'Basılıyor…'"></span>
+                                                  x-text="url.processing_state === 'fetching' ? 'Fetching…' : 'Posting…'"></span>
                                         </template>
                                     </div>
                                     <div class="flex gap-4 text-xs text-gray-500 ml-4">
@@ -335,12 +335,12 @@
                                         </template>
                                     </div>
                                     <div class="flex gap-4 text-xs text-gray-400 ml-4 mt-1">
-                                        <span>Bulunan: <span class="text-gray-600" x-text="url.cycle_found"></span></span>
-                                        <span>Yeni: <span class="text-emerald-600" x-text="url.cycle_new"></span></span>
-                                        <span>Zaten var: <span x-text="url.cycle_found - url.cycle_new"></span></span>
-                                        <span>Basılan: <span class="text-blue-600" x-text="url.cycle_posted"></span></span>
+                                        <span>Found: <span class="text-gray-600" x-text="url.cycle_found"></span></span>
+                                        <span>New: <span class="text-emerald-600" x-text="url.cycle_new"></span></span>
+                                        <span>Duplicate: <span x-text="url.cycle_found - url.cycle_new"></span></span>
+                                        <span>Posted: <span class="text-blue-600" x-text="url.cycle_posted"></span></span>
                                         <template x-if="url.last_fetched_at">
-                                            <span>Son: <span x-text="formatTime(url.last_fetched_at)"></span></span>
+                                            <span>Last run: <span x-text="formatTime(url.last_fetched_at)"></span></span>
                                         </template>
                                         <template x-if="url.last_error">
                                             <span class="text-red-500" x-text="url.last_error"></span>

@@ -26,9 +26,12 @@ from apps.posting.models import (
     OfferPoolStatus,
     CredentialSpec,
     GameVariant,
+    PoolDispatchAttempt,
     PoolOffer,
     PoolOfferStatus,
     PoolOfferStrategy,
+    PoolSaleEvent,
+    PostingDefault,
 )
 
 logger = logging.getLogger(__name__)
@@ -709,6 +712,126 @@ def edit_pool_offers(request, pool_id):
     }, status=status_code)
 
 
+# ── Single Offer Edit ────────────────────────────────────────────
+
+
+@login_required
+@require_POST
+def edit_single_pool_offer(request, pool_id, offer_id):
+    """Edit title/description/price of one linked offer on the marketplace."""
+    try:
+        body = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    try:
+        pool_offer = PoolOffer.objects.select_related(
+            'pool', 'listing', 'listing__integration_account',
+            'listing__integration_account__credential',
+        ).get(pk=offer_id, pool_id=pool_id)
+    except PoolOffer.DoesNotExist:
+        return JsonResponse({'error': 'Pool offer not found'}, status=404)
+
+    changes = {}
+    if 'title' in body:
+        title = str(body['title']).strip() if body['title'] else ''
+        if not title:
+            return JsonResponse({'error': 'title cannot be empty'}, status=400)
+        changes['title'] = title
+    if 'description' in body:
+        description = str(body['description']).strip() if body['description'] else ''
+        if not description:
+            return JsonResponse({'error': 'description cannot be empty'}, status=400)
+        changes['description'] = description
+    if 'price' in body and body['price'] is not None:
+        try:
+            changes['price'] = parse_price(body['price'])
+        except ValueError as exc:
+            return JsonResponse({'error': str(exc)}, status=400)
+
+    if not changes:
+        return JsonResponse({'error': 'No changes provided'}, status=400)
+
+    from apps.posting.services.offer_editor import edit_offer
+    result = edit_offer(pool_offer.listing, changes)
+
+    return JsonResponse({
+        'ok': result.ok,
+        'error': result.error,
+        'pool_offer': _pool_offer_to_dict(pool_offer),
+    }, status=200 if result.ok else 502)
+
+
+# ── Activity Log ─────────────────────────────────────────────────
+
+
+@login_required
+@require_GET
+def pool_activity(request, pool_id):
+    """Return activity log for a pool: dispatch attempts + sale events."""
+    try:
+        pool = OfferPool.objects.get(pk=pool_id)
+    except OfferPool.DoesNotExist:
+        return JsonResponse({'error': 'Pool not found'}, status=404)
+
+    limit = min(int(request.GET.get('limit', 50)), 200)
+
+    attempts = list(
+        PoolDispatchAttempt.objects
+        .filter(pool_offer__pool=pool)
+        .select_related('pool_offer__listing', 'item__owned_product')
+        .order_by('-created_at')[:limit]
+    )
+
+    sale_events = list(
+        PoolSaleEvent.objects
+        .filter(pool_offer__pool=pool)
+        .select_related('pool_offer__listing')
+        .order_by('-created_at')[:20]
+    )
+
+    def _fmt_attempt(a):
+        return {
+            'type': 'dispatch',
+            'id': a.pk,
+            'operation': a.operation,
+            'status': a.status,
+            'pool_offer_id': a.pool_offer_id,
+            'listing_id': a.pool_offer.listing_id if a.pool_offer_id else None,
+            'item_login': (
+                a.item.owned_product.login
+                if a.item_id and a.item.owned_product_id
+                else None
+            ),
+            'error_code': a.error_code,
+            'error_message': a.error_message,
+            'started_at': a.started_at.isoformat() if a.started_at else None,
+            'finished_at': a.finished_at.isoformat() if a.finished_at else None,
+            'created_at': a.created_at.isoformat(),
+        }
+
+    def _fmt_sale(s):
+        return {
+            'type': 'sale',
+            'id': s.pk,
+            'event_key': s.event_key,
+            'pool_offer_id': s.pool_offer_id,
+            'listing_id': s.listing_id,
+            'order_id': s.order_id,
+            'outcome': s.outcome,
+            'processed_at': s.processed_at.isoformat() if s.processed_at else None,
+            'created_at': s.created_at.isoformat(),
+        }
+
+    events = sorted(
+        [_fmt_attempt(a) for a in attempts] + [_fmt_sale(s) for s in sale_events],
+        key=lambda e: e['created_at'],
+        reverse=True,
+    )[:limit]
+
+    return JsonResponse({'events': events, 'pool_id': pool_id})
+
+
 # ── Sweep Settings ───────────────────────────────────────────────
 
 
@@ -888,6 +1011,303 @@ def available_listings(request):
         })
 
     return JsonResponse({'listings': data, 'total': total})
+
+
+# ── Dispatch endpoints ────────────────────────────────────────────
+
+
+@login_required
+@require_GET
+def dispatch_prefill(request, pool_id):
+    """Return pre-fill data for the Create Offer drawer.
+
+    GET /api/pools/{id}/dispatch-prefill/
+    GET /api/pools/{id}/dispatch-prefill/?store_id=123
+    """
+    try:
+        pool = OfferPool.objects.select_related('game').get(pk=pool_id)
+    except OfferPool.DoesNotExist:
+        return JsonResponse({'error': 'Pool not found'}, status=404)
+
+    store_id = request.GET.get('store_id')
+    store = None
+    if store_id:
+        try:
+            store = IntegrationAccount.objects.get(
+                pk=store_id,
+                is_active=True,
+                provider__in=['eldorado', 'gameboost', 'playerauctions'],
+            )
+        except IntegrationAccount.DoesNotExist:
+            return JsonResponse({'error': 'Store not found'}, status=404)
+
+    # --- Pending count (unreserved) ---
+    from apps.posting.models import PoolDispatchReservation
+    pending_count = pool.items.filter(
+        status=OfferPoolItemStatus.PENDING,
+        pool_offer__isnull=True,
+        reservation__isnull=True,
+    ).count()
+
+    # --- Game info ---
+    game = pool.game
+    game_slug = game.slug or ''
+    is_gta = game_slug.lower().startswith('gta') or game_slug.lower().startswith('grand-theft-auto')
+
+    # --- Listing prefill from most recent active PoolOffer ---
+    title = ''
+    description = ''
+    listing_price = None
+
+    active_offer = (
+        pool.pool_offers
+        .filter(status=PoolOfferStatus.ACTIVE)
+        .select_related('listing')
+        .order_by('-created_at')
+        .first()
+    )
+    if active_offer and active_offer.listing:
+        from apps.posting.services.shared.utils import (
+            extract_title_from_payload,
+            extract_title_from_response,
+            extract_price_from_response,
+        )
+        lst = active_offer.listing
+        title = lst.title or ''
+        listing_price = str(lst.price) if lst.price is not None else None
+        # Try to get description from raw_data
+        raw = lst.raw_data or {}
+        description = (
+            raw.get('description')
+            or (raw.get('payload') or {}).get('description')
+            or (raw.get('payload') or {}).get('offer_description')
+            or ''
+        )
+
+    # --- Item prefill from first unreserved PENDING item ---
+    purchased_price = None
+    batch_data: dict = {}
+    platform = ''
+
+    first_item = (
+        pool.items.filter(
+            status=OfferPoolItemStatus.PENDING,
+            pool_offer__isnull=True,
+            reservation__isnull=True,
+        )
+        .select_related('owned_product')
+        .order_by('order', 'created_at')
+        .first()
+    )
+    if first_item and first_item.owned_product:
+        op = first_item.owned_product
+        raw = op.raw_data or {}
+        purchased_price = (
+            str(op.price)
+            if op.price is not None
+            else str(raw.get('price') or raw.get('purchased_price') or '')
+        ) or None
+        platform = raw.get('main_platform') or raw.get('platform') or ''
+
+        # Extract manual_fields / offer_details / batch_data from raw
+        manual_fields = raw.get('manual_fields') or {}
+        offer_details = raw.get('offer_details') or {}
+        batch_data_raw = raw.get('batch_data') or {}
+        batch_data = {
+            'manual_fields': manual_fields,
+            'offer_details': offer_details,
+            **{k: v for k, v in batch_data_raw.items() if k != 'manual_fields'},
+        }
+        # GTA-style top-level fields
+        for gta_field in ('cash_amount', 'cash_unit', 'level', 'cars_count', 'tags'):
+            if gta_field in raw:
+                batch_data[gta_field] = raw[gta_field]
+
+    # --- Pool config from most recent active PoolOffer ---
+    target_count = 5
+    threshold = 2
+    max_concurrent = None
+    if active_offer:
+        target_count = active_offer.target_count
+        threshold = active_offer.threshold
+        max_concurrent = active_offer.max_concurrent
+
+    # --- Store settings from PostingDefault ---
+    store_settings: dict = {}
+    pa_mode = 'bulk'
+    if store:
+        try:
+            default = PostingDefault.objects.get(game=game, marketplace=store.provider)
+            store_settings = {
+                'multiplier_low': str(default.multiplier_low or '1.00'),
+                'multiplier_mid': str(default.multiplier_mid or '1.00'),
+                'multiplier_high': str(default.multiplier_high or '1.00'),
+            }
+            if store.provider == 'playerauctions':
+                pa_mode = getattr(default, 'pa_mode', 'bulk') or 'bulk'
+                store_settings['pa_mode'] = pa_mode
+        except PostingDefault.DoesNotExist:
+            pass
+
+    # --- Supported stores ---
+    supported_providers = ['eldorado', 'gameboost', 'playerauctions']
+    supported_stores_qs = IntegrationAccount.objects.filter(
+        is_active=True,
+        provider__in=supported_providers,
+        role__in=['sell', 'both'],
+    ).select_related('credential').filter(credential__is_active=True)
+
+    supported_stores = [
+        {
+            'id': s.id,
+            'name': s.name,
+            'provider': s.provider,
+            'slug': s.slug,
+        }
+        for s in supported_stores_qs
+    ]
+
+    return JsonResponse({
+        'pending_count': pending_count,
+        'game_id': game.id,
+        'game_slug': game_slug,
+        'is_gta': is_gta,
+        'platform': platform,
+        'title': title,
+        'description': description,
+        'listing_price': listing_price,
+        'purchased_price': purchased_price,
+        'batch_data': batch_data,
+        'store_settings': store_settings,
+        'pool_config': {
+            'target_count': target_count,
+            'threshold': threshold,
+            'max_concurrent': max_concurrent,
+        },
+        'supported_stores': supported_stores,
+    })
+
+
+@login_required
+@require_POST
+def dispatch_offer(request, pool_id):
+    """Create a new offer from pool items.
+
+    POST /api/pools/{id}/dispatch-offer/
+    """
+    try:
+        pool = OfferPool.objects.select_related('game').get(
+            pk=pool_id,
+            status=OfferPoolStatus.ACTIVE,
+        )
+    except OfferPool.DoesNotExist:
+        return JsonResponse({'error': 'Pool not found or not active'}, status=404)
+
+    try:
+        body = json.loads(request.body)
+    except (ValueError, TypeError):
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    # --- Validate store ---
+    store_id = body.get('store_id')
+    if not store_id:
+        return JsonResponse({'error': 'store_id is required'}, status=400)
+    try:
+        store = IntegrationAccount.objects.select_related('credential').get(
+            pk=store_id,
+            is_active=True,
+            role__in=['sell', 'both'],
+        )
+    except IntegrationAccount.DoesNotExist:
+        return JsonResponse({'error': 'Store not found or not eligible'}, status=400)
+
+    # Validate provider supported
+    try:
+        PoolOffer.strategy_for_provider(store.provider)
+    except ValidationError as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+    # --- Validate counts ---
+    try:
+        count = int(body.get('count', 0))
+        target_count = int(body.get('target_count', 5))
+        threshold = int(body.get('threshold', 2))
+    except (TypeError, ValueError):
+        return JsonResponse({'error': 'count, target_count, threshold must be integers'}, status=400)
+
+    if count < 1:
+        return JsonResponse({'error': 'count must be at least 1'}, status=400)
+
+    unreserved_pending = pool.items.filter(
+        status=OfferPoolItemStatus.PENDING,
+        pool_offer__isnull=True,
+        reservation__isnull=True,
+    ).count()
+    if count > unreserved_pending:
+        return JsonResponse({
+            'error': f'Not enough pending items: requested {count}, available {unreserved_pending}',
+        }, status=400)
+
+    if target_count < 1:
+        return JsonResponse({'error': 'target_count must be at least 1'}, status=400)
+    if threshold < 1 or threshold > target_count:
+        return JsonResponse({'error': 'threshold must be between 1 and target_count'}, status=400)
+
+    # --- Validate max_concurrent (PA/clone only) ---
+    strategy = PoolOfferStrategy.strategy_for_provider(store.provider)
+    max_concurrent = body.get('max_concurrent')
+    if strategy == PoolOfferStrategy.CLONE:
+        try:
+            max_concurrent = int(max_concurrent)
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'max_concurrent is required for PA/clone'}, status=400)
+        if not (target_count <= max_concurrent <= 10):
+            return JsonResponse({
+                'error': f'max_concurrent must satisfy target_count ({target_count}) <= max_concurrent <= 10',
+            }, status=400)
+    else:
+        if max_concurrent is not None:
+            return JsonResponse({'error': 'max_concurrent must not be set for append providers'}, status=400)
+
+    # --- Validate batch_data ---
+    batch_data = body.get('batch_data') or {}
+    store_settings = body.get('store_settings') or {}
+
+    purchased_price = batch_data.get('purchased_price')
+    try:
+        purchased_price_val = float(purchased_price or 0)
+    except (TypeError, ValueError):
+        purchased_price_val = 0.0
+    if purchased_price_val <= 0:
+        return JsonResponse({'error': 'batch_data.purchased_price must be > 0'}, status=400)
+
+    # --- Dispatch ---
+    from apps.posting.services.pool.dispatcher import dispatch_offer_from_pool
+
+    try:
+        job = dispatch_offer_from_pool(
+            pool=pool,
+            store=store,
+            count=count,
+            target_count=target_count,
+            threshold=threshold,
+            max_concurrent=max_concurrent,
+            batch_data=batch_data,
+            store_settings=store_settings,
+        )
+    except ValueError as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    except Exception as e:
+        logger.exception('dispatch_offer_from_pool failed (pool=%d): %s', pool_id, e)
+        return JsonResponse({'error': 'Dispatch failed unexpectedly'}, status=500)
+
+    reservation = getattr(job, 'pool_dispatch_reservation', None)
+    return JsonResponse({
+        'job_id': job.pk,
+        'reservation_id': reservation.pk if reservation else None,
+        'reservation_token': str(reservation.token) if reservation else None,
+        'total_count': job.total_count,
+    }, status=201)
 
 
 # ── Serializers ──────────────────────────────────────────────────

@@ -284,11 +284,10 @@ class StockOrchestrator:
                 is_skip = prepared.get('error_category') == 'source_unsupported'
                 status = PostingJobItemStatus.SKIPPED if is_skip else PostingJobItemStatus.FAILED
                 log_level = PostingLogLevel.INFO if is_skip else PostingLogLevel.ERROR
+                fail_reason = f"[{prepared['stage']}] {prepared['error']}"
                 for item in items:
                     item.status = status
-                    item.error_message = (
-                        f"[{prepared['stage']}] {prepared['error']}"
-                    )
+                    item.error_message = fail_reason
                     item.save(update_fields=[
                         'status', 'error_message', 'updated_at',
                     ])
@@ -304,6 +303,14 @@ class StockOrchestrator:
                             'error_category': prepared.get('error_category', ''),
                         },
                         integration_account=item.store,
+                    )
+                # Prepare fail is pre-remote → known safe release
+                owned = first_item.owned_product
+                if owned:
+                    from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
+                    release_dispatch_items_for_job(
+                        job, owned_products=[owned],
+                        reason=fail_reason, remote_outcome='absent',
                     )
                 continue
 
@@ -397,6 +404,14 @@ class StockOrchestrator:
                     'error': f"raw_data is empty for '{login}'",
                     'error_category': 'data_missing',
                 }
+
+            # Apply raw_overrides from pool dispatch job (whitelist only, no credentials)
+            pool_dispatch = (job.settings or {}).get('_pool_dispatch') or {}
+            raw_overrides = pool_dispatch.get('raw_overrides') or {}
+            overlay = raw_overrides.get(str(owned_product.pk)) or raw_overrides.get(owned_product.pk)
+            if overlay:
+                from apps.posting.services.pool.dispatcher import _deep_merge
+                raw = _deep_merge(raw, overlay)
 
             # Determine source key: manual entries use 'manual', otherwise provider
             if isinstance(raw, dict) and raw.get('source') == 'manual':
@@ -585,7 +600,9 @@ class StockOrchestrator:
         items: list[PostingJobItem],
         reason: str,
     ) -> None:
-        """Mark items as SKIPPED."""
+        """Mark items as SKIPPED (pre-remote — known-safe release for pool dispatch)."""
+        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
+        job = items[0].job if items else None
         for item in items:
             if item.status == PostingJobItemStatus.PENDING:
                 item.status = PostingJobItemStatus.SKIPPED
@@ -593,6 +610,8 @@ class StockOrchestrator:
                 item.save(update_fields=[
                     'status', 'error_message', 'updated_at',
                 ])
+        if job:
+            release_dispatch_items_for_job(job, reason=reason, remote_outcome='absent')
 
     def _fail_remaining_items(
         self,
@@ -600,9 +619,19 @@ class StockOrchestrator:
         job: PostingJob,
         reason: str,
     ) -> None:
-        """Mark remaining PENDING/PROCESSING items as FAILED."""
+        """Mark remaining PENDING/PROCESSING items as FAILED.
+
+        Thread-crash path: PROCESSING items had an in-flight remote call whose
+        outcome is unknown → release with remote_outcome='unknown'.
+        PENDING items never reached remote → remote_outcome='absent'.
+        """
+        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
+
+        unknown_products = []
+        absent_products = []
         for item in items:
-            if item.status in (
+            original_status = item.status
+            if original_status in (
                 PostingJobItemStatus.PENDING,
                 PostingJobItemStatus.PROCESSING,
             ):
@@ -622,10 +651,37 @@ class StockOrchestrator:
                     },
                     integration_account=item.store,
                 )
+                if item.owned_product:
+                    if original_status == PostingJobItemStatus.PROCESSING:
+                        unknown_products.append(item.owned_product)
+                    else:
+                        absent_products.append(item.owned_product)
+
+        if unknown_products:
+            release_dispatch_items_for_job(
+                job, owned_products=unknown_products,
+                reason=reason, remote_outcome='unknown',
+            )
+        if absent_products:
+            release_dispatch_items_for_job(
+                job, owned_products=absent_products,
+                reason=reason, remote_outcome='absent',
+            )
 
     def _finalize_job(self, job: PostingJob) -> None:
         """Finalize job: count results, mark any orphan PENDING as FAILED, set status."""
         from django.utils import timezone
+        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
+
+        # Orphan PROCESSING → unknown remote outcome; PENDING → no remote call
+        orphan_processing = list(
+            job.items.filter(status=PostingJobItemStatus.PROCESSING)
+            .select_related('owned_product')
+        )
+        orphan_pending = list(
+            job.items.filter(status=PostingJobItemStatus.PENDING)
+            .select_related('owned_product')
+        )
 
         orphan_count = job.items.filter(
             status__in=[PostingJobItemStatus.PENDING, PostingJobItemStatus.PROCESSING],
@@ -635,9 +691,23 @@ class StockOrchestrator:
         )
         if orphan_count:
             logger.warning(
-                "Job #%d: %d orphan PENDING items marked FAILED",
+                "Job #%d: %d orphan items marked FAILED",
                 job.id, orphan_count,
             )
+            if orphan_processing:
+                release_dispatch_items_for_job(
+                    job,
+                    owned_products=[it.owned_product for it in orphan_processing if it.owned_product],
+                    reason='Orphan item: thread did not complete (remote outcome unknown)',
+                    remote_outcome='unknown',
+                )
+            if orphan_pending:
+                release_dispatch_items_for_job(
+                    job,
+                    owned_products=[it.owned_product for it in orphan_pending if it.owned_product],
+                    reason='Orphan item: was never processed',
+                    remote_outcome='absent',
+                )
 
         job.refresh_from_db(fields=['status'])
         was_cancelled = job.status == PostingJobStatus.CANCELLED

@@ -916,6 +916,7 @@ class PoolOfferStrategy(models.TextChoices):
 
 class OfferPoolItemStatus(models.TextChoices):
     PENDING = 'pending', 'Pending'
+    RESERVED = 'reserved', 'Reserved'
     QUEUED = 'queued', 'Queued'
     PUSHED = 'pushed', 'Pushed'
     FAILED = 'failed', 'Failed'
@@ -1038,6 +1039,7 @@ class OfferPool(models.Model):
         return self.items.filter(
             status=OfferPoolItemStatus.PENDING,
             pool_offer__isnull=True,
+            reservation__isnull=True,
         ).count()
 
     @property
@@ -1226,6 +1228,13 @@ class OfferPoolItem(models.Model):
         on_delete=models.PROTECT,
         related_name='items',
     )
+    reservation = models.ForeignKey(
+        'posting.PoolDispatchReservation',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name='items',
+    )
     status = models.CharField(
         max_length=10,
         choices=OfferPoolItemStatus.choices,
@@ -1266,9 +1275,23 @@ class OfferPoolItem(models.Model):
             models.CheckConstraint(
                 condition=(
                     ~models.Q(status=OfferPoolItemStatus.PENDING)
+                    | models.Q(pool_offer__isnull=True, reservation__isnull=True)
+                ),
+                name='pending_item_unassigned',
+            ),
+            models.CheckConstraint(
+                condition=(
+                    ~models.Q(status=OfferPoolItemStatus.RESERVED)
                     | models.Q(pool_offer__isnull=True)
                 ),
-                name='pending_pool_item_unassigned',
+                name='reserved_item_no_pool_offer',
+            ),
+            models.CheckConstraint(
+                condition=(
+                    ~models.Q(status=OfferPoolItemStatus.RESERVED)
+                    | models.Q(reservation__isnull=False)
+                ),
+                name='reserved_item_has_reservation',
             ),
             models.CheckConstraint(
                 condition=(
@@ -1298,6 +1321,10 @@ class OfferPoolItem(models.Model):
             models.Index(
                 fields=['pool_offer', 'status'],
                 name='pool_item_offer_status_idx',
+            ),
+            models.Index(
+                fields=['reservation', 'pool', 'status'],
+                name='pool_item_reservation_idx',
             ),
         ]
 
@@ -1433,6 +1460,66 @@ class PoolDispatchAttempt(models.Model):
                 name='pool_attempt_item_created_idx',
             ),
         ]
+
+
+class PoolDispatchReservationStatus(models.TextChoices):
+    ACTIVE = 'active', 'Active'
+    FINALIZED = 'finalized', 'Finalized'
+    RELEASED = 'released', 'Released'
+    FAILED = 'failed', 'Failed'
+
+
+class PoolDispatchReservation(models.Model):
+    """Group-level reservation for creating a brand-new PoolOffer from a pool.
+
+    Holds RESERVED OfferPoolItems together under a single dispatch operation.
+    ``token`` is the group-level idempotency key (distinct from per-item claim_token).
+    """
+
+    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    pool = models.ForeignKey(
+        OfferPool,
+        on_delete=models.PROTECT,
+        related_name='dispatch_reservations',
+    )
+    store = models.ForeignKey(
+        'integrations.IntegrationAccount',
+        on_delete=models.PROTECT,
+        related_name='pool_dispatch_reservations',
+    )
+    job = models.OneToOneField(
+        PostingJob,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='pool_dispatch_reservation',
+    )
+    status = models.CharField(
+        max_length=16,
+        choices=PoolDispatchReservationStatus.choices,
+        default=PoolDispatchReservationStatus.ACTIVE,
+    )
+    item_count = models.PositiveIntegerField(default=0)
+    reason = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    finalized_at = models.DateTimeField(null=True, blank=True)
+    released_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'pool_dispatch_reservations'
+        indexes = [
+            models.Index(
+                fields=['pool', 'status'],
+                name='dispatch_res_pool_status_idx',
+            ),
+            models.Index(
+                fields=['status', 'created_at'],
+                name='dispatch_res_stale_idx',
+            ),
+        ]
+
+    def __str__(self):
+        return f"Reservation #{self.pk} — {self.pool} ({self.status})"
 
 
 class PoolSaleEvent(models.Model):

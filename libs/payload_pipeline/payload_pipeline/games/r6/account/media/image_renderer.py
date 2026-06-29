@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 from io import BytesIO
 import json
 import logging
@@ -28,6 +29,12 @@ _TEXT_COLOR = (244, 247, 250, 255)
 _MUTED_TEXT_COLOR = (178, 186, 198, 255)
 _PLACEHOLDER_FILL = (35, 39, 47, 255)
 _PLACEHOLDER_BORDER = (96, 104, 120, 255)
+
+# MD5 hashes of known LZT/nztcdn placeholder images (saved as PNG by Pillow).
+# A cached file matching any of these is treated as poisoned and re-fetched.
+_POISONED_CACHE_MD5S: frozenset[str] = frozenset({
+    "03859bc548c53f5ed5418b8f67cbaa46",
+})
 _GAP = 5
 _TOP_PADDING = 14
 _BOTTOM_PADDING = 10
@@ -472,6 +479,9 @@ class R6ImageRenderer:
         cache_candidates = [current_cache_path, *self._legacy_cache_paths(entry.cache_key)]
 
         for candidate in cache_candidates:
+            if self._is_poisoned_cache(candidate):
+                logger.debug("Skipping poisoned cache file: %s", candidate)
+                continue
             image = self._load_cached_image(candidate)
             if image is not None:
                 return image
@@ -487,6 +497,16 @@ class R6ImageRenderer:
             return image
 
         return None
+
+    def _is_poisoned_cache(self, path: Path) -> bool:
+        """Return True if the file is a known LZT placeholder cached on disk."""
+        if not path.exists():
+            return False
+        try:
+            md5 = hashlib.md5(path.read_bytes()).hexdigest()
+            return md5 in _POISONED_CACHE_MD5S
+        except Exception:
+            return False
 
     def _cache_path(self, cache_key: str) -> Path:
         if cache_key.startswith("operator:"):

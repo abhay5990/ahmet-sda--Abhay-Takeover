@@ -41,6 +41,10 @@ class CS2MediaStrategy(MediaOverrideMixin):
         if override is not None:
             return override
 
+        # Manual entries have no games list — skip image generation
+        if not subject.games:
+            return []
+
         renderer = self._renderer or SteamGameGridRenderer(
             cache_dir=default_cache_base_dir("counter-strike-2"),
         )

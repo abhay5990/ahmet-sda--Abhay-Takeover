@@ -807,6 +807,34 @@
             </div>
         </div>
 
+        <!-- Create Restock Pool (manual mode only) -->
+        <div x-show="sourceType === 'manual'" class="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+            <label class="flex items-center gap-3 cursor-pointer select-none">
+                <input type="checkbox" x-model="createPoolEnabled" class="w-4 h-4 rounded text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                <span class="text-sm font-medium text-indigo-800">Create Restock Pool for these offers</span>
+            </label>
+            <div x-show="createPoolEnabled" x-transition class="mt-3 grid grid-cols-3 gap-3">
+                <div class="col-span-3 sm:col-span-1">
+                    <label class="block text-xs text-indigo-700 mb-1">Pool Name *</label>
+                    <input type="text" x-model="poolName" placeholder="e.g. Fortnite OG — Main"
+                           class="w-full text-sm border-indigo-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-indigo-700 mb-1">Target (keys/offer)</label>
+                    <input type="number" min="1" x-model.number="poolTargetCount"
+                           class="w-full text-sm border-indigo-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-indigo-700 mb-1">Threshold (refill below)</label>
+                    <input type="number" min="1" x-model.number="poolThreshold"
+                           class="w-full text-sm border-indigo-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <p class="col-span-3 text-xs text-indigo-600">
+                    Each posted offer will be automatically linked to this pool. You can add more credentials and link additional offers from the pool page later.
+                </p>
+            </div>
+        </div>
+
         <!-- Submit -->
         <div class="space-y-3">
             <div class="flex items-center space-x-4">
@@ -1039,6 +1067,11 @@ function stockStart() {
         imageError: '',
         mediaCapabilities: { auto_generate_manual: false, supports_override: true },
         imageGalleryOpen: false,
+        // Manual mode — Create Pool option
+        createPoolEnabled: false,
+        poolName: '',
+        poolTargetCount: 5,
+        poolThreshold: 2,
         // Manual mode — credentials & distribution
         distributionMode: 'cross_platform',
         credentials: [],
@@ -1650,6 +1683,14 @@ function stockStart() {
             // Include dynamic game-specific fields (non-GTA)
             if (!this.isGtaGame && Object.keys(this.manualFields).length > 0) {
                 payload.manual_fields = { ...this.manualFields };
+            }
+            // Include pool creation config if enabled
+            if (this.createPoolEnabled && this.poolName.trim()) {
+                payload.pool_config = {
+                    name: this.poolName.trim(),
+                    target_count: this.poolTargetCount,
+                    threshold: this.poolThreshold,
+                };
             }
             return payload;
         },

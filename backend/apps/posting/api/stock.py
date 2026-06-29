@@ -22,6 +22,8 @@ from apps.posting.api.media_override import (
 )
 from apps.posting.models import (
     ContentTemplate,
+    OfferPool,
+    OfferPoolStatus,
     PostingDefault,
     PostingJob,
     PostingJobItem,
@@ -347,6 +349,38 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
         'selected_image_path': media_settings.get('selected_image_path', ''),
         'batch_data': batch_data,
     }
+
+    # Optional: auto-create a restock pool for this job
+    pool_config_raw = body.get('pool_config')
+    if pool_config_raw and isinstance(pool_config_raw, dict):
+        pool_name = str(pool_config_raw.get('name', '')).strip()
+        if pool_name:
+            try:
+                target_count = max(1, int(pool_config_raw.get('target_count', 5)))
+                threshold = max(1, int(pool_config_raw.get('threshold', 2)))
+            except (TypeError, ValueError):
+                return JsonResponse(
+                    {'error': 'pool_config: target_count and threshold must be integers'},
+                    status=400,
+                )
+            if threshold > target_count:
+                return JsonResponse(
+                    {'error': 'pool_config: threshold cannot exceed target_count'},
+                    status=400,
+                )
+            from apps.posting.services.pool.spec_resolver import resolve_spec_for_game_variant
+            credential_spec = resolve_spec_for_game_variant(game, platform)
+            pool = OfferPool.objects.create(
+                name=pool_name,
+                game=game,
+                credential_spec=credential_spec,
+                status=OfferPoolStatus.ACTIVE,
+            )
+            job_settings['_pool'] = {
+                'pool_id': pool.id,
+                'target_count': target_count,
+                'threshold': threshold,
+            }
 
     job = PostingJob.objects.create(
         game=game,
