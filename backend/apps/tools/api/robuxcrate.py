@@ -33,6 +33,9 @@ _USERNAME_MAX = 50
 _PLACE_NAME_MAX = 200
 _QUANTITY_MIN, _QUANTITY_MAX = 1, 20
 _ROBUX_MIN, _ROBUX_MAX = 1, 1_000_000
+# Auto-place: cap how many candidate places we will sequentially try, to bound
+# the number of attempts (sellers realistically have a handful of public games).
+_AUTO_PLACE_MAX_CANDIDATES = 10
 
 
 def _get_roblox_client():
@@ -168,21 +171,50 @@ def create_order(request):
     except ServiceCredential.DoesNotExist:
         return JsonResponse({'error': 'RbxCrate merchant not found or inactive'}, status=400)
 
-    # -- Validate place_id against token --
-    try:
-        place_id = int(body.get('place_id', 0))
-    except (ValueError, TypeError):
-        return JsonResponse({'error': 'place_id must be a positive integer'}, status=400)
-
-    if place_id <= 0:
-        return JsonResponse({'error': 'place_id must be a positive integer'}, status=400)
-
+    # -- Place selection: manual single place OR auto-place (try all) --
+    auto_place = bool(body.get('auto_place', False))
     token_place_ids = token_data.get('pids', [])
-    if place_id not in token_place_ids:
-        return JsonResponse(
-            {'error': 'Selected place_id does not belong to the looked-up user'},
-            status=400,
-        )
+    # Names are cosmetic; map any client-supplied place names onto verified IDs.
+    sent_places = body.get('places') or []
+    name_map: dict[int, str] = {}
+    if isinstance(sent_places, list):
+        for p in sent_places:
+            try:
+                name_map[int(p['place_id'])] = str(p.get('name') or '')[:_PLACE_NAME_MAX]
+            except (KeyError, ValueError, TypeError):
+                continue
+
+    if auto_place:
+        # Candidates = every place the user owns (verified via token), in order.
+        if not token_place_ids:
+            return JsonResponse(
+                {'error': 'Auto-place requires at least one place for the user'},
+                status=400,
+            )
+        candidate_ids = token_place_ids[:_AUTO_PLACE_MAX_CANDIDATES]
+        place_candidates = [
+            {'place_id': pid, 'name': name_map.get(pid, '')}
+            for pid in candidate_ids
+        ]
+        place_id = place_candidates[0]['place_id']
+        place_name = place_candidates[0]['name']
+    else:
+        # Manual: a single place_id, validated against the token.
+        try:
+            place_id = int(body.get('place_id', 0))
+        except (ValueError, TypeError):
+            return JsonResponse({'error': 'place_id must be a positive integer'}, status=400)
+
+        if place_id <= 0:
+            return JsonResponse({'error': 'place_id must be a positive integer'}, status=400)
+
+        if place_id not in token_place_ids:
+            return JsonResponse(
+                {'error': 'Selected place_id does not belong to the looked-up user'},
+                status=400,
+            )
+        place_name = name_map.get(place_id, '')
+        place_candidates = [{'place_id': place_id, 'name': place_name}]
 
     # -- Validate robux_amount --
     try:
@@ -211,7 +243,6 @@ def create_order(request):
     # -- Extract verified data from token --
     roblox_user_id = token_data['uid']
     roblox_username = token_data['un']
-    place_name = (body.get('place_name') or '')[:_PLACE_NAME_MAX]
 
     # -- Idempotency check --
     try:
@@ -236,6 +267,9 @@ def create_order(request):
                 roblox_user_id=roblox_user_id,
                 place_id=place_id,
                 place_name=place_name,
+                auto_place=auto_place,
+                place_candidates=place_candidates,
+                place_attempt_index=0,
                 robux_amount=robux_amount,
                 quantity=quantity,
             )
@@ -266,6 +300,10 @@ def _batch_response(batch: RobuxCrateBatch, status_code: int = 200) -> JsonRespo
         'marketplace_order_id': batch.marketplace_order_id,
         'roblox_username': batch.roblox_username,
         'place_id': batch.place_id,
+        'place_name': batch.place_name,
+        'auto_place': batch.auto_place,
+        'place_attempt_index': batch.place_attempt_index,
+        'place_count': len(batch.place_candidates or []),
         'robux_amount': batch.robux_amount,
         'quantity': batch.quantity,
         'batch_status': batch.status,

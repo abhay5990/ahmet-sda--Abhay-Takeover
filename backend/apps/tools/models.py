@@ -55,6 +55,21 @@ class RobuxCrateBatch(models.Model):
     roblox_user_id = models.BigIntegerField(null=True, blank=True)
     place_id = models.BigIntegerField()
     place_name = models.CharField(max_length=200, blank=True)
+
+    # Auto-place: when True, the batch tries each candidate place in order
+    # until one succeeds (a place fails when RbxCrate returns GAMEPASS_NOT_FOUND).
+    # place_id/place_name above always reflect the *currently active* candidate.
+    auto_place = models.BooleanField(default=False)
+    place_candidates = models.JSONField(
+        default=list,
+        blank=True,
+        help_text='Ordered list of {place_id, name} candidates tried in auto-place mode',
+    )
+    place_attempt_index = models.PositiveSmallIntegerField(
+        default=0,
+        help_text='Index into place_candidates of the currently active place',
+    )
+
     robux_amount = models.PositiveIntegerField()
     quantity = models.PositiveSmallIntegerField(default=1)
     status = models.CharField(

@@ -176,6 +176,16 @@ def _send_order(order: RobuxCrateOrder, batch: RobuxCrateBatch, client) -> None:
         order.error_message = f'Uncertain: {result.error.message}' if result.error else 'Status uncertain'
         order.rbxcrate_response = (result.error.details if result.error else None) or {}
     else:
+        # Auto-place: a place-specific "gamepass not found" means THIS place has no
+        # matching gamepass for the amount. Try the next candidate place instead of
+        # failing the order outright.
+        if (
+            batch.auto_place
+            and result.error is not None
+            and result.error.category == ErrorCategory.NOT_FOUND
+            and _advance_to_next_place(batch, order, result)
+        ):
+            return  # order reset to PENDING; will be re-sent next cycle with new place
         order.status = RobuxCrateOrder.Status.ERROR
         order.error_message = result.error.message if result.error else 'Unknown provider error'
         order.rbxcrate_response = (result.error.details if result.error else None) or {}
@@ -185,6 +195,50 @@ def _send_order(order: RobuxCrateOrder, batch: RobuxCrateBatch, client) -> None:
         'status', 'raw_provider_status', 'rbxcrate_response',
         'error_message', 'last_status_checked_at', 'updated_at',
     ])
+
+
+def _advance_to_next_place(batch: RobuxCrateBatch, order: RobuxCrateOrder, result) -> bool:
+    """Auto-place mode: move the batch to the next candidate place and reset the
+    order to PENDING so the scheduler re-sends it next cycle with the new place.
+
+    Returns True if advanced (caller should stop here), False if all candidate
+    places are exhausted (caller marks the order ERROR as usual).
+
+    Note: place_attempt_index reflects the *currently active* place, so if another
+    order in the same batch already advanced past this place, next_index is computed
+    from the live batch state — no double-advance, and a per-order guard is unneeded.
+    """
+    candidates = batch.place_candidates or []
+    next_index = batch.place_attempt_index + 1
+    if next_index >= len(candidates):
+        return False  # no more places to try — genuine failure on all of them
+
+    failed_place = batch.place_id
+    nxt = candidates[next_index]
+    batch.place_attempt_index = next_index
+    batch.place_id = nxt['place_id']
+    batch.place_name = nxt.get('name', '') or ''
+    batch.save(update_fields=['place_id', 'place_name', 'place_attempt_index', 'updated_at'])
+
+    err_msg = result.error.message if result and result.error else 'Gamepass not found'
+    order.status = RobuxCrateOrder.Status.PENDING
+    order.raw_provider_status = ''
+    order.rbxcrate_response = (result.error.details if result and result.error else None) or {}
+    order.error_message = (
+        f'Place {failed_place} had no gamepass ({err_msg}) — '
+        f'retrying with place {nxt["place_id"]} '
+        f'({next_index + 1}/{len(candidates)})'
+    )
+    order.last_status_checked_at = timezone.now()
+    order.save(update_fields=[
+        'status', 'raw_provider_status', 'rbxcrate_response',
+        'error_message', 'last_status_checked_at', 'updated_at',
+    ])
+    logger.info(
+        'Batch %s auto-place advance: place %s failed → trying place %s (index %d/%d)',
+        batch.id, failed_place, nxt['place_id'], next_index, len(candidates) - 1,
+    )
+    return True
 
 
 def _check_order_status(order: RobuxCrateOrder, client) -> None:
