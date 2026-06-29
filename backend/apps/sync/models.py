@@ -370,3 +370,84 @@ class SyncFeatureFlag(models.Model):
     def __str__(self):
         state = 'ON' if self.is_enabled else 'OFF'
         return f'{self.key} [{state}]'
+
+
+class EldoradoReview(models.Model):
+    """Durable record of an Eldorado seller review (negative reviews monitored).
+
+    One row per ``(integration_account, remote_id)``.  Row *existence* is the
+    dedup key for the negative-review monitor: once we have a row for a review
+    we never notify about it again, even if it briefly drops out of the API's
+    paginated window or its rating is toggled.  This replaces the previous
+    ``SyncCheckpoint.meta['seen_ids']`` approach, which was overwritten with the
+    current 21-item window on every run and therefore re-notified old reviews.
+
+    The ``notified`` flag drives delivery:
+      - bootstrap-seeded rows are created with ``notified=True`` (handled, no
+        alert) so the first run never floods Telegram;
+      - genuinely new reviews are created with ``notified=False`` and dispatched
+        afterwards, with ``notify_attempts`` bounding retries on send failure.
+    """
+
+    integration_account = models.ForeignKey(
+        'integrations.IntegrationAccount',
+        on_delete=models.CASCADE,
+        related_name='eldorado_reviews',
+    )
+    remote_id = models.CharField(
+        max_length=255,
+        help_text='orderReview.id on Eldorado',
+    )
+
+    feedback_rating = models.CharField(
+        max_length=20,
+        help_text='Negative / Positive / Neutral',
+    )
+    game_category_title = models.CharField(max_length=255, blank=True, default='')
+    review_message = models.TextField(blank=True, default='')
+    feedback_tags = models.JSONField(default=list, blank=True)
+    was_initial_rating_positive = models.BooleanField(null=True, blank=True)
+    buyer_masked_username = models.CharField(max_length=255, blank=True, default='')
+    review_date = models.DateTimeField(
+        null=True, blank=True,
+        help_text='orderReview.date (parsed; raw value kept in `raw`)',
+    )
+
+    raw = models.JSONField(
+        default=dict, blank=True,
+        help_text='Full review item payload as returned by the API',
+    )
+
+    notified = models.BooleanField(
+        default=False,
+        help_text='True once a Telegram alert was sent (or the row was seeded)',
+    )
+    notified_at = models.DateTimeField(null=True, blank=True)
+    notify_attempts = models.PositiveIntegerField(
+        default=0,
+        help_text='Number of Telegram send attempts (bounds retries on failure)',
+    )
+
+    first_seen_at = models.DateTimeField(
+        help_text='When the monitor first ingested this review',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'eldorado_reviews'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['integration_account', 'remote_id'],
+                name='unique_eldorado_review',
+            ),
+        ]
+        indexes = [
+            models.Index(fields=['integration_account', 'feedback_rating']),
+            models.Index(fields=['integration_account', 'notified']),
+            models.Index(fields=['review_date']),
+        ]
+        ordering = ['-review_date']
+
+    def __str__(self):
+        return f"{self.feedback_rating}:{self.remote_id} ({self.buyer_masked_username})"

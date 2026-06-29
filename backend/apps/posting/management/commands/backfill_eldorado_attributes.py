@@ -33,6 +33,12 @@ Examples:
 
     # Dry-run across all LISTED instant fortnite listings
     python manage.py backfill_eldorado_attributes --game fortnite --kind instant
+
+    # League of Legends — backfill LISTED *and* PAUSED instant listings.
+    # Paused offers cannot be edited to active without a relist, so include them:
+    # the relist recreates each as a fresh active (LISTED) offer with new attrs.
+    python manage.py backfill_eldorado_attributes --game league-of-legends \\
+        --kind instant --status LISTED PAUSED --apply --sleep 30
 """
 
 from __future__ import annotations
@@ -68,8 +74,10 @@ class Command(BaseCommand):
         parser.add_argument("--listing-id", type=int, default=None, help="Target a single listing id.")
         parser.add_argument("--limit", type=int, default=None, help="Cap the number of listings processed.")
         parser.add_argument(
-            "--status", default="LISTED", choices=sorted(_STATUS_MAP),
-            help="Listing status filter (default: LISTED).",
+            "--status", default=["LISTED"], nargs="+", choices=sorted(_STATUS_MAP),
+            help="Listing status filter; accepts multiple (default: LISTED). "
+                 "Use '--status LISTED PAUSED' to backfill paused offers too — "
+                 "relist recreates them as active (LISTED).",
         )
         parser.add_argument(
             "--kind", default="instant", choices=["instant", "dropship", "all"],
@@ -94,7 +102,7 @@ class Command(BaseCommand):
         qs = (
             Listing.objects
             .filter(integration_account__provider="eldorado", game__slug=opts["game"])
-            .filter(status=_STATUS_MAP[opts["status"]])
+            .filter(status__in=[_STATUS_MAP[s] for s in opts["status"]])
             .select_related("integration_account", "game", "dropship_product")
         )
         if opts["kind"] == "instant":
@@ -130,7 +138,7 @@ class Command(BaseCommand):
         dry = not opts["apply"]
         self.stdout.write(
             f"{'DRY RUN' if dry else 'APPLY (' + opts['mode'] + ')'}: "
-            f"{len(listings)} {opts['game']} listing(s), status={opts['status']}, kind={opts['kind']}"
+            f"{len(listings)} {opts['game']} listing(s), status={','.join(opts['status'])}, kind={opts['kind']}"
         )
 
         sleep_s = opts["sleep"]

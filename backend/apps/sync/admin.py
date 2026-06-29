@@ -1,7 +1,14 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import RawPayload, SyncCheckpoint, SyncFeatureFlag, SyncRun, SyncLog
+from .models import (
+    EldoradoReview,
+    RawPayload,
+    SyncCheckpoint,
+    SyncFeatureFlag,
+    SyncRun,
+    SyncLog,
+)
 
 
 @admin.register(RawPayload)
@@ -184,3 +191,50 @@ class SyncFeatureFlagAdmin(admin.ModelAdmin):
     list_display_links = ('key',)
     search_fields = ('key', 'description')
     readonly_fields = ('updated_at',)
+
+
+@admin.register(EldoradoReview)
+class EldoradoReviewAdmin(admin.ModelAdmin):
+    list_display = (
+        'remote_id',
+        'integration_account',
+        'feedback_rating',
+        'game_category_title',
+        'buyer_masked_username',
+        'message_short',
+        'review_date',
+        'notified',
+        'notify_attempts',
+    )
+    list_select_related = ('integration_account',)
+    list_filter = ('feedback_rating', 'notified', 'integration_account')
+    search_fields = ('remote_id', 'buyer_masked_username', 'review_message')
+    show_full_result_count = False
+    list_per_page = 50
+    readonly_fields = (
+        'integration_account',
+        'remote_id',
+        'feedback_rating',
+        'game_category_title',
+        'review_message',
+        'feedback_tags',
+        'was_initial_rating_positive',
+        'buyer_masked_username',
+        'review_date',
+        'raw',
+        'notified',
+        'notified_at',
+        'notify_attempts',
+        'first_seen_at',
+        'created_at',
+        'updated_at',
+    )
+
+    def has_add_permission(self, request):
+        return False
+
+    @admin.display(description='Message')
+    def message_short(self, obj):
+        if len(obj.review_message) > 80:
+            return obj.review_message[:80] + '...'
+        return obj.review_message

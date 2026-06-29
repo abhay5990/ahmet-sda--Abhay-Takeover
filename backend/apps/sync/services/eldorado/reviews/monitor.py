@@ -6,37 +6,38 @@ Telegram notifications for newly seen negative reviews.
 
 State strategy
 --------------
-Uses ``SyncCheckpoint(resource_type='reviews', mode='incremental')`` per
-account.  The ``meta`` JSON field stores a ``seen_ids`` set — the IDs of
-all negative reviews we have already processed.
+Persists every seen review as an ``EldoradoReview`` row (one per
+``account + remote_id``).  Row *existence* is the dedup key: a review we
+already have a row for is never re-notified, even if it briefly drops out of
+the API's paginated window or its rating is toggled.
 
-Why seen-IDs instead of a watermark:
-  Buyers can change their rating from Positive/Neutral → Negative *after*
-  the original review date.  A date-based watermark misses these because
-  the review keeps its original (old) date and appears below the watermark
-  in the newest-first API response.  Tracking seen IDs catches every new
-  appearance regardless of date ordering.
+This replaces the previous ``SyncCheckpoint.meta['seen_ids']`` approach,
+which overwrote the seen set with only the current 21-item window on every
+run — so reviews beyond that window were forgotten and re-notified whenever
+they reappeared.
 
 Poll logic:
   1. Fetch up to MAX_PAGES pages (newest → oldest) of negative reviews.
-  2. Compare every review ID against ``seen_ids``.
-  3. IDs not in ``seen_ids`` → new negative reviews → notify via Telegram.
-  4. Replace ``seen_ids`` with the full set of IDs from the current fetch
-     so that reviews whose rating changed back to positive are naturally
-     pruned from the set.
-  5. Bootstrap (empty ``seen_ids``): save all current IDs, do NOT notify.
+  2. Ingest: create a row for every review_id we don't already have.
+       - Bootstrap (no rows yet for the account): seed silently
+         (``notified=True``) so the first run never floods Telegram.
+       - Otherwise new rows are created ``notified=False``.
+  3. Dispatch: send a Telegram alert for every ``notified=False`` row, then
+     mark it ``notified=True``.  ``notify_attempts`` bounds retries so a
+     transient send failure is retried on the next run instead of lost.
 """
 
 import logging
+import re
 from typing import Any
 
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 
 from apps.integrations.models import IntegrationAccount
 from apps.integrations.providers.registry import get_or_build_client
 from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
-from apps.sync.enums import ResourceType, SyncMode
-from apps.sync.models import SyncCheckpoint
+from apps.sync.models import EldoradoReview
 from apps.sync.services.eldorado.reviews.notifier import TelegramNotifier
 
 logger = logging.getLogger(__name__)
@@ -45,6 +46,22 @@ _PROVIDER = "eldorado"
 _PAGE_SIZE = 7
 _MAX_PAGES = 3
 _CURSOR_TOP = "9999-99-99 99:99:99.999999999999999-9999-9999-9999-999999999999"
+# Cap retries so a review that can never be delivered (e.g. permanently bad
+# payload) does not get re-attempted forever on every run.
+_MAX_NOTIFY_ATTEMPTS = 5
+# Eldorado timestamps carry up to 7 fractional-second digits; Python's parser
+# only accepts 6, so trim the extras before parsing.
+_FRACTIONAL_RE = re.compile(r"(\.\d{6})\d+")
+
+
+def _parse_review_date(value: str | None):
+    """Best-effort parse of an Eldorado ISO timestamp; returns None on failure."""
+    if not value:
+        return None
+    try:
+        return parse_datetime(_FRACTIONAL_RE.sub(r"\1", value))
+    except (ValueError, TypeError):
+        return None
 
 
 class EldoradoReviewMonitor:
@@ -111,13 +128,6 @@ class EldoradoReviewMonitor:
         account: IntegrationAccount,
         proxy_pool: Any,
     ) -> None:
-        checkpoint, _ = SyncCheckpoint.objects.get_or_create(
-            integration_account=account,
-            resource_type=ResourceType.REVIEWS,
-            mode=SyncMode.INCREMENTAL,
-            defaults={"last_seen_remote_id": "", "cursor": ""},
-        )
-
         facade = get_or_build_client(
             _PROVIDER,
             account.credential,
@@ -130,56 +140,86 @@ class EldoradoReviewMonitor:
         if all_items is None:
             return  # API error — already logged
 
-        current_ids = {item.orderReview.id for item in all_items}
-        meta = checkpoint.meta or {}
-        seen_ids = set(meta.get("seen_ids", []))
+        self._ingest(account, all_items)
+        self._dispatch(account)
 
-        # Bootstrap — first run, save all IDs, don't notify
-        if not seen_ids and not checkpoint.last_seen_remote_id:
-            meta["seen_ids"] = list(current_ids)
-            checkpoint.meta = meta
-            checkpoint.last_run_at = timezone.now()
-            checkpoint.save(update_fields=["meta", "last_run_at", "updated_at"])
-            logger.info(
-                "review_monitor: bootstrap for %s — %d review(s) saved",
-                account.slug, len(current_ids),
+    def _ingest(self, account: IntegrationAccount, all_items: list) -> None:
+        """Persist a row for every review we don't already have.
+
+        On the very first run for an account (no rows yet) the fetched window is
+        seeded silently — ``notified=True`` — so we don't flood Telegram with
+        pre-existing reviews. Afterwards new rows are created ``notified=False``
+        and left for :meth:`_dispatch` to deliver.
+        """
+        existing = set(
+            EldoradoReview.objects
+            .filter(integration_account=account)
+            .values_list("remote_id", flat=True)
+        )
+        is_bootstrap = not existing
+        now = timezone.now()
+
+        created = 0
+        for item in all_items:
+            rid = item.orderReview.id
+            if rid in existing:
+                continue
+            r = item.orderReview
+            feedback = r.review
+            EldoradoReview.objects.create(
+                integration_account=account,
+                remote_id=rid,
+                feedback_rating=feedback.feedbackRating or "",
+                game_category_title=r.gameCategoryTitle or "",
+                review_message=(feedback.reviewMessage or "").strip(),
+                feedback_tags=feedback.feedbackTags or [],
+                was_initial_rating_positive=feedback.wasInitialRatingPositive,
+                buyer_masked_username=item.buyer.maskedUsername or "",
+                review_date=_parse_review_date(str(r.date) if r.date else None),
+                raw=item.model_dump(mode="json"),
+                notified=is_bootstrap,  # seeded rows are considered handled
+                notified_at=now if is_bootstrap else None,
+                first_seen_at=now,
             )
-            return
+            existing.add(rid)
+            created += 1
 
-        # Migration: if old checkpoint has last_seen_remote_id but no seen_ids,
-        # treat all current IDs as already seen to avoid a flood of notifications.
-        if not seen_ids and checkpoint.last_seen_remote_id:
-            seen_ids = current_ids.copy()
+        if is_bootstrap:
             logger.info(
-                "review_monitor: migrated %s from watermark to seen_ids (%d ids)",
-                account.slug, len(seen_ids),
+                "review_monitor: bootstrap for %s — %d review(s) seeded",
+                account.slug, created,
             )
-
-        # Find new reviews — IDs in current fetch that we haven't seen before
-        new_ids = current_ids - seen_ids
-        new_items = [
-            item for item in all_items
-            if item.orderReview.id in new_ids
-        ]
-
-        if not new_items:
-            logger.debug("review_monitor: no new negative reviews for %s", account.slug)
-        else:
+        elif created:
             logger.info(
                 "review_monitor: %d new negative review(s) for %s",
-                len(new_items), account.slug,
+                created, account.slug,
             )
-            for item in new_items:
-                self._notifier.send_negative_review(
-                    account_slug=account.slug,
-                    review_item=item,
-                )
+        else:
+            logger.debug("review_monitor: no new negative reviews for %s", account.slug)
 
-        # Update seen_ids to current set (naturally prunes changed-back reviews)
-        meta["seen_ids"] = list(current_ids)
-        checkpoint.meta = meta
-        checkpoint.last_run_at = timezone.now()
-        checkpoint.save(update_fields=["meta", "last_run_at", "updated_at"])
+    def _dispatch(self, account: IntegrationAccount) -> None:
+        """Send a Telegram alert for every un-notified review (oldest first)."""
+        pending = (
+            EldoradoReview.objects
+            .filter(
+                integration_account=account,
+                notified=False,
+                notify_attempts__lt=_MAX_NOTIFY_ATTEMPTS,
+            )
+            .order_by("review_date")
+        )
+        for review in pending:
+            sent = self._notifier.send_negative_review(
+                account_slug=account.slug,
+                review=review,
+            )
+            review.notify_attempts += 1
+            if sent:
+                review.notified = True
+                review.notified_at = timezone.now()
+            review.save(update_fields=[
+                "notified", "notified_at", "notify_attempts", "updated_at",
+            ])
 
     def _fetch_negative_reviews(self, facade: Any, account_slug: str) -> list | None:
         """Fetch up to _MAX_PAGES of negative reviews. Returns None on API error."""
