@@ -104,7 +104,15 @@ class SteamGameGridRenderer:
             row, col = divmod(i, cols)
             x = x_offset + col * (_GAME_WIDTH + _GAME_SPACING)
             y = _HEADER_HEIGHT + _GAME_SPACING + row * (_GAME_HEIGHT + _GAME_SPACING)
-            self._draw_game(canvas, draw, game, x, y)
+            try:
+                self._draw_game(canvas, draw, game, x, y)
+            except Exception as exc:
+                # One malformed game must not sink the whole grid (which would
+                # leave the offer with no image → marketplace 400).
+                logger.warning(
+                    "Skipping game tile (appid=%s): %s",
+                    game.get("appid"), exc,
+                )
 
         return canvas
 
@@ -247,6 +255,13 @@ class SteamGameGridRenderer:
     def _truncate_text(
         text: str, max_width: int, font: ImageFont.FreeTypeFont
     ) -> str:
+        if not text:
+            return ""
+        # Collapse newlines/extra whitespace: Pillow's textlength() raises
+        # "can't measure length of multiline text" on any string containing a
+        # newline (some LZT titles arrive with a trailing "\r\n", e.g.
+        # "Resident Evil Village\r\n").
+        text = " ".join(text.split())
         if not text:
             return ""
         tmp = ImageDraw.Draw(Image.new("RGB", (1, 1)))

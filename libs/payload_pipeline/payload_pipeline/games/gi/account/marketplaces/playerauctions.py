@@ -46,18 +46,16 @@ class GenshinImpactPlayerAuctionsBuilder(BasePlayerAuctionsBuilder):
     def _get_server(
         self, account: GenshinResolvedAccount, ctx: BuildContext | None = None,
     ) -> list[str]:
-        region = (account.region or "").lower()
         name = get_external_name(
-            ctx.variant_context if ctx else None, "region", region,
+            ctx.variant_context if ctx else None, "region", account.region_variant_key,
         )
         return [name or _FALLBACK_SERVER]
 
     def _get_server_id(
         self, account: GenshinResolvedAccount, ctx: BuildContext | None = None,
     ) -> list[str] | None:
-        region = (account.region or "").lower()
         eid = get_external_id(
-            ctx.variant_context if ctx else None, "region", region,
+            ctx.variant_context if ctx else None, "region", account.region_variant_key,
         )
         return [eid or _FALLBACK_SERVER_ID]
 

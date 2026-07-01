@@ -24,9 +24,8 @@ class GenshinImpactGameBoostBuilder(BaseGameBoostBuilder):
     def _build_account_data(
         self, account: GenshinResolvedAccount, ctx: BuildContext | None = None,
     ) -> dict[str, Any]:
-        region = account.region.lower()
         server = get_external_id(
-            ctx.variant_context if ctx else None, "region", region,
+            ctx.variant_context if ctx else None, "region", account.region_variant_key,
         ) or "Europe"
         data: dict[str, Any] = {
             "server": server,

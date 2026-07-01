@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 
 from ....core.contracts import FieldMeta, ResolvedAccountBase
+from .region import normalize_region_key
 
 
 @dataclass(slots=True, frozen=True)
@@ -179,3 +180,14 @@ class GenshinResolvedAccount(ResolvedAccountBase):
             "computed",
         ),
     }
+
+    @property
+    def region_variant_key(self) -> str:
+        """Canonical region key for variant/trade-environment lookups.
+
+        Normalizes raw source values (LZT codes like ``eu``/``usa``/``cht``,
+        or manual full names) to the ``GameVariant.source_key`` form so
+        marketplace builders resolve the correct trade environment / server.
+        Kept separate from :attr:`region`, which stays raw for display.
+        """
+        return normalize_region_key(self.region)

@@ -20,7 +20,7 @@ class GenshinImpactEldoradoBuilder(BaseEldoradoBuilder):
         ctx: BuildContext,
     ) -> dict[str, Any]:
         trade_env = get_external_id(
-            ctx.variant_context, "region", account.region,
+            ctx.variant_context, "region", account.region_variant_key,
         ) or "1-999"
 
         return self.build_base_payload(
