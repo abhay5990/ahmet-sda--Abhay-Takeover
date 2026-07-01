@@ -8,6 +8,8 @@ browser TLS fingerprint impersonation.
 
 from __future__ import annotations
 
+from typing import Any
+
 from apis_sdk.infrastructure.http.base import BaseHttpTransport
 from apis_sdk.infrastructure.logging.logger import SdkLogger
 from apis_sdk.infrastructure.proxy.pool import ProxyPool
@@ -26,20 +28,18 @@ class R6LockerFactory:
         base_url: str = "https://r6skins.locker",
         timeout: float = 30.0,
         proxy_pool: ProxyPool | None = None,
+        cf_cookie_provider: Any | None = None,
         logger: SdkLogger | None = None,
     ) -> R6LockerFacade:
         """
         Create a fully configured R6Locker facade.
-
-        The transport should be a CurlCffiTransport with browser
-        impersonation enabled (e.g. "chrome124") — R6Locker is
-        behind Cloudflare and rejects non-browser TLS fingerprints.
 
         Args:
             transport: HTTP transport (typically CurlCffiTransport).
             base_url: R6Locker base URL.
             timeout: Request timeout.
             proxy_pool: Optional proxy pool for request routing.
+            cf_cookie_provider: Optional CfCookieProvider for Cloudflare bypass.
             logger: Optional SDK logger.
 
         Returns:
@@ -59,5 +59,6 @@ class R6LockerFactory:
         return R6LockerFacade(
             client=client,
             proxy_pool=proxy_pool,
-            logger=logger,
+            cf_cookie_provider=cf_cookie_provider,
+            sdk_logger=logger,
         )

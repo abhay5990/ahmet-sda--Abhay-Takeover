@@ -104,6 +104,10 @@ urlpatterns = [
     path('api/manual/fortnite/sheet/', manual_api.open_sheet, name='api_manual_fortnite_sheet'),
     path('api/manual/fortnite/accounts/', manual_api.fetch_accounts, name='api_manual_fortnite_accounts'),
 
+    # API — manual posting (R6 Tracker Google Sheets)
+    path('api/manual/r6/sheet/', manual_api.open_r6_sheet, name='api_manual_r6_sheet'),
+    path('api/manual/r6/accounts/', manual_api.fetch_r6_accounts, name='api_manual_r6_accounts'),
+
     # API — manual field specs (game-specific dynamic form fields)
     path('api/manual-fields/', manual_fields_api.manual_field_specs, name='api_manual_field_specs'),
 

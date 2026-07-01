@@ -171,6 +171,10 @@ def create_job(request):
         from apps.posting.api.manual import _create_sheet_job
         return _create_sheet_job(body, game, stores, job_settings)
 
+    if source_type == 'r6_sheet':
+        from apps.posting.api.manual import _create_r6_sheet_job
+        return _create_r6_sheet_job(body, game, stores, job_settings)
+
     return _create_account_job(body, game, stores, job_settings)
 
 

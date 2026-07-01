@@ -62,12 +62,18 @@ class R6LockerClient:
         account_id: str,
         *,
         proxy_url: str | None = None,
+        extra_headers: dict[str, str] | None = None,
     ) -> ApiResult[dict[str, Any]]:
         """
         Fetch public account data from the R6Locker tracker.
 
         This is a read-only, unauthenticated endpoint.
         The referer header must match the expected profile URL pattern.
+
+        Args:
+            account_id: R6Locker account UUID.
+            proxy_url: Optional proxy URL.
+            extra_headers: Additional headers (e.g. Cookie, User-Agent from CfCookieProvider).
         """
         account_id = (account_id or "").strip()
         if not account_id:
@@ -86,6 +92,8 @@ class R6LockerClient:
             "pragma": "no-cache",
             "referer": f"{self._config.base_url}/profile/{account_id}",
         }
+        if extra_headers:
+            headers.update(extra_headers)
 
         try:
             response = self._transport.request(

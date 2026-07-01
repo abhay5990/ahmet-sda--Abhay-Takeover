@@ -64,8 +64,8 @@
                            class="text-emerald-600 focus:ring-emerald-500">
                     <span class="text-sm text-gray-700">Manual Entry</span>
                 </label>
-                <label x-show="isFortniteGame" class="flex items-center space-x-2 cursor-pointer">
-                    <input type="radio" value="sheet" x-model="sourceType"
+                <label x-show="hasSheetMode" class="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" :value="isR6Game ? 'r6_sheet' : 'sheet'" x-model="sourceType"
                            class="text-emerald-600 focus:ring-emerald-500">
                     <span class="text-sm text-gray-700">Google Sheet</span>
                 </label>
@@ -491,6 +491,106 @@
                             </table>
                         </div>
                         <!-- Sheet fetch errors -->
+                        <template x-if="sheetFetchErrors.length > 0">
+                            <div class="p-3 border-t bg-red-50">
+                                <p class="text-xs font-medium text-red-700 mb-1">Errors:</p>
+                                <ul class="text-xs text-red-600 space-y-0.5">
+                                    <template x-for="err in sheetFetchErrors" :key="err">
+                                        <li x-text="err"></li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- R6 Tracker Sheet mode -->
+        <template x-if="sourceType === 'r6_sheet'">
+            <div class="space-y-4">
+                <div class="bg-white rounded-lg shadow p-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Google Sheet — R6 Tracker Import</label>
+                    <p class="text-xs text-gray-500 mb-4">
+                        Enter your Google Sheet ID or URL, choose a worksheet name, then prepare the sheet and fill in account data with TrackerLink URLs.
+                    </p>
+
+                    <div class="mb-3">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Spreadsheet ID or Link</label>
+                        <input type="text" x-model="sheetSpreadsheetInput"
+                               placeholder="https://docs.google.com/spreadsheets/d/... or just the ID"
+                               class="w-full border-gray-300 rounded-md shadow-sm text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Worksheet Name</label>
+                        <input type="text" x-model="sheetWorksheetName"
+                               placeholder="R6 TRACKER"
+                               class="w-full border-gray-300 rounded-md shadow-sm text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                        <button @click="prepareR6Sheet()" type="button"
+                                :disabled="sheetLoading || !sheetSpreadsheetInput.trim()"
+                                class="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-md hover:bg-emerald-700 disabled:opacity-50 transition-colors">
+                            <span x-show="!sheetLoading">Prepare Sheet</span>
+                            <span x-show="sheetLoading">Preparing...</span>
+                        </button>
+                        <button @click="fetchR6Accounts()" type="button"
+                                :disabled="sheetFetching || (!sheetSpreadsheetId && !sheetSpreadsheetInput.trim())"
+                                class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors">
+                            <span x-show="!sheetFetching">Fetch Accounts</span>
+                            <span x-show="sheetFetching">Fetching...</span>
+                        </button>
+                    </div>
+
+                    <template x-if="sheetUrl">
+                        <p class="mt-3 text-xs text-gray-500">
+                            Sheet: <a :href="sheetUrl" target="_blank" class="text-emerald-600 underline" x-text="sheetUrl"></a>
+                        </p>
+                    </template>
+                    <template x-if="sheetSuccess">
+                        <p class="mt-3 text-xs text-emerald-600" x-text="sheetSuccess"></p>
+                    </template>
+                    <template x-if="sheetError">
+                        <p class="mt-3 text-xs text-red-600" x-text="sheetError"></p>
+                    </template>
+                </div>
+
+                <!-- Fetched R6 accounts preview -->
+                <template x-if="sheetAccounts.length > 0">
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="p-4 border-b bg-gray-50 flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-700">
+                                Fetched Accounts: <span class="text-emerald-600" x-text="sheetAccounts.length"></span>
+                            </span>
+                            <button @click="sheetAccounts = []" type="button"
+                                    class="text-xs text-gray-500 hover:text-red-600">Clear</button>
+                        </div>
+                        <div class="max-h-64 overflow-y-auto">
+                            <table class="min-w-full text-xs">
+                                <thead class="bg-gray-50 border-b sticky top-0">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left text-gray-500 font-medium">#</th>
+                                        <th class="px-3 py-2 text-left text-gray-500 font-medium">Mail</th>
+                                        <th class="px-3 py-2 text-left text-gray-500 font-medium">Tracker UUID</th>
+                                        <th class="px-3 py-2 text-left text-gray-500 font-medium">Price</th>
+                                        <th class="px-3 py-2 text-left text-gray-500 font-medium">Title</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <template x-for="(acc, idx) in sheetAccounts" :key="idx">
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-3 py-1.5 text-gray-400" x-text="idx + 1"></td>
+                                            <td class="px-3 py-1.5 font-mono" x-text="acc.mail"></td>
+                                            <td class="px-3 py-1.5 font-mono text-gray-500" x-text="acc.tracker_uuid ? acc.tracker_uuid.substring(0, 8) + '...' : '-'"></td>
+                                            <td class="px-3 py-1.5 text-emerald-700" x-text="acc.sales_price ? '$' + acc.sales_price : (acc.price || '-')"></td>
+                                            <td class="px-3 py-1.5 max-w-xs truncate text-gray-500" x-text="acc.title || '(auto from tracker)'"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
                         <template x-if="sheetFetchErrors.length > 0">
                             <div class="p-3 border-t bg-red-50">
                                 <p class="text-xs font-medium text-red-700 mb-1">Errors:</p>
@@ -1097,7 +1197,7 @@ function stockStart() {
         submitError: '',
 
         get sheetHasSalesPrice() {
-            if (this.sourceType !== 'sheet' || this.sheetAccounts.length === 0) return false;
+            if ((this.sourceType !== 'sheet' && this.sourceType !== 'r6_sheet') || this.sheetAccounts.length === 0) return false;
             return this.sheetAccounts.some(a => a.sales_price && a.sales_price > 0);
         },
 
@@ -1121,7 +1221,7 @@ function stockStart() {
             if (this.sourceType === 'account') {
                 return this.loginCount > 0;
             }
-            if (this.sourceType === 'sheet') {
+            if (this.sourceType === 'sheet' || this.sourceType === 'r6_sheet') {
                 return this.sheetAccounts.length > 0;
             }
             // Manual mode
@@ -1171,6 +1271,15 @@ function stockStart() {
         get isFortniteGame() {
             const slug = (GAME_SLUGS[this.selectedGame] || '').toLowerCase();
             return slug === 'fortnite' || slug === 'fn';
+        },
+
+        get isR6Game() {
+            const slug = (GAME_SLUGS[this.selectedGame] || '').toLowerCase();
+            return slug === 'rainbow-six-siege' || slug === 'r6' || slug === 'r6s';
+        },
+
+        get hasSheetMode() {
+            return this.isFortniteGame || this.isR6Game;
         },
 
         get manualFieldGroups() {
@@ -1315,8 +1424,11 @@ function stockStart() {
                     id => this.isStoreSupported(STORE_PROVIDERS[id])
                 );
             }
-            // Reset sheet mode if switching away from Fortnite
+            // Reset sheet mode if switching away from supported game
             if (this.sourceType === 'sheet' && !this.isFortniteGame) {
+                this.sourceType = 'account';
+            }
+            if (this.sourceType === 'r6_sheet' && !this.isR6Game) {
                 this.sourceType = 'account';
             }
             if (!this.selectedGame) {
@@ -1651,6 +1763,18 @@ function stockStart() {
                 };
             }
 
+            if (this.sourceType === 'r6_sheet') {
+                return {
+                    source_type: 'r6_sheet',
+                    game_id: Number(this.selectedGame),
+                    stores: storeIds,
+                    defaults: defaultsPayload,
+                    accounts: this.sheetAccounts,
+                    has_sales_price: this.sheetHasSalesPrice,
+                    selected_image_preset_id: this.selectedImagePresetPayload,
+                };
+            }
+
             // Manual mode
             const distrib = {};
             if (this.distributionMode === 'shared') {
@@ -1758,6 +1882,73 @@ function stockStart() {
             try {
                 const wsName = this.sheetWorksheetName.trim() || 'FORTNITE MANUAL';
                 const resp = await fetch(`/posting/api/manual/fortnite/accounts/?spreadsheet_id=${encodeURIComponent(ssId)}&sheet_name=${encodeURIComponent(wsName)}`, {
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                });
+                const data = await resp.json();
+                if (!resp.ok) {
+                    this.sheetError = data.error || 'Failed to fetch accounts';
+                } else {
+                    this.sheetAccounts = data.accounts || [];
+                    this.sheetFetchErrors = data.errors || [];
+                }
+            } catch (e) {
+                this.sheetError = 'Network error: ' + e.message;
+            } finally {
+                this.sheetFetching = false;
+            }
+        },
+
+        async prepareR6Sheet() {
+            const ssId = this._parseSpreadsheetId(this.sheetSpreadsheetInput);
+            if (!ssId) {
+                this.sheetError = 'Invalid spreadsheet ID or URL.';
+                return;
+            }
+            this.sheetLoading = true;
+            this.sheetError = '';
+            this.sheetSuccess = '';
+            try {
+                const resp = await fetch('/posting/api/manual/r6/sheet/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify({
+                        spreadsheet_id: ssId,
+                        sheet_name: this.sheetWorksheetName.trim() || 'R6 TRACKER',
+                    }),
+                });
+                const data = await resp.json();
+                if (!resp.ok) {
+                    this.sheetError = data.error || 'Failed to prepare sheet';
+                } else {
+                    this.sheetSpreadsheetId = ssId;
+                    this.sheetUrl = data.url;
+                    this.sheetSuccess = data.message || 'Sheet ready! Fill in your accounts and click Fetch.';
+                    if (data.url) window.open(data.url, '_blank');
+                }
+            } catch (e) {
+                this.sheetError = 'Network error: ' + e.message;
+            } finally {
+                this.sheetLoading = false;
+            }
+        },
+
+        async fetchR6Accounts() {
+            const ssId = this.sheetSpreadsheetId || this._parseSpreadsheetId(this.sheetSpreadsheetInput);
+            if (!ssId) {
+                this.sheetError = 'Enter a spreadsheet ID or URL first.';
+                return;
+            }
+            this.sheetSpreadsheetId = ssId;
+            this.sheetFetching = true;
+            this.sheetError = '';
+            this.sheetSuccess = '';
+            this.sheetFetchErrors = [];
+            try {
+                const wsName = this.sheetWorksheetName.trim() || 'R6 TRACKER';
+                const resp = await fetch(`/posting/api/manual/r6/accounts/?spreadsheet_id=${encodeURIComponent(ssId)}&sheet_name=${encodeURIComponent(wsName)}`, {
                     headers: { 'X-CSRFToken': '{{ csrf_token }}' },
                 });
                 const data = await resp.json();

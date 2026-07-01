@@ -54,10 +54,26 @@ class R6Resolver:
 
         psn_connected, xbox_connected = self._resolve_platform_connections(lzt, tracker)
 
+        # Tracker-only overrides (injected by orchestrator for sheet imports)
+        tracker_raw = request.source("tracker")
+        _tr = tracker_raw if isinstance(tracker_raw, dict) else {}
+
+        # Price: prefer LZT, then tracker source (injected by orchestrator)
+        price = lzt.price if lzt else 0.0
+        if price == 0 and _tr.get("price"):
+            try:
+                price = float(_tr["price"])
+            except (TypeError, ValueError):
+                pass
+
+        # Title/description overrides from sheet (tracker-only mode)
+        sheet_title = str(_tr.get("_sheet_title") or "").strip()
+        sheet_desc = str(_tr.get("_sheet_description") or "").strip()
+
         return R6ResolvedAccount(
             item_id=lzt.item_id if lzt else "",
             category_id=lzt.category_id if lzt else 5,
-            price=lzt.price if lzt else 0.0,
+            price=price,
             kind=request.kind,
             credentials=credentials,
             tracker_url=self._resolve_tracker_url(request, lzt, tracker),
@@ -81,6 +97,8 @@ class R6Resolver:
             inventory=self._build_inventory_breakdown(tracker),
             psn_connected=psn_connected,
             xbox_connected=xbox_connected,
+            manual_title=sheet_title,
+            manual_description=sheet_desc,
         )
 
     def _resolve_manual(self, src, request: PipelineRequest) -> R6ResolvedAccount:

@@ -1,4 +1,4 @@
-"""Manual posting API endpoints — Google Sheets integration for Fortnite."""
+"""Manual posting API endpoints — Google Sheets integration for Fortnite & R6."""
 
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ from apps.posting.api.media_override import mark_image_override_used
 logger = logging.getLogger(__name__)
 
 _DEFAULT_SHEET_NAME = 'FORTNITE MANUAL'
+_DEFAULT_R6_SHEET_NAME = 'R6 TRACKER'
 
 _HEADERS = [
     'Mail',
@@ -27,6 +28,18 @@ _HEADERS = [
     'Title',
     'Items',
     'Images',
+]
+
+_R6_HEADERS = [
+    'Mail',
+    'Mail PW',
+    'Uplay PW',
+    'Price',
+    'Sales Price',
+    'Platform',
+    'Title',
+    'Items',
+    'TrackerLink',
 ]
 
 
@@ -508,5 +521,315 @@ def _create_sheet_job(body: dict, game, stores: list, job_settings: dict):
     PostingJobItem.objects.bulk_create(items)
 
     # Launch job in background thread
+    from apps.posting.api.stock import _launch_job
+    return _launch_job(job, total)
+
+
+# =========================================================================
+# R6 Tracker Sheet — endpoints
+# =========================================================================
+
+_R6SKINS_UUID_RE = re.compile(
+    r'r6skins\.locker/(?:profile|masked)/([a-f0-9-]+)', re.IGNORECASE,
+)
+
+
+@login_required
+@require_POST
+def open_r6_sheet(request):
+    """Prepare an R6 tracker worksheet inside a user-provided spreadsheet."""
+    client = _get_sheets_client()
+    if not client:
+        return JsonResponse(
+            {'error': 'Google Sheets service not configured. Add a google-sheets ServiceCredential.'},
+            status=400,
+        )
+
+    try:
+        body = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'error': 'Invalid JSON body.'}, status=400)
+
+    spreadsheet_id = (body.get('spreadsheet_id') or '').strip()
+    if not spreadsheet_id:
+        return JsonResponse({'error': 'spreadsheet_id is required.'}, status=400)
+
+    sheet_name = (body.get('sheet_name') or '').strip() or _DEFAULT_R6_SHEET_NAME
+
+    try:
+        ws = client.get_or_create_worksheet(spreadsheet_id, sheet_name, rows=500, cols=len(_R6_HEADERS))
+
+        all_values = ws.get_all_values()
+        has_data = len(all_values) > 1
+
+        existing_header = all_values[0] if all_values else []
+        if existing_header != _R6_HEADERS:
+            ws.update([_R6_HEADERS], 'A1', value_input_option='USER_ENTERED')
+
+        sheet_url = f'https://docs.google.com/spreadsheets/d/{spreadsheet_id}/edit#gid={ws.id}'
+        message = 'Sheet ready — headers written.' if not has_data else f'Sheet ready — {len(all_values) - 1} existing data row(s) found.'
+
+        return JsonResponse({
+            'url': sheet_url,
+            'sheet_name': sheet_name,
+            'spreadsheet_id': spreadsheet_id,
+            'has_data': has_data,
+            'message': message,
+        })
+    except Exception as exc:
+        logger.exception("Failed to prepare R6 tracker sheet")
+        return JsonResponse({'error': f'Google Sheets error: {exc}'}, status=500)
+
+
+@login_required
+@require_GET
+def fetch_r6_accounts(request):
+    """Read R6 accounts from a user-specified worksheet.
+
+    Query params: spreadsheet_id (required), sheet_name (optional).
+    Parses rows, extracts tracker UUIDs. Does NOT fetch tracker data yet
+    (that happens at job creation time to persist into OwnedProduct).
+    """
+    client = _get_sheets_client()
+    if not client:
+        return JsonResponse({'error': 'Google Sheets service not configured.'}, status=400)
+
+    spreadsheet_id = (request.GET.get('spreadsheet_id') or '').strip()
+    if not spreadsheet_id:
+        return JsonResponse({'error': 'spreadsheet_id is required.'}, status=400)
+
+    sheet_name = (request.GET.get('sheet_name') or '').strip() or _DEFAULT_R6_SHEET_NAME
+
+    try:
+        rows = client.read_sheet(spreadsheet_id, sheet_name)
+    except Exception as exc:
+        logger.exception("Failed to read R6 tracker sheet")
+        return JsonResponse({'error': f'Google Sheets error: {exc}'}, status=500)
+
+    if not rows or len(rows) < 2:
+        return JsonResponse({'error': 'Sheet is empty (no data rows).'}, status=400)
+
+    data_rows = rows[1:]
+    accounts = []
+    errors = []
+
+    for i, row in enumerate(data_rows, start=2):
+        row = row + [''] * (len(_R6_HEADERS) - len(row))
+
+        mail = row[0].strip()
+        mail_pw = row[1].strip()
+        epic_pw = row[2].strip()
+        price = row[3].strip()
+        sales_price = row[4].strip()
+        platform_raw = row[5].strip()
+        title = row[6].strip()
+        items_desc = row[7].strip()
+        tracker_link = row[8].strip()
+
+        if not mail:
+            continue
+
+        if not mail_pw:
+            errors.append(f'Row {i}: Mail PW is required')
+            continue
+
+        if not tracker_link:
+            errors.append(f'Row {i}: TrackerLink is required')
+            continue
+
+        # Extract UUID from tracker link
+        tracker_uuid = _extract_tracker_uuid(tracker_link)
+        if not tracker_uuid:
+            errors.append(f'Row {i}: Invalid TrackerLink — expected r6skins.locker/profile/<uuid>')
+            continue
+
+        # Parse sales price (optional for R6)
+        sales_price_val = 0.0
+        if sales_price:
+            try:
+                sales_price_val = float(sales_price.replace(',', '.'))
+            except ValueError:
+                errors.append(f'Row {i}: Invalid Sales Price "{sales_price}"')
+                continue
+
+        platforms = _parse_platform(platform_raw, title) if platform_raw else []
+        epic_password = epic_pw if epic_pw else mail_pw
+
+        account = {
+            'row': i,
+            'mail': mail,
+            'mail_pw': mail_pw,
+            'epic_pw': epic_password,
+            'price': price,
+            'sales_price': sales_price_val,
+            'platforms': platforms,
+            'title': title,
+            'items_raw': items_desc,
+            'tracker_link': tracker_link,
+            'tracker_uuid': tracker_uuid,
+        }
+        accounts.append(account)
+
+    return JsonResponse({
+        'accounts': accounts,
+        'total': len(accounts),
+        'errors': errors,
+    })
+
+
+def _extract_tracker_uuid(link: str) -> str:
+    """Extract UUID from an r6skins.locker tracker link."""
+    match = _R6SKINS_UUID_RE.search(link)
+    if match:
+        return match.group(1)
+    # Fallback: bare UUID
+    link = link.strip().rstrip('/')
+    segment = link.rsplit('/', 1)[-1]
+    if re.match(r'^[a-f0-9-]{32,36}$', segment, re.IGNORECASE):
+        return segment
+    return ''
+
+
+# =========================================================================
+# R6 Sheet Job Creation (called from stock.py)
+# =========================================================================
+
+def _create_r6_sheet_job(body: dict, game, stores: list, job_settings: dict):
+    """Create a posting job from R6 Google Sheet accounts.
+
+    For each account:
+    1. Persist credentials, tracker UUID and sheet data into OwnedProduct.raw_data
+    2. Tracker data is fetched asynchronously during job execution (orchestrator)
+    """
+    import hashlib
+    import uuid
+    from decimal import Decimal
+
+    from apps.inventory.models import OwnedProduct
+    from apps.posting.models import PostingJob, PostingJobItem
+
+    accounts = body.get('accounts', [])
+    if not accounts:
+        return JsonResponse({'error': 'No accounts provided'}, status=400)
+
+    if not game.category_id:
+        return JsonResponse({'error': 'Game has no category assigned'}, status=400)
+
+    has_sales_price = body.get('has_sales_price', False)
+
+    owned_products = []
+
+    for acc in accounts:
+        mail = acc.get('mail', '').strip()
+        mail_pw = acc.get('mail_pw', '').strip()
+        epic_pw = acc.get('epic_pw', mail_pw).strip()
+        sales_price = acc.get('sales_price', 0)
+        price_raw = acc.get('price', '').strip() if isinstance(acc.get('price'), str) else acc.get('price', '')
+        platforms = acc.get('platforms', [])
+        title = acc.get('title', '')
+        items_raw = acc.get('items_raw', '')
+        tracker_link = acc.get('tracker_link', '')
+        tracker_uuid = acc.get('tracker_uuid', '')
+
+        if not mail or not mail_pw or not tracker_uuid:
+            continue
+
+        login = mail.lower().strip()
+        password = epic_pw or mail_pw
+
+        # Parse prices
+        try:
+            price_val = float(str(price_raw).replace(',', '.')) if price_raw else 0.0
+        except (ValueError, TypeError):
+            price_val = 0.0
+
+        if has_sales_price and sales_price:
+            pipeline_price = float(sales_price)
+            purchased_price = price_val if price_val > 0 else float(sales_price) / 2
+        else:
+            pipeline_price = price_val if price_val > 0 else float(sales_price or 0)
+            purchased_price = pipeline_price
+
+        # Build raw_data — tracker fetch deferred to orchestrator
+        raw_data = {
+            'source': 'tracker_sheet',
+            'game': 'rainbow-six-siege',
+            'tracker_link': tracker_link,
+            'uplay_id': tracker_uuid,
+            'price': pipeline_price,
+            'loginData': {
+                'login': login,
+                'password': password,
+            },
+            'emailLoginData': {
+                'login': login,
+                'password': mail_pw,
+            },
+            'title': title,
+            'description': items_raw,
+            'platforms': platforms,
+            'item_id': f'r6sheet-{uuid.uuid4().hex[:12]}',
+        }
+
+        owned, _ = OwnedProduct.objects.update_or_create(
+            category=game.category,
+            login=login,
+            defaults={
+                'password': password,
+                'password_hash': hashlib.sha256(password.encode()).hexdigest(),
+                'email': login,
+                'email_password': mail_pw,
+                'game': game,
+                'status': 'draft',
+                'price': Decimal(str(purchased_price)),
+                'currency': 'USD',
+                'source_account': None,
+                'raw_data': raw_data,
+            },
+        )
+        owned_products.append(owned)
+
+    if not owned_products:
+        return JsonResponse({'error': 'No valid accounts to post'}, status=400)
+
+    items_data = []
+    for owned in owned_products:
+        for store in stores:
+            items_data.append((owned.login, owned, store))
+
+    if has_sales_price:
+        for store in stores:
+            store_key = store.slug
+            if store_key not in job_settings:
+                job_settings[store_key] = {}
+            job_settings[store_key]['multiplier_low'] = '1.00'
+            job_settings[store_key]['multiplier_mid'] = '1.00'
+            job_settings[store_key]['multiplier_high'] = '1.00'
+
+    job_settings['_manual'] = {
+        'source_type': 'r6_sheet',
+        'game': 'rainbow-six-siege',
+    }
+
+    total = len(items_data)
+    job = PostingJob.objects.create(
+        game=game,
+        source_account=None,
+        settings=job_settings,
+        total_count=total,
+    )
+    mark_image_override_used(job_settings)
+
+    items = []
+    for login_val, owned, store in items_data:
+        items.append(PostingJobItem(
+            job=job,
+            login=login_val,
+            owned_product=owned,
+            store=store,
+            marketplace=store.provider,
+        ))
+    PostingJobItem.objects.bulk_create(items)
+
     from apps.posting.api.stock import _launch_job
     return _launch_job(job, total)

@@ -7,7 +7,11 @@ from typing import TYPE_CHECKING, Any
 from apis_sdk.clients.marketplaces.playerauctions.encryption import (
     PAPasswordEncryptor,
 )
+from apis_sdk.clients.marketplaces.playerauctions.models import (
+    PlayerAuctionsCancelRequest,
+)
 from apis_sdk.factories.playerauctions_factory import PlayerAuctionsFactory
+from apis_sdk.factories.pa_official_factory import PAOfficialFactory
 from apis_sdk.infrastructure.logging.logger import StdlibLogger
 
 from .base import AbstractProvider, CredentialField
@@ -22,15 +26,113 @@ logger = logging.getLogger(__name__)
 _encryptor = PAPasswordEncryptor()
 
 
+# ---------------------------------------------------------------------------
+# Composite client — unified interface over official + legacy facades
+# ---------------------------------------------------------------------------
+
+
+class PACompositeClient:
+    """Wraps official + legacy PA facades behind the legacy interface.
+
+    Routing:
+    - Offer ops (create, cancel, list, hide/show, bulk) → official API
+    - Order ops (list_seller_orders, get_order_details) → legacy API
+
+    The provider methods call the same duck-typed interface as before;
+    this wrapper translates to the correct facade internally.
+    """
+
+    # Signals that the caller should NOT RSA-encrypt passwords.
+    # Official API accepts plain text — encryption is legacy-only.
+    needs_password_encryption = False
+
+    def __init__(self, official_facade: Any, legacy_facade: Any) -> None:
+        self._official = official_facade
+        self._legacy = legacy_facade
+
+    # --- Offer reads (→ official) ---
+
+    def list_offers(self, **kwargs: Any) -> Any:
+        return self._official.list_offers(**kwargs)
+
+    def get_offer_details(self, offer_id: str, **kwargs: Any) -> Any:
+        """Map legacy get_offer_details to official get_offer.
+
+        Legacy uses string offer_id, official uses (product_type, int).
+        Default product_type="account" since that's all the pipeline
+        currently produces.
+        """
+        product_type = kwargs.pop("product_type", "account")
+        return self._official.get_offer(product_type, int(offer_id), **kwargs)
+
+    # --- Offer writes (→ official) ---
+
+    def create_offer(
+        self,
+        payload: dict[str, Any] | None = None,
+        *,
+        proxy_group: str | None = None,
+        **kwargs: Any,
+    ) -> Any:
+        """Translate legacy create_offer(payload=) to official create_offer(product_type, payload)."""
+        if payload is None:
+            payload = kwargs.get("payload", {})
+        # Extract product_type from payload; default "account" (all current games)
+        product_type = payload.pop("productType", "account")
+        return self._official.create_offer(product_type, payload, proxy_group=proxy_group)
+
+    def cancel_offers(
+        self,
+        request: PlayerAuctionsCancelRequest | None = None,
+        *,
+        offer_ids: list[int] | None = None,
+        proxy_group: str | None = None,
+        **kwargs: Any,
+    ) -> Any:
+        """Accept both legacy (request model) and official (offer_ids) calling conventions."""
+        if request is not None:
+            offer_ids = request.offer_ids
+        return self._official.cancel_offers(offer_ids=offer_ids, proxy_group=proxy_group)
+
+    def set_display_status(self, **kwargs: Any) -> Any:
+        return self._official.set_display_status(**kwargs)
+
+    # --- Bulk (→ official) ---
+
+    def bulk_upload(self, file_path: str, **kwargs: Any) -> Any:
+        return self._official.bulk_upload(file_path, **kwargs)
+
+    # --- Game metadata (→ official) ---
+
+    def game_account_servers(self, game_id: int, **kwargs: Any) -> Any:
+        product_type = kwargs.pop("product_type", "account")
+        return self._official.game_servers(game_id, product_type, **kwargs)
+
+    # --- Orders (→ legacy, official API has no order endpoints) ---
+
+    def list_seller_orders(self, **kwargs: Any) -> Any:
+        return self._legacy.list_seller_orders(**kwargs)
+
+    def get_order_details(self, order_id: str, **kwargs: Any) -> Any:
+        return self._legacy.get_order_details(order_id, **kwargs)
+
+
+# ---------------------------------------------------------------------------
+# Provider
+# ---------------------------------------------------------------------------
+
+
 @register_provider
 class PlayerAuctionsProvider(AbstractProvider):
     """PlayerAuctions marketplace provider — sell (target) platform.
 
-    Auth: Uses reactive token refresh via a local Puppeteer microservice.
-    When a 401 is encountered, the SDK calls the PA Token Service to
-    perform browser-based login and obtain a fresh JWT.
-    Credentials must include ``username`` and ``password``.
-    ``access_token`` is optional (auto-obtained on first 401).
+    Supports two auth modes:
+
+    1. **Official API** (preferred): HMAC-SHA256 via api_key + secret_key.
+       Returns a ``PACompositeClient`` that routes offer ops through the
+       official API and order ops through the legacy API.
+    2. **Legacy API**: Browser-based JWT via Puppeteer microservice.
+       Returns the legacy ``PlayerAuctionsFacade`` directly.
     """
 
     provider_name = 'playerauctions'
@@ -55,7 +157,19 @@ class PlayerAuctionsProvider(AbstractProvider):
                 'access_token', 'Access Token',
                 field_type='password',
                 required=False,
-                help_text='PlayerAuctions access token (JWT) — auto-refreshed via microservice',
+                help_text='PlayerAuctions access token (JWT) — auto-refreshed via microservice. Not needed if using Official API.',
+            ),
+            CredentialField(
+                'api_key', 'API Key (Official)',
+                field_type='text',
+                required=False,
+                help_text='Official Seller API key (from PA API Key Management). Leave blank to use legacy auth.',
+            ),
+            CredentialField(
+                'secret_key', 'Secret Key (Official)',
+                field_type='password',
+                required=False,
+                help_text='Official Seller API secret key (shown only once at creation). Leave blank to use legacy auth.',
             ),
         ]
 
@@ -63,6 +177,31 @@ class PlayerAuctionsProvider(AbstractProvider):
         creds = credential.credentials
         transport = self._create_transport()
 
+        api_key = creds.get('api_key', '')
+        secret_key = creds.get('secret_key', '')
+
+        if api_key and secret_key:
+            # Official + legacy composite: offers via official, orders via legacy
+            logger.info("Using official PA Seller API (HMAC-SHA256) for %s", credential.account.name)
+            official = PAOfficialFactory.create(
+                api_key=api_key,
+                secret_key=secret_key,
+                transport=transport,
+                proxy_pool=proxy_pool,
+                logger=StdlibLogger("apis_sdk.playerauctions_official"),
+            )
+            legacy = PlayerAuctionsFactory.create(
+                username=creds.get('username', ''),
+                password=creds.get('password', ''),
+                access_token=creds.get('access_token', '') or creds.get('bearer_token', ''),
+                transport=transport,
+                proxy_pool=proxy_pool,
+                proxy_group=proxy_group,
+                logger=StdlibLogger("apis_sdk.playerauctions"),
+            )
+            return PACompositeClient(official_facade=official, legacy_facade=legacy)
+
+        # Legacy-only: browser-based JWT auth via Puppeteer microservice
         return PlayerAuctionsFactory.create(
             username=creds.get('username', ''),
             password=creds.get('password', ''),
@@ -80,16 +219,19 @@ class PlayerAuctionsProvider(AbstractProvider):
         """Create a single PA offer via ``create_offer`` API.
 
         Handles the ``product_data`` envelope created by ``_post_with_backoff``
-        (``{'payload': <api_json>, 'proxy_group': <str|None>}``), encrypts
-        password fields with PA's RSA public key, then delegates to the SDK.
+        (``{'payload': <api_json>, 'proxy_group': <str|None>}``).
+
+        Password encryption is only applied for the legacy API client.
+        The official API accepts plain text passwords.
         """
         payload = product_data.get('payload', product_data)
         proxy_group = product_data.get('proxy_group')
 
-        encrypted_payload = _encrypt_pa_passwords(payload)
+        if getattr(client, 'needs_password_encryption', True):
+            payload = _encrypt_pa_passwords(payload)
 
         return client.create_offer(
-            payload=encrypted_payload,
+            payload=payload,
             proxy_group=proxy_group,
         )
 
@@ -99,9 +241,6 @@ class PlayerAuctionsProvider(AbstractProvider):
         )
 
     def delete_listing(self, client: Any, external_id: str) -> Any:
-        from apis_sdk.clients.marketplaces.playerauctions.models import (
-            PlayerAuctionsCancelRequest,
-        )
         return client.cancel_offers(
             PlayerAuctionsCancelRequest(offerIds=[int(external_id)])
         )

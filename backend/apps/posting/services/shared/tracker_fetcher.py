@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 
 # Lazy module-level facade singletons — built on first use, reused across calls.
 _r6locker_facade = None
+_r6locker_cf_provider = None
 _statsroyale_facade = None
 _clashofstats_facade = None
 
@@ -235,17 +236,24 @@ def _extract_supercell_tag(raw_data: dict[str, Any], *, tag_key: str) -> str:
 # ---------------------------------------------------------------------------
 
 def _get_r6locker_facade():
-    global _r6locker_facade
+    global _r6locker_facade, _r6locker_cf_provider
     if _r6locker_facade is not None:
         return _r6locker_facade
     try:
-        from apis_sdk.clients.trackers.r6locker.facade import R6LockerFacade  # noqa: F401
         from apis_sdk.factories.r6locker_factory import R6LockerFactory
+        from apis_sdk.infrastructure.auth.cf_cookie_provider import CfCookieProvider
         from apis_sdk.infrastructure.http.curl_cffi_transport import CurlCffiTransport
 
         transport = CurlCffiTransport()
-        _r6locker_facade = R6LockerFactory.create(transport=transport)
-        logger.debug("R6LockerFacade initialised")
+        _r6locker_cf_provider = CfCookieProvider(
+            "https://r6skins.locker",
+            warmup_path="/",
+        )
+        _r6locker_facade = R6LockerFactory.create(
+            transport=transport,
+            cf_cookie_provider=_r6locker_cf_provider,
+        )
+        logger.debug("R6LockerFacade initialised with CfCookieProvider")
     except Exception:
         logger.warning("Could not build R6LockerFacade", exc_info=True)
         return None

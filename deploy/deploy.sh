@@ -33,11 +33,17 @@ mkdir -p "$REPO_DIR/backend/logs"
 info "Pulling latest code..."
 git pull origin "$(git rev-parse --abbrev-ref HEAD)"
 
-# ── 2. Dependencies ───────────────────────────────────────────────────────────
+# ── 2. System packages (Xvfb for Cloudflare bypass) ──────────────────────────
+if ! command -v Xvfb >/dev/null 2>&1; then
+    info "Installing Xvfb (required for Cloudflare cookie resolution)..."
+    apt-get install -y -qq xvfb >/dev/null 2>&1 || warn "Could not install xvfb — install manually: apt-get install -y xvfb"
+fi
+
+# ── 3. Dependencies ───────────────────────────────────────────────────────────
 info "Installing Python dependencies..."
 "$VENV/pip" install -q -r requirements/prod.txt
 
-# ── 3. Django: migrate + collectstatic ───────────────────────────────────────
+# ── 4. Django: migrate + collectstatic ───────────────────────────────────────
 info "Running migrations..."
 cd backend
 $MANAGE migrate --noinput
@@ -46,7 +52,7 @@ info "Collecting static files..."
 $MANAGE collectstatic --noinput --clear
 cd "$REPO_DIR"
 
-# ── 4. Nginx config ───────────────────────────────────────────────────────────
+# ── 5. Nginx config ───────────────────────────────────────────────────────────
 info "Generating nginx config for ${DOMAIN}..."
 
 NGINX_AVAILABLE="/etc/nginx/sites-available/${DOMAIN}"
@@ -73,7 +79,7 @@ fi
 info "Testing nginx config..."
 nginx -t || error "Nginx config test failed. Fix the error above and re-run."
 
-# ── 5. Systemd services ───────────────────────────────────────────────────────
+# ── 6. Systemd services ───────────────────────────────────────────────────────
 SYSTEMD_DIR="/etc/systemd/system"
 SERVICES=(ecom-gunicorn ecom-dropship ecom-scheduler)
 CHANGED=0
@@ -94,13 +100,13 @@ for svc in "${SERVICES[@]}"; do
     systemctl enable "$svc" --quiet 2>/dev/null || true
 done
 
-# ── 6. Restart app services ───────────────────────────────────────────────────
+# ── 7. Restart app services ───────────────────────────────────────────────────
 info "Restarting application services..."
 for svc in "${SERVICES[@]}"; do
     systemctl restart "$svc"
 done
 
-# ── 7. Start or reload nginx ─────────────────────────────────────────────────
+# ── 8. Start or reload nginx ─────────────────────────────────────────────────
 if systemctl is-active --quiet nginx; then
     info "Reloading nginx..."
     systemctl reload nginx
@@ -110,7 +116,7 @@ else
     systemctl start nginx
 fi
 
-# ── 8. Status ─────────────────────────────────────────────────────────────────
+# ── 9. Status ─────────────────────────────────────────────────────────────────
 echo ""
 info "═══ Service Status ═════════════════════════════"
 ALL_OK=true

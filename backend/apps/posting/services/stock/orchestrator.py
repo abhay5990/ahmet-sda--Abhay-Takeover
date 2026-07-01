@@ -416,12 +416,14 @@ class StockOrchestrator:
             # Determine source key: manual entries use 'manual', otherwise provider
             if isinstance(raw, dict) and raw.get('source') == 'manual':
                 source_key = 'manual'
+            elif isinstance(raw, dict) and raw.get('source') == 'tracker_sheet':
+                source_key = 'tracker_sheet'
             elif owned_product.source_account and owned_product.source_account.provider:
                 source_key = owned_product.source_account.provider
             else:
                 source_key = 'lzt'
 
-            if source_key not in ('lzt', 'manual'):
+            if source_key not in ('lzt', 'manual', 'tracker_sheet'):
                 return {
                     'ok': False,
                     'stage': 'prepare_once',
@@ -432,10 +434,37 @@ class StockOrchestrator:
                     'error_category': 'source_unsupported',
                 }
 
-            sources: dict = {source_key: raw}
-            tracker_data = fetch_tracker_data(job.game.slug, owned_product.raw_data)
-            if tracker_data is not None:
-                sources['tracker'] = tracker_data
+            # For tracker_sheet: use persisted tracker_data or fetch from API
+            if source_key == 'tracker_sheet':
+                persisted_tracker = raw.get('tracker_data') if isinstance(raw, dict) else None
+                if not persisted_tracker:
+                    # Fetch from API (deferred from job creation)
+                    persisted_tracker = fetch_tracker_data(job.game.slug, owned_product.raw_data)
+                if not persisted_tracker:
+                    return {
+                        'ok': False,
+                        'stage': 'prepare_once',
+                        'error': f"Tracker fetch failed for '{login}'",
+                        'error_category': 'source_missing',
+                    }
+                sources = {'tracker': persisted_tracker}
+                # Inject credentials, price, and sheet overrides into tracker source
+                if isinstance(persisted_tracker, dict):
+                    if 'loginData' not in persisted_tracker and 'loginData' in raw:
+                        persisted_tracker['loginData'] = raw['loginData']
+                    if 'emailLoginData' not in persisted_tracker and 'emailLoginData' in raw:
+                        persisted_tracker['emailLoginData'] = raw['emailLoginData']
+                    if 'price' in raw:
+                        persisted_tracker['price'] = raw['price']
+                    if raw.get('title'):
+                        persisted_tracker['_sheet_title'] = raw['title']
+                    if raw.get('description'):
+                        persisted_tracker['_sheet_description'] = raw['description']
+            else:
+                sources: dict = {source_key: raw}
+                tracker_data = fetch_tracker_data(job.game.slug, owned_product.raw_data)
+                if tracker_data is not None:
+                    sources['tracker'] = tracker_data
 
             prepare_result = adapter.prepare(
                 game_slug=job.game.slug,

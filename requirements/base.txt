@@ -34,6 +34,10 @@ pycognito==2024.5.1
 # Google Sheets
 gspread==6.2.1
 
+# Cloudflare bypass (R6Locker tracker)
+DrissionPage==4.1.1.4
+PyVirtualDisplay==3.0
+
 # Utilities
 python-dateutil==2.9.0
 pytz==2024.1

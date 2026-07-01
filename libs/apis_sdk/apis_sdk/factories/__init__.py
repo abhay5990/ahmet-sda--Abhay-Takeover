@@ -11,6 +11,7 @@ from apis_sdk.factories.eldorado_factory import EldoradoFactory
 from apis_sdk.factories.gameboost_factory import GameBoostFactory
 from apis_sdk.factories.g2g_factory import G2GFactory
 from apis_sdk.factories.playerauctions_factory import PlayerAuctionsFactory
+from apis_sdk.factories.pa_official_factory import PAOfficialFactory
 from apis_sdk.factories.lzt_factory import LztFactory
 from apis_sdk.factories.rbxcrate_factory import RbxCrateFactory
 from apis_sdk.factories.imgur_factory import ImgurFactory
@@ -23,6 +24,7 @@ __all__ = [
     "GameBoostFactory",
     "G2GFactory",
     "PlayerAuctionsFactory",
+    "PAOfficialFactory",
     "LztFactory",
     "RbxCrateFactory",
     "ImgurFactory",
