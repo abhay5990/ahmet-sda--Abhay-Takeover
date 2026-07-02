@@ -6,9 +6,9 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/home/ahmet/e-commerce-management-system/backend
-EnvironmentFile=/home/ahmet/e-commerce-management-system/.env
-ExecStart=/home/ahmet/e-commerce-management-system/venv/bin/python manage.py runapscheduler
+WorkingDirectory=${PROJECT_DIR}/backend
+EnvironmentFile=${PROJECT_DIR}/.env
+ExecStart=${PROJECT_DIR}/venv/bin/python manage.py runapscheduler
 Restart=always
 RestartSec=10
 StandardOutput=journal

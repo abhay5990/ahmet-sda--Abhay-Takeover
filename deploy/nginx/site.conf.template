@@ -1,5 +1,5 @@
 # Nginx config template — processed by deploy.sh via envsubst
-# Variable substituted: ${DOMAIN}
+# Variables substituted: ${DOMAIN}, ${PROJECT_DIR}
 # All other nginx $variables (e.g. $host, $uri) are left untouched by envsubst.
 
 limit_req_zone $binary_remote_addr zone=login:10m   rate=5r/m;
@@ -61,7 +61,7 @@ server {
 
     # Static files — served by Nginx, never hits Gunicorn
     location /static/ {
-        alias /home/ahmet/e-commerce-management-system/backend/staticfiles/;
+        alias ${PROJECT_DIR}/backend/staticfiles/;
         expires 30d;
         add_header Cache-Control "public, immutable";
         gzip_static on;
@@ -70,7 +70,7 @@ server {
 
     # Media files
     location /media/ {
-        alias /home/ahmet/e-commerce-management-system/media/;
+        alias ${PROJECT_DIR}/media/;
         expires 7d;
         add_header Cache-Control "public";
         access_log off;

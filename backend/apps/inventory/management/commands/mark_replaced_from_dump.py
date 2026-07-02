@@ -36,7 +36,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             '--dump', '-d',
-            default='/home/ahmet/e-commerce-management-system/tmp/gameboost_full_dump.txt',
+            default='tmp/gameboost_full_dump.txt',
             help='Path to the Gameboost order dump file',
         )
         parser.add_argument(

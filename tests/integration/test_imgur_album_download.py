@@ -1,7 +1,7 @@
 """Gerçek Imgur album'den resim indirme integration testi.
 
 Kullanım:
-    cd /home/ahmet/e-commerce-management-system
+    cd <project-root>
     venv/bin/python tests/integration/test_imgur_album_download.py \
         --album https://imgur.com/a/HASH_BURAYA \
         --client-id CLIENT_ID_BURAYA \

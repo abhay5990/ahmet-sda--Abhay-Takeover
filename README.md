@@ -87,6 +87,18 @@ phpMyAdmin: 127.0.0.1:8082 — NOT exposed to internet.
 Access only via SSH tunnel (see below).
 ```
 
+### Services (systemd)
+
+| Service | Description |
+|---|---|
+| `ecom-gunicorn` | Django web server (Gunicorn) |
+| `ecom-scheduler` | APScheduler — sync chain, review monitor, pool sweep, order status refresh |
+| `ecom-dropship` | Dropship scheduler — poster + cleaner threads |
+
+All service files are templates with `${PROJECT_DIR}` — resolved by `deploy.sh` via `envsubst`.
+
+---
+
 ### First-time server setup
 
 #### 1. System packages
@@ -99,7 +111,7 @@ apt install nginx python3-venv python3-pip pkg-config libmysqlclient-dev gettext
 #### 2. Clone & virtualenv
 
 ```bash
-cd /home/ahmet
+cd ~
 git clone <repo-url> e-commerce-management-system
 cd e-commerce-management-system
 
@@ -119,7 +131,11 @@ nano .env
 Minimum prod values:
 
 ```env
-DOMAIN=admin4gamers.com
+# PROJECT_DIR is auto-detected by deploy.sh from repo root.
+# Override only if needed:
+# PROJECT_DIR=/home/ubuntu/e-commerce-management-system
+
+DOMAIN=ubuntu.anap4smurfkings.com
 DJANGO_SETTINGS_MODULE=config.settings.prod
 DJANGO_SECRET_KEY=<50+ char random string>
 DJANGO_DEBUG=False
@@ -141,61 +157,77 @@ python3 -c "import secrets; print(secrets.token_urlsafe(50))"
 venv/bin/python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 ```
 
-#### 4. Log directory
+#### 4. Database (Docker)
 
 ```bash
-mkdir -p backend/logs
-```
-
-#### 5. Database (Docker)
-
-```bash
-# Start MySQL + phpMyAdmin (phpMyAdmin is localhost-only, safe to start)
+# Start MySQL + phpMyAdmin
 docker-compose -f docker-compose.yml up -d
 
-# Run migrations
+# Wait for MySQL to be ready (~10s), then run migrations
 cd backend
 ../venv/bin/python manage.py migrate
 ../venv/bin/python manage.py createsuperuser
 cd ..
 ```
 
-#### 6. Static files
-
-```bash
-cd backend
-../venv/bin/python manage.py collectstatic --noinput
-cd ..
-```
-
-#### 7. SSL (Certbot)
+#### 5. SSL (Certbot)
 
 ```bash
 apt install certbot python3-certbot-nginx -y
-certbot --nginx -d admin4gamers.com -d www.admin4gamers.com
+certbot certonly --standalone -d ubuntu.anap4smurfkings.com
 ```
 
-#### 8. Disable old nginx site (listing-adder)
+#### 6. Deploy
 
 ```bash
-rm /etc/nginx/sites-enabled/listing-adder
-```
-
-#### 9. Deploy
-
-```bash
+mkdir -p backend/logs
 bash deploy/deploy.sh
 ```
 
-This script (on every deploy):
+This script handles everything on every deploy:
 - `git pull`
 - `pip install`
-- `migrate`
-- `collectstatic`
-- Generates `/etc/nginx/sites-available/admin4gamers.com` from `deploy/nginx/site.conf.template`
-- Installs/updates systemd services
+- `migrate` + `collectstatic`
+- Generates nginx config from template (`${DOMAIN}` + `${PROJECT_DIR}` substituted)
+- Installs/updates systemd services (templates rendered via `envsubst`)
 - Restarts `ecom-gunicorn`, `ecom-dropship`, `ecom-scheduler`
 - Reloads nginx
+
+---
+
+### Data Migration (from existing server)
+
+If migrating from an existing server, follow these steps **after** completing steps 1-4 above (skip `migrate` and `createsuperuser`).
+
+#### On the old server:
+
+```bash
+mysqldump -u root -p inventory_manager \
+  --ignore-table=inventory_manager.sync_rawpayload \
+  --ignore-table=inventory_manager.sync_syncrun \
+  --ignore-table=inventory_manager.sync_synclog \
+  --ignore-table=inventory_manager.django_apscheduler_djangojobexecution \
+  > dump.sql
+
+scp dump.sql root@<new-server-ip>:~/
+```
+
+**Excluded tables** (regenerated automatically by the sync system):
+- `sync_rawpayload` — raw marketplace API responses (large, re-fetched on next sync)
+- `sync_syncrun` — sync execution audit log
+- `sync_synclog` — operational debug logs
+- `django_apscheduler_djangojobexecution` — scheduler execution history
+
+#### On the new server:
+
+```bash
+# Import the dump (MySQL must be running)
+mysql -u root -p -h 127.0.0.1 -P 3307 inventory_manager < ~/dump.sql
+```
+
+> **Important:** Copy `CREDENTIAL_ENCRYPTION_KEY` from the old server's `.env` — without it, encrypted credentials become unreadable.
+
+Then continue with steps 5-6 (SSL + deploy).
 
 ---
 
@@ -207,21 +239,31 @@ bash deploy/deploy.sh
 
 ---
 
+### DNS Setup (subdomain)
+
+To set up a subdomain (e.g. `ubuntu.anap4smurfkings.com`):
+
+1. Add an **A record** at your DNS provider:
+
+   | Type | Name | Value |
+   |------|------|-------|
+   | A | `ubuntu` | `<server IP>` |
+
+2. Set `DOMAIN=ubuntu.anap4smurfkings.com` in `.env`
+3. Get SSL certificate: `certbot certonly --standalone -d ubuntu.anap4smurfkings.com`
+4. Run `bash deploy/deploy.sh`
+
+---
+
 ### phpMyAdmin — SSH tunnel access
 
 phpMyAdmin is **not** accessible via the web. Connect via SSH tunnel:
 
 ```bash
-ssh -L 8082:127.0.0.1:8082 root@admin4gamers.com
+ssh -L 8082:127.0.0.1:8082 root@<your-domain>
 ```
 
 Then open `http://localhost:8082` in your browser.
-
-To apply the localhost-only port binding to the running container (one-time):
-```bash
-# On the server — does NOT touch the database or its data
-docker-compose -f docker-compose.yml up -d phpmyadmin
-```
 
 ---
 
@@ -236,9 +278,9 @@ journalctl -u ecom-scheduler -n 100 -f
 # Service status
 systemctl status ecom-gunicorn ecom-dropship ecom-scheduler
 
-# Nginx logs
-tail -f /var/log/nginx/admin4gamers.com.access.log
-tail -f /var/log/nginx/admin4gamers.com.error.log
+# Nginx logs (replace with your domain)
+tail -f /var/log/nginx/<your-domain>.access.log
+tail -f /var/log/nginx/<your-domain>.error.log
 
 # Django shell
 cd backend && ../venv/bin/python manage.py shell
@@ -263,11 +305,11 @@ e-commerce-management-system/
 │
 ├── deploy/                       All deployment config
 │   ├── nginx/
-│   │   └── site.conf.template    Nginx template (${DOMAIN} substituted at deploy)
+│   │   └── site.conf.template    Nginx template (${DOMAIN} + ${PROJECT_DIR} substituted)
 │   ├── systemd/
-│   │   ├── ecom-gunicorn.service
-│   │   ├── ecom-dropship.service
-│   │   └── ecom-scheduler.service
+│   │   ├── ecom-gunicorn.service   Template — rendered by deploy.sh
+│   │   ├── ecom-dropship.service   Template — rendered by deploy.sh
+│   │   └── ecom-scheduler.service  Template — rendered by deploy.sh
 │   └── deploy.sh                 Single-command deploy script
 │
 ├── frontend/

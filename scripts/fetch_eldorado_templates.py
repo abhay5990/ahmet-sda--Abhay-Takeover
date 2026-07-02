@@ -261,11 +261,18 @@ def main():
     parser.add_argument('--only', default=None,
                         help='Comma-separated category folders to limit to '
                              '(e.g. "currency,topup"). Default: all.')
+    parser.add_argument('--game', default=None,
+                        help='Filter by game ID (integer) or game name substring '
+                             '(e.g. --game 570 or --game "Genshin Impact").')
     args = parser.parse_args()
 
     only = None
     if args.only:
         only = {x.strip().lower() for x in args.only.split(',') if x.strip()}
+
+    game_filter = None
+    if args.game:
+        game_filter = args.game.strip()
 
     # ── Build SDK client ───────────────────────────────────────────
     account = find_account(args.account)
@@ -289,11 +296,22 @@ def main():
         cat: folder for cat, folder in CATEGORY_FOLDERS.items()
         if only is None or folder in only
     }
-    for folder in active_folders.values():
-        reset_dir(os.path.join(ASSETS_ROOT, folder))
-        reset_dir(os.path.join(RAW_ROOT, folder))
+    if not game_filter:
+        for folder in active_folders.values():
+            reset_dir(os.path.join(ASSETS_ROOT, folder))
+            reset_dir(os.path.join(RAW_ROOT, folder))
+    else:
+        for folder in active_folders.values():
+            os.makedirs(os.path.join(ASSETS_ROOT, folder), exist_ok=True)
+            os.makedirs(os.path.join(RAW_ROOT, folder), exist_ok=True)
 
     work = [s for s in library if s['category'] in active_folders]
+
+    if game_filter:
+        if game_filter.isdigit():
+            work = [s for s in work if str(s['gameId']) == game_filter]
+        else:
+            work = [s for s in work if game_filter.lower() in s.get('gameName', '').lower()]
     print(f'{len(work)} services to process across {len(active_folders)} categories\n')
 
     # ── Fetch + generate ───────────────────────────────────────────

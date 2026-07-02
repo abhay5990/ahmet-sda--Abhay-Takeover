@@ -1,7 +1,7 @@
 """Unit tests for ImgurAlbumDownloader adapter.
 
 Usage:
-    cd /home/ahmet/e-commerce-management-system
+    cd <project-root>
     venv/bin/python -m pytest tests/unit/test_imgur_album_downloader.py -v
 """
 

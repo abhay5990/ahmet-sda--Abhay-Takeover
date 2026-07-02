@@ -26,6 +26,10 @@ command -v envsubst >/dev/null || error "envsubst not found. Run: apt install ge
 set -a; source .env; set +a
 DOMAIN="${DOMAIN:?DOMAIN is not set in .env}"
 
+# PROJECT_DIR: auto-detected from repo root, overridable via .env
+export PROJECT_DIR="${PROJECT_DIR:-$REPO_DIR}"
+info "PROJECT_DIR = $PROJECT_DIR"
+
 # ── 0. Ensure log directory exists ───────────────────────────────────────────
 mkdir -p "$REPO_DIR/backend/logs"
 
@@ -67,8 +71,8 @@ if [ -L "$NGINX_OLD_LISTING" ] || [ -f "$NGINX_OLD_LISTING" ]; then
     error "Aborting to prevent nginx conflict."
 fi
 
-# envsubst only replaces \${DOMAIN} — all nginx \$variables are preserved
-envsubst '${DOMAIN}' < deploy/nginx/site.conf.template \
+# envsubst only replaces ${DOMAIN} and ${PROJECT_DIR} — all nginx $variables are preserved
+envsubst '${DOMAIN} ${PROJECT_DIR}' < deploy/nginx/site.conf.template \
     | tee "$NGINX_AVAILABLE" > /dev/null
 
 if [ ! -L "$NGINX_ENABLED" ]; then
@@ -87,8 +91,10 @@ CHANGED=0
 for svc in "${SERVICES[@]}"; do
     SRC="$REPO_DIR/deploy/systemd/${svc}.service"
     DST="$SYSTEMD_DIR/${svc}.service"
-    if [ ! -f "$DST" ] || ! diff -q "$SRC" "$DST" > /dev/null 2>&1; then
-        cp "$SRC" "$DST"
+    # Substitute ${PROJECT_DIR} and ${GUNICORN_WORKERS} in service templates
+    RENDERED=$(envsubst '${PROJECT_DIR} ${GUNICORN_WORKERS}' < "$SRC")
+    if [ ! -f "$DST" ] || [ "$RENDERED" != "$(cat "$DST")" ]; then
+        echo "$RENDERED" > "$DST"
         CHANGED=1
         info "Installed ${svc}.service"
     fi
