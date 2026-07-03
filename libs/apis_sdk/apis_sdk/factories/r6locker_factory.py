@@ -58,6 +58,7 @@ class R6LockerFactory:
 
         return R6LockerFacade(
             client=client,
+            base_url=base_url,
             proxy_pool=proxy_pool,
             cf_cookie_provider=cf_cookie_provider,
             sdk_logger=logger,

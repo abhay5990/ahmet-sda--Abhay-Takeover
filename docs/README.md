@@ -26,6 +26,14 @@ repository, `docs/` wins.
   - target design for order/listing sync staging
   - `RawPayload` semantics
   - ingest vs parse/reprocess split
+- `r6-tracker-server-setup.md`
+  - R6 (Rainbow Six) tracker server requirements (Xvfb + real Chrome)
+  - Cloudflare / cf_clearance setup + the datacenter-IP blocker
+  - what to install on a new server so the R6 sheet flow works
+- `deploy-runbook.md`
+  - service map (xvfb + ecom-* + nginx) and one-script deploy
+  - step-by-step manual diagnosis when something fails
+  - legacy AdsPower/PA-token removal note
 
 ## Related sources
 

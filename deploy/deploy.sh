@@ -37,10 +37,30 @@ mkdir -p "$REPO_DIR/backend/logs"
 info "Pulling latest code..."
 git pull origin "$(git rev-parse --abbrev-ref HEAD)"
 
-# ── 2. System packages (Xvfb for Cloudflare bypass) ──────────────────────────
+# ── 2. System packages (Xvfb + Chrome for Cloudflare bypass) ─────────────────
+# The R6Locker tracker sits behind Cloudflare Turnstile. nodriver drives a REAL
+# Chrome under Xvfb (:99) to solve the challenge and mint a cf_clearance cookie.
+# Both pieces are required — Xvfb alone is not enough (see docs/r6-tracker-server-setup.md).
 if ! command -v Xvfb >/dev/null 2>&1; then
     info "Installing Xvfb (required for Cloudflare cookie resolution)..."
     apt-get install -y -qq xvfb >/dev/null 2>&1 || warn "Could not install xvfb — install manually: apt-get install -y xvfb"
+fi
+
+# nodriver needs a real Chrome/Chromium binary. On Ubuntu 22.04 the apt
+# 'chromium-browser' package is only a snap shim that cannot be driven under
+# Xvfb, so we install real Google Chrome from the official .deb instead.
+if ! command -v google-chrome >/dev/null 2>&1 \
+   && ! command -v google-chrome-stable >/dev/null 2>&1 \
+   && ! command -v chromium >/dev/null 2>&1; then
+    info "Installing Google Chrome (required for Cloudflare cookie resolution)..."
+    CHROME_DEB="/tmp/google-chrome-stable_current_amd64.deb"
+    if wget -qO "$CHROME_DEB" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; then
+        apt-get install -y -qq "$CHROME_DEB" >/dev/null 2>&1 \
+            || warn "Could not install Google Chrome — install manually (see docs/r6-tracker-server-setup.md)"
+        rm -f "$CHROME_DEB"
+    else
+        warn "Could not download Google Chrome .deb — install manually (see docs/r6-tracker-server-setup.md)"
+    fi
 fi
 
 # ── 3. Dependencies ───────────────────────────────────────────────────────────
@@ -85,7 +105,8 @@ nginx -t || error "Nginx config test failed. Fix the error above and re-run."
 
 # ── 6. Systemd services ───────────────────────────────────────────────────────
 SYSTEMD_DIR="/etc/systemd/system"
-SERVICES=(ecom-gunicorn ecom-dropship ecom-scheduler)
+# xvfb first — it provides DISPLAY=:99 that the ecom services depend on (R6 Cloudflare).
+SERVICES=(xvfb ecom-gunicorn ecom-dropship ecom-scheduler)
 CHANGED=0
 
 for svc in "${SERVICES[@]}"; do

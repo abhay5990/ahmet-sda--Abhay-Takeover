@@ -1,13 +1,15 @@
 [Unit]
 Description=E-Commerce Dropship Scheduler (Poster + Cleaner)
-After=docker.service network-online.target
-Wants=network-online.target
+After=docker.service network-online.target xvfb.service
+Wants=network-online.target xvfb.service
 
 [Service]
 Type=simple
 User=root
 WorkingDirectory=${PROJECT_DIR}/backend
 EnvironmentFile=${PROJECT_DIR}/.env
+# Persistent Xvfb display for R6Locker Cloudflare (headless Chrome) solves.
+Environment=DISPLAY=:99
 ExecStart=${PROJECT_DIR}/venv/bin/python manage.py run_dropship_scheduler
 Restart=always
 RestartSec=10

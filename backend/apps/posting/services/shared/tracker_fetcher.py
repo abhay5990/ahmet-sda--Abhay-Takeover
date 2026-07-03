@@ -235,6 +235,28 @@ def _extract_supercell_tag(raw_data: dict[str, Any], *, tag_key: str) -> str:
 # Lazy facade builders
 # ---------------------------------------------------------------------------
 
+def _load_r6_sticky_proxy():
+    """Load the residential (DataImpulse) proxy for R6 Cloudflare solving.
+
+    Both the nodriver solve and the curl fetch must share this proxy's sticky
+    exit IP (cf_clearance is IP-bound). Which DB proxy to use is configurable
+    via ``settings.R6_RESIDENTIAL_PROXY_ID`` (default 1).
+    """
+    from django.conf import settings
+    from apis_sdk.core.models import ProxyRecord
+    from apis_sdk.infrastructure.proxy.sticky import StickyResidentialProxy
+    from apps.integrations.models import Proxy
+
+    proxy_id = getattr(settings, "R6_RESIDENTIAL_PROXY_ID", 1)
+    p = Proxy.objects.filter(id=proxy_id).first()
+    if p is None or not p.username or not p.password:
+        return None
+    record = ProxyRecord(
+        host=p.host, port=p.port, username=p.username, password=p.password,
+    )
+    return StickyResidentialProxy.from_record(record)
+
+
 def _get_r6locker_facade():
     global _r6locker_facade, _r6locker_cf_provider
     if _r6locker_facade is not None:
@@ -244,16 +266,22 @@ def _get_r6locker_facade():
         from apis_sdk.infrastructure.auth.cf_cookie_provider import CfCookieProvider
         from apis_sdk.infrastructure.http.curl_cffi_transport import CurlCffiTransport
 
+        proxy = _load_r6_sticky_proxy()
+        if proxy is None:
+            logger.warning(
+                "R6Locker: no residential proxy configured — cannot solve Cloudflare"
+            )
+            return None
+
         transport = CurlCffiTransport()
-        _r6locker_cf_provider = CfCookieProvider(
-            "https://r6skins.locker",
-            warmup_path="/",
-        )
+        # No fixed seed: the provider solves on the profile of whichever account
+        # is being fetched (facade passes solve_url per request).
+        _r6locker_cf_provider = CfCookieProvider(proxy)
         _r6locker_facade = R6LockerFactory.create(
             transport=transport,
             cf_cookie_provider=_r6locker_cf_provider,
         )
-        logger.debug("R6LockerFacade initialised with CfCookieProvider")
+        logger.debug("R6LockerFacade initialised with nodriver CfCookieProvider")
     except Exception:
         logger.warning("Could not build R6LockerFacade", exc_info=True)
         return None

@@ -1,0 +1,18 @@
+[Unit]
+# Persistent virtual display :99 for headless Chrome (R6Locker Cloudflare bypass).
+# DrissionPage/nodriver drive a REAL Chrome under this display to solve the
+# Cloudflare JS challenge. The ecom services set DISPLAY=:99 to use it.
+# You can attach a VNC/screenshot tool to :99 to watch a live CF solve.
+Description=Virtual X Framebuffer (:99) for headless Chrome / Cloudflare bypass
+After=network.target
+
+[Service]
+Type=simple
+# -ac disables X access control so the root ecom services can connect to a
+# display that may be owned by another user; -nolisten tcp keeps it local-only.
+ExecStart=/usr/bin/Xvfb :99 -screen 0 1280x720x24 -ac -nolisten tcp
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

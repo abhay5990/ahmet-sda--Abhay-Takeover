@@ -1,13 +1,16 @@
 [Unit]
 Description=Gunicorn — E-Commerce Management System
-After=network.target docker.service
+After=network.target docker.service xvfb.service
 Requires=docker.service
+Wants=xvfb.service
 
 [Service]
 Type=notify
 User=root
 WorkingDirectory=${PROJECT_DIR}/backend
 EnvironmentFile=${PROJECT_DIR}/.env
+# Persistent Xvfb display for R6Locker Cloudflare (headless Chrome) solves.
+Environment=DISPLAY=:99
 
 ExecStart=${PROJECT_DIR}/venv/bin/gunicorn \
     --workers ${GUNICORN_WORKERS} \

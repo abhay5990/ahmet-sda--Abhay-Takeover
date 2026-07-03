@@ -35,8 +35,13 @@ pycognito==2024.5.1
 gspread==6.2.1
 
 # Cloudflare bypass (R6Locker tracker)
-DrissionPage==4.1.1.4
-PyVirtualDisplay==3.0
+# nodriver drives a REAL Chrome to solve the Turnstile challenge; opencv-python
+# lets nodriver.verify_cf() locate the checkbox via template matching.
+# NOTE: these Python packages are NOT enough on their own. The host also needs
+# system deps: Xvfb (:99) + a REAL Google Chrome binary (NOT the Ubuntu chromium
+# snap). deploy.sh installs both; manual setup: docs/r6-tracker-server-setup.md
+nodriver==0.50.3
+opencv-python==4.13.0.92
 
 # Utilities
 python-dateutil==2.9.0
