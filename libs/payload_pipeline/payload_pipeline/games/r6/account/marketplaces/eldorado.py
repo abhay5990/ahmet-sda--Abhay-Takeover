@@ -107,6 +107,10 @@ class R6EldoradoBuilder(BaseEldoradoBuilder):
 
     @staticmethod
     def _resolve_operators(count: int) -> str:
+        if count <= 0:
+            # Operatör verisi yok (tracker/sheet hesabı operatör sayısı vermez) ->
+            # en yüksek kovayı seç; bilinmeyeni düşük göstermektense premium dursun.
+            return "operators-50plus"
         if count <= 9:
             return "operators-09"
         if count <= 14:

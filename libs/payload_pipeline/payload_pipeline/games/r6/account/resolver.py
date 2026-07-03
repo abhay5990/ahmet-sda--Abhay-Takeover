@@ -65,13 +65,20 @@ class R6Resolver:
                 price = float(_tr["price"])
             except (TypeError, ValueError):
                 pass
+        # Sheet/tracker-only hesapta fiyat gelmediyse: ucuza satmaktansa pahalı
+        # dursun (299 USD) — fark edip düzeltiriz, bedavaya gitmesin.
+        if price == 0 and tracker and not lzt:
+            price = 299.0
 
         # Title/description overrides from sheet (tracker-only mode)
         sheet_title = str(_tr.get("_sheet_title") or "").strip()
         sheet_desc = str(_tr.get("_sheet_description") or "").strip()
 
         return R6ResolvedAccount(
-            item_id=lzt.item_id if lzt else "",
+            # Sheet/tracker-only akışta LZT yok -> item_id boş kalırdı ve
+            # validate_resolved "empty item_id" ile düşerdi. Uplay user_id'yi
+            # (kalıcı, hesaba özgü) item_id olarak kullan.
+            item_id=lzt.item_id if lzt else (tracker.user_id if tracker else ""),
             category_id=lzt.category_id if lzt else 5,
             price=price,
             kind=request.kind,
