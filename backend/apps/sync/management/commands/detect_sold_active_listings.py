@@ -242,7 +242,18 @@ class Command(BaseCommand):
                 # Single-account: delete via provider API
                 provider_impl = get_provider(account.provider)
                 client = get_or_build_client(account.provider, account.credential)
-                provider_impl.delete_listing(client, listing.store_listing_id)
+                result = provider_impl.delete_listing(client, listing.store_listing_id)
+
+                # Check API result before marking as DELETED
+                if hasattr(result, 'ok') and not result.ok:
+                    error_msg = (
+                        result.error.message
+                        if hasattr(result, 'error') and result.error
+                        else 'unknown'
+                    )
+                    raise RuntimeError(
+                        f"API delete failed for {listing.store_listing_id}: {error_msg}"
+                    )
 
                 # API success -> mark as DELETED in DB
                 listing.status = ListingStatus.DELETED

@@ -320,6 +320,9 @@ class FacadeExecutor:
 
         # Pin as the sticky proxy for this group
         self._sticky_proxy[group] = proxy
+        # Sync to auth provider so token refresh uses the same proxy/IP
+        if hasattr(self._auth, 'set_sticky_proxy'):
+            self._auth.set_sticky_proxy(proxy)
         self._logger.info(
             "Proxy acquired (sticky)",
             proxy=f"{proxy.host}:{proxy.port}",

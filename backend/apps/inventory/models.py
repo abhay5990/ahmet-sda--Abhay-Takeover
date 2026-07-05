@@ -239,6 +239,10 @@ class DropshipProduct(models.Model):
                 fields=['source_account', 'status', 'last_checked_at'],
                 name='ds_prod_status_checked_idx',
             ),
+            models.Index(
+                fields=['status', 'game', '-created_at'],
+                name='ds_prod_stat_game_creat_idx',
+            ),
         ]
 
     def __str__(self):

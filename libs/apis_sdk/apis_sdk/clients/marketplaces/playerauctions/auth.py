@@ -15,6 +15,7 @@ Safety:
 
 from __future__ import annotations
 
+import time
 from typing import TYPE_CHECKING, Callable
 
 from apis_sdk.clients.services.pa_token_service import (
@@ -27,6 +28,7 @@ from apis_sdk.infrastructure.http.base import BaseHttpTransport
 from apis_sdk.infrastructure.logging.logger import NullLogger, SdkLogger
 
 if TYPE_CHECKING:
+    from apis_sdk.core.models import ProxyRecord
     from apis_sdk.infrastructure.proxy.pool import ProxyPool
 
 
@@ -71,6 +73,9 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         self._on_refresh = on_refresh
         self._logger = logger or NullLogger()
         self._refresh_failed = False
+        self._transient_backoff_until: float = 0.0
+        self._transient_fail_count: int = 0
+        self._sticky_proxy: ProxyRecord | None = None
 
         # Build token service client (reuses the same transport)
         self._token_service = PaTokenServiceClient(
@@ -117,6 +122,16 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         """
         self._refresh_failed = False
         self._last_refresh_error = None
+        self._transient_backoff_until = 0.0
+        self._transient_fail_count = 0
+
+    def set_sticky_proxy(self, proxy: ProxyRecord) -> None:
+        """Sync the auth sticky proxy with the facade's sticky proxy.
+
+        Called by FacadeExecutor when it pins a new proxy for the group,
+        so token refresh uses the same exit IP as API requests.
+        """
+        self._sticky_proxy = proxy
 
     def set_tokens(
         self,
@@ -138,19 +153,46 @@ class PlayerAuctionsAuth(BaseAuthProvider):
     # BaseAuthProvider overrides
     # ------------------------------------------------------------------
 
+    # Transient error categories — these should NOT permanently block refresh
+    _TRANSIENT_CATEGORIES = frozenset({
+        ErrorCategory.NETWORK,
+        ErrorCategory.SERVER_ERROR,
+        ErrorCategory.RATE_LIMIT,
+        ErrorCategory.TIMEOUT,
+    })
+
+    # Max consecutive transient failures before giving up for the run
+    _MAX_TRANSIENT_FAILURES = 3
+
+    # Backoff seconds per transient failure (multiplied by fail count)
+    _TRANSIENT_BACKOFF_STEP = 30
+
     def _do_refresh(self) -> bool:
         """
         Refresh PlayerAuctions token via the PA Token Service on VDS.
 
         Sends username/password to PA Token Service which performs a
-        browser-based login and returns a fresh JWT. On failure, sets
-        ``_refresh_failed`` to prevent repeated attempts and stores the
-        reason in ``_last_refresh_error`` for upstream diagnostics.
+        browser-based login and returns a fresh JWT.
+
+        Permanent failures (bad credentials) set ``_refresh_failed`` to
+        prevent infinite retries. Transient failures (504, 429, network)
+        use a backoff cooldown — the next attempt is allowed after the
+        cooldown expires, up to ``_MAX_TRANSIENT_FAILURES`` consecutive
+        transient failures.
         """
         if self._refresh_failed:
             self._logger.warning(
-                "PlayerAuctions token refresh skipped — previous refresh failed. "
+                "PlayerAuctions token refresh skipped — credentials invalid. "
                 "Call set_tokens() with new credentials to reset."
+            )
+            return False
+
+        # Transient backoff: skip if cooldown hasn't elapsed
+        now = time.monotonic()
+        if now < self._transient_backoff_until:
+            remaining = int(self._transient_backoff_until - now)
+            self._logger.info(
+                "Token refresh cooling down — retry in %ds", remaining,
             )
             return False
 
@@ -180,11 +222,37 @@ class PlayerAuctionsAuth(BaseAuthProvider):
             error_cat = result.error.category if result.error else None
             error_msg = result.error.message if result.error else "unknown"
 
-            if error_cat == ErrorCategory.NETWORK:
-                reason = f"Token service unreachable: {error_msg}"
-            else:
-                reason = f"Token refresh failed: {error_msg}"
+            if error_cat in self._TRANSIENT_CATEGORIES:
+                # Network errors likely mean the proxy is bad — rotate it
+                if error_cat == ErrorCategory.NETWORK and self._sticky_proxy is not None:
+                    self._proxy_pool.report_failure(self._sticky_proxy)
+                    self._sticky_proxy = None
 
+                # Transient: allow retry after backoff
+                self._transient_fail_count += 1
+                if self._transient_fail_count >= self._MAX_TRANSIENT_FAILURES:
+                    reason = (
+                        f"Token refresh gave up after {self._transient_fail_count} "
+                        f"transient failures: {error_msg}"
+                    )
+                    self._logger.warning(reason)
+                    self._last_refresh_error = reason
+                    self._refresh_failed = True
+                    return False
+
+                backoff = self._TRANSIENT_BACKOFF_STEP * self._transient_fail_count
+                self._transient_backoff_until = time.monotonic() + backoff
+                reason = (
+                    f"Token refresh transient error ({self._transient_fail_count}/"
+                    f"{self._MAX_TRANSIENT_FAILURES}): {error_msg} — "
+                    f"will retry after {backoff}s"
+                )
+                self._logger.warning(reason)
+                self._last_refresh_error = reason
+                return False
+
+            # Permanent failure (AUTHENTICATION, etc.)
+            reason = f"Token refresh failed (permanent): {error_msg}"
             self._logger.warning(reason)
             self._last_refresh_error = reason
             self._refresh_failed = True
@@ -196,6 +264,8 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         self._expires_at = float("inf")
         self._refresh_failed = False
         self._last_refresh_error = None
+        self._transient_fail_count = 0
+        self._transient_backoff_until = 0.0
         self._logger.info("PlayerAuctions access token refreshed successfully")
 
         # Notify caller (e.g. persist to DB)
@@ -231,12 +301,40 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         return headers
 
     def _acquire_proxy_string(self) -> str | None:
-        """Acquire a proxy from the shared pool, formatted for PA Token Service."""
+        """Acquire a sticky proxy for token refresh.
+
+        Reuses the same proxy across refreshes so the PA session IP
+        stays consistent. Only rotates when the current proxy is
+        unhealthy (proxy error / cooldown).
+        """
         if self._proxy_pool is None:
             return None
+
+        # Reuse sticky proxy if still healthy
+        if self._sticky_proxy is not None:
+            if self._proxy_pool.is_healthy(self._sticky_proxy):
+                return self._proxy_to_string(self._sticky_proxy)
+            # Sticky proxy unhealthy — rotate
+            self._logger.info(
+                "Token refresh sticky proxy unhealthy, rotating",
+                proxy=f"{self._sticky_proxy.host}:{self._sticky_proxy.port}",
+            )
+            self._sticky_proxy = None
+
         proxy = self._proxy_pool.acquire(group=self._proxy_group)
         if proxy is None:
             return None
+
+        self._sticky_proxy = proxy
+        self._logger.info(
+            "Token refresh proxy pinned (sticky)",
+            proxy=f"{proxy.host}:{proxy.port}",
+        )
+        return self._proxy_to_string(proxy)
+
+    @staticmethod
+    def _proxy_to_string(proxy: ProxyRecord) -> str:
+        """Format a ProxyRecord as ip:port[:user:pass] for PA Token Service."""
         parts = [proxy.host, str(proxy.port)]
         if proxy.username and proxy.password:
             parts.extend([proxy.username, proxy.password])

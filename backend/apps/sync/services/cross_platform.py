@@ -448,14 +448,26 @@ def _get_raw_payload(listing: Listing, account: Any) -> RawPayload | None:
 
 
 def _remove_single_offer(listing: Listing, account: Any = None, client: Any = None) -> None:
-    """Remove a single-account offer via platform API and update DB status."""
+    """Remove a single-account offer via platform API and update DB status.
+
+    Raises RuntimeError if the API delete fails so the caller's try/except
+    keeps the listing in its current status (preventing phantom deletes).
+    """
     if account is None:
         account = listing.integration_account
     provider = get_provider(account.provider)
     if client is None:
         client = get_or_build_client(account.provider, account.credential)
 
-    provider.delete_listing(client, listing.store_listing_id)
+    result = provider.delete_listing(client, listing.store_listing_id)
+
+    # Guard: provider.delete_listing returns ApiResult — check it
+    if hasattr(result, 'ok') and not result.ok:
+        error_msg = result.error.message if hasattr(result, 'error') and result.error else 'unknown'
+        raise RuntimeError(
+            f"Failed to delete offer {listing.store_listing_id} "
+            f"from {account.provider}:{account.slug}: {error_msg}"
+        )
 
     listing.status = ListingStatus.DELETED
     listing.removed_at = timezone.now()
