@@ -608,7 +608,10 @@
 
         <!-- ===== POSTING IMAGE (job-level, capabilities-driven) ===== -->
         <div x-show="selectedGame && mediaCapabilities.supports_override" class="bg-white rounded-lg shadow p-4">
-            <label class="block text-sm font-medium text-gray-700 mb-3">Posting Image</label>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+                Posting Image
+                <span x-show="isImageOptional || canAutoGenerateMedia" class="ml-1 text-xs font-normal text-gray-400">(Optional)</span>
+            </label>
             <div class="flex flex-wrap items-center gap-3">
                 <!-- Auto Generated option (manual mode only) -->
                 <button x-show="canAutoGenerateMedia" type="button"
@@ -640,7 +643,7 @@
                 <!-- Choose from Gallery button -->
                 <button type="button" @click="imageGalleryOpen = true"
                         class="flex items-center gap-2 px-3 py-2 rounded-lg border-2 border-dashed text-sm transition-all"
-                        :class="!canAutoGenerateMedia && selectedImagePresetId === ''
+                        :class="!isImageOptional && !canAutoGenerateMedia && selectedImagePresetId === ''
                             ? 'border-amber-300 bg-amber-50 text-amber-700'
                             : 'border-gray-300 text-gray-600 hover:border-emerald-400 hover:bg-emerald-50'">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -652,7 +655,11 @@
             </div>
             <span class="text-xs text-gray-400 mt-2 block" x-show="imageLoading">Loading saved images...</span>
             <p x-show="imageError" class="mt-2 text-xs text-red-600" x-text="imageError"></p>
-            <p x-show="!canAutoGenerateMedia && selectedImagePresetId === '' && !imageLoading"
+            <p x-show="isImageOptional && selectedImagePresetId === '' && !imageLoading"
+               class="mt-2 text-xs text-gray-500">Optional — if not selected, the platform's default image behavior will be used.</p>
+            <p x-show="canAutoGenerateMedia && selectedImagePresetId === 'auto' && !imageLoading"
+               class="mt-2 text-xs text-gray-500">Image will be auto-generated. You can optionally pick one from the gallery to override it.</p>
+            <p x-show="!isImageOptional && !canAutoGenerateMedia && selectedImagePresetId === '' && !imageLoading"
                class="mt-2 text-xs text-amber-600">No image selected. Choose one from the gallery or upload a new one.</p>
 
             <!-- Hidden file input -->
@@ -1310,6 +1317,10 @@ function stockStart() {
 
         get canAutoGenerateMedia() {
             return this.sourceType === 'manual' && Boolean(this.mediaCapabilities.auto_generate_manual);
+        },
+
+        get isImageOptional() {
+            return this.sourceType !== 'manual';
         },
 
         get selectedImagePresetPayload() {

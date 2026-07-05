@@ -16,6 +16,8 @@ Auth:
 
 from __future__ import annotations
 
+from typing import Callable
+
 from apis_sdk.infrastructure.http.base import BaseHttpTransport
 from apis_sdk.infrastructure.logging.logger import SdkLogger
 from apis_sdk.infrastructure.proxy.pool import ProxyPool
@@ -36,6 +38,8 @@ class PlayerAuctionsFactory:
         username: str = "",
         password: str = "",
         access_token: str = "",
+        cookie: str = "",
+        user_agent: str = "",
         transport: BaseHttpTransport,
         offer_base_url: str = "https://offer-api.playerauctions.com",
         order_base_url: str = "https://order-api.playerauctions.com",
@@ -45,6 +49,7 @@ class PlayerAuctionsFactory:
         rate_limit_delay: float = 1.0,
         proxy_pool: ProxyPool | None = None,
         proxy_group: str | None = None,
+        on_refresh: Callable[[str, str, str], None] | None = None,
         retry_policy: RetryPolicy | None = None,
         retry_strategy: RetryStrategy | None = None,
         max_retry_attempts: int = 3,
@@ -57,6 +62,9 @@ class PlayerAuctionsFactory:
             username: PlayerAuctions username (for token refresh via microservice).
             password: PlayerAuctions password (for token refresh via microservice).
             access_token: Bearer access token for API authentication.
+            cookie: Full cookie string from PA Token Service session.
+            user_agent: User-Agent from PA Token Service session (must match
+                the browser fingerprint used during authentication).
             transport: HTTP transport for API calls.
             offer_base_url: Base URL for offer/game endpoints.
             order_base_url: Base URL for order endpoints.
@@ -86,10 +94,13 @@ class PlayerAuctionsFactory:
             username=username,
             password=password,
             access_token=access_token,
+            cookie=cookie,
+            user_agent=user_agent,
             proxy_pool=proxy_pool,
             proxy_group=proxy_group,
             token_service_url=token_service_url,
             token_service_api_key=token_service_api_key,
+            on_refresh=on_refresh,
             logger=logger,
         )
 

@@ -44,8 +44,6 @@ class BrawlStarsDescriptionGenerator:
 
         lines.extend([
             "",
-            "\U0001f6d2 **STORE4GAMERS**",
-            "",
             "\u2757 **Please don't send any questions to Supercell to avoid problem "
             "(get locked or banned) on your account.**",
         ])

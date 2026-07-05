@@ -34,7 +34,7 @@ def build_roblox_context(
     # Add computed fields
     context.update({
         "profile_url": (
-            f"https://www.roblox.com/users/{account.roblox_id}/profile"
+            f"www.roblox.com/users/{account.roblox_id}/profile"
             if account.roblox_id
             else ""
         ),

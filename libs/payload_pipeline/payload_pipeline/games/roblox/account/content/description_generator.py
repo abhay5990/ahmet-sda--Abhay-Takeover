@@ -20,7 +20,7 @@ class RobloxDescriptionGenerator:
         is_dropshipping: bool = False,
     ) -> str:
         register_date = _format_register_date(account.register_date)
-        profile_url = f"https://www.roblox.com/users/{account.roblox_id}/profile" if account.roblox_id else "N/A"
+        profile_url = f"www.roblox.com/users/{account.roblox_id}/profile" if account.roblox_id else "N/A"
 
         instant_delivery = "\n\U0001f538\u2728 INSTANT DELIVERY\n" if not is_dropshipping else ""
 

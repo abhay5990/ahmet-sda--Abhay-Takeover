@@ -177,6 +177,9 @@ class PlayerAuctionsProvider(AbstractProvider):
         creds = credential.credentials
         transport = self._create_transport()
 
+        # Closure that persists refreshed tokens to DB
+        persist_callback = _make_persist_callback(credential.pk)
+
         api_key = creds.get('api_key', '')
         secret_key = creds.get('secret_key', '')
 
@@ -194,9 +197,12 @@ class PlayerAuctionsProvider(AbstractProvider):
                 username=creds.get('username', ''),
                 password=creds.get('password', ''),
                 access_token=creds.get('access_token', '') or creds.get('bearer_token', ''),
+                cookie=creds.get('cookie', ''),
+                user_agent=creds.get('user_agent', ''),
                 transport=transport,
                 proxy_pool=proxy_pool,
                 proxy_group=proxy_group,
+                on_refresh=persist_callback,
                 logger=StdlibLogger("apis_sdk.playerauctions"),
             )
             return PACompositeClient(official_facade=official, legacy_facade=legacy)
@@ -206,9 +212,12 @@ class PlayerAuctionsProvider(AbstractProvider):
             username=creds.get('username', ''),
             password=creds.get('password', ''),
             access_token=creds.get('access_token', '') or creds.get('bearer_token', ''),
+            cookie=creds.get('cookie', ''),
+            user_agent=creds.get('user_agent', ''),
             transport=transport,
             proxy_pool=proxy_pool,
             proxy_group=proxy_group,
+            on_refresh=persist_callback,
             logger=StdlibLogger("apis_sdk.playerauctions"),
         )
 
@@ -251,6 +260,40 @@ class PlayerAuctionsProvider(AbstractProvider):
     def fetch_order_details(self, client: Any, order_id: str) -> Any:
         """Fetch rich order detail for a single order."""
         return client.get_order_details(order_id=order_id)
+
+
+def _make_persist_callback(credential_pk: int):
+    """Create a closure that persists refreshed PA session data to DB.
+
+    Called by PlayerAuctionsAuth.on_refresh after a successful token
+    refresh.  Saves access_token, cookie, and user_agent so they
+    survive app restarts.
+    """
+    def _persist(access_token: str, cookie: str, user_agent: str) -> None:
+        from apps.integrations.models import IntegrationCredential
+
+        try:
+            cred = IntegrationCredential.objects.get(pk=credential_pk)
+            cred.update_token(
+                access_token=access_token,
+                cookie=cookie,
+                user_agent=user_agent,
+            )
+            logger.info(
+                "Persisted refreshed PA session to DB (credential=%s)",
+                credential_pk,
+            )
+        except IntegrationCredential.DoesNotExist:
+            logger.warning(
+                "Cannot persist PA token — credential %s not found",
+                credential_pk,
+            )
+        except Exception as exc:
+            logger.warning(
+                "Failed to persist PA token to DB: %s", exc,
+            )
+
+    return _persist
 
 
 def _encrypt_pa_passwords(payload: dict[str, Any]) -> dict[str, Any]:

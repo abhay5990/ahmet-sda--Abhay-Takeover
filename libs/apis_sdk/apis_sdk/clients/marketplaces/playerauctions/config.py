@@ -45,11 +45,32 @@ class PlayerAuctionsConfig(BaseModel):
     )
 
     def get_default_headers(self) -> dict[str, str]:
-        """Get browser-like default headers (without credentials)."""
+        """Get browser-like default headers (without credentials).
+
+        These are the static headers that mimic a real browser session.
+        User-Agent is included as a fallback but will be overridden by
+        the auth provider's session-specific User-Agent when available.
+        """
         return {
             "accept": "application/json, text/plain, */*",
-            "accept-language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
+            "accept-language": (
+                "tr,en-US;q=0.9,en;q=0.8,ru;q=0.7,de;q=0.6,"
+                "zh-CN;q=0.5,zh;q=0.4,it;q=0.3,ko;q=0.2,es;q=0.1,pl;q=0.1"
+            ),
+            "cache-control": "no-cache",
+            "content-security-policy": "frame-ancestors 'self' https://*.playerauctions.com",
+            "frame-ancestors": "self",
+            "origin": "https://member.playerauctions.com",
+            "pragma": "no-cache",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": '"Windows"',
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-site",
+            "strict-transport-security": "max-age=31536000; includeSubDomains",
             "user-agent": self.default_user_agent,
+            "x-content-type-options": "nosniff",
+            "x-xss-protection": "1; mode=block",
         }
 
     model_config = {"frozen": True}

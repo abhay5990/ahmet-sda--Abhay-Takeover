@@ -450,16 +450,43 @@ class FacadeExecutor:
         *,
         proxy_group: str | None = None,
     ) -> ApiResult[T]:
-        """Execute a client call exactly once — no retry.
+        """Execute a client call once, with a single auth-retry on 401.
 
-        Used for non-idempotent operations (e.g. POST create_offer)
-        where automatic retry could cause duplicate side effects.
+        Used for non-idempotent operations (e.g. POST create_offer).
+        No general retry to prevent duplicates, but a 401 means the
+        request was rejected (not processed), so refreshing auth and
+        retrying once is safe.
         """
         if self._pre_execute is not None:
             self._pre_execute()
 
         try:
             proxy_url = self._get_proxy_url(group=proxy_group)
-            return operation(proxy_url)
+            result = operation(proxy_url)
         except Exception as exc:
             return self._exception_to_result(exc)
+
+        # If auth error (401/403), try refresh + one retry
+        if not result.ok and result.error and result.error.category == ErrorCategory.AUTHENTICATION:
+            self._logger.info("Auth failed on write operation, attempting token refresh")
+            try:
+                self._auth.refresh()
+            except Exception as exc:
+                self._logger.warning("Auth refresh failed", error=str(exc))
+                return self._exception_to_result(
+                    AuthenticationError(
+                        f"Auth refresh failed: {exc}",
+                        provider=self._provider_name,
+                    )
+                )
+
+            # Retry once with refreshed auth
+            self._logger.info("Retrying write operation after auth refresh")
+            if self._pre_execute is not None:
+                self._pre_execute()
+            try:
+                result = operation(proxy_url)
+            except Exception as exc:
+                return self._exception_to_result(exc)
+
+        return result

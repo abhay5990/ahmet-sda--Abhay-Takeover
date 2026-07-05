@@ -7,7 +7,7 @@ browser sessions and caching internally.
 
 API:
     POST /authenticate  {username, password, proxy?}
-    → {ok, success, token, authorization, cookie, duration, exitCode}
+    → {ok, token, authorization, cookie, userAgent, duration, requestId}
 
     GET /health
     → {ok, uptime, version}
@@ -36,6 +36,7 @@ class PaTokenResult:
     access_token: str
     authorization: str
     cookie: str
+    user_agent: str
 
 
 class PaTokenServiceClient:
@@ -126,7 +127,7 @@ class PaTokenServiceClient:
                 provider=self.PROVIDER,
             )
 
-        if not body.get("ok") or not body.get("success"):
+        if not body.get("ok"):
             return ApiResult.from_error(
                 ErrorCategory.AUTHENTICATION,
                 f"PA Token Service login failed: exitCode={body.get('exitCode')}",
@@ -145,6 +146,7 @@ class PaTokenServiceClient:
             access_token=token,
             authorization=body.get("authorization", f"Bearer {token}"),
             cookie=body.get("cookie", ""),
+            user_agent=body.get("userAgent", ""),
         )
         return ApiResult.success(result, status_code=response.status_code)
 

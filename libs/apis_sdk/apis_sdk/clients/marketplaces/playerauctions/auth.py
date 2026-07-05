@@ -15,7 +15,7 @@ Safety:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from apis_sdk.clients.services.pa_token_service import (
     PaTokenServiceClient,
@@ -50,10 +50,13 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         username: str = "",
         password: str = "",
         access_token: str = "",
+        cookie: str = "",
+        user_agent: str = "",
         proxy_pool: ProxyPool | None = None,
         proxy_group: str | None = None,
         token_service_url: str = "http://31.57.156.36:8976",
         token_service_api_key: str = "pa-s4g-Xk9mT2vL7nQp4wR8jY3bF6hA",
+        on_refresh: Callable[[str, str, str], None] | None = None,
         logger: SdkLogger | None = None,
     ) -> None:
         super().__init__()
@@ -61,8 +64,11 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         self._username = username
         self._password = password
         self._access_token = access_token
+        self._cookie = cookie
+        self._user_agent = user_agent
         self._proxy_pool = proxy_pool
         self._proxy_group = proxy_group
+        self._on_refresh = on_refresh
         self._logger = logger or NullLogger()
         self._refresh_failed = False
 
@@ -76,9 +82,16 @@ class PlayerAuctionsAuth(BaseAuthProvider):
             logger=logger,
         )
 
-        # Reactive-only: set effectively infinite expiry if token exists
-        if access_token:
+        # Token + cookie both present → session is valid, infinite expiry.
+        # Token exists but cookie missing → session incomplete, force
+        # proactive refresh on first use so we get a complete set.
+        if access_token and cookie:
             self._expires_at = float("inf")
+        elif access_token and not cookie:
+            self._logger.info(
+                "PA token exists but cookie missing — will refresh on first use"
+            )
+            # _expires_at stays at 0.0 → is_expired=True → triggers _do_refresh
 
     # ------------------------------------------------------------------
     # Public helpers
@@ -88,9 +101,27 @@ class PlayerAuctionsAuth(BaseAuthProvider):
     def access_token(self) -> str:
         return self._access_token
 
-    def set_tokens(self, access_token: str) -> None:
-        """Update token externally and reset failure state."""
+    @property
+    def cookie(self) -> str:
+        return self._cookie
+
+    @property
+    def user_agent(self) -> str:
+        return self._user_agent
+
+    def set_tokens(
+        self,
+        access_token: str,
+        *,
+        cookie: str = "",
+        user_agent: str = "",
+    ) -> None:
+        """Update token and session data externally, reset failure state."""
         self._access_token = access_token
+        if cookie:
+            self._cookie = cookie
+        if user_agent:
+            self._user_agent = user_agent
         self._refresh_failed = False
         self._expires_at = float("inf")
 
@@ -151,15 +182,44 @@ class PlayerAuctionsAuth(BaseAuthProvider):
             return False
 
         self._access_token = result.data.access_token
+        self._cookie = result.data.cookie
+        self._user_agent = result.data.user_agent
         self._expires_at = float("inf")
         self._refresh_failed = False
         self._last_refresh_error = None
         self._logger.info("PlayerAuctions access token refreshed successfully")
+
+        # Notify caller (e.g. persist to DB)
+        if self._on_refresh is not None:
+            try:
+                self._on_refresh(
+                    self._access_token,
+                    self._cookie,
+                    self._user_agent,
+                )
+            except Exception as exc:
+                self._logger.warning(
+                    "on_refresh callback failed (token still usable)",
+                    error=str(exc),
+                )
+
         return True
 
     def _build_headers(self) -> dict[str, str]:
-        """Build auth headers for normal API requests."""
-        return {"Authorization": f"Bearer {self._access_token}"}
+        """Build auth headers for normal API requests.
+
+        Includes Authorization, Cookie, and User-Agent from the token
+        service session. These must match the browser fingerprint used
+        during authentication to satisfy Cloudflare checks.
+        """
+        headers: dict[str, str] = {
+            "Authorization": f"Bearer {self._access_token}",
+        }
+        if self._cookie:
+            headers["Cookie"] = self._cookie
+        if self._user_agent:
+            headers["User-Agent"] = self._user_agent
+        return headers
 
     def _acquire_proxy_string(self) -> str | None:
         """Acquire a proxy from the shared pool, formatted for PA Token Service."""
