@@ -149,6 +149,7 @@ class PlayerAuctionsFacade:
         self._client = client
         self._rate_limit_delay = rate_limit_delay
         self._last_request_time: float | None = None
+        self._auth = auth
         self._exec = FacadeExecutor(
             auth=auth,
             transport=transport,
@@ -160,6 +161,11 @@ class PlayerAuctionsFacade:
             provider_name="playerauctions",
             pre_execute=self._throttle,
         )
+
+    def reset_auth_failure(self) -> None:
+        """Reset auth failure flag so the next 401 can trigger a fresh refresh."""
+        if hasattr(self._auth, 'reset_failure'):
+            self._auth.reset_failure()
 
     # ---------------------------------------------------------------------------
     # Throttle (PlayerAuctions-specific)

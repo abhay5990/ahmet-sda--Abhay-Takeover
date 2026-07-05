@@ -108,6 +108,13 @@ class PACompositeClient:
         product_type = kwargs.pop("product_type", "account")
         return self._official.game_servers(game_id, product_type, **kwargs)
 
+    # --- Auth management ---
+
+    def reset_auth_failure(self) -> None:
+        """Reset auth failure flags on both facades."""
+        if hasattr(self._legacy, 'reset_auth_failure'):
+            self._legacy.reset_auth_failure()
+
     # --- Orders (→ legacy, official API has no order endpoints) ---
 
     def list_seller_orders(self, **kwargs: Any) -> Any:

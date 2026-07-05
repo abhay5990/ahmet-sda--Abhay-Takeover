@@ -58,6 +58,12 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
         self.order_status = order_status or self.DEFAULT_ORDER_STATUS
         self.product_type = product_type or self.DEFAULT_PRODUCT_TYPE
 
+    def run(self, account, mode, phase='full'):
+        """Reset auth failure flag before each sync run."""
+        if self.client and hasattr(self.client, 'reset_auth_failure'):
+            self.client.reset_auth_failure()
+        return super().run(account, mode, phase)
+
     # ── Hook implementations ──────────────────────────────────────────
 
     def fetch_page(

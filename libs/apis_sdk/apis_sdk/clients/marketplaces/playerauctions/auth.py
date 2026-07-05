@@ -109,6 +109,15 @@ class PlayerAuctionsAuth(BaseAuthProvider):
     def user_agent(self) -> str:
         return self._user_agent
 
+    def reset_failure(self) -> None:
+        """Reset the refresh-failed flag so the next 401 can retry.
+
+        Call this at the start of each sync run so transient failures
+        (network blip, service restart) don't permanently block refresh.
+        """
+        self._refresh_failed = False
+        self._last_refresh_error = None
+
     def set_tokens(
         self,
         access_token: str,
