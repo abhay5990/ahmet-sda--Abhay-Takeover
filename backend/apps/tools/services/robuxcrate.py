@@ -19,6 +19,46 @@ from apps.tools.models import RobuxCrateBatch, RobuxCrateOrder
 
 logger = logging.getLogger(__name__)
 
+
+def _get_telegram_creds():
+    """Return (bot_token, chat_id) from the active Telegram credential, or (None, None)."""
+    try:
+        from apps.integrations.models import ServiceCredential
+        cred = (
+            ServiceCredential.objects
+            .filter(service_type='telegram', slug='telegram-robux-bot', is_active=True)
+            .first()
+        )
+        if not cred:
+            cred = (
+                ServiceCredential.objects
+                .filter(service_type='telegram', is_active=True)
+                .first()
+            )
+        if not cred:
+            return None, None
+        creds = cred.credentials or {}
+        return creds.get('bot_token'), creds.get('chat_id')
+    except Exception as exc:
+        logger.warning('robuxcrate: failed to get Telegram creds: %s', exc)
+        return None, None
+
+
+def _telegram_alert(text: str) -> None:
+    """Send a Telegram message to the configured Robux bot chat. Silently ignores errors."""
+    try:
+        import requests as _req
+        bot_token, chat_id = _get_telegram_creds()
+        if not bot_token or not chat_id:
+            return
+        _req.post(
+            f'https://api.telegram.org/bot{bot_token}/sendMessage',
+            json={'chat_id': chat_id, 'text': text, 'parse_mode': 'HTML'},
+            timeout=10,
+        )
+    except Exception as exc:
+        logger.warning('robuxcrate: Telegram alert failed: %s', exc)
+
 # Provider status → internal status mapping
 _STATUS_MAP: dict[str, str] = {
     'queued': RobuxCrateOrder.Status.QUEUED,
@@ -189,6 +229,15 @@ def _send_order(order: RobuxCrateOrder, batch: RobuxCrateBatch, client) -> None:
         order.status = RobuxCrateOrder.Status.ERROR
         order.error_message = result.error.message if result.error else 'Unknown provider error'
         order.rbxcrate_response = (result.error.details if result.error else None) or {}
+        # Notify Telegram on hard error
+        _telegram_alert(
+            f"\u26a0\ufe0f <b>Robux Delivery Failed</b>\n\n"
+            f"Order   : {batch.marketplace_order_id}\n"
+            f"Username: {batch.roblox_username}\n"
+            f"Place   : {batch.place_name or batch.place_id}\n"
+            f"Error   : {order.error_message}\n\n"
+            f"Action required \u2014 check the Robux tool dashboard."
+        )
 
     order.last_status_checked_at = now
     order.save(update_fields=[
@@ -211,6 +260,20 @@ def _advance_to_next_place(batch: RobuxCrateBatch, order: RobuxCrateOrder, resul
     candidates = batch.place_candidates or []
     next_index = batch.place_attempt_index + 1
     if next_index >= len(candidates):
+        # All candidate places exhausted — alert Telegram
+        _telegram_alert(
+            f"⚠️ <b>Robux Delivery — All Games Exhausted</b>
+
+"
+            f"Order   : {batch.marketplace_order_id}
+"
+            f"Username: {batch.roblox_username}
+"
+            f"Tried   : {len(candidates)} game(s), none had a matching gamepass.
+
+"
+            f"Action required — buyer may need to create a public Roblox game."
+        )
         return False  # no more places to try — genuine failure on all of them
 
     failed_place = batch.place_id
@@ -314,6 +377,21 @@ def _update_batch_status(batch: RobuxCrateBatch) -> None:
         batch.status = RobuxCrateBatch.Status.ERROR
         batch.delivery_error = ''
         batch.save(update_fields=['status', 'delivery_error', 'updated_at'])
+        _telegram_alert(
+            f"❌ <b>Robux Batch Failed</b>
+
+"
+            f"Order   : {batch.marketplace_order_id}
+"
+            f"Username: {batch.roblox_username}
+"
+            f"Place   : {batch.place_name or batch.place_id}
+"
+            f"Result  : All {len(statuses)} order(s) failed or cancelled.
+
+"
+            f"Action required — check the Robux tool dashboard."
+        )
         return
 
     # At least 1 completed → attempt delivery (or retry if previous attempt failed)
@@ -364,6 +442,23 @@ def _attempt_delivery(batch: RobuxCrateBatch, success_count: int, total: int) ->
         logger.error(
             'Batch %s delivery PERMANENTLY failed (%d/%d): %s',
             batch.id, success_count, total, error,
+        )
+        _telegram_alert(
+            f"❌ <b>Robux Marketplace Delivery Failed</b>
+
+"
+            f"Order   : {batch.marketplace_order_id}
+"
+            f"Username: {batch.roblox_username}
+"
+            f"Store   : {batch.marketplace}
+"
+            f"Error   : {error or 'Permanent delivery failure'}
+
+"
+            f"Robux was delivered to buyer but marketplace mark-delivered failed.
+"
+            f"Action required — mark delivered manually."
         )
 
     batch.save(update_fields=[
