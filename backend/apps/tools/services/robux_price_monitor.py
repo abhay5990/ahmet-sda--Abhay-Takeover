@@ -171,7 +171,7 @@ def run_robux_price_monitor() -> None:
             profit_per_1000 = sell_price * (1 - ELDORADO_FEE_RATE) - cost
             msg = (
                 f"\u26a0\ufe0f Robux Margin Alert\n\n"
-                f"RbxCrate cheapest rate : ${cost:.2f} / 1,000 R$\n"
+                f"Source cheapest rate : ${cost:.2f} / 1,000 R$\n"
                 f"Your Eldorado price    : ${sell_price:.2f} / 1,000 R$\n"
                 f"After 11% fees         : ${float(sell_price * (1 - ELDORADO_FEE_RATE)):.2f} / 1,000 R$\n"
                 f"Net profit             : ${float(profit_per_1000):.2f} / 1,000 R$ ({margin_pct:.1f}%)\n\n"
@@ -193,7 +193,7 @@ def run_robux_price_monitor() -> None:
                 profit_per_1000 = sell_price * (1 - ELDORADO_FEE_RATE) - cost
                 msg = (
                     f"\u2705 Robux Margin Restored\n\n"
-                    f"RbxCrate cheapest rate : ${cost:.2f} / 1,000 R$\n"
+                    f"Source cheapest rate : ${cost:.2f} / 1,000 R$\n"
                     f"Your Eldorado price    : ${sell_price:.2f} / 1,000 R$\n"
                     f"Net profit             : ${float(profit_per_1000):.2f} / 1,000 R$ ({margin_pct:.1f}%)\n\n"
                     f"Margin is back above 10% — safe to sell."
