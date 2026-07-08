@@ -185,3 +185,53 @@ class RobuxAutoOrder(models.Model):
 
     def __str__(self):
         return f'RobuxAutoOrder #{self.pk} ({self.state}) — order {self.order_id}'
+
+
+class DropshipDeliveryTracking(models.Model):
+    """Tracks cross-team delivery accountability for dropshipped item orders."""
+
+    class State(models.TextChoices):
+        PENDING_ELDORADO = "pending_eldorado", "Pending Eldorado Buy"
+        ELDORADO_DONE = "eldorado_done", "Eldorado Bought & Sent"
+        FULLY_DELIVERED = "fully_delivered", "Fully Delivered"
+        CANCELLED = "cancelled", "Cancelled"
+
+    order = models.OneToOneField(
+        "orders.Order",
+        on_delete=models.CASCADE,
+        related_name="dropship_delivery_tracking",
+    )
+    dropship_product = models.ForeignKey(
+        "inventory.DropshipProduct",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="delivery_trackings",
+    )
+    state = models.CharField(
+        max_length=30,
+        choices=State.choices,
+        default=State.PENDING_ELDORADO,
+    )
+    telegram_message_id = models.IntegerField(null=True, blank=True)
+    notified_at = models.DateTimeField(null=True, blank=True)
+    last_reminded_at = models.DateTimeField(null=True, blank=True)
+    # Eldorado step
+    eldorado_done_by = models.CharField(max_length=100, blank=True)
+    eldorado_done_at = models.DateTimeField(null=True, blank=True)
+    # GameBoost step
+    gb_done_by = models.CharField(max_length=100, blank=True)
+    gb_done_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "tools_dropship_delivery_tracking"
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["state"], name="idx_ddt_state"),
+            models.Index(fields=["created_at"], name="idx_ddt_created"),
+        ]
+
+    def __str__(self):
+        return f"DeliveryTracking #{self.pk} ({self.state}) — order {self.order_id}"

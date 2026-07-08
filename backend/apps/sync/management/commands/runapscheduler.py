@@ -140,6 +140,13 @@ def run_robux_price_monitor_job():
     _job()
 
 
+
+@apscheduler_util.close_old_connections
+def run_item_dropship_delivery_tracker_job():
+    """APScheduler wrapper — cross-team Telegram delivery accountability tracker."""
+    from apps.tools.services.item_dropship_delivery_tracker import run_item_dropship_delivery_tracker as _job
+    _job()
+
 @apscheduler_util.close_old_connections
 def delete_old_job_executions(max_age_days=MAX_EXECUTION_AGE_DAYS):
     """Cleanup old APScheduler execution records."""
@@ -262,6 +269,16 @@ class Command(BaseCommand):
             next_run_time=datetime.now(),
         )
 
+
+        # Item dropship delivery tracker — cross-team Telegram accountability
+        scheduler.add_job(
+            run_item_dropship_delivery_tracker_job,
+            trigger=IntervalTrigger(minutes=5),
+            id="item_dropship_delivery_tracker",
+            name="Item Dropship Delivery Tracker (Telegram Bot)",
+            max_instances=1,
+            replace_existing=True,
+        )
         # Cleanup old execution logs — runs daily
         scheduler.add_job(
             delete_old_job_executions,
