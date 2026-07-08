@@ -133,6 +133,11 @@ def run_robux_auto_fulfillment_job():
     """APScheduler wrapper — automated Robux delivery via Telegram bot."""
     from apps.tools.services.robux_auto_fulfillment import run_robux_auto_fulfillment_job as _job
     _job()
+@apscheduler_util.close_old_connections
+def run_robux_price_monitor_job():
+    """APScheduler wrapper — proactive Robux margin price monitor."""
+    from apps.tools.services.robux_price_monitor import run_robux_price_monitor as _job
+    _job()
 
 
 @apscheduler_util.close_old_connections
@@ -245,6 +250,16 @@ class Command(BaseCommand):
             name='Robux Auto-Fulfillment (Telegram Bot)',
             max_instances=1,
             replace_existing=True,
+)
+        # Robux price monitor — check RbxCrate rates vs sell price every 30 min
+        scheduler.add_job(
+            run_robux_price_monitor_job,
+            trigger=IntervalTrigger(minutes=30),
+            id='robux_price_monitor',
+            name='Robux Price Monitor (Margin Guard)',
+            max_instances=1,
+            replace_existing=True,
+            next_run_time=datetime.now(),
         )
 
         # Cleanup old execution logs — runs daily
