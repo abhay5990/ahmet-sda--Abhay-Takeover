@@ -466,15 +466,6 @@ class StockOrchestrator:
                 if tracker_data is not None:
                     sources['tracker'] = tracker_data
 
-            # Derive CT bridge Eldorado store from the first Eldorado store in the job
-            _ct_bridge_eldorado_store = 'ezsmurfmart'
-            try:
-                _eldorado_items = [i for i in job.items.all() if i.marketplace == 'eldorado']
-                if _eldorado_items:
-                    _slug = _eldorado_items[0].store.slug  # e.g. 'eldorado-ezsmurfmart'
-                    _ct_bridge_eldorado_store = _slug.replace('eldorado-', '', 1) if _slug.startswith('eldorado-') else 'ezsmurfmart'
-            except Exception:
-                pass
             prepare_result = adapter.prepare(
                 game_slug=job.game.slug,
                 sources=sources,
@@ -486,9 +477,6 @@ class StockOrchestrator:
                 description_templates=self._description_templates,
                 ref_key=owned_product.ref_key or "",
                 media_override_path=self._media_override_path(job),
-                ct_bridge_source_id=str(owned_product.source_product_id) if owned_product.source_product_id else '',
-                ct_bridge_game=job.game.slug,
-                ct_bridge_eldorado_store=_ct_bridge_eldorado_store,
             )
             if not prepare_result.success:
                 return {
@@ -503,8 +491,6 @@ class StockOrchestrator:
                 'data': {
                     'owned_product': owned_product,
                     'prepared': prepare_result.prepared,
-                    'ct_bridge_source_id': str(owned_product.source_product_id) if owned_product.source_product_id else '',
-                    'ct_bridge_game': job.game.slug,
                 },
             }
         except Exception as e:

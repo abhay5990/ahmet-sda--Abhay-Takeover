@@ -6,8 +6,8 @@ Creates configured PlayerAuctions marketplace client instances.
 Auth:
     Uses PlayerAuctionsAuth with reactive token refresh. When a 401 is
     encountered, the retry path triggers _do_refresh() which calls the
-    PA Token Service on VDS to perform browser-based login and obtain
-    a fresh JWT.
+    PA Relay at http://35.231.166.148:3001 to obtain a fresh JWT via
+    /pa-access-token (cache-first, browser-based if cold).
 
     If refresh fails (service down, bad credentials, etc.), a
     _refresh_failed flag prevents infinite retry loops. Call
@@ -43,8 +43,12 @@ class PlayerAuctionsFactory:
         transport: BaseHttpTransport,
         offer_base_url: str = "https://offer-api.playerauctions.com",
         order_base_url: str = "https://order-api.playerauctions.com",
-        token_service_url: str = "http://31.57.156.36:8976",
-        token_service_api_key: str = "pa-s4g-Xk9mT2vL7nQp4wR8jY3bF6hA",
+        relay_url: str = "http://35.231.166.148:3001",
+        relay_secret: str = "pa-relay-secret-2026",
+        store_slug: str = "",
+        # Legacy params kept for backward compatibility — ignored
+        token_service_url: str = "",
+        token_service_api_key: str = "",
         timeout: float = 30.0,
         rate_limit_delay: float = 1.0,
         proxy_pool: ProxyPool | None = None,
@@ -59,25 +63,25 @@ class PlayerAuctionsFactory:
         Create a fully configured PlayerAuctions facade.
 
         Args:
-            username: PlayerAuctions username (for token refresh via microservice).
-            password: PlayerAuctions password (for token refresh via microservice).
+            username:     PA account email/username (for relay token refresh).
+            password:     PA account password (for relay token refresh).
             access_token: Bearer access token for API authentication.
-            cookie: Full cookie string from PA Token Service session.
-            user_agent: User-Agent from PA Token Service session (must match
-                the browser fingerprint used during authentication).
-            transport: HTTP transport for API calls.
+            cookie:       Full cookie string (legacy — relay handles cookies internally).
+            user_agent:   User-Agent (legacy — relay handles UA internally).
+            transport:    HTTP transport for API calls.
             offer_base_url: Base URL for offer/game endpoints.
             order_base_url: Base URL for order endpoints.
-            token_service_url: PA Token Service URL (VDS).
-            token_service_api_key: API key for PA Token Service auth.
-            timeout: Request timeout in seconds.
+            relay_url:    PA Relay base URL (default: http://35.231.166.148:3001).
+            relay_secret: X-Relay-Secret header value.
+            store_slug:   Store slug sent to relay (e.g. "ezsmurfmart").
+            timeout:      Request timeout in seconds.
             rate_limit_delay: Minimum delay between requests (seconds).
-            proxy_pool: Optional proxy pool for request and token refresh routing.
-            proxy_group: Proxy group for pool acquisition (token refresh + requests).
+            proxy_pool:   Optional proxy pool (not used by relay, kept for compat).
+            proxy_group:  Proxy group (not used by relay, kept for compat).
             retry_policy: Optional retry policy. Defaults to MarketplaceRetryPolicy.
             retry_strategy: Optional retry strategy. Defaults to MarketplaceRetryStrategy.
             max_retry_attempts: Retry attempts for retryable operations.
-            logger: Optional SDK logger.
+            logger:       Optional SDK logger.
 
         Returns:
             Ready-to-use PlayerAuctionsFacade instance.
@@ -98,8 +102,9 @@ class PlayerAuctionsFactory:
             user_agent=user_agent,
             proxy_pool=proxy_pool,
             proxy_group=proxy_group,
-            token_service_url=token_service_url,
-            token_service_api_key=token_service_api_key,
+            relay_url=relay_url,
+            relay_secret=relay_secret,
+            store_slug=store_slug,
             on_refresh=on_refresh,
             logger=logger,
         )

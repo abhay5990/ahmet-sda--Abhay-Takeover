@@ -53,8 +53,6 @@ def build_item_payload(
     stage = f'build_{item.marketplace}'
     try:
         prepared = prepared_data['prepared']
-        ct_bridge_source_id = prepared_data.get('ct_bridge_source_id', '')
-        ct_bridge_game = prepared_data.get('ct_bridge_game', '')
 
         # Read pricing from job.settings (store-slug-keyed, job-scoped).
         # No DB read here — orchestrator is DB-independent in the build path.
@@ -121,8 +119,6 @@ def build_item_payload(
                     kind=ListingKind.STOCK,
                     variant_slug=variant_slug,
                     variant_context=variant_ctx,
-                    ct_bridge_source_id=ct_bridge_source_id,
-                    ct_bridge_game=ct_bridge_game,
                 )
                 if not pipeline_result.success:
                     return {
@@ -153,8 +149,6 @@ def build_item_payload(
                 kind=ListingKind.STOCK,
                 variant_slug=variant_slug,
                 variant_context=variant_ctx,
-                ct_bridge_source_id=ct_bridge_source_id,
-                ct_bridge_game=ct_bridge_game,
             )
             if not pipeline_result.success:
                 return {
@@ -185,8 +179,6 @@ def build_item_payload(
             kind=ListingKind.STOCK,
             variant_slug=variant_slug,
             variant_context=variant_ctx,
-            ct_bridge_source_id=ct_bridge_source_id,
-            ct_bridge_game=ct_bridge_game,
         )
         if not pipeline_result.success:
             return {

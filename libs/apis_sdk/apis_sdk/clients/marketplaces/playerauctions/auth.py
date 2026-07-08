@@ -4,8 +4,8 @@ PlayerAuctions authentication provider with reactive token refresh.
 Implements a reactive-only model:
 - Tokens start with effectively infinite expiry (no proactive refresh)
 - Refresh is triggered only via the retry path (401 → strategy → runtime)
-- Refresh calls the PA Token Service on VDS to perform browser-based
-  login and return a fresh JWT
+- Refresh calls the PA Relay at http://35.231.166.148:3001 to obtain
+  a fresh JWT via /pa-access-token (cache-first, browser-based if cold)
 
 Safety:
 - If refresh fails (service down, bad credentials, etc.),
@@ -18,9 +18,9 @@ from __future__ import annotations
 import time
 from typing import TYPE_CHECKING, Callable
 
-from apis_sdk.clients.services.pa_token_service import (
-    PaTokenServiceClient,
-    PaTokenServiceConfig,
+from apis_sdk.clients.services.pa_relay import (
+    PaRelayClient,
+    PaRelayConfig,
 )
 from apis_sdk.core.enums import ErrorCategory
 from apis_sdk.infrastructure.auth.base import BaseAuthProvider
@@ -56,8 +56,9 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         user_agent: str = "",
         proxy_pool: ProxyPool | None = None,
         proxy_group: str | None = None,
-        token_service_url: str = "http://31.57.156.36:8976",
-        token_service_api_key: str = "pa-s4g-Xk9mT2vL7nQp4wR8jY3bF6hA",
+        relay_url: str = "http://35.231.166.148:3001",
+        relay_secret: str = "pa-relay-secret-2026",
+        store_slug: str = "",
         on_refresh: Callable[[str, str, str], None] | None = None,
         logger: SdkLogger | None = None,
     ) -> None:
@@ -76,12 +77,13 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         self._transient_backoff_until: float = 0.0
         self._transient_fail_count: int = 0
         self._sticky_proxy: ProxyRecord | None = None
+        self._store_slug = store_slug
 
-        # Build token service client (reuses the same transport)
-        self._token_service = PaTokenServiceClient(
-            config=PaTokenServiceConfig(
-                base_url=token_service_url,
-                api_key=token_service_api_key,
+        # Build PA Relay client for token refresh
+        self._relay_client = PaRelayClient(
+            config=PaRelayConfig(
+                base_url=relay_url,
+                relay_secret=relay_secret,
             ),
             transport=transport,
             logger=logger,
@@ -203,19 +205,12 @@ class PlayerAuctionsAuth(BaseAuthProvider):
             self._refresh_failed = True
             return False
 
-        self._logger.info("Refreshing PlayerAuctions token via microservice")
+        self._logger.info("Refreshing PlayerAuctions token via relay")
 
-        # Acquire proxy from shared pool for token service
-        proxy_str = self._acquire_proxy_string()
-        self._logger.info(
-            "Token refresh proxy selected",
-            proxy=proxy_str or "direct (no proxy)",
-        )
-
-        result = self._token_service.authenticate(
+        result = self._relay_client.get_token(
             username=self._username,
             password=self._password,
-            proxy=proxy_str,
+            store=self._store_slug or self._username,
         )
 
         if not result.ok:
@@ -259,14 +254,13 @@ class PlayerAuctionsAuth(BaseAuthProvider):
             return False
 
         self._access_token = result.data.access_token
-        self._cookie = result.data.cookie
-        self._user_agent = result.data.user_agent
+        # Relay returns only the JWT token — cookie/user_agent handled by relay internally
         self._expires_at = float("inf")
         self._refresh_failed = False
         self._last_refresh_error = None
         self._transient_fail_count = 0
         self._transient_backoff_until = 0.0
-        self._logger.info("PlayerAuctions access token refreshed successfully")
+        self._logger.info(f"PlayerAuctions access token refreshed via relay (cached={result.data.cached})")
 
         # Notify caller (e.g. persist to DB)
         if self._on_refresh is not None:
@@ -301,41 +295,5 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         return headers
 
     def _acquire_proxy_string(self) -> str | None:
-        """Acquire a sticky proxy for token refresh.
-
-        Reuses the same proxy across refreshes so the PA session IP
-        stays consistent. Only rotates when the current proxy is
-        unhealthy (proxy error / cooldown).
-        """
-        if self._proxy_pool is None:
-            return None
-
-        # Reuse sticky proxy if still healthy
-        if self._sticky_proxy is not None:
-            if self._proxy_pool.is_healthy(self._sticky_proxy):
-                return self._proxy_to_string(self._sticky_proxy)
-            # Sticky proxy unhealthy — rotate
-            self._logger.info(
-                "Token refresh sticky proxy unhealthy, rotating",
-                proxy=f"{self._sticky_proxy.host}:{self._sticky_proxy.port}",
-            )
-            self._sticky_proxy = None
-
-        proxy = self._proxy_pool.acquire(group=self._proxy_group)
-        if proxy is None:
-            return None
-
-        self._sticky_proxy = proxy
-        self._logger.info(
-            "Token refresh proxy pinned (sticky)",
-            proxy=f"{proxy.host}:{proxy.port}",
-        )
-        return self._proxy_to_string(proxy)
-
-    @staticmethod
-    def _proxy_to_string(proxy: ProxyRecord) -> str:
-        """Format a ProxyRecord as ip:port[:user:pass] for PA Token Service."""
-        parts = [proxy.host, str(proxy.port)]
-        if proxy.username and proxy.password:
-            parts.extend([proxy.username, proxy.password])
-        return ":".join(parts)
+        """Proxy acquisition — not used by relay (relay handles proxies internally)."""
+        return None

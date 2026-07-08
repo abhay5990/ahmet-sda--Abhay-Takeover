@@ -187,6 +187,12 @@ class PlayerAuctionsProvider(AbstractProvider):
         # Closure that persists refreshed tokens to DB
         persist_callback = _make_persist_callback(credential.pk)
 
+        # Relay config — read from credential or fall back to defaults
+        relay_url = creds.get('relay_url', 'http://35.231.166.148:3001')
+        relay_secret = creds.get('relay_secret', 'pa-relay-secret-2026')
+        # store_slug maps our internal account slug to the relay's store identifier
+        store_slug = creds.get('store_slug', '') or credential.account.slug or ''
+
         api_key = creds.get('api_key', '')
         secret_key = creds.get('secret_key', '')
 
@@ -209,12 +215,15 @@ class PlayerAuctionsProvider(AbstractProvider):
                 transport=transport,
                 proxy_pool=proxy_pool,
                 proxy_group=proxy_group,
+                relay_url=relay_url,
+                relay_secret=relay_secret,
+                store_slug=store_slug,
                 on_refresh=persist_callback,
                 logger=StdlibLogger("apis_sdk.playerauctions"),
             )
             return PACompositeClient(official_facade=official, legacy_facade=legacy)
 
-        # Legacy-only: browser-based JWT auth via Puppeteer microservice
+        # Legacy-only: browser-based JWT auth via relay
         return PlayerAuctionsFactory.create(
             username=creds.get('username', ''),
             password=creds.get('password', ''),
@@ -224,6 +233,9 @@ class PlayerAuctionsProvider(AbstractProvider):
             transport=transport,
             proxy_pool=proxy_pool,
             proxy_group=proxy_group,
+            relay_url=relay_url,
+            relay_secret=relay_secret,
+            store_slug=store_slug,
             on_refresh=persist_callback,
             logger=StdlibLogger("apis_sdk.playerauctions"),
         )

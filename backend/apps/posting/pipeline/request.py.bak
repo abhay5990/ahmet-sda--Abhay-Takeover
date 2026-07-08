@@ -1,5 +1,7 @@
 """PipelineRequest factory — bridges Django models to the payload_pipeline lib."""
+
 from __future__ import annotations
+
 from payload_pipeline.core import context_keys as ctx_keys
 from payload_pipeline.core.contracts import ListingCategory, ListingKind, PipelineRequest
 
@@ -9,7 +11,6 @@ def build_request(
     game_slug: str,
     sources: dict,
     kind: ListingKind,
-    category: ListingCategory = ListingCategory.ACCOUNT,
     disable_media: bool = True,
     lzt_image_fetcher=None,
     imgur_album_downloader=None,
@@ -18,9 +19,6 @@ def build_request(
     cosmetic_lists: list[dict] | None = None,
     ref_key: str = "",
     media_override_path: str = '',
-    ct_bridge_source_id: str = '',
-    ct_bridge_game: str = '',
-    ct_bridge_eldorado_store: str = '',
 ) -> PipelineRequest:
     """Build a lib PipelineRequest from Django-layer inputs.
 
@@ -36,9 +34,6 @@ def build_request(
         cosmetic_lists:        Dynamic cosmetic matching lists from DB.
         ref_key:               Traceability ref key (#ABC1234) from OwnedProduct.
         media_override_path:    Optional local image path selected by the user.
-        ct_bridge_source_id:   Source item ID for the CT bridge (e.g. LZT item_id).
-        ct_bridge_game:        Game slug for the CT bridge (e.g. 'fortnite').
-        ct_bridge_eldorado_store: Eldorado store slug for the CT bridge (e.g. 'ezsmurfmart').
     """
     ctx: dict = {ctx_keys.DISABLE_MEDIA: disable_media}
     if lzt_image_fetcher is not None:
@@ -55,16 +50,10 @@ def build_request(
         ctx[ctx_keys.REF_KEY] = ref_key
     if media_override_path:
         ctx[ctx_keys.MEDIA_OVERRIDE_PATH] = media_override_path
-    # CT bridge context keys — used by CtBridgeMediaPublisher
-    if ct_bridge_source_id:
-        ctx['ct_bridge_source_id'] = ct_bridge_source_id
-    if ct_bridge_game:
-        ctx['ct_bridge_game'] = ct_bridge_game
-    if ct_bridge_eldorado_store:
-        ctx['ct_bridge_eldorado_store'] = ct_bridge_eldorado_store
+
     return PipelineRequest(
         game=game_slug,
-        category=category,
+        category=ListingCategory.ACCOUNT,
         kind=kind,
         sources=sources,
         context=ctx,

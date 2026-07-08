@@ -163,3 +163,7 @@ CREDENTIAL_ENCRYPTION_KEY = config('CREDENTIAL_ENCRYPTION_KEY', default='')
 
 # Provider credentials are stored in DB (IntegrationCredential model)
 # No provider-specific API keys in settings
+
+# Code-Tracker SDA Image Bridge
+CT_BRIDGE_URL = config('CT_BRIDGE_URL', default='')
+CT_BRIDGE_SECRET = config('CT_BRIDGE_SECRET', default='')

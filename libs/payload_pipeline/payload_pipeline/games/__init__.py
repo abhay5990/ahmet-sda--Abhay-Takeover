@@ -19,6 +19,7 @@ from .steam import register as register_steam
 from .ubisoft_connect import register as register_ubisoft
 from .val import register as register_valorant
 from .xbox import register as register_xbox
+from .sab import register as register_sab
 
 
 def register_supported_games(registry) -> None:
@@ -30,6 +31,7 @@ def register_supported_games(registry) -> None:
     register_r6(registry)
     register_cs2(registry)
     register_valorant(registry)
+    register_sab(registry)
     register_bs(registry)
     register_coc(registry)
     register_cr(registry)

@@ -55,7 +55,7 @@ from apps.posting.services.variant_routing import PLATFORM_PRIORITY, VariantRout
 from apps.posting.services.variant_slug import resolve_listing_variant_slug
 from apps.posting.services.shared.tracker_fetcher import fetch_tracker_data
 from core.marketplace.normalizers import normalize_offer_response
-from payload_pipeline.core.contracts import ListingKind
+from payload_pipeline.core.contracts import ListingCategory, ListingKind
 from payload_pipeline.pricing.rules import PricingRule as LibPricingRule, calculate_price
 
 # Ensure all source providers are registered
@@ -484,10 +484,17 @@ def _attempt_post(
 
     sources = scrub_sources(sources, game_slug=game.slug)
 
+    _ITEM_GAMES = frozenset({"steal-a-brainrot", "new-world"})
+    _listing_category = (
+        ListingCategory.ITEM
+        if game.slug in _ITEM_GAMES
+        else ListingCategory.ACCOUNT
+    )
     prepare_result = adapter.prepare(
         game_slug=game.slug,
         sources=sources,
         kind=ListingKind.DROPSHIPPING,
+        category=_listing_category,
         disable_media=False,
         lzt_image_fetcher=lzt_image_fetcher,
     )

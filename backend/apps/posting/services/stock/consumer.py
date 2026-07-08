@@ -39,6 +39,7 @@ from apps.posting.services.shared.utils import extract_listing_id
 from apps.posting.services.variant_context import build_variant_context
 from apps.posting.services.variant_routing import PLATFORM_PRIORITY, VariantRouter
 from apps.posting.services.stock.pa_bulk_uploader import PABulkUploader, PABatchResult
+from apps.posting.services.stock.pa_relay_poster import PARelayPoster, PARelayPostResult
 from apps.posting.services.stock.payload_builder import build_item_payload
 from core.marketplace.normalizers import normalize_offer_response
 
@@ -832,9 +833,25 @@ class StockConsumer:
 
         logger.info("PA flush: %d rows (job=%d)", len(excel_rows), job.id)
 
-        batch_result: PABatchResult = self._pa_uploader.upload_batch(
-            facade, excel_rows, proxy_group=proxy_group,
-        )
+        # Use relay poster if facade has a relay token available
+        _auth = getattr(facade, '_auth', None)
+        _relay_token = (_auth.access_token if _auth and _auth.access_token else None)
+        _store_slug = (_auth._store_slug if _auth and getattr(_auth, '_store_slug', None) else None)
+
+        if _relay_token and _store_slug:
+            logger.info("PA flush via relay: %d rows (job=%d, store=%s)", len(excel_rows), job.id, _store_slug)
+            _relay_poster = PARelayPoster()
+            _relay_result = _relay_poster.post_batch(_relay_token, _store_slug, excel_rows)
+            # Convert PARelayPostResult to PABatchResult for unified downstream handling
+            batch_result = PABatchResult(
+                successful=_relay_result.successful,
+                failed=_relay_result.failed,
+            )
+        else:
+            logger.warning("PA relay token/store not available — falling back to XLSX bulk upload (job=%d)", job.id)
+            batch_result: PABatchResult = self._pa_uploader.upload_batch(
+                facade, excel_rows, proxy_group=proxy_group,
+            )
 
         from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
 

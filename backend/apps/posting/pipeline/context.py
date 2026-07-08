@@ -1,10 +1,7 @@
 """BuildContext factory — converts Django model fields to lib pricing + marketplace config."""
-
 from __future__ import annotations
-
 import logging
 from typing import Any
-
 from payload_pipeline.core.contracts import BuildContext, ListingKind
 from payload_pipeline.marketplaces.eldorado import EldoradoConfig
 from payload_pipeline.marketplaces.g2g import G2GConfig
@@ -21,6 +18,8 @@ def build_context(
     kind: ListingKind,
     variant_slug: str = '',
     variant_context: dict | None = None,
+    ct_bridge_source_id: str = '',
+    ct_bridge_game: str = '',
 ) -> BuildContext:
     """Build a lib BuildContext from Django-layer inputs.
 
@@ -28,13 +27,15 @@ def build_context(
     Attaches the correct marketplace-specific config object per provider.
 
     Args:
-        marketplace:      Provider slug ('eldorado', 'g2g', 'gameboost', ...).
-        pricing_defaults: PricingDefaults dataclass (stock) or DropshipTargetURL
-                          (dropship). Duck-typed pricing fields.
-        store:            IntegrationAccount (used for G2G seller_id lookup).
-        kind:             STOCK or DROPSHIPPING.
-        variant_slug:     Pre-selected variant slug (empty string = none / auto).
-        variant_context:  DB-driven variant mappings (from build_variant_context).
+        marketplace:          Provider slug ('eldorado', 'g2g', 'gameboost', ...).
+        pricing_defaults:     PricingDefaults dataclass (stock) or DropshipTargetURL
+                              (dropship). Duck-typed pricing fields.
+        store:                IntegrationAccount (used for G2G seller_id lookup).
+        kind:                 STOCK or DROPSHIPPING.
+        variant_slug:         Pre-selected variant slug (empty string = none / auto).
+        variant_context:      DB-driven variant mappings (from build_variant_context).
+        ct_bridge_source_id:  Source item ID for CT bridge Eldorado uploader.
+        ct_bridge_game:       Game slug for CT bridge Eldorado uploader.
     """
     forced = pricing_defaults.forced_ending
     rule = PricingRule(
@@ -48,23 +49,37 @@ def build_context(
     selected_variants: dict[str, str] | None = None
     if variant_slug and variant_slug.lower() != 'auto':
         selected_variants = {"platform": variant_slug}
-
     return BuildContext(
         kind=kind,
         marketplace=marketplace,
         pricing_rules={marketplace: rule},
-        marketplace_config=_marketplace_config(marketplace, store, variant_slug),
+        marketplace_config=_marketplace_config(
+            marketplace, store, variant_slug,
+            ct_bridge_source_id=ct_bridge_source_id,
+            ct_bridge_game=ct_bridge_game,
+        ),
         exchange_rate=float(exchange_rate) if exchange_rate is not None else None,
         variant_context=variant_context,
         selected_variants=selected_variants,
     )
 
 
-def _marketplace_config(marketplace: str, store, variant_slug: str) -> Any:
+def _marketplace_config(
+    marketplace: str,
+    store,
+    variant_slug: str,
+    *,
+    ct_bridge_source_id: str = '',
+    ct_bridge_game: str = '',
+) -> Any:
     """Return the marketplace-specific config object, or None if not needed."""
     if marketplace == 'eldorado':
         return EldoradoConfig(
-            image_uploader=_build_eldorado_uploader(store),
+            image_uploader=_build_eldorado_uploader(
+                store,
+                ct_bridge_source_id=ct_bridge_source_id,
+                ct_bridge_game=ct_bridge_game,
+            ),
         )
     if marketplace == 'g2g':
         seller_id = store.credential.credentials.get('seller_id', '')
@@ -72,7 +87,45 @@ def _marketplace_config(marketplace: str, store, variant_slug: str) -> Any:
     return None
 
 
-def _build_eldorado_uploader(store):
+def _build_eldorado_uploader(store, *, ct_bridge_source_id: str = '', ct_bridge_game: str = ''):
+    """Build an Eldorado image uploader.
+
+    If a CT bridge result is available for (ct_bridge_source_id, ct_bridge_game),
+    returns a CtBridgeEldoradoUploader that returns pre-fetched CDN paths.
+    Falls back to EldoradoMarketplaceUploader (real upload) otherwise.
+
+    Returns None if neither can be built.
+    """
+    # Build the real uploader as fallback (always attempt)
+    real_uploader = _build_real_eldorado_uploader(store)
+
+    # If bridge params are provided, try to use the bridge result
+    if ct_bridge_source_id and ct_bridge_game:
+        try:
+            from .ct_bridge_client import peek_bridge_result, CtBridgeEldoradoUploader
+            result = peek_bridge_result(ct_bridge_source_id, ct_bridge_game)
+            if result is not None and result.eldorado_ok:
+                logger.debug(
+                    "Using CtBridgeEldoradoUploader for item=%s game=%s",
+                    ct_bridge_source_id, ct_bridge_game,
+                )
+                return CtBridgeEldoradoUploader(
+                    source_item_id=ct_bridge_source_id,
+                    game=ct_bridge_game,
+                    fallback_uploader=real_uploader,
+                )
+            else:
+                logger.debug(
+                    "No bridge result for item=%s game=%s — using real Eldorado uploader",
+                    ct_bridge_source_id, ct_bridge_game,
+                )
+        except Exception as exc:
+            logger.warning("Failed to check CT bridge result: %s", exc)
+
+    return real_uploader
+
+
+def _build_real_eldorado_uploader(store):
     """Build an EldoradoMarketplaceUploader from the store's credential.
 
     Returns None if the facade cannot be built (uploader will fall back to
@@ -82,7 +135,6 @@ def _build_eldorado_uploader(store):
         from apps.integrations.providers import registry
         from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
         from .media import EldoradoMarketplaceUploader
-
         proxy_pool = build_proxy_pool()
         facade = registry.get_or_build_client('eldorado', store.credential, proxy_pool=proxy_pool)
         proxy_group = get_group_name(store)
