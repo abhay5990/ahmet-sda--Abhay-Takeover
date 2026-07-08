@@ -231,12 +231,12 @@ def _send_order(order: RobuxCrateOrder, batch: RobuxCrateBatch, client) -> None:
         order.rbxcrate_response = (result.error.details if result.error else None) or {}
         # Notify Telegram on hard error
         _telegram_alert(
-            f"\u26a0\ufe0f <b>Robux Delivery Failed</b>\n\n"
-            f"Order   : {batch.marketplace_order_id}\n"
-            f"Username: {batch.roblox_username}\n"
-            f"Place   : {batch.place_name or batch.place_id}\n"
-            f"Error   : {order.error_message}\n\n"
-            f"Action required \u2014 check the Robux tool dashboard."
+            "\u26a0\ufe0f <b>Robux Delivery Failed</b>\n\n"
+            + f"Order   : {batch.marketplace_order_id}\n"
+            + f"Username: {batch.roblox_username}\n"
+            + f"Place   : {batch.place_name or batch.place_id}\n"
+            + f"Error   : {order.error_message}\n\n"
+            + "Action required \u2014 check the Robux tool dashboard."
         )
 
     order.last_status_checked_at = now
@@ -262,17 +262,11 @@ def _advance_to_next_place(batch: RobuxCrateBatch, order: RobuxCrateOrder, resul
     if next_index >= len(candidates):
         # All candidate places exhausted — alert Telegram
         _telegram_alert(
-            f"⚠️ <b>Robux Delivery — All Games Exhausted</b>
-
-"
-            f"Order   : {batch.marketplace_order_id}
-"
-            f"Username: {batch.roblox_username}
-"
-            f"Tried   : {len(candidates)} game(s), none had a matching gamepass.
-
-"
-            f"Action required — buyer may need to create a public Roblox game."
+            "\u26a0\ufe0f <b>Robux Delivery \u2014 All Games Exhausted</b>\n\n"
+            + f"Order   : {batch.marketplace_order_id}\n"
+            + f"Username: {batch.roblox_username}\n"
+            + f"Tried   : {len(candidates)} game(s), none had a matching gamepass.\n\n"
+            + "Action required \u2014 buyer may need to create a public Roblox game."
         )
         return False  # no more places to try — genuine failure on all of them
 
@@ -378,19 +372,12 @@ def _update_batch_status(batch: RobuxCrateBatch) -> None:
         batch.delivery_error = ''
         batch.save(update_fields=['status', 'delivery_error', 'updated_at'])
         _telegram_alert(
-            f"❌ <b>Robux Batch Failed</b>
-
-"
-            f"Order   : {batch.marketplace_order_id}
-"
-            f"Username: {batch.roblox_username}
-"
-            f"Place   : {batch.place_name or batch.place_id}
-"
-            f"Result  : All {len(statuses)} order(s) failed or cancelled.
-
-"
-            f"Action required — check the Robux tool dashboard."
+            "\u274c <b>Robux Batch Failed</b>\n\n"
+            + f"Order   : {batch.marketplace_order_id}\n"
+            + f"Username: {batch.roblox_username}\n"
+            + f"Place   : {batch.place_name or batch.place_id}\n"
+            + f"Result  : All {len(statuses)} order(s) failed or cancelled.\n\n"
+            + "Action required \u2014 check the Robux tool dashboard."
         )
         return
 
@@ -444,21 +431,13 @@ def _attempt_delivery(batch: RobuxCrateBatch, success_count: int, total: int) ->
             batch.id, success_count, total, error,
         )
         _telegram_alert(
-            f"❌ <b>Robux Marketplace Delivery Failed</b>
-
-"
-            f"Order   : {batch.marketplace_order_id}
-"
-            f"Username: {batch.roblox_username}
-"
-            f"Store   : {batch.marketplace}
-"
-            f"Error   : {error or 'Permanent delivery failure'}
-
-"
-            f"Robux was delivered to buyer but marketplace mark-delivered failed.
-"
-            f"Action required — mark delivered manually."
+            "\u274c <b>Robux Marketplace Delivery Failed</b>\n\n"
+            + f"Order   : {batch.marketplace_order_id}\n"
+            + f"Username: {batch.roblox_username}\n"
+            + f"Store   : {batch.marketplace}\n"
+            + f"Error   : {error or 'Permanent delivery failure'}\n\n"
+            + "Robux was delivered to buyer but marketplace mark-delivered failed.\n"
+            + "Action required \u2014 mark delivered manually."
         )
 
     batch.save(update_fields=[
