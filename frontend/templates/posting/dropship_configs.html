@@ -348,7 +348,7 @@
                                     </div>
                                 </div>
                                 <div class="flex gap-2 ml-3 shrink-0">
-                                    <button @click="openEditUrl(url)"
+                                    <button @click="openEditUrl(url, config)"
                                             class="text-gray-400 hover:text-indigo-600" title="Edit">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -458,8 +458,8 @@
                 <h2 class="text-lg font-bold mb-4" x-text="editingUrl ? 'Edit URL' : 'Add URL'"></h2>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">LZT Filter URL</label>
-                        <input type="url" x-model="urlForm.url" placeholder="https://lzt.market/fortnite?pmin=5&pmax=50"
+                        <label class="block text-sm font-medium text-gray-700 mb-1" x-text="activeSourceProvider === 'eldorado' ? 'Eldorado Filter URL' : activeSourceProvider === 'lzt' ? 'LZT Filter URL' : 'Source Filter URL'"></label>
+                        <input type="url" x-model="urlForm.url" :placeholder="activeSourceProvider === 'eldorado' ? 'gameId=259&category=CustomItem&sortBy=price&sortOrder=asc' : 'https://lzt.market/fortnite?pmin=5&pmax=50'"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
                                :disabled="!!editingUrl">
                     </div>
@@ -523,6 +523,7 @@ function dropshipManager() {
         },
         showCreateModal: false,
         showUrlModal: false,
+        activeSourceProvider: 'lzt',
         editingUrl: null,
         activeConfigId: null,
         newConfig: {
@@ -714,13 +715,15 @@ function dropshipManager() {
 
         openAddUrl(config) {
             this.activeConfigId = config.id;
+            this.activeSourceProvider = (config.source_account && config.source_account.provider) ? config.source_account.provider : 'lzt';
             this.editingUrl = null;
             this.urlForm = {url: '', multiplier_low: 2.0, multiplier_mid: 1.8, multiplier_high: 1.5, min_price: 0, forced_ending: 0.99};
             this.showUrlModal = true;
         },
 
-        openEditUrl(url) {
+        openEditUrl(url, config) {
             this.editingUrl = url;
+            this.activeSourceProvider = (config && config.source_account && config.source_account.provider) ? config.source_account.provider : 'lzt';
             this.urlForm = {
                 url: url.url,
                 multiplier_low: parseFloat(url.multiplier_low),

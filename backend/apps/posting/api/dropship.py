@@ -202,7 +202,7 @@ def dropship_configs(request):
     return JsonResponse({'configs': [
         {
             'id': c.id,
-            'source_account': {'id': c.source_account.id, 'name': c.source_account.name},
+            'source_account': {'id': c.source_account.id, 'name': c.source_account.name, 'provider': c.source_account.provider},
             'store': {'id': c.store.id, 'name': c.store.name, 'provider': c.store.provider},
             'game': {'id': c.game.id, 'name': c.game.name, 'slug': c.game.slug},
             'enabled': c.enabled,
