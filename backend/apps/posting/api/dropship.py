@@ -223,6 +223,7 @@ def dropship_configs(request):
                     'multiplier_high': str(u.multiplier_high),
                     'min_price': str(u.min_price),
                     'forced_ending': str(u.forced_ending) if u.forced_ending is not None else None,
+                    'seller_username': u.seller_username or '',
                     'last_fetched_at': u.last_fetched_at.isoformat() if u.last_fetched_at else None,
                     'last_error': u.last_error,
                     'processing_state': u.processing_state,
@@ -367,6 +368,7 @@ def create_dropship_url(request, config_id):
         multiplier_high=body.get('multiplier_high', 1.5),
         min_price=body.get('min_price', 0),
         forced_ending=body.get('forced_ending', 0.99),
+        seller_username=(body.get('seller_username') or '').strip(),
     )
 
     return JsonResponse({'id': target_url.id}, status=201)
@@ -395,7 +397,7 @@ def update_dropship_url(request, url_id):
 
     update_fields = []
     for field in ('enabled', 'url', 'multiplier_low', 'multiplier_mid',
-                  'multiplier_high', 'min_price', 'forced_ending'):
+                  'multiplier_high', 'min_price', 'forced_ending', 'seller_username'):
         if field in body:
             setattr(target_url, field, body[field])
             update_fields.append(field)
@@ -868,3 +870,91 @@ def dropship_stats(request):
             for log in recent_logs
         ],
     })
+
+
+@login_required
+@role_required('admin', 'user')
+def seller_check(request):
+    """GET /api/dropship/seller-check/?username=OdbougShop&config_id=2
+    Checks if a seller exists in current Eldorado listings and returns their profile.
+    """
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+    username = (request.GET.get('username') or '').strip()
+    config_id = request.GET.get('config_id')
+
+    if not username:
+        return JsonResponse({'error': 'username is required'}, status=400)
+
+    try:
+        from apps.posting.models import DropshippingJobConfig
+        from apps.posting.services.dropship.sources.eldorado import EldoradoSourceProvider
+        from apps.integrations.proxy_pool import build_proxy_pool
+
+        # Get the source account credential from the config if provided
+        credential = None
+        if config_id:
+            try:
+                config = DropshippingJobConfig.objects.select_related('source_account__credential').get(id=config_id)
+                credential = config.source_account.credential
+            except DropshippingJobConfig.DoesNotExist:
+                pass
+
+        if credential is None:
+            # Fall back to any active Eldorado account
+            from apps.integrations.models import IntegrationAccount
+            acc = IntegrationAccount.objects.filter(provider='eldorado', is_active=True).first()
+            if acc:
+                credential = acc.credential
+
+        if credential is None:
+            return JsonResponse({'found': False, 'error': 'No Eldorado credential available'})
+
+        provider = EldoradoSourceProvider(credential=credential)
+
+        # Search for the seller in current SAB listings (first 3 pages)
+        import requests as req_lib
+        session = provider._get_session()
+        found_user = None
+
+        for page in range(1, 4):
+            resp = session.get(
+                'https://www.eldorado.gg/api/v1/item-management/offers',
+                params={'gameId': 259, 'category': 'CustomItem', 'pageSize': 20, 'page': page},
+                timeout=10,
+            )
+            if not resp.ok:
+                break
+            data = resp.json()
+            results = data.get('results') or []
+            for entry in results:
+                user = entry.get('user') or {}
+                if (user.get('username') or '').lower() == username.lower():
+                    found_user = user
+                    break
+            if found_user:
+                break
+            if not results:
+                break
+
+        if found_user:
+            return JsonResponse({
+                'found': True,
+                'username': found_user.get('username') or username,
+                'isVerifiedSeller': found_user.get('isVerifiedSeller') or False,
+                'rating': found_user.get('rating') or 0,
+                'description': (found_user.get('description') or '')[:200],
+                'createdDate': found_user.get('createdDate') or '',
+            })
+        else:
+            return JsonResponse({
+                'found': False,
+                'username': username,
+                'note': 'Seller not found in first 3 pages of current listings. They may have no active items right now, but the filter will still apply when they list items.',
+            })
+
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).warning("seller_check error: %s", e)
+        return JsonResponse({'found': False, 'error': str(e)})

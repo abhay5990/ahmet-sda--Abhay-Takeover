@@ -325,13 +325,19 @@
                                                   x-text="url.processing_state === 'fetching' ? 'Fetching…' : 'Posting…'"></span>
                                         </template>
                                     </div>
-                                    <div class="flex gap-4 text-xs text-gray-500 ml-4">
+                                    <div class="flex gap-4 text-xs text-gray-500 ml-4 flex-wrap">
                                         <span>low: <span x-text="url.multiplier_low"></span>x</span>
                                         <span>mid: <span x-text="url.multiplier_mid"></span>x</span>
                                         <span>high: <span x-text="url.multiplier_high"></span>x</span>
                                         <span>min: $<span x-text="url.min_price"></span></span>
                                         <template x-if="url.forced_ending">
                                             <span>ending: .<span x-text="url.forced_ending"></span></span>
+                                        </template>
+                                        <template x-if="url.seller_username">
+                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-violet-100 text-violet-700 rounded-full font-medium">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                                <span x-text="url.seller_username"></span>
+                                            </span>
                                         </template>
                                     </div>
                                     <div class="flex gap-4 text-xs text-gray-400 ml-4 mt-1">
@@ -493,6 +499,43 @@
                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Seller Filter
+                            <span class="text-xs font-normal text-gray-400 ml-1">(optional — leave blank to source from all sellers)</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <input type="text" x-model="urlForm.seller_username"
+                                   placeholder="e.g. OdbougShop"
+                                   class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                                   @input="sellerCheckResult = null">
+                            <button type="button"
+                                    @click="checkSeller()"
+                                    :disabled="!urlForm.seller_username.trim() || sellerChecking"
+                                    class="px-3 py-2 text-xs bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg disabled:opacity-40 whitespace-nowrap">
+                                <span x-text="sellerChecking ? 'Checking…' : 'Verify Seller'"></span>
+                            </button>
+                        </div>
+                        <template x-if="sellerCheckResult">
+                            <div class="mt-2 p-2 rounded-lg text-xs"
+                                 :class="sellerCheckResult.found ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-red-50 border border-red-200 text-red-700'">
+                                <template x-if="sellerCheckResult.found">
+                                    <span>
+                                        ✅ <strong x-text="sellerCheckResult.username"></strong>
+                                        <template x-if="sellerCheckResult.isVerifiedSeller">
+                                            <span class="ml-1 px-1 bg-blue-100 text-blue-700 rounded">Verified</span>
+                                        </template>
+                                        <template x-if="sellerCheckResult.rating">
+                                            <span class="ml-1">⭐ <span x-text="sellerCheckResult.rating"></span></span>
+                                        </template>
+                                    </span>
+                                </template>
+                                <template x-if="!sellerCheckResult.found">
+                                    <span>⚠️ Seller not found in current listings — they may have no active items right now, but the filter will still apply.</span>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
                 </div>
                 <div class="flex justify-end gap-3 mt-6">
                     <button @click="showUrlModal = false; editingUrl = null;"
@@ -524,6 +567,8 @@ function dropshipManager() {
         showCreateModal: false,
         showUrlModal: false,
         activeSourceProvider: 'lzt',
+        sellerChecking: false,
+        sellerCheckResult: null,
         editingUrl: null,
         activeConfigId: null,
         newConfig: {
@@ -713,11 +758,29 @@ function dropshipManager() {
 
         // --- URL CRUD ---
 
+        async checkSeller() {
+            if (!this.urlForm.seller_username.trim()) return;
+            this.sellerChecking = true;
+            this.sellerCheckResult = null;
+            try {
+                const res = await fetch(`/posting/api/dropship/seller-check/?username=${encodeURIComponent(this.urlForm.seller_username.trim())}&config_id=${this.activeConfigId}`);
+                if (res.ok) {
+                    this.sellerCheckResult = await res.json();
+                } else {
+                    this.sellerCheckResult = { found: false };
+                }
+            } catch (e) {
+                this.sellerCheckResult = { found: false };
+            } finally {
+                this.sellerChecking = false;
+            }
+        },
         openAddUrl(config) {
             this.activeConfigId = config.id;
             this.activeSourceProvider = (config.source_account && config.source_account.provider) ? config.source_account.provider : 'lzt';
             this.editingUrl = null;
-            this.urlForm = {url: '', multiplier_low: 2.0, multiplier_mid: 1.8, multiplier_high: 1.5, min_price: 0, forced_ending: 0.99};
+            this.urlForm = {url: '', multiplier_low: 2.0, multiplier_mid: 1.8, multiplier_high: 1.5, min_price: 0, forced_ending: 0.99, seller_username: ''};
+            this.sellerCheckResult = null;
             this.showUrlModal = true;
         },
 
@@ -731,6 +794,7 @@ function dropshipManager() {
                 multiplier_high: parseFloat(url.multiplier_high),
                 min_price: parseFloat(url.min_price),
                 forced_ending: url.forced_ending ? parseFloat(url.forced_ending) : null,
+                seller_username: url.seller_username || '',
             };
             this.showUrlModal = true;
         },

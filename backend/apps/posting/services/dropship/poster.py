@@ -228,7 +228,8 @@ def _process_target_url(
         new_items: list[dict] = []
         cycle_found = 0
 
-        for page_items in source_provider.fetch_items(target_url.url, proxy_group=source_proxy_group):
+        seller_username = getattr(target_url, 'seller_username', '') or ''
+        for page_items in source_provider.fetch_items(target_url.url, seller_username=seller_username, proxy_group=source_proxy_group):
             if stop_event.is_set():
                 break
             for item in page_items:
