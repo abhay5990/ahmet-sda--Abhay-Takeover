@@ -141,3 +141,47 @@ class RobuxCrateOrder(models.Model):
 
     def __str__(self):
         return f'Order {self.id!s:.8} ({self.status})'
+
+
+class RobuxAutoOrder(models.Model):
+    """State-machine record tracking automated Robux delivery for a marketplace order."""
+
+    class State(models.TextChoices):
+        AWAITING_USERNAME = 'awaiting_username', 'Awaiting Username'
+        USERNAME_RECEIVED = 'username_received', 'Username Received'
+        ORDER_CREATED = 'order_created', 'Order Created'
+        PLACE_LOOKUP_FAILED = 'place_lookup_failed', 'Place Lookup Failed'
+        FAILED = 'failed', 'Failed'
+        SKIPPED = 'skipped', 'Skipped'
+
+    order = models.OneToOneField(
+        'orders.Order',
+        on_delete=models.CASCADE,
+        related_name='robux_auto_order',
+    )
+    batch = models.ForeignKey(
+        RobuxCrateBatch,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='auto_orders',
+    )
+    state = models.CharField(
+        max_length=30,
+        choices=State.choices,
+        default=State.AWAITING_USERNAME,
+    )
+    roblox_username = models.CharField(max_length=100, blank=True)
+    telegram_message_id = models.IntegerField(null=True, blank=True)
+    notified_at = models.DateTimeField(null=True, blank=True)
+    username_received_at = models.DateTimeField(null=True, blank=True)
+    error_message = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'tools_robux_auto_orders'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'RobuxAutoOrder #{self.pk} ({self.state}) — order {self.order_id}'

@@ -128,6 +128,12 @@ def run_robuxcrate_batch_processor_job():
     from apps.tools.services.robuxcrate import process_pending_batches
     process_pending_batches()
 
+@apscheduler_util.close_old_connections
+def run_robux_auto_fulfillment_job():
+    """APScheduler wrapper — automated Robux delivery via Telegram bot."""
+    from apps.tools.services.robux_auto_fulfillment import run_robux_auto_fulfillment_job as _job
+    _job()
+
 
 @apscheduler_util.close_old_connections
 def delete_old_job_executions(max_age_days=MAX_EXECUTION_AGE_DAYS):
@@ -228,6 +234,15 @@ class Command(BaseCommand):
             trigger=IntervalTrigger(minutes=5),
             id='robuxcrate_batch_processor',
             name='RobuxCrate Batch Order Processor',
+            max_instances=1,
+            replace_existing=True,
+        )
+        # Robux auto-fulfillment — detect orders, poll Telegram, create batches
+        scheduler.add_job(
+            run_robux_auto_fulfillment_job,
+            trigger=IntervalTrigger(minutes=5),
+            id='robux_auto_fulfillment',
+            name='Robux Auto-Fulfillment (Telegram Bot)',
             max_instances=1,
             replace_existing=True,
         )
