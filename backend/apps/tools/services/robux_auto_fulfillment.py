@@ -32,12 +32,21 @@ _ROBLOX_GAME_SLUG = 'roblox'
 # ── Telegram helpers ─────────────────────────────────────────────────────────
 
 def _get_telegram_creds():
-    """Return (bot_token, chat_id) or (None, None)."""
+    """Return (bot_token, chat_id) or (None, None).
+    Prefers the dedicated Robux bot (slug='telegram-robux-bot').
+    Falls back to any active Telegram credential.
+    """
     try:
         from apps.integrations.models import ServiceCredential
+        # Prefer the dedicated Robux bot (@Ops_EzsmurfmartBot)
         cred = ServiceCredential.objects.filter(
-            service_type='telegram', is_active=True
+            service_type='telegram', slug='telegram-robux-bot', is_active=True
         ).first()
+        # Fallback to any active Telegram credential
+        if not cred:
+            cred = ServiceCredential.objects.filter(
+                service_type='telegram', is_active=True
+            ).first()
         if not cred:
             return None, None
         creds = cred.credentials or {}
