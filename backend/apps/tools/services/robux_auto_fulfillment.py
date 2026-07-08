@@ -152,6 +152,11 @@ def detect_new_roblox_orders() -> int:
     Creates RobuxAutoOrder records and sends Telegram notifications.
     Returns count of new orders detected.
     """
+    import os
+    if os.environ.get('ROBLOX_NOTIFY_PAUSED', '').lower() in ('true', '1', 'yes'):
+        logger.info('robux_auto: Roblox Telegram notifications are PAUSED (ROBLOX_NOTIFY_PAUSED=true)')
+        return 0
+
     from apps.orders.models import Order
     from apps.tools.models import RobuxAutoOrder
     from core.enums import ProductCategory
