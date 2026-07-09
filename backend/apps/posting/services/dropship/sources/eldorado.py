@@ -290,4 +290,4 @@ def _parse_query_string(qs: str) -> dict:
             k, v = part.split("=", 1)
             params[k.strip()] = v.strip()
     return params
-register_source(eldorado, EldoradoSourceProvider)
+register_source("eldorado", EldoradoSourceProvider)
