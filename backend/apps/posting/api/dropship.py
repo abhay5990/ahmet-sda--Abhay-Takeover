@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import JsonResponse
 from django.utils import timezone
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_POST, require_GET, require_http_methods
 
 from apps.accounts.decorators import role_required
 from apps.integrations.models import IntegrationAccount
