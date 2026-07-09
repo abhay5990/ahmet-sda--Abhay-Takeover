@@ -888,7 +888,7 @@ function dropshipManager() {
                 const err = await res.json();
                 alert(err.error || 'Error adding bulk sellers');
             }
-        }
+        },
 
         async addBulkSellerLinks() {
             // Parse seller links — extract username from eldorado.gg/users/{username}/...
@@ -937,7 +937,7 @@ function dropshipManager() {
             } catch (e) {
                 alert('Network error: ' + e.message);
             }
-        },,
+        },
 
         async saveUrlEdit() {
             const res = await fetch(`/posting/api/dropship/urls/${this.editingUrl.id}/`, {
