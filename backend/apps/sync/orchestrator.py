@@ -209,6 +209,18 @@ def run_sync_chain() -> None:
                 EldoradoNotificationStatusSync().run()
             except Exception as e:
                 log_sync_error('sync_chain', f'Notification status sync failed: {e}', exc=e)
+
+        # 6. Robux auto-fulfillment detection — runs immediately after order sync
+        # so new Roblox currency orders trigger Telegram within seconds, not up to 5 min later
+        try:
+            import os
+            if os.environ.get('ROBLOX_NOTIFY_PAUSED', '').lower() not in ('true', '1', 'yes'):
+                from apps.tools.services.robux_auto_fulfillment import detect_new_roblox_orders
+                detected = detect_new_roblox_orders()
+                if detected:
+                    logger.info('sync_chain: robux_auto detected %d new order(s) post-sync', detected)
+        except Exception as e:
+            log_sync_error('sync_chain', f'Robux post-sync detection failed: {e}', exc=e)
     finally:
         clear_client_cache()
 
