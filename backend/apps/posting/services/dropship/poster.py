@@ -570,6 +570,9 @@ def _attempt_post(
         logger.info("Stop requested after pipeline build, skipping API call for item %s", item_id)
         return False
 
+    # Dropship tag: append #DS to GameBoost titles so staff can identify dropship orders
+    if marketplace == 'gameboost' and isinstance(payload, dict) and payload.get('title') and '#DS' not in payload['title']:
+        payload['title'] = payload['title'].rstrip() + ' #DS'
     # Marketplace POST
     product_data = {'payload': payload}
     if target_proxy_group:
