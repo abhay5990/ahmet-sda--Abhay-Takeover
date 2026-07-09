@@ -133,31 +133,18 @@ class EldoradoSourceProvider:
         if not seller_username:
             seller_username = _extract_seller_from_url(url)
 
-        # Resolve seller UUID for server-side filtering
-        seller_uuid: str | None = None
+        # Note: Eldorado API userId/sellerId filters do not work for item listings.
+        # Always use client-side seller filtering (fast with pageSize=100).
         if seller_username:
-            seller_uuid = self._resolve_seller_uuid(seller_username)
-            if seller_uuid:
-                logger.info(
-                    "Using server-side userId filter for seller '%s' (UUID: %s)",
-                    seller_username, seller_uuid,
-                )
-            else:
-                logger.warning(
-                    "Falling back to client-side filtering for seller '%s'",
-                    seller_username,
-                )
+            logger.info("Client-side filtering for seller '%s' (pageSize=100)", seller_username)
 
         page = 1
-        page_size = 20
+        page_size = 100
         while True:
             try:
                 params = _parse_query_string(url)
                 params.update({"page": page, "pageSize": page_size})
 
-                # Server-side seller filter via userId UUID
-                if seller_uuid:
-                    params["userId"] = seller_uuid
 
                 resp = session.get(ELDORADO_API_BASE, params=params, timeout=15)
                 if resp.status_code == 401:
@@ -176,7 +163,7 @@ class EldoradoSourceProvider:
                     if not item:
                         continue
                     # Client-side seller filter (fallback when UUID not resolved)
-                    if seller_username and not seller_uuid:
+                    if seller_username:
                         item_seller = (item.get("_seller_username") or "").lower()
                         if item_seller != seller_username.lower():
                             continue
