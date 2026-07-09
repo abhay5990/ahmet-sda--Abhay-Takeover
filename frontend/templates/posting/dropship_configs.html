@@ -502,12 +502,19 @@
     <template x-if="showUrlModal">
         <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showUrlModal = false">
             <div class="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
-                <h2 class="text-lg font-bold mb-4" x-text="editingUrl ? 'Edit URL' : 'Add URL'"></h2>
+                <h2 class="text-lg font-bold mb-4"
+                    x-text="editingUrl ? 'Edit URL' : (activeSourceProvider === 'eldorado' ? 'Add Sellers' : 'Add URL')"></h2>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1" x-text="activeSourceProvider === 'eldorado' ? 'Eldorado Filter URL' : activeSourceProvider === 'lzt' ? 'LZT Filter URL' : 'Source Filter URL'"></label>
-                        <input type="url" x-model="urlForm.url" :placeholder="activeSourceProvider === 'eldorado' ? 'gameId=259&category=CustomItem&sortBy=price&sortOrder=asc' : 'https://lzt.market/fortnite?pmin=5&pmax=50'"
+                        <!-- Filter URL: hidden for Eldorado (auto-filled), shown for others -->
+                        <template x-if="activeSourceProvider !== 'eldorado'">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1"
+                                       x-text="activeSourceProvider === 'lzt' ? 'LZT Filter URL' : 'Source Filter URL'"></label>
+                                <input type="url" x-model="urlForm.url" placeholder="https://lzt.market/fortnite?pmin=5&pmax=50"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                            </div>
+                        </template>
                                :disabled="!!editingUrl">
                     </div>
                     <div class="grid grid-cols-3 gap-3">
@@ -540,75 +547,44 @@
                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
                         </div>
                     </div>
-                    <div>
-                        <div class="flex items-center justify-between mb-1">
-                            <label class="block text-sm font-medium text-gray-700">
-                                Seller Filter
-                                <span class="text-xs font-normal text-gray-400 ml-1">(optional)</span>
-                            </label>
-                            <template x-if="!editingUrl">
-                                <button type="button" @click="bulkSellerMode = !bulkSellerMode; urlForm.seller_username = ''; bulkSellers = ''"
-                                        class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
-                                    <span x-text="bulkSellerMode ? '← Single seller' : '+ Bulk add sellers'"></span>
-                                </button>
-                            </template>
-                        </div>
-                        <!-- Single seller mode -->
-                        <template x-if="!bulkSellerMode">
-                            <div>
-                                <div class="flex gap-2">
-                                    <input type="text" x-model="urlForm.seller_username"
-                                           placeholder="e.g. OdbougShop"
-                                           class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm"
-                                           @input="sellerCheckResult = null">
-                                    <button type="button"
-                                            @click="checkSeller()"
-                                            :disabled="!urlForm.seller_username.trim() || sellerChecking"
-                                            class="px-3 py-2 text-xs bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg disabled:opacity-40 whitespace-nowrap">
-                                        <span x-text="sellerChecking ? 'Checking…' : 'Verify Seller'"></span>
-                                    </button>
-                                </div>
-                                <template x-if="sellerCheckResult">
-                                    <div class="mt-2 p-2 rounded-lg text-xs"
-                                         :class="sellerCheckResult.found ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-red-50 border border-red-200 text-red-700'">
-                                        <template x-if="sellerCheckResult.found">
-                                            <span>
-                                                ✅ <strong x-text="sellerCheckResult.username"></strong>
-                                                <template x-if="sellerCheckResult.isVerifiedSeller">
-                                                    <span class="ml-1 px-1 bg-blue-100 text-blue-700 rounded">Verified</span>
-                                                </template>
-                                                <template x-if="sellerCheckResult.rating">
-                                                    <span class="ml-1">⭐ <span x-text="sellerCheckResult.rating"></span></span>
-                                                </template>
-                                            </span>
-                                        </template>
-                                        <template x-if="!sellerCheckResult.found">
-                                            <span>⚠️ Seller not found in current listings — filter will still apply.</span>
-                                        </template>
-                                    </div>
-                                </template>
-                            </div>
-                        </template>
-                        <!-- Bulk seller mode -->
-                        <template x-if="bulkSellerMode">
-                            <div>
+                    <!-- Seller Links (Eldorado only) -->
+                        <template x-if="activeSourceProvider === 'eldorado'">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Seller Links
+                                    <span class="text-xs text-gray-400 font-normal ml-1">— paste Eldorado seller profile links</span>
+                                </label>
                                 <textarea x-model="bulkSellers" rows="5"
-                                          placeholder="Paste seller usernames, one per line:&#10;OdbougShop&#10;SellerTwo&#10;SellerThree"
-                                          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono resize-y"></textarea>
+                                          placeholder="Paste seller links, one per line:&#10;https://www.eldorado.gg/users/OdbougShop/shop/CustomItem?gameId=259&#10;https://www.eldorado.gg/users/SellerTwo/shop/CustomItem?gameId=259"
+                                          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono resize-y"
+                                          @input="parsedSellersCount = bulkSellers.split('\n').filter(l => l.trim().match(/eldorado\.gg\/users\/([^/]+)/)).length"></textarea>
                                 <p class="text-xs text-gray-400 mt-1">
-                                    One seller per line. Each seller gets their own URL entry with the same filter and multipliers above.
-                                    <span class="font-medium text-indigo-600" x-text="bulkSellers.split('\n').filter(s => s.trim()).length + ' seller(s) detected'"></span>
+                                    Each link gets its own entry with the multipliers above.
+                                    <template x-if="parsedSellersCount > 0">
+                                        <span class="font-medium text-indigo-600" x-text="parsedSellersCount + ' seller(s) detected'"></span>
+                                    </template>
                                 </p>
                             </div>
                         </template>
-                    </div>
+                        <!-- Seller Filter (non-Eldorado) -->
+                        <template x-if="activeSourceProvider !== 'eldorado'">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Seller Filter
+                                    <span class="text-xs text-gray-400 font-normal">(optional)</span>
+                                </label>
+                                <input type="text" x-model="urlForm.seller_username"
+                                       placeholder="e.g. OdbougShop"
+                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            </div>
+                        </template>
                 </div>
                 <div class="flex justify-end gap-3 mt-6">
                     <button @click="showUrlModal = false; editingUrl = null;"
                             class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
-                    <button @click="editingUrl ? saveUrlEdit() : (bulkSellerMode ? addBulkUrls() : addUrl())"
+                    <button @click="editingUrl ? saveUrlEdit() : (activeSourceProvider === 'eldorado' ? addBulkSellerLinks() : (bulkSellerMode ? addBulkUrls() : addUrl()))"
                             class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
-                        <span x-text="editingUrl ? 'Save' : (bulkSellerMode ? 'Add All Sellers' : 'Add')"></span>
+                        <span x-text="editingUrl ? 'Save' : (activeSourceProvider === 'eldorado' ? 'Add Sellers' : (bulkSellerMode ? 'Add All Sellers' : 'Add'))"></span>
                     </button>
                 </div>
             </div>
@@ -626,6 +602,7 @@ function dropshipManager() {
         stats: { active_items: 0, active_configs: 0, recent_logs: [] },
         bulkSellers: '',
         bulkSellerMode: false,
+        parsedSellersCount: 0,
         scheduler: {
             alive: false,
             pid: null,
@@ -911,7 +888,56 @@ function dropshipManager() {
                 const err = await res.json();
                 alert(err.error || 'Error adding bulk sellers');
             }
-        },
+        }
+
+        async addBulkSellerLinks() {
+            // Parse seller links — extract username from eldorado.gg/users/{username}/...
+            const lines = this.bulkSellers.split('\n').map(l => l.trim()).filter(Boolean);
+            const sellers = [];
+            for (const line of lines) {
+                const m = line.match(/eldorado\.gg\/users\/([^/?#]+)/i);
+                if (m) sellers.push(m[1]);
+            }
+            if (!sellers.length) {
+                alert('No valid Eldorado seller links detected. Make sure links contain /users/{username}/');
+                return;
+            }
+            // Auto-fill the filter URL from the game ID in the first link (or use default SAB query)
+            let gameId = '259';
+            const firstLink = lines[0];
+            const gm = firstLink.match(/gameId=(\d+)/i);
+            if (gm) gameId = gm[1];
+            const autoUrl = `gameId=${gameId}&category=CustomItem&sortBy=price&sortOrder=asc`;
+            
+            const payload = {
+                sellers: sellers,
+                url: autoUrl,
+                multiplier_low: parseFloat(this.urlForm.multiplier_low) || 2.0,
+                multiplier_mid: parseFloat(this.urlForm.multiplier_mid) || 1.8,
+                multiplier_high: parseFloat(this.urlForm.multiplier_high) || 1.5,
+                min_price: parseFloat(this.urlForm.min_price) || 0,
+                forced_ending: parseFloat(this.urlForm.forced_ending) || 0.99,
+            };
+            try {
+                const resp = await fetch(`/posting/api/dropship/configs/${this.activeConfigId}/urls/bulk/`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.csrfToken},
+                    body: JSON.stringify(payload),
+                });
+                const data = await resp.json();
+                if (data.ok) {
+                    this.showUrlModal = false;
+                    this.bulkSellers = '';
+                    this.parsedSellersCount = 0;
+                    await this.loadConfigs();
+                    alert(`✅ Added ${data.created} seller(s). ${data.skipped} skipped (already exist).`);
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            } catch (e) {
+                alert('Network error: ' + e.message);
+            }
+        },,
 
         async saveUrlEdit() {
             const res = await fetch(`/posting/api/dropship/urls/${this.editingUrl.id}/`, {
