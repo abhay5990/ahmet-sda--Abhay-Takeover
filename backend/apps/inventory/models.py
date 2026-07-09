@@ -115,9 +115,9 @@ class OwnedProduct(models.Model):
     )
 
     # Source tracking
-    source_product_id = models.BigIntegerField(
-        null=True, blank=True,
-        help_text='Item ID on the source platform (e.g. LZT item_id)',
+    source_product_id = models.CharField(
+        max_length=128, null=True, blank=True,
+        help_text='Item ID on the source platform (e.g. LZT item_id, Eldorado UUID)',
     )
     ref_key = models.CharField(
         max_length=8, blank=True, default='',
@@ -178,8 +178,9 @@ class OwnedProduct(models.Model):
 
 
 class DropshipProduct(models.Model):
-    source_product_id = models.BigIntegerField(
-        help_text='Item ID on the source platform',
+    source_product_id = models.CharField(
+        max_length=128,
+        help_text='Item ID on the source platform (numeric for LZT, UUID for Eldorado)',
     )
     source_account = models.ForeignKey(
         'integrations.IntegrationAccount',

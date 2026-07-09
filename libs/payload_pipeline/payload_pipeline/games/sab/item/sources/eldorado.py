@@ -43,7 +43,7 @@ class SabEldoradoSourceAdapter:
         offer_id = str(raw.get("id", "") or raw.get("offerId", ""))
         if not offer_id:
             return None
-        price_data = raw.get("pricePerUnitInUSD") or raw.get("price") or {}
+        price_data = raw.get("minPurchasePrice") or raw.get("pricePerUnitInUSD") or raw.get("price") or {}
         if isinstance(price_data, dict):
             price = float(price_data.get("amount", 0) or 0)
         else:
