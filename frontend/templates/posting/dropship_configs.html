@@ -513,9 +513,9 @@
                                        x-text="activeSourceProvider === 'lzt' ? 'LZT Filter URL' : 'Source Filter URL'"></label>
                                 <input type="url" x-model="urlForm.url" placeholder="https://lzt.market/fortnite?pmin=5&pmax=50"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                               :disabled="!!editingUrl">
                             </div>
                         </template>
-                               :disabled="!!editingUrl">
                     </div>
                     <div class="grid grid-cols-3 gap-3">
                         <div>
@@ -921,7 +921,7 @@ function dropshipManager() {
             try {
                 const resp = await fetch(`/posting/api/dropship/configs/${this.activeConfigId}/urls/bulk/`, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.csrfToken},
+                    headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
                     body: JSON.stringify(payload),
                 });
                 const data = await resp.json();
