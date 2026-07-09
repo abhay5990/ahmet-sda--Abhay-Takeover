@@ -2,9 +2,7 @@ from __future__ import annotations
 import logging
 from .models import SabResolvedItem
 from .sources import SabEldoradoSourceAdapter
-
 logger = logging.getLogger(__name__)
-
 
 class SabItemResolver:
     def __init__(self):
@@ -30,4 +28,5 @@ class SabItemResolver:
             mutations=parsed["mutations"],
             price=parsed["price"],
             quantity=parsed["quantity"],
+            image_url=parsed.get("image_url", ""),
         )

@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 logger = logging.getLogger(__name__)
 
+_ELDORADO_CDN = "https://cdn.eldorado.gg/uploads/offers/{filename}"
 
 def _parse_ms(ms_str: str):
     if not ms_str:
@@ -20,6 +21,20 @@ def _parse_ms(ms_str: str):
     except ValueError:
         return 0.0, 0.0
 
+def _extract_image_url(raw: dict) -> str:
+    """Extract the best image URL from an Eldorado offer dict."""
+    main = raw.get("mainOfferImage") or {}
+    if isinstance(main, dict):
+        filename = main.get("largeImage") or main.get("originalSizeImage") or main.get("smallImage")
+        if filename:
+            return _ELDORADO_CDN.format(filename=filename)
+    # Fallback: first offerImages entry
+    offer_images = raw.get("offerImages") or []
+    if offer_images and isinstance(offer_images[0], dict):
+        filename = offer_images[0].get("largeImage") or offer_images[0].get("originalSizeImage")
+        if filename:
+            return _ELDORADO_CDN.format(filename=filename)
+    return ""
 
 class SabEldoradoSourceAdapter:
     def parse(self, raw: dict) -> dict | None:
@@ -36,21 +51,13 @@ class SabEldoradoSourceAdapter:
         trade_values = raw.get("tradeEnvironmentValues") or []
         attrs = {}
         for tv in trade_values:
-            # Eldorado API returns "name" field (not "key") for the attribute label
-            # Support both "key" (old format) and "name" (current format)
             key = (tv.get("key") or tv.get("name") or "").lower().replace(" ", "_")
             val = tv.get("value") or ""
             if key:
                 attrs[key] = val
-
-        # Map Eldorado's attribute names to our internal fields
-        # "Brainrot" attribute = item name (e.g. "Secret Lucky Block")
-        # "Rarity" attribute = rarity (e.g. "Secret", "Common")
-        # "M/S" or "Mutations/s" = ms value
-        # "Mutations" = mutation list
         item_name = (
             attrs.get("item_name")
-            or attrs.get("brainrot")          # Eldorado uses "Brainrot" as the item name field
+            or attrs.get("brainrot")
             or attrs.get("name")
             or raw.get("title", "")
             or ""
@@ -67,6 +74,7 @@ class SabEldoradoSourceAdapter:
         mutations_raw = attrs.get("mutations", "") or attrs.get("mutation_list", "")
         mutations = [m.strip() for m in mutations_raw.split(",") if m.strip()] if mutations_raw else []
         quantity = int(raw.get("quantity", 1) or 1)
+        image_url = _extract_image_url(raw)
         return {
             "offer_id": offer_id,
             "item_name": item_name,
@@ -76,4 +84,5 @@ class SabEldoradoSourceAdapter:
             "mutations": mutations,
             "price": price,
             "quantity": quantity,
+            "image_url": image_url,
         }
