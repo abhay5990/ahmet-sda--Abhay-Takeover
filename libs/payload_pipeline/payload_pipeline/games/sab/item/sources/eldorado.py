@@ -1,7 +1,6 @@
 """Eldorado source adapter for SAB items."""
 from __future__ import annotations
 import logging
-
 logger = logging.getLogger(__name__)
 
 
@@ -37,12 +36,33 @@ class SabEldoradoSourceAdapter:
         trade_values = raw.get("tradeEnvironmentValues") or []
         attrs = {}
         for tv in trade_values:
-            key = (tv.get("key") or "").lower().replace(" ", "_")
+            # Eldorado API returns "name" field (not "key") for the attribute label
+            # Support both "key" (old format) and "name" (current format)
+            key = (tv.get("key") or tv.get("name") or "").lower().replace(" ", "_")
             val = tv.get("value") or ""
-            attrs[key] = val
-        item_name = attrs.get("item_name") or attrs.get("name") or raw.get("title", "") or ""
+            if key:
+                attrs[key] = val
+
+        # Map Eldorado's attribute names to our internal fields
+        # "Brainrot" attribute = item name (e.g. "Secret Lucky Block")
+        # "Rarity" attribute = rarity (e.g. "Secret", "Common")
+        # "M/S" or "Mutations/s" = ms value
+        # "Mutations" = mutation list
+        item_name = (
+            attrs.get("item_name")
+            or attrs.get("brainrot")          # Eldorado uses "Brainrot" as the item name field
+            or attrs.get("name")
+            or raw.get("title", "")
+            or ""
+        )
         rarity = attrs.get("rarity", "")
-        ms_str = attrs.get("m/s", "") or attrs.get("ms", "") or attrs.get("mutations_per_second", "")
+        ms_str = (
+            attrs.get("m/s")
+            or attrs.get("ms")
+            or attrs.get("mutations_per_second")
+            or attrs.get("mutations/s")
+            or ""
+        )
         ms_min, ms_max = _parse_ms(ms_str)
         mutations_raw = attrs.get("mutations", "") or attrs.get("mutation_list", "")
         mutations = [m.strip() for m in mutations_raw.split(",") if m.strip()] if mutations_raw else []

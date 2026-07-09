@@ -237,8 +237,14 @@ def _process_target_url(
         for page_items in source_provider.fetch_items(target_url.url, seller_username=seller_username, proxy_group=source_proxy_group):
             if stop_event.is_set():
                 break
+            _min_price = float(target_url.min_price or 0)
             for item in page_items:
                 cycle_found += 1
+                # Pre-filter by min_price before attempting to post
+                if _min_price > 0:
+                    item_price = float(item.get('price') or 0)
+                    if item_price < _min_price:
+                        continue
                 try:
                     resolver.resolve(item, source_provider)
                     new_items.append(item)
