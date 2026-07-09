@@ -136,10 +136,10 @@ class EldoradoSourceProvider:
         # Note: Eldorado API userId/sellerId filters do not work for item listings.
         # Always use client-side seller filtering (fast with pageSize=100).
         if seller_username:
-            logger.info("Client-side filtering for seller '%s' (pageSize=100)", seller_username)
+            logger.info("Client-side filtering for seller '%s' (pageSize=50)", seller_username)
 
         page = 1
-        page_size = 100
+        page_size = 50
         while True:
             try:
                 params = _parse_query_string(url)
