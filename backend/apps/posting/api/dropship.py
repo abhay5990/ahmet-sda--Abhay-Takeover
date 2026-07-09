@@ -374,6 +374,60 @@ def create_dropship_url(request, config_id):
     return JsonResponse({'id': target_url.id}, status=201)
 
 
+@require_http_methods(['POST'])
+@login_required
+def bulk_create_dropship_urls(request, config_id):
+    """Create one DropshipTargetURL per seller from a list of seller usernames."""
+    try:
+        config = DropshippingJobConfig.objects.get(id=config_id)
+    except DropshippingJobConfig.DoesNotExist:
+        return JsonResponse({'error': 'Config not found'}, status=404)
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    sellers = data.get('sellers', [])
+    if not sellers or not isinstance(sellers, list):
+        return JsonResponse({'error': 'sellers list is required'}, status=400)
+    url_base = data.get('url', '')
+    multiplier_low = data.get('multiplier_low', 2.0)
+    multiplier_mid = data.get('multiplier_mid', 1.8)
+    multiplier_high = data.get('multiplier_high', 1.5)
+    min_price = data.get('min_price', 0)
+    forced_ending = data.get('forced_ending', 0.99)
+    created = 0
+    skipped = 0
+    for seller in sellers:
+        seller = seller.strip()
+        if not seller:
+            continue
+        # Skip if this seller already exists for this config
+        if DropshipTargetURL.objects.filter(config=config, seller_username=seller).exists():
+            skipped += 1
+            continue
+        err = _validate_url_fields({
+            'multiplier_low': multiplier_low,
+            'multiplier_mid': multiplier_mid,
+            'multiplier_high': multiplier_high,
+            'min_price': min_price,
+        })
+        if err:
+            return JsonResponse({'error': err}, status=400)
+        DropshipTargetURL.objects.create(
+            config=config,
+            url=url_base,
+            multiplier_low=multiplier_low,
+            multiplier_mid=multiplier_mid,
+            multiplier_high=multiplier_high,
+            min_price=min_price,
+            forced_ending=forced_ending if forced_ending is not None else None,
+            seller_username=seller,
+            enabled=True,
+        )
+        created += 1
+    return JsonResponse({'created': created, 'skipped': skipped}, status=201)
+
+
 @login_required
 @role_required('admin', 'user')
 def update_dropship_url(request, url_id):

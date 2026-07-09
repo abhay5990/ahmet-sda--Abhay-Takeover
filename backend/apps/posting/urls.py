@@ -84,6 +84,7 @@ urlpatterns = [
     path('api/dropship/configs/<int:config_id>/', dropship_api.update_dropship_config, name='api_update_dropship_config'),
     path('api/dropship/configs/<int:config_id>/delete/', dropship_api.delete_dropship_config, name='api_delete_dropship_config'),
     path('api/dropship/configs/<int:config_id>/urls/', dropship_api.create_dropship_url, name='api_create_dropship_url'),
+    path('api/dropship/configs/<int:config_id>/urls/bulk/', dropship_api.bulk_create_dropship_urls, name='api_bulk_create_dropship_urls'),
     path('api/dropship/seller-check/', dropship_api.seller_check, name='api_dropship_seller_check'),
 
     # API — dropship URLs

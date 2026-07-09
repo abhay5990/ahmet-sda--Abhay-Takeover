@@ -292,6 +292,47 @@
 
                 <!-- URLs Table -->
                 <div class="p-4">
+                    <!-- Sellers summary section -->
+                    <template x-if="config.urls && config.urls.filter(u => u.seller_username).length > 0">
+                        <div class="mb-3 px-1">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                                    Sellers
+                                    <span class="ml-1 text-gray-400 font-normal normal-case"
+                                          x-text="'(' + config.urls.filter(u => u.seller_username).length + ' active)'"></span>
+                                </h4>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5">
+                                <template x-for="url in config.urls.filter(u => u.seller_username)" :key="url.id">
+                                    <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium border cursor-default"
+                                         :class="url.enabled ? 'bg-violet-50 border-violet-200 text-violet-700' : 'bg-gray-100 border-gray-200 text-gray-400'">
+                                        <span class="w-1.5 h-1.5 rounded-full inline-block"
+                                              :class="url.enabled ? 'bg-violet-400' : 'bg-gray-300'"></span>
+                                        <span x-text="url.seller_username"></span>
+                                        <template x-if="url.processing_state && url.processing_state !== 'idle'">
+                                            <span class="text-[9px] px-1 rounded"
+                                                  :class="url.processing_state === 'fetching' ? 'bg-amber-200 text-amber-700' : 'bg-blue-200 text-blue-700'"
+                                                  x-text="url.processing_state === 'fetching' ? '⟳' : '↑'"></span>
+                                        </template>
+                                        <template x-if="url.cycle_posted > 0">
+                                            <span class="text-[9px] text-emerald-600 font-bold" x-text="'+' + url.cycle_posted"></span>
+                                        </template>
+                                        <button @click="toggleUrl(url)" class="ml-0.5 opacity-50 hover:opacity-100" :title="url.enabled ? 'Pause' : 'Enable'">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path x-show="url.enabled" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6"/>
+                                                <path x-show="!url.enabled" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                            </svg>
+                                        </button>
+                                        <button @click="deleteUrl(url)" class="ml-0.5 opacity-40 hover:opacity-100 hover:text-red-500" title="Remove">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="text-sm font-medium text-gray-700">Target URLs</h3>
                         <button @click="openAddUrl(config)"
@@ -500,39 +541,64 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            Seller Filter
-                            <span class="text-xs font-normal text-gray-400 ml-1">(optional — leave blank to source from all sellers)</span>
-                        </label>
-                        <div class="flex gap-2">
-                            <input type="text" x-model="urlForm.seller_username"
-                                   placeholder="e.g. OdbougShop"
-                                   class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm"
-                                   @input="sellerCheckResult = null">
-                            <button type="button"
-                                    @click="checkSeller()"
-                                    :disabled="!urlForm.seller_username.trim() || sellerChecking"
-                                    class="px-3 py-2 text-xs bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg disabled:opacity-40 whitespace-nowrap">
-                                <span x-text="sellerChecking ? 'Checking…' : 'Verify Seller'"></span>
-                            </button>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-sm font-medium text-gray-700">
+                                Seller Filter
+                                <span class="text-xs font-normal text-gray-400 ml-1">(optional)</span>
+                            </label>
+                            <template x-if="!editingUrl">
+                                <button type="button" @click="bulkSellerMode = !bulkSellerMode; urlForm.seller_username = ''; bulkSellers = ''"
+                                        class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
+                                    <span x-text="bulkSellerMode ? '← Single seller' : '+ Bulk add sellers'"></span>
+                                </button>
+                            </template>
                         </div>
-                        <template x-if="sellerCheckResult">
-                            <div class="mt-2 p-2 rounded-lg text-xs"
-                                 :class="sellerCheckResult.found ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-red-50 border border-red-200 text-red-700'">
-                                <template x-if="sellerCheckResult.found">
-                                    <span>
-                                        ✅ <strong x-text="sellerCheckResult.username"></strong>
-                                        <template x-if="sellerCheckResult.isVerifiedSeller">
-                                            <span class="ml-1 px-1 bg-blue-100 text-blue-700 rounded">Verified</span>
+                        <!-- Single seller mode -->
+                        <template x-if="!bulkSellerMode">
+                            <div>
+                                <div class="flex gap-2">
+                                    <input type="text" x-model="urlForm.seller_username"
+                                           placeholder="e.g. OdbougShop"
+                                           class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                                           @input="sellerCheckResult = null">
+                                    <button type="button"
+                                            @click="checkSeller()"
+                                            :disabled="!urlForm.seller_username.trim() || sellerChecking"
+                                            class="px-3 py-2 text-xs bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg disabled:opacity-40 whitespace-nowrap">
+                                        <span x-text="sellerChecking ? 'Checking…' : 'Verify Seller'"></span>
+                                    </button>
+                                </div>
+                                <template x-if="sellerCheckResult">
+                                    <div class="mt-2 p-2 rounded-lg text-xs"
+                                         :class="sellerCheckResult.found ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-red-50 border border-red-200 text-red-700'">
+                                        <template x-if="sellerCheckResult.found">
+                                            <span>
+                                                ✅ <strong x-text="sellerCheckResult.username"></strong>
+                                                <template x-if="sellerCheckResult.isVerifiedSeller">
+                                                    <span class="ml-1 px-1 bg-blue-100 text-blue-700 rounded">Verified</span>
+                                                </template>
+                                                <template x-if="sellerCheckResult.rating">
+                                                    <span class="ml-1">⭐ <span x-text="sellerCheckResult.rating"></span></span>
+                                                </template>
+                                            </span>
                                         </template>
-                                        <template x-if="sellerCheckResult.rating">
-                                            <span class="ml-1">⭐ <span x-text="sellerCheckResult.rating"></span></span>
+                                        <template x-if="!sellerCheckResult.found">
+                                            <span>⚠️ Seller not found in current listings — filter will still apply.</span>
                                         </template>
-                                    </span>
+                                    </div>
                                 </template>
-                                <template x-if="!sellerCheckResult.found">
-                                    <span>⚠️ Seller not found in current listings — they may have no active items right now, but the filter will still apply.</span>
-                                </template>
+                            </div>
+                        </template>
+                        <!-- Bulk seller mode -->
+                        <template x-if="bulkSellerMode">
+                            <div>
+                                <textarea x-model="bulkSellers" rows="5"
+                                          placeholder="Paste seller usernames, one per line:&#10;OdbougShop&#10;SellerTwo&#10;SellerThree"
+                                          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono resize-y"></textarea>
+                                <p class="text-xs text-gray-400 mt-1">
+                                    One seller per line. Each seller gets their own URL entry with the same filter and multipliers above.
+                                    <span class="font-medium text-indigo-600" x-text="bulkSellers.split('\n').filter(s => s.trim()).length + ' seller(s) detected'"></span>
+                                </p>
                             </div>
                         </template>
                     </div>
@@ -540,9 +606,9 @@
                 <div class="flex justify-end gap-3 mt-6">
                     <button @click="showUrlModal = false; editingUrl = null;"
                             class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
-                    <button @click="editingUrl ? saveUrlEdit() : addUrl()"
+                    <button @click="editingUrl ? saveUrlEdit() : (bulkSellerMode ? addBulkUrls() : addUrl())"
                             class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
-                        <span x-text="editingUrl ? 'Save' : 'Add'"></span>
+                        <span x-text="editingUrl ? 'Save' : (bulkSellerMode ? 'Add All Sellers' : 'Add')"></span>
                     </button>
                 </div>
             </div>
@@ -558,6 +624,8 @@ function dropshipManager() {
     return {
         configs: [],
         stats: { active_items: 0, active_configs: 0, recent_logs: [] },
+        bulkSellers: '',
+        bulkSellerMode: false,
         scheduler: {
             alive: false,
             pid: null,
@@ -780,6 +848,8 @@ function dropshipManager() {
             this.activeSourceProvider = (config.source_account && config.source_account.provider) ? config.source_account.provider : 'lzt';
             this.editingUrl = null;
             this.urlForm = {url: '', multiplier_low: 2.0, multiplier_mid: 1.8, multiplier_high: 1.5, min_price: 0, forced_ending: 0.99, seller_username: ''};
+            this.bulkSellers = '';
+            this.bulkSellerMode = false;
             this.sellerCheckResult = null;
             this.showUrlModal = true;
         },
@@ -811,6 +881,35 @@ function dropshipManager() {
             } else {
                 const err = await res.json();
                 alert(err.error || 'Error adding URL');
+            }
+        },
+        async addBulkUrls() {
+            const sellers = this.bulkSellers.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+            if (sellers.length === 0) { alert('No sellers entered.'); return; }
+            const base = {...this.urlForm};
+            const res = await fetch(`/posting/api/dropship/configs/${this.activeConfigId}/urls/bulk/`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.getCsrf()},
+                body: JSON.stringify({
+                    url: base.url,
+                    multiplier_low: base.multiplier_low,
+                    multiplier_mid: base.multiplier_mid,
+                    multiplier_high: base.multiplier_high,
+                    min_price: base.min_price,
+                    forced_ending: base.forced_ending,
+                    sellers: sellers,
+                }),
+            });
+            if (res.ok) {
+                const data = await res.json();
+                this.showUrlModal = false;
+                this.bulkSellers = '';
+                this.bulkSellerMode = false;
+                await this.loadConfigs();
+                alert(`✅ Added ${data.created} seller URL(s) successfully!${data.skipped > 0 ? ' (' + data.skipped + ' already existed)' : ''}`);
+            } else {
+                const err = await res.json();
+                alert(err.error || 'Error adding bulk sellers');
             }
         },
 
