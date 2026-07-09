@@ -410,7 +410,7 @@ def bulk_create_dropship_urls(request, config_id):
             'multiplier_mid': multiplier_mid,
             'multiplier_high': multiplier_high,
             'min_price': min_price,
-        })
+        }, _URL_LIMITS)
         if err:
             return JsonResponse({'error': err}, status=400)
         DropshipTargetURL.objects.create(
