@@ -1,5 +1,7 @@
 from __future__ import annotations
 import re
+from payload_pipeline.marketplaces.base import BasePayloadBuilder
+
 
 def _slugify(text):
     slug = text.lower().strip()
@@ -7,7 +9,8 @@ def _slugify(text):
     slug = re.sub(r"[\s-]+", "-", slug)
     return slug.strip("-")
 
-class SabItemGameBoostBuilder:
+
+class SabItemGameBoostBuilder(BasePayloadBuilder):
     marketplace = "gameboost"
 
     def build_payload(self, subject, listing, ctx):
@@ -15,12 +18,9 @@ class SabItemGameBoostBuilder:
         title = content.get("title", subject.item_name or "SAB Item")
         description = content.get("description", "")
 
-        price = subject.price
-        if hasattr(ctx, "apply_multiplier"):
-            price = ctx.apply_multiplier(price)
-        elif hasattr(ctx, "multiplier") and ctx.multiplier:
-            price = round(price * ctx.multiplier, 2)
-        if hasattr(ctx, "exchange_rate") and ctx.exchange_rate:
+        # Apply pricing rules (multiplier) then exchange rate — same as BaseBuilder pattern
+        price = self._apply_pricing(subject.price, ctx)
+        if ctx.exchange_rate is not None:
             price = round(price * ctx.exchange_rate, 2)
 
         # Build account_data using GameBoost SAB template fields
