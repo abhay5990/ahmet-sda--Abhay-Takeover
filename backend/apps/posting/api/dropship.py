@@ -425,7 +425,7 @@ def bulk_create_dropship_urls(request, config_id):
             enabled=True,
         )
         created += 1
-    return JsonResponse({'created': created, 'skipped': skipped}, status=201)
+    return JsonResponse({'ok': True, 'created': created, 'skipped': skipped}, status=201)
 
 
 @login_required
