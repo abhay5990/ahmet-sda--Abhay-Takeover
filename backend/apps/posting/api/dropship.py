@@ -405,7 +405,7 @@ def bulk_create_dropship_urls(request, config_id):
         if DropshipTargetURL.objects.filter(config=config, seller_username=seller).exists():
             skipped += 1
             continue
-        err = _validate_url_fields({
+        err = _validate_numeric_fields({
             'multiplier_low': multiplier_low,
             'multiplier_mid': multiplier_mid,
             'multiplier_high': multiplier_high,
