@@ -993,6 +993,14 @@ def seller_check(request):
                 break
 
         if found_user:
+            seller_id = found_user.get('id') or ''
+            # Auto-save UUID to matching DropshipTargetURL records
+            if seller_id and config_id:
+                try:
+                    from apps.posting.models import DropshipTargetURL
+                    DropshipTargetURL.objects.filter(config_id=config_id, seller_username__iexact=username).update(seller_uuid=seller_id)
+                except Exception:
+                    pass
             return JsonResponse({
                 'found': True,
                 'username': found_user.get('username') or username,

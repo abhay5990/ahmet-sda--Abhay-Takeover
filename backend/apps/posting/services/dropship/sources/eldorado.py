@@ -3,14 +3,20 @@ from __future__ import annotations
 import logging
 import time
 from typing import Iterator
+
 import requests
 
 logger = logging.getLogger(__name__)
+
 from apps.posting.services.dropship.source_provider import register_source  # noqa: E402
 
 # Eldorado item listing API
 ELDORADO_API_BASE = "https://eldorado.gg/api/v1/item-management/offers"
 SAB_GAME_ID = 259  # Steal-A-Brainrot game ID on Eldorado
+
+# In-memory cache: seller_username.lower() → userId UUID
+# Populated lazily on first fetch; persists for the lifetime of the process.
+_SELLER_UUID_CACHE: dict[str, str] = {}
 
 
 class EldoradoSourceProvider:
@@ -38,7 +44,71 @@ class EldoradoSourceProvider:
                     "Content-Type": "application/json",
                     "User-Agent": "Mozilla/5.0",
                 })
+            else:
+                self._session.headers.update({"User-Agent": "Mozilla/5.0"})
         return self._session
+
+    def _resolve_seller_uuid(self, seller_username: str) -> str | None:
+        """Resolve a seller username to their Eldorado userId UUID.
+
+        The Eldorado public API supports ``?userId={UUID}`` for server-side
+        filtering, but NOT ``?sellerUsername=``.  We resolve the UUID by
+        scanning the first few pages of the global listing until we find an
+        item from that seller, then cache the result for the process lifetime.
+
+        Returns the UUID string, or None if not found within the scan limit.
+        """
+        key = seller_username.lower()
+        if key in _SELLER_UUID_CACHE:
+            return _SELLER_UUID_CACHE[key]
+
+        logger.info("Resolving Eldorado UUID for seller '%s'…", seller_username)
+        session = self._get_session()
+        # Scan up to 50 pages (1 000 items) sorted by newest — recent sellers
+        # appear near the top.
+        for page in range(1, 51):
+            try:
+                resp = session.get(
+                    ELDORADO_API_BASE,
+                    params={
+                        "gameId": SAB_GAME_ID,
+                        "category": "CustomItem",
+                        "sortBy": "date",
+                        "sortOrder": "desc",
+                        "page": page,
+                        "pageSize": 20,
+                    },
+                    timeout=15,
+                )
+                resp.raise_for_status()
+                data = resp.json()
+                results = data.get("results") or []
+                for entry in results:
+                    user = entry.get("user") or {}
+                    uname = (user.get("username") or "").lower()
+                    uid = user.get("id") or ""
+                    # Cache every seller we encounter along the way
+                    if uname and uid:
+                        _SELLER_UUID_CACHE[uname] = uid
+                    if uname == key and uid:
+                        logger.info(
+                            "Resolved seller '%s' → UUID %s (found on page %d)",
+                            seller_username, uid, page,
+                        )
+                        return uid
+                if not results:
+                    break
+                time.sleep(0.3)
+            except Exception as exc:
+                logger.warning("UUID resolve error (page %d): %s", page, exc)
+                break
+
+        logger.warning(
+            "Could not resolve UUID for seller '%s' within scan limit — "
+            "falling back to client-side filtering",
+            seller_username,
+        )
+        return None
 
     def fetch_items(self, url: str, seller_username: str = "", proxy_group=None) -> Iterator[list[dict]]:
         """Fetch pages of items from Eldorado marketplace.
@@ -48,9 +118,12 @@ class EldoradoSourceProvider:
              or   'https://www.eldorado.gg/users/OdbougShop/shop/CustomItem?gameId=259'
 
         seller_username: if set, only items from this seller are yielded.
-                         The Eldorado API does not support server-side seller filtering,
-                         so we fetch all pages and filter client-side by
-                         item["user"]["username"].
+            Strategy:
+            1. Resolve the seller's userId UUID (cached after first lookup).
+            2. Pass ``userId={UUID}`` as a query param → server-side filter,
+               returns ONLY that seller's items (typically 1–2 pages).
+            3. If UUID resolution fails, fall back to client-side filtering
+               (scans all pages — slow, but correct).
 
         Yields lists (pages) of raw item dicts.
         """
@@ -60,13 +133,31 @@ class EldoradoSourceProvider:
         if not seller_username:
             seller_username = _extract_seller_from_url(url)
 
+        # Resolve seller UUID for server-side filtering
+        seller_uuid: str | None = None
+        if seller_username:
+            seller_uuid = self._resolve_seller_uuid(seller_username)
+            if seller_uuid:
+                logger.info(
+                    "Using server-side userId filter for seller '%s' (UUID: %s)",
+                    seller_username, seller_uuid,
+                )
+            else:
+                logger.warning(
+                    "Falling back to client-side filtering for seller '%s'",
+                    seller_username,
+                )
+
         page = 1
         page_size = 20
-
         while True:
             try:
                 params = _parse_query_string(url)
                 params.update({"page": page, "pageSize": page_size})
+
+                # Server-side seller filter via userId UUID
+                if seller_uuid:
+                    params["userId"] = seller_uuid
 
                 resp = session.get(ELDORADO_API_BASE, params=params, timeout=15)
                 if resp.status_code == 401:
@@ -74,7 +165,6 @@ class EldoradoSourceProvider:
                     break
                 resp.raise_for_status()
                 data = resp.json()
-
                 raw_items = data.get("results") or data.get("offers") or data.get("items") or data.get("data") or []
                 if not raw_items:
                     break
@@ -85,8 +175,8 @@ class EldoradoSourceProvider:
                     item = _normalize_item(entry)
                     if not item:
                         continue
-                    # Client-side seller filter
-                    if seller_username:
+                    # Client-side seller filter (fallback when UUID not resolved)
+                    if seller_username and not seller_uuid:
                         item_seller = (item.get("_seller_username") or "").lower()
                         if item_seller != seller_username.lower():
                             continue
@@ -106,10 +196,8 @@ class EldoradoSourceProvider:
                         break
                 else:
                     break
-
                 page += 1
                 time.sleep(0.5)
-
             except Exception as exc:
                 logger.error("Eldorado fetch_items error (page %d): %s", page, exc)
                 break
@@ -118,45 +206,68 @@ class EldoradoSourceProvider:
         """Fetch public seller profile info from Eldorado.
 
         Returns dict with keys: username, rating, completedOrders, isVerifiedSeller, etc.
-        Returns None if not found or on error.
+        Scans the first few pages of SAB listings to find the seller.
         """
         session = self._get_session()
         try:
-            # Try the seller's shop endpoint to get their profile from the first item's user object
-            resp = session.get(
-                ELDORADO_API_BASE,
-                params={"pageSize": 1, "page": 1},
-                timeout=10,
-            )
-            if not resp.ok:
-                return None
-            data = resp.json()
-            results = data.get("results") or []
-            for entry in results:
-                user = entry.get("user") or {}
-                uname = user.get("username") or ""
-                if uname.lower() == seller_username.lower():
-                    return _parse_seller_profile(user)
-            # Not found in first page — return minimal info
+            for page in range(1, 4):
+                resp = session.get(
+                    ELDORADO_API_BASE,
+                    params={
+                        "gameId": SAB_GAME_ID,
+                        "category": "CustomItem",
+                        "pageSize": 20,
+                        "page": page,
+                    },
+                    timeout=10,
+                )
+                if not resp.ok:
+                    break
+                data = resp.json()
+                results = data.get("results") or []
+                for entry in results:
+                    user = entry.get("user") or {}
+                    uname = (user.get("username") or "").lower()
+                    if uname == seller_username.lower():
+                        return _parse_seller_profile(user)
             return {"username": seller_username, "found": False}
         except Exception as exc:
             logger.warning("fetch_seller_profile %s error: %s", seller_username, exc)
             return None
 
-    def check_item(self, item_id: str) -> "ItemCheckResult":
-        """Check if an Eldorado offer still exists."""
+    def check_item(self, item_id: str, *, proxy_group=None):
+        """Check if an Eldorado item still exists and get its current price."""
         from apps.posting.services.dropship.source_provider import ItemCheckResult
+        from decimal import Decimal
+
         session = self._get_session()
         try:
-            resp = session.get(f"{ELDORADO_API_BASE}/{item_id}", timeout=10)
+            resp = session.get(
+                f"{ELDORADO_API_BASE}/{item_id}",
+                timeout=10,
+            )
             if resp.status_code == 404:
-                return ItemCheckResult(exists=False)
-            resp.raise_for_status()
+                return ItemCheckResult(exists=False, status="not_found")
+            if not resp.ok:
+                logger.warning("check_item %s: HTTP %d", item_id, resp.status_code)
+                return ItemCheckResult(exists=True)  # Assume exists on error
             data = resp.json()
             offer = data.get("offer") or data
-            status = (offer.get("status") or "").lower()
-            exists = status not in ("sold", "deleted", "cancelled", "expired", "inactive")
-            return ItemCheckResult(exists=exists)
+            state = (offer.get("offerState") or "").lower()
+            if state in ("inactive", "deleted", "sold"):
+                return ItemCheckResult(exists=False, status=state)
+            price_data = offer.get("minPurchasePrice") or offer.get("pricePerUnitInUSD") or {}
+            price = None
+            if isinstance(price_data, dict):
+                amt = price_data.get("amount")
+                if amt is not None:
+                    price = Decimal(str(amt))
+            return ItemCheckResult(
+                exists=True,
+                status=state or "active",
+                current_price=price,
+                raw_data=data,
+            )
         except Exception as exc:
             logger.error("Eldorado check_item %s error: %s", item_id, exc)
             return ItemCheckResult(exists=True)  # Assume exists on error
@@ -179,13 +290,11 @@ def _normalize_item(entry: dict) -> dict | None:
 
     The API wraps items as:
         {"offer": {...}, "user": {...}, "userOrderInfo": {...}, "deliveryTime": {...}}
-
     We flatten this into a single dict that the rest of the pipeline expects,
     preserving the original structure under "offer" and "user" keys.
     """
     if not entry:
         return None
-
     offer = entry.get("offer") or {}
     user = entry.get("user") or {}
 
@@ -274,7 +383,7 @@ def _parse_query_string(qs: str) -> dict:
     Also handles full URLs — extracts only the query string params.
     The path (e.g. /users/OdbougShop/shop/CustomItem) is intentionally ignored
     because the Eldorado API does not support path-based seller filtering.
-    Seller filtering is done client-side via seller_username param.
+    Seller filtering is done via userId UUID (server-side) or client-side fallback.
     """
     params = {}
     if not qs:
@@ -290,4 +399,6 @@ def _parse_query_string(qs: str) -> dict:
             k, v = part.split("=", 1)
             params[k.strip()] = v.strip()
     return params
+
+
 register_source("eldorado", EldoradoSourceProvider)

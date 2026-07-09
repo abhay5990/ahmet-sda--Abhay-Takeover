@@ -697,6 +697,10 @@ class DropshipTargetURL(models.Model):
         max_length=100, null=True, blank=True, default=None,
         help_text='If set, only source items from this specific Eldorado seller username.',
     )
+    seller_uuid = models.CharField(
+        max_length=100, null=True, blank=True, default=None,
+        help_text='Eldorado userId UUID for this seller (resolved automatically, enables server-side filtering).',
+    )
     exchange_rate = models.DecimalField(
         max_digits=6, decimal_places=4, null=True, blank=True, default=0.87,
         help_text='USD→EUR conversion rate for Gameboost. Null = no conversion.',

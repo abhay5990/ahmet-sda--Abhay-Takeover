@@ -229,6 +229,11 @@ def _process_target_url(
         cycle_found = 0
 
         seller_username = getattr(target_url, 'seller_username', '') or ''
+        # Pre-seed the UUID cache from DB if available — avoids expensive scan
+        seller_uuid_db = getattr(target_url, 'seller_uuid', None) or ''
+        if seller_username and seller_uuid_db:
+            from apps.posting.services.dropship.sources.eldorado import _SELLER_UUID_CACHE
+            _SELLER_UUID_CACHE[seller_username.lower()] = seller_uuid_db
         for page_items in source_provider.fetch_items(target_url.url, seller_username=seller_username, proxy_group=source_proxy_group):
             if stop_event.is_set():
                 break
