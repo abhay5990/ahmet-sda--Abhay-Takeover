@@ -7,6 +7,10 @@ FANDOM_API = "https://steal-a-brainrot.fandom.com/api.php"
 
 
 class SabItemMediaStrategy:
+    def prepare(self, subject, request):
+        """Alias for fetch_media — called by the pipeline core."""
+        return self.fetch_media(subject, request)
+
     def fetch_media(self, subject, request):
         if not subject.item_name:
             return []

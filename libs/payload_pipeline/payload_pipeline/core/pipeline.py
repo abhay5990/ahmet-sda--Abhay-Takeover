@@ -96,7 +96,7 @@ class PayloadPipeline:
 
         # --- validate ---------------------------------------------------
         try:
-            validate_resolved(subject, game=request.game, kind=request.kind)
+            validate_resolved(subject, game=request.game, kind=request.kind, category=getattr(request, "category", "account") or "account")
         except Exception as exc:
             logger.error("Validation failed for %s: %s", request.game, exc)
             return PrepareResult(success=False, error=str(exc), error_stage="validate")

@@ -7,7 +7,7 @@ RARITY_EMOJI = {
 
 
 class SabItemComposer:
-    def compose(self, subject, request):
+    def compose(self, subject, request, media=None):
         title = self._build_title(subject)
         description = self._build_description(subject)
         return {"gameboost": {"title": title, "description": description}}
