@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 from apps.posting.services.dropship.source_provider import register_source  # noqa: E402
 
 # Eldorado item listing API
-ELDORADO_API_BASE = "https://eldorado.gg/api/v1/item-management/offers"
+ELDORADO_API_BASE = "https://www.eldorado.gg/api/v1/item-management/offers"
 SAB_GAME_ID = 259  # Steal-A-Brainrot game ID on Eldorado
 
 # In-memory cache: seller_username.lower() → userId UUID
