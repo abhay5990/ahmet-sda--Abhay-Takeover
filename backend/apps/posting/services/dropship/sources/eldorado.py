@@ -4,7 +4,16 @@ import logging
 import time
 from typing import Iterator
 
-import requests
+# Use curl_cffi for browser TLS impersonation — Cloudflare blocks plain
+# Python requests.Session() when running as a system service (different
+# network/TLS fingerprint context). curl_cffi mimics Chrome's TLS handshake
+# and bypasses Cloudflare bot protection reliably.
+try:
+    from curl_cffi import requests as cffi_requests
+    _USE_CURL_CFFI = True
+except ImportError:
+    import requests as cffi_requests  # type: ignore[no-redef]
+    _USE_CURL_CFFI = False
 
 logger = logging.getLogger(__name__)
 
@@ -13,6 +22,9 @@ from apps.posting.services.dropship.source_provider import register_source  # no
 # Eldorado item listing API
 ELDORADO_API_BASE = "https://www.eldorado.gg/api/v1/item-management/offers"
 SAB_GAME_ID = 259  # Steal-A-Brainrot game ID on Eldorado
+
+# Browser impersonation target for curl_cffi
+_IMPERSONATE = "chrome124"
 
 # In-memory cache: seller_username.lower() → userId UUID
 # Populated lazily on first fetch; persists for the lifetime of the process.
@@ -31,8 +43,14 @@ class EldoradoSourceProvider:
 
     def _get_session(self):
         if self._session is None:
-            self._session = requests.Session()
-            # Use stored auth token from credential
+            if _USE_CURL_CFFI:
+                # curl_cffi Session with Chrome TLS fingerprint — bypasses Cloudflare
+                self._session = cffi_requests.Session(impersonate=_IMPERSONATE)
+            else:
+                import requests
+                self._session = requests.Session()
+
+            # Apply auth token if available
             token = None
             if hasattr(self._credential, "token"):
                 token = self._credential.token
@@ -42,10 +60,7 @@ class EldoradoSourceProvider:
                 self._session.headers.update({
                     "Authorization": f"Bearer {token}",
                     "Content-Type": "application/json",
-                    "User-Agent": "Mozilla/5.0",
                 })
-            else:
-                self._session.headers.update({"User-Agent": "Mozilla/5.0"})
         return self._session
 
     def _resolve_seller_uuid(self, seller_username: str) -> str | None:
@@ -158,7 +173,6 @@ class EldoradoSourceProvider:
                 else:
                     params = _parse_query_string(url)
                     params.update({"page": page, "pageSize": page_size})
-
 
                 resp = session.get(ELDORADO_API_BASE, params=params, timeout=15)
                 if resp.status_code == 401:
