@@ -416,6 +416,15 @@ def _attempt_delivery(batch: RobuxCrateBatch, success_count: int, total: int) ->
             'Batch %s delivered (%d/%d orders completed)',
             batch.id, success_count, total,
         )
+        _telegram_alert(
+            "\u2705 <b>Robux Delivered Successfully</b>\n\n"
+            + f"Order   : {batch.marketplace_order_id}\n"
+            + f"Username: {batch.roblox_username}\n"
+            + f"Amount  : {batch.robux_amount:,} R$\n"
+            + f"Store   : {batch.marketplace}\n"
+            + f"Place   : {batch.place_name or batch.place_id}\n\n"
+            + "Marketplace marked delivered \u2713"
+        )
     elif retryable:
         batch.status = RobuxCrateBatch.Status.PROCESSING
         batch.delivery_error = error or 'Delivery failed (will retry)'
