@@ -6,6 +6,7 @@ from typing import Iterator
 import requests
 
 logger = logging.getLogger(__name__)
+from apps.posting.services.dropship.source_provider import register_source  # noqa: E402
 
 # Eldorado item listing API
 ELDORADO_API_BASE = "https://eldorado.gg/api/v1/item-management/offers"
@@ -289,3 +290,4 @@ def _parse_query_string(qs: str) -> dict:
             k, v = part.split("=", 1)
             params[k.strip()] = v.strip()
     return params
+register_source(eldorado, EldoradoSourceProvider)
