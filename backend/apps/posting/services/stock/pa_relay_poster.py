@@ -160,7 +160,13 @@ class PARelayPoster:
 
         for idx, row in enumerate(rows):
             try:
-                payload = self._build_json_payload(row)
+                # Detect if row is already a JSON payload (pa_mode='single') or an Excel row dict (pa_mode='bulk').
+                # JSON payloads have 'serverId' key; Excel rows have 'Game'/'Server' keys.
+                if isinstance(row, dict) and 'serverId' in row:
+                    # Already a pre-built JSON payload — pass through directly
+                    payload = row
+                else:
+                    payload = self._build_json_payload(row)
                 offer_id, error = self._post_one(token, store_slug, payload)
                 if offer_id:
                     result.successful[idx] = offer_id
