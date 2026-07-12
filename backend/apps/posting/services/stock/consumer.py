@@ -583,15 +583,11 @@ class StockConsumer:
         Collects all items for a store, builds payload dicts, posts via
         PARelayPoster, then persists results.
         """
-        import logging
-        from apps.posting.models import PostingJobItemStatus, PostingLog, PostingLogLevel
-        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
-        from apps.posting.services.stock.pa_relay_poster import PARelayPoster, fetch_relay_token
-        from apps.posting.services.stock.pipeline import build_item_payload
-        from apps.posting.services.stock.persist import persist_success
-        from apps.posting.services.pool.pool import add_failed_owned_products_to_pool
-        from apps.posting.services.stock.normalize import normalize_offer_response
-        from apps.posting.services.stock.variant_router import VariantRouter, build_variant_context
+        # All imports are already at module level in consumer.py
+        # Using: build_item_payload, persist_success, add_failed_owned_products_to_pool,
+        #        release_dispatch_items_for_job, PARelayPoster, fetch_relay_token,
+        #        normalize_offer_response, VariantRouter, build_variant_context
+        # (imported from correct paths at top of file)
 
         logger = logging.getLogger(__name__)
 
