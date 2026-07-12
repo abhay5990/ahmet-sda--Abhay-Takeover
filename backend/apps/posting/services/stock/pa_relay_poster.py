@@ -245,6 +245,15 @@ class PARelayPoster:
         Maps the XLSX column names to the JSON fields expected by /pa-post-offer.
         """
         game_name = str(row.get("Game", "")).lower().replace(" ", "-")
+        # Normalize game name aliases (PA display names → slug keys)
+        _GAME_NAME_ALIASES: dict[str, str] = {
+            "tom-clancys-rainbow-six-siege": "rainbow-six-siege",
+            "tom-clancy's-rainbow-six-siege": "rainbow-six-siege",
+            "rainbow-six": "rainbow-six-siege",
+            "league-of-legends-(lol)": "league-of-legends",
+            "lol": "league-of-legends",
+        }
+        game_name = _GAME_NAME_ALIASES.get(game_name, game_name)
         game_id = PA_GAME_IDS.get(game_name, 0)
         server_id = self._get_server_id(row, game_name)
 
