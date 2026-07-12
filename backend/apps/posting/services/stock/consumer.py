@@ -583,11 +583,8 @@ class StockConsumer:
         Collects all items for a store, builds payload dicts, posts via
         PARelayPoster, then persists results.
         """
-        # All imports are already at module level in consumer.py
-        # Using: build_item_payload, persist_success, add_failed_owned_products_to_pool,
-        #        release_dispatch_items_for_job, PARelayPoster, fetch_relay_token,
-        #        normalize_offer_response, VariantRouter, build_variant_context
-        # (imported from correct paths at top of file)
+        # Inline import to guarantee availability regardless of call order
+        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
 
         logger = logging.getLogger(__name__)
 
