@@ -39,7 +39,7 @@ from apps.posting.services.shared.utils import extract_listing_id
 from apps.posting.services.variant_context import build_variant_context
 from apps.posting.services.variant_routing import PLATFORM_PRIORITY, VariantRouter
 from apps.posting.services.stock.pa_bulk_uploader import PABulkUploader, PABatchResult
-from apps.posting.services.stock.pa_relay_poster import PARelayPoster, PARelayPostResult
+from apps.posting.services.stock.pa_relay_poster import PARelayPoster, PARelayPostResult, fetch_relay_token
 from apps.posting.services.stock.payload_builder import build_item_payload
 from core.marketplace.normalizers import normalize_offer_response
 
@@ -833,10 +833,36 @@ class StockConsumer:
 
         logger.info("PA flush: %d rows (job=%d)", len(excel_rows), job.id)
 
-        # Use relay poster if facade has a relay token available
+        # [RELAY-ALWAYS] All PA posting goes through relay — no XLSX fallback
         _auth = getattr(facade, '_auth', None)
         _relay_token = (_auth.access_token if _auth and _auth.access_token else None)
         _store_slug = (_auth._store_slug if _auth and getattr(_auth, '_store_slug', None) else None)
+
+        # If no cached token, fetch fresh from relay using store credentials
+        if not _relay_token or not _store_slug:
+            _creds = {}
+            _store = getattr(items[0], 'store', None) if items else None
+            if _store and hasattr(_store, 'credential') and _store.credential:
+                _creds = _store.credential.credentials or {}
+            _username = _creds.get('username', '')
+            _password = _creds.get('password', '')
+            _store_slug = _creds.get('store_slug', '')
+            _relay_url = _creds.get('relay_url', 'http://35.231.166.148:3001')
+            _relay_secret = _creds.get('relay_secret', 'pa-relay-secret-2026')
+            if _username and _password and _store_slug:
+                logger.info(
+                    "PA relay token not cached — fetching fresh for store=%s (job=%d)",
+                    _store_slug, job.id,
+                )
+                _relay_token = fetch_relay_token(
+                    _username, _password, _store_slug,
+                    relay_url=_relay_url, relay_secret=_relay_secret,
+                )
+            else:
+                logger.error(
+                    "PA relay: missing credentials for store (job=%d) — cannot post",
+                    job.id,
+                )
 
         if _relay_token and _store_slug:
             logger.info("PA flush via relay: %d rows (job=%d, store=%s)", len(excel_rows), job.id, _store_slug)
@@ -848,9 +874,13 @@ class StockConsumer:
                 failed=_relay_result.failed,
             )
         else:
-            logger.warning("PA relay token/store not available — falling back to XLSX bulk upload (job=%d)", job.id)
-            batch_result: PABatchResult = self._pa_uploader.upload_batch(
-                facade, excel_rows, proxy_group=proxy_group,
+            logger.error(
+                "PA relay: no token available — marking all %d items as failed (job=%d)",
+                len(items), job.id,
+            )
+            batch_result = PABatchResult(
+                successful={},
+                failed={i: "PA relay token unavailable — check relay machine and store credentials" for i in range(len(items))},
             )
 
         from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job

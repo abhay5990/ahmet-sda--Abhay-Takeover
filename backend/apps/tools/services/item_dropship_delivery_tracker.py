@@ -29,6 +29,43 @@ CHAT_ID = int(os.environ.get("ITEM_DROPSHIP_CHAT_ID", "-5542418551"))
 TG_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 REMINDER_HOURS = 2  # remind if not actioned within this many hours
+# ---------------------------------------------------------------------------
+# Eldorado auto-buy
+# ---------------------------------------------------------------------------
+MCT_AUTO_BUY_URL = "http://35.196.132.30:3456/api/ops/eldorado-auto-buy"
+MCT_BRIDGE_SECRET = "bridge-ce1b9d8001c8fc76ccbfd28c44832eec299ccc89ea537e9d"
+
+
+def _auto_buy_eldorado(offer_id: str, store: str = "ezsmurfmart") -> dict:
+    """
+    Call the MCT Node.js server to auto-purchase an Eldorado offer.
+    Returns dict with keys: ok, orderId (on success) or error (on failure).
+    """
+    try:
+        resp = requests.post(
+            MCT_AUTO_BUY_URL,
+            json={"offerId": offer_id, "store": store},
+            headers={"X-Bridge-Secret": MCT_BRIDGE_SECRET},
+            timeout=35,
+        )
+        data = resp.json()
+        return data
+    except Exception as exc:
+        logger.error("auto_buy_eldorado request failed: %s", exc)
+        return {"ok": False, "error": str(exc)}
+
+
+def _extract_offer_id(dp) -> str | None:
+    """Extract the Eldorado offer UUID from a DropshipProduct."""
+    if not dp:
+        return None
+    source_url = getattr(dp, "source_url", "") or ""
+    if source_url.startswith("eldorado:"):
+        return source_url.split(":", 1)[1]
+    source_product_id = getattr(dp, "source_product_id", None)
+    return str(source_product_id) if source_product_id else None
+
+
 
 
 # ---------------------------------------------------------------------------
@@ -44,27 +81,73 @@ def _tg_post(method: str, payload: dict) -> dict:
         return {}
 
 
-def _send_order_notification(tracking) -> int | None:
+def _build_eldorado_purchase_link(dp) -> str | None:
+    """Build the Eldorado purchase link from DropshipProduct source data."""
+    if not dp:
+        return None
+    # source_url format: "eldorado:{offer_uuid}"
+    source_url = getattr(dp, "source_url", "") or ""
+    if source_url.startswith("eldorado:"):
+        offer_id = source_url.split(":", 1)[1]
+        # Use the game seo alias from raw_data if available, fallback to generic
+        raw = dp.raw_data or {}
+        game_alias = raw.get("gameSeoAlias", "steal-a-brainrot-brainrots")
+        return f"https://eldorado.gg/{game_alias}/offers/{offer_id}"
+    # Fallback: try source_product_id
+    source_product_id = getattr(dp, "source_product_id", None)
+    if source_product_id:
+        return f"https://eldorado.gg/steal-a-brainrot-brainrots/offers/{source_product_id}"
+    return None
+
+
+def _send_order_notification(tracking, auto_buy_result: dict | None = None) -> int | None:
     """Send the initial order notification with inline buttons. Returns message_id."""
     order = tracking.order
     dp = tracking.dropship_product
 
     item_name = dp.product_title if dp else "Unknown Item"
-    buy_price = float(dp.price) if dp and dp.price else 0.0
     sell_price = float(order.price)
-    profit = sell_price - buy_price
-    buyer = order.raw_data.get("buyerUsername") or order.raw_data.get("buyer_username") or "Unknown"
+
+    # Buyer: raw_data has nested {"buyer": {"id": ..., "username": "..."}} for GameBoost item orders
+    raw = order.raw_data or {}
+    buyer_obj = raw.get("buyer") or {}
+    if isinstance(buyer_obj, dict):
+        buyer = buyer_obj.get("username") or "Unknown"
+    else:
+        buyer = raw.get("buyerUsername") or raw.get("buyer_username") or "Unknown"
+
     gb_order_id = order.store_order_id
+
+    # Links
+    gb_link = f"https://gameboost.com/orders/{gb_order_id}"
+    eldo_link = _build_eldorado_purchase_link(dp)
+
+    link_line = f'\n<a href="{gb_link}">📦 View GB Order</a>'
+    if eldo_link:
+        link_line += f'  |  <a href="{eldo_link}">🛒 Buy on Eldorado</a>'
+
+    # Auto-buy status line
+    if auto_buy_result is None:
+        auto_buy_line = ""
+        eldo_instruction = "<b>Eldorado team:</b> Buy the item from Eldorado and tap ✅ below."
+    elif auto_buy_result.get("ok"):
+        eldorado_order_id = auto_buy_result.get("orderId", "?")
+        auto_buy_line = f"\n🤖 <b>Auto-bought!</b> Eldorado Order: <code>{eldorado_order_id}</code>"
+        eldo_instruction = "<b>Eldorado team:</b> Item auto-purchased ✅ — just tap ✅ below to confirm."
+    else:
+        err = auto_buy_result.get("error", "unknown")
+        auto_buy_line = f"\n⚠️ <b>Auto-buy failed:</b> {err[:100]}"
+        eldo_instruction = "<b>Eldorado team:</b> Auto-buy failed — please buy manually and tap ✅ below."
 
     text = (
         f"🛒 <b>New Item Dropship Order</b>\n\n"
         f"Item         : <b>{item_name}</b>\n"
         f"GameBoost ID : <code>{gb_order_id}</code>\n"
         f"Buyer        : {buyer}\n"
-        f"Sell Price   : ${sell_price:.2f}\n"
-        f"Buy Price    : ${buy_price:.2f}\n"
-        f"Profit       : ${profit:.2f}\n\n"
-        f"<b>Eldorado team:</b> Buy the item from Eldorado and tap ✅ below.\n"
+        f"Sell Price   : ${sell_price:.2f}"
+        f"{auto_buy_line}"
+        f"{link_line}\n\n"
+        f"{eldo_instruction}\n"
         f"<b>GameBoost team:</b> Mark delivered on GameBoost and tap ✅ below."
     )
 
@@ -88,6 +171,7 @@ def _send_order_notification(tracking) -> int | None:
         "text": text,
         "parse_mode": "HTML",
         "reply_markup": keyboard,
+        "disable_web_page_preview": True,
     })
 
     result = resp.get("result", {})
@@ -336,20 +420,46 @@ def _detect_new_orders() -> None:
             dropship_product=order.dropship_product,
             state=DropshipDeliveryTracking.State.PENDING_ELDORADO,
         )
-
-        # Send Telegram notification
-        message_id = _send_order_notification(tracking)
-        if message_id:
-            tracking.telegram_message_id = message_id
-            tracking.notified_at = timezone.now()
-            tracking.save(update_fields=["telegram_message_id", "notified_at"])
-
         logger.info(
             "New dropship order tracked: #%d (order %s, item: %s)",
             tracking.id,
             order.store_order_id,
             order.dropship_product.product_title if order.dropship_product else "?",
         )
+
+        # ── Auto-buy from Eldorado ──────────────────────────────────────────
+        dp = order.dropship_product
+        offer_id = _extract_offer_id(dp)
+        auto_buy_result = None
+        if offer_id:
+            logger.info("Tracking #%d: auto-buying Eldorado offer %s...", tracking.id, offer_id)
+            auto_buy_result = _auto_buy_eldorado(offer_id, store="ezsmurfmart")
+            if auto_buy_result.get("ok"):
+                eldorado_order_id = auto_buy_result.get("orderId")
+                logger.info(
+                    "Tracking #%d: auto-buy SUCCESS — Eldorado orderId=%s",
+                    tracking.id, eldorado_order_id,
+                )
+                # Mark Eldorado step as done automatically
+                tracking.state = DropshipDeliveryTracking.State.ELDORADO_DONE
+                tracking.eldorado_done_by = f"AutoBot (orderId={eldorado_order_id})"
+                tracking.eldorado_done_at = timezone.now()
+                tracking.save(update_fields=["state", "eldorado_done_by", "eldorado_done_at", "updated_at"])
+            else:
+                err = auto_buy_result.get("error", "unknown error")
+                logger.error(
+                    "Tracking #%d: auto-buy FAILED — %s. Staff will need to buy manually.",
+                    tracking.id, err,
+                )
+        else:
+            logger.warning("Tracking #%d: no offer_id found on DropshipProduct — skipping auto-buy", tracking.id)
+
+        # ── Send Telegram notification ─────────────────────────────────────
+        message_id = _send_order_notification(tracking, auto_buy_result=auto_buy_result)
+        if message_id:
+            tracking.telegram_message_id = message_id
+            tracking.notified_at = timezone.now()
+            tracking.save(update_fields=["telegram_message_id", "notified_at"])
 
 
 def _send_reminders() -> None:

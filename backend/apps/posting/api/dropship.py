@@ -966,43 +966,82 @@ def seller_check(request):
             return JsonResponse({'found': False, 'error': 'No Eldorado credential available'})
 
         provider = EldoradoSourceProvider(credential=credential)
-
-        # Search for the seller in current SAB listings (first 3 pages)
-        import requests as req_lib
         session = provider._get_session()
-        found_user = None
 
-        for page in range(1, 4):
-            resp = session.get(
-                'https://www.eldorado.gg/api/v1/item-management/offers',
-                params={'gameId': 259, 'category': 'CustomItem', 'pageSize': 20, 'page': page},
+        # --- Fast path: profile page scrape to get UUID (O(1) HTTP request) ---
+        # The seller's avatar URL contains their UUID:
+        #   https://assetsdelivery.eldorado.gg/v7/_profiles-v2_/{UUID}_Avatar_...
+        import re as _re
+        found_user = None
+        seller_uuid = None
+        try:
+            profile_resp = session.get(
+                f'https://www.eldorado.gg/users/{username}/shop',
                 timeout=10,
             )
-            if not resp.ok:
-                break
-            data = resp.json()
-            results = data.get('results') or []
-            for entry in results:
-                user = entry.get('user') or {}
-                if (user.get('username') or '').lower() == username.lower():
-                    found_user = user
+            if profile_resp.ok:
+                uuid_pat = _re.compile(
+                    r'_profiles-v2_/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})_Avatar_',
+                    _re.IGNORECASE,
+                )
+                m = uuid_pat.search(profile_resp.text)
+                if m:
+                    seller_uuid = m.group(1)
+                    # Fetch one item using userId to get full user object
+                    item_resp = session.get(
+                        'https://www.eldorado.gg/api/v1/item-management/offers',
+                        params={'userId': seller_uuid, 'pageSize': 1},
+                        timeout=10,
+                    )
+                    if item_resp.ok:
+                        results = item_resp.json().get('results') or []
+                        if results:
+                            found_user = results[0].get('user') or {}
+                    if not found_user:
+                        # Build minimal user object from what we know
+                        found_user = {'id': seller_uuid, 'username': username}
+        except Exception as _exc:
+            import logging
+            logging.getLogger(__name__).debug("Profile page scrape failed for '%s': %s", username, _exc)
+
+        # --- Fallback: scan first 3 pages of listings ---
+        if not found_user:
+            for page in range(1, 4):
+                resp = session.get(
+                    'https://www.eldorado.gg/api/v1/item-management/offers',
+                    params={'gameId': 259, 'category': 'CustomItem', 'pageSize': 20, 'page': page},
+                    timeout=10,
+                )
+                if not resp.ok:
                     break
-            if found_user:
-                break
-            if not results:
-                break
+                data = resp.json()
+                results = data.get('results') or []
+                for entry in results:
+                    user = entry.get('user') or {}
+                    if (user.get('username') or '').lower() == username.lower():
+                        found_user = user
+                        seller_uuid = user.get('id') or ''
+                        break
+                if found_user:
+                    break
+                if not results:
+                    break
 
         if found_user:
-            seller_id = found_user.get('id') or ''
+            seller_id = found_user.get('id') or seller_uuid or ''
             # Auto-save UUID to matching DropshipTargetURL records
-            if seller_id and config_id:
+            if seller_id:
                 try:
                     from apps.posting.models import DropshipTargetURL
-                    DropshipTargetURL.objects.filter(config_id=config_id, seller_username__iexact=username).update(seller_uuid=seller_id)
+                    qs = DropshipTargetURL.objects.filter(seller_username__iexact=username)
+                    if config_id:
+                        qs = qs.filter(config_id=config_id)
+                    qs.update(seller_uuid=seller_id)
                 except Exception:
                     pass
             return JsonResponse({
                 'found': True,
+                'uuid': seller_id,
                 'username': found_user.get('username') or username,
                 'isVerifiedSeller': found_user.get('isVerifiedSeller') or False,
                 'rating': found_user.get('rating') or 0,
@@ -1013,9 +1052,8 @@ def seller_check(request):
             return JsonResponse({
                 'found': False,
                 'username': username,
-                'note': 'Seller not found in first 3 pages of current listings. They may have no active items right now, but the filter will still apply when they list items.',
+                'note': 'Seller profile not found on Eldorado. Check the username spelling.',
             })
-
     except Exception as e:
         import logging
         logging.getLogger(__name__).warning("seller_check error: %s", e)

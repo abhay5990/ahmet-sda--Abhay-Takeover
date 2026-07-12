@@ -1,20 +1,18 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from apis_sdk.factories.gameboost_factory import GameBoostFactory
-
 from .base import AbstractProvider, CredentialField
 from .registry import register_provider
-
 if TYPE_CHECKING:
     from apps.integrations.models import IntegrationCredential
+
+# Games that use item offers (not account offers) on GameBoost
+_ITEM_OFFER_GAMES = frozenset({"steal-a-brainrot", "new-world"})
 
 
 @register_provider
 class GameboostProvider(AbstractProvider):
     """Gameboost marketplace provider — sell (target) platform."""
-
     provider_name = 'gameboost'
     display_name = 'Gameboost'
 
@@ -39,7 +37,11 @@ class GameboostProvider(AbstractProvider):
     def create_listing(self, client: Any, product_data: dict) -> Any:
         payload = product_data.get('payload', product_data)
         proxy_group = product_data.get('proxy_group')
-
+        # Route item games (SAB, New World) to the item offers endpoint
+        game_slug = payload.get('game', '')
+        if game_slug in _ITEM_OFFER_GAMES:
+            return client.create_item_offer(payload=payload, proxy_group=proxy_group)
+        # Account offers: use credentials endpoint if credentials are present
         if 'credentials' in payload:
             return client.create_offer_with_credentials(
                 payload=payload, proxy_group=proxy_group,
@@ -54,3 +56,6 @@ class GameboostProvider(AbstractProvider):
 
     def fetch_orders(self, client: Any, **kwargs) -> Any:
         return client.list_orders(**kwargs)
+
+    def fetch_item_orders(self, client: Any, **kwargs) -> Any:
+        return client.list_item_orders(**kwargs)

@@ -23,6 +23,7 @@ def _build_registry() -> dict[tuple[str, str], type[BaseSyncService]]:
     from apps.sync.services.eldorado.offers.service import EldoradoOfferSyncService
     from apps.sync.services.gameboost.offers.service import GameboostOfferSyncService
     from apps.sync.services.gameboost.orders.service import GameboostOrderSyncService
+    from apps.sync.services.gameboost.orders.item_service import GameboostItemOrderSyncService
     from apps.sync.services.lzt.service import LztOwnedProductSyncService
     from apps.sync.services.playerauctions.orders.service import (
         PlayerAuctionsOrderSyncService,
@@ -36,6 +37,7 @@ def _build_registry() -> dict[tuple[str, str], type[BaseSyncService]]:
         (ResourceType.HISTORICAL_ORDERS, 'eldorado'): EldoradoHistoricalOrderSyncService,
         (ResourceType.LISTINGS, 'eldorado'): EldoradoOfferSyncService,
         (ResourceType.ORDERS, 'gameboost'): GameboostOrderSyncService,
+        (ResourceType.ITEM_ORDERS, 'gameboost'): GameboostItemOrderSyncService,
         (ResourceType.LISTINGS, 'gameboost'): GameboostOfferSyncService,
         (ResourceType.ORDERS, 'playerauctions'): PlayerAuctionsOrderSyncService,
         (ResourceType.LISTINGS, 'playerauctions'): PlayerAuctionsOfferSyncService,

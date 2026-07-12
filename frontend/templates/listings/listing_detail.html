@@ -249,8 +249,14 @@
     <div class="bg-white rounded-lg shadow p-6 mb-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-gray-800">Auto-Restock Pool</h2>
-            <a href="{% url 'posting:restock_pool_detail' offer_pool.id %}"
-               class="text-sm text-indigo-600 hover:text-indigo-800">View pool details &rarr;</a>
+            <div class="flex items-center gap-3">
+                <button @click="openPoolEdit()"
+                        class="px-3 py-1.5 bg-amber-500 text-white rounded-lg hover:bg-amber-600 text-sm font-medium">
+                    &#9998; Edit Pool Settings
+                </button>
+                <a href="{% url 'posting:restock_pool_detail' offer_pool.id %}"
+                   class="text-sm text-indigo-600 hover:text-indigo-800">View pool details &rarr;</a>
+            </div>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div>
@@ -298,6 +304,139 @@
     </div>
     {% endif %}
 
+    <!-- PLATFORM-OFFER-IDS: Sibling listings across all stores -->
+    {% if sibling_listings %}
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-800">Platform Offer IDs</h2>
+        </div>
+        <div class="space-y-4">
+            {% for group in sibling_listings %}
+            <div>
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="px-2 py-0.5 rounded text-xs font-semibold uppercase
+                        {% if group.provider == 'eldorado' %}bg-purple-100 text-purple-700
+                        {% elif group.provider == 'gameboost' %}bg-blue-100 text-blue-700
+                        {% elif group.provider == 'playerauctions' %}bg-orange-100 text-orange-700
+                        {% else %}bg-gray-100 text-gray-600{% endif %}">
+                        {{ group.provider }}
+                    </span>
+                    <span class="text-xs text-gray-400">{{ group.listings|length }} offer{{ group.listings|length|pluralize }}</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <thead>
+                            <tr class="text-xs text-gray-500 uppercase border-b">
+                                <th class="pb-1 pr-4 text-left font-medium">Store</th>
+                                <th class="pb-1 pr-4 text-left font-medium">Offer ID</th>
+                                <th class="pb-1 pr-4 text-left font-medium">Status</th>
+                                <th class="pb-1 pr-4 text-left font-medium">Price</th>
+                                <th class="pb-1 text-left font-medium">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for s in group.listings %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-1.5 pr-4 text-gray-700">{{ s.store_name }}</td>
+                                <td class="py-1.5 pr-4 font-mono text-xs text-gray-600 max-w-xs truncate">
+                                    {% if s.url %}
+                                    <a href="{{ s.url }}" target="_blank" rel="noopener"
+                                       class="text-emerald-600 hover:text-emerald-800 hover:underline" title="{{ s.store_listing_id }}">
+                                        {{ s.store_listing_id|truncatechars:36 }}
+                                    </a>
+                                    {% else %}
+                                    {{ s.store_listing_id|truncatechars:36 }}
+                                    {% endif %}
+                                </td>
+                                <td class="py-1.5 pr-4">
+                                    <span class="inline-flex px-1.5 py-0.5 text-xs rounded-full
+                                        {% if s.status == 'listed' %}bg-emerald-100 text-emerald-700
+                                        {% elif s.status == 'paused' %}bg-yellow-100 text-yellow-700
+                                        {% elif s.status == 'deleted' %}bg-red-100 text-red-700
+                                        {% else %}bg-gray-100 text-gray-600{% endif %}">
+                                        {{ s.status }}
+                                    </span>
+                                </td>
+                                <td class="py-1.5 pr-4 text-gray-600">${{ s.price }}</td>
+                                <td class="py-1.5">
+                                    <a href="/listings/{{ s.id }}/"
+                                       class="text-xs text-indigo-600 hover:text-indigo-800">View &rarr;</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Edit Pool Settings Modal -->
+    {% if offer_pool and pool_offer %}
+    <div x-show="poolEditOpen" x-cloak
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
+         @keydown.escape.window="poolEditOpen = false">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6"
+             @click.stop>
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-lg font-semibold text-gray-800">Edit Pool Settings</h3>
+                <button @click="poolEditOpen = false" class="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Threshold
+                        <span class="text-xs text-gray-400 font-normal">(replenish when count drops below this)</span>
+                    </label>
+                    <input type="number" x-model="poolEdit.threshold" min="1"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Target Count
+                        <span class="text-xs text-gray-400 font-normal">(how many keys to maintain)</span>
+                    </label>
+                    <input type="number" x-model="poolEdit.target_count" min="1"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                </div>
+                {% if pool_offer.strategy == 'clone' %}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Max Concurrent
+                        <span class="text-xs text-gray-400 font-normal">(max active offers at once, clone strategy)</span>
+                    </label>
+                    <input type="number" x-model="poolEdit.max_concurrent" min="1" max="10"
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                </div>
+                {% endif %}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <select x-model="poolEdit.status"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                        <option value="active">Active</option>
+                        <option value="paused">Paused</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-6 flex gap-3 justify-end">
+                <button @click="poolEditOpen = false"
+                        class="px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    Cancel
+                </button>
+                <button @click="savePoolSettings()"
+                        :disabled="loading"
+                        class="px-4 py-2 text-sm bg-amber-500 text-white rounded-lg hover:bg-amber-600 disabled:opacity-50">
+                    <span x-show="!loading">Save Settings</span>
+                    <span x-show="loading">Saving...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
     <!-- Toast notification -->
     <div x-show="toast.show" x-cloak
          x-transition:enter="transition ease-out duration-300"
@@ -318,8 +457,57 @@ function listingDetail() {
         loading: false,
         loadingMsg: '',
         toast: { show: false, ok: true, msg: '' },
-
+        poolEditOpen: false,
+        poolEdit: {
+            threshold: {{ pool_offer.threshold|default:2 }},
+            target_count: {{ pool_offer.target_count|default:5 }},
+            max_concurrent: {{ pool_offer.max_concurrent|default:'null' }},
+            status: '{{ pool_offer.status|default:"active" }}',
+        },
         init() {},
+        openPoolEdit() {
+            this.poolEditOpen = true;
+        },
+        async savePoolSettings() {
+            {% if offer_pool and pool_offer %}
+            this.loading = true;
+            this.loadingMsg = 'Saving pool settings…';
+            try {
+                const body = {
+                    threshold: parseInt(this.poolEdit.threshold),
+                    target_count: parseInt(this.poolEdit.target_count),
+                    status: this.poolEdit.status,
+                };
+                {% if pool_offer.strategy == 'clone' %}
+                if (this.poolEdit.max_concurrent) {
+                    body.max_concurrent = parseInt(this.poolEdit.max_concurrent);
+                }
+                {% endif %}
+                const res = await fetch(`/posting/api/pools/{{ offer_pool.id }}/offers/{{ pool_offer.id }}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.csrfToken(),
+                    },
+                    body: JSON.stringify(body),
+                });
+                const data = await res.json().catch(() => ({}));
+                this.loading = false;
+                if (res.ok) {
+                    this.poolEditOpen = false;
+                    this.showToast(true, 'Pool settings saved! Refreshing…');
+                    setTimeout(() => window.location.reload(), 1200);
+                } else {
+                    this.showToast(false, 'Save failed: ' + (data.error || JSON.stringify(data)), 6000);
+                }
+            } catch (e) {
+                this.loading = false;
+                this.showToast(false, 'Request failed: ' + e.message, 6000);
+            }
+            {% else %}
+            this.showToast(false, 'No pool configured for this listing', 4000);
+            {% endif %}
+        },
 
         showToast(ok, msg, duration = 4000) {
             this.toast = { show: true, ok, msg };

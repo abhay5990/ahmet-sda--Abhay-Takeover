@@ -223,7 +223,10 @@ def _process_target_url(
     try:
         # === Phase 1: Fetch + filter ===
         target_url.processing_state = DropshipTargetURL.PROC_FETCHING
-        target_url.save(update_fields=['processing_state'])
+        try:
+            target_url.save(update_fields=['processing_state'])
+        except Exception:
+            pass  # Row may have been deleted; continue anyway
 
         new_items: list[dict] = []
         cycle_found = 0
@@ -256,7 +259,10 @@ def _process_target_url(
 
         # === Phase 2: Post new items (with stop checks + backoff) ===
         target_url.processing_state = DropshipTargetURL.PROC_POSTING
-        target_url.save(update_fields=['processing_state'])
+        try:
+            target_url.save(update_fields=['processing_state'])
+        except Exception:
+            pass  # Row may have been deleted; continue anyway
 
         pricing = build_pricing_rule(PricingDefaults.from_model(target_url))
         posted_count = 0
@@ -412,10 +418,13 @@ def _process_target_url(
         target_url.cycle_posted = posted_count
         target_url.last_error = ''
         target_url.error_count = 0
-        target_url.save(update_fields=[
-            'last_fetched_at', 'cycle_found', 'cycle_new', 'cycle_posted',
-            'last_error', 'error_count',
-        ])
+        try:
+            target_url.save(update_fields=[
+                'last_fetched_at', 'cycle_found', 'cycle_new', 'cycle_posted',
+                'last_error', 'error_count',
+            ])
+        except Exception:
+            pass  # Row may have been deleted; stats update skipped
 
         if posted_count:
             PostingLog.objects.create(
@@ -607,6 +616,30 @@ def _attempt_post(
 
     # Success — create DropshipProduct + Listing atomically
     store_listing_id = extract_listing_id(api_result.data)
+    # GameBoost: publish the newly created offer (draft → listed)
+    if marketplace == 'gameboost':
+        _ITEM_GAMES_PUB = frozenset({"steal-a-brainrot", "new-world"})
+        _publish_fn = (
+            target_facade.list_item_offer
+            if game.slug in _ITEM_GAMES_PUB
+            else target_facade.list_account_offer
+        )
+        pub_result = _publish_fn(
+            str(store_listing_id),
+            proxy_group=target_proxy_group,
+        )
+        if not pub_result.ok:
+            err = pub_result.error
+            logger.warning(
+                "GameBoost publish failed for offer %s (store=%s): %s",
+                store_listing_id, config.store.name,
+                getattr(err, 'message', err),
+            )
+        else:
+            logger.info(
+                "GameBoost offer %s published (listed) for store=%s",
+                store_listing_id, config.store.name,
+            )
 
     if not game.category_id:
         raise RuntimeError(f"Game '{game.name}' has no category assigned")

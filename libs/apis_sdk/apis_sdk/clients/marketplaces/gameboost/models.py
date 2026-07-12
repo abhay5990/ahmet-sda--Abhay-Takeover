@@ -336,9 +336,9 @@ class GameBoostItemOffer(BaseModel):
     stock: int = 0
     min_quantity: int = 1
 
-    # Prices are plain strings for item offers (e.g. "19.99")
-    price_eur: str = ""
-    price_usd: str = ""
+    # Prices can be plain strings OR nested objects (API returns objects)
+    price_eur: str | dict | None = None
+    price_usd: str | dict | None = None
 
     views: int = 0
     image_urls: list[str] = Field(default_factory=list)
@@ -404,10 +404,10 @@ class GameBoostItemOrder(BaseModel):
     delivery_time: GameBoostDeliveryTime = Field(default_factory=GameBoostDeliveryTime)
 
     # Prices are plain strings for item orders
-    price_eur: str = ""
-    price_usd: str = ""
-    unit_price_eur: str = ""
-    unit_price_usd: str = ""
+    price_eur: str | dict | None = ""
+    price_usd: str | dict | None = ""
+    unit_price_eur: str | dict | None = ""
+    unit_price_usd: str | dict | None = ""
 
     created_at: int | None = None
     updated_at: int | None = None
@@ -487,8 +487,8 @@ class GameBoostGiftCardOffer(BaseModel):
 
     id: int = 0
     gift_card_id: int = 0
-    price_eur: str = ""
-    price_usd: str = ""
+    price_eur: str | dict | None = ""
+    price_usd: str | dict | None = ""
     stock: int = 0
     gift_card: GameBoostGiftCard = Field(default_factory=GameBoostGiftCard)
     created_at: int | None = None
@@ -538,10 +538,10 @@ class GameBoostGiftCardOrder(BaseModel):
     face_value_amount: str = ""
     face_value_unit: str = ""
     quantity: int = 0
-    unit_price_eur: str = ""
-    unit_price_usd: str = ""
-    price_eur: str = ""
-    price_usd: str = ""
+    unit_price_eur: str | dict | None = ""
+    unit_price_usd: str | dict | None = ""
+    price_eur: str | dict | None = ""
+    price_usd: str | dict | None = ""
     status: str = ""
     keys: list[GameBoostGiftCardOrderKey] = Field(default_factory=list)
     created_at: int | None = None
@@ -581,8 +581,8 @@ class GameBoostCurrencyOffer(BaseModel):
     stock: int = 0
     min_quantity: int = 1
 
-    price_eur: str = ""
-    price_usd: str = ""
+    price_eur: str | dict | None = ""
+    price_usd: str | dict | None = ""
 
     views: int = 0
     icon_url: str | None = None
@@ -643,10 +643,10 @@ class GameBoostCurrencyOrder(BaseModel):
     credentials: Any = None
     completion_proof_url: str | None = None
 
-    price_eur: str = ""
-    price_usd: str = ""
-    unit_price_eur: str = ""
-    unit_price_usd: str = ""
+    price_eur: str | dict | None = ""
+    price_usd: str | dict | None = ""
+    unit_price_eur: str | dict | None = ""
+    unit_price_usd: str | dict | None = ""
 
     created_at: int | None = None
     updated_at: int | None = None

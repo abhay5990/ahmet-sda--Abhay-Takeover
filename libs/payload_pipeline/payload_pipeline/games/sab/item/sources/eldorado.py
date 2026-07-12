@@ -1,9 +1,40 @@
 """Eldorado source adapter for SAB items."""
 from __future__ import annotations
 import logging
-logger = logging.getLogger(__name__)
+import re
 
+logger = logging.getLogger(__name__)
 _ELDORADO_CDN = "https://cdn.eldorado.gg/uploads/offers/{filename}"
+
+# Marketing noise to strip from seller titles when used as fallback item name
+_NOISE = re.compile(
+    r"(instant|premium|fast|quick)\s+(delivery|trade|sell|buy|stock)"
+    r"|24\s*/\s*7"
+    r"|\binstant\b|\bdelivery\b|\btrade\b|\btrusted\b|\bseller\b|\bpremium\b"
+    r"|\bfast\b|\bquick\b|\bcheap\b|\bbest\b|\bprice\b|\bstock\b"
+    r"|\d+\s*[MmBbKk]/[Ss]"   # drop M/s values — we render them ourselves
+    r"|\bcandy\b",             # "candy " prefix used by this seller
+    re.IGNORECASE,
+)
+_EMOJI = re.compile(
+    r"[\U00010000-\U0010FFFF"   # supplementary planes (most game emoji)
+    r"\U0001F000-\U0001FAFF"
+    r"\u2600-\u27BF"
+    r"\uFE00-\uFE0F"
+    r"]+",
+    flags=re.UNICODE,
+)
+
+
+def _clean_seller_title(t: str) -> str:
+    if not t:
+        return ""
+    t = _NOISE.sub("", t)          # drop marketing phrases
+    t = _EMOJI.sub("", t)          # drop emoji
+    t = re.sub(r"[|#@!?*\"']+", "", t)  # drop punctuation noise
+    t = re.sub(r"\s{2,}", " ", t).strip()
+    return t
+
 
 def _parse_ms(ms_str: str):
     if not ms_str:
@@ -21,6 +52,7 @@ def _parse_ms(ms_str: str):
     except ValueError:
         return 0.0, 0.0
 
+
 def _extract_image_url(raw: dict) -> str:
     """Extract the best image URL from an Eldorado offer dict."""
     main = raw.get("mainOfferImage") or {}
@@ -36,6 +68,7 @@ def _extract_image_url(raw: dict) -> str:
             return _ELDORADO_CDN.format(filename=filename)
     return ""
 
+
 class SabEldoradoSourceAdapter:
     def parse(self, raw: dict) -> dict | None:
         if not raw:
@@ -43,11 +76,13 @@ class SabEldoradoSourceAdapter:
         offer_id = str(raw.get("id", "") or raw.get("offerId", ""))
         if not offer_id:
             return None
+
         price_data = raw.get("minPurchasePrice") or raw.get("pricePerUnitInUSD") or raw.get("price") or {}
         if isinstance(price_data, dict):
             price = float(price_data.get("amount", 0) or 0)
         else:
             price = float(price_data or 0)
+
         trade_values = raw.get("tradeEnvironmentValues") or []
         attrs = {}
         for tv in trade_values:
@@ -55,14 +90,22 @@ class SabEldoradoSourceAdapter:
             val = tv.get("value") or ""
             if key:
                 attrs[key] = val
+
+        # item_name: check structured attributes first (Brainrot, Pets & Eggs, name, item_name)
+        # then fall back to a cleaned seller title
         item_name = (
-            attrs.get("item_name")
-            or attrs.get("brainrot")
+            attrs.get("brainrot")        # most Brainrot items
+            or attrs.get("pets_&_eggs")  # Pets items (Stygian Owl, Blue Betta Fish, etc.)
+            or attrs.get("item_name")
             or attrs.get("name")
-            or raw.get("title", "")
             or ""
         )
+        # If structured lookup returned "Other" or empty, use cleaned seller title
+        if not item_name or item_name.lower() == "other":
+            item_name = _clean_seller_title(raw.get("offerTitle") or raw.get("title", ""))
+
         rarity = attrs.get("rarity", "")
+
         ms_str = (
             attrs.get("m/s")
             or attrs.get("ms")
@@ -71,10 +114,13 @@ class SabEldoradoSourceAdapter:
             or ""
         )
         ms_min, ms_max = _parse_ms(ms_str)
+
         mutations_raw = attrs.get("mutations", "") or attrs.get("mutation_list", "")
         mutations = [m.strip() for m in mutations_raw.split(",") if m.strip()] if mutations_raw else []
+
         quantity = int(raw.get("quantity", 1) or 1)
         image_url = _extract_image_url(raw)
+
         return {
             "offer_id": offer_id,
             "item_name": item_name,

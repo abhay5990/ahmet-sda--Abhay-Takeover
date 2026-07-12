@@ -75,6 +75,56 @@ RELAY_URL = "http://35.231.166.148:3001"
 RELAY_SECRET = "pa-relay-secret-2026"
 RELAY_TIMEOUT = 60  # seconds
 
+# ---------------------------------------------------------------------------
+# Token fetch helper — gets a fresh PA JWT from the relay
+# ---------------------------------------------------------------------------
+def fetch_relay_token(
+    username: str,
+    password: str,
+    store_slug: str,
+    *,
+    relay_url: str = RELAY_URL,
+    relay_secret: str = RELAY_SECRET,
+    timeout: int = 240,
+) -> str | None:
+    """Fetch a PA access token from the relay /pa-access-token endpoint.
+
+    Uses cache-first: returns cached token instantly if relay warmup ran,
+    otherwise triggers a fresh AdsPower browser login (up to 4 min).
+
+    Returns:
+        JWT token string on success, None on failure.
+    """
+    try:
+        resp = requests.post(
+            f"{relay_url}/pa-access-token",
+            json={"username": username, "password": password, "store": store_slug},
+            headers={
+                "Content-Type": "application/json",
+                "X-Relay-Secret": relay_secret,
+            },
+            timeout=timeout,
+        )
+        data = resp.json()
+        if data.get("ok") and data.get("token"):
+            logger.info(
+                "PA relay token fetched for store=%s (cached=%s)",
+                store_slug, data.get("cached", False),
+            )
+            return data["token"]
+        logger.warning(
+            "PA relay /pa-access-token returned ok=False for store=%s: %s",
+            store_slug, data.get("error", "unknown"),
+        )
+        return None
+    except requests.exceptions.Timeout:
+        logger.error("PA relay /pa-access-token timeout for store=%s", store_slug)
+        return None
+    except Exception as exc:
+        logger.error("PA relay /pa-access-token error for store=%s: %s", store_slug, exc)
+        return None
+
+
 
 @dataclass
 class PARelayPostResult:

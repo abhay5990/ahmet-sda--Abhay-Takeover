@@ -1,8 +1,16 @@
 from __future__ import annotations
 
 RARITY_EMOJI = {
-    "common": "⚪", "uncommon": "🟢", "rare": "🔵",
-    "epic": "🟣", "legendary": "🟠", "secret": "🔴",
+    "common": "⚪",
+    "uncommon": "🟢",
+    "rare": "🔵",
+    "epic": "🟣",
+    "legendary": "🟠",
+    "mythical": "🔮",
+    "secret": "🔴",
+    "brainrot god": "👑",
+    "og": "✨",
+    "ultra-rare": "💎",
 }
 
 
@@ -13,7 +21,8 @@ class SabItemComposer:
         return {"gameboost": {"title": title, "description": description}}
 
     def _build_title(self, s):
-        emoji = RARITY_EMOJI.get(s.rarity.lower(), "") if s.rarity else ""
+        rarity_key = s.rarity.lower().strip() if s.rarity else ""
+        emoji = RARITY_EMOJI.get(rarity_key, "")
         parts = []
         if emoji:
             parts.append(emoji)
@@ -33,7 +42,8 @@ class SabItemComposer:
         if s.item_name:
             lines.append(f"Item: {s.item_name}")
         if s.rarity:
-            emoji = RARITY_EMOJI.get(s.rarity.lower(), "")
+            rarity_key = s.rarity.lower().strip()
+            emoji = RARITY_EMOJI.get(rarity_key, "")
             lines.append(f"Rarity: {emoji} {s.rarity.capitalize()}")
         if s.ms_min > 0:
             if s.ms_max > s.ms_min:

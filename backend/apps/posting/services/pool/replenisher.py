@@ -30,6 +30,13 @@ from apps.posting.models import (
 )
 
 from apps.posting.services.shared.utils import extract_listing_id
+from apps.posting.services.stock.pa_relay_poster import (
+    PARelayPoster,
+    fetch_relay_token,
+    pa_encrypt,
+    pa_fake_owner_info,
+    pa_sanitize,
+)
 from core.marketplace.normalizers import normalize_offer_response
 from core.marketplace.payload_extractor import extract_create_payload
 
@@ -710,24 +717,57 @@ def _clone_pa_offer(
     product = item.owned_product
     _apply_pa_auto_delivery_credentials(payload, product, pool=pool)
 
-    result = client.create_offer(payload, proxy_group=proxy_group)
-    if not result.ok:
-        error_str = str(result.error) if result.error else 'Unknown error'
+    # [RELAY-CLONE] Post via relay instead of client.create_offer()
+    _creds = {}
+    _store_obj = pool.listing.integration_account
+    if hasattr(_store_obj, 'credential') and _store_obj.credential:
+        _creds = _store_obj.credential.credentials or {}
+    _username = _creds.get('username', '')
+    _password = _creds.get('password', '')
+    _store_slug = _creds.get('store_slug', '')
+    _relay_url = _creds.get('relay_url', 'http://35.231.166.148:3001')
+    _relay_secret = _creds.get('relay_secret', 'pa-relay-secret-2026')
+    _access_token = _creds.get('access_token', '')
+
+    # Use cached token first, fetch fresh if missing
+    _token = _access_token
+    if not _token:
+        if _username and _password and _store_slug:
+            _token = fetch_relay_token(
+                _username, _password, _store_slug,
+                relay_url=_relay_url, relay_secret=_relay_secret,
+            )
+        if not _token:
+            mark_item_failed(
+                item,
+                error_message='PA relay: could not obtain access token for pool clone',
+                failure_stage='remote_push',
+                remote_state='absent',
+                retryable=True,
+            )
+            return 0
+
+    # Build Excel-row dict from payload for PARelayPoster
+    _excel_row = _build_excel_row_from_payload(payload)
+    _relay_poster = PARelayPoster()
+    _relay_result = _relay_poster.post_batch(_token, _store_slug, [_excel_row])
+
+    if 0 in _relay_result.failed:
+        error_str = _relay_result.failed[0]
         mark_item_failed(
             item,
-            error_message=f"PA create failed: {error_str[:200]}",
+            error_message=f"PA relay clone failed: {error_str[:200]}",
             failure_stage='remote_push',
             remote_state='absent',
             retryable=True,
         )
         return 0
 
-    # Extract offer ID from response
-    new_offer_id = extract_listing_id(result.data)
+    new_offer_id = _relay_result.successful.get(0, '')
     if not new_offer_id:
         mark_item_failed(
             item,
-            error_message='PA create succeeded but no offer ID in response',
+            error_message='PA relay clone succeeded but no offer ID returned',
             failure_stage='response_parse',
             remote_state='unknown',
         )
@@ -735,7 +775,7 @@ def _clone_pa_offer(
 
     raw_data = normalize_offer_response(
         'playerauctions',
-        result.data,
+        {'offer_id': new_offer_id},
         payload=payload,
         client=client,
         proxy_group=proxy_group,
@@ -1027,3 +1067,32 @@ def _mark_items_pushed(
 def _check_depleted(pool: OfferPool) -> None:
     """Depletion is computed health; never overwrite user intent state."""
     return None
+
+def _build_excel_row_from_payload(payload: dict) -> dict:
+    """Convert a PA JSON offer payload back to an Excel-row-style dict for PARelayPoster.
+
+    PARelayPoster._build_json_payload() expects Excel column names.
+    This function reverses that mapping so pool replenisher can use PARelayPoster
+    without needing to rebuild the full Excel row from scratch.
+    """
+    auto_delivery = payload.get('autoDelivery') or {}
+    manual = payload.get('manual') or {}
+    return {
+        'Game': payload.get('gameId', ''),
+        'Server': payload.get('serverId', ''),
+        'Title': payload.get('title', ''),
+        'Description': payload.get('offerDesc', ''),
+        'Price': payload.get('price', 0),
+        'Offer Duration': payload.get('offerDuration', 30),
+        'Seller After-Sale Protection': payload.get('freeInsurance', 7),
+        'Cover image (PA hosted)': payload.get('screenShot', ''),
+        'Auto Delivery': 'Yes' if payload.get('isAuto') else 'No',
+        # Auto delivery credentials
+        'Login': auto_delivery.get('loginName', ''),
+        'Password': auto_delivery.get('password', ''),
+        'Instruction': auto_delivery.get('instruction', ''),
+        'Registration CD Key': auto_delivery.get('firstCDKey', ''),
+        # Pass through the full autoDelivery dict for PARelayPoster to use
+        '_autoDelivery': auto_delivery,
+        '_payload': payload,  # full original payload passthrough
+    }

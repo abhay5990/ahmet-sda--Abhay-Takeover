@@ -18,27 +18,14 @@ class SabItemGameBoostBuilder(BasePayloadBuilder):
         title = content.get("title", subject.item_name or "SAB Item")
         description = content.get("description", "")
 
+        # Append #DS tag to mark as dropship listing
+        if "#DS" not in title:
+            title = f"{title} #DS"
+
         # Apply pricing rules (multiplier) then exchange rate — same as BaseBuilder pattern
         price = self._apply_pricing(subject.price, ctx)
         if ctx.exchange_rate is not None:
             price = round(price * ctx.exchange_rate, 2)
-
-        # Build account_data using GameBoost SAB template fields
-        account_data = {
-            "money_amount": "0",
-            "secrets_amount": 0,
-            "rebirths_amount": 0,
-            "floor": None,
-        }
-        if subject.rarity:
-            account_data["rarity"] = subject.rarity
-        if subject.ms_min > 0:
-            if subject.ms_max > subject.ms_min:
-                account_data["ms"] = f"{subject.ms_min:.1f}-{subject.ms_max:.1f}"
-            else:
-                account_data["ms"] = f"{subject.ms_min:.1f}"
-        if subject.mutations:
-            account_data["mutations"] = ", ".join(subject.mutations)
 
         image_urls = [subject.image_url] if getattr(subject, "image_url", None) else []
 
@@ -48,17 +35,16 @@ class SabItemGameBoostBuilder(BasePayloadBuilder):
             "slug": _slugify(title),
             "description": description,
             "price": price,
-            # credentials array is required by the /create endpoint
-            "credentials": ["Delivery: Manual - Contact us after purchase via chat"],
-            "is_manual": True,
-            "delivery_time": {"duration": 10, "unit": "minutes"},
-            "has_2fa": False,
-            "level_up_method": "by_hand",
-            "image_urls": image_urls,
-            "account_data": account_data,
+            # Required fields for item offers
+            "stock": 1,
+            "min_quantity": 1,
+            # Delivery: none — we contact buyer via chat
+            "delivery_method": "none",
+            "delivery_time": {"duration": 20, "unit": "minutes"},
             "delivery_instructions": (
                 "\u26a1 INSTANT DELIVERY\n"
                 "After purchase, contact us via chat with your order ID. "
                 "We will deliver your item within 10 minutes."
             ),
+            "image_urls": image_urls,
         }

@@ -122,6 +122,18 @@ def sync_orders(*, proxy_pool=None) -> list[int]:
     for account in accounts:
         try:
             run = _sync_account(account, ResourceType.ORDERS, proxy_pool=proxy_pool)
+            # Also sync item orders (SAB, New World) for GameBoost accounts
+            if account.provider == 'gameboost':
+                try:
+                    item_run = _sync_account(account, ResourceType.ITEM_ORDERS, proxy_pool=proxy_pool)
+                    if item_run:
+                        log_sync(
+                            'order_sync', SyncLogLevel.SUCCESS,
+                            f'{account.slug}: item orders — {item_run.created_count} new, {item_run.updated_count} updated',
+                            sync_run=item_run, integration_account=account,
+                        )
+                except Exception as e:
+                    log_sync_error('order_sync', f'{account.slug} item orders: {e}', exc=e, integration_account=account)
             if run:
                 log_sync(
                     'order_sync', SyncLogLevel.SUCCESS,

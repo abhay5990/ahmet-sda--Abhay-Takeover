@@ -25,6 +25,21 @@ BULK_DELETE_LIMIT = 100
 _DELETABLE_STATUSES = {ListingStatus.LISTED, ListingStatus.PAUSED}
 
 
+def _get_listing_url(listing) -> str:
+    """Build the marketplace URL for a listing."""
+    if not listing.store_listing_id or not listing.integration_account:
+        return ''
+    provider = listing.integration_account.provider
+    sid = listing.store_listing_id
+    if provider == 'eldorado':
+        return f'https://www.eldorado.gg/sell/offers/{sid}'
+    if provider == 'gameboost':
+        return f'https://gameboost.com/sell/offers/{sid}'
+    if provider == 'playerauctions':
+        return f'https://www.playerauctions.com/offer/{sid}/'
+    return ''
+
+
 @role_required('admin', 'user')
 def listing_list(request):
     """Listing browser with filters and pagination."""
@@ -137,6 +152,7 @@ def listing_list(request):
 @role_required('admin', 'user')
 def listing_detail(request, listing_id):
     """Detail page for a single listing."""
+    # [DETAIL-ENHANCED]
     listing = get_object_or_404(
         Listing.objects.select_related(
             'game', 'integration_account', 'dropship_product',
@@ -152,6 +168,7 @@ def listing_detail(request, listing_id):
     )
 
     from apps.posting.models import PoolOffer
+    from apps.listings.models import ListingOwnedProduct
     pool_offer = (
         PoolOffer.objects.filter(listing=listing)
         .select_related('pool', 'pool__game', 'listing__integration_account')
@@ -159,12 +176,53 @@ def listing_detail(request, listing_id):
     )
     offer_pool = pool_offer.pool if pool_offer else None
 
+    # Build sibling listings — other listings sharing the same owned products
+    sibling_listings = []
+    if owned_products:
+        op_ids = [op.id for op in owned_products]
+        siblings_qs = (
+            Listing.objects
+            .filter(listing_owned_products__owned_product_id__in=op_ids)
+            .exclude(id=listing.id)
+            .select_related('integration_account')
+            .distinct()
+            .order_by('integration_account__provider', 'integration_account__name', 'id')
+        )
+        from collections import defaultdict
+        grouped = defaultdict(list)
+        for s in siblings_qs:
+            provider = s.integration_account.provider if s.integration_account else 'unknown'
+            grouped[provider].append({
+                'id': s.id,
+                'store_listing_id': s.store_listing_id,
+                'store_name': s.integration_account.name if s.integration_account else '',
+                'store_id': s.integration_account.id if s.integration_account else None,
+                'status': s.status,
+                'price': str(s.price) if s.price is not None else '',
+                'title': s.title or '',
+                'url': _get_listing_url(s),
+            })
+        sibling_listings = [
+            {'provider': provider, 'listings': items}
+            for provider, items in sorted(grouped.items())
+        ]
+
+    # PA store accounts for "Add to PA" button
+    pa_stores = list(
+        IntegrationAccount.objects.filter(
+            provider='playerauctions', is_active=True, role__in=['sell', 'both'],
+        ).order_by('name')
+    )
+
     return render(request, 'listings/listing_detail.html', {
         'listing': listing,
         'owned_products': owned_products,
         'offer_pool': offer_pool,
         'pool_offer': pool_offer,
+        'sibling_listings': sibling_listings,
+        'pa_stores': pa_stores,
     })
+
 
 
 @role_required('admin', 'user')

@@ -66,21 +66,83 @@ class EldoradoSourceProvider:
     def _resolve_seller_uuid(self, seller_username: str) -> str | None:
         """Resolve a seller username to their Eldorado userId UUID.
 
-        The Eldorado public API supports ``?userId={UUID}`` for server-side
-        filtering, but NOT ``?sellerUsername=``.  We resolve the UUID by
-        scanning the first few pages of the global listing until we find an
-        item from that seller, then cache the result for the process lifetime.
+        Strategy (fastest first):
+        1. In-memory cache — instant if already resolved this process lifetime.
+        2. DB cache — check DropshipTargetURL.seller_uuid for pre-saved UUIDs.
+        3. Profile page scrape — fetch /users/{username}/shop and extract the
+           UUID from the seller's avatar image URL (format:
+           /_profiles-v2_/{UUID}_Avatar_...). This is O(1) — one HTTP request.
+        4. Listing scan fallback — scan up to 50 pages of recent listings to
+           find an item from this seller and extract their UUID. Slow but works
+           even if the profile page is unavailable.
 
-        Returns the UUID string, or None if not found within the scan limit.
+        Returns the UUID string, or None if all methods fail.
         """
+        import re as _re
         key = seller_username.lower()
         if key in _SELLER_UUID_CACHE:
             return _SELLER_UUID_CACHE[key]
 
-        logger.info("Resolving Eldorado UUID for seller '%s'…", seller_username)
+        logger.info("Resolving Eldorado UUID for seller '%s'...", seller_username)
         session = self._get_session()
-        # Scan up to 50 pages (1 000 items) sorted by newest — recent sellers
-        # appear near the top.
+
+        # --- Method 1: DB cache (DropshipTargetURL.seller_uuid) ---
+        try:
+            from apps.posting.models import DropshipTargetURL
+            db_uuid = (
+                DropshipTargetURL.objects
+                .filter(seller_username__iexact=seller_username)
+                .exclude(seller_uuid="")
+                .values_list("seller_uuid", flat=True)
+                .first()
+            )
+            if db_uuid:
+                _SELLER_UUID_CACHE[key] = db_uuid
+                logger.info(
+                    "Resolved seller '%s' -> UUID %s (from DB cache)",
+                    seller_username, db_uuid,
+                )
+                return db_uuid
+        except Exception as exc:
+            logger.debug("DB cache lookup failed for '%s': %s", seller_username, exc)
+
+        # --- Method 2: Profile page scrape ---
+        # The seller's avatar URL on Eldorado contains their UUID:
+        #   https://assetsdelivery.eldorado.gg/v7/_profiles-v2_/{UUID}_Avatar_...
+        # We fetch the seller's shop page (server-rendered HTML includes the
+        # avatar URL in the initial page source) and regex out the UUID.
+        try:
+            resp2 = session.get(
+                f"https://www.eldorado.gg/users/{seller_username}/shop",
+                timeout=10,
+            )
+            if resp2.ok:
+                uuid_pat = _re.compile(
+                    r"_profiles-v2_/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})_Avatar_",
+                    _re.IGNORECASE,
+                )
+                m = uuid_pat.search(resp2.text)
+                if m:
+                    uid = m.group(1)
+                    _SELLER_UUID_CACHE[key] = uid
+                    # Persist to DB for future processes
+                    try:
+                        from apps.posting.models import DropshipTargetURL
+                        DropshipTargetURL.objects.filter(
+                            seller_username__iexact=seller_username,
+                        ).exclude(seller_uuid=uid).update(seller_uuid=uid)
+                    except Exception:
+                        pass
+                    logger.info(
+                        "Resolved seller '%s' -> UUID %s (profile page scrape)",
+                        seller_username, uid,
+                    )
+                    return uid
+        except Exception as exc:
+            logger.debug("Profile page scrape failed for '%s': %s", seller_username, exc)
+
+        # --- Method 3: Listing scan fallback ---
+        # Scan up to 50 pages of recent listings to find an item from this seller.
         for page in range(1, 51):
             try:
                 resp = session.get(
@@ -107,7 +169,7 @@ class EldoradoSourceProvider:
                         _SELLER_UUID_CACHE[uname] = uid
                     if uname == key and uid:
                         logger.info(
-                            "Resolved seller '%s' → UUID %s (found on page %d)",
+                            "Resolved seller '%s' -> UUID %s (found on page %d)",
                             seller_username, uid, page,
                         )
                         return uid
@@ -119,7 +181,7 @@ class EldoradoSourceProvider:
                 break
 
         logger.warning(
-            "Could not resolve UUID for seller '%s' within scan limit — "
+            "Could not resolve UUID for seller '%s' within scan limit -- "
             "falling back to client-side filtering",
             seller_username,
         )
