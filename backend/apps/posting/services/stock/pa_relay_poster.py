@@ -163,8 +163,20 @@ class PARelayPoster:
                 # Detect if row is already a JSON payload (pa_mode='single') or an Excel row dict (pa_mode='bulk').
                 # JSON payloads have 'serverId' key; Excel rows have 'Game'/'Server' keys.
                 if isinstance(row, dict) and 'serverId' in row:
-                    # Already a pre-built JSON payload — pass through directly
-                    payload = row
+                    # Already a pre-built JSON payload — encrypt plain-text passwords
+                    # before posting (payload_pipeline returns plain text; encryption
+                    # is the caller's responsibility per the lib contract).
+                    payload = dict(row)
+                    auto_del = payload.get('autoDelivery')
+                    if isinstance(auto_del, dict):
+                        auto_del = dict(auto_del)
+                        plain_pw = auto_del.get('password', '')
+                        # Only encrypt if not already RSA ciphertext (base64, ~172 chars)
+                        if plain_pw and len(plain_pw) < 150:
+                            enc = pa_encrypt(plain_pw)
+                            auto_del['password'] = enc
+                            auto_del['retypePassword'] = enc
+                        payload['autoDelivery'] = auto_del
                 else:
                     payload = self._build_json_payload(row)
                 offer_id, error = self._post_one(token, store_slug, payload)
