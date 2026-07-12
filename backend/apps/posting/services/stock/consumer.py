@@ -354,187 +354,6 @@ class StockConsumer:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _process_pa_relay_batch(
-        self,
-        entries: list[tuple],
-        job,
-    ) -> None:
-        """Route all PA items through the relay poster — never direct SDK calls.
-        Collects all items for a store, builds payload dicts, posts via
-        PARelayPoster, then persists results.
-        """
-        import logging
-        from apps.posting.models import PostingJobItemStatus, PostingLog, PostingLogLevel
-        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
-        from apps.posting.services.stock.pa_relay_poster import PARelayPoster, fetch_relay_token
-        from apps.posting.services.stock.pipeline import build_item_payload
-        from apps.posting.services.stock.persist import persist_success
-        from apps.posting.services.pool.pool import add_failed_owned_products_to_pool
-        from apps.posting.services.stock.normalize import normalize_offer_response
-        from apps.posting.services.stock.variant_router import VariantRouter, build_variant_context
-
-        logger = logging.getLogger(__name__)
-
-        if not entries:
-            return
-
-        first_item = entries[0][0]
-        store = first_item.store
-        creds = store.credential.credentials or {}
-        store_slug = creds.get('store_slug', '')
-        relay_url = creds.get('relay_url', 'http://35.196.132.30:3001')
-        relay_secret = creds.get('relay_secret', 'pa-relay-secret-2026')
-
-        # Use cached access token from DB, or fetch fresh from relay
-        relay_token = creds.get('access_token') or creds.get('bearer_token') or ''
-        if not relay_token:
-            username = creds.get('username', '')
-            password = creds.get('password', '')
-            if username and password and store_slug:
-                logger.info(
-                    "PA relay token not cached — fetching fresh for store=%s (job=%d)",
-                    store_slug, job.id,
-                )
-                relay_token = fetch_relay_token(
-                    username, password, store_slug,
-                    relay_url=relay_url, relay_secret=relay_secret,
-                )
-
-        if not relay_token or not store_slug:
-            logger.error(
-                "PA relay: no token/store_slug for store=%s (job=%d) — marking all failed",
-                store_slug, job.id,
-            )
-            for item, prepared_data in entries:
-                item.status = PostingJobItemStatus.FAILED
-                item.error_message = 'PA relay token unavailable — check relay machine and store credentials'
-                item.save(update_fields=['status', 'error_message', 'updated_at'])
-                owned_product = prepared_data.get('owned_product')
-                if owned_product:
-                    add_failed_owned_products_to_pool(job, [owned_product])
-                    release_dispatch_items_for_job(
-                        job, owned_products=[owned_product],
-                        reason='PA relay token unavailable', remote_outcome='absent',
-                    )
-            return
-
-        # Build payload rows for each item
-        variant_ctx = build_variant_context(
-            store=store, game=job.game, marketplace='playerauctions',
-        )
-        router = VariantRouter(variant_ctx, mode='stock')
-        excel_rows: list[dict] = []
-        build_data_list: list[dict] = []
-        valid_entries: list[tuple] = []
-
-        for item, prepared_data in entries:
-            try:
-                build_result = build_item_payload(
-                    item, prepared_data, job,
-                    variant_ctx=variant_ctx, router=router,
-                )
-                if not build_result['ok']:
-                    raise ValueError(f"[{build_result['stage']}] {build_result['error']}")
-                excel_rows.append(build_result['data']['payload'])
-                build_data_list.append(build_result['data'])
-                valid_entries.append((item, prepared_data))
-            except Exception as exc:
-                item.status = PostingJobItemStatus.FAILED
-                item.error_message = str(exc)
-                item.save(update_fields=['status', 'error_message', 'updated_at'])
-                owned_product = prepared_data.get('owned_product')
-                if owned_product:
-                    add_failed_owned_products_to_pool(job, [owned_product])
-                    release_dispatch_items_for_job(
-                        job, owned_products=[owned_product],
-                        reason=str(exc), remote_outcome='absent',
-                    )
-
-        if not excel_rows:
-            return
-
-        # Post via relay
-        logger.info("PA relay batch: %d rows (job=%d, store=%s)", len(excel_rows), job.id, store_slug)
-        _relay_poster = PARelayPoster()
-        _relay_result = _relay_poster.post_batch(relay_token, store_slug, excel_rows)
-
-        # Build PA client for normalize_offer_response (optional, graceful fallback)
-        facade = None
-        proxy_group = None
-        try:
-            from apps.posting.services.stock.proxy import get_group_name
-            from apps.posting.services.stock.registry import registry
-            proxy_group = get_group_name(store)
-            facade = registry.get_or_build_client(
-                'playerauctions', store.credential,
-                proxy_pool=self._proxy_pool, proxy_group=proxy_group,
-            )
-        except Exception:
-            pass
-
-        for idx, (item, prepared_data) in enumerate(valid_entries):
-            owned_product = prepared_data.get('owned_product')
-            if idx in _relay_result.successful:
-                offer_id = _relay_result.successful[idx]
-                final_price = build_data_list[idx]['final_price']
-                variant_slug = build_data_list[idx]['variant_slug']
-                listing_variant_slug = build_data_list[idx].get('listing_variant_slug', variant_slug)
-                try:
-                    kwargs = {}
-                    if facade:
-                        kwargs['client'] = facade
-                        kwargs['proxy_group'] = proxy_group
-                    normalized_raw = normalize_offer_response(
-                        'playerauctions',
-                        {'offer_id': offer_id},
-                        payload=excel_rows[idx],
-                        **kwargs,
-                    )
-                    persist_success(
-                        item=item,
-                        job=job,
-                        owned_product=owned_product,
-                        store_listing_id=offer_id,
-                        variant_slug=listing_variant_slug,
-                        final_price=final_price,
-                        payload=excel_rows[idx],
-                        response_data={'offer_id': offer_id},
-                        raw_data_override=normalized_raw,
-                    )
-                except Exception as exc:
-                    item.status = PostingJobItemStatus.FAILED
-                    item.error_message = f'Listing persist failed (PA offer may exist): {exc}'
-                    logger.exception(
-                        "PA listing persist failed for item #%d (offer_id=%s)", item.id, offer_id,
-                    )
-                    release_dispatch_items_for_job(
-                        job, owned_products=[owned_product] if owned_product else [],
-                        reason=str(exc), remote_outcome='unknown',
-                    )
-            else:
-                error_msg = _relay_result.failed.get(idx, 'PA relay post failed')
-                item.status = PostingJobItemStatus.FAILED
-                item.error_message = error_msg
-                if owned_product:
-                    add_failed_owned_products_to_pool(job, [owned_product])
-                    release_dispatch_items_for_job(
-                        job, owned_products=[owned_product],
-                        reason=error_msg, remote_outcome='absent',
-                    )
-                PostingLog.objects.create(
-                    task_name='stock_post',
-                    level=PostingLogLevel.ERROR,
-                    message=f"PA relay post failed: {item.login}",
-                    detail={
-                        'item_id': item.id,
-                        'job_id': job.id,
-                        'stage': 'pa_relay_batch',
-                        'error': error_msg,
-                    },
-                    integration_account=store,
-                )
-            item.save(update_fields=['status', 'error_message', 'listing', 'updated_at'])
-
     def _is_multi_cred_job(job: PostingJob, marketplace: str) -> bool:
         """Return True when all credentials should be merged into one offer.
 
@@ -754,6 +573,187 @@ class StockConsumer:
                 },
                 integration_account=base_item.store,
             )
+
+    def _process_pa_relay_batch(
+        self,
+        entries: list[tuple],
+        job,
+    ) -> None:
+        """Route all PA items through the relay poster — never direct SDK calls.
+        Collects all items for a store, builds payload dicts, posts via
+        PARelayPoster, then persists results.
+        """
+        import logging
+        from apps.posting.models import PostingJobItemStatus, PostingLog, PostingLogLevel
+        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
+        from apps.posting.services.stock.pa_relay_poster import PARelayPoster, fetch_relay_token
+        from apps.posting.services.stock.pipeline import build_item_payload
+        from apps.posting.services.stock.persist import persist_success
+        from apps.posting.services.pool.pool import add_failed_owned_products_to_pool
+        from apps.posting.services.stock.normalize import normalize_offer_response
+        from apps.posting.services.stock.variant_router import VariantRouter, build_variant_context
+
+        logger = logging.getLogger(__name__)
+
+        if not entries:
+            return
+
+        first_item = entries[0][0]
+        store = first_item.store
+        creds = store.credential.credentials or {}
+        store_slug = creds.get('store_slug', '')
+        relay_url = creds.get('relay_url', 'http://35.196.132.30:3001')
+        relay_secret = creds.get('relay_secret', 'pa-relay-secret-2026')
+
+        # Use cached access token from DB, or fetch fresh from relay
+        relay_token = creds.get('access_token') or creds.get('bearer_token') or ''
+        if not relay_token:
+            username = creds.get('username', '')
+            password = creds.get('password', '')
+            if username and password and store_slug:
+                logger.info(
+                    "PA relay token not cached — fetching fresh for store=%s (job=%d)",
+                    store_slug, job.id,
+                )
+                relay_token = fetch_relay_token(
+                    username, password, store_slug,
+                    relay_url=relay_url, relay_secret=relay_secret,
+                )
+
+        if not relay_token or not store_slug:
+            logger.error(
+                "PA relay: no token/store_slug for store=%s (job=%d) — marking all failed",
+                store_slug, job.id,
+            )
+            for item, prepared_data in entries:
+                item.status = PostingJobItemStatus.FAILED
+                item.error_message = 'PA relay token unavailable — check relay machine and store credentials'
+                item.save(update_fields=['status', 'error_message', 'updated_at'])
+                owned_product = prepared_data.get('owned_product')
+                if owned_product:
+                    add_failed_owned_products_to_pool(job, [owned_product])
+                    release_dispatch_items_for_job(
+                        job, owned_products=[owned_product],
+                        reason='PA relay token unavailable', remote_outcome='absent',
+                    )
+            return
+
+        # Build payload rows for each item
+        variant_ctx = build_variant_context(
+            store=store, game=job.game, marketplace='playerauctions',
+        )
+        router = VariantRouter(variant_ctx, mode='stock')
+        excel_rows: list[dict] = []
+        build_data_list: list[dict] = []
+        valid_entries: list[tuple] = []
+
+        for item, prepared_data in entries:
+            try:
+                build_result = build_item_payload(
+                    item, prepared_data, job,
+                    variant_ctx=variant_ctx, router=router,
+                )
+                if not build_result['ok']:
+                    raise ValueError(f"[{build_result['stage']}] {build_result['error']}")
+                excel_rows.append(build_result['data']['payload'])
+                build_data_list.append(build_result['data'])
+                valid_entries.append((item, prepared_data))
+            except Exception as exc:
+                item.status = PostingJobItemStatus.FAILED
+                item.error_message = str(exc)
+                item.save(update_fields=['status', 'error_message', 'updated_at'])
+                owned_product = prepared_data.get('owned_product')
+                if owned_product:
+                    add_failed_owned_products_to_pool(job, [owned_product])
+                    release_dispatch_items_for_job(
+                        job, owned_products=[owned_product],
+                        reason=str(exc), remote_outcome='absent',
+                    )
+
+        if not excel_rows:
+            return
+
+        # Post via relay
+        logger.info("PA relay batch: %d rows (job=%d, store=%s)", len(excel_rows), job.id, store_slug)
+        _relay_poster = PARelayPoster()
+        _relay_result = _relay_poster.post_batch(relay_token, store_slug, excel_rows)
+
+        # Build PA client for normalize_offer_response (optional, graceful fallback)
+        facade = None
+        proxy_group = None
+        try:
+            from apps.posting.services.stock.proxy import get_group_name
+            from apps.posting.services.stock.registry import registry
+            proxy_group = get_group_name(store)
+            facade = registry.get_or_build_client(
+                'playerauctions', store.credential,
+                proxy_pool=self._proxy_pool, proxy_group=proxy_group,
+            )
+        except Exception:
+            pass
+
+        for idx, (item, prepared_data) in enumerate(valid_entries):
+            owned_product = prepared_data.get('owned_product')
+            if idx in _relay_result.successful:
+                offer_id = _relay_result.successful[idx]
+                final_price = build_data_list[idx]['final_price']
+                variant_slug = build_data_list[idx]['variant_slug']
+                listing_variant_slug = build_data_list[idx].get('listing_variant_slug', variant_slug)
+                try:
+                    kwargs = {}
+                    if facade:
+                        kwargs['client'] = facade
+                        kwargs['proxy_group'] = proxy_group
+                    normalized_raw = normalize_offer_response(
+                        'playerauctions',
+                        {'offer_id': offer_id},
+                        payload=excel_rows[idx],
+                        **kwargs,
+                    )
+                    persist_success(
+                        item=item,
+                        job=job,
+                        owned_product=owned_product,
+                        store_listing_id=offer_id,
+                        variant_slug=listing_variant_slug,
+                        final_price=final_price,
+                        payload=excel_rows[idx],
+                        response_data={'offer_id': offer_id},
+                        raw_data_override=normalized_raw,
+                    )
+                except Exception as exc:
+                    item.status = PostingJobItemStatus.FAILED
+                    item.error_message = f'Listing persist failed (PA offer may exist): {exc}'
+                    logger.exception(
+                        "PA listing persist failed for item #%d (offer_id=%s)", item.id, offer_id,
+                    )
+                    release_dispatch_items_for_job(
+                        job, owned_products=[owned_product] if owned_product else [],
+                        reason=str(exc), remote_outcome='unknown',
+                    )
+            else:
+                error_msg = _relay_result.failed.get(idx, 'PA relay post failed')
+                item.status = PostingJobItemStatus.FAILED
+                item.error_message = error_msg
+                if owned_product:
+                    add_failed_owned_products_to_pool(job, [owned_product])
+                    release_dispatch_items_for_job(
+                        job, owned_products=[owned_product],
+                        reason=error_msg, remote_outcome='absent',
+                    )
+                PostingLog.objects.create(
+                    task_name='stock_post',
+                    level=PostingLogLevel.ERROR,
+                    message=f"PA relay post failed: {item.login}",
+                    detail={
+                        'item_id': item.id,
+                        'job_id': job.id,
+                        'stage': 'pa_relay_batch',
+                        'error': error_msg,
+                    },
+                    integration_account=store,
+                )
+            item.save(update_fields=['status', 'error_message', 'listing', 'updated_at'])
 
     def _retry_with_variant_fallback(
         self,
