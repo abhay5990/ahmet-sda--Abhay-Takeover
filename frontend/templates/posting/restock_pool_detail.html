@@ -489,7 +489,16 @@
                     </td>
                     <td class="px-4 py-2 text-xs text-gray-400">{{ lop.created_at|date:"Y-m-d H:i" }}</td>
                     <td class="px-4 py-2 text-xs text-red-500 max-w-xs truncate"></td>
-                    <td class="px-4 py-2 text-right"></td>
+                    <td class="px-4 py-2 text-right whitespace-nowrap">
+                        <button type="button"
+                                onclick="removeLinkedKey({{ lop.listing_id }}, {{ lop.owned_product_id }}, '{{ lop.owned_product.login|escapejs }}', this)"
+                                class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span>Delete Key</span>
+                        </button>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
@@ -592,7 +601,7 @@
                                 class="text-xs text-red-600 hover:text-red-800 disabled:opacity-50">Remove from Pool</button>
                         {% elif item.status == 'reserved' %}
                         <span class="text-xs text-amber-600" title="This key is being dispatched">In progress</span>
-                        {% elif item.pool_offer_id and item.status != 'consumed' and item.status != 'removed' %}
+                        {% elif item.pool_offer_id and item.status != 'removed' %}
                         <button onclick="removeItem({{ pool.id }}, {{ item.id }}, '{{ item.status }}', true, this)"
                                 class="text-xs text-red-600 hover:text-red-800 disabled:opacity-50">Delete Key</button>
                         {% else %}
@@ -1698,6 +1707,31 @@ function poolDetail() {
             }
         },
     };
+}
+
+async function removeLinkedKey(listingId, productId, login, btn) {
+    const message = `Delete key “${login}” from this linked listing?\n\nIf it is still live on the marketplace, SDA will remove the remote key first. The underlying inventory account will not be deleted.`;
+    if (!confirm(message)) return;
+
+    const originalLabel = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = 'Removing...';
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value
+        || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+    try {
+        const resp = await fetch(`/listings/api/${listingId}/keys/${productId}/remove/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrf },
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) throw new Error(data.error || `Removal failed (${resp.status})`);
+        window.location.reload();
+    } catch (error) {
+        alert(error.message || 'Failed to remove key');
+        btn.disabled = false;
+        btn.innerHTML = originalLabel;
+    }
 }
 
 async function removeItem(poolId, itemId, status, assignedToOffer, btn) {

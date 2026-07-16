@@ -539,17 +539,45 @@ class UnifiedPoolTestCase(TestCase):
         self.client.force_login(user)
         pool = self.make_pool('Individual Key Actions Pool')
         pool_offer = self.make_pool_offer(pool)
-        OfferPoolItem.objects.create(
+        pending_item = OfferPoolItem.objects.create(
             pool=pool,
             owned_product=self.make_owned('pending-key-action'),
             status=OfferPoolItemStatus.PENDING,
         )
-        OfferPoolItem.objects.create(
+        assigned_product = self.make_owned('assigned-key-action')
+        assigned_item = OfferPoolItem.objects.create(
             pool=pool,
             pool_offer=pool_offer,
-            owned_product=self.make_owned('assigned-key-action'),
+            owned_product=assigned_product,
             status=OfferPoolItemStatus.PUSHED,
             remote_state='present',
+        )
+        ListingOwnedProduct.objects.create(
+            listing=pool_offer.listing,
+            owned_product=assigned_product,
+        )
+        consumed_product = self.make_owned('consumed-key-action')
+        consumed_item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=consumed_product,
+            status=OfferPoolItemStatus.CONSUMED,
+            remote_state='absent',
+        )
+        ListingOwnedProduct.objects.create(
+            listing=pool_offer.listing,
+            owned_product=consumed_product,
+        )
+        reservation = PoolDispatchReservation.objects.create(
+            pool=pool,
+            store=self.eldorado,
+            item_count=1,
+        )
+        reserved_item = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=self.make_owned('reserved-key-action'),
+            reservation=reservation,
+            status=OfferPoolItemStatus.RESERVED,
         )
 
         response = self.client.get(f'/posting/restock/pools/{pool.pk}/')
@@ -558,6 +586,27 @@ class UnifiedPoolTestCase(TestCase):
         self.assertContains(response, 'Remove from Pool')
         self.assertContains(response, 'Delete Key')
         self.assertContains(response, 'Delete this individual key from the Pool?')
+        self.assertContains(
+            response,
+            f'removeLinkedKey({pool_offer.listing_id}, {consumed_product.pk}',
+        )
+        self.assertContains(
+            response,
+            f"removeItem({pool.pk}, {pending_item.pk}, 'pending', false",
+        )
+        self.assertContains(
+            response,
+            f"removeItem({pool.pk}, {assigned_item.pk}, 'pushed', true",
+        )
+        self.assertContains(
+            response,
+            f"removeItem({pool.pk}, {consumed_item.pk}, 'consumed', true",
+        )
+        self.assertNotContains(
+            response,
+            f"removeItem({pool.pk}, {reserved_item.pk}, 'reserved'",
+        )
+        self.assertContains(response, 'In progress')
 
     def test_listing_remove_key_removes_remote_credential_then_marks_item_removed(self):
         user = get_user_model().objects.create_user(
