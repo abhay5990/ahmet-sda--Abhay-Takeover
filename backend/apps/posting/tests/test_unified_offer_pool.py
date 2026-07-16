@@ -291,7 +291,7 @@ class UnifiedPoolTestCase(TestCase):
         pool.refresh_from_db()
         self.assertEqual(pool.name, 'Renamed Pool')
 
-    def test_pool_list_reports_exact_hard_delete_eligibility(self):
+    def test_pool_list_allows_safe_history_and_blocks_active_marketplace_work(self):
         user = get_user_model().objects.create_user(
             username='pool-delete-eligibility-user',
             password='test-password',
@@ -304,6 +304,14 @@ class UnifiedPoolTestCase(TestCase):
             owned_product=self.make_owned('removed-history@example.test'),
             status=OfferPoolItemStatus.REMOVED,
         )
+        pool_with_pending_item = self.make_pool('Pool With Pending Item')
+        OfferPoolItem.objects.create(
+            pool=pool_with_pending_item,
+            owned_product=self.make_owned('pending-delete@example.test'),
+            status=OfferPoolItemStatus.PENDING,
+        )
+        pool_with_active_offer = self.make_pool('Pool With Active Offer')
+        self.make_pool_offer(pool_with_active_offer)
 
         response = self.client.get('/posting/api/pools/')
 
@@ -311,48 +319,121 @@ class UnifiedPoolTestCase(TestCase):
         pools = {entry['id']: entry for entry in response.json()['pools']}
         self.assertTrue(pools[empty_pool.pk]['can_hard_delete'])
         self.assertEqual(pools[pool_with_history.pk]['items_total'], 0)
-        self.assertFalse(pools[pool_with_history.pk]['can_hard_delete'])
+        self.assertTrue(pools[pool_with_history.pk]['can_hard_delete'])
+        self.assertTrue(pools[pool_with_pending_item.pk]['can_hard_delete'])
+        self.assertFalse(pools[pool_with_active_offer.pk]['can_hard_delete'])
+        self.assertIn(
+            'active_linked_offers',
+            pools[pool_with_active_offer.pk]['delete_blockers'],
+        )
 
-    def test_hard_delete_rejects_pool_history_and_deletes_empty_pool(self):
+    def test_hard_delete_cleans_pool_history_but_preserves_listing_and_inventory(self):
         user = get_user_model().objects.create_user(
             username='pool-delete-user',
             password='test-password',
         )
         self.client.force_login(user)
-        pool_with_offer = self.make_pool('Pool With Offer')
-        self.make_pool_offer(pool_with_offer)
-        pool_with_item = self.make_pool('Pool With Item')
+        pool = self.make_pool('Disposable Historical Pool')
+        listing = self.make_listing(remote_id='preserved-offer')
+        owned = self.make_owned('preserved-inventory@example.test')
+        listing_link = ListingOwnedProduct.objects.create(
+            listing=listing,
+            owned_product=owned,
+        )
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            status='detached',
+        )
         OfferPoolItem.objects.create(
-            pool=pool_with_item,
-            owned_product=self.make_owned('delete-guard@example.test'),
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=owned,
+            status=OfferPoolItemStatus.CONSUMED,
         )
-        empty_pool = self.make_pool('Disposable Empty Pool')
+        sale_event = PoolSaleEvent.objects.create(
+            event_key='pool-delete:sale-history',
+            listing=listing,
+            pool_offer=pool_offer,
+        )
 
-        offer_response = self.client.post(
-            f'/posting/api/pools/{pool_with_offer.pk}/delete/',
-            data={'hard': True},
-            content_type='application/json',
-        )
-        item_response = self.client.post(
-            f'/posting/api/pools/{pool_with_item.pk}/delete/',
-            data={'hard': True},
-            content_type='application/json',
-        )
-        empty_response = self.client.post(
-            f'/posting/api/pools/{empty_pool.pk}/delete/',
+        response = self.client.post(
+            f'/posting/api/pools/{pool.pk}/delete/',
             data={'hard': True},
             content_type='application/json',
         )
 
-        self.assertEqual(offer_response.status_code, 409)
-        self.assertEqual(offer_response.json()['error_code'], 'cleanup_required')
-        self.assertEqual(item_response.status_code, 409)
-        self.assertEqual(item_response.json()['error_code'], 'cleanup_required')
-        self.assertEqual(empty_response.status_code, 200)
-        self.assertTrue(empty_response.json()['deleted'])
-        self.assertTrue(OfferPool.objects.filter(pk=pool_with_offer.pk).exists())
-        self.assertTrue(OfferPool.objects.filter(pk=pool_with_item.pk).exists())
-        self.assertFalse(OfferPool.objects.filter(pk=empty_pool.pk).exists())
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertTrue(response.json()['deleted'])
+        self.assertEqual(response.json()['removed_pool_items'], 1)
+        self.assertEqual(response.json()['removed_pool_offers'], 1)
+        self.assertFalse(OfferPool.objects.filter(pk=pool.pk).exists())
+        self.assertFalse(PoolOffer.objects.filter(pk=pool_offer.pk).exists())
+        self.assertTrue(OwnedProduct.objects.filter(pk=owned.pk).exists())
+        self.assertTrue(Listing.objects.filter(pk=listing.pk).exists())
+        self.assertTrue(ListingOwnedProduct.objects.filter(pk=listing_link.pk).exists())
+        sale_event.refresh_from_db()
+        self.assertIsNone(sale_event.pool_offer_id)
+
+    def test_hard_delete_rejects_active_offer_items_and_dispatch_reservations(self):
+        user = get_user_model().objects.create_user(
+            username='pool-delete-blocker-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        active_pool = self.make_pool('Active Marketplace Pool')
+        active_offer = self.make_pool_offer(active_pool)
+        OfferPoolItem.objects.create(
+            pool=active_pool,
+            pool_offer=active_offer,
+            owned_product=self.make_owned('active-delete-guard@example.test'),
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+        )
+        reserved_pool = self.make_pool('Reserved Pool')
+        PoolDispatchReservation.objects.create(
+            pool=reserved_pool,
+            store=self.eldorado,
+            status='active',
+            item_count=0,
+        )
+
+        active_response = self.client.post(
+            f'/posting/api/pools/{active_pool.pk}/delete/',
+            data={'hard': True},
+            content_type='application/json',
+        )
+        reserved_response = self.client.post(
+            f'/posting/api/pools/{reserved_pool.pk}/delete/',
+            data={'hard': True},
+            content_type='application/json',
+        )
+
+        self.assertEqual(active_response.status_code, 409)
+        self.assertEqual(active_response.json()['error_code'], 'pool_delete_blocked')
+        self.assertIn('active_pool_items', active_response.json()['blockers'])
+        self.assertIn('active_linked_offers', active_response.json()['blockers'])
+        self.assertEqual(reserved_response.status_code, 409)
+        self.assertIn(
+            'active_dispatch_reservations',
+            reserved_response.json()['blockers'],
+        )
+        self.assertTrue(OfferPool.objects.filter(pk=active_pool.pk).exists())
+        self.assertTrue(OfferPool.objects.filter(pk=reserved_pool.pk).exists())
+
+    def test_pool_list_template_explains_safe_delete_cleanup(self):
+        user = get_user_model().objects.create_user(
+            username='pool-delete-template-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+
+        response = self.client.get('/posting/restock/pools/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'listings and inventory accounts are preserved')
+        self.assertContains(response, 'pool.delete_blockers')
+        self.assertContains(response, 'The pool and its local pool history will be removed')
 
     def test_leave_remote_detach_preserves_assignment(self):
         user = get_user_model().objects.create_user(
@@ -432,7 +513,7 @@ class UnifiedPoolTestCase(TestCase):
         self.assertEqual(detail_response.status_code, 200)
         self.assertContains(list_response, 'Edit Name')
         self.assertContains(list_response, 'savePoolName(pool)')
-        self.assertContains(list_response, 'Permanent delete is blocked')
+        self.assertContains(list_response, 'Delete is temporarily blocked')
         self.assertContains(detail_response, 'Rendered Pool')
         self.assertContains(detail_response, 'Linked Offers')
 

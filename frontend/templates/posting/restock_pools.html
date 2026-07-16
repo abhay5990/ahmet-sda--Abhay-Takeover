@@ -151,7 +151,7 @@
                                 </button>
                                 <button @click="hardDeletePool(pool)"
                                         :disabled="!pool.can_hard_delete || deletingPoolId !== null"
-                                        :title="pool.can_hard_delete ? 'Permanently delete this empty pool' : 'Permanent delete is blocked because this pool has items or linked-offer history. Archive it instead.'"
+                                        :title="pool.can_hard_delete ? 'Delete this pool and its local pool history; listings and inventory accounts are preserved' : 'Delete is temporarily blocked while marketplace work or a linked offer is active'"
                                         class="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed"
                                         x-text="deletingPoolId === pool.id ? 'Deleting...' : 'Delete'">
                                 </button>
@@ -785,10 +785,11 @@ function restockManager() {
 
         async hardDeletePool(pool) {
             if (!pool.can_hard_delete) {
-                alert('Permanent delete is blocked because this pool has items or linked-offer history. Archive it instead.');
+                const blockers = (pool.delete_blockers || []).join(', ');
+                alert(`Delete is temporarily blocked while marketplace work is active${blockers ? `: ${blockers}` : '.'}`);
                 return;
             }
-            if (!confirm(`Permanently delete "${pool.name}"? This empty pool will be removed and cannot be restored.`)) return;
+            if (!confirm(`Delete pool "${pool.name}"?\n\nThe pool and its local pool history will be removed. Marketplace listings, linked keys, and inventory accounts will be preserved. This cannot be undone.`)) return;
 
             this.deletingPoolId = pool.id;
             try {

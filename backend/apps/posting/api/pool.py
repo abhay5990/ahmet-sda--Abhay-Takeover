@@ -21,12 +21,16 @@ from apps.orders.enums import OrderStatus
 from apps.posting.models import (
     OfferPool,
     OfferPoolActiveOffer,
+    OfferPoolActiveOfferStatus,
     OfferPoolItem,
     OfferPoolItemStatus,
     OfferPoolStatus,
     CredentialSpec,
     GameVariant,
     PoolDispatchAttempt,
+    PoolDispatchReservation,
+    PoolDispatchReservationStatus,
+    PoolDispatchStatus,
     PoolOffer,
     PoolOfferStatus,
     PoolOfferStrategy,
@@ -56,11 +60,34 @@ def list_pools(request):
             _items_pushed=Count('items', filter=Q(items__status=OfferPoolItemStatus.PUSHED)),
             _items_failed=Count('items', filter=Q(items__status=OfferPoolItemStatus.FAILED)),
             _items_consumed=Count('items', filter=Q(items__status=OfferPoolItemStatus.CONSUMED)),
-            _has_items=Exists(
-                OfferPoolItem.objects.filter(pool_id=OuterRef('pk')),
+            _has_blocking_items=Exists(
+                OfferPoolItem.objects.filter(
+                    pool_id=OuterRef('pk'),
+                    status__in=_POOL_DELETE_BLOCKING_ITEM_STATUSES,
+                ),
             ),
-            _has_pool_offers=Exists(
-                PoolOffer.objects.filter(pool_id=OuterRef('pk')),
+            _has_blocking_pool_offers=Exists(
+                PoolOffer.objects.filter(pool_id=OuterRef('pk')).exclude(
+                    status=PoolOfferStatus.DETACHED,
+                ),
+            ),
+            _has_blocking_active_offers=Exists(
+                OfferPoolActiveOffer.objects.filter(
+                    pool_id=OuterRef('pk'),
+                    status=OfferPoolActiveOfferStatus.ACTIVE,
+                ),
+            ),
+            _has_blocking_reservations=Exists(
+                PoolDispatchReservation.objects.filter(
+                    pool_id=OuterRef('pk'),
+                    status=PoolDispatchReservationStatus.ACTIVE,
+                ),
+            ),
+            _has_blocking_attempts=Exists(
+                PoolDispatchAttempt.objects.filter(
+                    pool_offer__pool_id=OuterRef('pk'),
+                    status__in=_POOL_DELETE_BLOCKING_ATTEMPT_STATUSES,
+                ),
             ),
         )
         .order_by('-created_at')
@@ -257,30 +284,59 @@ def update_pool(request, pool_id):
 @login_required
 @require_http_methods(['POST', 'DELETE'])
 def delete_pool(request, pool_id):
-    """Archive by default; hard-delete only a never-used empty aggregate."""
-    try:
-        pool = OfferPool.objects.get(id=pool_id)
-    except OfferPool.DoesNotExist:
-        return JsonResponse({'error': 'Pool not found'}, status=404)
-
+    """Archive by default; hard-delete a Pool when no remote work is active."""
     try:
         body = json.loads(request.body or b'{}')
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
     if body.get('hard'):
-        has_history = (
-            pool.items.exists()
-            or pool.pool_offers.exists()
-        )
-        if has_history:
-            return JsonResponse({
-                'error': 'Pool has operational history and cannot be hard-deleted',
-                'error_code': 'cleanup_required',
-            }, status=409)
-        pool.delete()
-        return JsonResponse({'ok': True, 'deleted': True})
+        with transaction.atomic():
+            try:
+                pool = OfferPool.objects.select_for_update().get(id=pool_id)
+            except OfferPool.DoesNotExist:
+                return JsonResponse({'error': 'Pool not found'}, status=404)
 
+            blockers = _pool_delete_blockers(pool)
+            if blockers:
+                return JsonResponse({
+                    'error': 'Pool cannot be deleted while marketplace work is active',
+                    'error_code': 'pool_delete_blocked',
+                    'blockers': blockers,
+                }, status=409)
+
+            pool_offer_ids = list(pool.pool_offers.values_list('pk', flat=True))
+            item_count = pool.items.count()
+            offer_count = len(pool_offer_ids)
+
+            if pool_offer_ids:
+                PoolSaleEvent.objects.filter(
+                    pool_offer_id__in=pool_offer_ids,
+                ).update(pool_offer=None)
+                PoolDispatchAttempt.objects.filter(
+                    pool_offer_id__in=pool_offer_ids,
+                ).delete()
+
+            OfferPoolActiveOffer.objects.filter(pool=pool).delete()
+            pool.items.update(reservation=None)
+            pool.items.all().delete()
+            pool.dispatch_reservations.all().delete()
+            pool.pool_offers.all().delete()
+            pool.delete()
+
+        return JsonResponse({
+            'ok': True,
+            'deleted': True,
+            'removed_pool_items': item_count,
+            'removed_pool_offers': offer_count,
+            'listings_preserved': True,
+            'inventory_preserved': True,
+        })
+
+    try:
+        pool = OfferPool.objects.get(id=pool_id)
+    except OfferPool.DoesNotExist:
+        return JsonResponse({'error': 'Pool not found'}, status=404)
     pool.status = OfferPoolStatus.ARCHIVED
     pool.save(update_fields=['status', 'updated_at'])
     return JsonResponse({'ok': True, 'archived': True})
@@ -1377,6 +1433,69 @@ def dispatch_offer(request, pool_id):
 # ── Serializers ──────────────────────────────────────────────────
 
 
+_POOL_DELETE_BLOCKING_ITEM_STATUSES = (
+    OfferPoolItemStatus.RESERVED,
+    OfferPoolItemStatus.QUEUED,
+    OfferPoolItemStatus.PUSHED,
+    OfferPoolItemStatus.FAILED,
+)
+_POOL_DELETE_BLOCKING_ATTEMPT_STATUSES = (
+    PoolDispatchStatus.PENDING,
+    PoolDispatchStatus.IN_PROGRESS,
+    PoolDispatchStatus.UNKNOWN,
+)
+
+
+def _pool_delete_blockers(pool: OfferPool) -> list[str]:
+    """Return active remote/in-progress conditions that make deletion unsafe."""
+    checks = (
+        (
+            'active_pool_items',
+            '_has_blocking_items',
+            lambda: pool.items.filter(
+                status__in=_POOL_DELETE_BLOCKING_ITEM_STATUSES,
+            ).exists(),
+        ),
+        (
+            'active_linked_offers',
+            '_has_blocking_pool_offers',
+            lambda: pool.pool_offers.exclude(
+                status=PoolOfferStatus.DETACHED,
+            ).exists(),
+        ),
+        (
+            'active_remote_offers',
+            '_has_blocking_active_offers',
+            lambda: pool.active_offers.filter(
+                status=OfferPoolActiveOfferStatus.ACTIVE,
+            ).exists(),
+        ),
+        (
+            'active_dispatch_reservations',
+            '_has_blocking_reservations',
+            lambda: pool.dispatch_reservations.filter(
+                status=PoolDispatchReservationStatus.ACTIVE,
+            ).exists(),
+        ),
+        (
+            'in_progress_dispatch_attempts',
+            '_has_blocking_attempts',
+            lambda: PoolDispatchAttempt.objects.filter(
+                pool_offer__pool=pool,
+                status__in=_POOL_DELETE_BLOCKING_ATTEMPT_STATUSES,
+            ).exists(),
+        ),
+    )
+    blockers = []
+    for label, annotation, query in checks:
+        blocked = getattr(pool, annotation, None)
+        if blocked is None:
+            blocked = query()
+        if blocked:
+            blockers.append(label)
+    return blockers
+
+
 def _pool_to_dict(pool: OfferPool) -> dict:
     pending = getattr(pool, '_items_pending', None)
     queued = getattr(pool, '_items_queued', None)
@@ -1393,12 +1512,7 @@ def _pool_to_dict(pool: OfferPool) -> dict:
         failed = counts.get(OfferPoolItemStatus.FAILED, 0)
         consumed = counts.get(OfferPoolItemStatus.CONSUMED, 0)
 
-    has_items = getattr(pool, '_has_items', None)
-    if has_items is None:
-        has_items = pool.items.exists()
-    has_pool_offers = getattr(pool, '_has_pool_offers', None)
-    if has_pool_offers is None:
-        has_pool_offers = pool.pool_offers.exists()
+    delete_blockers = _pool_delete_blockers(pool)
 
     linked_offers = [
         offer for offer in pool.pool_offers.all()
@@ -1427,7 +1541,8 @@ def _pool_to_dict(pool: OfferPool) -> dict:
         'variant': pool.variant.slug if pool.variant_id else '',
         'credential_spec_id': pool.credential_spec_id,
         'linked_offer_count': len(linked_offers),
-        'can_hard_delete': not has_items and not has_pool_offers,
+        'can_hard_delete': not delete_blockers,
+        'delete_blockers': delete_blockers,
         # Compatibility fields for the existing UI during cutover.
         'listing_id': listing.pk if listing else None,
         'listing_title': (listing.title or listing.store_listing_id) if listing else '',
