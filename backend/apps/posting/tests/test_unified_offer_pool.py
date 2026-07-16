@@ -260,6 +260,99 @@ class UnifiedPoolTestCase(TestCase):
         self.assertEqual(linked.strategy, PoolOfferStrategy.APPEND)
         self.assertIsNone(linked.max_concurrent)
 
+    def test_pool_api_rename_trims_name_and_rejects_blank(self):
+        user = get_user_model().objects.create_user(
+            username='pool-rename-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Original Pool Name')
+
+        rename_response = self.client.patch(
+            f'/posting/api/pools/{pool.pk}/update/',
+            data={'name': '  Renamed Pool  '},
+            content_type='application/json',
+        )
+
+        self.assertEqual(rename_response.status_code, 200, rename_response.content)
+        self.assertEqual(rename_response.json()['pool']['name'], 'Renamed Pool')
+        pool.refresh_from_db()
+        self.assertEqual(pool.name, 'Renamed Pool')
+
+        blank_response = self.client.patch(
+            f'/posting/api/pools/{pool.pk}/update/',
+            data={'name': '   '},
+            content_type='application/json',
+        )
+
+        self.assertEqual(blank_response.status_code, 400)
+        self.assertEqual(blank_response.json()['error'], 'name cannot be empty')
+        pool.refresh_from_db()
+        self.assertEqual(pool.name, 'Renamed Pool')
+
+    def test_pool_list_reports_exact_hard_delete_eligibility(self):
+        user = get_user_model().objects.create_user(
+            username='pool-delete-eligibility-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        empty_pool = self.make_pool('Empty Pool')
+        pool_with_history = self.make_pool('Pool With Removed Item')
+        OfferPoolItem.objects.create(
+            pool=pool_with_history,
+            owned_product=self.make_owned('removed-history@example.test'),
+            status=OfferPoolItemStatus.REMOVED,
+        )
+
+        response = self.client.get('/posting/api/pools/')
+
+        self.assertEqual(response.status_code, 200)
+        pools = {entry['id']: entry for entry in response.json()['pools']}
+        self.assertTrue(pools[empty_pool.pk]['can_hard_delete'])
+        self.assertEqual(pools[pool_with_history.pk]['items_total'], 0)
+        self.assertFalse(pools[pool_with_history.pk]['can_hard_delete'])
+
+    def test_hard_delete_rejects_pool_history_and_deletes_empty_pool(self):
+        user = get_user_model().objects.create_user(
+            username='pool-delete-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool_with_offer = self.make_pool('Pool With Offer')
+        self.make_pool_offer(pool_with_offer)
+        pool_with_item = self.make_pool('Pool With Item')
+        OfferPoolItem.objects.create(
+            pool=pool_with_item,
+            owned_product=self.make_owned('delete-guard@example.test'),
+        )
+        empty_pool = self.make_pool('Disposable Empty Pool')
+
+        offer_response = self.client.post(
+            f'/posting/api/pools/{pool_with_offer.pk}/delete/',
+            data={'hard': True},
+            content_type='application/json',
+        )
+        item_response = self.client.post(
+            f'/posting/api/pools/{pool_with_item.pk}/delete/',
+            data={'hard': True},
+            content_type='application/json',
+        )
+        empty_response = self.client.post(
+            f'/posting/api/pools/{empty_pool.pk}/delete/',
+            data={'hard': True},
+            content_type='application/json',
+        )
+
+        self.assertEqual(offer_response.status_code, 409)
+        self.assertEqual(offer_response.json()['error_code'], 'cleanup_required')
+        self.assertEqual(item_response.status_code, 409)
+        self.assertEqual(item_response.json()['error_code'], 'cleanup_required')
+        self.assertEqual(empty_response.status_code, 200)
+        self.assertTrue(empty_response.json()['deleted'])
+        self.assertTrue(OfferPool.objects.filter(pk=pool_with_offer.pk).exists())
+        self.assertTrue(OfferPool.objects.filter(pk=pool_with_item.pk).exists())
+        self.assertFalse(OfferPool.objects.filter(pk=empty_pool.pk).exists())
+
     def test_leave_remote_detach_preserves_assignment(self):
         user = get_user_model().objects.create_user(
             username='pool-operator',
@@ -336,6 +429,9 @@ class UnifiedPoolTestCase(TestCase):
 
         self.assertEqual(list_response.status_code, 200)
         self.assertEqual(detail_response.status_code, 200)
+        self.assertContains(list_response, 'Edit Name')
+        self.assertContains(list_response, 'savePoolName(pool)')
+        self.assertContains(list_response, 'Permanent delete is blocked')
         self.assertContains(detail_response, 'Rendered Pool')
         self.assertContains(detail_response, 'Linked Offers')
     def test_listing_remove_key_removes_remote_credential_then_marks_item_removed(self):

@@ -9,7 +9,7 @@ import uuid
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError, transaction
-from django.db.models import Count, Q
+from django.db.models import Count, Exists, OuterRef, Q
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET, require_http_methods
 
@@ -56,6 +56,12 @@ def list_pools(request):
             _items_pushed=Count('items', filter=Q(items__status=OfferPoolItemStatus.PUSHED)),
             _items_failed=Count('items', filter=Q(items__status=OfferPoolItemStatus.FAILED)),
             _items_consumed=Count('items', filter=Q(items__status=OfferPoolItemStatus.CONSUMED)),
+            _has_items=Exists(
+                OfferPoolItem.objects.filter(pool_id=OuterRef('pk')),
+            ),
+            _has_pool_offers=Exists(
+                PoolOffer.objects.filter(pool_id=OuterRef('pk')),
+            ),
         )
         .order_by('-created_at')
     )
@@ -1347,6 +1353,13 @@ def _pool_to_dict(pool: OfferPool) -> dict:
         failed = counts.get(OfferPoolItemStatus.FAILED, 0)
         consumed = counts.get(OfferPoolItemStatus.CONSUMED, 0)
 
+    has_items = getattr(pool, '_has_items', None)
+    if has_items is None:
+        has_items = pool.items.exists()
+    has_pool_offers = getattr(pool, '_has_pool_offers', None)
+    if has_pool_offers is None:
+        has_pool_offers = pool.pool_offers.exists()
+
     linked_offers = [
         offer for offer in pool.pool_offers.all()
         if offer.status != PoolOfferStatus.DETACHED
@@ -1374,6 +1387,7 @@ def _pool_to_dict(pool: OfferPool) -> dict:
         'variant': pool.variant.slug if pool.variant_id else '',
         'credential_spec_id': pool.credential_spec_id,
         'linked_offer_count': len(linked_offers),
+        'can_hard_delete': not has_items and not has_pool_offers,
         # Compatibility fields for the existing UI during cutover.
         'listing_id': listing.pk if listing else None,
         'listing_title': (listing.title or listing.store_listing_id) if listing else '',

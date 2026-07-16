@@ -72,9 +72,30 @@
                 <template x-for="pool in pools" :key="pool.id">
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 py-3">
-                            <a :href="'/posting/restock/pools/' + pool.id + '/'"
-                               class="text-indigo-600 hover:text-indigo-800 font-medium text-sm"
-                               x-text="pool.name"></a>
+                            <div x-show="editingPoolId !== pool.id">
+                                <a :href="'/posting/restock/pools/' + pool.id + '/'"
+                                   class="text-indigo-600 hover:text-indigo-800 font-medium text-sm"
+                                   x-text="pool.name"></a>
+                            </div>
+                            <div x-show="editingPoolId === pool.id" x-cloak class="flex items-center gap-1.5">
+                                <input type="text"
+                                       :id="'pool-name-input-' + pool.id"
+                                       x-model="editingPoolName"
+                                       @keydown.enter.prevent="savePoolName(pool)"
+                                       @keydown.escape.prevent="cancelRename()"
+                                       maxlength="255"
+                                       class="w-48 border border-indigo-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                       aria-label="Pool name">
+                                <button @click="savePoolName(pool)"
+                                        :disabled="renamingPool"
+                                        class="px-2 py-1 text-xs bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        x-text="renamingPool ? 'Saving...' : 'Save'"></button>
+                                <button @click="cancelRename()"
+                                        :disabled="renamingPool"
+                                        class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50">
+                                    Cancel
+                                </button>
+                            </div>
                             <div class="text-xs text-gray-400"
                                  x-text="pool.linked_offer_count + ' linked offer(s)'"></div>
                         </td>
@@ -107,7 +128,12 @@
                         <td class="px-4 py-3 text-center text-xs text-gray-400"
                             x-text="pool.last_checked_at ? new Date(pool.last_checked_at).toLocaleString() : 'Never'"></td>
                         <td class="px-4 py-3 text-right">
-                            <div class="flex items-center justify-end gap-2">
+                            <div class="flex items-center justify-end gap-2 whitespace-nowrap">
+                                <button @click="startRename(pool)"
+                                        :disabled="editingPoolId !== null || deletingPoolId !== null"
+                                        class="px-2 py-1 text-xs bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Edit Name
+                                </button>
                                 <button @click="triggerReplenish(pool.id)"
                                         :disabled="pool.status !== 'active'"
                                         class="px-2 py-1 text-xs bg-emerald-600 text-white rounded hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -117,15 +143,17 @@
                                         class="px-2 py-1 text-xs rounded"
                                         :class="pool.status === 'active' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'"
                                         x-text="pool.status === 'active' ? 'Pause' : 'Activate'"></button>
-                                <button @click="deletePool(pool.id)"
-                                        class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200">
-                                    Archive
+                                <button @click="archivePool(pool)"
+                                        :disabled="pool.status === 'archived' || deletingPoolId !== null"
+                                        :title="pool.status === 'archived' ? 'This pool is already archived' : 'Archive the pool while preserving its items and offer history'"
+                                        class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                                        x-text="deletingPoolId === pool.id ? 'Archiving...' : (pool.status === 'archived' ? 'Archived' : 'Archive')">
                                 </button>
-                                <button @click="hardDeletePool(pool.id)"
-                                        :disabled="pool.items_total > 0 || pool.linked_offer_count > 0"
-                                        :title="(pool.items_total > 0 || pool.linked_offer_count > 0) ? 'Pool has items or active offers — archive instead' : 'Permanently delete this empty pool'"
-                                        class="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-30 disabled:cursor-not-allowed">
-                                    Delete
+                                <button @click="hardDeletePool(pool)"
+                                        :disabled="!pool.can_hard_delete || deletingPoolId !== null"
+                                        :title="pool.can_hard_delete ? 'Permanently delete this empty pool' : 'Permanent delete is blocked because this pool has items or linked-offer history. Archive it instead.'"
+                                        class="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed"
+                                        x-text="deletingPoolId === pool.id ? 'Deleting...' : 'Delete'">
                                 </button>
                             </div>
                         </td>
@@ -398,6 +426,10 @@ function restockManager() {
         sweepInterval: 30,
         showCreateModal: false,
         creating: false,
+        editingPoolId: null,
+        editingPoolName: '',
+        renamingPool: false,
+        deletingPoolId: null,
         listingResults: [],
         credentials: [],
         credentialSpec: null,
@@ -679,28 +711,104 @@ function restockManager() {
             await this.loadPools();
         },
 
-        async deletePool(poolId) {
-            if (!confirm('Archive this pool? Existing remote assignments will be preserved.')) return;
-            await fetch(`/posting/api/pools/${poolId}/delete/`, {
-                method: 'POST',
-                headers: { 'X-CSRFToken': this.getCSRF() },
+        startRename(pool) {
+            this.editingPoolId = pool.id;
+            this.editingPoolName = pool.name;
+            this.$nextTick(() => {
+                const input = document.getElementById(`pool-name-input-${pool.id}`);
+                input?.focus();
+                input?.select();
             });
-            await this.loadPools();
         },
 
-        async hardDeletePool(poolId) {
-            if (!confirm('Permanently delete this pool? This cannot be undone.')) return;
-            const resp = await fetch(`/posting/api/pools/${poolId}/delete/`, {
-                method: 'POST',
-                headers: { 'X-CSRFToken': this.getCSRF(), 'Content-Type': 'application/json' },
-                body: JSON.stringify({ hard: true }),
-            });
-            const data = await resp.json();
-            if (!resp.ok) {
-                alert(data.error || 'Cannot delete pool.');
+        cancelRename() {
+            this.editingPoolId = null;
+            this.editingPoolName = '';
+        },
+
+        async savePoolName(pool) {
+            const name = this.editingPoolName.trim();
+            if (!name) {
+                alert('Pool name cannot be empty.');
                 return;
             }
-            await this.loadPools();
+            if (name === pool.name) {
+                this.cancelRename();
+                return;
+            }
+
+            this.renamingPool = true;
+            try {
+                const resp = await fetch(`/posting/api/pools/${pool.id}/update/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCSRF(),
+                    },
+                    body: JSON.stringify({ name }),
+                });
+                const data = await resp.json();
+                if (!resp.ok) {
+                    alert(data.error || 'Failed to rename pool.');
+                    return;
+                }
+                pool.name = data.pool.name;
+                this.cancelRename();
+            } catch (error) {
+                alert('Failed to rename pool. Please try again.');
+            } finally {
+                this.renamingPool = false;
+            }
+        },
+
+        async archivePool(pool) {
+            if (!confirm(`Archive "${pool.name}"? Its items, linked offers, and remote assignments will be preserved.`)) return;
+
+            this.deletingPoolId = pool.id;
+            try {
+                const resp = await fetch(`/posting/api/pools/${pool.id}/delete/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': this.getCSRF() },
+                });
+                const data = await resp.json();
+                if (!resp.ok) {
+                    alert(data.error || 'Failed to archive pool.');
+                    return;
+                }
+                await this.loadPools();
+            } catch (error) {
+                alert('Failed to archive pool. Please try again.');
+            } finally {
+                this.deletingPoolId = null;
+            }
+        },
+
+        async hardDeletePool(pool) {
+            if (!pool.can_hard_delete) {
+                alert('Permanent delete is blocked because this pool has items or linked-offer history. Archive it instead.');
+                return;
+            }
+            if (!confirm(`Permanently delete "${pool.name}"? This empty pool will be removed and cannot be restored.`)) return;
+
+            this.deletingPoolId = pool.id;
+            try {
+                const resp = await fetch(`/posting/api/pools/${pool.id}/delete/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': this.getCSRF(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hard: true }),
+                });
+                const data = await resp.json();
+                if (!resp.ok) {
+                    alert(data.error || 'Cannot delete pool.');
+                    await this.loadPools();
+                    return;
+                }
+                await this.loadPools();
+            } catch (error) {
+                alert('Cannot delete pool. Please try again.');
+            } finally {
+                this.deletingPoolId = null;
+            }
         },
     };
 }
