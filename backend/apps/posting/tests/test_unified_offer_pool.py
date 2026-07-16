@@ -17,6 +17,7 @@ from apps.posting.models import (
     OfferPoolItem,
     OfferPoolItemStatus,
     OfferPoolStatus,
+    PoolDispatchReservation,
     PoolOffer,
     PoolOfferStrategy,
     PoolSaleEvent,
@@ -434,6 +435,130 @@ class UnifiedPoolTestCase(TestCase):
         self.assertContains(list_response, 'Permanent delete is blocked')
         self.assertContains(detail_response, 'Rendered Pool')
         self.assertContains(detail_response, 'Linked Offers')
+
+    def test_pool_detail_removes_pending_key_but_keeps_account_inventory(self):
+        user = get_user_model().objects.create_user(
+            username='pool-pending-remove-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Pending Key Removal Pool')
+        product = self.make_owned('pending-pool-key')
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=product,
+            status=OfferPoolItemStatus.PENDING,
+        )
+
+        response = self.client.post(
+            f'/posting/api/pools/{pool.pk}/items/{item.pk}/remove/',
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.json()['removed_from_marketplace'])
+        self.assertFalse(OfferPoolItem.objects.filter(pk=item.pk).exists())
+        self.assertTrue(OwnedProduct.objects.filter(pk=product.pk).exists())
+
+    def test_pool_detail_removes_assigned_key_from_marketplace_and_pool(self):
+        user = get_user_model().objects.create_user(
+            username='pool-assigned-remove-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Assigned Key Removal Pool')
+        pool_offer = self.make_pool_offer(pool, threshold=2, target_count=5)
+        pool_offer.current_remote_count = 3
+        pool_offer.save(update_fields=['current_remote_count'])
+        product = self.make_owned('assigned-pool-key')
+        ListingOwnedProduct.objects.create(
+            listing=pool_offer.listing,
+            owned_product=product,
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=product,
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+        )
+
+        with patch(
+            'apps.posting.services.pool.lifecycle._remove_eldorado',
+            return_value=({item.pk}, []),
+        ):
+            response = self.client.post(
+                f'/posting/api/pools/{pool.pk}/items/{item.pk}/remove/',
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()['removed_from_marketplace'])
+        self.assertFalse(ListingOwnedProduct.objects.filter(
+            listing=pool_offer.listing,
+            owned_product=product,
+        ).exists())
+        item.refresh_from_db()
+        pool_offer.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.REMOVED)
+        self.assertEqual(item.remote_state, 'absent')
+        self.assertEqual(pool_offer.current_remote_count, 2)
+        self.assertTrue(OwnedProduct.objects.filter(pk=product.pk).exists())
+
+    def test_pool_detail_blocks_removal_while_key_is_reserved(self):
+        user = get_user_model().objects.create_user(
+            username='pool-reserved-remove-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Reserved Key Removal Pool')
+        product = self.make_owned('reserved-pool-key')
+        reservation = PoolDispatchReservation.objects.create(
+            pool=pool,
+            store=self.eldorado,
+            item_count=1,
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=product,
+            reservation=reservation,
+            status=OfferPoolItemStatus.RESERVED,
+        )
+
+        response = self.client.post(
+            f'/posting/api/pools/{pool.pk}/items/{item.pk}/remove/',
+        )
+
+        self.assertEqual(response.status_code, 409)
+        self.assertIn('in-progress dispatch', response.json()['error'])
+        self.assertTrue(OfferPoolItem.objects.filter(pk=item.pk).exists())
+
+    def test_pool_detail_exposes_individual_pending_and_assigned_key_actions(self):
+        user = get_user_model().objects.create_user(
+            username='pool-key-actions-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Individual Key Actions Pool')
+        pool_offer = self.make_pool_offer(pool)
+        OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=self.make_owned('pending-key-action'),
+            status=OfferPoolItemStatus.PENDING,
+        )
+        OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('assigned-key-action'),
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+        )
+
+        response = self.client.get(f'/posting/restock/pools/{pool.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Remove from Pool')
+        self.assertContains(response, 'Delete Key')
+        self.assertContains(response, 'Delete this individual key from the Pool?')
+
     def test_listing_remove_key_removes_remote_credential_then_marks_item_removed(self):
         user = get_user_model().objects.create_user(
             username='remove-key-user',

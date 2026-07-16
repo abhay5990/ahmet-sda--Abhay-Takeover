@@ -551,17 +551,57 @@ def add_pool_items(request, pool_id):
 @login_required
 @require_POST
 def remove_pool_item(request, pool_id, item_id):
-    """Remove a single item from pool (only if PENDING)."""
+    """Remove one Pool key locally or from its assigned marketplace offer."""
     try:
-        item = OfferPoolItem.objects.get(id=item_id, pool_id=pool_id)
+        item = (
+            OfferPoolItem.objects
+            .select_related('pool_offer__listing', 'owned_product')
+            .get(id=item_id, pool_id=pool_id)
+        )
     except OfferPoolItem.DoesNotExist:
         return JsonResponse({'error': 'Item not found'}, status=404)
 
-    if item.status != OfferPoolItemStatus.PENDING or item.pool_offer_id is not None:
-        return JsonResponse({'error': f'Cannot remove item with status {item.status}'}, status=400)
+    if item.status == OfferPoolItemStatus.RESERVED:
+        return JsonResponse({
+            'error': 'This key is reserved by an in-progress dispatch. Try again after it finishes.',
+        }, status=409)
 
-    item.delete()
-    return JsonResponse({'ok': True})
+    if item.status == OfferPoolItemStatus.PENDING and item.pool_offer_id is None:
+        item.delete()
+        return JsonResponse({
+            'ok': True,
+            'removed_from_marketplace': False,
+            'message': 'Pending key removed from the Pool. The account remains in inventory.',
+        })
+
+    if not item.pool_offer_id:
+        return JsonResponse({
+            'error': f'Cannot safely remove an unassigned key with status {item.status}.',
+        }, status=409)
+
+    from apps.posting.services.pool.lifecycle import remove_pool_item as remove_assigned_item
+
+    result = remove_assigned_item(
+        item.pool_offer,
+        item,
+        listing=item.pool_offer.listing,
+    )
+    if not result.ok:
+        return JsonResponse({
+            'error': '; '.join(result.errors) or 'Key removal failed',
+        }, status=409)
+
+    item.refresh_from_db(fields=['status'])
+    return JsonResponse({
+        'ok': True,
+        'removed_from_marketplace': result.remote_removed,
+        'status': item.status,
+        'message': (
+            'Key removed from the marketplace offer and Pool.'
+            if result.remote_removed
+            else 'Key removed from the Pool assignment.'
+        ),
+    })
 
 
 @login_required
