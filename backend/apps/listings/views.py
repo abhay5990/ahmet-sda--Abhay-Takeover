@@ -224,6 +224,66 @@ def listing_detail(request, listing_id):
     })
 
 
+@role_required('admin', 'user')
+@require_POST
+def listing_remove_key(request, listing_id, product_id):
+    """Remove one linked key, including its remote credential when required."""
+    listing = get_object_or_404(
+        Listing.objects.select_related('integration_account'),
+        pk=listing_id,
+    )
+    link = get_object_or_404(
+        ListingOwnedProduct.objects.select_related('owned_product'),
+        listing=listing,
+        owned_product_id=product_id,
+    )
+
+    from apps.posting.models import OfferPoolItem
+    from apps.posting.services.pool.lifecycle import remove_pool_item
+
+    pool_item = (
+        OfferPoolItem.objects.filter(owned_product_id=product_id)
+        .filter(
+            Q(pool_offer__listing=listing)
+            | Q(active_offers__listing=listing)
+        )
+        .select_related('pool_offer', 'owned_product')
+        .distinct()
+        .first()
+    )
+
+    if pool_item and pool_item.pool_offer_id:
+        result = remove_pool_item(
+            pool_item.pool_offer,
+            pool_item,
+            listing=listing,
+        )
+        if not result.ok:
+            return JsonResponse(
+                {'error': '; '.join(result.errors) or 'Key removal failed'},
+                status=409,
+            )
+        return JsonResponse({
+            'ok': True,
+            'remote_removed': result.remote_removed,
+            'message': 'Key removed from this listing.',
+        })
+
+    if listing.status in _ACTIVE_LISTING_STATUSES:
+        return JsonResponse({
+            'error': (
+                'This active listing is not managed by an Auto-Restock Pool, '
+                'so the remote key cannot be removed safely from here.'
+            ),
+        }, status=409)
+
+    link.delete()
+    return JsonResponse({
+        'ok': True,
+        'remote_removed': False,
+        'message': 'Key link removed from this inactive listing.',
+    })
+
 
 @role_required('admin', 'user')
 def listing_edit(request, listing_id):

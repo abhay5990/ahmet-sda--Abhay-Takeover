@@ -934,6 +934,7 @@ class OfferPoolItemStatus(models.TextChoices):
     PUSHED = 'pushed', 'Pushed'
     FAILED = 'failed', 'Failed'
     CONSUMED = 'consumed', 'Consumed'
+    REMOVED = 'removed', 'Removed'
 
 
 class OfferPoolActiveOfferStatus(models.TextChoices):

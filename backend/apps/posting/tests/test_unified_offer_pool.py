@@ -338,3 +338,139 @@ class UnifiedPoolTestCase(TestCase):
         self.assertEqual(detail_response.status_code, 200)
         self.assertContains(detail_response, 'Rendered Pool')
         self.assertContains(detail_response, 'Linked Offers')
+    def test_listing_remove_key_removes_remote_credential_then_marks_item_removed(self):
+        user = get_user_model().objects.create_user(
+            username='remove-key-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Remove One Key Pool')
+        pool_offer = self.make_pool_offer(pool, threshold=2, target_count=5)
+        pool_offer.current_remote_count = 3
+        pool_offer.save(update_fields=['current_remote_count'])
+        product = self.make_owned('remove-one-key')
+        ListingOwnedProduct.objects.create(
+            listing=pool_offer.listing,
+            owned_product=product,
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=product,
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+        )
+
+        with patch(
+            'apps.posting.services.pool.lifecycle._remove_eldorado',
+            return_value=({item.pk}, []),
+        ):
+            response = self.client.post(
+                f'/listings/api/{pool_offer.listing_id}/keys/{product.pk}/remove/',
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()['remote_removed'])
+        self.assertFalse(ListingOwnedProduct.objects.filter(
+            listing=pool_offer.listing,
+            owned_product=product,
+        ).exists())
+        item.refresh_from_db()
+        pool_offer.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.REMOVED)
+        self.assertEqual(item.remote_state, 'absent')
+        self.assertEqual(pool_offer.current_remote_count, 2)
+        self.assertEqual(item.dispatch_attempts.get().status, 'succeeded')
+
+    def test_listing_remove_key_unlinks_consumed_history_without_remote_call(self):
+        user = get_user_model().objects.create_user(
+            username='remove-history-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Remove Historical Key Pool')
+        pool_offer = self.make_pool_offer(pool)
+        pool_offer.listing.status = 'deleted'
+        pool_offer.listing.save(update_fields=['status'])
+        product = self.make_owned('remove-history-key')
+        ListingOwnedProduct.objects.create(
+            listing=pool_offer.listing,
+            owned_product=product,
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=product,
+            status=OfferPoolItemStatus.CONSUMED,
+            remote_state='absent',
+        )
+
+        with patch('apps.posting.services.pool.lifecycle._remove_eldorado') as remove:
+            response = self.client.post(
+                f'/listings/api/{pool_offer.listing_id}/keys/{product.pk}/remove/',
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.json()['remote_removed'])
+        remove.assert_not_called()
+        self.assertFalse(ListingOwnedProduct.objects.filter(
+            listing=pool_offer.listing,
+            owned_product=product,
+        ).exists())
+        item.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.CONSUMED)
+        self.assertTrue(OwnedProduct.objects.filter(pk=product.pk).exists())
+
+    def test_listing_remove_key_blocks_active_unmanaged_listing(self):
+        user = get_user_model().objects.create_user(
+            username='remove-unmanaged-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        product = self.make_owned('unmanaged-key')
+        listing = Listing.objects.create(
+            game=self.game,
+            integration_account=self.eldorado,
+            store_listing_id='unmanaged-live-offer',
+            title='Unmanaged live offer',
+            price=Decimal('10.00'),
+            status='listed',
+            is_instant=True,
+        )
+        ListingOwnedProduct.objects.create(
+            listing=listing,
+            owned_product=product,
+        )
+
+        response = self.client.post(
+            f'/listings/api/{listing.pk}/keys/{product.pk}/remove/',
+        )
+
+        self.assertEqual(response.status_code, 409)
+        self.assertIn('not managed by an Auto-Restock Pool', response.json()['error'])
+        self.assertTrue(ListingOwnedProduct.objects.filter(
+            listing=listing,
+            owned_product=product,
+        ).exists())
+
+    def test_listing_detail_exposes_delete_key_and_store_specific_threshold_copy(self):
+        user = get_user_model().objects.create_user(
+            username='listing-key-ui-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Store Threshold Pool')
+        pool_offer = self.make_pool_offer(pool, threshold=3, target_count=7)
+        product = self.make_owned('listing-key-ui')
+        ListingOwnedProduct.objects.create(
+            listing=pool_offer.listing,
+            owned_product=product,
+        )
+
+        response = self.client.get(f'/listings/{pool_offer.listing_id}/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Delete Key')
+        self.assertContains(response, 'This Store Threshold / Target')
+        self.assertContains(response, 'These settings apply only to this listing/store.')
+        self.assertContains(response, self.eldorado.name)

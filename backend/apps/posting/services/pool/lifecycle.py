@@ -36,6 +36,140 @@ class DetachResult:
     errors: list[str] = field(default_factory=list)
 
 
+@dataclass
+class RemoveItemResult:
+    ok: bool
+    removed: bool = False
+    remote_removed: bool = False
+    errors: list[str] = field(default_factory=list)
+
+
+def remove_pool_item(
+    pool_offer: PoolOffer,
+    item: OfferPoolItem,
+    *,
+    listing,
+) -> RemoveItemResult:
+    """Remove one user-selected key without allowing it to be replenished again."""
+    pool_offer = PoolOffer.objects.select_related(
+        'pool', 'pool__credential_spec', 'pool__variant',
+        'listing', 'listing__integration_account',
+        'listing__integration_account__credential',
+    ).get(pk=pool_offer.pk)
+    item = OfferPoolItem.objects.select_related('owned_product').get(
+        pk=item.pk,
+        pool_offer=pool_offer,
+    )
+
+    listing_is_inactive = listing.status in {
+        ListingStatus.CLOSED,
+        ListingStatus.DELETED,
+    }
+    is_known_local_only = (
+        listing_is_inactive
+        or item.remote_state == 'absent'
+        or item.status in {
+            OfferPoolItemStatus.PENDING,
+            OfferPoolItemStatus.CONSUMED,
+            OfferPoolItemStatus.REMOVED,
+        }
+    )
+    if is_known_local_only:
+        _finalize_single_item_removal(
+            pool_offer,
+            item,
+            listing=listing,
+            attempt=None,
+            decrement_remote=False,
+        )
+        return RemoveItemResult(ok=True, removed=True)
+
+    if item.status == OfferPoolItemStatus.RESERVED:
+        return RemoveItemResult(
+            ok=False,
+            errors=['This key is reserved by an in-progress dispatch. Try again after it finishes.'],
+        )
+    if item.status not in {
+        OfferPoolItemStatus.QUEUED,
+        OfferPoolItemStatus.PUSHED,
+        OfferPoolItemStatus.FAILED,
+    }:
+        return RemoveItemResult(
+            ok=False,
+            errors=[f'Key cannot be removed while its Pool state is {item.status}.'],
+        )
+
+    attempts = _start_remove_attempts(pool_offer, [item])
+    attempt = attempts[item.pk]
+    try:
+        if pool_offer.strategy == 'clone':
+            removed_ids, errors = _remove_pa(pool_offer, [item])
+        elif pool_offer.marketplace == 'eldorado':
+            removed_ids, errors = _remove_eldorado(pool_offer, [item])
+        elif pool_offer.marketplace == 'gameboost':
+            removed_ids, errors = _remove_gameboost(pool_offer, [item])
+        else:
+            removed_ids, errors = set(), ['Unsupported marketplace']
+    except Exception as exc:
+        _finish_remove_failures(pool_offer, attempts, str(exc), unknown=True)
+        return RemoveItemResult(ok=False, errors=[str(exc)])
+
+    if item.pk not in removed_ids:
+        error = '; '.join(errors) or 'Remote removal failed'
+        _finish_remove_failures(pool_offer, attempts, error, unknown=False)
+        return RemoveItemResult(ok=False, errors=errors or [error])
+
+    _finalize_single_item_removal(
+        pool_offer,
+        item,
+        listing=listing,
+        attempt=attempt,
+        decrement_remote=True,
+    )
+    return RemoveItemResult(ok=True, removed=True, remote_removed=True)
+
+
+def _finalize_single_item_removal(
+    pool_offer,
+    item,
+    *,
+    listing,
+    attempt,
+    decrement_remote,
+):
+    now = timezone.now()
+    with transaction.atomic():
+        item = OfferPoolItem.objects.select_for_update().get(pk=item.pk)
+        ListingOwnedProduct.objects.filter(
+            listing=listing,
+            owned_product_id=item.owned_product_id,
+        ).delete()
+        if item.status != OfferPoolItemStatus.CONSUMED:
+            item.status = OfferPoolItemStatus.REMOVED
+        item.remote_state = 'absent'
+        item.remote_credential_id = ''
+        item.claim_token = None
+        item.claimed_at = None
+        item.error_message = ''
+        item.failure_stage = ''
+        item.save(update_fields=[
+            'status', 'remote_state', 'remote_credential_id', 'claim_token',
+            'claimed_at', 'error_message', 'failure_stage', 'updated_at',
+        ])
+        if attempt is not None:
+            attempt.status = PoolDispatchStatus.SUCCEEDED
+            attempt.finished_at = now
+            attempt.save(update_fields=['status', 'finished_at'])
+        if decrement_remote and pool_offer.current_remote_count is not None:
+            PoolOffer.objects.filter(
+                pk=pool_offer.pk,
+                current_remote_count__gt=0,
+            ).update(
+                current_remote_count=models.F('current_remote_count') - 1,
+                last_error='',
+            )
+
+
 def detach_pool_offer(pool_offer: PoolOffer, mode: str) -> DetachResult:
     if mode not in {'leave_remote', 'remove_remote'}:
         raise ValueError('Unsupported detach mode')
