@@ -740,7 +740,7 @@ def _attempt_post(
                 _url = f'{_base}/api/bridge/sab-gb-listed'
                 _resp = _req.post(
                     _url,
-                    json={'code': _sab_code, 'gbOfferId': _sab_offer_id, 'gbStore': _sab_store, 'title': _sab_title, 'price': _sab_price, 'gbListingUrl': None},
+                    json={'code': _sab_code, 'gbOfferId': _sab_offer_id, 'gbStore': _sab_store, 'title': _sab_title, 'price': _sab_price, 'gbListingUrl': None, 'eldoradoGameId': item.get('gameId')},
                     headers={'x-bridge-secret': _bridge_secret},
                     timeout=10,
                 )
