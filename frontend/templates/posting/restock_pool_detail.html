@@ -252,10 +252,45 @@
                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
                     </div>
                     <div>
-                        <label class="block text-xs text-gray-500 mb-1">Purchased $</label>
-                        <input type="number" step="0.01" x-model.number="dispatchForm.batch_data.purchased_price"
-                               class="w-36 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <label class="block text-xs text-gray-500 mb-1">Sale Price (USD) *</label>
+                        <input type="number" step="0.01" min="0.01" x-model.number="dispatchForm.sale_price"
+                               placeholder="Final customer price"
+                               class="w-44 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <p class="mt-1 text-xs text-gray-400">This is the final marketplace sale price. No multiplier is applied.</p>
                     </div>
+                </div>
+            </div>
+
+            <!-- Listing Image -->
+            <div class="border-t pt-4">
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-700">Listing Image *</h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Select a pre-fed image. Automatic image generation is not used.</p>
+                    </div>
+                    <button type="button" @click="$refs.dispatchImageInput.click()"
+                            :disabled="dispatchDrawer.imageUploading"
+                            class="px-3 py-1.5 text-xs font-medium border border-indigo-300 text-indigo-700 rounded-lg hover:bg-indigo-50 disabled:opacity-50">
+                        <span x-text="dispatchDrawer.imageUploading ? 'Uploading...' : '+ Upload Image'"></span>
+                    </button>
+                    <input x-ref="dispatchImageInput" type="file" accept="image/png,image/jpeg,image/webp"
+                           class="hidden" @change="uploadDispatchImage($event)">
+                </div>
+                <div x-show="dispatchDrawer.imagePresets.length" class="grid grid-cols-3 gap-2">
+                    <template x-for="image in dispatchDrawer.imagePresets" :key="image.id">
+                        <button type="button" @click="dispatchForm.selected_image_preset_id = image.id"
+                                class="relative border-2 rounded-lg overflow-hidden text-left bg-white"
+                                :class="String(dispatchForm.selected_image_preset_id) === String(image.id) ? 'border-indigo-600 ring-2 ring-indigo-100' : 'border-gray-200 hover:border-indigo-300'">
+                            <img :src="image.url" :alt="image.name" class="w-full h-20 object-cover bg-gray-100">
+                            <span class="block px-2 py-1 text-[11px] text-gray-600 truncate" x-text="image.name || 'Image'"></span>
+                            <span x-show="String(dispatchForm.selected_image_preset_id) === String(image.id)"
+                                  class="absolute top-1 right-1 w-5 h-5 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center">✓</span>
+                        </button>
+                    </template>
+                </div>
+                <div x-show="!dispatchDrawer.imagePresets.length && !dispatchDrawer.imageUploading"
+                     class="border border-dashed border-gray-300 rounded-lg px-4 py-5 text-center text-xs text-gray-500">
+                    No pre-fed images yet. Upload a PNG, JPEG, or WebP image to continue.
                 </div>
             </div>
 
@@ -287,35 +322,15 @@
                 </div>
             </div>
 
-            <!-- Pricing -->
-            <div class="border-t pt-4">
-                <h3 class="text-sm font-semibold text-gray-700 mb-3">Pricing</h3>
-                <div class="grid grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-xs text-gray-500 mb-1">Low multiplier</label>
-                        <input type="number" step="0.01" x-model="dispatchForm.store_settings.multiplier_low"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-500 mb-1">Mid multiplier</label>
-                        <input type="number" step="0.01" x-model="dispatchForm.store_settings.multiplier_mid"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-500 mb-1">High multiplier</label>
-                        <input type="number" step="0.01" x-model="dispatchForm.store_settings.multiplier_high"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                    </div>
-                </div>
-                <!-- PA mode — only for playerauctions store -->
-                <div x-show="isPA()" class="mt-3">
-                    <label class="block text-xs text-gray-500 mb-1">PA Mode</label>
-                    <select x-model="dispatchForm.store_settings.pa_mode"
-                            class="w-40 border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                        <option value="bulk">Bulk</option>
-                        <option value="single">Single</option>
-                    </select>
-                </div>
+            <!-- Provider Settings — only when required -->
+            <div x-show="isPA()" class="border-t pt-4">
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">PlayerAuctions Settings</h3>
+                <label class="block text-xs text-gray-500 mb-1">PA Mode</label>
+                <select x-model="dispatchForm.store_settings.pa_mode"
+                        class="w-40 border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option value="bulk">Bulk</option>
+                    <option value="single">Single</option>
+                </select>
             </div>
 
             <!-- Pool Config -->
@@ -349,7 +364,7 @@
                 Cancel
             </button>
             <button @click="submitDispatch()"
-                    :disabled="dispatchDrawer.submitting"
+                    :disabled="dispatchDrawer.submitting || dispatchDrawer.imageUploading"
                     class="px-6 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 flex items-center gap-2">
                 <template x-if="dispatchDrawer.submitting">
                     <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -1027,6 +1042,8 @@ function poolDetail() {
             error: '',
             prefill: {},
             manualFields: [],
+            imagePresets: [],
+            imageUploading: false,
             pollTimer: null,
         },
         dispatchForm: {
@@ -1035,17 +1052,15 @@ function poolDetail() {
             target_count: 5,
             threshold: 2,
             max_concurrent: null,
+            sale_price: '',
+            selected_image_preset_id: '',
             batch_data: {
                 title: '',
                 description: '',
-                purchased_price: '',
                 platform: '',
                 manual_fields: {},
             },
             store_settings: {
-                multiplier_low: '2.00',
-                multiplier_mid: '2.00',
-                multiplier_high: '2.00',
                 pa_mode: 'bulk',
             },
         },
@@ -1104,7 +1119,7 @@ function poolDetail() {
 
                 this.dispatchForm.batch_data.title = data.title || '';
                 this.dispatchForm.batch_data.description = data.description || '';
-                this.dispatchForm.batch_data.purchased_price = parseFloat(data.purchased_price || 0) || '';
+                this.dispatchForm.sale_price = parseFloat(data.listing_price || data.batch_data?.price || 0) || '';
                 this.dispatchForm.batch_data.platform = data.platform || '';
 
                 if (data.batch_data?.manual_fields) {
@@ -1115,9 +1130,12 @@ function poolDetail() {
                     Object.assign(this.dispatchForm.store_settings, data.store_settings);
                 }
 
-                // Load manual fields for game
+                // Load manual fields and pre-fed images for the pool's game.
                 if (data.game_id) {
-                    await this._loadManualFields(data.game_id);
+                    await Promise.all([
+                        this._loadManualFields(data.game_id),
+                        this._loadDispatchImages(data.game_id),
+                    ]);
                 }
             } catch (e) {
                 this.dispatchDrawer.error = 'Failed to load prefill data.';
@@ -1134,6 +1152,60 @@ function poolDetail() {
                 this.dispatchDrawer.manualFields = data.fields || [];
             } catch (e) {
                 console.warn('Failed to load manual fields:', e);
+            }
+        },
+
+        async _loadDispatchImages(gameId) {
+            try {
+                const resp = await fetch(`/posting/api/image-presets/?game_id=${gameId}`);
+                const data = await resp.json();
+                if (!resp.ok) throw new Error(data.error || 'Failed to load images');
+                this.dispatchDrawer.imagePresets = data.presets || [];
+                const selectedStillExists = this.dispatchDrawer.imagePresets.some(
+                    image => String(image.id) === String(this.dispatchForm.selected_image_preset_id)
+                );
+                if (!selectedStillExists) this.dispatchForm.selected_image_preset_id = '';
+            } catch (e) {
+                this.dispatchDrawer.imagePresets = [];
+                this.dispatchDrawer.error = e.message || 'Failed to load listing images.';
+            }
+        },
+
+        async uploadDispatchImage(event) {
+            const input = event.target;
+            const file = input.files?.[0];
+            if (!file) return;
+            const gameId = this.dispatchDrawer.prefill.game_id;
+            if (!gameId) {
+                this.dispatchDrawer.error = 'Pool game is unavailable; image cannot be uploaded.';
+                input.value = '';
+                return;
+            }
+            this.dispatchDrawer.imageUploading = true;
+            this.dispatchDrawer.error = '';
+            try {
+                const form = new FormData();
+                form.append('game_id', gameId);
+                form.append('image', file);
+                form.append('name', file.name.replace(/\.[^.]+$/, ''));
+                const resp = await fetch('/posting/api/image-presets/upload/', {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': this.getCSRF() },
+                    body: form,
+                });
+                const data = await resp.json();
+                if (!resp.ok) throw new Error(data.error || 'Image upload failed');
+                const preset = data.preset;
+                this.dispatchDrawer.imagePresets = [
+                    preset,
+                    ...this.dispatchDrawer.imagePresets.filter(image => image.id !== preset.id),
+                ];
+                this.dispatchForm.selected_image_preset_id = preset.id;
+            } catch (e) {
+                this.dispatchDrawer.error = e.message || 'Image upload failed.';
+            } finally {
+                this.dispatchDrawer.imageUploading = false;
+                input.value = '';
             }
         },
 
@@ -1157,6 +1229,12 @@ function poolDetail() {
             if (this.dispatchForm.count < 1) {
                 this.dispatchDrawer.error = 'Count must be at least 1.'; return;
             }
+            if (!(Number(this.dispatchForm.sale_price) > 0)) {
+                this.dispatchDrawer.error = 'Enter a sale price greater than 0.'; return;
+            }
+            if (!this.dispatchForm.selected_image_preset_id) {
+                this.dispatchDrawer.error = 'Select or upload a listing image.'; return;
+            }
             const pa = this.isPA();
             const payload = {
                 store_id: Number(this.dispatchForm.store_id),
@@ -1164,6 +1242,8 @@ function poolDetail() {
                 target_count: this.dispatchForm.target_count,
                 threshold: this.dispatchForm.threshold,
                 max_concurrent: pa ? this.dispatchForm.max_concurrent : null,
+                sale_price: Number(this.dispatchForm.sale_price),
+                selected_image_preset_id: Number(this.dispatchForm.selected_image_preset_id),
                 batch_data: { ...this.dispatchForm.batch_data },
                 store_settings: { ...this.dispatchForm.store_settings },
             };

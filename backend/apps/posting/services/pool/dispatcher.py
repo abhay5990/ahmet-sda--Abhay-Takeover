@@ -356,6 +356,7 @@ def dispatch_offer_from_pool(
     max_concurrent: int | None,
     batch_data: dict,
     store_settings: dict,
+    media_settings: dict,
 ) -> PostingJob:
     """Reserve pool items and create a PostingJob for a new offer.
 
@@ -386,8 +387,13 @@ def dispatch_offer_from_pool(
         )
         owned_products = [it.owned_product for it in items]
 
+        # Attach the validated pre-fed image to the established manual batch
+        # contract used by the stock payload pipeline.
+        effective_batch_data = dict(batch_data)
+        effective_batch_data.update(media_settings)
+
         # Build raw_data overlays from drawer fields (whitelist only)
-        raw_overrides = build_dispatch_raw_overrides(items, batch_data)
+        raw_overrides = build_dispatch_raw_overrides(items, effective_batch_data)
 
         # Determine source_type for manual payload path
         source_type = 'manual'
@@ -395,10 +401,11 @@ def dispatch_offer_from_pool(
         # Build job settings
         job_settings: dict = {
             store.slug: store_settings,
+            '_media': media_settings,
             '_manual': {
                 'source_type': source_type,
-                'platform': batch_data.get('platform', ''),
-                'batch_data': batch_data,
+                'platform': effective_batch_data.get('platform', ''),
+                'batch_data': effective_batch_data,
             },
             '_pool_dispatch': {
                 'pool_id': pool.pk,

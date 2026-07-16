@@ -1133,21 +1133,15 @@ def dispatch_prefill(request, pool_id):
         max_concurrent = active_offer.max_concurrent
 
     # --- Store settings from PostingDefault ---
+    # Create Offer uses a direct final sale price. Multipliers are intentionally
+    # hidden and neutralized server-side; only provider-specific settings remain.
     store_settings: dict = {}
-    pa_mode = 'bulk'
-    if store:
+    if store and store.provider == 'playerauctions':
         try:
             default = PostingDefault.objects.get(game=game, marketplace=store.provider)
-            store_settings = {
-                'multiplier_low': str(default.multiplier_low or '1.00'),
-                'multiplier_mid': str(default.multiplier_mid or '1.00'),
-                'multiplier_high': str(default.multiplier_high or '1.00'),
-            }
-            if store.provider == 'playerauctions':
-                pa_mode = getattr(default, 'pa_mode', 'bulk') or 'bulk'
-                store_settings['pa_mode'] = pa_mode
+            store_settings['pa_mode'] = getattr(default, 'pa_mode', 'bulk') or 'bulk'
         except PostingDefault.DoesNotExist:
-            pass
+            store_settings['pa_mode'] = 'bulk'
 
     # --- Supported stores ---
     supported_providers = ['eldorado', 'gameboost', 'playerauctions']
@@ -1254,7 +1248,7 @@ def dispatch_offer(request, pool_id):
         return JsonResponse({'error': 'threshold must be between 1 and target_count'}, status=400)
 
     # --- Validate max_concurrent (PA/clone only) ---
-    strategy = PoolOfferStrategy.strategy_for_provider(store.provider)
+    strategy = PoolOffer.strategy_for_provider(store.provider)
     max_concurrent = body.get('max_concurrent')
     if strategy == PoolOfferStrategy.CLONE:
         try:
@@ -1269,17 +1263,39 @@ def dispatch_offer(request, pool_id):
         if max_concurrent is not None:
             return JsonResponse({'error': 'max_concurrent must not be set for append providers'}, status=400)
 
-    # --- Validate batch_data ---
-    batch_data = body.get('batch_data') or {}
-    store_settings = body.get('store_settings') or {}
-
-    purchased_price = batch_data.get('purchased_price')
+    # --- Validate direct sale price ---
     try:
-        purchased_price_val = float(purchased_price or 0)
+        sale_price = float(body.get('sale_price') or 0)
     except (TypeError, ValueError):
-        purchased_price_val = 0.0
-    if purchased_price_val <= 0:
-        return JsonResponse({'error': 'batch_data.purchased_price must be > 0'}, status=400)
+        sale_price = 0.0
+    if sale_price <= 0:
+        return JsonResponse({'error': 'sale_price must be greater than 0'}, status=400)
+
+    # Keep the established posting pipeline shape while making the final price
+    # explicit: base price equals sale price and all multipliers are neutral.
+    batch_data = dict(body.get('batch_data') or {})
+    batch_data['price'] = sale_price
+    batch_data['sales_price'] = sale_price
+    batch_data['purchased_price'] = sale_price
+
+    store_settings = dict(body.get('store_settings') or {})
+    store_settings.update({
+        'multiplier_low': '1.00',
+        'multiplier_mid': '1.00',
+        'multiplier_high': '1.00',
+    })
+
+    # Pool-created offers must use a pre-fed image; automatic media generation
+    # is deliberately not available in this workflow.
+    if body.get('selected_image_preset_id') in (None, '', 'auto'):
+        return JsonResponse({'error': 'Please select or upload a listing image'}, status=400)
+    from apps.posting.api.media_override import (
+        mark_image_override_used,
+        resolve_image_override_settings,
+    )
+    media_settings, media_error = resolve_image_override_settings(body, pool.game)
+    if media_error:
+        return media_error
 
     # --- Dispatch ---
     from apps.posting.services.pool.dispatcher import dispatch_offer_from_pool
@@ -1294,7 +1310,9 @@ def dispatch_offer(request, pool_id):
             max_concurrent=max_concurrent,
             batch_data=batch_data,
             store_settings=store_settings,
+            media_settings=media_settings,
         )
+        mark_image_override_used(job.settings)
     except ValueError as e:
         return JsonResponse({'error': str(e)}, status=400)
     except Exception as e:
