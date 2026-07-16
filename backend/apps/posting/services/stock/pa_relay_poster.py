@@ -137,11 +137,22 @@ class PARelayPoster:
     """Posts PA offers via the relay's /pa-post-offer endpoint.
 
     Usage:
-        poster = PARelayPoster()
+        poster = PARelayPoster(relay_url=store_relay_url, relay_secret=secret)
         result = poster.post_batch(token, store_slug, rows)
         # result.successful = {0: "12345678"}
         # result.failed     = {1: "Please select a game."}
     """
+
+    def __init__(
+        self,
+        *,
+        relay_url: str = RELAY_URL,
+        relay_secret: str = RELAY_SECRET,
+        timeout: int = RELAY_TIMEOUT,
+    ) -> None:
+        self._relay_url = (relay_url or RELAY_URL).rstrip("/")
+        self._relay_secret = relay_secret or RELAY_SECRET
+        self._timeout = timeout
 
     def post_batch(
         self,
@@ -213,13 +224,13 @@ class PARelayPoster:
         }
         try:
             resp = requests.post(
-                f"{RELAY_URL}/pa-post-offer",
+                f"{self._relay_url}/pa-post-offer",
                 json=body,
                 headers={
                     "Content-Type": "application/json",
-                    "X-Relay-Secret": RELAY_SECRET,
+                    "X-Relay-Secret": self._relay_secret,
                 },
-                timeout=RELAY_TIMEOUT,
+                timeout=self._timeout,
             )
             data = resp.json()
         except requests.exceptions.Timeout:

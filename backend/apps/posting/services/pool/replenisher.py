@@ -725,7 +725,7 @@ def _clone_pa_offer(
     _username = _creds.get('username', '')
     _password = _creds.get('password', '')
     _store_slug = _creds.get('store_slug', '')
-    _relay_url = _creds.get('relay_url', 'http://35.231.166.148:3001')
+    _relay_url = _creds.get('relay_url', 'http://35.196.132.30:3001')
     _relay_secret = _creds.get('relay_secret', 'pa-relay-secret-2026')
     _access_token = _creds.get('access_token', '')
 
@@ -749,7 +749,10 @@ def _clone_pa_offer(
 
     # Build Excel-row dict from payload for PARelayPoster
     _excel_row = _build_excel_row_from_payload(payload)
-    _relay_poster = PARelayPoster()
+    _relay_poster = PARelayPoster(
+        relay_url=_relay_url,
+        relay_secret=_relay_secret,
+    )
     _relay_result = _relay_poster.post_batch(_token, _store_slug, [_excel_row])
 
     if 0 in _relay_result.failed:

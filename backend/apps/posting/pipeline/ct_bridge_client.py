@@ -237,21 +237,38 @@ class CtBridgeMediaPublisher:
         (source_item_id, game) so _build_eldorado_uploader() can retrieve it.
       - Returns a MediaBundle with external_urls (GameBoost) and album_url (PA).
 
-    On failure: falls back to NullMediaPublisher behaviour (local_paths only).
+    Explicit local overrides and bridge failures are delegated to the hosted
+    fallback publisher so GameBoost receives direct image URLs and
+    PlayerAuctions receives an album URL.
     """
 
-    def __init__(self, client: CtBridgeClient) -> None:
+    def __init__(self, client: CtBridgeClient, fallback_publisher=None) -> None:
         self._client = client
+        self._fallback_publisher = fallback_publisher
+
+    def _publish_fallback(self, local_paths, request=None):
+        from pathlib import Path
+        from payload_pipeline.core.contracts import MediaBundle
+
+        normalized = [str(Path(p)) for p in local_paths if p]
+        if self._fallback_publisher is not None:
+            return self._fallback_publisher.publish(normalized, request=request)
+        return MediaBundle(local_paths=normalized)
 
     def publish(self, local_paths, request=None):
+        from payload_pipeline.core import context_keys as ctx_keys
         from pathlib import Path
         from payload_pipeline.core.contracts import MediaBundle
 
         normalized = [str(Path(p)) for p in local_paths if p]
 
         if request is None:
-            logger.debug("CT bridge publisher: no request context, skipping bridge call")
-            return MediaBundle(local_paths=normalized)
+            logger.debug("CT bridge publisher: no request context, using hosted fallback")
+            return self._publish_fallback(normalized, request=request)
+
+        if request.context.get(ctx_keys.MEDIA_OVERRIDE_PATH):
+            logger.info("CT bridge publisher: selected image override detected, using hosted fallback")
+            return self._publish_fallback(normalized, request=request)
 
         source_item_id = request.context.get("ct_bridge_source_id", "")
         game = request.context.get("ct_bridge_game", "")
@@ -259,9 +276,9 @@ class CtBridgeMediaPublisher:
 
         if not source_item_id or not game:
             logger.debug(
-                "CT bridge publisher: missing source_item_id or game in context, skipping"
+                "CT bridge publisher: missing source_item_id or game, using hosted fallback"
             )
-            return MediaBundle(local_paths=normalized)
+            return self._publish_fallback(normalized, request=request)
 
         result = self._client.fetch(
             source_item_id=source_item_id,
@@ -270,10 +287,10 @@ class CtBridgeMediaPublisher:
         )
         if result is None:
             logger.warning(
-                "CT bridge call failed for item=%s game=%s — falling back to local paths",
+                "CT bridge call failed for item=%s game=%s — using hosted fallback",
                 source_item_id, game,
             )
-            return MediaBundle(local_paths=normalized)
+            return self._publish_fallback(normalized, request=request)
 
         # Store the full bridge result so _build_eldorado_uploader() can use it
         _store_bridge_result(source_item_id, game, result)

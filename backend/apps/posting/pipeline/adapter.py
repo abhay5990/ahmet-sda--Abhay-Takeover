@@ -30,11 +30,12 @@ _pipeline: PayloadPipeline | None = None
 _pipeline_lock = threading.Lock()
 
 
-def _build_ct_bridge_publisher():
+def _build_ct_bridge_publisher(fallback_publisher=None):
     """Build a CtBridgeMediaPublisher if CT_BRIDGE_URL is configured.
 
-    Returns None if the bridge is not configured (caller falls back to
-    _build_media_publisher).
+    The hosted publisher remains available as a fallback for explicit local
+    image overrides, missing bridge context, and bridge request failures.
+    Returns None when the bridge itself is not configured.
     """
     try:
         from django.conf import settings
@@ -45,7 +46,7 @@ def _build_ct_bridge_publisher():
         from .ct_bridge_client import CtBridgeClient, CtBridgeMediaPublisher
         client = CtBridgeClient(url=url, secret=secret)
         logger.info("CT bridge publisher configured: %s", url)
-        return CtBridgeMediaPublisher(client)
+        return CtBridgeMediaPublisher(client, fallback_publisher=fallback_publisher)
     except Exception as exc:
         logger.warning("Failed to build CT bridge publisher: %s", exc)
         return None
@@ -107,8 +108,13 @@ def _get_pipeline() -> PayloadPipeline:
     # Slow path — acquire lock, check again, then initialise.
     with _pipeline_lock:
         if _pipeline is None:
-            # Prefer CT bridge publisher if configured; fall back to Dropbox+ImageShack
-            publisher = _build_ct_bridge_publisher() or _build_media_publisher()
+            # Prefer the CT bridge for source-driven media while retaining the
+            # hosted publisher for explicit local overrides and bridge failures.
+            hosted_publisher = _build_media_publisher()
+            publisher = (
+                _build_ct_bridge_publisher(fallback_publisher=hosted_publisher)
+                or hosted_publisher
+            )
             instance = PayloadPipeline(build_default_registry(), media_publisher=publisher)
             logger.debug(
                 "PayloadPipeline initialised (media_publisher=%s)",

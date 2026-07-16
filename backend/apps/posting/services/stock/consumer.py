@@ -668,7 +668,10 @@ class StockConsumer:
 
         # Post via relay
         logger.info("PA relay batch: %d rows (job=%d, store=%s)", len(excel_rows), job.id, store_slug)
-        _relay_poster = PARelayPoster()
+        _relay_poster = PARelayPoster(
+            relay_url=relay_url,
+            relay_secret=relay_secret,
+        )
         _relay_result = _relay_poster.post_batch(relay_token, store_slug, excel_rows)
 
         # Build PA client for normalize_offer_response (optional, graceful fallback)
@@ -1023,18 +1026,18 @@ class StockConsumer:
         _auth = getattr(facade, '_auth', None)
         _relay_token = (_auth.access_token if _auth and _auth.access_token else None)
         _store_slug = (_auth._store_slug if _auth and getattr(_auth, '_store_slug', None) else None)
+        _creds = {}
+        _store = getattr(items[0], 'store', None) if items else None
+        if _store and hasattr(_store, 'credential') and _store.credential:
+            _creds = _store.credential.credentials or {}
+        _relay_url = _creds.get('relay_url', 'http://35.196.132.30:3001')
+        _relay_secret = _creds.get('relay_secret', 'pa-relay-secret-2026')
 
         # If no cached token, fetch fresh from relay using store credentials
         if not _relay_token or not _store_slug:
-            _creds = {}
-            _store = getattr(items[0], 'store', None) if items else None
-            if _store and hasattr(_store, 'credential') and _store.credential:
-                _creds = _store.credential.credentials or {}
             _username = _creds.get('username', '')
             _password = _creds.get('password', '')
             _store_slug = _creds.get('store_slug', '')
-            _relay_url = _creds.get('relay_url', 'http://35.231.166.148:3001')
-            _relay_secret = _creds.get('relay_secret', 'pa-relay-secret-2026')
             if _username and _password and _store_slug:
                 logger.info(
                     "PA relay token not cached — fetching fresh for store=%s (job=%d)",
@@ -1052,7 +1055,10 @@ class StockConsumer:
 
         if _relay_token and _store_slug:
             logger.info("PA flush via relay: %d rows (job=%d, store=%s)", len(excel_rows), job.id, _store_slug)
-            _relay_poster = PARelayPoster()
+            _relay_poster = PARelayPoster(
+                relay_url=_relay_url,
+                relay_secret=_relay_secret,
+            )
             _relay_result = _relay_poster.post_batch(_relay_token, _store_slug, excel_rows)
             # Convert PARelayPostResult to PABatchResult for unified downstream handling
             batch_result = PABatchResult(
