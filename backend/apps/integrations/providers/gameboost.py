@@ -51,7 +51,11 @@ class GameboostProvider(AbstractProvider):
     def update_listing(self, client: Any, external_id: str, product_data: dict) -> Any:
         return client.update_offer(account_id=external_id, payload=product_data)
 
-    def delete_listing(self, client: Any, external_id: str) -> Any:
+    def delete_listing(self, client: Any, external_id: str, **kwargs) -> Any:
+        # Route item-offer games (SAB, New World) to archive_item_offer
+        game_slug = kwargs.get('game_slug', '')
+        if game_slug in _ITEM_OFFER_GAMES:
+            return client.archive_item_offer(external_id)
         return client.delete_offer(account_id=external_id)
 
     def fetch_orders(self, client: Any, **kwargs) -> Any:

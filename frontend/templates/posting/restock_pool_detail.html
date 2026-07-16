@@ -145,12 +145,12 @@
             {% for offer in pool_offers %}
                 <tr>
                     <td class="px-4 py-3 text-sm">{{ offer.store.name }} <span class="text-gray-400">({{ offer.marketplace }})</span></td>
-                    <td class="px-4 py-3 text-sm"><a class="text-indigo-600" href="{% url 'listings:detail' offer.listing_id %}">{{ offer.listing.title|default:offer.listing.store_listing_id }}</a></td>
+                    <td class="px-4 py-3 text-sm"><a class="text-indigo-600" href="{% url 'listings:detail' offer.listing_id %}">{% firstof offer.listing.title offer.listing.store_listing_id "—" %}</a></td>
                     <td class="px-4 py-3 text-center text-sm">{{ offer.current_remote_count|default:"—" }}</td>
                     <td class="px-4 py-3 text-center text-sm">{{ offer.threshold }} / {{ offer.target_count }}</td>
                     <td class="px-4 py-3 text-center text-sm">{{ offer.get_status_display }}</td>
                     <td class="px-4 py-3 text-right text-xs space-x-1">
-                        <button @click="openOfferDrawer({{ offer.id }}, '{{ offer.marketplace }}', '{{ offer.listing.title|default:offer.listing.store_listing_id|escapejs }}', '{{ offer.strategy }}', {{ offer.target_count }}, {{ offer.threshold }}, {{ offer.max_concurrent|default:'null' }}, '{{ offer.status }}')"
+                        <button @click="openOfferDrawer({{ offer.id }}, '{{ offer.marketplace }}', '{{ offer.listing.title|default_if_none:""|escapejs }}', '{{ offer.strategy }}', {{ offer.target_count }}, {{ offer.threshold }}, {{ offer.max_concurrent|default:'null' }}, '{{ offer.status }}')"
                                 class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200">Edit</button>
                         {% if offer.status != 'detached' %}
                         <button @click="unlinkOffer({{ offer.id }}, 'leave_remote')" class="px-2 py-1 bg-gray-100 rounded">Detach</button>
@@ -477,6 +477,53 @@
         </table>
     </div>
 
+    <!-- Allocation Card -->
+    <div class="bg-white rounded-lg shadow overflow-hidden mb-6" id="allocation-card">
+        <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
+            <h2 class="font-semibold text-gray-700">Per-Store Allocation</h2>
+            <button onclick="saveAllocation({{ pool.id }})"
+                    class="px-3 py-1.5 bg-indigo-600 text-white rounded text-xs font-medium hover:bg-indigo-700"
+                    id="save-allocation-btn">Save</button>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Store</th>
+                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Marketplace</th>
+                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Target Count</th>
+                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Threshold</th>
+                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Current</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200" id="allocation-tbody">
+                {% for offer in pool_offers %}
+                <tr>
+                    <td class="px-4 py-2 text-sm font-mono">{% firstof offer.listing.store_listing_id offer.listing.title "—" %}</td>
+                    <td class="px-4 py-2 text-center text-sm text-gray-600">{{ offer.marketplace }}</td>
+                    <td class="px-4 py-2 text-center">
+                        <input type="number" min="1" value="{{ offer.target_count }}"
+                               data-listing-id="{{ offer.listing.id }}"
+                               data-field="target_count"
+                               class="alloc-input w-20 border rounded px-2 py-1 text-sm text-center">
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                        <input type="number" min="1" value="{{ offer.threshold }}"
+                               data-listing-id="{{ offer.listing.id }}"
+                               data-field="threshold"
+                               class="alloc-input w-20 border rounded px-2 py-1 text-sm text-center">
+                    </td>
+                    <td class="px-4 py-2 text-center text-sm {% if offer.current_remote_count is not None and offer.current_remote_count < offer.threshold %}text-red-600 font-semibold{% else %}text-gray-700{% endif %}">
+                        {{ offer.current_remote_count|default:"—" }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-4 py-6 text-center text-gray-400 text-sm">No offers linked to this pool.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     <!-- Pool Accounts Table -->
     <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
         <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
@@ -515,6 +562,8 @@
                     </td>
                     <td class="px-4 py-2 text-xs text-red-500 max-w-xs truncate">{{ item.error_message|default:"" }}</td>
                     <td class="px-4 py-2 text-right">
+                        <button onclick="openEditItem({{ item.id }}, '{{ item.owned_product.login|escapejs }}', '{{ item.owned_product.email|default_if_none:""|escapejs }}', '{{ item.status }}')"
+                                class="text-xs text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>
                         {% if item.status == 'pending' %}
                         <button onclick="removeItem({{ pool.id }}, {{ item.id }}, this)"
                                 class="text-xs text-red-600 hover:text-red-800">Remove</button>
@@ -1525,5 +1574,121 @@ async function removeItem(poolId, itemId, btn) {
         alert(data.error || 'Failed');
     }
 }
+
+    <!-- Edit Item Modal -->
+    <div id="edit-item-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Edit Credentials</h3>
+            <input type="hidden" id="edit-item-id">
+            <input type="hidden" id="edit-item-status">
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Login</label>
+                    <input id="edit-item-login" type="text" class="w-full border rounded px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Password</label>
+                    <input id="edit-item-password" type="text" class="w-full border rounded px-3 py-2 text-sm" placeholder="Leave blank to keep current">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Email</label>
+                    <input id="edit-item-email" type="text" class="w-full border rounded px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Email Password</label>
+                    <input id="edit-item-email-password" type="text" class="w-full border rounded px-3 py-2 text-sm" placeholder="Leave blank to keep current">
+                </div>
+                <div id="edit-item-warning" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded p-2">
+                    ⚠ This item is not PENDING. Editing will use force=true.
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 mt-5">
+                <button onclick="closeEditItem()" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+                <button onclick="saveEditItem()" class="px-4 py-2 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700">Save</button>
+            </div>
+        </div>
+    </div>
+
+
+// ── Edit item ──────────────────────────────────────────────────────────────
+function openEditItem(itemId, login, email, status) {
+    document.getElementById('edit-item-id').value = itemId;
+    document.getElementById('edit-item-status').value = status;
+    document.getElementById('edit-item-login').value = login;
+    document.getElementById('edit-item-password').value = '';
+    document.getElementById('edit-item-email').value = email;
+    document.getElementById('edit-item-email-password').value = '';
+    const warn = document.getElementById('edit-item-warning');
+    if (status !== 'pending') warn.classList.remove('hidden');
+    else warn.classList.add('hidden');
+    const modal = document.getElementById('edit-item-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+function closeEditItem() {
+    const modal = document.getElementById('edit-item-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+async function saveEditItem() {
+    const itemId = document.getElementById('edit-item-id').value;
+    const status = document.getElementById('edit-item-status').value;
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value
+        || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+    const body = { force: status !== 'pending' };
+    const login = document.getElementById('edit-item-login').value.trim();
+    const password = document.getElementById('edit-item-password').value.trim();
+    const email = document.getElementById('edit-item-email').value.trim();
+    const emailPw = document.getElementById('edit-item-email-password').value.trim();
+    if (login) body.login = login;
+    if (password) body.password = password;
+    if (email) body.email = email;
+    if (emailPw) body.email_password = emailPw;
+    const poolId = {{ pool.id }};
+    const resp = await fetch(`/posting/api/pools/${poolId}/items/${itemId}/edit/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrf, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+    const data = await resp.json();
+    if (resp.ok) {
+        closeEditItem();
+        // Update login cell in table
+        const row = document.getElementById('item-' + itemId);
+        if (row && login) row.querySelectorAll('td')[1].textContent = login;
+        if (row && email) row.querySelectorAll('td')[2].textContent = email;
+    } else {
+        alert(data.error || 'Failed to save');
+    }
+}
+
+// ── Save allocation ─────────────────────────────────────────────────────────
+async function saveAllocation(poolId) {
+    const btn = document.getElementById('save-allocation-btn');
+    const inputs = document.querySelectorAll('.alloc-input');
+    const map = {};
+    inputs.forEach(inp => {
+        const lid = inp.dataset.listingId;
+        if (!map[lid]) map[lid] = { listing_id: parseInt(lid) };
+        map[lid][inp.dataset.field] = parseInt(inp.value) || 1;
+    });
+    const allocations = Object.values(map);
+    if (!allocations.length) return;
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value
+        || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+    const resp = await fetch(`/posting/api/pools/${poolId}/allocation/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrf, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ allocations }),
+    });
+    const data = await resp.json();
+    btn.disabled = false;
+    btn.textContent = resp.ok ? '✓ Saved' : 'Save';
+    if (!resp.ok) alert(data.error || 'Failed to save allocation');
+    setTimeout(() => { btn.textContent = 'Save'; }, 2000);
+}
+
 </script>
 {% endblock %}

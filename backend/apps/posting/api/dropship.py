@@ -1058,3 +1058,113 @@ def seller_check(request):
         import logging
         logging.getLogger(__name__).warning("seller_check error: %s", e)
         return JsonResponse({'found': False, 'error': str(e)})
+
+
+# ---------------------------------------------------------------------------
+# Listing Link — GameBoost offer ID → Eldorado source_product_id
+# ---------------------------------------------------------------------------
+@require_GET
+def listing_link(request, gb_offer_id: str):
+    """
+    GET /posting/api/listing-link/<gb_offer_id>/
+    Returns the Eldorado source_product_id linked to a GameBoost offer ID.
+    Used by the code-tracker sabFulfillment to auto-buy from Eldorado when
+    a GameBoost SAB order comes in.
+    Auth: X-Bridge-Secret header must match settings.BRIDGE_SECRET
+    """
+    secret = request.headers.get("X-Bridge-Secret", "")
+    from django.conf import settings as django_settings
+    expected = getattr(django_settings, "CT_BRIDGE_SECRET", "") or "bridge-ce1b9d8001c8fc76ccbfd28c44832eec299ccc89ea537e9d"
+    if not expected or secret != expected:
+        return JsonResponse({"ok": False, "error": "Unauthorized"}, status=401)
+
+    try:
+        listing = (
+            Listing.objects
+            .select_related("dropship_product", "integration_account")
+            .filter(
+                store_listing_id=gb_offer_id,
+                integration_account__provider="gameboost",
+            )
+            .first()
+        )
+        if not listing:
+            return JsonResponse({"ok": False, "error": "No GameBoost listing found for this offer ID"}, status=404)
+
+        dp = listing.dropship_product
+        if not dp:
+            return JsonResponse({"ok": False, "error": "Listing has no linked DropshipProduct"}, status=404)
+
+        return JsonResponse({
+            "ok": True,
+            "gameboostOfferId": gb_offer_id,
+            "eldoradoOfferId": dp.source_product_id,
+            "store": listing.integration_account.name if listing.integration_account else None,
+            "game": listing.game.slug if listing.game else None,
+            "title": listing.title or "",
+        })
+    except Exception as exc:
+        import logging
+        logging.getLogger(__name__).error("listing_link error for %s: %s", gb_offer_id, exc)
+        return JsonResponse({"ok": False, "error": str(exc)}, status=500)
+
+
+
+def listing_link_stats(request):
+    """
+    GET /posting/api/listing-link-stats/
+    Returns stats on SAB GameBoost listings from whitelisted Eldorado sellers
+    that have a valid Eldorado source_product_id linked.
+    Whitelisted sellers = sellers with an active DropshippingJobConfig for steal-a-brainrot.
+    """
+    from django.conf import settings as django_settings
+    from django.db.models import Q
+    from apps.posting.models import DropshippingJobConfig
+    secret = request.headers.get("X-Bridge-Secret", "")
+    expected = getattr(django_settings, "CT_BRIDGE_SECRET", "") or "bridge-ce1b9d8001c8fc76ccbfd28c44832eec299ccc89ea537e9d"
+    if not expected or secret != expected:
+        return JsonResponse({"ok": False, "error": "Unauthorized"}, status=403)
+
+    try:
+        # Get whitelisted Eldorado seller account IDs for SAB game
+        sab_seller_ids = list(
+            DropshippingJobConfig.objects.filter(
+                game__slug="steal-a-brainrot",
+                source_account__provider="eldorado",
+            ).values_list("source_account_id", flat=True).distinct()
+        )
+
+        # SAB GameBoost listings from whitelisted sellers only
+        # DropshipProduct.source_account is the direct FK to the Eldorado seller account
+        sab_listings = Listing.objects.filter(
+            status="listed",
+            game__slug="steal-a-brainrot",
+            integration_account__provider="gameboost",
+            dropship_product__source_account_id__in=sab_seller_ids,
+        ).select_related("dropship_product")
+
+        total = sab_listings.count()
+
+        with_source = sab_listings.filter(
+            dropship_product__isnull=False,
+            dropship_product__source_product_id__isnull=False,
+        ).exclude(dropship_product__source_product_id="").count()
+
+        without_source = total - with_source
+
+        broken_qs = sab_listings.filter(
+            Q(dropship_product__isnull=True) |
+            Q(dropship_product__source_product_id__isnull=True) |
+            Q(dropship_product__source_product_id="")
+        ).values("id", "store_listing_id", "title", "integration_account_id")[:10]
+
+        return JsonResponse({
+            "ok": True,
+            "whitelisted_seller_count": len(sab_seller_ids),
+            "total_sab_gameboost_listings": total,
+            "with_valid_eldorado_source_id": with_source,
+            "without_eldorado_source_id": without_source,
+            "broken_samples": list(broken_qs),
+        })
+    except Exception as exc:
+        return JsonResponse({"ok": False, "error": str(exc)}, status=500)

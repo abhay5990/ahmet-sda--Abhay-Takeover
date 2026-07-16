@@ -9,6 +9,7 @@ config to PAUSED.
 from __future__ import annotations
 
 import logging
+import threading
 from decimal import Decimal
 from threading import Event
 
@@ -721,6 +722,34 @@ def _attempt_post(
     variant_router.record_post('platform', variant_slug)
     if region_slug:
         variant_router.record_post('region', region_slug)
+    # SAB lifecycle: notify MCT immediately so sheet + U7Buy listing are created without 5-min delay
+    if game.slug == 'steal-a-brainrot' and marketplace == 'gameboost':
+        _sab_code = item.get('code') or item.get('item_code') or str(item_id)
+        _sab_offer_id = str(store_listing_id)
+        _sab_store = config.store.name
+        _sab_title = posted_title or ''
+        _sab_price = str(listing_price) if listing_price is not None else ''
+        def _notify_mct_sab():
+            try:
+                import requests as _req
+                from django.conf import settings as _dj_settings
+                _bridge_url = getattr(_dj_settings, 'CT_BRIDGE_URL', '')
+                _bridge_secret = getattr(_dj_settings, 'CT_BRIDGE_SECRET', 'bridge-ce1b9d8001c8fc76ccbfd28c44832eec299ccc89ea537e9d')
+                import re as _re
+                _base = _re.sub(r'/api/.*', '', _bridge_url) if _bridge_url else 'http://35.196.132.30:3456'
+                _url = f'{_base}/api/bridge/sab-gb-listed'
+                _resp = _req.post(
+                    _url,
+                    json={'code': _sab_code, 'gbOfferId': _sab_offer_id, 'gbStore': _sab_store, 'title': _sab_title, 'price': _sab_price, 'gbListingUrl': None},
+                    headers={'x-bridge-secret': _bridge_secret},
+                    timeout=10,
+                )
+                import logging as _log
+                _log.getLogger(__name__).info('[SABWebhook] MCT notified code=%s offerId=%s status=%s', _sab_code, _sab_offer_id, _resp.status_code)
+            except Exception as _e:
+                import logging as _log
+                _log.getLogger(__name__).warning('[SABWebhook] MCT notify failed: %s', _e)
+        threading.Thread(target=_notify_mct_sab, daemon=True).start()
     return True
 
 

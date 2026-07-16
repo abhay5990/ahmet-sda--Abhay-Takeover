@@ -118,6 +118,9 @@
                             <span class="font-semibold text-gray-900" x-text="config.store.name"></span>
                             <span class="ml-2 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700"
                                   x-text="config.store.provider"></span>
+                            <template x-if="config.game && config.game.slug === 'steal-a-brainrot'">
+                                <span class="ml-1 px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-700">u7buy</span>
+                            </template>
                         </div>
 
                         <!-- Poster Status Badge -->

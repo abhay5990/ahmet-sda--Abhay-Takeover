@@ -2,9 +2,10 @@
 from __future__ import annotations
 import logging
 import re
+from urllib.parse import quote as _url_quote
 
 logger = logging.getLogger(__name__)
-_ELDORADO_CDN = "https://cdn.eldorado.gg/uploads/offers/{filename}"
+_ELDORADO_CDN = "https://assetsdelivery.eldorado.gg/v7/_offers_/{filename}"
 
 # Marketing noise to strip from seller titles when used as fallback item name
 _NOISE = re.compile(
@@ -59,13 +60,13 @@ def _extract_image_url(raw: dict) -> str:
     if isinstance(main, dict):
         filename = main.get("largeImage") or main.get("originalSizeImage") or main.get("smallImage")
         if filename:
-            return _ELDORADO_CDN.format(filename=filename)
+            return _ELDORADO_CDN.format(filename=_url_quote(filename, safe=""))
     # Fallback: first offerImages entry
     offer_images = raw.get("offerImages") or []
     if offer_images and isinstance(offer_images[0], dict):
         filename = offer_images[0].get("largeImage") or offer_images[0].get("originalSizeImage")
         if filename:
-            return _ELDORADO_CDN.format(filename=filename)
+            return _ELDORADO_CDN.format(filename=_url_quote(filename, safe=""))
     return ""
 
 

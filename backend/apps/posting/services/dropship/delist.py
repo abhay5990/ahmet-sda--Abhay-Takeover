@@ -259,7 +259,12 @@ def _delete_one_listing(listing: Listing, *, proxy_pool=None) -> bool:
     try:
         provider = registry.get_provider(marketplace)
         facade = registry.get_or_build_client(marketplace, store.credential, proxy_pool=proxy_pool)
-        provider.delete_listing(facade, listing.store_listing_id)
+        game_slug = ''
+        try:
+            game_slug = listing.game.slug if listing.game_id else ''
+        except Exception:
+            pass
+        provider.delete_listing(facade, listing.store_listing_id, game_slug=game_slug)
     except Exception as e:
         logger.warning(
             "Failed to delete offer %s on %s: %s",

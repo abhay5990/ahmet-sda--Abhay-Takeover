@@ -1786,3 +1786,90 @@ def _add_credentials_to_pool(
             result['added'] += 1
 
     return result['added']
+
+# ── Edit pool item credentials ─────────────────────────────────────────────────
+@login_required
+@require_POST
+def edit_pool_item(request, pool_id, item_id):
+    """Edit credentials of a pool item (safety-gated to PENDING unless force=true)."""
+    try:
+        body = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    try:
+        item = OfferPoolItem.objects.select_related('owned_product').get(
+            id=item_id, pool_id=pool_id
+        )
+    except OfferPoolItem.DoesNotExist:
+        return JsonResponse({'error': 'Item not found'}, status=404)
+    force = bool(body.get('force'))
+    if item.status != OfferPoolItemStatus.PENDING and not force:
+        return JsonResponse(
+            {'error': f'item_{item.status}_use_force', 'status': item.status},
+            status=409,
+        )
+    op = item.owned_product
+    changed = False
+    for field in ('login', 'password', 'email', 'email_password'):
+        if field in body and body[field] is not None:
+            setattr(op, field, str(body[field]).strip())
+            changed = True
+    if not changed:
+        return JsonResponse({'error': 'No fields to update'}, status=400)
+    try:
+        op.full_clean()
+        op.save()
+    except ValidationError as exc:
+        return JsonResponse({'error': str(exc)}, status=400)
+    return JsonResponse({'ok': True})
+
+
+# ── Set per-store allocation (target_count + threshold) ────────────────────────
+@login_required
+@require_POST
+def set_store_allocation(request, pool_id):
+    """Bulk-update target_count and threshold for each PoolOffer linked to a pool."""
+    try:
+        body = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    allocations = body.get('allocations')
+    if not isinstance(allocations, list) or not allocations:
+        return JsonResponse({'error': 'allocations must be a non-empty list'}, status=400)
+    try:
+        with transaction.atomic():
+            for a in allocations:
+                listing_id = a.get('listing_id')
+                target_count = a.get('target_count')
+                threshold = a.get('threshold')
+                if listing_id is None:
+                    return JsonResponse({'error': 'listing_id required in each allocation'}, status=400)
+                try:
+                    po = PoolOffer.objects.select_for_update().get(
+                        pool_id=pool_id, listing_id=listing_id
+                    )
+                except PoolOffer.DoesNotExist:
+                    return JsonResponse(
+                        {'error': f'PoolOffer for listing {listing_id} not found in pool {pool_id}'},
+                        status=404,
+                    )
+                if target_count is not None:
+                    po.target_count = int(target_count)
+                if threshold is not None:
+                    po.threshold = int(threshold)
+                # Validate only the fields we are changing (not full model state)
+                alloc_errors = {}
+                if po.target_count < 1:
+                    alloc_errors["target_count"] = "Target count must be >= 1."
+                if po.threshold < 1:
+                    alloc_errors["threshold"] = "Threshold must be >= 1."
+                if po.threshold > po.target_count:
+                    alloc_errors["threshold"] = (
+                        f"Threshold ({po.threshold}) must be <= target_count ({po.target_count})."
+                    )
+                if alloc_errors:
+                    raise ValidationError(alloc_errors)
+                po.save(update_fields=["target_count", "threshold", "updated_at"])
+    except ValidationError as exc:
+        return JsonResponse({'error': str(exc)}, status=400)
+    return JsonResponse({'ok': True})
