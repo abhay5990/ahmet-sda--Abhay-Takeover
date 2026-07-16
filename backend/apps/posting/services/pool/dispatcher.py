@@ -370,9 +370,9 @@ def dispatch_offer_from_pool(
     Raises:
         ValueError: validation failures (not enough items, etc.)
     """
-    from apps.posting.models import PoolOfferStrategy
+    from apps.posting.models import PoolOffer
 
-    strategy = PoolOfferStrategy.strategy_for_provider(store.provider)
+    strategy = PoolOffer.strategy_for_provider(store.provider)
 
     with transaction.atomic():
         reservation = reserve_pending_items_for_new_offer(

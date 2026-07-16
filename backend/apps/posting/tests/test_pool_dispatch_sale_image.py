@@ -13,8 +13,10 @@ from apps.posting.models import (
     OfferPool,
     OfferPoolItem,
     OfferPoolStatus,
+    PoolOfferStrategy,
     PostingImagePreset,
 )
+from apps.posting.services.pool.dispatcher import dispatch_offer_from_pool
 
 
 _TEST_MEDIA_ROOT = tempfile.mkdtemp(prefix='sda-pool-dispatch-media-')
@@ -111,6 +113,30 @@ class PoolDispatchSaleImageTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json()['error'], 'Please select or upload a listing image')
+
+    @patch('apps.posting.services.pool.dispatcher._launch_orchestrator')
+    def test_real_dispatch_resolves_marketplace_strategy(self, launch_mock):
+        with self.captureOnCommitCallbacks(execute=True):
+            job = dispatch_offer_from_pool(
+                pool=self.pool,
+                store=self.store,
+                count=1,
+                target_count=5,
+                threshold=2,
+                max_concurrent=None,
+                batch_data=self.base_payload['batch_data'],
+                store_settings=self.base_payload['store_settings'],
+                media_settings={
+                    'selected_image_preset_id': self.preset.pk,
+                    'selected_image_path': self.preset.image.path,
+                },
+            )
+
+        self.assertEqual(
+            job.settings['_pool_dispatch']['strategy'],
+            PoolOfferStrategy.APPEND,
+        )
+        launch_mock.assert_called_once_with(job.pk)
 
     @patch('apps.posting.services.pool.dispatcher.dispatch_offer_from_pool')
     def test_dispatch_normalizes_price_and_attaches_selected_image(self, dispatch_mock):
