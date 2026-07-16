@@ -414,6 +414,9 @@ def restock_pool_detail_page(request, pool_id):
         pool.pool_offers.select_related('listing', 'listing__integration_account')
         .order_by('created_at')
     )
+    active_pool_offers = [
+        offer for offer in pool_offers if offer.status != 'detached'
+    ]
     items = pool.items.select_related(
         'owned_product', 'pool_offer',
     ).order_by('order', 'created_at')
@@ -444,7 +447,8 @@ def restock_pool_detail_page(request, pool_id):
     return render(request, 'posting/restock_pool_detail.html', {
         'pool': pool,
         'pool_offers': pool_offers,
-        'primary_offer': pool_offers[0] if pool_offers else None,
+        'active_pool_offers': active_pool_offers,
+        'primary_offer': active_pool_offers[0] if active_pool_offers else None,
         'items': items,
         'active_offers': active_offers,
         'linked_accounts': linked_accounts,
