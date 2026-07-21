@@ -100,8 +100,19 @@
                                  x-text="pool.linked_offer_count + ' linked offer(s)'"></div>
                         </td>
                         <td class="px-4 py-3 text-sm">
-                            <span x-text="pool.store"></span>
-                            <span class="text-xs text-gray-400" x-text="'(' + pool.marketplace + ')'"></span>
+                            <template x-if="pool.stores && pool.stores.length">
+                                <div class="flex flex-col gap-0.5">
+                                    <template x-for="s in pool.stores" :key="s.id">
+                                        <div>
+                                            <span x-text="s.name"></span>
+                                            <span class="text-xs text-gray-400" x-text="'(' + s.marketplace + ')'"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <template x-if="!pool.stores || !pool.stores.length">
+                                <span class="text-gray-400">—</span>
+                            </template>
                         </td>
                         <td class="px-4 py-3">
                             <span class="inline-flex px-2 py-0.5 text-xs rounded-full"

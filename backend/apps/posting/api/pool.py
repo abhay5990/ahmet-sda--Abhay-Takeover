@@ -1522,6 +1522,30 @@ def _pool_to_dict(pool: OfferPool) -> dict:
     first_offer = linked_offers[0] if linked_offers else None
     listing = first_offer.listing if first_offer else None
     store = first_offer.store if first_offer else None
+
+    # All stores/marketplaces this common pool serves (one PoolOffer per store).
+    # The single-value ``store``/``marketplace`` fields below are kept for
+    # backward compatibility, but a pool can span multiple stores so the UI
+    # should render this list instead of just the first offer.
+    stores = []
+    _seen_store_ids: set[int] = set()
+    for offer in linked_offers:
+        offer_store = offer.store
+        if not offer_store or offer_store.pk in _seen_store_ids:
+            continue
+        _seen_store_ids.add(offer_store.pk)
+        stores.append({
+            'id': offer_store.pk,
+            'name': offer_store.name,
+            'marketplace': offer_store.provider,
+            'strategy': offer.strategy,
+            'threshold': offer.threshold,
+            'target_count': offer.target_count,
+            'current_remote_count': offer.current_remote_count,
+            'listing_id': offer.listing.pk if offer.listing else None,
+            'offer_id': offer.listing.store_listing_id if offer.listing else '',
+        })
+    marketplaces = sorted({s['marketplace'] for s in stores if s['marketplace']})
     if pool.status == OfferPoolStatus.ARCHIVED:
         health = 'archived'
     elif pool.status == OfferPoolStatus.PAUSED:
@@ -1552,6 +1576,9 @@ def _pool_to_dict(pool: OfferPool) -> dict:
         'store': store.name if store else '',
         'store_id': store.pk if store else None,
         'marketplace': store.provider if store else '',
+        # Full set of stores/marketplaces served by this common pool.
+        'stores': stores,
+        'marketplaces': marketplaces,
         'strategy': first_offer.strategy if first_offer else '',
         'status': pool.status,
         'threshold': first_offer.threshold if first_offer else None,
