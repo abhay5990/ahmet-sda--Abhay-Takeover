@@ -21,6 +21,7 @@ from __future__ import annotations
 import logging
 import threading
 import uuid as _uuid
+from datetime import timedelta
 from typing import Any
 
 from django.db import transaction
@@ -340,6 +341,69 @@ def release_dispatch_items_for_job(
         remote_outcome=remote_outcome,
         owned_product_ids=owned_product_ids,
     )
+
+
+# ---------------------------------------------------------------------------
+# Stale reservation recovery
+# ---------------------------------------------------------------------------
+
+# A dispatch reserves items, runs a PostingJob, then finalizes (PUSHED) or
+# releases them — all within one job run (seconds to a couple of minutes). Any
+# ACTIVE reservation older than this is assumed abandoned (e.g. the worker
+# process was killed by a deploy/restart before it could finalize or release).
+STALE_RESERVATION_AGE = timedelta(minutes=30)
+
+
+def release_stale_reservations(max_age: timedelta = STALE_RESERVATION_AGE) -> int:
+    """Release dispatch reservations stuck in ACTIVE past ``max_age``.
+
+    When a dispatch worker dies mid-run, its ``PoolDispatchReservation`` stays
+    ACTIVE and its items stay RESERVED forever. That permanently blocks removing
+    the key (``lifecycle.remove_pool_item`` refuses RESERVED items) and blocks
+    deleting the pool (RESERVED items and ACTIVE reservations are delete
+    blockers). This returns those items to PENDING (known-safe: a still-RESERVED
+    item never reached a confirmed remote offer — a successful post would have
+    marked it PUSHED) and marks the reservation RELEASED, so it can be
+    re-dispatched or the pool deleted.
+
+    Returns the number of reservations released. Safe to run repeatedly.
+    """
+    cutoff = timezone.now() - max_age
+    stale_ids = list(
+        PoolDispatchReservation.objects.filter(
+            status=PoolDispatchReservationStatus.ACTIVE,
+            created_at__lt=cutoff,
+        ).values_list('pk', flat=True)
+    )
+
+    released = 0
+    for reservation_id in stale_ids:
+        try:
+            with transaction.atomic():
+                reservation = (
+                    PoolDispatchReservation.objects
+                    .select_for_update()
+                    .get(
+                        pk=reservation_id,
+                        status=PoolDispatchReservationStatus.ACTIVE,
+                    )
+                )
+                release_reserved_items(
+                    reservation,
+                    reason=(
+                        'Stale dispatch reservation auto-released '
+                        '(worker no longer running)'
+                    ),
+                    remote_outcome='absent',
+                )
+            released += 1
+        except PoolDispatchReservation.DoesNotExist:
+            # Released concurrently by another worker — nothing to do.
+            continue
+
+    if released:
+        logger.info('Released %d stale dispatch reservation(s)', released)
+    return released
 
 
 # ---------------------------------------------------------------------------
