@@ -34,6 +34,7 @@ from .replenisher import (
     replenish_pool_offer,
 )
 from .allocation import quarantine_stale_claims
+from .dispatcher import release_stale_reservations
 from apps.posting.services.shared.utils import extract_listing_id
 from core.marketplace.payload_extractor import extract_create_payload
 
@@ -193,6 +194,7 @@ def sweep_all_pools() -> dict[str, int]:
     Returns summary stats: {checked, replenished, errors}.
     """
     quarantine_stale_claims()
+    release_stale_reservations()
     pool_offers = list(
         PoolOffer.objects.exclude(status=PoolOfferStatus.DETACHED).select_related(
             'pool', 'pool__game', 'pool__credential_spec',
