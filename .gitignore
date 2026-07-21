@@ -28,6 +28,8 @@ wheels/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+backend/db.sqlite3
+backend/inventory_manager
 staticfiles/
 /media/
 backend/logs/
