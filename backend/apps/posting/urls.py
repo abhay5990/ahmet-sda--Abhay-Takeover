@@ -149,4 +149,5 @@ urlpatterns = [
     path('api/pools/sweep-settings/update/', pool_api.update_sweep_settings, name='api_update_sweep_settings'),
     path('api/listing-link/<str:gb_offer_id>/', dropship_api.listing_link, name='api_listing_link'),
     path('api/listing-link-stats/', dropship_api.listing_link_stats, name='api_listing_link_stats'),
+    path('api/bulk-delist-by-gb-offer/', dropship_api.bulk_delist_by_gb_offer, name='api_bulk_delist_by_gb_offer'),
 ]

@@ -9,6 +9,7 @@ from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_GET, require_http_methods
 
@@ -1168,3 +1169,72 @@ def listing_link_stats(request):
         })
     except Exception as exc:
         return JsonResponse({"ok": False, "error": str(exc)}, status=500)
+
+
+@csrf_exempt
+def bulk_delist_by_gb_offer(request):
+    """
+    POST /posting/api/bulk-delist-by-gb-offer/
+    Accepts a list of GameBoost offer IDs and delists each corresponding
+    DropshipProduct using the SDA delist service (uses SDA proxy/token).
+    Auth: X-Bridge-Secret header.
+    Body: {"offerIds": ["595653", "595667", ...]}
+    """
+    from django.conf import settings as django_settings
+    secret = request.headers.get("X-Bridge-Secret", "")
+    expected = getattr(django_settings, "CT_BRIDGE_SECRET", "") or "bridge-ce1b9d8001c8fc76ccbfd28c44832eec299ccc89ea537e9d"
+    if not expected or secret != expected:
+        return JsonResponse({"ok": False, "error": "Unauthorized"}, status=401)
+    if request.method != "POST":
+        return JsonResponse({"ok": False, "error": "POST required"}, status=405)
+    try:
+        raw_body = request.body
+        if not raw_body:
+            return JsonResponse({"ok": False, "error": "Empty body", "body_len": 0}, status=400)
+        body = json.loads(raw_body)
+    except (json.JSONDecodeError, ValueError) as e:
+        return JsonResponse({"ok": False, "error": f"Invalid JSON: {e}"}, status=400)
+    offer_ids = body.get("offerIds", [])
+    if not offer_ids or not isinstance(offer_ids, list):
+        return JsonResponse({"ok": False, "error": "offerIds must be a non-empty list"}, status=400)
+    from apps.posting.services.dropship.delist import delist_single
+    succeeded = []
+    failed = []
+    errors = {}
+    for offer_id in offer_ids:
+        offer_id = str(offer_id)
+        try:
+            listing = (
+                Listing.objects
+                .select_related("dropship_product")
+                .filter(
+                    store_listing_id=offer_id,
+                    integration_account__provider="gameboost",
+                )
+                .first()
+            )
+            if not listing:
+                failed.append(offer_id)
+                errors[offer_id] = "No GameBoost listing found"
+                continue
+            dp = listing.dropship_product
+            if not dp:
+                failed.append(offer_id)
+                errors[offer_id] = "Listing has no linked DropshipProduct"
+                continue
+            result = delist_single(dp)
+            if result.ok:
+                succeeded.append(offer_id)
+            else:
+                failed.append(offer_id)
+                errors[offer_id] = result.error
+        except Exception as exc:
+            failed.append(offer_id)
+            errors[offer_id] = str(exc)
+    return JsonResponse({
+        "ok": len(failed) == 0,
+        "total": len(offer_ids),
+        "succeeded": succeeded,
+        "failed": failed,
+        "errors": errors,
+    }, status=200 if not failed else 207)
