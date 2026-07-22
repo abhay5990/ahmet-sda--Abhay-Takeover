@@ -1770,6 +1770,26 @@ def _get_or_create_owned_product(
         return owned, True
 
 
+def _skip_missing_login_password(cred: dict, login: str, result: dict) -> None:
+    """Record a credential row that has no usable login/password.
+
+    Prevents silent drops: previously such rows were skipped without any
+    feedback, so the UI reported nothing was added and gave no reason.
+    """
+    shown_login = login or str(
+        cred.get('login')
+        or cred.get('psn_id')
+        or cred.get('xbox_id')
+        or cred.get('steam_id')
+        or ''
+    ).strip()
+    result['skipped'].append({
+        'login': shown_login or '(unknown)',
+        'reason': 'missing_login_password',
+        'detail': 'Row has no login/password value the pool credential format recognizes',
+    })
+
+
 def _add_credentials_to_pool(
     pool: OfferPool,
     credentials: list[dict],
@@ -1844,10 +1864,14 @@ def _add_credentials_to_pool(
         password_key = role_map.get('password', 'password')
 
         for i, cred in enumerate(credentials):
-            login = str(cred.get(login_key, '')).strip().lower()
-            password = str(cred.get(password_key, '')).strip()
+            # Accept the spec/preset key, but fall back to the generic
+            # 'login'/'password' keys the paste UI sends when its resolved
+            # spec differs from the pool's (otherwise rows are silently lost).
+            login = str(cred.get(login_key) or cred.get('login') or '').strip().lower()
+            password = str(cred.get(password_key) or cred.get('password') or '').strip()
 
             if not login or not password:
+                _skip_missing_login_password(cred, login, result)
                 continue
 
             raw_data = {
@@ -1861,6 +1885,10 @@ def _add_credentials_to_pool(
 
             extra_fields: dict = {}
             for field_key, role in reverse_map.items():
+                # login/password are resolved above (with generic fallback) and
+                # passed directly; don't let an empty spec-key value blank them.
+                if role in ('login', 'password'):
+                    continue
                 value = str(cred.get(field_key, '')).strip()
                 owned_field = ROLE_TO_OWNED_PRODUCT_FIELD.get(role)
                 if owned_field:
@@ -1903,8 +1931,8 @@ def _add_credentials_to_pool(
     for i, cred in enumerate(credentials):
         if mapping:
             login_key, pass_key, extra_keys = mapping
-            login = cred.get(login_key, '').strip().lower()
-            password = cred.get(pass_key, '').strip()
+            login = (cred.get(login_key) or cred.get('login') or '').strip().lower()
+            password = (cred.get(pass_key) or cred.get('password') or '').strip()
             credential_extras = {}
             for k in extra_keys:
                 val = cred.get(k, '').strip()
@@ -1916,6 +1944,7 @@ def _add_credentials_to_pool(
             credential_extras = {}
 
         if not login or not password:
+            _skip_missing_login_password(cred, login, result)
             continue
 
         raw_data = {
