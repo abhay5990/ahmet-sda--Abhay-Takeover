@@ -6,6 +6,7 @@ from apps.posting.services.stock.consumer import _pa_legacy_relay_disabled
 from apps.posting.services.stock.pa_relay_poster import (
     PARelayPoster,
     _format_relay_error,
+    fetch_relay_token,
 )
 
 
@@ -98,3 +99,54 @@ class LegacyRelayGuardFlagTests(SimpleTestCase):
     @override_settings(PA_LEGACY_RELAY_ENABLED=True)
     def test_can_be_force_enabled(self):
         self.assertFalse(_pa_legacy_relay_disabled())
+
+
+class RelayCookiePropagationTests(SimpleTestCase):
+    @patch("apps.posting.services.stock.pa_relay_poster.requests.post")
+    def test_fetch_returns_distinct_token_and_cookie(self, post):
+        response = Mock()
+        response.json.return_value = {"ok": True, "token": "jwt-123", "cookie": "cookie-abc"}
+        post.return_value = response
+
+        token, cookie = fetch_relay_token("u", "p", "store")
+
+        self.assertEqual(token, "jwt-123")
+        self.assertEqual(cookie, "cookie-abc")
+
+    @patch("apps.posting.services.stock.pa_relay_poster.requests.post")
+    def test_fetch_falls_back_to_token_as_cookie(self, post):
+        response = Mock()
+        response.json.return_value = {"ok": True, "token": "jwt-123"}  # no cookie
+        post.return_value = response
+
+        token, cookie = fetch_relay_token("u", "p", "store")
+
+        self.assertEqual(token, "jwt-123")
+        self.assertEqual(cookie, "jwt-123")
+
+    @patch("apps.posting.services.stock.pa_relay_poster.requests.post")
+    def test_post_batch_sends_real_cookie_not_token(self, post):
+        response = Mock()
+        response.json.return_value = {"ok": True, "offerId": "999"}
+        post.return_value = response
+
+        poster = PARelayPoster(relay_url="http://relay.test", relay_secret="s")
+        poster.post_batch(
+            "jwt-123", "store", [{"serverId": 1, "title": "x"}], cookie="cookie-abc",
+        )
+
+        sent_body = post.call_args.kwargs["json"]
+        self.assertEqual(sent_body["token"], "jwt-123")
+        self.assertEqual(sent_body["cookie"], "cookie-abc")
+
+    @patch("apps.posting.services.stock.pa_relay_poster.requests.post")
+    def test_post_batch_cookie_defaults_to_token(self, post):
+        response = Mock()
+        response.json.return_value = {"ok": True, "offerId": "999"}
+        post.return_value = response
+
+        poster = PARelayPoster(relay_url="http://relay.test", relay_secret="s")
+        poster.post_batch("jwt-123", "store", [{"serverId": 1, "title": "x"}])
+
+        sent_body = post.call_args.kwargs["json"]
+        self.assertEqual(sent_body["cookie"], "jwt-123")

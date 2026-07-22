@@ -674,6 +674,7 @@ class StockConsumer:
 
         # Use cached access token from DB, or fetch fresh from relay
         relay_token = creds.get('access_token') or creds.get('bearer_token') or ''
+        relay_cookie = creds.get('cookie') or ''
         if not relay_token:
             username = creds.get('username', '')
             password = creds.get('password', '')
@@ -682,7 +683,7 @@ class StockConsumer:
                     "PA relay token not cached — fetching fresh for store=%s (job=%d)",
                     store_slug, job.id,
                 )
-                relay_token = fetch_relay_token(
+                relay_token, relay_cookie = fetch_relay_token(
                     username, password, store_slug,
                     relay_url=relay_url, relay_secret=relay_secret,
                 )
@@ -746,7 +747,10 @@ class StockConsumer:
             relay_url=relay_url,
             relay_secret=relay_secret,
         )
-        _relay_result = _relay_poster.post_batch(relay_token, store_slug, excel_rows)
+        _relay_result = _relay_poster.post_batch(
+            relay_token, store_slug, excel_rows,
+            cookie=(relay_cookie or relay_token),
+        )
 
         # Build PA client for normalize_offer_response (optional, graceful fallback)
         facade = None
@@ -1119,6 +1123,8 @@ class StockConsumer:
         _relay_url = _creds.get('relay_url', 'http://35.196.132.30:3001')
         _relay_secret = _creds.get('relay_secret', 'pa-relay-secret-2026')
 
+        _relay_cookie = _creds.get('cookie') or ''
+
         # If no cached token, fetch fresh from relay using store credentials
         if not _relay_token or not _store_slug:
             _username = _creds.get('username', '')
@@ -1129,7 +1135,7 @@ class StockConsumer:
                     "PA relay token not cached — fetching fresh for store=%s (job=%d)",
                     _store_slug, job.id,
                 )
-                _relay_token = fetch_relay_token(
+                _relay_token, _relay_cookie = fetch_relay_token(
                     _username, _password, _store_slug,
                     relay_url=_relay_url, relay_secret=_relay_secret,
                 )
@@ -1145,7 +1151,10 @@ class StockConsumer:
                 relay_url=_relay_url,
                 relay_secret=_relay_secret,
             )
-            _relay_result = _relay_poster.post_batch(_relay_token, _store_slug, excel_rows)
+            _relay_result = _relay_poster.post_batch(
+                _relay_token, _store_slug, excel_rows,
+                cookie=(_relay_cookie or _relay_token),
+            )
             # Convert PARelayPostResult to PABatchResult for unified downstream handling
             batch_result = PABatchResult(
                 successful=_relay_result.successful,
