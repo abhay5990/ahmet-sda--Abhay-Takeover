@@ -150,4 +150,5 @@ urlpatterns = [
     path('api/listing-link/<str:gb_offer_id>/', dropship_api.listing_link, name='api_listing_link'),
     path('api/listing-link-stats/', dropship_api.listing_link_stats, name='api_listing_link_stats'),
     path('api/bulk-delist-by-gb-offer/', dropship_api.bulk_delist_by_gb_offer, name='api_bulk_delist_by_gb_offer'),
+    path('api/delist-non-sab-items/', dropship_api.delist_non_sab_items, name='api_delist_non_sab_items'),
 ]
