@@ -422,6 +422,22 @@ class StockConsumer:
             build_results.append((item, prepared_data, result))
 
         if not build_results:
+            # Every credential failed to build (pre-remote). For a pool-dispatch
+            # job this must release the reserved items back to PENDING — otherwise
+            # they stay stuck in RESERVED forever (blocking removal/re-dispatch).
+            from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
+            failed_owned = [
+                prepared_data.get('owned_product')
+                for _, prepared_data in entries
+                if prepared_data.get('owned_product')
+            ]
+            if failed_owned:
+                add_failed_owned_products_to_pool(job, failed_owned)
+                release_dispatch_items_for_job(
+                    job, owned_products=failed_owned,
+                    reason='All credentials failed to build (pre-remote)',
+                    remote_outcome='absent',
+                )
             return
 
         # Use first successful build as base payload
