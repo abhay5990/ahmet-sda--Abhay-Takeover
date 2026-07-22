@@ -480,6 +480,22 @@ def _attempt_post(
     # Extract item ID via source provider
     item_id = source_provider.extract_item_id(item)
 
+    # SAB item dropship must never post non-SAB Eldorado offers. Seller-UUID
+    # fetches omit gameId server-side; source filter is primary, this is a
+    # last-line guard in case a wrong-game item still reaches the poster.
+    if game.slug == 'steal-a-brainrot' and source_type == 'eldorado':
+        from apps.posting.services.dropship.sources.eldorado import (
+            SAB_GAME_ID,
+            _coerce_game_id,
+        )
+        item_game_id = _coerce_game_id(item.get('gameId') or item.get('game_id'))
+        if item_game_id is not None and item_game_id != SAB_GAME_ID:
+            logger.warning(
+                "Skipping non-SAB Eldorado item %s (gameId=%s, expected=%s)",
+                item_id, item_game_id, SAB_GAME_ID,
+            )
+            return False
+
     # Pricing
     raw_price_float = float(str(item.get('price', 0)))
     if raw_price_float <= 0:
