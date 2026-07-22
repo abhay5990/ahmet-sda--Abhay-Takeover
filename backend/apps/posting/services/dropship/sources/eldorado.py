@@ -202,6 +202,11 @@ class EldoradoSourceProvider:
             3. If UUID resolution fails, fall back to client-side filtering
                (scans all pages — slow, but correct).
 
+        Important: Eldorado's ``userId`` filter returns 0 results when combined
+        with ``gameId``, so seller fetches drop ``gameId`` server-side and
+        re-apply game/category filters client-side. Without that, a multi-game
+        seller's non-SAB offers would be dropshipped as SAB items.
+
         Yields lists (pages) of raw item dicts.
         """
         session = self._get_session()
@@ -210,6 +215,16 @@ class EldoradoSourceProvider:
         if not seller_username:
             seller_username = _extract_seller_from_url(url)
 
+        url_params = _parse_query_string(url)
+        expected_game_id = _coerce_game_id(
+            url_params.get("gameId") or url_params.get("game_id")
+        )
+        # SAB item dropship configs always target game 259. Default to SAB when
+        # the URL omits gameId so seller-UUID fetches cannot leak other games.
+        if expected_game_id is None:
+            expected_game_id = SAB_GAME_ID
+        expected_category = (url_params.get("category") or "").strip()
+
         # userId filter works WITHOUT gameId. Use it for seller-specific fetches (1 page).
         # With gameId, userId filter returns 0. Without gameId, it returns seller items correctly.
         seller_uuid: str | None = None
@@ -217,8 +232,9 @@ class EldoradoSourceProvider:
             seller_uuid = self._resolve_seller_uuid(seller_username)
             if seller_uuid:
                 logger.info(
-                    "Server-side userId filter for seller %s (UUID: %s, no gameId)",
-                    seller_username, seller_uuid,
+                    "Server-side userId filter for seller %s (UUID: %s, "
+                    "client-side gameId=%s category=%s)",
+                    seller_username, seller_uuid, expected_game_id, expected_category or "*",
                 )
             else:
                 logger.warning(
@@ -230,10 +246,11 @@ class EldoradoSourceProvider:
         while True:
             try:
                 if seller_uuid:
-                    # Drop gameId — it breaks the userId filter
+                    # Drop gameId — it breaks the userId filter. Game/category
+                    # are enforced client-side below after normalization.
                     params = {"userId": seller_uuid, "page": page, "pageSize": page_size}
                 else:
-                    params = _parse_query_string(url)
+                    params = dict(url_params)
                     params.update({"page": page, "pageSize": page_size})
 
                 resp = session.get(ELDORADO_API_BASE, params=params, timeout=15)
@@ -248,6 +265,7 @@ class EldoradoSourceProvider:
 
                 # Normalize each result — Eldorado wraps items in {"offer": {...}, "user": {...}}
                 normalized = []
+                skipped_wrong_game = 0
                 for entry in raw_items:
                     item = _normalize_item(entry)
                     if not item:
@@ -257,7 +275,24 @@ class EldoradoSourceProvider:
                         item_seller = (item.get("_seller_username") or "").lower()
                         if item_seller != seller_username.lower():
                             continue
+                    # Always enforce game/category. Critical for seller-UUID
+                    # fetches which must omit gameId on the API request.
+                    if not _item_matches_filters(
+                        item,
+                        expected_game_id=expected_game_id,
+                        expected_category=expected_category,
+                    ):
+                        skipped_wrong_game += 1
+                        continue
                     normalized.append(item)
+
+                if skipped_wrong_game:
+                    logger.info(
+                        "Eldorado page %d: skipped %d non-matching items "
+                        "(gameId=%s category=%s) for seller '%s'",
+                        page, skipped_wrong_game, expected_game_id,
+                        expected_category or "*", seller_username or "all",
+                    )
 
                 if normalized:
                     yield normalized
@@ -434,6 +469,43 @@ def _parse_seller_profile(user: dict) -> dict:
         "createdDate": user.get("createdDate") or "",
         "found": True,
     }
+
+
+def _coerce_game_id(value) -> int | None:
+    """Parse a gameId query/API value to int, or None if missing/invalid."""
+    if value is None or value == "":
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _item_matches_filters(
+    item: dict,
+    *,
+    expected_game_id: int | None,
+    expected_category: str = "",
+) -> bool:
+    """Return True when the normalized offer matches configured game/category.
+
+    Used after seller-UUID fetches (which cannot send gameId server-side) so
+    non-SAB offers from multi-game sellers are never dropshipped as SAB items.
+    """
+    if expected_game_id is not None:
+        item_game_id = _coerce_game_id(item.get("gameId") or item.get("game_id"))
+        if item_game_id is None or item_game_id != expected_game_id:
+            return False
+    if expected_category:
+        item_category = (
+            item.get("category")
+            or item.get("offerCategory")
+            or item.get("listingCategory")
+            or ""
+        )
+        if str(item_category).strip().lower() != expected_category.lower():
+            return False
+    return True
 
 
 def _extract_seller_from_url(url: str) -> str:
