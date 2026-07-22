@@ -35,7 +35,13 @@ def _lookup(
     Lookup order:
     1. Exact match on *key*.
     2. Case-insensitive fallback (``key.lower()`` vs each dict key lowered).
-    3. ``None`` — no match.
+    3. Case-insensitive match on each entry's identity fields (``slug``,
+       ``source_key``). The dict key may be the display label/``source_key``
+       while callers pass the internal ``slug`` (or vice versa); without this
+       the lookup misses and the caller falls back to the raw internal value,
+       which marketplaces reject (e.g. sending ``pc-enhanced`` to GameBoost
+       instead of the configured ``PC · Enhanced``).
+    4. ``None`` — no match.
     """
     if not variant_ctx or not key:
         return None
@@ -49,11 +55,20 @@ def _lookup(
     if entry is not None:
         return entry
 
-    # 2. Case-insensitive fallback
+    # 2. Case-insensitive fallback on the dict key
     key_lower = key.lower()
     for k, v in type_map.items():
         if k.lower() == key_lower:
             return v
+
+    # 3. Case-insensitive match on each entry's identity fields
+    for v in type_map.values():
+        if not isinstance(v, dict):
+            continue
+        for field in ('slug', 'source_key'):
+            val = v.get(field)
+            if val and str(val).lower() == key_lower:
+                return v
 
     return None
 
