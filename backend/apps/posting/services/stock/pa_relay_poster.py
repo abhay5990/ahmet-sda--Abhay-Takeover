@@ -235,6 +235,9 @@ class PARelayPoster:
             data = resp.json()
         except requests.exceptions.Timeout:
             return None, "PA relay timeout"
+        except ValueError:
+            # Non-JSON relay/upstream body (e.g. an empty 405) — preserve status.
+            return None, _format_relay_error({}, resp.status_code)
         except Exception as exc:
             return None, f"PA relay connection error: {exc}"
 
@@ -242,8 +245,16 @@ class PARelayPoster:
             offer_id = str(data.get("offerId", ""))
             return offer_id, None
 
-        error = data.get("error") or f"HTTP {resp.status_code}"
-        logger.warning("PA relay post failed: store=%s error=%r status=%s", self._store_slug if hasattr(self, '_store_slug') else '?', error, data.get('status'))
+        error = _format_relay_error(data, resp.status_code)
+        # Log only the structured, non-sensitive fields — never the payload.
+        logger.warning(
+            "PA relay post failed: store=%s status=%s upstream_status=%s request_id=%s error=%r",
+            store_slug,
+            resp.status_code,
+            data.get("status"),
+            data.get("requestId") or data.get("request_id") or "",
+            (data.get("error") or data.get("message") or "")[:300],
+        )
         return None, error
 
     # ------------------------------------------------------------------
@@ -365,6 +376,27 @@ class PARelayPoster:
 # ---------------------------------------------------------------------------
 # Utility functions
 # ---------------------------------------------------------------------------
+
+def _format_relay_error(data: dict[str, Any], http_status: int) -> str:
+    """Build a structured, non-sensitive error string from a relay response.
+
+    Preserves the upstream status, request id, and error text so failures like
+    an empty ``HTTP 405`` are diagnosable, instead of flattening everything to a
+    bare status code. Only whitelisted diagnostic fields are included — never the
+    offer payload or credential material.
+    """
+    if not isinstance(data, dict):
+        data = {}
+    upstream_status = data.get("status") or http_status
+    request_id = data.get("requestId") or data.get("request_id") or ""
+    detail = (data.get("error") or data.get("message") or "").strip()
+
+    parts = [f"upstream_status={upstream_status}"]
+    if request_id:
+        parts.append(f"request_id={request_id}")
+    parts.append(detail or "empty upstream response body")
+    return "PA relay upstream error (" + ", ".join(parts[:-1]) + "): " + parts[-1]
+
 
 def pa_encrypt(plaintext: str) -> str:
     """RSA-encrypt a password for PA autoDelivery fields."""

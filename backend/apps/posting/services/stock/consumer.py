@@ -49,6 +49,20 @@ logger = logging.getLogger(__name__)
 _PA_BATCH_SIZE = 10
 _MULTI_CRED_MARKETPLACES: frozenset[str] = frozenset({'eldorado', 'gameboost'})
 
+# Shown when PA posting is attempted while the obsolete legacy relay is disabled.
+_PA_LEGACY_DISABLED_MESSAGE = (
+    'PlayerAuctions posting is disabled: the legacy browser-session relay is '
+    'obsolete (upstream returns HTTP 405) and the official signed seller-api '
+    'client is not yet configured. Set PA_LEGACY_RELAY_ENABLED=True to force the '
+    'legacy path.'
+)
+
+
+def _pa_legacy_relay_disabled() -> bool:
+    """True when the obsolete PA legacy relay must not be used (default)."""
+    from django.conf import settings
+    return not getattr(settings, 'PA_LEGACY_RELAY_ENABLED', False)
+
 
 class StockConsumer:
     """Thread-safe single-store queue consumer.
@@ -590,6 +604,45 @@ class StockConsumer:
                 integration_account=base_item.store,
             )
 
+    def _fail_pa_legacy_disabled(self, entries: list[tuple], job) -> None:
+        """Fail all PA items fast when the obsolete legacy relay is disabled.
+
+        Marks each item FAILED with an explicit migration message, logs it, and
+        releases any pool-dispatch reservation so the keys return to PENDING —
+        instead of repeatedly hitting the dead legacy endpoint (HTTP 405).
+        """
+        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
+
+        failed_owned = []
+        for item, prepared_data in entries:
+            item.status = PostingJobItemStatus.FAILED
+            item.error_message = _PA_LEGACY_DISABLED_MESSAGE
+            item.save(update_fields=['status', 'error_message', 'updated_at'])
+            owned_product = prepared_data.get('owned_product') if isinstance(prepared_data, dict) else None
+            if owned_product:
+                failed_owned.append(owned_product)
+            PostingLog.objects.create(
+                task_name='stock_post',
+                level=PostingLogLevel.ERROR,
+                message=f'PA posting skipped (legacy relay disabled): {item.login}',
+                detail={
+                    'item_id': item.id,
+                    'job_id': job.id,
+                    'stage': 'pa_legacy_disabled',
+                },
+                integration_account=item.store,
+            )
+        if failed_owned:
+            add_failed_owned_products_to_pool(job, failed_owned)
+            release_dispatch_items_for_job(
+                job, owned_products=failed_owned,
+                reason='PA legacy relay disabled', remote_outcome='absent',
+            )
+        logger.warning(
+            'PA legacy relay disabled — failed %d item(s) fast (job=%d)',
+            len(entries), job.id,
+        )
+
     def _process_pa_relay_batch(
         self,
         entries: list[tuple],
@@ -605,6 +658,11 @@ class StockConsumer:
         logger = logging.getLogger(__name__)
 
         if not entries:
+            return
+
+        # Fail fast instead of hitting the obsolete legacy relay endpoint.
+        if _pa_legacy_relay_disabled():
+            self._fail_pa_legacy_disabled(entries, job)
             return
 
         first_item = entries[0][0]
@@ -928,6 +986,18 @@ class StockConsumer:
         """
         try:
             close_old_connections()
+
+            # Fail fast instead of hitting the obsolete legacy relay endpoint.
+            if _pa_legacy_relay_disabled():
+                drained: list[tuple] = []
+                while True:
+                    entry = queue.get()
+                    if entry is self._sentinel:
+                        break
+                    drained.append(entry)
+                if drained:
+                    self._fail_pa_legacy_disabled(drained, job)
+                return
 
             facade = None
             proxy_group: str | None = None

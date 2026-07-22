@@ -50,13 +50,8 @@
                 Cancel Job
             </button>
             <span class="px-3 py-1 rounded-full text-sm font-medium"
-                  :class="{
-                      'bg-emerald-100 text-emerald-700': jobData.status === 'completed',
-                      'bg-blue-100 text-blue-700': jobData.status === 'running',
-                      'bg-red-100 text-red-700': jobData.status === 'failed',
-                      'bg-gray-100 text-gray-600': jobData.status === 'pending' || jobData.status === 'cancelled',
-                  }"
-                  x-text="jobData.status">
+                  :class="topStatusBadgeClass"
+                  x-text="statusLabel">
                 {{ job.status }}
             </span>
         </div>
@@ -400,6 +395,30 @@ function jobDetail() {
         },
 
         // Computed
+        // A finished job with failures should not read as a plain "completed"
+        // success — surface "failed" (0 succeeded) or "completed with failures".
+        get statusLabel() {
+            if (this.jobData.status === 'completed' && this.jobData.fail_count > 0) {
+                return this.jobData.success_count > 0 ? 'completed with failures' : 'failed';
+            }
+            return this.jobData.status;
+        },
+
+        get topStatusBadgeClass() {
+            if (this.jobData.status === 'completed' && this.jobData.fail_count > 0) {
+                return this.jobData.success_count > 0
+                    ? 'bg-amber-100 text-amber-700'
+                    : 'bg-red-100 text-red-700';
+            }
+            return {
+                'completed': 'bg-emerald-100 text-emerald-700',
+                'running': 'bg-blue-100 text-blue-700',
+                'failed': 'bg-red-100 text-red-700',
+                'pending': 'bg-gray-100 text-gray-600',
+                'cancelled': 'bg-gray-100 text-gray-600',
+            }[this.jobData.status] || 'bg-gray-100 text-gray-600';
+        },
+
         get activeColumns() {
             return this.columnOrder.filter(c => this.visibleColumns.includes(c));
         },

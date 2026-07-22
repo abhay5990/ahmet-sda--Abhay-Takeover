@@ -167,3 +167,12 @@ CREDENTIAL_ENCRYPTION_KEY = config('CREDENTIAL_ENCRYPTION_KEY', default='')
 # Code-Tracker SDA Image Bridge
 CT_BRIDGE_URL = config('CT_BRIDGE_URL', default='')
 CT_BRIDGE_SECRET = config('CT_BRIDGE_SECRET', default='')
+
+# PlayerAuctions legacy relay guard.
+# The browser-session relay posts account offers to the obsolete
+# offer-api.playerauctions.com endpoint, which now returns HTTP 405. It is
+# disabled by default so PA account-offer jobs fail fast with an explicit
+# migration message instead of repeatedly attempting the dead endpoint. Set
+# PA_LEGACY_RELAY_ENABLED=True to force the legacy path (not recommended);
+# the durable path is the official signed seller-api client.
+PA_LEGACY_RELAY_ENABLED = config('PA_LEGACY_RELAY_ENABLED', default=False, cast=bool)
