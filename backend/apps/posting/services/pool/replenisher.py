@@ -731,9 +731,10 @@ def _clone_pa_offer(
 
     # Use cached token first, fetch fresh if missing
     _token = _access_token
+    _cookie = _creds.get('cookie', '')
     if not _token:
         if _username and _password and _store_slug:
-            _token = fetch_relay_token(
+            _token, _cookie = fetch_relay_token(
                 _username, _password, _store_slug,
                 relay_url=_relay_url, relay_secret=_relay_secret,
             )
@@ -753,7 +754,10 @@ def _clone_pa_offer(
         relay_url=_relay_url,
         relay_secret=_relay_secret,
     )
-    _relay_result = _relay_poster.post_batch(_token, _store_slug, [_excel_row])
+    _relay_result = _relay_poster.post_batch(
+        _token, _store_slug, [_excel_row],
+        cookie=(_cookie or _token),
+    )
 
     if 0 in _relay_result.failed:
         error_str = _relay_result.failed[0]
