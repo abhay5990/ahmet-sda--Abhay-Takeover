@@ -86,14 +86,18 @@ def fetch_relay_token(
     relay_url: str = RELAY_URL,
     relay_secret: str = RELAY_SECRET,
     timeout: int = 240,
-) -> str | None:
-    """Fetch a PA access token from the relay /pa-access-token endpoint.
+) -> tuple[str | None, str | None]:
+    """Fetch a PA access token + cookie from the relay /pa-access-token endpoint.
 
     Uses cache-first: returns cached token instantly if relay warmup ran,
     otherwise triggers a fresh AdsPower browser login (up to 4 min).
 
+    The relay returns a JWT ``token`` and a separate ``cookie`` value; the safer
+    path is to send the real cookie back on /pa-post-offer. When the relay does
+    not supply a distinct cookie we fall back to the token (JWT-as-cookie).
+
     Returns:
-        JWT token string on success, None on failure.
+        ``(token, cookie)`` on success, ``(None, None)`` on failure.
     """
     try:
         resp = requests.post(
@@ -111,18 +115,20 @@ def fetch_relay_token(
                 "PA relay token fetched for store=%s (cached=%s)",
                 store_slug, data.get("cached", False),
             )
-            return data["token"]
+            token = data["token"]
+            cookie = data.get("cookie") or token
+            return token, cookie
         logger.warning(
             "PA relay /pa-access-token returned ok=False for store=%s: %s",
             store_slug, data.get("error", "unknown"),
         )
-        return None
+        return None, None
     except requests.exceptions.Timeout:
         logger.error("PA relay /pa-access-token timeout for store=%s", store_slug)
-        return None
+        return None, None
     except Exception as exc:
         logger.error("PA relay /pa-access-token error for store=%s: %s", store_slug, exc)
-        return None
+        return None, None
 
 
 
@@ -159,13 +165,18 @@ class PARelayPoster:
         token: str,
         store_slug: str,
         rows: list[dict[str, Any]],
+        *,
+        cookie: str | None = None,
     ) -> PARelayPostResult:
         """Post each row as a separate JSON offer via the relay.
 
         Args:
-            token:      JWT from /pa-access-token (used as both token and cookie)
+            token:      JWT from /pa-access-token
             store_slug: "ezsmurfmart" or "ezsmurfshop"
             rows:       List of Excel row dicts (same format as XLSX uploader)
+            cookie:     The cookie value returned by /pa-access-token. When
+                        omitted, the token is reused as the cookie (JWT-as-cookie
+                        fallback) to preserve backwards-compatible behavior.
         """
         result = PARelayPostResult()
 
@@ -190,7 +201,7 @@ class PARelayPoster:
                         payload['autoDelivery'] = auto_del
                 else:
                     payload = self._build_json_payload(row)
-                offer_id, error = self._post_one(token, store_slug, payload)
+                offer_id, error = self._post_one(token, store_slug, payload, cookie=cookie)
                 if offer_id:
                     result.successful[idx] = offer_id
                 else:
@@ -214,11 +225,15 @@ class PARelayPoster:
         token: str,
         store_slug: str,
         payload: dict[str, Any],
+        *,
+        cookie: str | None = None,
     ) -> tuple[str | None, str | None]:
         """POST one offer to relay. Returns (offer_id, None) or (None, error)."""
         body = {
             "token": token,
-            "cookie": token,   # relay uses this as Production_access_token cookie
+            # Prefer the real cookie from /pa-access-token; fall back to the
+            # token (JWT-as-cookie) when no distinct cookie was provided.
+            "cookie": cookie or token,
             "store": store_slug,
             "payload": payload,
         }
