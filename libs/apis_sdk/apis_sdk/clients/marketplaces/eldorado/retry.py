@@ -12,6 +12,7 @@ from apis_sdk.core.enums import ErrorCategory
 from apis_sdk.core.exceptions import (
     AuthenticationError,
     RateLimitError,
+    TransportError,
 )
 from apis_sdk.infrastructure.retry.decision import RetryDecision
 from apis_sdk.infrastructure.retry.strategy import MarketplaceRetryStrategy
@@ -40,6 +41,17 @@ class EldoradoRetryStrategy(MarketplaceRetryStrategy):
         self._rotate_proxy_on_rate_limit = rotate_proxy_on_rate_limit
 
     def decide(self, attempt: int, error: Exception) -> RetryDecision:
+        # A transport failure that explicitly originated from the selected
+        # proxy must not reuse the facade's sticky proxy on the next upload
+        # attempt.  ``RuntimeRetryStrategy`` reports and excludes it before
+        # acquiring a replacement, while the session reset clears any failed
+        # connection state.
+        if isinstance(error, TransportError) and error.details.get("proxy_url"):
+            return RetryDecision.new_proxy_and_session(
+                "Eldorado proxy transport failure, rotate proxy and reset session",
+                error_category=ErrorCategory.NETWORK,
+            )
+
         # Eldorado-specific: 429 → rotate proxy + reset session
         if isinstance(error, RateLimitError) and self._rotate_proxy_on_rate_limit:
             return RetryDecision.new_proxy_and_session(

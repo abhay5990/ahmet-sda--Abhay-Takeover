@@ -321,8 +321,11 @@ class EldoradoClient:
             )
         except TransportError as exc:
             return ApiResult.from_error(
-                ErrorCategory.NETWORK, str(exc),
-                provider=self.PROVIDER, is_retryable=True,
+                ErrorCategory.NETWORK,
+                str(exc),
+                provider=self.PROVIDER,
+                is_retryable=True,
+                details=exc.details,
             )
 
         if not response.is_success:
@@ -371,8 +374,11 @@ class EldoradoClient:
             )
         except TransportError as exc:
             return ApiResult.from_error(
-                ErrorCategory.NETWORK, str(exc),
-                provider=self.PROVIDER, is_retryable=True,
+                ErrorCategory.NETWORK,
+                str(exc),
+                provider=self.PROVIDER,
+                is_retryable=True,
+                details=exc.details,
             )
 
         if not response.is_success:
