@@ -296,7 +296,19 @@ def _push_eldorado(
     result = client.update_offer(offer_id, update_payload, proxy_group=proxy_group)
 
     if result.ok:
-        return _mark_items_pushed(valid_items, offer_id, listing=pool.listing)
+        remote_ids = _eldorado_remote_ids_for_credentials(
+            client, offer_id, new_creds, proxy_group,
+        )
+        return _mark_items_pushed(
+            valid_items,
+            offer_id,
+            listing=pool.listing,
+            remote_credential_ids={
+                item.pk: remote_ids[credential.strip()]
+                for item, credential in zip(valid_items, new_creds)
+                if remote_ids.get(credential.strip())
+            },
+        )
 
     # Update failed — fallback to delete + recreate strategy
     error_str = str(result.error) if result.error else ''
@@ -437,7 +449,52 @@ def _create_eldorado_offer(
         },
     )
 
-    return _mark_items_pushed(new_items, new_offer_id, listing=pool.listing)
+    remote_ids = _eldorado_remote_ids_for_credentials(
+        client, new_offer_id, all_creds, proxy_group,
+    )
+    return _mark_items_pushed(
+        new_items,
+        new_offer_id,
+        listing=pool.listing,
+        remote_credential_ids={
+            item.pk: remote_ids[credential.strip()]
+            for item, credential in zip(new_items, all_creds[-len(new_items):])
+            if remote_ids.get(credential.strip())
+        },
+    )
+
+
+def _eldorado_remote_ids_for_credentials(
+    client: Any,
+    offer_id: str,
+    credentials: list[str],
+    proxy_group: str | None,
+) -> dict[str, str]:
+    """Return stable remote IDs for newly published Eldorado credentials.
+
+    The post-update detail response is authoritative.  Failure is deliberately
+    non-fatal: items are still pushed, but legacy text matching remains the
+    fallback until the next successful identity-aware reconciliation.
+    """
+    details = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
+    if not details.ok:
+        logger.warning(
+            'Pool Eldorado credential-ID fetch failed for offer %s: %s',
+            offer_id,
+            details.error,
+        )
+        return {}
+    response = details.data
+    entries = getattr(response, 'secretDetails', None) or getattr(
+        response, 'accountsDetails', None,
+    ) or []
+    wanted = {credential.strip() for credential in credentials}
+    return {
+        str(getattr(entry, 'secretDetails', '')).strip(): str(getattr(entry, 'id', '')).strip()
+        for entry in entries
+        if str(getattr(entry, 'secretDetails', '')).strip() in wanted
+        and str(getattr(entry, 'id', '')).strip()
+    }
 
 
 def _push_gameboost(
@@ -1205,14 +1262,15 @@ def _extract_legacy_gameboost_credential(payload: dict) -> str | None:
 def _reconcile_pushed_items(
     pool: OfferPool,
     remote_creds: list[str],
+    *,
+    remote_credential_ids: set[str] | None = None,
 ) -> int:
-    """Compare PUSHED pool items against remote credentials and mark missing as CONSUMED.
+    """Mark only credentials proven absent from the remote offer as consumed.
 
-    For each PUSHED item, re-format its credential string and check if it
-    exists in the remote credential list. If not found → CONSUMED + unlink
-    from listing.
-
-    Returns the number of items marked as CONSUMED.
+    Prefer the immutable remote credential ID recorded when an item was pushed.
+    Rendering account details again is a compatibility fallback for historical
+    items without an ID because formatting rules and source data can change
+    after the credential was successfully published.
     """
     pushed_items = list(
         pool.items.filter(
@@ -1226,24 +1284,30 @@ def _reconcile_pushed_items(
 
     marketplace = pool.store.provider
     consumed = 0
+    remote_id_set = {
+        str(remote_id).strip()
+        for remote_id in (remote_credential_ids or set())
+        if str(remote_id).strip()
+    }
 
     for item in pushed_items:
-        try:
-            expected_cred = format_credential_for_marketplace(
-                item.owned_product, marketplace, pool=pool,
-            )
-        except Exception:
-            continue
+        if item.remote_credential_id and remote_id_set:
+            found = item.remote_credential_id.strip() in remote_id_set
+        else:
+            try:
+                expected_cred = format_credential_for_marketplace(
+                    item.owned_product, marketplace, pool=pool,
+                )
+            except Exception:
+                continue
 
-        if isinstance(expected_cred, dict):
-            # PA dict format — not applicable here
-            continue
+            if isinstance(expected_cred, dict):
+                # PA dict format — not applicable here
+                continue
 
-        # Normalize whitespace for comparison
-        expected_norm = expected_cred.strip()
-        found = any(
-            rc.strip() == expected_norm for rc in remote_creds
-        )
+            # Normalize whitespace for the legacy historical fallback only.
+            expected_norm = expected_cred.strip()
+            found = any(rc.strip() == expected_norm for rc in remote_creds)
 
         if not found:
             item.status = OfferPoolItemStatus.CONSUMED

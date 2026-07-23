@@ -32,6 +32,8 @@ from apps.posting.services.pool.checker import notify_sale
 from apps.posting.services.pool.lifecycle import detach_pool_offer
 from apps.posting.services.pool.replenisher import (
     _ensure_pa_offer_description,
+    _PoolOfferContext,
+    _reconcile_pushed_items,
     replenish_pool_offer,
 )
 
@@ -962,3 +964,32 @@ class UnifiedPoolTestCase(TestCase):
         self.assertContains(response, 'This Store Threshold / Target')
         self.assertContains(response, 'These settings apply only to this listing/store.')
         self.assertContains(response, self.eldorado.name)
+
+    def test_remote_credential_id_prevents_false_consumption_after_format_drift(self):
+        pool = self.make_pool('Stable Credential Identity')
+        pool_offer = self.make_pool_offer(pool)
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('stable-remote-id@example.test'),
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+            remote_credential_id='credential-remote-123',
+        )
+
+        with patch(
+            'apps.posting.services.pool.replenisher.format_credential_for_marketplace',
+            side_effect=AssertionError(
+                'Text formatting must not run when a stable remote credential ID is available',
+            ),
+        ):
+            consumed = _reconcile_pushed_items(
+                _PoolOfferContext(pool_offer),
+                ['remote-format-has-changed'],
+                remote_credential_ids={'credential-remote-123'},
+            )
+
+        self.assertEqual(consumed, 0)
+        item.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.PUSHED)
+        self.assertEqual(item.remote_state, 'present')

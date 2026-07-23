@@ -309,8 +309,11 @@ def _check_and_replenish(pool_offer: PoolOffer, *, force: bool = False) -> int:
     if marketplace == 'playerauctions':
         remote_count = _get_pa_active_count(pool)
         remote_creds = None
+        remote_credential_ids = None
     else:
-        remote_count, remote_creds = _get_remote_credentials(pool, marketplace)
+        remote_count, remote_creds, remote_credential_ids = _get_remote_credentials(
+            pool, marketplace,
+        )
 
     # Offer gone from remote — recover by creating a new one
     if remote_count == _OFFER_NOT_FOUND:
@@ -325,7 +328,11 @@ def _check_and_replenish(pool_offer: PoolOffer, *, force: bool = False) -> int:
 
     # Reconcile: mark PUSHED items no longer on remote as CONSUMED
     if remote_creds is not None:
-        _reconcile_pushed_items(pool, remote_creds)
+        _reconcile_pushed_items(
+            pool,
+            remote_creds,
+            remote_credential_ids=remote_credential_ids,
+        )
 
     # A failed/unknown monitor result must not be interpreted as zero stock;
     # doing so could duplicate every credential on the remote offer.
@@ -353,11 +360,12 @@ def _check_and_replenish(pool_offer: PoolOffer, *, force: bool = False) -> int:
 def _get_remote_credentials(
     pool: OfferPool,
     marketplace: str,
-) -> tuple[int | None, list[str] | None]:
+) -> tuple[int | None, list[str] | None, set[str] | None]:
     """Query marketplace API for current credentials on the offer.
 
-    Returns (count, credential_strings).
-    credential_strings is None when API call fails or format doesn't support it.
+    Returns ``(count, credential_strings, credential_ids)``.  Credential IDs are
+    authoritative presence markers when the marketplace exposes them; text is
+    retained for older offers that have no stored remote credential ID.
     """
     store = pool.store
     proxy_pool = build_proxy_pool()
@@ -376,7 +384,7 @@ def _get_remote_credentials(
     elif marketplace == 'gameboost':
         return _fetch_gameboost(client, offer_id, proxy_group, pool)
 
-    return None, None
+    return None, None, None
 
 
 def _fetch_eldorado(
@@ -384,8 +392,8 @@ def _fetch_eldorado(
     offer_id: str,
     proxy_group: str | None,
     pool: OfferPool,
-) -> tuple[int | None, list[str] | None]:
-    """Eldorado: GET account details, return count + credential strings.
+) -> tuple[int | None, list[str] | None, set[str] | None]:
+    """Eldorado: GET account details, return count + credential strings and IDs.
 
     Returns (_OFFER_NOT_FOUND, None) when the offer no longer exists (404).
     """
@@ -396,20 +404,26 @@ def _fetch_eldorado(
             logger.warning(
                 'pool_checker: Eldorado offer %s not found (404)', offer_id,
             )
-            return _OFFER_NOT_FOUND, None
+            return _OFFER_NOT_FOUND, None, None
         logger.warning(
             'pool_checker: Eldorado count failed for offer %s: %s',
             offer_id, result.error,
         )
-        return None, None
+        return None, None, None
 
     resp = result.data
-    creds: list[str] = []
+    entries = []
     if hasattr(resp, 'secretDetails') and resp.secretDetails:
-        creds = [entry.secretDetails for entry in resp.secretDetails if entry.secretDetails]
+        entries = list(resp.secretDetails)
     elif hasattr(resp, 'accountsDetails') and resp.accountsDetails:
-        creds = [entry.secretDetails for entry in resp.accountsDetails if entry.secretDetails]
-    return len(creds), creds
+        entries = list(resp.accountsDetails)
+    creds = [entry.secretDetails for entry in entries if getattr(entry, 'secretDetails', None)]
+    credential_ids = {
+        str(getattr(entry, 'id', '')).strip()
+        for entry in entries
+        if getattr(entry, 'secretDetails', None) and str(getattr(entry, 'id', '')).strip()
+    }
+    return len(creds), creds, credential_ids
 
 
 def _fetch_gameboost(
@@ -417,7 +431,7 @@ def _fetch_gameboost(
     offer_id: str,
     proxy_group: str | None,
     pool: OfferPool,
-) -> tuple[int | None, list[str] | None]:
+) -> tuple[int | None, list[str] | None, set[str] | None]:
     """Gameboost: detect format from DB, then fetch credentials via API.
 
     Old format (payload has login/password): single credential, count = 0 or 1.
@@ -433,14 +447,14 @@ def _fetch_gameboost(
                 'pool_checker: Gameboost get_offer failed for %s: %s',
                 offer_id, offer_result.error,
             )
-            return None, None
+            return None, None, None
         offer = offer_result.data
         has_cred = (
             offer.credentials
             and getattr(offer.credentials, 'login', None)
         )
         # Legacy single-credential: can't do string reconciliation
-        return (1 if has_cred else 0), None
+        return (1 if has_cred else 0), None, None
 
     # New format: fetch via /credentials endpoint
     result = client.list_offer_credentials(offer_id, proxy_group=proxy_group)
@@ -449,7 +463,7 @@ def _fetch_gameboost(
             'pool_checker: Gameboost count failed for offer %s: %s',
             offer_id, result.error,
         )
-        return None, None
+        return None, None, None
 
     data = result.data
     if isinstance(data, list):
@@ -461,15 +475,20 @@ def _fetch_gameboost(
         # then appends nothing and the offer stays drafted. Excluding sold
         # credentials makes the count reflect real stock, so replenish tops up
         # and the offer is re-published.
-        creds = [
-            str(getattr(c, 'credentials', '') or '')
-            for c in data
+        active_entries = [
+            c for c in data
             if c is not None and not getattr(c, 'is_sold', False)
         ]
-        return len(creds), creds
+        creds = [str(getattr(c, 'credentials', '') or '') for c in active_entries]
+        credential_ids = {
+            str(getattr(c, 'id', '')).strip()
+            for c in active_entries
+            if str(getattr(c, 'id', '')).strip()
+        }
+        return len(creds), creds, credential_ids
     if hasattr(data, 'total'):
-        return data.total, None
-    return 0, []
+        return data.total, None, None
+    return 0, [], set()
 
 
 def _get_pa_active_count(pool: OfferPool) -> int | None:
