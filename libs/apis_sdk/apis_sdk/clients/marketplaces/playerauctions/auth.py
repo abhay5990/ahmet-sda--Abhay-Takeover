@@ -209,7 +209,8 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         if now < self._transient_backoff_until:
             remaining = int(self._transient_backoff_until - now)
             self._logger.info(
-                "Token refresh cooling down — retry in %ds", remaining,
+                f"Token refresh cooling down — retry in {remaining}s",
+                remaining_seconds=remaining,
             )
             return False
 

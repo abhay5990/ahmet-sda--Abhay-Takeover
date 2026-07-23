@@ -1,8 +1,10 @@
 from types import SimpleNamespace
+import time
 from unittest import TestCase
 from unittest.mock import Mock
 
 from apis_sdk.clients.marketplaces.playerauctions.auth import PlayerAuctionsAuth
+from apis_sdk.infrastructure.logging.logger import StdlibLogger
 from apis_sdk.clients.services.pa_relay.client import PaRelayTokenResult
 
 
@@ -41,6 +43,22 @@ class PlayerAuctionsAuthRefreshTests(TestCase):
         self.assertEqual(auth.access_token, 'fresh-token')
         self.assertEqual(auth.cookie, 'fresh-cookie')
         self.assertEqual(auth.user_agent, 'fresh-agent')
+
+    def test_cooldown_log_uses_the_sdk_logger_interface(self):
+        auth = PlayerAuctionsAuth(
+            transport=Mock(),
+            username='seller@example.com',
+            password='secret',
+            access_token='old-token',
+            cookie='old-cookie',
+            store_slug='vapenation',
+            logger=StdlibLogger('test.playerauctions.cooldown'),
+        )
+        auth._relay_client = Mock()
+        auth._transient_backoff_until = time.monotonic() + 60
+
+        self.assertFalse(auth._do_refresh())
+        auth._relay_client.get_token.assert_not_called()
 
     def test_initial_session_refresh_keeps_cache_first_behavior(self):
         auth = self.make_auth()
