@@ -60,10 +60,13 @@ class PlayerAuctionsOrderListItem(BaseModel):
     This is the flat shape returned in ``data.items[]``.
     Note: ``status`` is a plain string here (e.g. "Pending Payment",
     "Delivery Fully Completed"), unlike the detail endpoint where
-    ``status`` is a nested object.
+    ``status`` is a nested object.  The live seller-order response also
+    includes ``offerId``; keeping it lets an order be matched directly to a
+    cloned pool offer without depending on the fragile detail endpoint.
     """
 
     order_id: int = Field(default=0, alias="orderId")
+    offer_id: int | str | None = Field(default=None, alias="offerId")
     order_title: str = Field(default="", alias="orderTitle")
     server_name: str = Field(default="", alias="serverName")
     create_time: str = Field(default="", alias="createTime")

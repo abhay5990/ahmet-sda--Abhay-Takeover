@@ -151,20 +151,16 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
         item: dict,
         account: IntegrationAccount,
     ) -> tuple[dict, dict]:
-        """Fetch per-order detail and merge with summary.
+        """Prepare a seller-order summary for persistence.
 
-        Raises ``SkipItem`` if detail fetch fails — per BD-1,
-        incomplete summaries are not written to RawPayload.
+        MCT's production-proven PlayerAuctions flow uses the seller-order list
+        response directly.  That response already contains the order ID,
+        offer ID, status, price, and timestamp needed to record a sale and
+        match it to a pool clone.  The optional order-detail endpoint is
+        inconsistent for historical orders and must not prevent a verified
+        summary from being stored.
         """
-        remote_id = self.extract_remote_id(item)
-        merged = self._fetch_and_merge_detail(item, remote_id)
-        if merged is None:
-            logger.warning(
-                "Skipping PA order %s (status=%s) — detail fetch failed",
-                remote_id, item.get('status', ''),
-            )
-            raise SkipItem()
-        return merged, {}
+        return item, {}
 
     def extract_remote_id(self, item: dict) -> str:
         return str(
@@ -207,8 +203,15 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
         )
         product_category = mapper.map_category(product_type)
 
-        # Listing reference
-        listing_id = mapper.extract_listing_id_from_detail(payload)
+        # Listing reference.  PlayerAuctions exposes offerId on the
+        # SellerOrders summary (the same source MCT uses).  Prefer it so pool
+        # sale attribution does not depend on the less reliable detail route.
+        listing_id = str(
+            payload.get('offer_id')
+            or payload.get('offerId')
+            or mapper.extract_listing_id_from_detail(payload)
+            or ''
+        )
 
         defaults = {
             'is_instant': mapper.extract_is_instant(payload),
