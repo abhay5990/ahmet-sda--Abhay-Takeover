@@ -86,6 +86,7 @@ def fetch_relay_token(
     relay_url: str = RELAY_URL,
     relay_secret: str = RELAY_SECRET,
     timeout: int = 240,
+    force_refresh: bool = False,
 ) -> tuple[str | None, str | None]:
     """Fetch a PA access token + cookie from the relay /pa-access-token endpoint.
 
@@ -102,7 +103,12 @@ def fetch_relay_token(
     try:
         resp = requests.post(
             f"{relay_url}/pa-access-token",
-            json={"username": username, "password": password, "store": store_slug},
+            json={
+                "username": username,
+                "password": password,
+                "store": store_slug,
+                "forceRefresh": force_refresh,
+            },
             headers={
                 "Content-Type": "application/json",
                 "X-Relay-Secret": relay_secret,

@@ -125,6 +125,16 @@ class RelayCookiePropagationTests(SimpleTestCase):
         self.assertEqual(cookie, "jwt-123")
 
     @patch("apps.posting.services.stock.pa_relay_poster.requests.post")
+    def test_forced_fetch_requests_fresh_relay_session(self, post):
+        response = Mock()
+        response.json.return_value = {"ok": True, "token": "jwt-fresh"}
+        post.return_value = response
+
+        fetch_relay_token("u", "p", "store", force_refresh=True)
+
+        self.assertTrue(post.call_args.kwargs["json"]["forceRefresh"])
+
+    @patch("apps.posting.services.stock.pa_relay_poster.requests.post")
     def test_post_batch_sends_real_cookie_not_token(self, post):
         response = Mock()
         response.json.return_value = {"ok": True, "offerId": "999"}

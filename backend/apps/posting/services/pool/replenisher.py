@@ -77,6 +77,12 @@ def _ensure_pa_offer_description(payload: dict[str, Any]) -> dict[str, Any]:
     return payload
 
 
+def _is_pa_relay_authorization_error(error: str) -> bool:
+    """True when the relay reports a rejected marketplace session."""
+    normalized = str(error or '').casefold()
+    return 'unauthorized' in normalized or 'upstream_status=401' in normalized
+
+
 class _PoolOfferContext:
     """Temporary compatibility facade for provider-specific legacy helpers.
 
@@ -968,10 +974,42 @@ def _post_pa_excel_row(
         )
         return 0
 
-    relay_result = PARelayPoster(
+    relay_poster = PARelayPoster(
         relay_url=relay_url,
         relay_secret=relay_secret,
-    ).post_batch(token, store_slug, [excel_row], cookie=(cookie or token))
+    )
+    relay_result = relay_poster.post_batch(
+        token,
+        store_slug,
+        [excel_row],
+        cookie=(cookie or token),
+    )
+    if (
+        0 in relay_result.failed
+        and _is_pa_relay_authorization_error(relay_result.failed[0])
+        and username
+        and password
+        and store_slug
+    ):
+        logger.info(
+            'PA relay rejected the stored session; forcing one fresh browser session for pool offer %s',
+            pool.pk,
+        )
+        fresh_token, fresh_cookie = fetch_relay_token(
+            username,
+            password,
+            store_slug,
+            relay_url=relay_url,
+            relay_secret=relay_secret,
+            force_refresh=True,
+        )
+        if fresh_token:
+            relay_result = relay_poster.post_batch(
+                fresh_token,
+                store_slug,
+                [excel_row],
+                cookie=(fresh_cookie or fresh_token),
+            )
     if 0 in relay_result.failed:
         error_str = relay_result.failed[0]
         mark_item_failed(
