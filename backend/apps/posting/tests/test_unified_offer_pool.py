@@ -18,6 +18,7 @@ from apps.posting.models import (
     OfferPoolItem,
     OfferPoolItemStatus,
     OfferPoolStatus,
+    PoolOfferStatus,
     PoolDispatchReservation,
     PoolOffer,
     PoolOfferStrategy,
@@ -190,6 +191,37 @@ class UnifiedPoolTestCase(TestCase):
         pool_offer.refresh_from_db()
         self.assertEqual(pool_offer.current_remote_count, 4)
         self.assertEqual(PoolSaleEvent.objects.count(), 1)
+
+    def test_closed_pa_clone_keeps_replacement_lane_active(self):
+        pool = self.make_pool()
+        listing = self.make_listing(
+            account=self.playerauctions,
+            remote_id='pa-closed-clone',
+        )
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=1,
+            threshold=1,
+            max_concurrent=1,
+        )
+        active_offer = OfferPoolActiveOffer.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            listing=listing,
+            store_listing_id='pa-closed-clone',
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+        )
+
+        listing.status = 'closed'
+        listing.save(update_fields=['status', 'updated_at'])
+
+        pool_offer.refresh_from_db()
+        active_offer.refresh_from_db()
+        self.assertEqual(pool_offer.status, PoolOfferStatus.ACTIVE)
+        self.assertEqual(pool_offer.last_error, '')
+        self.assertEqual(active_offer.status, OfferPoolActiveOfferStatus.DELISTED)
 
     def test_verified_pa_order_recovers_delisted_clone_as_sold(self):
         pool = self.make_pool()
