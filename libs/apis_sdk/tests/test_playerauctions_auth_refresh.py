@@ -8,7 +8,8 @@ from apis_sdk.clients.marketplaces.playerauctions.facade import PlayerAuctionsFa
 from apis_sdk.clients.marketplaces.playerauctions.models import PlayerAuctionsCancelRequest
 from apis_sdk.core.result import ApiResult
 from apis_sdk.infrastructure.logging.logger import StdlibLogger
-from apis_sdk.clients.services.pa_relay.client import PaRelayTokenResult
+from apis_sdk.clients.services.pa_relay.client import PaRelayClient, PaRelayTokenResult
+from apis_sdk.clients.services.pa_relay.config import PaRelayConfig
 
 
 class PlayerAuctionsAuthRefreshTests(TestCase):
@@ -91,6 +92,34 @@ class PlayerAuctionsAuthRefreshTests(TestCase):
         self.assertIs(result, expected)
         auth.cancel_offers_in_browser.assert_called_once_with([12345])
         client.cancel_offers.assert_not_called()
+
+    def test_browser_cancellation_uses_management_relay_url(self):
+        transport = Mock()
+        transport.request.return_value = SimpleNamespace(
+            is_success=True,
+            status_code=200,
+            json=lambda: {'ok': True, 'offerIds': [12345]},
+        )
+        client = PaRelayClient(
+            config=PaRelayConfig(
+                base_url='http://token-relay.test:3001',
+                management_base_url='http://management-relay.test:3001',
+            ),
+            transport=transport,
+        )
+
+        result = client.cancel_offers_in_browser(
+            username='seller@example.com',
+            password='secret',
+            store='vapenation',
+            offer_ids=[12345],
+        )
+
+        self.assertTrue(result.ok)
+        self.assertEqual(
+            transport.request.call_args.args[1],
+            'http://management-relay.test:3001/pa-cancel-offers',
+        )
 
     def test_initial_session_refresh_keeps_cache_first_behavior(self):
         auth = self.make_auth()

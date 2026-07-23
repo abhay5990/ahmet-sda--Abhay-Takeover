@@ -16,6 +16,10 @@ class PaRelayConfig(BaseModel):
         default="pa-relay-secret-2026",
         description="X-Relay-Secret header value for relay authentication.",
     )
+    management_base_url: str = Field(
+        default="http://35.196.132.30:3001",
+        description="Authenticated standalone relay used only for PlayerAuctions offer-management writes.",
+    )
     token_timeout: float = Field(
         default=220.0,
         gt=0,
