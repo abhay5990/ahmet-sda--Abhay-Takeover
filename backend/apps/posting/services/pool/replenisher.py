@@ -64,6 +64,18 @@ logger = logging.getLogger(__name__)
 
 TASK_NAME = 'pool_replenish'
 
+_PA_SOURCE_REBUILD_DESCRIPTION = (
+    'Instant delivery. Account access details are provided automatically '
+    'after purchase. Please review the listing title for included features.'
+)
+
+
+def _ensure_pa_offer_description(payload: dict[str, Any]) -> dict[str, Any]:
+    """Return a PA direct payload with the platform-required description field."""
+    if not str(payload.get('offerDesc') or '').strip():
+        payload['offerDesc'] = _PA_SOURCE_REBUILD_DESCRIPTION
+    return payload
+
 
 class _PoolOfferContext:
     """Temporary compatibility facade for provider-specific legacy helpers.
@@ -876,6 +888,7 @@ def _rebuild_pa_offer_from_stock(
         raise ValueError('PlayerAuctions source rebuild returned an empty JSON payload')
     if pool.listing.price is not None:
         payload['price'] = round(float(pool.listing.price), 2)
+    _ensure_pa_offer_description(payload)
 
     return _post_pa_excel_row(
         pool,

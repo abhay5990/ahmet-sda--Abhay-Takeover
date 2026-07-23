@@ -30,7 +30,10 @@ from apps.posting.services.pool.allocation import (
 )
 from apps.posting.services.pool.checker import notify_sale
 from apps.posting.services.pool.lifecycle import detach_pool_offer
-from apps.posting.services.pool.replenisher import replenish_pool_offer
+from apps.posting.services.pool.replenisher import (
+    _ensure_pa_offer_description,
+    replenish_pool_offer,
+)
 
 
 class UnifiedPoolTestCase(TestCase):
@@ -311,6 +314,18 @@ class UnifiedPoolTestCase(TestCase):
         self.assertEqual(rebuild.call_args.args[2].pk, item.pk)
         pool_offer.refresh_from_db()
         self.assertEqual(pool_offer.current_remote_count, 1)
+
+    def test_pa_source_rebuild_supplies_description_only_when_blank(self):
+        blank_payload = {'offerDesc': '   '}
+        populated = _ensure_pa_offer_description(blank_payload)
+        self.assertIn('Instant delivery.', populated['offerDesc'])
+        self.assertTrue(populated['offerDesc'].strip())
+
+        existing_payload = {'offerDesc': 'Existing product details.'}
+        self.assertEqual(
+            _ensure_pa_offer_description(existing_payload)['offerDesc'],
+            'Existing product details.',
+        )
 
     def test_pa_source_listing_is_adopted_as_first_active_offer(self):
         pool = self.make_pool()
