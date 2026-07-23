@@ -159,6 +159,78 @@ class PaRelayClient:
         )
         return ApiResult.success(result, status_code=response.status_code)
 
+    def cancel_offers_in_browser(
+        self,
+        *,
+        username: str,
+        password: str,
+        store: str,
+        offer_ids: list[int],
+    ) -> ApiResult[dict[str, Any]]:
+        """Cancel explicitly selected offers through the relay browser session.
+
+        This is limited to legacy offer-management writes. It keeps the
+        authenticated browser and its network fingerprint together, which the
+        PlayerAuctions legacy API requires for cancellation requests.
+        """
+        if not offer_ids:
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION,
+                "At least one PlayerAuctions offer ID is required for cancellation",
+                provider=self.PROVIDER,
+            )
+
+        url = f"{self._config.base_url}/pa-cancel-offers"
+        payload: dict[str, Any] = {
+            "username": username,
+            "password": password,
+            "store": store,
+            "offerIds": offer_ids,
+        }
+        try:
+            response = self._transport.request(
+                HttpMethod.POST,
+                url,
+                json_body=payload,
+                headers={
+                    "Content-Type": "application/json",
+                    RELAY_SECRET_HEADER: self._config.relay_secret,
+                },
+                timeout=max(self._config.token_timeout, 120.0),
+            )
+        except Exception as exc:
+            return ApiResult.from_error(
+                ErrorCategory.NETWORK,
+                f"PA Relay browser cancellation connection error: {exc}",
+                provider=self.PROVIDER,
+                is_retryable=True,
+            )
+
+        try:
+            body = response.json()
+        except Exception:
+            body = {}
+
+        if not response.is_success or not body.get("ok"):
+            detail = body.get("error") or f"PA Relay browser cancellation HTTP {response.status_code}"
+            category = (
+                ErrorCategory.AUTHENTICATION
+                if response.status_code in {401, 403}
+                else ErrorCategory.SERVER_ERROR
+            )
+            return ApiResult.from_error(
+                category,
+                f"PA Relay browser cancellation failed: {detail}",
+                status_code=response.status_code,
+                provider=self.PROVIDER,
+                is_retryable=response.status_code >= 500,
+            )
+
+        return ApiResult.success(
+            body,
+            status_code=response.status_code,
+        )
+
     def warmup(
         self,
         stores: list[dict[str, str]],

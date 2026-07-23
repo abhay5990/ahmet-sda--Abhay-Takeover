@@ -304,7 +304,16 @@ class PlayerAuctionsFacade:
         *,
         proxy_group: str | None = None,
     ) -> ApiResult[PlayerAuctionsCancelResponse]:
-        """Cancel offers by IDs (non-idempotent, no retry)."""
+        """Cancel offers by IDs (non-idempotent, no retry).
+
+        Legacy PlayerAuctions sessions are issued by a browser relay. When
+        available, keep cancellation in that same browser context rather than
+        forwarding the session through a separate direct API request.
+        """
+        browser_cancel = getattr(self._auth, "cancel_offers_in_browser", None)
+        if callable(browser_cancel):
+            return browser_cancel(request.offer_ids)
+
         return self._exec.execute_once(
             lambda proxy_url: self._client.cancel_offers(
                 request,

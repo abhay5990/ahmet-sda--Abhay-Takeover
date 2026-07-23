@@ -116,6 +116,20 @@ class PlayerAuctionsAuth(BaseAuthProvider):
     def user_agent(self) -> str:
         return self._user_agent
 
+    def cancel_offers_in_browser(self, offer_ids: list[int]):
+        """Cancel offers in the relay-managed authenticated browser session.
+
+        PlayerAuctions can reject direct legacy writes when the token is used
+        from a different network fingerprint than the browser that obtained
+        it. The relay keeps that browser context intact for this mutation.
+        """
+        return self._relay_client.cancel_offers_in_browser(
+            username=self._username,
+            password=self._password,
+            store=self._store_slug or self._username,
+            offer_ids=offer_ids,
+        )
+
     def reset_failure(self) -> None:
         """Reset the refresh-failed flag so the next 401 can retry.
 
