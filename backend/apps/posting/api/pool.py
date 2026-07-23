@@ -499,7 +499,10 @@ def update_pool_offer(request, pool_id, offer_id):
             if body['status'] not in PoolOfferStatus.values:
                 return JsonResponse({'error': 'Invalid PoolOffer status'}, status=400)
             pool_offer.status = body['status']
-        pool_offer.full_clean()
+        # Pool configuration is local state.  Do not require the linked
+        # marketplace template to remain an active instant listing merely to
+        # pause or resume replenishment.
+        pool_offer.validate_local_configuration()
         pool_offer.save()
     except (json.JSONDecodeError, TypeError, ValueError):
         return JsonResponse({'error': 'Invalid config payload'}, status=400)

@@ -1185,6 +1185,31 @@ class PoolOffer(models.Model):
             return PoolOfferStrategy.APPEND
         raise ValidationError(f'Unsupported pool marketplace: {provider}')
 
+    def validate_local_configuration(self) -> None:
+        """Validate fields owned by the pool without requiring a live source listing.
+
+        A pool offer can remain useful as a local record after its original
+        marketplace template has ended or been removed.  Staff must still be
+        able to pause that local replenishment record in this state.  This
+        deliberately validates only the configuration fields that are changed
+        from the pool UI; ``clean`` retains the stricter validation used when a
+        listing is first linked to a pool.
+        """
+        errors = {}
+        if self.threshold < 1 or self.target_count < 1 or self.threshold > self.target_count:
+            errors['threshold'] = 'Threshold must be between 1 and target_count.'
+        if self.strategy == PoolOfferStrategy.CLONE:
+            if self.max_concurrent is None or not (
+                self.target_count <= self.max_concurrent <= 10
+            ):
+                errors['max_concurrent'] = (
+                    'Clone max must satisfy target_count <= max <= 10.'
+                )
+        elif self.strategy == PoolOfferStrategy.APPEND and self.max_concurrent is not None:
+            errors['max_concurrent'] = 'Append offers cannot have max_concurrent.'
+        if errors:
+            raise ValidationError(errors)
+
     def clean(self):
         super().clean()
         listing = self.listing
@@ -1209,17 +1234,7 @@ class PoolOffer(models.Model):
         expected_strategy = self.strategy_for_provider(listing.integration_account.provider)
         if self.strategy != expected_strategy:
             raise ValidationError({'strategy': f'Strategy must be {expected_strategy} for this provider.'})
-        if self.threshold < 1 or self.target_count < 1 or self.threshold > self.target_count:
-            raise ValidationError({'threshold': 'Threshold must be between 1 and target_count.'})
-        if self.strategy == PoolOfferStrategy.CLONE:
-            if self.max_concurrent is None or not (
-                self.target_count <= self.max_concurrent <= 10
-            ):
-                raise ValidationError({
-                    'max_concurrent': 'Clone max must satisfy target_count <= max <= 10.',
-                })
-        elif self.max_concurrent is not None:
-            raise ValidationError({'max_concurrent': 'Append offers must not set max_concurrent.'})
+        self.validate_local_configuration()
 
 
 class OfferPoolItem(models.Model):

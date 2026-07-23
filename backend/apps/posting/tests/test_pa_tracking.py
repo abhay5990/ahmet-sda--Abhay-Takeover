@@ -341,3 +341,89 @@ class PlayerAuctionsManualReturnTests(SimpleTestCase):
 
         self.assertFalse(result.ok)
         self.assertIn("Confirmed marketplace sale evidence", result.errors[0])
+
+
+class PoolOfferLocalConfigurationTests(SimpleTestCase):
+    def test_local_configuration_accepts_valid_clone_and_append_settings(self):
+        from apps.posting.models import PoolOffer, PoolOfferStrategy
+
+        clone_offer = PoolOffer(
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=3,
+            threshold=2,
+            max_concurrent=5,
+        )
+        append_offer = PoolOffer(
+            strategy=PoolOfferStrategy.APPEND,
+            target_count=3,
+            threshold=2,
+            max_concurrent=None,
+        )
+
+        clone_offer.validate_local_configuration()
+        append_offer.validate_local_configuration()
+
+    def test_local_configuration_rejects_invalid_pool_values(self):
+        from django.core.exceptions import ValidationError
+        from apps.posting.models import PoolOffer, PoolOfferStrategy
+
+        with self.assertRaises(ValidationError) as threshold_error:
+            PoolOffer(
+                strategy=PoolOfferStrategy.APPEND,
+                target_count=2,
+                threshold=3,
+            ).validate_local_configuration()
+        self.assertIn('threshold', threshold_error.exception.message_dict)
+
+        with self.assertRaises(ValidationError) as capacity_error:
+            PoolOffer(
+                strategy=PoolOfferStrategy.CLONE,
+                target_count=3,
+                threshold=1,
+                max_concurrent=2,
+            ).validate_local_configuration()
+        self.assertIn('max_concurrent', capacity_error.exception.message_dict)
+
+    def test_pause_endpoint_uses_local_validation_for_an_inactive_listing(self):
+        import json
+        from types import SimpleNamespace
+        from unittest.mock import Mock, patch
+
+        from django.test import RequestFactory
+        from apps.posting.api.pool import update_pool_offer
+        from apps.posting.models import PoolOfferStatus
+
+        request = RequestFactory().patch(
+            '/posting/api/pools/1/offers/2/',
+            data=json.dumps({'status': PoolOfferStatus.PAUSED}),
+            content_type='application/json',
+        )
+        pool_offer = SimpleNamespace(
+            pk=2,
+            target_count=3,
+            threshold=1,
+            max_concurrent=3,
+            status=PoolOfferStatus.ACTIVE,
+            pool=SimpleNamespace(status='active'),
+            validate_local_configuration=Mock(),
+            full_clean=Mock(),
+            save=Mock(),
+        )
+        pool_offer_manager = Mock()
+        pool_offer_manager.select_related.return_value.get.return_value = pool_offer
+
+        with patch(
+            'apps.posting.api.pool.PoolOffer.objects',
+            pool_offer_manager,
+        ), patch(
+            'apps.posting.api.pool._pool_offer_to_dict',
+            return_value={'id': pool_offer.pk, 'status': PoolOfferStatus.PAUSED},
+        ):
+            view = update_pool_offer.__wrapped__.__wrapped__
+            response = view(request, pool_id=1, offer_id=pool_offer.pk)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(pool_offer.status, PoolOfferStatus.PAUSED)
+        pool_offer.validate_local_configuration.assert_called_once_with()
+        pool_offer.full_clean.assert_not_called()
+        pool_offer.save.assert_called_once_with()
