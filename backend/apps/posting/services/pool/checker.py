@@ -401,7 +401,19 @@ def _fetch_gameboost(
 
     data = result.data
     if isinstance(data, list):
-        creds = [str(c) for c in data if c]
+        # Count only UNSOLD credentials as sellable stock, and use the actual
+        # credential string (not the model repr) for reconciliation. A sold
+        # credential still appears in the list, but GameBoost refuses to list
+        # the offer against it ("Instant delivery accounts must have stock"), so
+        # counting it as stock leaves current_remote_count too high — replenish
+        # then appends nothing and the offer stays drafted. Excluding sold
+        # credentials makes the count reflect real stock, so replenish tops up
+        # and the offer is re-published.
+        creds = [
+            str(getattr(c, 'credentials', '') or '')
+            for c in data
+            if c is not None and not getattr(c, 'is_sold', False)
+        ]
         return len(creds), creds
     if hasattr(data, 'total'):
         return data.total, None
