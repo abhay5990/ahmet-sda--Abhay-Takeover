@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import logging
 from datetime import timedelta
 from typing import Any
@@ -119,6 +120,12 @@ def _normalize_playerauctions(
         "delivery_guarantee": "",
         "expired_time_string": "",
     }
+    if payload:
+        template = _sanitize_pa_create_template(payload)
+        result["payload"] = template
+        description = str(template.get("offerDesc") or template.get("description") or "").strip()
+        if description:
+            result["description"] = description
 
     if not details:
         # Preserve existing fields when details unavailable
@@ -149,6 +156,26 @@ def _normalize_playerauctions(
         result["expired_time_string"] = expire_dt.strftime("%b-%d-%Y %I:%M:%S %p")
 
     return result
+
+
+def _sanitize_pa_create_template(payload: dict[str, Any]) -> dict[str, Any]:
+    """Retain PA create metadata locally without duplicating account credentials.
+
+    The linked owned product remains the source of delivery credentials.  Future
+    edits can therefore rebuild the offer locally, apply fresh credentials, and
+    avoid a fragile remote detail lookup.
+    """
+    template = copy.deepcopy(payload)
+    auto_delivery = template.get("autoDelivery")
+    if isinstance(auto_delivery, dict):
+        auto_delivery = dict(auto_delivery)
+        for key in (
+            "loginName", "retypeLoginName", "password", "retypePassword",
+            "email", "emailPassword", "ownerEmail",
+        ):
+            auto_delivery.pop(key, None)
+        template["autoDelivery"] = auto_delivery
+    return template
 
 
 def _fetch_pa_details(

@@ -1029,8 +1029,8 @@ def edit_single_pool_offer(request, pool_id, offer_id):
     if not changes:
         return JsonResponse({'error': 'No changes provided'}, status=400)
 
-    from apps.posting.services.offer_editor import edit_offer
-    result = edit_offer(pool_offer.listing, changes)
+    from apps.posting.services.offer_editor import edit_pool_offer
+    result = edit_pool_offer(pool_offer, changes)
 
     return JsonResponse({
         'ok': result.ok,

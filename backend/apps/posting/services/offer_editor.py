@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 import logging
+import uuid
 from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import Any
@@ -28,6 +29,9 @@ from apps.posting.models import (
     OfferPoolItem,
     OfferPoolItemStatus,
     PoolOffer,
+    PoolDispatchAttempt,
+    PoolDispatchOperation,
+    PoolDispatchStatus,
     PostingLog,
     PostingLogLevel,
 )
@@ -101,6 +105,19 @@ def edit_offer(listing: Listing, changes: dict[str, Any]) -> EditResult:
         logger.exception('offer_edit: failed for listing %d', listing.pk)
         _log(PostingLogLevel.ERROR, f'Edit failed for listing #{listing.pk}: {exc}', account=store)
         return EditResult(ok=False, error=str(exc)[:500])
+
+
+def edit_pool_offer(pool_offer: PoolOffer, changes: dict[str, Any]) -> EditResult:
+    """Edit one configured marketplace target from the pool-detail panel."""
+    if pool_offer.strategy == OfferPool.Strategy.CLONE:
+        from apps.posting.services.pool.replenisher import _PoolOfferContext
+
+        bulk = _edit_pa_pool_bulk(_PoolOfferContext(pool_offer), changes)
+        return EditResult(
+            ok=bulk.failed == 0,
+            error='; '.join(error for error in bulk.errors if error)[:500],
+        )
+    return edit_offer(pool_offer.listing, changes)
 
 
 def edit_pool_offers(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResult:
@@ -422,15 +439,12 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
     raw = pool.listing.raw_data or {}
     original_payload = extract_create_payload(raw, 'playerauctions', client=client, proxy_group=proxy_group)
     if not original_payload:
-        _log(
-            PostingLogLevel.ERROR,
-            f'Pool #{pool.pk}: no original payload - aborting before cancel',
-            account=store,
-            detail={'pool_id': pool.pk},
+        # Older PA clones persisted only an offer ID.  Do not depend on a
+        # remote detail read before editing them: the linked owned product is
+        # sufficient to rebuild a safe replacement with fresh credentials.
+        return _rebuild_pa_pool_edit_from_stock(
+            pool, changes, active_offers, client, store, result,
         )
-        result.failed = result.total
-        result.errors.append('No original payload - no remote changes made')
-        return result
 
     _apply_pa_changes(original_payload, changes)
 
@@ -620,6 +634,139 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
         },
     )
     return result
+
+
+def _rebuild_pa_pool_edit_from_stock(
+    pool: OfferPool,
+    changes: dict[str, Any],
+    active_offers: list[OfferPoolActiveOffer],
+    client: Any,
+    store: IntegrationAccount,
+    result: BulkEditResult,
+) -> BulkEditResult:
+    """Recreate legacy PA clones from locally linked owned-stock data.
+
+    Historical PA clone records may retain only a remote ID.  A title or
+    description edit must not depend on a remote-detail read in that case.  The
+    linked owned product supplies a safe source payload and fresh credentials;
+    remote offers are cancelled only after that local source has been checked.
+    """
+    invalid_ids = [
+        str(active_offer.store_listing_id)
+        for active_offer in active_offers
+        if not active_offer.pool_item
+        or not active_offer.pool_item.owned_product
+        or not isinstance(active_offer.pool_item.owned_product.raw_data, dict)
+        or not active_offer.pool_item.owned_product.raw_data
+    ]
+    if invalid_ids:
+        result.failed = result.total
+        result.errors.append(
+            'Cannot rebuild active offer(s) without owned-stock source data: '
+            + ', '.join(invalid_ids)
+        )
+        return result
+
+    try:
+        offer_ids = [int(active_offer.store_listing_id) for active_offer in active_offers]
+        from apis_sdk.clients.marketplaces.playerauctions.models import PlayerAuctionsCancelRequest
+        cancel_result = client.cancel_offers(PlayerAuctionsCancelRequest(offerIds=offer_ids))
+        if cancel_result and hasattr(cancel_result, 'ok') and not cancel_result.ok:
+            error_msg = str(getattr(cancel_result, 'error', 'Cancel failed'))
+            result.failed = result.total
+            result.errors.append(f'PlayerAuctions cancel failed: {error_msg}')
+            return result
+    except Exception as exc:
+        result.failed = result.total
+        result.errors.append(f'PlayerAuctions cancel failed: {exc}')
+        return result
+
+    old_listing_ids = _mark_old_active_offer_listings_deleted(active_offers, pool)
+    _update_listing_db(pool.listing, changes)
+    queued_items: list[OfferPoolItem] = []
+    with transaction.atomic():
+        for active_offer in active_offers:
+            _return_ao_to_pending(
+                active_offer,
+                'Rebuilding PlayerAuctions clone after marketplace edit',
+            )
+            if active_offer.pool_item_id:
+                queued_items.append(
+                    _claim_exact_item_for_pa_edit(active_offer.pool_item, pool.pool_offer)
+                )
+        pool.pool_offer.current_remote_count = 0
+        pool.pool_offer.save(update_fields=['current_remote_count', 'updated_at'])
+
+    from apps.posting.services.pool.allocation import mark_item_failed
+    from apps.posting.services.pool.replenisher import _rebuild_pa_offer_from_stock
+    pushed = 0
+    for item in queued_items:
+        try:
+            pushed += _rebuild_pa_offer_from_stock(pool, client, item, proxy_group)
+        except Exception as exc:
+            logger.exception('Pool #%s: exact PA source rebuild failed for item %s', pool.pk, item.pk)
+            mark_item_failed(
+                item,
+                error_message=f'PlayerAuctions source rebuild failed: {exc}',
+                failure_stage='remote_push',
+                remote_state='unknown',
+            )
+            result.errors.append(f'PlayerAuctions source rebuild failed for item {item.pk}: {exc}')
+
+    pool.pool_offer.current_remote_count = pushed
+    pool.pool_offer.save(update_fields=['current_remote_count', 'updated_at'])
+    result.succeeded = pushed
+    result.failed = result.total - result.succeeded
+    if result.failed and not result.errors:
+        failed_items = OfferPoolItem.objects.filter(
+            pk__in=[active_offer.pool_item_id for active_offer in active_offers if active_offer.pool_item_id],
+        ).exclude(status=OfferPoolItemStatus.PUSHED)
+        errors = [item.error_message for item in failed_items if item.error_message]
+        result.errors.append(
+            'PlayerAuctions source rebuild did not create every replacement'
+            + (': ' + '; '.join(errors[:3]) if errors else '')
+        )
+
+    _log(
+        PostingLogLevel.SUCCESS if result.failed == 0 else PostingLogLevel.WARNING,
+        f'Pool #{pool.pk}: rebuilt {result.succeeded}/{result.total} legacy PA clone(s) after edit',
+        account=store,
+        detail={
+            'pool_id': pool.pk,
+            'succeeded': result.succeeded,
+            'failed': result.failed,
+            'deactivated_listing_ids': old_listing_ids,
+            'changes': list(changes.keys()),
+        },
+    )
+    return result
+
+
+def _claim_exact_item_for_pa_edit(item: OfferPoolItem, pool_offer: PoolOffer) -> OfferPoolItem:
+    """Reserve one known-safe pool item for a replacement edit and give it a new code."""
+    token = uuid.uuid4()
+    now = timezone.now()
+    item.pool_offer = pool_offer
+    item.status = OfferPoolItemStatus.QUEUED
+    item.claim_token = token
+    item.claimed_at = now
+    item.failure_stage = ''
+    item.remote_state = ''
+    item.error_message = ''
+    item.save(update_fields=[
+        'pool_offer', 'status', 'claim_token', 'claimed_at', 'failure_stage',
+        'remote_state', 'error_message', 'updated_at',
+    ])
+    PoolDispatchAttempt.objects.create(
+        idempotency_key=token,
+        item=item,
+        pool_offer=pool_offer,
+        operation=PoolDispatchOperation.PUSH,
+        status=PoolDispatchStatus.IN_PROGRESS,
+        request_fingerprint=f'pool-edit:{pool_offer.pk}:{item.pk}:{token}',
+        started_at=now,
+    )
+    return item
 
 
 # ── Helpers ───────────────────────────────────────────────────────

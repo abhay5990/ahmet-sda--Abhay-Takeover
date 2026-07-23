@@ -1667,7 +1667,8 @@ function poolDetail() {
                 if (resp.ok && data.ok) {
                     d.editResult = { ok: true, msg: 'Marketplace updated' };
                 } else {
-                    d.editResult = { ok: false, msg: 'Error: ' + (data.error || 'Remote update failed') };
+                    const details = data.error || (Array.isArray(data.errors) ? data.errors.filter(Boolean).join('; ') : '');
+                    d.editResult = { ok: false, msg: 'Error: ' + (details || 'Remote update failed') };
                 }
             } catch (e) {
                 d.editResult = { ok: false, msg: 'Request failed: ' + e.message };

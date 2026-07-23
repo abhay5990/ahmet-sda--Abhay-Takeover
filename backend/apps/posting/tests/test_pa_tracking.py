@@ -16,11 +16,12 @@ class PlayerAuctionsTrackingTests(SimpleTestCase):
         first = SimpleNamespace(id=41, job_id=7)
         second = SimpleNamespace(id=42, job_id=7)
 
-        self.assertEqual(tracking_code_for_item(first), "PA-J7-I41")
-        self.assertNotEqual(tracking_code_for_item(first), tracking_code_for_item(second))
+        first_code = tracking_code_for_item(first)
+        self.assertRegex(first_code, r"^#[A-Z0-9]{6}$")
+        self.assertNotEqual(first_code, tracking_code_for_item(second))
         self.assertEqual(
             append_tracking_code("Fortnite account", first),
-            "Fortnite account [PA-J7-I41]",
+            f"Fortnite account {first_code}",
         )
 
     def test_title_code_replaces_only_a_previous_generated_code(self):
@@ -28,8 +29,8 @@ class PlayerAuctionsTrackingTests(SimpleTestCase):
 
         title = append_tracking_code("Fortnite [PA-J1-I2] account", item)
 
-        self.assertEqual(title, "Fortnite account [PA-J3-I9]")
-        self.assertEqual(extract_tracking_code(title), "PA-J3-I9")
+        self.assertRegex(title, r"^Fortnite account #[A-Z0-9]{6}$")
+        self.assertEqual(extract_tracking_code(title), tracking_code_for_item(item))
 
     def test_bulk_playerauctions_title_is_persisted_from_capitalized_column(self):
         payload = {"Title": "Valorant account [PA-J4-I12]"}
@@ -49,6 +50,18 @@ class PlayerAuctionsTrackingTests(SimpleTestCase):
         self.assertEqual(
             extract_tracking_code(*_payload_text_values(payload)),
             "PA-J8-I99",
+        )
+
+    def test_concise_order_code_can_be_found_in_nested_pa_payload_text(self):
+        payload = {
+            "order_info": {
+                "offer_title": "Account #AB12CD",
+            },
+        }
+
+        self.assertEqual(
+            extract_tracking_code(*_payload_text_values(payload)),
+            "#AB12CD",
         )
 
 
@@ -82,10 +95,11 @@ class PlayerAuctionsPayloadTrackingTests(SimpleTestCase):
             result = build_item_payload(item, prepared_data, job)
 
         self.assertTrue(result["ok"])
-        self.assertEqual(result["data"]["tracking_code"], "PA-J19-I71")
+        code = tracking_code_for_item(item)
+        self.assertEqual(result["data"]["tracking_code"], code)
         self.assertEqual(
             result["data"]["payload"]["title"],
-            "Fortnite account [PA-J19-I71]",
+            f"Fortnite account {code}",
         )
 
     def test_bulk_pa_payload_gets_the_item_tracking_code(self):
@@ -101,10 +115,11 @@ class PlayerAuctionsPayloadTrackingTests(SimpleTestCase):
             result = build_item_payload(item, prepared_data, job)
 
         self.assertTrue(result["ok"])
-        self.assertEqual(result["data"]["tracking_code"], "PA-J19-I71")
+        code = tracking_code_for_item(item)
+        self.assertEqual(result["data"]["tracking_code"], code)
         self.assertEqual(
             result["data"]["payload"]["Title"],
-            "Fortnite account [PA-J19-I71]",
+            f"Fortnite account {code}",
         )
 
     def test_recovery_service_and_route_are_available(self):
@@ -136,13 +151,13 @@ class PlayerAuctionsTargetIncreaseTests(SimpleTestCase):
         second_code = pool_clone_tracking_code(pool, second_item, "deadbeef-0000-0000-0000-000000000000")
 
         self.assertNotEqual(first_code, second_code)
-        self.assertEqual(extract_tracking_code(f"[{first_code}]"), first_code)
+        self.assertEqual(extract_tracking_code(first_code), first_code)
         self.assertEqual(
             append_tracking_code_for_code(
                 "GTA 5 Online-PC - Steam - Enhanced [PA-J7-I41]",
                 first_code,
             ),
-            f"GTA 5 Online-PC - Steam - Enhanced [{first_code}]",
+            f"GTA 5 Online-PC - Steam - Enhanced {first_code}",
         )
 
     def test_target_template_keeps_existing_title_and_description_pattern(self):
@@ -175,6 +190,25 @@ class PlayerAuctionsTargetIncreaseTests(SimpleTestCase):
             result["offerDesc"],
             "Existing customer-facing description pattern.",
         )
+
+    def test_generic_pa_description_is_replaced_with_the_shared_offer_description(self):
+        from unittest.mock import patch
+        from apps.posting.services.pool.replenisher import (
+            _PA_SOURCE_REBUILD_DESCRIPTION,
+            _ensure_pa_offer_description,
+        )
+
+        with patch(
+            "apps.posting.services.pool.replenisher._canonical_pa_offer_description",
+            return_value="Actual customer-facing description.",
+        ):
+            result = _ensure_pa_offer_description(
+                SimpleNamespace(),
+                {"offerDesc": _PA_SOURCE_REBUILD_DESCRIPTION},
+            )
+
+        self.assertEqual(result["offerDesc"], "Actual customer-facing description.")
+        self.assertEqual(result["description"], "Actual customer-facing description.")
 
     def test_pa_staff_edit_updates_the_nested_future_clone_template(self):
         from apps.posting.services.offer_editor import _raw_data_with_changes
@@ -468,3 +502,46 @@ class PlayerAuctionsRemovedCloneRecoveryRoutingTests(SimpleTestCase):
         self.assertIs(result, expected)
         make_available.assert_called_once()
         remote_recovery.assert_not_called()
+
+
+class PlayerAuctionsLegacyEditClaimTests(SimpleTestCase):
+    def test_exact_pool_item_is_reclaimed_with_a_fresh_dispatch_attempt(self):
+        from unittest.mock import Mock, patch
+
+        from apps.posting.models import OfferPoolItemStatus
+        from apps.posting.services.offer_editor import _claim_exact_item_for_pa_edit
+
+        item = SimpleNamespace(
+            pk=75,
+            pool_offer=None,
+            status=OfferPoolItemStatus.PENDING,
+            claim_token=None,
+            claimed_at=None,
+            failure_stage='old',
+            remote_state='absent',
+            error_message='old error',
+            save=Mock(),
+        )
+        pool_offer = SimpleNamespace(pk=23)
+
+        with patch(
+            'apps.posting.services.offer_editor.PoolDispatchAttempt.objects.create',
+        ) as create_attempt:
+            result = _claim_exact_item_for_pa_edit(item, pool_offer)
+
+        self.assertIs(result, item)
+        self.assertIs(item.pool_offer, pool_offer)
+        self.assertEqual(item.status, OfferPoolItemStatus.QUEUED)
+        self.assertIsNotNone(item.claim_token)
+        self.assertEqual(item.failure_stage, '')
+        self.assertEqual(item.remote_state, '')
+        self.assertEqual(item.error_message, '')
+        item.save.assert_called_once()
+        create_attempt.assert_called_once()
+        attempt = create_attempt.call_args.kwargs
+        self.assertEqual(attempt['item'], item)
+        self.assertEqual(attempt['pool_offer'], pool_offer)
+        self.assertEqual(attempt['idempotency_key'], item.claim_token)
+        self.assertIn('pool-edit:23:75:', attempt['request_fingerprint'])
+        self.assertEqual(attempt['status'], 'in_progress')
+        self.assertEqual(attempt['operation'], 'push')

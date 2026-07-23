@@ -235,10 +235,15 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
             tracking_code = extract_tracking_code(*_payload_text_values(payload))
             if tracking_code:
                 from apps.listings.models import Listing
+                title_marker = (
+                    tracking_code
+                    if tracking_code.startswith('#')
+                    else f'[{tracking_code}]'
+                )
                 linked_listing = (
                     Listing.objects.filter(
                         integration_account=raw_payload.integration_account,
-                        title__icontains=f'[{tracking_code}]',
+                        title__icontains=title_marker,
                     )
                     .order_by('-listed_at', '-id')
                     .first()

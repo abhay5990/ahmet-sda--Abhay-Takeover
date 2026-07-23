@@ -74,10 +74,56 @@ _PA_SOURCE_REBUILD_DESCRIPTION = (
 )
 
 
-def _ensure_pa_offer_description(payload: dict[str, Any]) -> dict[str, Any]:
-    """Return a PA direct payload with the platform-required description field."""
-    if not str(payload.get('offerDesc') or '').strip():
-        payload['offerDesc'] = _PA_SOURCE_REBUILD_DESCRIPTION
+def _description_from_listing(listing: Listing | None) -> str:
+    """Read a display description from the durable local listing payload."""
+    raw = getattr(listing, 'raw_data', None) or {}
+    payload = raw.get('payload') if isinstance(raw.get('payload'), dict) else {}
+    details = raw.get('details') if isinstance(raw.get('details'), dict) else {}
+    for value in (
+        raw.get('description'), raw.get('offerDesc'),
+        payload.get('offerDesc'), payload.get('description'),
+        details.get('offerDesc'), details.get('description'),
+    ):
+        text = str(value or '').strip()
+        if text:
+            return text
+    return ''
+
+
+def _canonical_pa_offer_description(pool: OfferPool) -> str:
+    """Return the real description from a sibling target of the same pool.
+
+    A PA parent listing created by an older worker may contain only a generic
+    placeholder.  Prefer another local marketplace target's authored copy,
+    which is the stable and reviewable source for the shared offer content.
+    """
+    aggregate = getattr(pool, 'aggregate', None) or pool
+    current_offer = getattr(pool, 'pool_offer', None)
+    current_offer_id = getattr(current_offer, 'pk', None)
+    candidates: list[tuple[int, str]] = []
+    for sibling in aggregate.pool_offers.select_related('listing__integration_account').order_by('pk'):
+        if sibling.pk == current_offer_id:
+            continue
+        listing = sibling.listing
+        provider = str(getattr(getattr(listing, 'integration_account', None), 'provider', '')).lower()
+        text = _description_from_listing(listing)
+        if not text or text == _PA_SOURCE_REBUILD_DESCRIPTION:
+            continue
+        priority = 0 if provider == 'gameboost' else 1 if provider == 'eldorado' else 2
+        candidates.append((priority, text))
+    if not candidates:
+        return ''
+    candidates.sort(key=lambda candidate: candidate[0])
+    return candidates[0][1]
+
+
+def _ensure_pa_offer_description(pool: OfferPool, payload: dict[str, Any]) -> dict[str, Any]:
+    """Ensure PA clones use real shared-offer copy, never a generic placeholder."""
+    current = str(payload.get('offerDesc') or payload.get('description') or '').strip()
+    if not current or current == _PA_SOURCE_REBUILD_DESCRIPTION:
+        current = _canonical_pa_offer_description(pool) or _PA_SOURCE_REBUILD_DESCRIPTION
+    payload['offerDesc'] = current
+    payload['description'] = current
     return payload
 
 
@@ -111,8 +157,11 @@ def _apply_pa_target_template(pool: OfferPool, payload: dict[str, Any]) -> dict[
         or details.get('description')
         or ''
     ).strip()
+    if not description or description == _PA_SOURCE_REBUILD_DESCRIPTION:
+        description = _canonical_pa_offer_description(pool)
     if description:
         payload['offerDesc'] = description
+        payload['description'] = description
     return payload
 
 
@@ -991,7 +1040,7 @@ def _rebuild_pa_offer_from_stock(
     _apply_pa_target_template(pool, payload)
     if pool.listing.price is not None:
         payload['price'] = round(float(pool.listing.price), 2)
-    _ensure_pa_offer_description(payload)
+    _ensure_pa_offer_description(pool, payload)
 
     return _post_pa_excel_row(
         pool,
