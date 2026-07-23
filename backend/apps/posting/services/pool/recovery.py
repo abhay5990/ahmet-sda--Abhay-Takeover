@@ -71,6 +71,14 @@ def recover_verified_unsold_item(*, pool_id: int, item_id: int) -> RecoverUnsold
         return _make_available(item, "No marketplace assignment remains; key returned to available pool stock.")
 
     pool_offer = item.pool_offer
+    if (
+        pool_offer.marketplace == "playerauctions"
+        and item.remote_state == "absent"
+    ):
+        return _make_available(
+            item,
+            "The PlayerAuctions clone was already confirmed absent locally; key returned to available pool stock.",
+        )
     if pool_offer.marketplace == "playerauctions":
         return _recover_playerauctions_item(item)
     return _recover_append_item(item)
@@ -232,11 +240,27 @@ def _make_available(item: OfferPoolItem, message: str) -> RecoverUnsoldResult:
                 ok=False,
                 errors=["Confirmed marketplace sale evidence appeared during verification; the key was not changed."],
             )
-        if locked.pool_offer_id:
+        active_offers = OfferPoolActiveOffer.objects.select_for_update().filter(
+            pool_item_id=locked.pk,
+        )
+        if active_offers.filter(status=OfferPoolActiveOfferStatus.SOLD).exists():
+            return RecoverUnsoldResult(
+                ok=False,
+                errors=["Confirmed marketplace sale evidence appeared during verification; the key was not changed."],
+            )
+        linked_listing_ids = set(
+            active_offers.exclude(listing_id__isnull=True).values_list("listing_id", flat=True),
+        )
+        if locked.pool_offer_id and locked.pool_offer.listing_id:
+            linked_listing_ids.add(locked.pool_offer.listing_id)
+        if linked_listing_ids:
             ListingOwnedProduct.objects.filter(
-                listing=locked.pool_offer.listing,
+                listing_id__in=linked_listing_ids,
                 owned_product_id=locked.owned_product_id,
             ).delete()
+        active_offers.filter(status=OfferPoolActiveOfferStatus.ACTIVE).update(
+            status=OfferPoolActiveOfferStatus.DELISTED,
+        )
         locked.status = OfferPoolItemStatus.PENDING
         locked.pool_offer = None
         locked.reservation = None

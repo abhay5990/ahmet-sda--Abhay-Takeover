@@ -2,9 +2,14 @@ from unittest.mock import Mock, patch
 
 from django.test import SimpleTestCase, override_settings
 
-from apps.posting.services.stock.consumer import _pa_legacy_relay_disabled
+from apps.posting.services.stock.consumer import (
+    _is_relay_authorization_failure,
+    _pa_legacy_relay_disabled,
+    _retry_relay_authorization_failures,
+)
 from apps.posting.services.stock.pa_relay_poster import (
     PARelayPoster,
+    PARelayPostResult,
     _format_relay_error,
     fetch_relay_token,
 )
@@ -89,6 +94,77 @@ class PostOneErrorCaptureTests(SimpleTestCase):
 
         self.assertEqual(result.successful, {})
         self.assertIn("upstream_status=405", result.failed[0])
+
+
+class RelayAuthorizationRetryTests(SimpleTestCase):
+    def test_only_upstream_401_rows_are_retried_with_a_fresh_session(self):
+        original = PARelayPostResult(
+            failed={
+                0: 'PA relay upstream error (upstream_status=401): Unauthorized',
+                1: 'PA relay upstream error (upstream_status=422): Invalid title',
+            },
+        )
+        poster = Mock()
+        poster.post_batch.return_value = PARelayPostResult(successful={0: 'new-offer-id'})
+
+        with patch(
+            'apps.posting.services.stock.consumer.fetch_relay_token',
+            return_value=('fresh-token', 'fresh-cookie'),
+        ) as fetch_token:
+            result = _retry_relay_authorization_failures(
+                original,
+                poster=poster,
+                rows=[{'title': 'Retry me'}, {'title': 'Do not retry me'}],
+                username='seller@example.test',
+                password='password',
+                store_slug='ezsmurfshop',
+                relay_url='http://relay.test',
+                relay_secret='relay-secret',
+            )
+
+        self.assertTrue(_is_relay_authorization_failure(original.failed[0]))
+        self.assertFalse(_is_relay_authorization_failure(original.failed[1]))
+        fetch_token.assert_called_once_with(
+            'seller@example.test',
+            'password',
+            'ezsmurfshop',
+            relay_url='http://relay.test',
+            relay_secret='relay-secret',
+            force_refresh=True,
+        )
+        poster.post_batch.assert_called_once_with(
+            'fresh-token',
+            'ezsmurfshop',
+            [{'title': 'Retry me'}],
+            cookie='fresh-cookie',
+        )
+        self.assertEqual(result.successful, {0: 'new-offer-id'})
+        self.assertEqual(
+            result.failed,
+            {1: 'PA relay upstream error (upstream_status=422): Invalid title'},
+        )
+
+    def test_non_authorization_failure_does_not_refresh_or_retry(self):
+        original = PARelayPostResult(failed={0: 'PA relay timeout'})
+        poster = Mock()
+
+        with patch(
+            'apps.posting.services.stock.consumer.fetch_relay_token',
+        ) as fetch_token:
+            result = _retry_relay_authorization_failures(
+                original,
+                poster=poster,
+                rows=[{'title': 'Never retry uncertain response'}],
+                username='seller@example.test',
+                password='password',
+                store_slug='ezsmurfshop',
+                relay_url='http://relay.test',
+                relay_secret='relay-secret',
+            )
+
+        self.assertIs(result, original)
+        fetch_token.assert_not_called()
+        poster.post_batch.assert_not_called()
 
 
 class LegacyRelayGuardFlagTests(SimpleTestCase):

@@ -64,6 +64,97 @@ def _pa_legacy_relay_disabled() -> bool:
     return not getattr(settings, 'PA_LEGACY_RELAY_ENABLED', False)
 
 
+def _is_relay_authorization_failure(error: str | None) -> bool:
+    """Return true only for an upstream PlayerAuctions 401 rejection.
+
+    A timeout or an uncertain response must never be retried because its remote
+    side effect is unknown.  The relay's structured error includes
+    ``upstream_status=401`` only when PlayerAuctions rejected the request before
+    creating the offer, making a one-time fresh-session retry safe.
+    """
+    return 'upstream_status=401' in str(error or '').lower()
+
+
+def _retry_relay_authorization_failures(
+    result: PARelayPostResult,
+    *,
+    poster: PARelayPoster,
+    rows: list[dict],
+    username: str,
+    password: str,
+    store_slug: str,
+    relay_url: str,
+    relay_secret: str,
+    credential=None,
+) -> PARelayPostResult:
+    """Refresh the relay session once and retry only upstream-401 PA rows.
+
+    Cached PlayerAuctions sessions can expire between jobs.  A definitive 401
+    is safe to retry, while all other failures retain their original result and
+    are handled by the normal release/error workflow.
+    """
+    retry_indexes = [
+        idx for idx, error in result.failed.items()
+        if _is_relay_authorization_failure(error)
+    ]
+    if not retry_indexes or not (username and password and store_slug):
+        return result
+
+    logger.info(
+        'PA relay upstream 401 for %d row(s); refreshing session and retrying store=%s',
+        len(retry_indexes), store_slug,
+    )
+    fresh_token, fresh_cookie = fetch_relay_token(
+        username,
+        password,
+        store_slug,
+        relay_url=relay_url,
+        relay_secret=relay_secret,
+        force_refresh=True,
+    )
+    if not fresh_token:
+        logger.warning(
+            'PA relay session refresh failed after upstream 401 for store=%s; preserving original errors',
+            store_slug,
+        )
+        return result
+
+    if credential is not None:
+        try:
+            refreshed_credentials = dict(credential.credentials or {})
+            refreshed_credentials['access_token'] = fresh_token
+            refreshed_credentials['cookie'] = fresh_cookie or fresh_token
+            credential.credentials = refreshed_credentials
+            credential.save(update_fields=['credentials', 'updated_at'])
+        except Exception:
+            logger.warning(
+                'PA relay refreshed session could not be persisted for store=%s',
+                store_slug,
+                exc_info=True,
+            )
+
+    retried = poster.post_batch(
+        fresh_token,
+        store_slug,
+        [rows[idx] for idx in retry_indexes],
+        cookie=fresh_cookie or fresh_token,
+    )
+    merged = PARelayPostResult(
+        successful=dict(result.successful),
+        failed=dict(result.failed),
+    )
+    for retry_idx, original_idx in enumerate(retry_indexes):
+        merged.failed.pop(original_idx, None)
+        if retry_idx in retried.successful:
+            merged.successful[original_idx] = retried.successful[retry_idx]
+        else:
+            merged.failed[original_idx] = retried.failed.get(
+                retry_idx,
+                result.failed.get(original_idx, 'PA relay post failed after session refresh'),
+            )
+    return merged
+
+
 class StockConsumer:
     """Thread-safe single-store queue consumer.
 
@@ -751,6 +842,17 @@ class StockConsumer:
             relay_token, store_slug, excel_rows,
             cookie=(relay_cookie or relay_token),
         )
+        _relay_result = _retry_relay_authorization_failures(
+            _relay_result,
+            poster=_relay_poster,
+            rows=excel_rows,
+            username=creds.get('username', ''),
+            password=creds.get('password', ''),
+            store_slug=store_slug,
+            relay_url=relay_url,
+            relay_secret=relay_secret,
+            credential=getattr(store, 'credential', None),
+        )
 
         # Build PA client for normalize_offer_response (optional, graceful fallback)
         facade = None
@@ -1154,6 +1256,17 @@ class StockConsumer:
             _relay_result = _relay_poster.post_batch(
                 _relay_token, _store_slug, excel_rows,
                 cookie=(_relay_cookie or _relay_token),
+            )
+            _relay_result = _retry_relay_authorization_failures(
+                _relay_result,
+                poster=_relay_poster,
+                rows=excel_rows,
+                username=_creds.get('username', ''),
+                password=_creds.get('password', ''),
+                store_slug=_store_slug,
+                relay_url=_relay_url,
+                relay_secret=_relay_secret,
+                credential=getattr(_store, 'credential', None),
             )
             # Convert PARelayPostResult to PABatchResult for unified downstream handling
             batch_result = PABatchResult(

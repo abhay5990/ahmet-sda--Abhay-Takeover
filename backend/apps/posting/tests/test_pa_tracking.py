@@ -427,3 +427,44 @@ class PoolOfferLocalConfigurationTests(SimpleTestCase):
         pool_offer.validate_local_configuration.assert_called_once_with()
         pool_offer.full_clean.assert_not_called()
         pool_offer.save.assert_called_once_with()
+
+
+class PlayerAuctionsRemovedCloneRecoveryRoutingTests(SimpleTestCase):
+    def test_locally_absent_removed_clone_returns_without_remote_lookup(self):
+        from unittest.mock import Mock, patch
+        from apps.posting.models import OfferPoolItemStatus
+        from apps.posting.services.pool.recovery import (
+            RecoverUnsoldResult,
+            recover_verified_unsold_item,
+        )
+
+        item = SimpleNamespace(
+            pk=75,
+            status=OfferPoolItemStatus.REMOVED,
+            pool_offer_id=18,
+            pool_offer=SimpleNamespace(marketplace='playerauctions'),
+            remote_state='absent',
+        )
+        item_manager = Mock()
+        item_manager.select_related.return_value.get.return_value = item
+        sale_events = Mock()
+        sale_events.filter.return_value.exists.return_value = False
+        expected = RecoverUnsoldResult(ok=True, state='available')
+
+        with patch(
+            'apps.posting.services.pool.recovery.OfferPoolItem.objects',
+            item_manager,
+        ), patch(
+            'apps.posting.services.pool.recovery.PoolSaleEvent.objects',
+            sale_events,
+        ), patch(
+            'apps.posting.services.pool.recovery._make_available',
+            return_value=expected,
+        ) as make_available, patch(
+            'apps.posting.services.pool.recovery._recover_playerauctions_item',
+        ) as remote_recovery:
+            result = recover_verified_unsold_item(pool_id=23, item_id=75)
+
+        self.assertIs(result, expected)
+        make_available.assert_called_once()
+        remote_recovery.assert_not_called()

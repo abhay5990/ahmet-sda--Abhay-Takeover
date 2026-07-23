@@ -636,6 +636,60 @@ class UnifiedPoolTestCase(TestCase):
         self.assertEqual(item.remote_state, 'absent')
         self.assertEqual(item.dispatch_attempts.get().status, 'succeeded')
 
+    def test_recover_removed_absent_pa_clone_returns_to_available_without_remote_lookup(self):
+        from apps.posting.services.pool.recovery import recover_verified_unsold_item
+
+        pool = self.make_pool('PA Recovery Pool')
+        listing = self.make_listing(
+            account=self.playerauctions,
+            remote_id='pa-removed-clone',
+        )
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=1,
+            threshold=1,
+            max_concurrent=1,
+        )
+        owned = self.make_owned('removed-pa-clone@example.test')
+        ListingOwnedProduct.objects.create(listing=listing, owned_product=owned)
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=owned,
+            status=OfferPoolItemStatus.REMOVED,
+            remote_state='absent',
+            target_offer_id=listing.store_listing_id,
+        )
+        active_offer = OfferPoolActiveOffer.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            listing=listing,
+            pool_item=item,
+            store_listing_id=listing.store_listing_id,
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+        )
+
+        with patch(
+            'apps.posting.services.pool.recovery.get_or_build_client',
+        ) as build_client:
+            result = recover_verified_unsold_item(pool_id=pool.pk, item_id=item.pk)
+
+        self.assertTrue(result.ok)
+        self.assertEqual(result.state, 'available')
+        build_client.assert_not_called()
+        item.refresh_from_db()
+        active_offer.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.PENDING)
+        self.assertIsNone(item.pool_offer_id)
+        self.assertEqual(item.remote_state, 'absent')
+        self.assertEqual(active_offer.status, OfferPoolActiveOfferStatus.DELISTED)
+        self.assertFalse(ListingOwnedProduct.objects.filter(
+            listing=listing,
+            owned_product=owned,
+        ).exists())
+
     def test_restock_pages_render_with_unified_relations(self):
         user = get_user_model().objects.create_user(
             username='pool-page-user',
