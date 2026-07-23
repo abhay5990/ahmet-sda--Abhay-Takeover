@@ -851,7 +851,10 @@ def _rebuild_pa_offer_from_stock(
     main_platform = getattr(prepared_result.prepared.subject, 'main_platform', '') or ''
     variant_slug = router.select_fixed('platform', main_platform) if main_platform else ''
 
-    build_result = adapter.build_bulk(
+    # Use the direct JSON builder rather than the bulk-row builder.  The
+    # direct builder carries GTA's numeric serverId/categoryId values, which
+    # the PA relay requires for a single-offer replacement.
+    build_result = adapter.build(
         prepared=prepared_result.prepared,
         marketplace='playerauctions',
         pricing_defaults=STOCK_PRICING_BASELINE,
@@ -868,17 +871,17 @@ def _rebuild_pa_offer_from_stock(
             f"{build_result.error or 'unknown error'}"
         )
 
-    excel_row = dict(build_result.payload or {})
-    if not excel_row:
-        raise ValueError('PlayerAuctions source rebuild returned an empty bulk payload')
+    payload = dict(build_result.payload or {})
+    if not payload:
+        raise ValueError('PlayerAuctions source rebuild returned an empty JSON payload')
     if pool.listing.price is not None:
-        excel_row['Listing Price'] = round(float(pool.listing.price), 2)
+        payload['price'] = round(float(pool.listing.price), 2)
 
     return _post_pa_excel_row(
         pool,
         client,
         item,
-        excel_row,
+        payload,
         proxy_group,
         variant_slug=variant_slug,
     )
@@ -999,7 +1002,7 @@ def _post_pa_excel_row(
             game=pool.game,
             store_listing_id=new_offer_id,
             variant=listing_variant,
-            title=excel_row.get('Title') or pool.listing.title,
+            title=(excel_row.get('Title') or excel_row.get('title') or pool.listing.title),
             price=pool.listing.price,
             currency=pool.listing.currency,
             raw_data=raw_data,
