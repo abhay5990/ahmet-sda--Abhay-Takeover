@@ -256,7 +256,7 @@ class PlayerAuctionsClient:
             "fromTime": "",
             "toTime": "",
         }
-        result = self._order_request(
+        result = self._mct_order_request(
             HttpMethod.GET,
             PlayerAuctionsEndpoints.LIST_SELLER_ORDERS,
             params=params,
@@ -307,7 +307,7 @@ class PlayerAuctionsClient:
         plus the full response data in ``extra``.
         """
         path = PlayerAuctionsEndpoints.order_details(order_id)
-        result = self._order_request(
+        result = self._mct_order_request(
             HttpMethod.GET,
             path,
             auth_headers=auth_headers,
@@ -579,10 +579,57 @@ class PlayerAuctionsClient:
         auth_headers: dict[str, str],
         proxy_url: str | None = None,
     ) -> ApiResult[Any]:
-        """Request against the order base URL."""
+        """Request against the order base URL using the generic PA contract."""
         url = f"{self._config.order_base_url}{path}"
         return self._request(method, url, json_body=json_body, params=params,
                              auth_headers=auth_headers, proxy_url=proxy_url)
+
+    def _mct_order_request(
+        self,
+        method: HttpMethod,
+        path: str,
+        *,
+        json_body: dict[str, Any] | None = None,
+        params: dict[str, Any] | None = None,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[Any]:
+        """Request seller orders with MCT's proven direct API contract.
+
+        MCT successfully reads ``order-api.playerauctions.com`` with a fresh
+        relay JWT, ``Accept``, and one browser user-agent.  The generic offer
+        request envelope includes session cookies and browser-only headers
+        which are useful for offer operations but cause the seller-order API
+        to reject otherwise valid relay sessions.  Keep this narrow contract
+        exclusively for read-only order endpoints.
+        """
+        url = f"{self._config.order_base_url}{path}"
+        authorization = (
+            auth_headers.get("Authorization")
+            or auth_headers.get("authorization")
+            or ""
+        )
+        user_agent = (
+            auth_headers.get("User-Agent")
+            or auth_headers.get("user-agent")
+            or self._config.default_user_agent
+        )
+        direct_headers = {
+            "Accept": "application/json",
+            "User-Agent": user_agent,
+        }
+        if authorization:
+            direct_headers["Authorization"] = authorization
+
+        return self._request(
+            method,
+            url,
+            json_body=json_body,
+            params=params,
+            auth_headers=direct_headers,
+            proxy_url=proxy_url,
+            base_headers={},
+        )
 
     def _request(
         self,
@@ -595,9 +642,13 @@ class PlayerAuctionsClient:
         files: dict[str, Any] | None = None,
         auth_headers: dict[str, str],
         proxy_url: str | None = None,
+        base_headers: dict[str, str] | None = None,
     ) -> ApiResult[Any]:
         """Generic request with PlayerAuctions response normalization."""
-        headers = {**self._default_headers, **auth_headers}
+        headers = {
+            **(self._default_headers if base_headers is None else base_headers),
+            **auth_headers,
+        }
         try:
             response = self._transport.request(
                 method,

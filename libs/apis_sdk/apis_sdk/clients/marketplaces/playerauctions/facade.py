@@ -239,17 +239,23 @@ class PlayerAuctionsFacade:
         product_type: str = "Accounts",
         proxy_group: str | None = None,
     ) -> ApiResult[list[PlayerAuctionsOrder]]:
-        """List seller orders with filters and pagination."""
+        """List seller orders using MCT's direct relay-token request route.
+
+        PlayerAuctions seller orders are read directly from the order API with
+        the relay JWT.  MCT's production fetcher intentionally bypasses the
+        marketplace proxy for this endpoint, so do the same here while still
+        retaining the SDK's one-time authentication retry on a 401/403.
+        """
         return self._exec.execute_with_retry(
-            lambda proxy_url: self._client.list_seller_orders(
+            lambda _proxy_url: self._client.list_seller_orders(
                 auth_headers=self._exec.get_auth_headers(),
                 page=page,
                 page_size=page_size,
                 order_status=order_status,
                 product_type=product_type,
-                proxy_url=proxy_url,
+                proxy_url=None,
             ),
-            proxy_group=proxy_group,
+            proxy_group=None,
         )
 
     # ---------------------------------------------------------------------------
@@ -262,14 +268,14 @@ class PlayerAuctionsFacade:
         *,
         proxy_group: str | None = None,
     ) -> ApiResult[PlayerAuctionsOrderDetail]:
-        """Fetch order details by order ID (idempotent read)."""
+        """Fetch order details using the same direct MCT-compatible route."""
         return self._exec.execute_with_retry(
-            lambda proxy_url: self._client.get_order_details(
+            lambda _proxy_url: self._client.get_order_details(
                 order_id,
                 auth_headers=self._exec.get_auth_headers(),
-                proxy_url=proxy_url,
+                proxy_url=None,
             ),
-            proxy_group=proxy_group,
+            proxy_group=None,
         )
 
     # ---------------------------------------------------------------------------
