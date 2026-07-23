@@ -1552,6 +1552,14 @@ class PoolSaleEvent(models.Model):
         on_delete=models.SET_NULL,
         related_name='sale_events',
     )
+    pool_item = models.ForeignKey(
+        OfferPoolItem,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='sale_events',
+        help_text='Exact pool account consumed by this marketplace sale, when known.',
+    )
     order_id = models.BigIntegerField(null=True, blank=True)
     processed_at = models.DateTimeField(null=True, blank=True)
     outcome = models.CharField(max_length=30, blank=True)
@@ -1563,5 +1571,9 @@ class PoolSaleEvent(models.Model):
             models.Index(
                 fields=['pool_offer', '-created_at'],
                 name='pool_sale_offer_created_idx',
+            ),
+            models.Index(
+                fields=['pool_item', '-created_at'],
+                name='pool_sale_item_created_idx',
             ),
         ]

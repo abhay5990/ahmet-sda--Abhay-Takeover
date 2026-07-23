@@ -616,8 +616,12 @@ class BaseSyncService:
             defaults=defaults,
         )
 
-        # Reactive pool check: new order = sale detected
-        if created and order.store_listing_id:
+        # Reactive pool check: an order linked to a pool listing is a sale.
+        # Retry on updates too: several marketplaces create the order first and
+        # only populate its listing reference on a later detail sync.  The pool
+        # event key is idempotent, so repeated notifications are safe and allow
+        # the exact order/item link to be filled in after the fact.
+        if order.store_listing_id:
             self._notify_pool_on_sale(order)
 
         return 'created' if created else 'updated'

@@ -155,6 +155,18 @@ class PlayerAuctionsAuth(BaseAuthProvider):
     # BaseAuthProvider overrides
     # ------------------------------------------------------------------
 
+    def refresh(self) -> bool:
+        """Force a non-cached relay refresh after a PA 401/403 response.
+
+        ``BaseAuthProvider.get_auth_headers`` still uses the cache-first
+        ``_do_refresh()`` path for an incomplete initial session.  The facade
+        calls this method only after the marketplace rejects a request, so a
+        fresh browser session is required instead of replaying the same cached
+        token and cookie.
+        """
+        with self._lock:
+            return self._do_refresh(force_refresh=True)
+
     # Transient error categories — these should NOT permanently block refresh
     _TRANSIENT_CATEGORIES = frozenset({
         ErrorCategory.NETWORK,
@@ -169,9 +181,12 @@ class PlayerAuctionsAuth(BaseAuthProvider):
     # Backoff seconds per transient failure (multiplied by fail count)
     _TRANSIENT_BACKOFF_STEP = 30
 
-    def _do_refresh(self) -> bool:
+    def _do_refresh(self, *, force_refresh: bool = False) -> bool:
         """
         Refresh PlayerAuctions token via the PA Token Service on VDS.
+
+        ``force_refresh`` bypasses the relay's cached session after an
+        authorization rejection from the PlayerAuctions order API.
 
         Sends username/password to PA Token Service which performs a
         browser-based login and returns a fresh JWT.
@@ -205,12 +220,16 @@ class PlayerAuctionsAuth(BaseAuthProvider):
             self._refresh_failed = True
             return False
 
-        self._logger.info("Refreshing PlayerAuctions token via relay")
+        self._logger.info(
+            "Refreshing PlayerAuctions token via relay "
+            f"(forced={force_refresh})"
+        )
 
         result = self._relay_client.get_token(
             username=self._username,
             password=self._password,
             store=self._store_slug or self._username,
+            force_refresh=force_refresh,
         )
 
         if not result.ok:
@@ -266,7 +285,10 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         self._last_refresh_error = None
         self._transient_fail_count = 0
         self._transient_backoff_until = 0.0
-        self._logger.info(f"PlayerAuctions access token refreshed via relay (cached={result.data.cached})")
+        self._logger.info(
+            "PlayerAuctions access token refreshed via relay "
+            f"(cached={result.data.cached}, forced={force_refresh})"
+        )
 
         # Notify caller (e.g. persist to DB)
         if self._on_refresh is not None:

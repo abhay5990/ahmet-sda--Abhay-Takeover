@@ -70,6 +70,7 @@ class PaRelayClient:
         username: str,
         password: str,
         store: str,
+        force_refresh: bool = False,
     ) -> ApiResult[PaRelayTokenResult]:
         """
         Fetch a PA JWT from the relay (cache-first).
@@ -78,6 +79,8 @@ class PaRelayClient:
             username: PA account email/username.
             password: PA account password.
             store:    Store slug, e.g. "ezsmurfmart" or "ezsmurfshop".
+            force_refresh: Bypass the relay's cached browser session and obtain
+                a fresh session. Use this after a marketplace 401/403 response.
 
         Returns:
             ApiResult[PaRelayTokenResult] with access_token on success.
@@ -87,6 +90,7 @@ class PaRelayClient:
             "username": username,
             "password": password,
             "store": store,
+            "forceRefresh": force_refresh,
         }
 
         try:
@@ -147,7 +151,10 @@ class PaRelayClient:
             cached=bool(body.get("cached", False)),
             cookie=str(body.get("cookie", "") or ""),
         )
-        self._logger.info(f"PA Relay token fetched (cached={result.cached}, store={store})")
+        self._logger.info(
+            "PA Relay token fetched "
+            f"(cached={result.cached}, forced={force_refresh}, store={store})"
+        )
         return ApiResult.success(result, status_code=response.status_code)
 
     def warmup(

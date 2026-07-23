@@ -98,7 +98,27 @@ def _pool_offer_priority(pool_offer):
     return status_priority.get(pool_offer.status, 4), -timestamp
 
 
-def _build_pool_marketplace_blocks(pool_offers, items, active_offers, sale_events):
+def _sale_order_reference(sale_event, orders_by_id=None):
+    """Return the marketplace-facing order ID for a pool sale event.
+
+    ``PoolSaleEvent.order_id`` stores the local order primary key for durable
+    linkage.  The detail page must display the marketplace order identifier
+    instead, while retaining the local value as a harmless fallback for older
+    data whose corresponding order was removed.
+    """
+    if not sale_event or not sale_event.order_id:
+        return None
+    order = (orders_by_id or {}).get(sale_event.order_id)
+    return order.store_order_id if order else sale_event.order_id
+
+
+def _build_pool_marketplace_blocks(
+    pool_offers,
+    items,
+    active_offers,
+    sale_events,
+    orders_by_id=None,
+):
     """Build the six marketplace/store cards shown on a pool detail page.
 
     An append marketplace can confirm that an item was removed from a remote
@@ -142,6 +162,7 @@ def _build_pool_marketplace_blocks(pool_offers, items, active_offers, sale_event
 
     sale_events_by_offer = {}
     sale_event_by_listing = {}
+    sale_event_by_item_id = {}
     for sale_event in sale_events:
         if sale_event.pool_offer_id:
             sale_events_by_offer.setdefault(sale_event.pool_offer_id, []).append(
@@ -151,6 +172,12 @@ def _build_pool_marketplace_blocks(pool_offers, items, active_offers, sale_event
         # ``-created_at``.  It is the exact order record for a PA cloned offer.
         if sale_event.listing_id and sale_event.listing_id not in sale_event_by_listing:
             sale_event_by_listing[sale_event.listing_id] = sale_event
+        sale_event_pool_item_id = getattr(sale_event, 'pool_item_id', None)
+        if (
+            sale_event_pool_item_id
+            and sale_event_pool_item_id not in sale_event_by_item_id
+        ):
+            sale_event_by_item_id[sale_event_pool_item_id] = sale_event
 
     def make_block(slot, offers, *, is_additional=False):
         offers = sorted(offers, key=_pool_offer_priority)
@@ -165,15 +192,13 @@ def _build_pool_marketplace_blocks(pool_offers, items, active_offers, sale_event
                 is_consumed = item.status == OfferPoolItemStatus.CONSUMED
                 if not (is_sold_clone or is_consumed):
                     continue
-                sale_event = (
-                    sale_event_by_listing.get(sold_active_offer.listing_id)
-                    if sold_active_offer and sold_active_offer.listing_id
-                    else None
-                )
+                sale_event = sale_event_by_item_id.get(item.pk)
+                if sale_event is None and sold_active_offer and sold_active_offer.listing_id:
+                    sale_event = sale_event_by_listing.get(sold_active_offer.listing_id)
                 sold_items.append({
                     'item': item,
                     'active_offer': sold_active_offer,
-                    'order_id': sale_event.order_id if sale_event else None,
+                    'order_id': _sale_order_reference(sale_event, orders_by_id),
                     'sold_at': (
                         sold_active_offer.updated_at
                         if sold_active_offer else item.consumed_at
@@ -240,7 +265,13 @@ _MARKETPLACE_DISPLAY_NAMES = {
 }
 
 
-def _build_pool_item_views(pool_offers, items, active_offers, sale_events):
+def _build_pool_item_views(
+    pool_offers,
+    items,
+    active_offers,
+    sale_events,
+    orders_by_id=None,
+):
     """Build item-level marketplace assignments and one cross-store sale ledger.
 
     Pool items are assigned to a specific ``PoolOffer`` once dispatch begins.
@@ -266,11 +297,19 @@ def _build_pool_item_views(pool_offers, items, active_offers, sale_events):
             sold_active_by_item_id[active_offer.pool_item_id] = active_offer
 
     sale_event_by_listing = {}
+    sale_event_by_item_id = {}
     for sale_event in sale_events:
-        # Queries arrive newest first.  A sale event on a PA cloned listing is
-        # the only exact item/order link for the item-level ledger.
+        # Queries arrive newest first.  Direct pool-item attribution is the
+        # authoritative order link; listing matching remains for historical
+        # PlayerAuctions clone events created before the field existed.
         if sale_event.listing_id and sale_event.listing_id not in sale_event_by_listing:
             sale_event_by_listing[sale_event.listing_id] = sale_event
+        sale_event_pool_item_id = getattr(sale_event, 'pool_item_id', None)
+        if (
+            sale_event_pool_item_id
+            and sale_event_pool_item_id not in sale_event_by_item_id
+        ):
+            sale_event_by_item_id[sale_event_pool_item_id] = sale_event
 
     for item in items:
         pool_offer = getattr(item, 'pool_offer', None) or offers_by_id.get(
@@ -288,10 +327,9 @@ def _build_pool_item_views(pool_offers, items, active_offers, sale_events):
         )
         slot = slots_by_key.get(slot_key)
         active_offer = sold_active_by_item_id.get(item.pk)
-        sale_event = (
-            sale_event_by_listing.get(active_offer.listing_id)
-            if active_offer and active_offer.listing_id else None
-        )
+        sale_event = sale_event_by_item_id.get(item.pk)
+        if sale_event is None and active_offer and active_offer.listing_id:
+            sale_event = sale_event_by_listing.get(active_offer.listing_id)
         is_sold_clone = bool(active_offer)
         is_consumed = item.status == OfferPoolItemStatus.CONSUMED
         is_sale_record = is_sold_clone or is_consumed
@@ -343,7 +381,7 @@ def _build_pool_item_views(pool_offers, items, active_offers, sale_events):
                     )
                 )
             ),
-            'order_id': sale_event.order_id if sale_event else None,
+            'order_id': _sale_order_reference(sale_event, orders_by_id),
             'sold_at': (
                 active_offer.updated_at if active_offer else item.consumed_at
             ) if is_sale_record else None,
@@ -878,9 +916,26 @@ def restock_pool_detail_page(request, pool_id):
     )
     sale_events = list(
         PoolSaleEvent.objects.filter(pool_offer__pool=pool)
-        .select_related('listing', 'pool_offer')
+        .select_related('listing', 'pool_offer', 'pool_item')
         .order_by('-created_at')
     )
+    order_ids = {event.order_id for event in sale_events if event.order_id}
+    if order_ids:
+        from apps.orders.models import Order
+        orders_by_id = {
+            order.pk: order
+            for order in Order.objects.filter(pk__in=order_ids).only(
+                'pk', 'store_order_id', 'status', 'sold_at',
+            )
+        }
+    else:
+        orders_by_id = {}
+    for sale_event in sale_events:
+        # The template also renders offer-level event pills, so expose a
+        # marketplace-facing reference there rather than the internal PK.
+        sale_event.marketplace_order_id = _sale_order_reference(
+            sale_event, orders_by_id,
+        )
     (
         marketplace_blocks,
         additional_marketplace_blocks,
@@ -890,6 +945,7 @@ def restock_pool_detail_page(request, pool_id):
         items,
         active_offers,
         sale_events,
+        orders_by_id,
     )
     (
         item_marketplace_blocks,
@@ -902,6 +958,7 @@ def restock_pool_detail_page(request, pool_id):
         items,
         active_offers,
         sale_events,
+        orders_by_id,
     )
 
     # Linked OwnedProducts via ListingOwnedProduct M2M

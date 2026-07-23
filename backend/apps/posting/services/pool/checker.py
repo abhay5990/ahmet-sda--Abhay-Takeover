@@ -124,17 +124,53 @@ def _record_sale_event(
     if len(event_key) > 255:
         digest = hashlib.sha256(event_key.encode()).hexdigest()
         event_key = f'{event_key[:180]}:{digest}'
+    pool_item_id = active_offer.pool_item_id if active_offer else None
+    if pool_item_id is None and order_id:
+        # Append marketplaces can identify the sold account through the order's
+        # linked OwnedProduct.  Persist that association instead of leaving the
+        # account ledger to infer it later from a remote-count reconciliation.
+        from apps.orders.models import Order
+        from apps.posting.models import OfferPoolItem
+
+        order_owned_product_id = (
+            Order.objects.filter(pk=order_id)
+            .values_list('owned_product_id', flat=True)
+            .first()
+        )
+        if order_owned_product_id:
+            pool_item_id = (
+                OfferPoolItem.objects.filter(
+                    pool_offer=pool_offer,
+                    owned_product_id=order_owned_product_id,
+                )
+                .values_list('pk', flat=True)
+                .first()
+            )
+
     with transaction.atomic():
         event, created = PoolSaleEvent.objects.get_or_create(
             event_key=event_key,
             defaults={
                 'listing_id': listing_id,
                 'pool_offer': pool_offer,
+                'pool_item_id': pool_item_id,
                 'order_id': order_id,
                 'outcome': 'processing',
             },
         )
         if not created:
+            # A retry may carry richer data than the original notification.
+            # Preserve the event's idempotency while filling any missing exact
+            # order/item references.
+            update_fields = []
+            if order_id and not event.order_id:
+                event.order_id = order_id
+                update_fields.append('order_id')
+            if pool_item_id and not event.pool_item_id:
+                event.pool_item_id = pool_item_id
+                update_fields.append('pool_item')
+            if update_fields:
+                event.save(update_fields=update_fields)
             return None
         if active_offer is not None:
             locked = OfferPoolActiveOffer.objects.select_for_update().get(

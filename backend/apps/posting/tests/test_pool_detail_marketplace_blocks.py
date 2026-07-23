@@ -142,6 +142,42 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertTrue(pa_block['sold_items'][0]['is_exact_order_match'])
         self.assertEqual(pa_block['sale_history'][0], pa_sale)
 
+    def test_direct_sale_item_attribution_uses_marketplace_order_id(self):
+        eldorado = self.make_offer(
+            offer_id=22,
+            marketplace='eldorado',
+            store_name='EzSmurfMart',
+        )
+        sold_item = self.make_item(
+            item_id=200,
+            status=OfferPoolItemStatus.CONSUMED,
+            pool_offer_id=eldorado.pk,
+            login='exact-eldorado-sale',
+        )
+        sale_event = SimpleNamespace(
+            pool_offer_id=eldorado.pk,
+            pool_item_id=sold_item.pk,
+            listing_id=eldorado.listing.pk,
+            order_id=9010,
+            created_at=timezone.now(),
+        )
+        marketplace_order = SimpleNamespace(store_order_id='ELD-ORDER-9010')
+
+        blocks, _, shared_rows, sold_history, _ = _build_pool_item_views(
+            [eldorado],
+            [sold_item],
+            [],
+            [sale_event],
+            {9010: marketplace_order},
+        )
+
+        self.assertEqual(shared_rows, [])
+        self.assertEqual(blocks[0]['sold_count'], 1)
+        self.assertEqual(len(sold_history), 1)
+        self.assertEqual(sold_history[0]['item'], sold_item)
+        self.assertEqual(sold_history[0]['order_id'], 'ELD-ORDER-9010')
+        self.assertTrue(sold_history[0]['is_exact_order_match'])
+
     def test_groups_each_item_into_one_store_lane_and_one_unified_sale_ledger(self):
         eldorado = self.make_offer(
             offer_id=24,
@@ -199,6 +235,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         )
         pa_sale = SimpleNamespace(
             pool_offer_id=playerauctions.pk,
+            pool_item_id=pa_item.pk,
             listing_id=clone_listing_id,
             order_id=9002,
             created_at=timezone.now(),
@@ -209,6 +246,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
             [mart_item, consumed_item, pa_item, shared_item, reserved_item],
             [sold_pa_clone],
             [pa_sale],
+            {9002: SimpleNamespace(store_order_id='PA-ORDER-9002')},
         )
 
         self.assertEqual(len(blocks), 6)
@@ -231,5 +269,5 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertIsNone(sold_by_login['eldorado-sold']['order_id'])
         self.assertFalse(sold_by_login['eldorado-sold']['is_exact_order_match'])
         self.assertEqual(sold_by_login['pa-sold']['destination_title'], 'Vapenation PlayerAuctions')
-        self.assertEqual(sold_by_login['pa-sold']['order_id'], 9002)
+        self.assertEqual(sold_by_login['pa-sold']['order_id'], 'PA-ORDER-9002')
         self.assertTrue(sold_by_login['pa-sold']['is_exact_order_match'])
