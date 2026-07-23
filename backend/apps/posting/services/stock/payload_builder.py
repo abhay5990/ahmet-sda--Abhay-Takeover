@@ -21,6 +21,10 @@ from apps.posting.services.shared.pricing import (
     STOCK_PRICING_BASELINE,
     build_pricing_rule,
 )
+from apps.posting.services.stock.pa_tracking import (
+    append_tracking_code,
+    tracking_code_for_item,
+)
 from apps.posting.services.variant_slug import resolve_listing_variant_slug
 from apps.posting.services.variant_routing import VariantRouter, get_eligible_variants
 from payload_pipeline.core.contracts import ListingKind
@@ -131,16 +135,19 @@ def build_item_payload(
                         'error': pipeline_result.error or 'Build failed',
                         'error_category': 'pipeline_error',
                     }
+                payload = dict(pipeline_result.payload or {})
+                payload['title'] = append_tracking_code(payload.get('title', ''), item)
                 return {
                     'ok': True, 'stage': stage,
                     'data': {
-                        'payload': pipeline_result.payload,
+                        'payload': payload,
                         'final_price': final_price,
                         'variant_slug': variant_slug,
                         'listing_variant_slug': _listing_variant_slug(
                             prepared.subject, variant_ctx, variant_slug,
                         ),
                         'mode': 'json',
+                        'tracking_code': tracking_code_for_item(item),
                     },
                 }
 
@@ -163,16 +170,20 @@ def build_item_payload(
                     'error': pipeline_result.error or 'Bulk build failed',
                     'error_category': 'pipeline_error',
                 }
+            payload = dict(pipeline_result.payload or {})
+            title_key = 'Title' if 'Title' in payload or 'title' not in payload else 'title'
+            payload[title_key] = append_tracking_code(payload.get(title_key, ''), item)
             return {
                 'ok': True, 'stage': stage,
                 'data': {
-                    'payload': pipeline_result.payload,
+                    'payload': payload,
                     'final_price': final_price,
                     'variant_slug': variant_slug,
                     'listing_variant_slug': _listing_variant_slug(
                         prepared.subject, variant_ctx, variant_slug,
                     ),
                     'mode': 'excel_row',
+                    'tracking_code': tracking_code_for_item(item),
                 },
             }
 

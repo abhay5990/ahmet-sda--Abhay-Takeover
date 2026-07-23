@@ -754,6 +754,23 @@ def retry_pool_item(request, pool_id, item_id):
     return JsonResponse({'ok': True, 'item': _item_to_dict(item)})
 
 
+@login_required
+@require_POST
+def recover_unsold_pool_item(request, pool_id, item_id):
+    """Return a key only after remote presence and sale evidence are verified."""
+    from apps.posting.services.pool.recovery import recover_verified_unsold_item
+
+    result = recover_verified_unsold_item(pool_id=pool_id, item_id=item_id)
+    if not result.ok:
+        status = 404 if result.errors == ['Item not found'] else 409
+        return JsonResponse({'error': '; '.join(result.errors)}, status=status)
+    return JsonResponse({
+        'ok': True,
+        'state': result.state,
+        'message': result.message,
+    })
+
+
 # ── Pool Actions ─────────────────────────────────────────────────
 
 

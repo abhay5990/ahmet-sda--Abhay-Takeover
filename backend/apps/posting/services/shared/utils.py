@@ -26,6 +26,10 @@ def extract_title_from_payload(payload: dict, marketplace: str) -> str:
     """
     if marketplace == 'eldorado':
         return payload.get('details', {}).get('offerTitle', '')
+    if marketplace == 'playerauctions':
+        # PA bulk uploads use the spreadsheet's capitalized column header,
+        # while direct PA API posts use the regular JSON ``title`` key.
+        return payload.get('title', '') or payload.get('Title', '')
     return payload.get('title', '')
 
 

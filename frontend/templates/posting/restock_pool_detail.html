@@ -594,7 +594,7 @@
                                 <td class="px-3 py-2"><div class="font-mono text-gray-800">{{ row.item.owned_product.login }}</div><div class="text-gray-400 truncate max-w-[10rem]">{{ row.item.owned_product.email|default:"—" }}</div></td>
                                 <td class="px-3 py-2 text-center"><span class="inline-flex px-2 py-0.5 rounded-full {% if row.item.status == 'pushed' %}bg-emerald-100 text-emerald-700{% elif row.item.status == 'consumed' %}bg-orange-100 text-orange-700{% elif row.item.status == 'failed' %}bg-red-100 text-red-700{% elif row.item.status == 'pending' %}bg-blue-100 text-blue-700{% else %}bg-gray-100 text-gray-700{% endif %}">{{ row.item.get_status_display }}</span></td>
                                 <td class="px-3 py-2 text-gray-500"><div class="font-mono break-all">{{ row.offer_id|default:"—" }}</div>{% if row.item.error_message %}<div class="text-red-500 mt-0.5 truncate max-w-[12rem]" title="{{ row.item.error_message }}">{{ row.item.error_message }}</div>{% endif %}</td>
-                                <td class="px-3 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if row.item.status == 'reserved' %}<span class="text-amber-600">Working</span>{% elif row.item.pool_offer_id and row.item.status != 'removed' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', true, this)" class="text-red-600 hover:text-red-800 disabled:opacity-50">Delete</button>{% else %}<span class="text-gray-400">—</span>{% endif %}</td>
+                                <td class="px-3 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if row.item.status == 'consumed' or row.item.status == 'failed' or row.item.status == 'removed' %}<button onclick="recoverUnsoldItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', this)" class="text-emerald-600 hover:text-emerald-800 mr-2 disabled:opacity-50">Verify &amp; return</button>{% endif %}{% if row.item.status == 'reserved' %}<span class="text-amber-600">Working</span>{% elif row.item.pool_offer_id and row.item.status != 'removed' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', true, this)" class="text-red-600 hover:text-red-800 disabled:opacity-50">Delete</button>{% else %}<span class="text-gray-400">—</span>{% endif %}</td>
                             </tr>
                             {% empty %}
                             <tr><td colspan="4" class="px-3 py-5 text-center text-gray-400">No accounts assigned to this store yet.</td></tr>
@@ -1727,6 +1727,32 @@ async function removeLinkedKey(listingId, productId, login, btn) {
         alert(error.message || 'Failed to remove key');
         btn.disabled = false;
         btn.innerHTML = originalLabel;
+    }
+}
+
+async function recoverUnsoldItem(poolId, itemId, login, btn) {
+    const message = `Verify and return “${login}” to the available pool?\n\nThis checks for confirmed sale evidence and current marketplace presence first. A key with a confirmed sale will be blocked.`;
+    if (!confirm(message)) return;
+
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Verifying...';
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value
+        || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+    try {
+        const resp = await fetch(`/posting/api/pools/${poolId}/items/${itemId}/recover-unsold/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrf },
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) throw new Error(data.error || `Verification failed (${resp.status})`);
+        alert(data.message || 'Key recovery completed.');
+        window.location.reload();
+    } catch (error) {
+        alert(error.message || 'Unable to verify and return this key');
+        btn.disabled = false;
+        btn.textContent = originalLabel;
     }
 }
 

@@ -2,18 +2,31 @@ from __future__ import annotations
 
 import logging
 from decimal import Decimal
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from apps.sync.enums import ResourceType, SyncMode
 from apps.sync.exceptions import SkipItem
 from apps.sync.models import RawPayload, SyncCheckpoint
 from apps.sync.services.base import BaseSyncService
+from apps.posting.services.stock.pa_tracking import extract_tracking_code
 from . import mapper
 
 if TYPE_CHECKING:
     from apps.integrations.models import IntegrationAccount
 
 logger = logging.getLogger(__name__)
+
+
+def _payload_text_values(value: Any):
+    """Yield scalar text from a PA order payload, including nested detail data."""
+    if isinstance(value, dict):
+        for nested in value.values():
+            yield from _payload_text_values(nested)
+    elif isinstance(value, list):
+        for nested in value:
+            yield from _payload_text_values(nested)
+    elif isinstance(value, (str, int, float)):
+        yield str(value)
 
 
 class PlayerAuctionsOrderSyncService(BaseSyncService):
@@ -213,6 +226,30 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
             or ''
         )
 
+        # Native offer IDs are authoritative.  A per-listing PA title code is
+        # a deliberately narrow fallback for API payloads that omit offerId.
+        # It maps the order to the exact locally persisted Listing, which in
+        # turn restores the canonical offer ID before pool-sale handling runs.
+        linked_listing = None
+        if not listing_id and raw_payload.integration_account_id:
+            tracking_code = extract_tracking_code(*_payload_text_values(payload))
+            if tracking_code:
+                from apps.listings.models import Listing
+                linked_listing = (
+                    Listing.objects.filter(
+                        integration_account=raw_payload.integration_account,
+                        title__icontains=f'[{tracking_code}]',
+                    )
+                    .order_by('-listed_at', '-id')
+                    .first()
+                )
+                if linked_listing:
+                    listing_id = linked_listing.store_listing_id
+                    logger.info(
+                        'PlayerAuctions order %s matched Listing #%s by tracking code %s',
+                        self.extract_remote_id(payload), linked_listing.id, tracking_code,
+                    )
+
         defaults = {
             'is_instant': mapper.extract_is_instant(payload),
             'product_category': product_category,
@@ -224,6 +261,13 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
             'store_listing_id': listing_id,
             'raw_data': payload,
         }
+
+        if linked_listing:
+            # Prevent BaseSyncService from discarding the verified title-code
+            # link when it applies its normal store_listing_id lookup.
+            defaults['listing'] = linked_listing
+            if linked_listing.dropship_product_id:
+                defaults['dropship_product'] = linked_listing.dropship_product
 
         # Game resolve
         from apps.inventory.services import resolve_game
