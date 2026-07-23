@@ -39,6 +39,7 @@ class PlayerAuctionsAuthRefreshTests(TestCase):
         )
         self.assertEqual(auth.access_token, 'fresh-token')
         self.assertEqual(auth.cookie, 'fresh-cookie')
+        self.assertEqual(auth.user_agent, 'fresh-agent')
 
     def test_initial_session_refresh_keeps_cache_first_behavior(self):
         auth = self.make_auth()

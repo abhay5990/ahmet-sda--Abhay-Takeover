@@ -280,6 +280,9 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         relay_cookie = getattr(result.data, "cookie", "") or ""
         if relay_cookie:
             self._cookie = relay_cookie
+        relay_user_agent = getattr(result.data, "user_agent", "") or ""
+        if relay_user_agent:
+            self._user_agent = relay_user_agent
         self._expires_at = float("inf")
         self._refresh_failed = False
         self._last_refresh_error = None
