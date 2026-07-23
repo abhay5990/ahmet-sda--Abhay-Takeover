@@ -1763,7 +1763,7 @@ async function recoverUnsoldItem(poolId, itemId, login, btn) {
 
 async function removeItem(poolId, itemId, status, assignedToOffer, btn) {
     const message = assignedToOffer
-        ? 'Delete this individual key from the Pool? If it is still live, SDA will delete the marketplace offer first. For a verified-unsold PlayerAuctions key, successful deletion returns the account to available pool stock. Confirmed sales are always blocked.'
+        ? 'Delete this individual key from the Pool? SDA will try to delete its marketplace offer first. For PlayerAuctions, if remote deletion fails, you can explicitly return the key to available stock with a warning that the remote offer may still be live. Confirmed sales are always blocked.'
         : 'Remove this pending key from the Pool? The account remains in inventory.';
     if (!confirm(message)) return;
 
@@ -1772,14 +1772,39 @@ async function removeItem(poolId, itemId, status, assignedToOffer, btn) {
     btn.textContent = 'Removing...';
     const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value
         || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
-
-    try {
-        const resp = await fetch(`/posting/api/pools/${poolId}/items/${itemId}/remove/`, {
+    const submitRemoval = async (forceReturnToAvailable = false) => {
+        const options = {
             method: 'POST',
             headers: { 'X-CSRFToken': csrf },
-        });
-        const data = await resp.json().catch(() => ({}));
-        if (!resp.ok) throw new Error(data.error || 'Failed to remove key');
+        };
+        if (forceReturnToAvailable) {
+            options.headers['Content-Type'] = 'application/json';
+            options.body = JSON.stringify({ force_return_to_available: true });
+        }
+        const response = await fetch(
+            `/posting/api/pools/${poolId}/items/${itemId}/remove/`,
+            options,
+        );
+        return {
+            response,
+            data: await response.json().catch(() => ({})),
+        };
+    };
+
+    try {
+        let { response, data } = await submitRemoval();
+        if (!response.ok && assignedToOffer && data.force_return_to_available_supported) {
+            const proceed = confirm(
+                'PlayerAuctions did not confirm deletion of the remote offer. '
+                + 'Move this key to available pool stock anyway? The remote offer may still be live, '
+                + 'so use this only when you intentionally accept that risk. Confirmed sales remain blocked.',
+            );
+            if (proceed) {
+                btn.textContent = 'Returning to pool...';
+                ({ response, data } = await submitRemoval(true));
+            }
+        }
+        if (!response.ok) throw new Error(data.error || 'Failed to remove key');
         if (data.message) alert(data.message);
         window.location.reload();
     } catch (error) {

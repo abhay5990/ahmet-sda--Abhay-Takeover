@@ -146,6 +146,141 @@ def remove_pool_item(
     )
 
 
+def can_force_return_to_available(pool_offer: PoolOffer) -> bool:
+    """Whether staff may explicitly free a PA clone after remote deletion fails.
+
+    This is intentionally limited to PlayerAuctions clone offers.  Append-style
+    offers have shared remote stock, so detaching an individual key without a
+    confirmed remote removal would corrupt their local-to-remote accounting.
+    """
+    return (
+        pool_offer.marketplace == 'playerauctions'
+        and pool_offer.strategy == 'clone'
+    )
+
+
+def force_return_pool_item_to_available(
+    pool_offer: PoolOffer,
+    item: OfferPoolItem,
+    *,
+    listing,
+) -> RemoveItemResult:
+    """Manually free one unsold PA key when the remote offer cannot be deleted.
+
+    The remote offer may still be live.  This staff-authorized override makes
+    that uncertainty durable rather than pretending the remote delete worked:
+    the old clone record is retained as ``FAILED`` with no pool key attached,
+    an ``UNKNOWN`` remove attempt is written, and the returned pool item keeps
+    ``remote_state='unknown'``.  Confirmed sale evidence remains a hard block.
+    """
+    pool_offer = PoolOffer.objects.select_related(
+        'pool', 'listing', 'listing__integration_account',
+        'listing__integration_account__credential',
+    ).get(pk=pool_offer.pk)
+    if not can_force_return_to_available(pool_offer):
+        return RemoveItemResult(
+            ok=False,
+            errors=['Manual return is supported only for individual PlayerAuctions clone listings.'],
+        )
+
+    now = timezone.now()
+    with transaction.atomic():
+        locked = OfferPoolItem.objects.select_for_update().select_related(
+            'owned_product',
+        ).get(pk=item.pk, pool_offer=pool_offer)
+        if locked.status == OfferPoolItemStatus.RESERVED:
+            return RemoveItemResult(
+                ok=False,
+                errors=['This key is reserved by an in-progress dispatch. Try again after it finishes.'],
+            )
+        if _has_confirmed_sale_evidence(locked):
+            return RemoveItemResult(
+                ok=False,
+                errors=['Confirmed marketplace sale evidence exists for this key; it cannot be returned to the pool.'],
+            )
+        if locked.status not in {
+            OfferPoolItemStatus.QUEUED,
+            OfferPoolItemStatus.PUSHED,
+            OfferPoolItemStatus.FAILED,
+        }:
+            return RemoveItemResult(
+                ok=False,
+                errors=[f'Key cannot be returned while its Pool state is {locked.status}.'],
+            )
+
+        active_offers = OfferPoolActiveOffer.objects.select_for_update().filter(
+            pool_offer=pool_offer,
+            pool_item=locked,
+        )
+        linked_listing_ids = {listing.pk}
+        linked_listing_ids.update(
+            active_offers.exclude(listing_id__isnull=True).values_list(
+                'listing_id', flat=True,
+            ),
+        )
+        active_offers.update(
+            pool_item=None,
+            status=OfferPoolActiveOfferStatus.FAILED,
+            updated_at=now,
+        )
+        ListingOwnedProduct.objects.filter(
+            listing_id__in=linked_listing_ids,
+            owned_product_id=locked.owned_product_id,
+        ).delete()
+
+        prior_target_offer_id = locked.target_offer_id or getattr(
+            listing, 'store_listing_id', '',
+        )
+        warning = (
+            'Manual staff override: returned to available pool after '
+            'PlayerAuctions deletion was not confirmed; the remote offer may still be live.'
+        )
+        locked.status = OfferPoolItemStatus.PENDING
+        locked.pool_offer = None
+        locked.target_offer_id = ''
+        locked.remote_credential_id = ''
+        locked.remote_state = 'unknown'
+        locked.pushed_at = None
+        locked.consumed_at = None
+        locked.reservation = None
+        locked.claim_token = None
+        locked.claimed_at = None
+        locked.error_message = warning
+        locked.failure_stage = 'manual_return_remote_unknown'
+        locked.save(update_fields=[
+            'status', 'pool_offer', 'target_offer_id', 'remote_credential_id',
+            'remote_state', 'pushed_at', 'consumed_at', 'reservation',
+            'claim_token', 'claimed_at', 'error_message', 'failure_stage',
+            'updated_at',
+        ])
+        fingerprint = hashlib.sha256(
+            f'pool-manual-return:{pool_offer.pk}:{locked.pk}:{uuid.uuid4()}'.encode(),
+        ).hexdigest()
+        PoolDispatchAttempt.objects.create(
+            item=locked,
+            pool_offer=pool_offer,
+            operation=PoolDispatchOperation.REMOVE,
+            status=PoolDispatchStatus.UNKNOWN,
+            request_fingerprint=fingerprint,
+            remote_offer_id=str(prior_target_offer_id),
+            error_code='manual_return_remote_unknown',
+            error_message=warning,
+            started_at=now,
+            finished_at=now,
+        )
+        PoolOffer.objects.filter(pk=pool_offer.pk).update(
+            last_error=warning[:2000],
+            updated_at=now,
+        )
+
+    return RemoveItemResult(
+        ok=True,
+        removed=True,
+        remote_removed=False,
+        released_to_pool=True,
+    )
+
+
 def _finalize_single_item_removal(
     pool_offer,
     item,

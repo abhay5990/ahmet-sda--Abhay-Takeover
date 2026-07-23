@@ -287,3 +287,57 @@ class PlayerAuctionsDeletionWorkflowTests(SimpleTestCase):
 
         self.assertTrue(_force_playerauctions_auth_refresh(client))
         auth.refresh.assert_called_once_with()
+
+
+class PlayerAuctionsManualReturnTests(SimpleTestCase):
+    def test_manual_return_is_limited_to_individual_playerauctions_clones(self):
+        from apps.posting.services.pool.lifecycle import can_force_return_to_available
+
+        self.assertTrue(can_force_return_to_available(SimpleNamespace(
+            marketplace="playerauctions", strategy="clone",
+        )))
+        self.assertFalse(can_force_return_to_available(SimpleNamespace(
+            marketplace="playerauctions", strategy="append",
+        )))
+        self.assertFalse(can_force_return_to_available(SimpleNamespace(
+            marketplace="eldorado", strategy="clone",
+        )))
+
+    def test_manual_return_keeps_confirmed_sale_evidence_as_a_hard_block(self):
+        from contextlib import nullcontext
+        from unittest.mock import Mock, patch
+        from apps.posting.models import OfferPoolItemStatus
+        from apps.posting.services.pool.lifecycle import force_return_pool_item_to_available
+
+        pool_offer = SimpleNamespace(
+            pk=12,
+            marketplace="playerauctions",
+            strategy="clone",
+        )
+        locked_item = SimpleNamespace(pk=31, status=OfferPoolItemStatus.PUSHED)
+        pool_offer_manager = Mock()
+        pool_offer_manager.select_related.return_value.get.return_value = pool_offer
+        item_manager = Mock()
+        item_manager.select_for_update.return_value.select_related.return_value.get.return_value = locked_item
+
+        with patch(
+            "apps.posting.services.pool.lifecycle.PoolOffer.objects",
+            pool_offer_manager,
+        ), patch(
+            "apps.posting.services.pool.lifecycle.OfferPoolItem.objects",
+            item_manager,
+        ), patch(
+            "apps.posting.services.pool.lifecycle.transaction.atomic",
+            return_value=nullcontext(),
+        ), patch(
+            "apps.posting.services.pool.lifecycle._has_confirmed_sale_evidence",
+            return_value=True,
+        ):
+            result = force_return_pool_item_to_available(
+                pool_offer,
+                SimpleNamespace(pk=31),
+                listing=SimpleNamespace(pk=77),
+            )
+
+        self.assertFalse(result.ok)
+        self.assertIn("Confirmed marketplace sale evidence", result.errors[0])

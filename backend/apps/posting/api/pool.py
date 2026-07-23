@@ -744,33 +744,66 @@ def remove_pool_item(request, pool_id, item_id):
             'error': f'Cannot safely remove an unassigned key with status {item.status}.',
         }, status=409)
 
-    from apps.posting.services.pool.lifecycle import remove_pool_item as remove_assigned_item
+    try:
+        payload = json.loads(request.body or '{}')
+    except (TypeError, ValueError):
+        return JsonResponse({'error': 'Invalid request body.'}, status=400)
+    force_return_to_available = payload.get('force_return_to_available') is True
 
-    result = remove_assigned_item(
-        item.pool_offer,
-        item,
-        listing=item.pool_offer.listing,
+    from apps.posting.services.pool.lifecycle import (
+        can_force_return_to_available,
+        force_return_pool_item_to_available,
+        remove_pool_item as remove_assigned_item,
     )
+
+    manual_return_supported = can_force_return_to_available(item.pool_offer)
+    if force_return_to_available:
+        result = force_return_pool_item_to_available(
+            item.pool_offer,
+            item,
+            listing=item.pool_offer.listing,
+        )
+    else:
+        result = remove_assigned_item(
+            item.pool_offer,
+            item,
+            listing=item.pool_offer.listing,
+        )
     if not result.ok:
         return JsonResponse({
             'error': '; '.join(result.errors) or 'Key removal failed',
+            # The client shows this option only after the ordinary remote-delete
+            # request failed. It remains limited to individual PA clones and is
+            # still blocked by confirmed sale evidence in the lifecycle helper.
+            'force_return_to_available_supported': (
+                not force_return_to_available and manual_return_supported
+            ),
         }, status=409)
 
-    item.refresh_from_db(fields=['status', 'pool_offer'])
+    item.refresh_from_db(fields=['status', 'pool_offer', 'remote_state', 'error_message'])
+    if result.released_to_pool:
+        if result.remote_removed:
+            message = (
+                'PlayerAuctions offer deleted and the verified-unsold key returned '
+                'to available pool stock.'
+            )
+        else:
+            message = (
+                'Key returned to available pool stock by staff override. The '
+                'PlayerAuctions offer may still be live because its remote deletion '
+                'was not confirmed.'
+            )
+    elif result.remote_removed:
+        message = 'Key removed from the marketplace offer and Pool.'
+    else:
+        message = 'Key removed from the Pool assignment.'
     return JsonResponse({
         'ok': True,
         'removed_from_marketplace': result.remote_removed,
         'returned_to_available_pool': result.released_to_pool,
+        'remote_deletion_unconfirmed': result.released_to_pool and not result.remote_removed,
         'status': item.status,
-        'message': (
-            'PlayerAuctions offer deleted and the verified-unsold key returned to available pool stock.'
-            if result.released_to_pool
-            else (
-                'Key removed from the marketplace offer and Pool.'
-                if result.remote_removed
-                else 'Key removed from the Pool assignment.'
-            )
-        ),
+        'message': message,
     })
 
 
