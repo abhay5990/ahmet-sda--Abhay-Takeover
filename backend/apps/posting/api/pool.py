@@ -535,6 +535,63 @@ def unlink_pool_offer(request, pool_id, offer_id):
 # ── Pool Item Management ─────────────────────────────────────────
 
 
+def _launch_pool_replenish(pool_id: int) -> None:
+    """Best-effort background replenish of a pool's active offers.
+
+    Called right after stock is added so newly-added keys are pushed to
+    under-stocked offers immediately, instead of waiting for the periodic sweep
+    (e.g. an offer that sold out before any pending stock existed). Runs in a
+    daemon thread so it never blocks the add-stock request; ``_check_and_replenish``
+    only pushes when an offer is actually below its threshold, so it is a no-op
+    for healthy offers.
+    """
+    import threading
+
+    def _run() -> None:
+        from django.db import close_old_connections
+
+        close_old_connections()
+        try:
+            _replenish_pool_active_offers(pool_id)
+        finally:
+            close_old_connections()
+
+    threading.Thread(
+        target=_run, daemon=True, name=f'pool-replenish-{pool_id}',
+    ).start()
+
+
+def _replenish_pool_active_offers(pool_id: int) -> None:
+    """Replenish every active, non-detached offer of an active pool (synchronous).
+
+    Only tops up offers that are below threshold (``_check_and_replenish`` gates
+    on that), so it is safe/no-op for healthy offers. Split out from the thread
+    wrapper so the selection logic is unit-testable.
+    """
+    from apps.posting.services.pool.checker import _check_and_replenish
+
+    try:
+        pool = (
+            OfferPool.objects
+            .prefetch_related('pool_offers')
+            .get(pk=pool_id)
+        )
+    except OfferPool.DoesNotExist:
+        return
+    if pool.status != OfferPoolStatus.ACTIVE:
+        return
+    for pool_offer in pool.pool_offers.exclude(status=PoolOfferStatus.DETACHED):
+        if pool_offer.status != PoolOfferStatus.ACTIVE:
+            continue
+        try:
+            _check_and_replenish(pool_offer)
+        except Exception:
+            logger.exception(
+                'auto-replenish after stock add failed for pool_offer %d',
+                pool_offer.pk,
+            )
+
+
 @login_required
 @require_POST
 def add_pool_items(request, pool_id):
@@ -598,6 +655,11 @@ def add_pool_items(request, pool_id):
             )
             if created:
                 result['added'] += 1
+
+    # Push newly-added stock to under-stocked offers now instead of waiting for
+    # the periodic sweep (fixes: sold-out offer not restocked after keys added).
+    if result['added'] > 0 and pool.status == OfferPoolStatus.ACTIVE:
+        _launch_pool_replenish(pool.id)
 
     pool.refresh_from_db()
     result['total_pending'] = pool.pending_count
