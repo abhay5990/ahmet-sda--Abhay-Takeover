@@ -548,208 +548,110 @@
         </div>
     </div>
 
-    <!-- Linked Accounts (from Listing) -->
-    <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
-        <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
-            <h2 class="font-semibold text-gray-700">Linked Accounts ({{ linked_accounts|length }})</h2>
-        </div>
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">#</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Login</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Listed At</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Error</th>
-                    <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                {% for lop in linked_accounts %}
-                <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-2 text-xs text-gray-400">{{ forloop.counter }}</td>
-                    <td class="px-4 py-2 text-sm font-mono">{{ lop.owned_product.login }}</td>
-                    <td class="px-4 py-2 text-sm text-gray-500">{{ lop.owned_product.email|default:"—" }}</td>
-                    <td class="px-4 py-2 text-center">
-                        <span class="inline-flex px-2 py-0.5 text-xs rounded-full
-                            {% if lop.owned_product.status == 'listed' %}bg-emerald-100 text-emerald-700
-                            {% elif lop.owned_product.status == 'draft' %}bg-gray-100 text-gray-600
-                            {% elif lop.owned_product.status == 'sold' %}bg-blue-100 text-blue-700
-                            {% else %}bg-gray-100 text-gray-600{% endif %}">
-                            {{ lop.owned_product.get_status_display }}
-                        </span>
-                    </td>
-                    <td class="px-4 py-2 text-xs text-gray-400">{{ lop.created_at|date:"Y-m-d H:i" }}</td>
-                    <td class="px-4 py-2 text-xs text-red-500 max-w-xs truncate"></td>
-                    <td class="px-4 py-2 text-right whitespace-nowrap">
-                        <button type="button"
-                                onclick="removeLinkedKey({{ lop.listing_id }}, {{ lop.owned_product_id }}, '{{ lop.owned_product.login|escapejs }}', this)"
-                                class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                            <span>Delete Key</span>
-                        </button>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" class="px-4 py-8 text-center text-gray-400">No accounts linked to this listing.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Allocation Card -->
+    <!-- Marketplace Assignment Lanes -->
     <div class="bg-white rounded-lg shadow overflow-hidden mb-6" id="allocation-card">
-        <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
-            <h2 class="font-semibold text-gray-700">Per-Store Allocation</h2>
+        <div class="px-5 py-4 bg-gray-50 border-b flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h2 class="font-semibold text-gray-800">Accounts by Store & Marketplace</h2>
+                <p class="text-xs text-gray-500 mt-1">Every account has one destination lane. Shared stock stays separate until it is dispatched, so the same key cannot appear in two stores.</p>
+            </div>
             <button onclick="saveAllocation({{ pool.id }})"
                     class="px-3 py-1.5 bg-indigo-600 text-white rounded text-xs font-medium hover:bg-indigo-700"
-                    id="save-allocation-btn">Save</button>
+                    id="save-allocation-btn">Save targets</button>
         </div>
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Store</th>
-                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Marketplace</th>
-                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Target Count</th>
-                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Threshold</th>
-                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Current</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200" id="allocation-tbody">
-                {% for offer in active_pool_offers %}
-                <tr>
-                    <td class="px-4 py-2 text-sm font-mono">{% firstof offer.listing.store_listing_id offer.listing.title "—" %}</td>
-                    <td class="px-4 py-2 text-center text-sm text-gray-600">{{ offer.marketplace }}</td>
-                    <td class="px-4 py-2 text-center">
-                        <input type="number" min="1" value="{{ offer.target_count }}"
-                               data-listing-id="{{ offer.listing.id }}"
-                               data-field="target_count"
-                               class="alloc-input w-20 border rounded px-2 py-1 text-sm text-center">
-                    </td>
-                    <td class="px-4 py-2 text-center">
-                        <input type="number" min="1" value="{{ offer.threshold }}"
-                               data-listing-id="{{ offer.listing.id }}"
-                               data-field="threshold"
-                               class="alloc-input w-20 border rounded px-2 py-1 text-sm text-center">
-                    </td>
-                    <td class="px-4 py-2 text-center text-sm {% if offer.current_remote_count is not None and offer.current_remote_count < offer.threshold %}text-red-600 font-semibold{% else %}text-gray-700{% endif %}">
-                        {{ offer.current_remote_count|default:"—" }}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="px-4 py-6 text-center text-gray-400 text-sm">No offers linked to this pool.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <!-- Pool Accounts Table -->
-    <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
-        <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
-            <h2 class="font-semibold text-gray-700">Pool Accounts ({{ items|length }})</h2>
+        <div class="p-4 grid grid-cols-1 xl:grid-cols-2 gap-4">
+            {% for block in item_marketplace_blocks %}
+            <article class="border border-gray-200 rounded-xl overflow-hidden {% if block.sold_count %}ring-1 ring-orange-100{% endif %}">
+                <div class="px-4 py-3 border-b bg-gradient-to-r from-gray-50 to-white flex items-start justify-between gap-3">
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-800">{{ block.title }}</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">{{ block.marketplace|title }}{% if block.primary_offer %} · {{ block.primary_offer.store.name }}{% else %} · No offer linked yet{% endif %}</p>
+                    </div>
+                    {% if block.primary_offer %}
+                    <span class="inline-flex px-2 py-0.5 text-xs rounded-full {% if block.primary_offer.status == 'active' %}bg-emerald-100 text-emerald-700{% elif block.primary_offer.status == 'paused' %}bg-amber-100 text-amber-700{% else %}bg-gray-100 text-gray-600{% endif %}">{{ block.primary_offer.get_status_display }}</span>
+                    {% endif %}
+                </div>
+                <div class="px-4 py-3 grid grid-cols-4 gap-2 text-center text-xs border-b border-gray-100">
+                    <div><div class="font-semibold text-gray-800">{{ block.item_count }}</div><div class="text-gray-400">Assigned</div></div>
+                    <div><div class="font-semibold text-emerald-700">{{ block.listed_count }}</div><div class="text-gray-400">Live</div></div>
+                    <div><div class="font-semibold text-orange-700">{{ block.sold_count }}</div><div class="text-gray-400">Sold</div></div>
+                    <div><div class="font-semibold {% if block.failed_count %}text-red-600{% else %}text-gray-700{% endif %}">{{ block.failed_count }}</div><div class="text-gray-400">Issues</div></div>
+                </div>
+                {% if block.primary_offer %}
+                <div class="px-4 py-3 bg-indigo-50/40 border-b border-indigo-100 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                    <div><span class="block text-gray-400">Offer ID</span><span class="font-mono text-gray-700 break-all">{{ block.primary_offer.listing.store_listing_id }}</span></div>
+                    <label><span class="block text-gray-400">Target</span><input type="number" min="1" value="{{ block.primary_offer.target_count }}" data-listing-id="{{ block.primary_offer.listing.id }}" data-field="target_count" class="alloc-input w-full mt-0.5 border border-indigo-200 rounded px-1.5 py-1 text-center"></label>
+                    <label><span class="block text-gray-400">Threshold</span><input type="number" min="1" value="{{ block.primary_offer.threshold }}" data-listing-id="{{ block.primary_offer.listing.id }}" data-field="threshold" class="alloc-input w-full mt-0.5 border border-indigo-200 rounded px-1.5 py-1 text-center"></label>
+                    <div><span class="block text-gray-400">Remote</span><span class="font-semibold {% if block.primary_offer.current_remote_count is not None and block.primary_offer.current_remote_count < block.primary_offer.threshold %}text-red-600{% else %}text-gray-700{% endif %}">{{ block.primary_offer.current_remote_count|default:"—" }}</span></div>
+                </div>
+                {% endif %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-100 text-xs">
+                        <thead class="bg-white text-gray-400"><tr><th class="px-3 py-2 text-left font-medium">Account</th><th class="px-3 py-2 text-center font-medium">Status</th><th class="px-3 py-2 text-left font-medium">Listing / error</th><th class="px-3 py-2 text-right font-medium">Action</th></tr></thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for row in block.rows %}
+                            <tr class="hover:bg-gray-50" id="item-{{ row.item.id }}">
+                                <td class="px-3 py-2"><div class="font-mono text-gray-800">{{ row.item.owned_product.login }}</div><div class="text-gray-400 truncate max-w-[10rem]">{{ row.item.owned_product.email|default:"—" }}</div></td>
+                                <td class="px-3 py-2 text-center"><span class="inline-flex px-2 py-0.5 rounded-full {% if row.item.status == 'pushed' %}bg-emerald-100 text-emerald-700{% elif row.item.status == 'consumed' %}bg-orange-100 text-orange-700{% elif row.item.status == 'failed' %}bg-red-100 text-red-700{% elif row.item.status == 'pending' %}bg-blue-100 text-blue-700{% else %}bg-gray-100 text-gray-700{% endif %}">{{ row.item.get_status_display }}</span></td>
+                                <td class="px-3 py-2 text-gray-500"><div class="font-mono break-all">{{ row.offer_id|default:"—" }}</div>{% if row.item.error_message %}<div class="text-red-500 mt-0.5 truncate max-w-[12rem]" title="{{ row.item.error_message }}">{{ row.item.error_message }}</div>{% endif %}</td>
+                                <td class="px-3 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if row.item.status == 'reserved' %}<span class="text-amber-600">Working</span>{% elif row.item.pool_offer_id and row.item.status != 'removed' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', true, this)" class="text-red-600 hover:text-red-800 disabled:opacity-50">Delete</button>{% else %}<span class="text-gray-400">—</span>{% endif %}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="px-3 py-5 text-center text-gray-400">No accounts assigned to this store yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+            {% endfor %}
+            {% for block in additional_item_marketplace_blocks %}
+            <article class="border border-dashed border-gray-300 rounded-xl overflow-hidden">
+                <div class="px-4 py-3 bg-gray-50 border-b"><h3 class="text-sm font-semibold text-gray-700">{{ block.title }}</h3><p class="text-xs text-gray-500">Additional linked store</p></div>
+                <div class="px-4 py-3 text-xs text-gray-600">{{ block.item_count }} assigned account{{ block.item_count|pluralize }} · {{ block.sold_count }} sold</div>
+            </article>
+            {% endfor %}
         </div>
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">#</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Login</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Pushed At</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Error</th>
-                    <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                {% for item in items %}
-                <tr class="hover:bg-gray-50" id="item-{{ item.id }}">
-                    <td class="px-4 py-2 text-xs text-gray-400">{{ item.order }}</td>
-                    <td class="px-4 py-2 text-sm font-mono">{{ item.owned_product.login }}</td>
-                    <td class="px-4 py-2 text-sm text-gray-500">{{ item.owned_product.email|default:"—" }}</td>
-                    <td class="px-4 py-2 text-center">
-                        <span class="inline-flex px-2 py-0.5 text-xs rounded-full
-                            {% if item.status == 'pending' %}bg-blue-100 text-blue-700
-                            {% elif item.status == 'pushed' %}bg-emerald-100 text-emerald-700
-                            {% elif item.status == 'consumed' %}bg-orange-100 text-orange-700
-                            {% elif item.status == 'failed' %}bg-red-100 text-red-700
-                            {% else %}bg-gray-100 text-gray-700{% endif %}">
-                            {{ item.get_status_display }}
-                        </span>
-                    </td>
-                    <td class="px-4 py-2 text-xs text-gray-400">
-                        {% if item.pushed_at %}{{ item.pushed_at|date:"Y-m-d H:i" }}{% else %}—{% endif %}
-                    </td>
-                    <td class="px-4 py-2 text-xs text-red-500 max-w-xs truncate">{{ item.error_message|default:"" }}</td>
-                    <td class="px-4 py-2 text-right">
-                        <button onclick="openEditItem({{ item.id }}, '{{ item.owned_product.login|escapejs }}', '{{ item.owned_product.email|default_if_none:""|escapejs }}', '{{ item.status }}')"
-                                class="text-xs text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>
-                        {% if item.status == 'pending' and not item.pool_offer_id %}
-                        <button onclick="removeItem({{ pool.id }}, {{ item.id }}, '{{ item.status }}', false, this)"
-                                class="text-xs text-red-600 hover:text-red-800 disabled:opacity-50">Remove from Pool</button>
-                        {% elif item.status == 'reserved' %}
-                        <span class="text-xs text-amber-600" title="This key is being dispatched">In progress</span>
-                        {% elif item.pool_offer_id and item.status != 'removed' %}
-                        <button onclick="removeItem({{ pool.id }}, {{ item.id }}, '{{ item.status }}', true, this)"
-                                class="text-xs text-red-600 hover:text-red-800 disabled:opacity-50">Delete Key</button>
-                        {% else %}
-                        <span class="text-xs text-gray-400">—</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" class="px-4 py-8 text-center text-gray-400">No items in pool</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
 
-    {% if active_offers %}
-    <!-- Active Offers (PA clones) -->
+    <!-- Shared accounts still available to every marketplace -->
     <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
-        <div class="px-4 py-3 bg-gray-50 border-b">
-            <h2 class="font-semibold text-gray-700">Active Offers (PA Clones)</h2>
+        <div class="px-5 py-4 bg-sky-50 border-b flex flex-wrap justify-between gap-2">
+            <div><h2 class="font-semibold text-gray-800">Shared Pool Stock ({{ shared_item_rows|length }})</h2><p class="text-xs text-gray-500 mt-1">These accounts are not assigned to any store yet and can be dispatched to the next marketplace that needs stock.</p></div>
+            <span class="inline-flex self-start px-2 py-0.5 text-xs rounded-full bg-sky-100 text-sky-700">Unallocated</span>
         </div>
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Offer ID</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Credential</th>
-                    <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                {% for ao in active_offers %}
-                <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-2 text-sm font-mono">{{ ao.store_listing_id }}</td>
-                    <td class="px-4 py-2 text-sm">
-                        {% if ao.pool_item and ao.pool_item.owned_product %}
-                        {{ ao.pool_item.owned_product.login }}
-                        {% else %}—{% endif %}
-                    </td>
-                    <td class="px-4 py-2 text-center">
-                        <span class="inline-flex px-2 py-0.5 text-xs rounded-full
-                            {% if ao.status == 'active' %}bg-emerald-100 text-emerald-700
-                            {% elif ao.status == 'sold' %}bg-blue-100 text-blue-700
-                            {% else %}bg-gray-100 text-gray-700{% endif %}">
-                            {{ ao.get_status_display }}
-                        </span>
-                    </td>
-                    <td class="px-4 py-2 text-xs text-gray-400">{{ ao.created_at|date:"Y-m-d H:i" }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-50"><tr><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">#</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Login</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th><th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">State</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Detail</th><th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Action</th></tr></thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for row in shared_item_rows %}
+                    <tr class="hover:bg-gray-50" id="item-{{ row.item.id }}"><td class="px-4 py-2 text-xs text-gray-400">{{ row.item.order }}</td><td class="px-4 py-2 font-mono">{{ row.item.owned_product.login }}</td><td class="px-4 py-2 text-gray-500">{{ row.item.owned_product.email|default:"—" }}</td><td class="px-4 py-2 text-center"><span class="inline-flex px-2 py-0.5 text-xs rounded-full {% if row.item.status == 'pending' %}bg-blue-100 text-blue-700{% elif row.item.status == 'reserved' %}bg-amber-100 text-amber-700{% elif row.item.status == 'failed' %}bg-red-100 text-red-700{% else %}bg-gray-100 text-gray-700{% endif %}">{{ row.item.get_status_display }}</span></td><td class="px-4 py-2 text-xs text-red-500">{{ row.item.error_message|default:"Ready for assignment" }}</td><td class="px-4 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-xs text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if row.item.status == 'pending' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', false, this)" class="text-xs text-red-600 hover:text-red-800 disabled:opacity-50">Remove</button>{% else %}<span class="text-xs text-gray-400">—</span>{% endif %}</td></tr>
+                    {% empty %}
+                    <tr><td colspan="6" class="px-4 py-7 text-center text-gray-400">All available accounts have been assigned to a store.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-    {% endif %}
+
+    <!-- One unified sale history for the whole pool -->
+    <div class="bg-white rounded-lg shadow overflow-hidden mb-6" id="sold-across-stores">
+        <div class="px-5 py-4 bg-orange-50 border-b flex flex-wrap items-start justify-between gap-3">
+            <div><h2 class="font-semibold text-gray-800">Sold Across All Stores ({{ sold_item_history|length }})</h2><p class="text-xs text-gray-500 mt-1">Each sold account appears once and shows the exact marketplace/store that consumed it.</p></div>
+            <span class="inline-flex px-2 py-0.5 text-xs rounded-full bg-orange-100 text-orange-700">Cross-platform sale history</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-50"><tr><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Account</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Sold where</th><th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Marketplace</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Order / evidence</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Sold at</th></tr></thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for row in sold_item_history %}
+                    <tr class="hover:bg-orange-50/30"><td class="px-4 py-2"><div class="font-mono text-gray-800">{{ row.item.owned_product.login }}</div><div class="text-xs text-gray-400">{{ row.item.owned_product.email|default:"—" }}</div></td><td class="px-4 py-2 font-medium text-gray-700">{{ row.destination_title }}</td><td class="px-4 py-2 text-center"><span class="inline-flex px-2 py-0.5 text-xs rounded-full bg-indigo-50 text-indigo-700">{{ row.marketplace_display }}</span></td><td class="px-4 py-2">{% if row.order_id %}<div class="font-mono text-gray-800">Order #{{ row.order_id }}</div><div class="text-xs text-emerald-600">Exact order match</div>{% else %}<div class="text-gray-600">{{ row.sale_status_label }}</div><div class="text-xs text-gray-400">Order ID unavailable from this reconciliation.</div>{% endif %}</td><td class="px-4 py-2 text-xs text-gray-500">{% if row.sold_at %}{{ row.sold_at|date:"Y-m-d H:i" }}{% else %}—{% endif %}</td></tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">No account has been sold or reconciled from this pool yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     </div><!-- /ITEMS TAB -->
 

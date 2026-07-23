@@ -70,16 +70,19 @@ def _normalize_pool_store_name(name):
     return ''.join(character for character in (name or '').lower() if character.isalnum())
 
 
-def _slot_key_for_pool_offer(pool_offer):
-    """Return the canonical marketplace-slot key for a linked pool offer."""
-    provider = (pool_offer.marketplace or '').lower()
-    store_key = _normalize_pool_store_name(
-        getattr(pool_offer.store, 'name', ''),
-    )
+def _slot_key_for_store(provider, store):
+    """Return the canonical slot for a provider/store pair."""
+    provider = (provider or '').lower()
+    store_key = _normalize_pool_store_name(getattr(store, 'name', ''))
     for slot in _POOL_MARKETPLACE_SLOTS:
         if provider == slot['provider'] and store_key in slot['store_aliases']:
             return slot['key']
     return None
+
+
+def _slot_key_for_pool_offer(pool_offer):
+    """Return the canonical marketplace-slot key for a linked pool offer."""
+    return _slot_key_for_store(pool_offer.marketplace, pool_offer.store)
 
 
 def _pool_offer_priority(pool_offer):
@@ -228,6 +231,243 @@ def _build_pool_marketplace_blocks(pool_offers, items, active_offers, sale_event
         }, [pool_offer], is_additional=True))
 
     return marketplace_blocks, additional_blocks, unallocated_pending_items
+
+
+_MARKETPLACE_DISPLAY_NAMES = {
+    'eldorado': 'Eldorado',
+    'gameboost': 'GameBoost',
+    'playerauctions': 'PlayerAuctions',
+}
+
+
+def _build_pool_item_views(pool_offers, items, active_offers, sale_events):
+    """Build item-level marketplace assignments and one cross-store sale ledger.
+
+    Pool items are assigned to a specific ``PoolOffer`` once dispatch begins.
+    That relationship is the authoritative destination for every account.  A
+    PlayerAuctions clone sale has an exact active-offer/item/order association;
+    append marketplaces retain the destination but only provide a reconciled
+    removal signal, so their order IDs are deliberately not guessed.
+    """
+    slots_by_key = {slot['key']: slot for slot in _POOL_MARKETPLACE_SLOTS}
+    offers_by_id = {offer.pk: offer for offer in pool_offers}
+    rows_by_slot = {slot['key']: [] for slot in _POOL_MARKETPLACE_SLOTS}
+    unmatched_rows_by_offer = {}
+    shared_rows = []
+    all_rows = []
+    sold_history = []
+
+    sold_active_by_item_id = {}
+    for active_offer in active_offers:
+        if (
+            active_offer.status == OfferPoolActiveOfferStatus.SOLD
+            and active_offer.pool_item_id
+        ):
+            sold_active_by_item_id[active_offer.pool_item_id] = active_offer
+
+    sale_event_by_listing = {}
+    for sale_event in sale_events:
+        # Queries arrive newest first.  A sale event on a PA cloned listing is
+        # the only exact item/order link for the item-level ledger.
+        if sale_event.listing_id and sale_event.listing_id not in sale_event_by_listing:
+            sale_event_by_listing[sale_event.listing_id] = sale_event
+
+    for item in items:
+        pool_offer = getattr(item, 'pool_offer', None) or offers_by_id.get(
+            item.pool_offer_id,
+        )
+        reservation = getattr(item, 'reservation', None)
+        reservation_store = getattr(reservation, 'store', None)
+        reservation_marketplace = (
+            getattr(reservation_store, 'provider', '') if reservation_store else ''
+        )
+        slot_key = (
+            _slot_key_for_pool_offer(pool_offer) if pool_offer
+            else _slot_key_for_store(reservation_marketplace, reservation_store)
+            if reservation_store else None
+        )
+        slot = slots_by_key.get(slot_key)
+        active_offer = sold_active_by_item_id.get(item.pk)
+        sale_event = (
+            sale_event_by_listing.get(active_offer.listing_id)
+            if active_offer and active_offer.listing_id else None
+        )
+        is_sold_clone = bool(active_offer)
+        is_consumed = item.status == OfferPoolItemStatus.CONSUMED
+        is_sale_record = is_sold_clone or is_consumed
+
+        if slot:
+            destination_title = slot['title']
+            marketplace = slot['provider']
+        elif pool_offer:
+            store = pool_offer.store
+            marketplace = pool_offer.marketplace or ''
+            destination_title = (
+                f'{store.name} {_MARKETPLACE_DISPLAY_NAMES.get(marketplace, marketplace.title())}'
+                if store else f'Additional store {pool_offer.pk}'
+            )
+        elif reservation_store:
+            marketplace = reservation_marketplace
+            destination_title = (
+                f'{reservation_store.name} '
+                f'{_MARKETPLACE_DISPLAY_NAMES.get(marketplace, marketplace.title())}'
+            )
+        else:
+            marketplace = ''
+            destination_title = 'Shared pool stock'
+
+        listing = pool_offer.listing if pool_offer else None
+        row = {
+            'item': item,
+            'pool_offer': pool_offer,
+            'slot_key': slot_key,
+            'destination_title': destination_title,
+            'marketplace': marketplace,
+            'marketplace_display': _MARKETPLACE_DISPLAY_NAMES.get(
+                marketplace, marketplace.title(),
+            ) if marketplace else 'Shared',
+            'store_name': (
+                pool_offer.store.name if pool_offer and pool_offer.store
+                else reservation_store.name if reservation_store else '—'
+            ),
+            'offer_id': (
+                item.target_offer_id
+                or (listing.store_listing_id if listing else '')
+            ),
+            'is_shared': pool_offer is None and reservation_store is None,
+            'is_sold': is_sale_record,
+            'sale_status_label': (
+                'Order confirmed' if sale_event else (
+                    'Sold clone' if is_sold_clone else (
+                        'Remote reconciliation' if is_consumed else ''
+                    )
+                )
+            ),
+            'order_id': sale_event.order_id if sale_event else None,
+            'sold_at': (
+                active_offer.updated_at if active_offer else item.consumed_at
+            ) if is_sale_record else None,
+            'is_exact_order_match': bool(sale_event),
+        }
+        all_rows.append(row)
+        if is_sale_record:
+            sold_history.append(row)
+
+        if slot_key:
+            rows_by_slot[slot_key].append(row)
+        elif pool_offer:
+            unmatched_rows_by_offer.setdefault(pool_offer.pk, []).append(row)
+        elif reservation_store:
+            unmatched_rows_by_offer.setdefault(
+                f'reservation_{reservation_store.pk}', [],
+            ).append(row)
+        else:
+            shared_rows.append(row)
+
+    def make_item_block(slot, rows, *, primary_offer=None, is_additional=False):
+        return {
+            'key': slot['key'],
+            'title': slot['title'],
+            'marketplace': slot['provider'],
+            'primary_offer': primary_offer,
+            'rows': rows,
+            'item_count': len(rows),
+            'listed_count': sum(
+                1 for row in rows
+                if row['item'].status == OfferPoolItemStatus.PUSHED
+            ),
+            'processing_count': sum(
+                1 for row in rows
+                if row['item'].status in {
+                    OfferPoolItemStatus.RESERVED,
+                    OfferPoolItemStatus.QUEUED,
+                }
+            ),
+            'sold_count': sum(1 for row in rows if row['is_sold']),
+            'failed_count': sum(
+                1 for row in rows
+                if row['item'].status == OfferPoolItemStatus.FAILED
+            ),
+            'is_additional': is_additional,
+        }
+
+    offers_by_slot = {slot['key']: [] for slot in _POOL_MARKETPLACE_SLOTS}
+    unmatched_offers = []
+    for pool_offer in pool_offers:
+        slot_key = _slot_key_for_pool_offer(pool_offer)
+        if slot_key:
+            offers_by_slot[slot_key].append(pool_offer)
+        else:
+            unmatched_offers.append(pool_offer)
+
+    item_marketplace_blocks = []
+    for slot in _POOL_MARKETPLACE_SLOTS:
+        offers = sorted(offers_by_slot[slot['key']], key=_pool_offer_priority)
+        item_marketplace_blocks.append(make_item_block(
+            slot,
+            rows_by_slot[slot['key']],
+            primary_offer=offers[0] if offers else None,
+        ))
+
+    additional_item_blocks = []
+    for pool_offer in unmatched_offers:
+        store = pool_offer.store
+        marketplace = pool_offer.marketplace or 'other'
+        title = (
+            f'{store.name} {_MARKETPLACE_DISPLAY_NAMES.get(marketplace, marketplace.title())}'
+            if store else f'Additional store {pool_offer.pk}'
+        )
+        additional_item_blocks.append(make_item_block(
+            {
+                'key': f'additional_{pool_offer.pk}',
+                'title': title,
+                'provider': marketplace,
+            },
+            unmatched_rows_by_offer.get(pool_offer.pk, []),
+            primary_offer=pool_offer,
+            is_additional=True,
+        ))
+
+    reservation_blocks = {}
+    for item in items:
+        reservation = getattr(item, 'reservation', None)
+        store = getattr(reservation, 'store', None)
+        if not store:
+            continue
+        slot_key = _slot_key_for_store(store.provider, store)
+        if slot_key:
+            continue
+        key = f'reservation_{store.pk}'
+        if key not in unmatched_rows_by_offer:
+            continue
+        reservation_blocks.setdefault(key, {
+            'store': store,
+            'marketplace': store.provider,
+        })
+    for key, details in reservation_blocks.items():
+        store = details['store']
+        marketplace = details['marketplace']
+        additional_item_blocks.append(make_item_block(
+            {
+                'key': key,
+                'title': f'{store.name} {_MARKETPLACE_DISPLAY_NAMES.get(marketplace, marketplace.title())}',
+                'provider': marketplace,
+            },
+            unmatched_rows_by_offer[key],
+            is_additional=True,
+        ))
+
+    sold_history.sort(
+        key=lambda row: row['sold_at'] or row['item'].updated_at,
+        reverse=True,
+    )
+    return (
+        item_marketplace_blocks,
+        additional_item_blocks,
+        shared_rows,
+        sold_history,
+        all_rows,
+    )
 
 
 def _get_game_providers() -> dict[str, list[str]]:
@@ -627,7 +867,9 @@ def restock_pool_detail_page(request, pool_id):
         offer for offer in pool_offers if offer.status != 'detached'
     ]
     items = list(pool.items.select_related(
-        'owned_product', 'pool_offer',
+        'owned_product',
+        'pool_offer__listing__integration_account',
+        'reservation__store',
     ).order_by('order', 'created_at'))
     active_offers = list(
         OfferPoolActiveOffer.objects.filter(pool_offer__pool=pool)
@@ -644,6 +886,18 @@ def restock_pool_detail_page(request, pool_id):
         additional_marketplace_blocks,
         unallocated_pending_items,
     ) = _build_pool_marketplace_blocks(
+        pool_offers,
+        items,
+        active_offers,
+        sale_events,
+    )
+    (
+        item_marketplace_blocks,
+        additional_item_marketplace_blocks,
+        shared_item_rows,
+        sold_item_history,
+        pool_item_rows,
+    ) = _build_pool_item_views(
         pool_offers,
         items,
         active_offers,
@@ -682,4 +936,9 @@ def restock_pool_detail_page(request, pool_id):
         'marketplace_blocks': marketplace_blocks,
         'additional_marketplace_blocks': additional_marketplace_blocks,
         'unallocated_pending_items': unallocated_pending_items,
+        'item_marketplace_blocks': item_marketplace_blocks,
+        'additional_item_marketplace_blocks': additional_item_marketplace_blocks,
+        'shared_item_rows': shared_item_rows,
+        'sold_item_history': sold_item_history,
+        'pool_item_rows': pool_item_rows,
     })
