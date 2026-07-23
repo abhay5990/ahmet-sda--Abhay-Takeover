@@ -87,10 +87,15 @@ def notify_sale(
                 pool_offer.pk,
             )
 
-    # PA clone pools where the listing is an active offer
+    # PA clone pools where the listing is active.  A synchronized order is
+    # exact evidence that a clone previously marked DELISTED was sold, so
+    # include only that additional state when the notifier received an order.
+    active_offer_statuses = [OfferPoolActiveOfferStatus.ACTIVE]
+    if order_id is not None:
+        active_offer_statuses.append(OfferPoolActiveOfferStatus.DELISTED)
     active_offers = OfferPoolActiveOffer.objects.filter(
         listing_id=listing_id,
-        status=OfferPoolActiveOfferStatus.ACTIVE,
+        status__in=active_offer_statuses,
         pool_offer__isnull=False,
     ).select_related(
         'pool_offer', 'pool_offer__pool', 'pool_offer__listing',
@@ -176,7 +181,18 @@ def _record_sale_event(
             locked = OfferPoolActiveOffer.objects.select_for_update().get(
                 pk=active_offer.pk,
             )
-            if locked.status != OfferPoolActiveOfferStatus.ACTIVE:
+            # A proactive remote sweep can mark a PA clone DELISTED before the
+            # seller-order feed arrives.  A later order notification is exact
+            # evidence for that same local listing, so recover that one state
+            # as SOLD.  Never revive FAILED or already-SOLD clones.
+            can_recover_delisted_sale = (
+                locked.status == OfferPoolActiveOfferStatus.DELISTED
+                and order_id is not None
+            )
+            if (
+                locked.status != OfferPoolActiveOfferStatus.ACTIVE
+                and not can_recover_delisted_sale
+            ):
                 event.outcome = 'already_processed'
                 event.processed_at = timezone.now()
                 event.save(update_fields=['outcome', 'processed_at'])

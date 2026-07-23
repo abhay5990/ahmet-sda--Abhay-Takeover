@@ -14,6 +14,7 @@ from apps.posting.api.pool import _adopt_pa_source_listing
 from apps.posting.models import (
     OfferPool,
     OfferPoolActiveOffer,
+    OfferPoolActiveOfferStatus,
     OfferPoolItem,
     OfferPoolItemStatus,
     OfferPoolStatus,
@@ -189,6 +190,55 @@ class UnifiedPoolTestCase(TestCase):
         pool_offer.refresh_from_db()
         self.assertEqual(pool_offer.current_remote_count, 4)
         self.assertEqual(PoolSaleEvent.objects.count(), 1)
+
+    def test_verified_pa_order_recovers_delisted_clone_as_sold(self):
+        pool = self.make_pool()
+        listing = self.make_listing(
+            account=self.playerauctions,
+            remote_id='pa-delisted-clone',
+        )
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=1,
+            threshold=1,
+            max_concurrent=1,
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('pa-delayed-sale@example.test'),
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='absent',
+        )
+        active_offer = OfferPoolActiveOffer.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            listing=listing,
+            pool_item=item,
+            store_listing_id='pa-delisted-clone',
+            status=OfferPoolActiveOfferStatus.DELISTED,
+        )
+
+        with patch(
+            'apps.posting.services.pool.checker.replenish_pool_offer',
+        ):
+            notify_sale(
+                listing.pk,
+                event_key='playerauctions:pa-test:verified-delayed-order',
+                order_id=91234,
+            )
+
+        active_offer.refresh_from_db()
+        event = PoolSaleEvent.objects.get(
+            event_key='playerauctions:pa-test:verified-delayed-order:active-offer:'
+            f'{active_offer.pk}',
+        )
+        self.assertEqual(active_offer.status, OfferPoolActiveOfferStatus.SOLD)
+        self.assertEqual(event.order_id, 91234)
+        self.assertEqual(event.pool_item_id, item.pk)
+        self.assertEqual(event.outcome, 'processed')
 
     def test_pa_source_listing_is_adopted_as_first_active_offer(self):
         pool = self.make_pool()
