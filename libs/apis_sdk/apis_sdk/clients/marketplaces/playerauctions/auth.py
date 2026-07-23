@@ -254,7 +254,13 @@ class PlayerAuctionsAuth(BaseAuthProvider):
             return False
 
         self._access_token = result.data.access_token
-        # Relay returns only the JWT token — cookie/user_agent handled by relay internally
+        # Adopt the relay's fresh cookie so direct order-api calls send a
+        # matching Bearer + Cookie (a refreshed JWT paired with a stale cookie
+        # is rejected with 401). When the relay omits a cookie, keep the
+        # existing one rather than clearing it.
+        relay_cookie = getattr(result.data, "cookie", "") or ""
+        if relay_cookie:
+            self._cookie = relay_cookie
         self._expires_at = float("inf")
         self._refresh_failed = False
         self._last_refresh_error = None
