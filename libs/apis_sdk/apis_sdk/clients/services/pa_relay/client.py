@@ -36,6 +36,7 @@ class PaRelayTokenResult:
 
     access_token: str
     cached: bool
+    cookie: str = ""
 
 
 class PaRelayClient:
@@ -144,6 +145,7 @@ class PaRelayClient:
         result = PaRelayTokenResult(
             access_token=token,
             cached=bool(body.get("cached", False)),
+            cookie=str(body.get("cookie", "") or ""),
         )
         self._logger.info(f"PA Relay token fetched (cached={result.cached}, store={store})")
         return ApiResult.success(result, status_code=response.status_code)
