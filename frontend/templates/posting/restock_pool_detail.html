@@ -1628,7 +1628,12 @@ function poolDetail() {
                 });
                 const data = await resp.json().catch(() => ({}));
                 if (resp.ok) {
-                    d.configResult = { ok: true, msg: 'Config saved' };
+                    d.configResult = {
+                        ok: true,
+                        msg: data.replenish_queued
+                            ? 'Config saved — additional stock is now being added to this offer'
+                            : 'Config saved',
+                    };
                 } else {
                     const err = typeof data.error === 'string' ? data.error : JSON.stringify(data.error || data);
                     d.configResult = { ok: false, msg: 'Error: ' + err };

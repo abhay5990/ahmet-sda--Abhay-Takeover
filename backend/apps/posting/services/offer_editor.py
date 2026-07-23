@@ -635,13 +635,10 @@ def _update_listing_db(listing: Listing, changes: dict[str, Any], extra_fields: 
         listing.price = changes['price']
         update_fields.append('price')
 
-    # Merge changes into raw_data
-    if listing.raw_data is None:
-        listing.raw_data = {}
-    raw = dict(listing.raw_data)
-    for key in ('title', 'description', 'price'):
-        if key in changes:
-            raw[key] = _json_safe_change_value(changes[key])
+    # Merge changes into raw_data.  PlayerAuctions target increases rebuild from
+    # the nested create payload, so the visible staff edit must update that
+    # authoritative template as well as the flat display fields.
+    raw = _raw_data_with_changes(listing.raw_data, changes)
     listing.raw_data = raw
     if 'raw_data' not in update_fields:
         update_fields.append('raw_data')
@@ -747,10 +744,42 @@ def _ao_login(ao: OfferPoolActiveOffer) -> str:
 
 
 def _raw_data_with_changes(raw_data: dict | None, changes: dict[str, Any]) -> dict:
+    """Persist display edits and keep a PA create template in sync."""
     raw = dict(raw_data or {})
     for key in ('title', 'description', 'price'):
         if key in changes:
             raw[key] = _json_safe_change_value(changes[key])
+
+    payload = raw.get('payload')
+    details = raw.get('details')
+    is_pa_payload = isinstance(payload, dict) and (
+        'autoDelivery' in payload or 'gameId' in payload
+    )
+    is_pa_details = isinstance(details, dict) and (
+        'autoDelivery' in details or 'gameId' in details
+    )
+
+    if is_pa_payload:
+        payload = dict(payload)
+        if 'title' in changes:
+            payload['title'] = changes['title']
+        if 'description' in changes:
+            payload['offerDesc'] = changes['description']
+            payload['description'] = changes['description']
+        if 'price' in changes:
+            payload['price'] = _json_safe_change_value(changes['price'])
+        raw['payload'] = payload
+
+    if is_pa_details:
+        details = dict(details)
+        if 'title' in changes:
+            details['title'] = changes['title']
+        if 'description' in changes:
+            details['offerDesc'] = changes['description']
+            details['description'] = changes['description']
+        if 'price' in changes:
+            details['price'] = _json_safe_change_value(changes['price'])
+        raw['details'] = details
     return raw
 
 

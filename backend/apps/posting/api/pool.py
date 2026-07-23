@@ -485,6 +485,7 @@ def update_pool_offer(request, pool_id, offer_id):
         ).get(pk=offer_id, pool_id=pool_id)
     except PoolOffer.DoesNotExist:
         return JsonResponse({'error': 'Pool offer not found'}, status=404)
+    previous_target = pool_offer.target_count
     try:
         body = json.loads(request.body)
         if 'target_count' in body:
@@ -504,7 +505,20 @@ def update_pool_offer(request, pool_id, offer_id):
         return JsonResponse({'error': 'Invalid config payload'}, status=400)
     except ValidationError as exc:
         return JsonResponse({'error': exc.message_dict}, status=400)
-    return JsonResponse({'pool_offer': _pool_offer_to_dict(pool_offer)})
+
+    target_increased = pool_offer.target_count > previous_target
+    replenish_queued = (
+        target_increased
+        and pool_offer.pool.status == OfferPoolStatus.ACTIVE
+        and pool_offer.status == PoolOfferStatus.ACTIVE
+    )
+    if replenish_queued:
+        _launch_pool_offer_replenish(pool_offer.pk)
+    return JsonResponse({
+        'pool_offer': _pool_offer_to_dict(pool_offer),
+        'target_increased': target_increased,
+        'replenish_queued': replenish_queued,
+    })
 
 
 @login_required
@@ -533,6 +547,39 @@ def unlink_pool_offer(request, pool_id, offer_id):
 
 
 # ── Pool Item Management ─────────────────────────────────────────
+
+
+def _launch_pool_offer_replenish(pool_offer_id: int) -> None:
+    """Best-effort immediate replenish of just one offer after its target rises."""
+    import threading
+
+    def _run() -> None:
+        from django.db import close_old_connections
+        from apps.posting.services.pool.checker import _check_and_replenish
+
+        close_old_connections()
+        try:
+            pool_offer = PoolOffer.objects.select_related('pool').get(pk=pool_offer_id)
+            if (
+                pool_offer.pool.status == OfferPoolStatus.ACTIVE
+                and pool_offer.status == PoolOfferStatus.ACTIVE
+            ):
+                _check_and_replenish(pool_offer, force=True)
+        except PoolOffer.DoesNotExist:
+            return
+        except Exception:
+            logger.exception(
+                'auto-replenish after target increase failed for pool_offer %d',
+                pool_offer_id,
+            )
+        finally:
+            close_old_connections()
+
+    threading.Thread(
+        target=_run,
+        daemon=True,
+        name=f'pool-target-replenish-{pool_offer_id}',
+    ).start()
 
 
 def _launch_pool_replenish(pool_id: int) -> None:

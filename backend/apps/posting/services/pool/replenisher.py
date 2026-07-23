@@ -43,6 +43,10 @@ from apps.posting.services.stock.pa_relay_poster import (
     pa_fake_owner_info,
     pa_sanitize,
 )
+from apps.posting.services.stock.pa_tracking import (
+    append_tracking_code_for_code,
+    pool_clone_tracking_code,
+)
 from core.marketplace.normalizers import normalize_offer_response
 from core.marketplace.payload_extractor import extract_create_payload
 
@@ -74,6 +78,41 @@ def _ensure_pa_offer_description(payload: dict[str, Any]) -> dict[str, Any]:
     """Return a PA direct payload with the platform-required description field."""
     if not str(payload.get('offerDesc') or '').strip():
         payload['offerDesc'] = _PA_SOURCE_REBUILD_DESCRIPTION
+    return payload
+
+
+def _apply_pa_target_template(pool: OfferPool, payload: dict[str, Any]) -> dict[str, Any]:
+    """Overlay the selected target's visible title and description on a PA clone.
+
+    Target increases must not regenerate generic marketing text.  The current
+    target listing is the source of truth; only the per-clone tracking suffix is
+    changed immediately before posting.
+    """
+    listing = pool.listing
+    raw = getattr(listing, 'raw_data', None) or {}
+    stored_payload = raw.get('payload') if isinstance(raw.get('payload'), dict) else {}
+    details = raw.get('details') if isinstance(raw.get('details'), dict) else {}
+
+    title = str(
+        getattr(listing, 'title', '')
+        or raw.get('title')
+        or stored_payload.get('title')
+        or details.get('title')
+        or ''
+    ).strip()
+    if title:
+        payload['title'] = title
+
+    description = str(
+        stored_payload.get('offerDesc')
+        or stored_payload.get('description')
+        or raw.get('description')
+        or details.get('offerDesc')
+        or details.get('description')
+        or ''
+    ).strip()
+    if description:
+        payload['offerDesc'] = description
     return payload
 
 
@@ -949,6 +988,7 @@ def _rebuild_pa_offer_from_stock(
     payload = dict(build_result.payload or {})
     if not payload:
         raise ValueError('PlayerAuctions source rebuild returned an empty JSON payload')
+    _apply_pa_target_template(pool, payload)
     if pool.listing.price is not None:
         payload['price'] = round(float(pool.listing.price), 2)
     _ensure_pa_offer_description(payload)
@@ -972,6 +1012,7 @@ def _clone_pa_offer(
 ) -> int:
     """Create a single PA clone offer with new credentials."""
     payload = dict(original_payload)
+    _apply_pa_target_template(pool, payload)
 
     # Replace credentials with platform-aware format
     product = item.owned_product
@@ -1000,6 +1041,17 @@ def _post_pa_excel_row(
     raw_payload: dict[str, Any] | None = None,
 ) -> int:
     """Post one prepared PA bulk row and atomically persist its pool clone."""
+    tracking_code = pool_clone_tracking_code(pool.aggregate, item, item.claim_token)
+    title_key = 'Title' if 'Title' in excel_row or 'title' not in excel_row else 'title'
+    excel_row = dict(excel_row)
+    excel_row[title_key] = append_tracking_code_for_code(
+        excel_row.get(title_key, '') or pool.listing.title,
+        tracking_code,
+    )
+    if raw_payload is not None:
+        raw_payload = dict(raw_payload)
+        raw_payload['title'] = excel_row[title_key]
+
     store_credentials = (
         getattr(pool.listing.integration_account.credential, 'credentials', None) or {}
         if getattr(pool.listing.integration_account, 'credential', None)

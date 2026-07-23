@@ -119,3 +119,90 @@ class PlayerAuctionsPayloadTrackingTests(SimpleTestCase):
             ),
             "/posting/api/pools/1/items/2/recover-unsold/",
         )
+
+
+class PlayerAuctionsTargetIncreaseTests(SimpleTestCase):
+    def test_pool_clone_code_is_unique_per_listing_attempt_and_replaces_old_code(self):
+        from apps.posting.services.stock.pa_tracking import (
+            append_tracking_code_for_code,
+            extract_tracking_code,
+            pool_clone_tracking_code,
+        )
+
+        pool = SimpleNamespace(pk=12)
+        first_item = SimpleNamespace(pk=31)
+        second_item = SimpleNamespace(pk=32)
+        first_code = pool_clone_tracking_code(pool, first_item, "a1b2c3d4-0000-0000-0000-000000000000")
+        second_code = pool_clone_tracking_code(pool, second_item, "deadbeef-0000-0000-0000-000000000000")
+
+        self.assertNotEqual(first_code, second_code)
+        self.assertEqual(extract_tracking_code(f"[{first_code}]"), first_code)
+        self.assertEqual(
+            append_tracking_code_for_code(
+                "GTA 5 Online-PC - Steam - Enhanced [PA-J7-I41]",
+                first_code,
+            ),
+            f"GTA 5 Online-PC - Steam - Enhanced [{first_code}]",
+        )
+
+    def test_target_template_keeps_existing_title_and_description_pattern(self):
+        from apps.posting.services.pool.replenisher import _apply_pa_target_template
+
+        pool = SimpleNamespace(
+            listing=SimpleNamespace(
+                title="GTA 5 Online-PC - Steam - Enhanced [PA-J7-I41]",
+                raw_data={
+                    "description": "Generic fallback description that must not replace the target pattern.",
+                    "payload": {
+                        "title": "Old generated title",
+                        "offerDesc": "Existing customer-facing description pattern.",
+                    },
+                },
+            ),
+        )
+        payload = {
+            "title": "Generic rebuilt title",
+            "offerDesc": "Generic rebuilt description",
+        }
+
+        result = _apply_pa_target_template(pool, payload)
+
+        self.assertEqual(
+            result["title"],
+            "GTA 5 Online-PC - Steam - Enhanced [PA-J7-I41]",
+        )
+        self.assertEqual(
+            result["offerDesc"],
+            "Existing customer-facing description pattern.",
+        )
+
+    def test_pa_staff_edit_updates_the_nested_future_clone_template(self):
+        from apps.posting.services.offer_editor import _raw_data_with_changes
+
+        raw = {
+            "payload": {
+                "gameId": 123,
+                "autoDelivery": {},
+                "title": "Old target pattern",
+                "offerDesc": "Old target description",
+            },
+            "details": {
+                "gameId": 123,
+                "autoDelivery": {},
+                "title": "Old target pattern",
+                "offerDesc": "Old target description",
+            },
+        }
+
+        result = _raw_data_with_changes(
+            raw,
+            {
+                "title": "Established target pattern",
+                "description": "Established target description",
+            },
+        )
+
+        self.assertEqual(result["payload"]["title"], "Established target pattern")
+        self.assertEqual(result["payload"]["offerDesc"], "Established target description")
+        self.assertEqual(result["details"]["title"], "Established target pattern")
+        self.assertEqual(result["details"]["offerDesc"], "Established target description")

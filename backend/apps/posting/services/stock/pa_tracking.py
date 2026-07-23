@@ -11,7 +11,10 @@ import re
 from typing import Any
 
 PA_TITLE_MAX_LENGTH = 150
-PA_TRACKING_CODE_RE = re.compile(r"\[PA-J\d+-I\d+\]", re.IGNORECASE)
+PA_TRACKING_CODE_RE = re.compile(
+    r"\[PA-(?:J\d+-I\d+|P\d+-K\d+-A[0-9A-F]{8})\]",
+    re.IGNORECASE,
+)
 
 
 def tracking_code_for_item(item: Any) -> str:
@@ -28,21 +31,52 @@ def tracking_code_for_item(item: Any) -> str:
     return f"PA-J{job_id}-I{item_id}"
 
 
-def append_tracking_code(title: str, item: Any, *, max_length: int = PA_TITLE_MAX_LENGTH) -> str:
-    """Append the item's PlayerAuctions tracking code within the title limit.
+def append_tracking_code_for_code(
+    title: str,
+    code: str,
+    *,
+    max_length: int = PA_TITLE_MAX_LENGTH,
+) -> str:
+    """Append one validated PlayerAuctions code while retaining the title pattern.
 
-    Any previous generated code is replaced.  This prevents a relisted account
-    from carrying an old reference while keeping ordinary title text intact.
+    The function removes only an earlier generated code, so a selected target's
+    visible wording stays unchanged when a new clone is created.
     """
-    code = tracking_code_for_item(item)
-    suffix = f" [{code}]"
+    normalized_code = str(code or "").strip().upper()
+    if not normalized_code.startswith("PA-"):
+        raise ValueError("PlayerAuctions tracking code must start with PA-")
+    suffix = f" [{normalized_code}]"
     if len(suffix) >= max_length:
         raise ValueError("PlayerAuctions title limit is too short for a tracking code")
 
     base = PA_TRACKING_CODE_RE.sub(" ", str(title or ""))
     base = " ".join(base.split())
     base = base[: max_length - len(suffix)].rstrip()
-    return f"{base}{suffix}" if base else f"[{code}]"
+    return f"{base}{suffix}" if base else f"[{normalized_code}]"
+
+
+def pool_clone_tracking_code(pool: Any, item: Any, attempt_token: Any) -> str:
+    """Return a unique, retry-stable code for one PlayerAuctions pool clone.
+
+    A pool item may be returned to stock and later relisted.  Its persisted
+    attempt token makes that later listing distinct without exposing credentials
+    in the marketplace title.
+    """
+    pool_id = getattr(pool, "pk", None) or getattr(pool, "id", None)
+    item_id = getattr(item, "pk", None) or getattr(item, "id", None)
+    token = str(attempt_token or "").replace("-", "").upper()[:8]
+    if not pool_id or not item_id or len(token) != 8:
+        raise ValueError("PlayerAuctions pool tracking code requires pool, item, and attempt token")
+    return f"PA-P{pool_id}-K{item_id}-A{token}"
+
+
+def append_tracking_code(title: str, item: Any, *, max_length: int = PA_TITLE_MAX_LENGTH) -> str:
+    """Append the posting item's durable PlayerAuctions code within the title limit."""
+    return append_tracking_code_for_code(
+        title,
+        tracking_code_for_item(item),
+        max_length=max_length,
+    )
 
 
 def extract_tracking_code(*values: Any) -> str:
