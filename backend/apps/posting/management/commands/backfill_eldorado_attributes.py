@@ -57,6 +57,7 @@ from apps.listings.models import Listing
 from apps.posting.pipeline import adapter
 from apps.posting.services.shared.pricing import STOCK_PRICING_BASELINE
 from apps.posting.services.variant_context import build_variant_context
+from apps.posting.services.variant_routing import VariantRouter
 from payload_pipeline.core.contracts import ListingKind
 
 _STATUS_MAP = {
@@ -179,20 +180,22 @@ class Command(BaseCommand):
             ))
             return "skip"
 
-        payload = self._rebuild(lst, raw, source_key, kind)
-        if payload is None:
+        rebuilt = self._rebuild(lst, raw, source_key, kind)
+        if rebuilt is None:
             return "fail"
+        payload, new_variant = rebuilt
 
         new_ag = payload.get("augmentedGame", {})
         new_attrs = new_ag.get("offerAttributes") or []
         old_attrs = self._current_attrs(lst)
+        needs_attr_correction = bool(new_attrs) and self._norm(old_attrs) != self._norm(new_attrs)
+        needs_variant_correction = bool(new_variant) and new_variant != (lst.variant or "")
 
-        # Idempotency: if the offer already carries exactly these attributes,
-        # there's nothing to do. Skip BEFORE probing/relisting so re-runs don't
-        # needlessly recreate (and reset the age of) already-updated offers.
-        if new_attrs and self._norm(old_attrs) == self._norm(new_attrs):
+        # Idempotency: skip before probing/relisting only when both the
+        # marketplace attributes and canonical platform variant already match.
+        if not needs_attr_correction and not needs_variant_correction:
             self.stdout.write(
-                f"#{lst.id} offer={lst.store_listing_id}: attributes already up to date — skip"
+                f"#{lst.id} offer={lst.store_listing_id}: attributes and variant already up to date — skip"
             )
             # No marketplace call was made — signal the caller to skip the throttle.
             return "uptodate"
@@ -204,13 +207,16 @@ class Command(BaseCommand):
         remote = {True: "yes", False: "GONE(404)", None: "unknown"}[exists]
 
         self.stdout.write(
-            f"#{lst.id} offer={lst.store_listing_id} variant={lst.variant} remote={remote}\n"
+            f"#{lst.id} offer={lst.store_listing_id} remote={remote}\n"
+            f"  VARIANT: {lst.variant or '(none)'} → {new_variant or '(none)'}\n"
             f"  OLD: {self._fmt(old_attrs)}\n"
             f"  NEW: {self._fmt(new_attrs)}"
         )
 
-        if not new_attrs:
-            self.stderr.write(self.style.WARNING(f"#{lst.id}: rebuild produced no attributes — skip"))
+        if not new_attrs and not needs_variant_correction:
+            self.stderr.write(self.style.WARNING(
+                f"#{lst.id}: rebuild produced no attributes or variant change — skip"
+            ))
             return "skip"
 
         # Definitively gone on remote → never recreate. Self-heal the DB instead.
@@ -232,9 +238,12 @@ class Command(BaseCommand):
         if dry:
             return "ok"
 
-        if mode == "put":
+        # An Eldorado trade environment and local listing variant are immutable
+        # after creation, so a platform correction must always take the relist
+        # path even when a caller selected diagnostic PUT mode.
+        if mode == "put" and not needs_variant_correction:
             return self._put(lst, new_ag)
-        return self._relist(lst, new_ag)
+        return self._relist(lst, new_ag, new_variant)
 
     def _source(self, lst: Listing):
         """Return (raw_data, source_key, ListingKind) for *lst*, or (None, ..) if missing."""
@@ -261,14 +270,19 @@ class Command(BaseCommand):
         key = (dp.source_account.provider if dp.source_account else None) or "lzt"
         return raw, key, ListingKind.DROPSHIPPING
 
-    def _rebuild(self, lst: Listing, raw: dict, source_key: str, kind) -> dict | None:
-        """Re-run the payload pipeline; returns the freshly built Eldorado payload."""
+    def _rebuild(self, lst: Listing, raw: dict, source_key: str, kind) -> tuple[dict, str] | None:
+        """Re-run the payload pipeline with the account's canonical source platform."""
         pr = adapter.prepare(game_slug=lst.game.slug, sources={source_key: raw}, kind=kind, disable_media=True)
         if not pr.success:
             self.stderr.write(self.style.ERROR(f"#{lst.id}: prepare failed: {pr.error}"))
             return None
 
         vctx = build_variant_context(store=lst.integration_account, game=lst.game, marketplace="eldorado")
+        source_platform = str(getattr(pr.prepared.subject, "main_platform", "") or "").strip()
+        canonical_variant = (
+            VariantRouter(vctx).select_fixed("platform", source_platform)
+            if source_platform else (lst.variant or "")
+        )
         br = adapter.build(
             prepared=pr.prepared,
             marketplace="eldorado",
@@ -276,19 +290,23 @@ class Command(BaseCommand):
             store=lst.integration_account,
             game=lst.game,
             kind=kind,
-            variant_slug=lst.variant or "",
+            variant_slug=canonical_variant,
             variant_context=vctx,
         )
         if not br.success:
             self.stderr.write(self.style.ERROR(f"#{lst.id}: build failed: {br.error}"))
             return None
-        return br.payload
+        return br.payload, canonical_variant
 
-    def _relist(self, lst: Listing, new_ag: dict) -> str:
-        """Delete + recreate, swapping in the rebuilt augmentedGame (new attributes)."""
+    def _relist(self, lst: Listing, new_ag: dict, new_variant: str) -> str:
+        """Delete + recreate with rebuilt Eldorado data and canonical variant."""
         from apps.posting.services.relist import relist_listing
 
-        result = relist_listing(lst, augmented_game_override=new_ag)
+        result = relist_listing(
+            lst,
+            augmented_game_override=new_ag,
+            variant_override=new_variant or None,
+        )
         if result.ok:
             new = result.new_listing
             self.stdout.write(self.style.SUCCESS(

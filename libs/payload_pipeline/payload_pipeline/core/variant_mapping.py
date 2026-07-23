@@ -25,6 +25,17 @@ from __future__ import annotations
 from typing import Any
 
 
+def _normalise_lookup_key(value: str | None) -> str:
+    """Return a punctuation-insensitive identity for source platform aliases.
+
+    Marketplace records can use human labels such as ``PC - Enhanced`` while
+    source feeds use canonical slugs such as ``pc-enhanced``. Exact and
+    case-insensitive matching remain preferred; this is a final compatibility
+    fallback for the same platform identity.
+    """
+    return ''.join(char for char in str(value or '').lower() if char.isalnum())
+
+
 def _lookup(
     variant_ctx: dict[str, Any] | None,
     variant_type: str,
@@ -69,6 +80,19 @@ def _lookup(
             val = v.get(field)
             if val and str(val).lower() == key_lower:
                 return v
+
+    # 4. Punctuation-insensitive identity. This reconciles a source slug such
+    # as ``pc-enhanced`` with the configured human label ``PC - Enhanced``.
+    normalized_key = _normalise_lookup_key(key)
+    if normalized_key:
+        for source_key, entry in type_map.items():
+            if _normalise_lookup_key(source_key) == normalized_key:
+                return entry
+            if not isinstance(entry, dict):
+                continue
+            for field in ('slug', 'source_key'):
+                if _normalise_lookup_key(entry.get(field)) == normalized_key:
+                    return entry
 
     return None
 

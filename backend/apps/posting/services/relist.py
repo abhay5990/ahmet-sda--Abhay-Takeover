@@ -37,6 +37,7 @@ def relist_listing(
     listing: Listing,
     *,
     augmented_game_override: dict | None = None,
+    variant_override: str | None = None,
 ) -> RelistResult:
     """Delete *listing* from its marketplace and re-create it.
 
@@ -53,6 +54,10 @@ def relist_listing(
     images and credentials.  Eldorado offers are immutable after creation
     (the update endpoint rejects PUT/PATCH/POST with 405), so attribute changes
     must go through delete + recreate.
+
+    ``variant_override``: canonical replacement for a stale persisted variant.
+    The override is stored with the newly-created listing so database routing
+    matches the corrected marketplace payload.
 
     Returns a ``RelistResult`` with the new ``Listing`` on success.
     """
@@ -153,6 +158,7 @@ def relist_listing(
         payload,
         client=client,
         proxy_group=proxy_group,
+        variant_override=variant_override,
     )
 
     logger.info(
@@ -321,6 +327,7 @@ def _replace_in_db(
     *,
     client=None,
     proxy_group=None,
+    variant_override: str | None = None,
 ) -> Listing:
     """Atomically replace old listing with a new one, transfer links and pools."""
     with transaction.atomic():
@@ -355,7 +362,7 @@ def _replace_in_db(
             game=old_listing.game,
             store_listing_id=new_offer_id,
             product_category=old_listing.product_category,
-            variant=old_listing.variant,
+            variant=(variant_override if variant_override is not None else old_listing.variant),
             status=ListingStatus.LISTED,
             title=old_listing.title,
             price=old_listing.price,

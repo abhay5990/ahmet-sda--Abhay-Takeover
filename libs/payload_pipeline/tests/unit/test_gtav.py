@@ -440,6 +440,33 @@ class TestGtavPipeline:
         assert "Steam ID:" in secret or "Login:" in secret  # depending on raw_data
         assert "Backup Codes:" in secret
 
+    def test_eldorado_raw_enhanced_slug_uses_enhanced_environment(self, load_fixture):
+        """A raw source slug must resolve through the human-readable mapping."""
+        sources = {"lzt": load_fixture("lzt_gtav.json")}
+        pipeline = PayloadPipeline(registry=build_default_registry())
+        request = PipelineRequest(
+            game="grand-theft-auto-5",
+            category="account",
+            kind="stock",
+            sources=sources,
+            context={ctx.G2G_SELLER_ID: "1000959019", ctx.DISABLE_MEDIA: True},
+        )
+        prepared_result = pipeline.prepare_once(request)
+        assert prepared_result.success, f"prepare_once failed: {prepared_result.error}"
+        prepared = replace(
+            prepared_result.prepared,
+            subject=replace(prepared_result.prepared.subject, main_platform="pc-enhanced"),
+        )
+
+        result = pipeline.build(prepared, BuildContext(
+            kind="stock",
+            marketplace="eldorado",
+            variant_context=gtav_eldorado(),
+        ))
+
+        assert result.success
+        assert result.payload["augmentedGame"]["tradeEnvironmentId"] == "5"
+
     def test_gameboost_payload_shape(self, load_fixture):
         sources = {"lzt": load_fixture("lzt_gtav.json")}
         pipeline = PayloadPipeline(registry=build_default_registry())

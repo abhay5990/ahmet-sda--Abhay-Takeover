@@ -12,6 +12,12 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+
+def _normalise_variant_key(value: str | None) -> str:
+    """Return a punctuation-insensitive identity for platform aliases."""
+    return ''.join(char for char in str(value or '').lower() if char.isalnum())
+
+
 # Default limits when no GameVariantLimit exists for a variant.
 DEFAULT_MAX_OFFERS = 300
 DEFAULT_MAX_OFFERS_REGION = 200
@@ -160,6 +166,17 @@ class VariantRouter:
                 return v.get('slug', source_key)
             if str(v.get('slug') or '').lower() == key_lower:
                 return v.get('slug', source_key)
+
+        # 3. Punctuation-insensitive compatibility fallback. Source feeds use
+        # canonical values such as ``pc-enhanced`` while configured source keys
+        # can be human labels such as ``PC - Enhanced``.
+        normalized_key = _normalise_variant_key(source_key)
+        if normalized_key:
+            for key, entry in type_ctx.items():
+                if _normalise_variant_key(key) == normalized_key:
+                    return entry.get('slug', source_key)
+                if _normalise_variant_key(entry.get('slug')) == normalized_key:
+                    return entry.get('slug', source_key)
 
         return source_key
 
