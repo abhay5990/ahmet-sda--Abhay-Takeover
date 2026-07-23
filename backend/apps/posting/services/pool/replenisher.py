@@ -158,6 +158,12 @@ def _replenish_append(pool: OfferPool, marketplace: str) -> int:
     current_count = pool.current_remote_count or 0
     need = pool.target_count - current_count
     if need <= 0:
+        # No append needed, but a GameBoost offer that sold out and reverted to
+        # draft (then was restocked to target) would otherwise stay drafted
+        # forever, since publish normally only runs after an append. Ensure a
+        # drafted-but-stocked offer is (re)published.
+        if marketplace == 'gameboost' and current_count > 0:
+            _ensure_gameboost_published(pool)
         return 0
 
     store = pool.store
@@ -524,6 +530,39 @@ def _gameboost_add_credentials(
     if pushed > 0:
         _publish_gameboost_offer(client, offer_id, pool, proxy_group)
     return pushed
+
+
+def _ensure_gameboost_published(pool: OfferPool) -> None:
+    """Publish a GameBoost offer that has stock but is still in draft.
+
+    Handles the no-append case (offer already at target credentials) where the
+    offer nonetheless reverted to draft after selling out. Only publishes when
+    the remote offer status is explicitly ``draft`` — a no-op otherwise, so it
+    never re-lists an already-listed offer. Best-effort/non-fatal.
+    """
+    store = pool.store
+    proxy_pool = build_proxy_pool()
+    proxy_group = get_group_name(store)
+    client = get_or_build_client(
+        'gameboost',
+        store.credential,
+        proxy_pool=proxy_pool,
+        proxy_group=proxy_group,
+    )
+    offer_id = pool.listing.store_listing_id
+    try:
+        res = client.get_offer(offer_id, proxy_group=proxy_group)
+    except Exception as exc:
+        logger.warning(
+            'Pool #%d: GameBoost get_offer for publish-check failed for %s: %s',
+            pool.pk, offer_id, exc,
+        )
+        return
+    if not getattr(res, 'ok', False):
+        return
+    status = str(getattr(getattr(res, 'data', None), 'status', '') or '').strip().lower()
+    if status == 'draft':
+        _publish_gameboost_offer(client, offer_id, pool, proxy_group)
 
 
 def _publish_gameboost_offer(
