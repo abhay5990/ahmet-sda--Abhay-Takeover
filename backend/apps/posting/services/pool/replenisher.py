@@ -518,7 +518,44 @@ def _gameboost_add_credentials(
             missing_items,
             'GameBoost did not create these credentials',
         )
+    # A GameBoost offer that sold out can revert to draft/unpublished; appending
+    # credentials does not re-list it. Publish after a successful restock so the
+    # offer goes live again (no-op/ignored if already listed; non-fatal).
+    if pushed > 0:
+        _publish_gameboost_offer(client, offer_id, pool, proxy_group)
     return pushed
+
+
+def _publish_gameboost_offer(
+    client: Any,
+    offer_id: str,
+    pool: OfferPool,
+    proxy_group: str | None,
+) -> None:
+    """(Re)publish a GameBoost offer after restock — best-effort, non-fatal.
+
+    Mirrors the stock consumer's post-create list step so a drafted/unpublished
+    offer becomes listed again once it has credentials.
+    """
+    try:
+        result = client.list_account_offer(offer_id, proxy_group=proxy_group)
+    except Exception as exc:
+        logger.warning(
+            'Pool #%d: GameBoost publish after restock error for offer %s: %s',
+            pool.pk, offer_id, exc,
+        )
+        return
+    if result is not None and hasattr(result, 'ok') and not result.ok:
+        _log(
+            PostingLogLevel.WARNING,
+            f"Pool #{pool.pk}: GameBoost publish after restock failed for offer {offer_id}",
+            account=pool.store,
+            detail={
+                'pool_id': pool.pk,
+                'offer_id': offer_id,
+                'error': str(getattr(result, 'error', ''))[:300],
+            },
+        )
 
 
 def _gameboost_recreate(
