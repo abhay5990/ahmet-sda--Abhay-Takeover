@@ -18,6 +18,7 @@ from apps.integrations.providers.registry import get_or_build_client
 from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
 from apps.listings.models import Listing, ListingOwnedProduct
 from apps.posting.models import (
+    GameVariant,
     OfferPool,
     OfferPoolActiveOffer,
     OfferPoolActiveOfferStatus,
@@ -29,7 +30,12 @@ from apps.posting.models import (
     PostingLogLevel,
 )
 
+from apps.posting.pipeline import adapter
+from apps.posting.services.shared.pricing import STOCK_PRICING_BASELINE
 from apps.posting.services.shared.utils import extract_listing_id
+from apps.posting.services.variant_context import build_variant_context
+from apps.posting.services.variant_routing import VariantRouter
+from payload_pipeline.core.contracts import ListingKind
 from apps.posting.services.stock.pa_relay_poster import (
     PARelayPoster,
     fetch_relay_token,
@@ -728,7 +734,10 @@ def _replenish_pa(pool: OfferPool) -> int:
         proxy_group=proxy_group,
     )
 
-    # Get the original payload template from the pool's listing
+    # Prefer cloning the original payload when it is available.  Some legacy
+    # source listings, however, were adopted without their create payload.
+    # For those lanes, rebuild from the pending owned product through the normal
+    # stock pipeline rather than permanently disabling or starving the lane.
     raw = pool.listing.raw_data or {}
     original_payload = extract_create_payload(
         raw,
@@ -736,13 +745,6 @@ def _replenish_pa(pool: OfferPool) -> int:
         client=client,
         proxy_group=proxy_group,
     )
-    if not original_payload:
-        _log(
-            PostingLogLevel.ERROR,
-            f"Pool #{pool.pk}: cannot clone PA offer — no original payload",
-            account=store,
-        )
-        return 0
 
     pending_items = claim_pending_items(pool.pool_offer, need)
     if not pending_items:
@@ -752,9 +754,16 @@ def _replenish_pa(pool: OfferPool) -> int:
     pushed = 0
     for item in pending_items:
         try:
-            pushed += _clone_pa_offer(pool, client, original_payload, item, proxy_group)
+            if original_payload:
+                pushed += _clone_pa_offer(
+                    pool, client, original_payload, item, proxy_group,
+                )
+            else:
+                pushed += _rebuild_pa_offer_from_stock(
+                    pool, client, item, proxy_group,
+                )
         except Exception as exc:
-            logger.exception('pool_replenish: PA clone failed for item %d', item.pk)
+            logger.exception('pool_replenish: PA replacement failed for item %d', item.pk)
             mark_item_failed(
                 item,
                 error_message=str(exc),
@@ -768,15 +777,111 @@ def _replenish_pa(pool: OfferPool) -> int:
         'last_replenished_at', 'current_remote_count', 'updated_at',
     ])
 
+    source = 'cloned' if original_payload else 'rebuilt from stock'
     _log(
         PostingLogLevel.SUCCESS if pushed > 0 else PostingLogLevel.WARNING,
-        f"Pool #{pool.pk} PA replenish: {pushed}/{len(pending_items)} cloned",
+        f"Pool #{pool.pk} PA replenish: {pushed}/{len(pending_items)} {source}",
         account=store,
-        detail={'pool_id': pool.pk, 'pushed': pushed, 'attempted': len(pending_items)},
+        detail={
+            'pool_id': pool.pk,
+            'pushed': pushed,
+            'attempted': len(pending_items),
+            'source_rebuild': not bool(original_payload),
+        },
     )
 
     _check_depleted(pool)
     return pushed
+
+
+def _source_key_for_owned_product(product: Any) -> str:
+    """Return the configured source key for one persisted owned product."""
+    raw = getattr(product, 'raw_data', None) or {}
+    if raw.get('source') == 'manual':
+        return 'manual'
+    if raw.get('source') == 'tracker_sheet':
+        return 'tracker_sheet'
+    source_account = getattr(product, 'source_account', None)
+    if source_account and source_account.provider:
+        return source_account.provider
+    return str(raw.get('source') or '')
+
+
+def _rebuild_pa_offer_from_stock(
+    pool: OfferPool,
+    client: Any,
+    item: OfferPoolItem,
+    proxy_group: str | None,
+) -> int:
+    """Build and post a PA replacement from owned stock when no clone payload exists.
+
+    This is intentionally limited to the current claimed item.  It uses the
+    same prepare/build path as normal stock posting and overrides only the
+    computed price with the pool offer's established selling price.
+    """
+    product = item.owned_product
+    raw = getattr(product, 'raw_data', None) or {}
+    if not isinstance(raw, dict) or not raw:
+        raise ValueError('PlayerAuctions source rebuild requires owned-product source data')
+
+    source_key = _source_key_for_owned_product(product)
+    if not source_key:
+        raise ValueError('PlayerAuctions source rebuild requires a configured source key')
+
+    prepared_result = adapter.prepare(
+        game_slug=pool.game.slug,
+        sources={source_key: raw},
+        kind=ListingKind.STOCK,
+        disable_media=True,
+        ref_key=product.ref_key or '',
+    )
+    if not prepared_result.success:
+        raise ValueError(
+            'PlayerAuctions source rebuild prepare failed: '
+            f"{prepared_result.error_stage or 'prepare'}: "
+            f"{prepared_result.error or 'unknown error'}"
+        )
+
+    variant_context = build_variant_context(
+        store=pool.store,
+        game=pool.game,
+        marketplace='playerauctions',
+    )
+    router = VariantRouter(variant_context, mode='stock')
+    main_platform = getattr(prepared_result.prepared.subject, 'main_platform', '') or ''
+    variant_slug = router.select_fixed('platform', main_platform) if main_platform else ''
+
+    build_result = adapter.build_bulk(
+        prepared=prepared_result.prepared,
+        marketplace='playerauctions',
+        pricing_defaults=STOCK_PRICING_BASELINE,
+        store=pool.store,
+        game=pool.game,
+        kind=ListingKind.STOCK,
+        variant_slug=variant_slug,
+        variant_context=variant_context,
+    )
+    if not build_result.success:
+        raise ValueError(
+            'PlayerAuctions source rebuild failed: '
+            f"{build_result.error_stage or 'build'}: "
+            f"{build_result.error or 'unknown error'}"
+        )
+
+    excel_row = dict(build_result.payload or {})
+    if not excel_row:
+        raise ValueError('PlayerAuctions source rebuild returned an empty bulk payload')
+    if pool.listing.price is not None:
+        excel_row['Listing Price'] = round(float(pool.listing.price), 2)
+
+    return _post_pa_excel_row(
+        pool,
+        client,
+        item,
+        excel_row,
+        proxy_group,
+        variant_slug=variant_slug,
+    )
 
 
 def _clone_pa_offer(
@@ -793,97 +898,116 @@ def _clone_pa_offer(
     product = item.owned_product
     _apply_pa_auto_delivery_credentials(payload, product, pool=pool)
 
-    # [RELAY-CLONE] Post via relay instead of client.create_offer()
-    _creds = {}
-    _store_obj = pool.listing.integration_account
-    if hasattr(_store_obj, 'credential') and _store_obj.credential:
-        _creds = _store_obj.credential.credentials or {}
-    _username = _creds.get('username', '')
-    _password = _creds.get('password', '')
-    _store_slug = _creds.get('store_slug', '')
-    _relay_url = _creds.get('relay_url', 'http://35.196.132.30:3001')
-    _relay_secret = _creds.get('relay_secret', 'pa-relay-secret-2026')
-    _access_token = _creds.get('access_token', '')
-
-    # Use cached token first, fetch fresh if missing
-    _token = _access_token
-    _cookie = _creds.get('cookie', '')
-    if not _token:
-        if _username and _password and _store_slug:
-            _token, _cookie = fetch_relay_token(
-                _username, _password, _store_slug,
-                relay_url=_relay_url, relay_secret=_relay_secret,
-            )
-        if not _token:
-            mark_item_failed(
-                item,
-                error_message='PA relay: could not obtain access token for pool clone',
-                failure_stage='remote_push',
-                remote_state='absent',
-                retryable=True,
-            )
-            return 0
-
-    # Build Excel-row dict from payload for PARelayPoster
-    _excel_row = _build_excel_row_from_payload(payload)
-    _relay_poster = PARelayPoster(
-        relay_url=_relay_url,
-        relay_secret=_relay_secret,
-    )
-    _relay_result = _relay_poster.post_batch(
-        _token, _store_slug, [_excel_row],
-        cookie=(_cookie or _token),
+    # Build Excel-row dict from the legacy create payload, then use the same
+    # relay persistence path as a source-driven replacement.
+    return _post_pa_excel_row(
+        pool,
+        client,
+        item,
+        _build_excel_row_from_payload(payload),
+        proxy_group,
+        raw_payload=payload,
     )
 
-    if 0 in _relay_result.failed:
-        error_str = _relay_result.failed[0]
+
+def _post_pa_excel_row(
+    pool: OfferPool,
+    client: Any,
+    item: OfferPoolItem,
+    excel_row: dict[str, Any],
+    proxy_group: str | None,
+    *,
+    variant_slug: str = '',
+    raw_payload: dict[str, Any] | None = None,
+) -> int:
+    """Post one prepared PA bulk row and atomically persist its pool clone."""
+    store_credentials = (
+        getattr(pool.listing.integration_account.credential, 'credentials', None) or {}
+        if getattr(pool.listing.integration_account, 'credential', None)
+        else {}
+    )
+    username = store_credentials.get('username', '')
+    password = store_credentials.get('password', '')
+    store_slug = store_credentials.get('store_slug', '')
+    relay_url = store_credentials.get('relay_url', 'http://35.196.132.30:3001')
+    relay_secret = store_credentials.get('relay_secret', 'pa-relay-secret-2026')
+    token = store_credentials.get('access_token', '')
+    cookie = store_credentials.get('cookie', '')
+
+    if not token and username and password and store_slug:
+        token, cookie = fetch_relay_token(
+            username,
+            password,
+            store_slug,
+            relay_url=relay_url,
+            relay_secret=relay_secret,
+        )
+    if not token:
         mark_item_failed(
             item,
-            error_message=f"PA relay clone failed: {error_str[:200]}",
+            error_message='PA relay: could not obtain access token for pool replacement',
             failure_stage='remote_push',
             remote_state='absent',
             retryable=True,
         )
         return 0
 
-    new_offer_id = _relay_result.successful.get(0, '')
+    relay_result = PARelayPoster(
+        relay_url=relay_url,
+        relay_secret=relay_secret,
+    ).post_batch(token, store_slug, [excel_row], cookie=(cookie or token))
+    if 0 in relay_result.failed:
+        error_str = relay_result.failed[0]
+        mark_item_failed(
+            item,
+            error_message=f"PA relay replacement failed: {error_str[:200]}",
+            failure_stage='remote_push',
+            remote_state='absent',
+            retryable=True,
+        )
+        return 0
+
+    new_offer_id = relay_result.successful.get(0, '')
     if not new_offer_id:
         mark_item_failed(
             item,
-            error_message='PA relay clone succeeded but no offer ID returned',
+            error_message='PA relay replacement succeeded but no offer ID returned',
             failure_stage='response_parse',
             remote_state='unknown',
         )
         return 0
 
+    persisted_payload = raw_payload or excel_row
     raw_data = normalize_offer_response(
         'playerauctions',
         {'offer_id': new_offer_id},
-        payload=payload,
+        payload=persisted_payload,
         client=client,
         proxy_group=proxy_group,
     )
+    listing_variant = pool.listing.variant
+    if variant_slug:
+        listing_variant = (
+            GameVariant.objects.filter(game=pool.game, slug=variant_slug).first()
+            or listing_variant
+        )
 
     with transaction.atomic():
-        # Create Listing for the clone
         new_listing = Listing.objects.create(
             is_instant=True,
             integration_account=pool.store,
             game=pool.game,
             store_listing_id=new_offer_id,
-            variant=pool.listing.variant,
-            title=pool.listing.title,
+            variant=listing_variant,
+            title=excel_row.get('Title') or pool.listing.title,
             price=pool.listing.price,
             currency=pool.listing.currency,
             raw_data=raw_data,
         )
-
         ListingOwnedProduct.objects.create(
             listing=new_listing,
-            owned_product=product,
+            owned_product=item.owned_product,
         )
-
-        # Track active offer
         OfferPoolActiveOffer.objects.create(
             pool=pool.aggregate,
             pool_offer=pool.pool_offer,
@@ -892,7 +1016,6 @@ def _clone_pa_offer(
             pool_item=item,
             status=OfferPoolActiveOfferStatus.ACTIVE,
         )
-
         finalize_items_pushed(
             [item],
             pool_offer=pool.pool_offer,

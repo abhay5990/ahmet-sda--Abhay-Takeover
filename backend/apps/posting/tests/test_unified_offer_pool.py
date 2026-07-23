@@ -30,6 +30,7 @@ from apps.posting.services.pool.allocation import (
 )
 from apps.posting.services.pool.checker import notify_sale
 from apps.posting.services.pool.lifecycle import detach_pool_offer
+from apps.posting.services.pool.replenisher import replenish_pool_offer
 
 
 class UnifiedPoolTestCase(TestCase):
@@ -271,6 +272,45 @@ class UnifiedPoolTestCase(TestCase):
         self.assertEqual(event.order_id, 91234)
         self.assertEqual(event.pool_item_id, item.pk)
         self.assertEqual(event.outcome, 'processed')
+
+    def test_pa_replenish_rebuilds_from_stock_when_template_is_missing(self):
+        pool = self.make_pool()
+        listing = self.make_listing(
+            account=self.playerauctions,
+            remote_id='pa-legacy-source-without-template',
+        )
+        listing.raw_data = {}
+        listing.save(update_fields=['raw_data', 'updated_at'])
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=1,
+            threshold=1,
+            max_concurrent=1,
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=self.make_owned('pa-stock-rebuild@example.test'),
+        )
+
+        with patch(
+            'apps.posting.services.pool.replenisher.get_or_build_client',
+            return_value=object(),
+        ), patch(
+            'apps.posting.services.pool.replenisher.extract_create_payload',
+            return_value=None,
+        ), patch(
+            'apps.posting.services.pool.replenisher._rebuild_pa_offer_from_stock',
+            return_value=1,
+        ) as rebuild:
+            pushed = replenish_pool_offer(pool_offer)
+
+        self.assertEqual(pushed, 1)
+        rebuild.assert_called_once()
+        self.assertEqual(rebuild.call_args.args[2].pk, item.pk)
+        pool_offer.refresh_from_db()
+        self.assertEqual(pool_offer.current_remote_count, 1)
 
     def test_pa_source_listing_is_adopted_as_first_active_offer(self):
         pool = self.make_pool()
