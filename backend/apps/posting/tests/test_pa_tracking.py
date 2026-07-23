@@ -206,3 +206,84 @@ class PlayerAuctionsTargetIncreaseTests(SimpleTestCase):
         self.assertEqual(result["payload"]["offerDesc"], "Established target description")
         self.assertEqual(result["details"]["title"], "Established target pattern")
         self.assertEqual(result["details"]["offerDesc"], "Established target description")
+
+
+class PlayerAuctionsDeletionWorkflowTests(SimpleTestCase):
+    def test_explicit_playerauctions_auth_rejections_are_detected(self):
+        from apps.posting.services.pool.lifecycle import _is_playerauctions_auth_failure
+
+        unauthorized = SimpleNamespace(
+            error=SimpleNamespace(status_code=401, message="Unauthorized"),
+        )
+        forbidden = SimpleNamespace(
+            error=SimpleNamespace(status_code=403, message="Forbidden"),
+        )
+        ordinary_failure = SimpleNamespace(
+            error=SimpleNamespace(status_code=500, message="Temporary provider failure"),
+        )
+
+        self.assertTrue(_is_playerauctions_auth_failure(unauthorized))
+        self.assertTrue(_is_playerauctions_auth_failure(forbidden))
+        self.assertFalse(_is_playerauctions_auth_failure(ordinary_failure))
+
+    def test_pa_delete_rebuilds_cached_client_once_after_unauthorized(self):
+        from unittest.mock import Mock, patch
+        from apps.posting.services.pool.lifecycle import _delete_pa_listing_with_fresh_auth_retry
+
+        first_client = SimpleNamespace()
+        second_client = SimpleNamespace(
+            reset_auth_failure=Mock(),
+            force_auth_refresh=Mock(return_value=True),
+        )
+        unauthorized = SimpleNamespace(
+            ok=False,
+            error=SimpleNamespace(status_code=401, message="Unauthorized"),
+        )
+        success = SimpleNamespace(ok=True, error=None)
+        provider = SimpleNamespace(delete_listing=Mock(side_effect=[unauthorized, success]))
+        pool_offer = SimpleNamespace(
+            store=SimpleNamespace(credential=SimpleNamespace(pk=99)),
+        )
+
+        with patch(
+            "apps.posting.services.pool.lifecycle._client",
+            side_effect=[(first_client, "pa-store"), (second_client, "pa-store")],
+        ) as build_client, patch(
+            "apps.posting.services.pool.lifecycle.invalidate_client",
+        ) as invalidate:
+            result = _delete_pa_listing_with_fresh_auth_retry(
+                pool_offer,
+                provider,
+                "292889808",
+            )
+
+        self.assertIs(result, success)
+        self.assertEqual(build_client.call_count, 2)
+        invalidate.assert_called_once_with(99)
+        second_client.reset_auth_failure.assert_called_once_with()
+        second_client.force_auth_refresh.assert_called_once_with()
+        self.assertEqual(provider.delete_listing.call_count, 2)
+
+    def test_only_playerauctions_clone_deletions_auto_release_stock(self):
+        from apps.posting.services.pool.lifecycle import _should_auto_release_after_remote_removal
+
+        self.assertTrue(_should_auto_release_after_remote_removal(SimpleNamespace(
+            marketplace="playerauctions", strategy="clone",
+        )))
+        self.assertFalse(_should_auto_release_after_remote_removal(SimpleNamespace(
+            marketplace="eldorado", strategy="append",
+        )))
+        self.assertFalse(_should_auto_release_after_remote_removal(SimpleNamespace(
+            marketplace="playerauctions", strategy="append",
+        )))
+
+
+    def test_production_compatible_pa_client_can_force_auth_refresh(self):
+        from unittest.mock import Mock
+        from apps.posting.services.pool.lifecycle import _force_playerauctions_auth_refresh
+
+        auth = SimpleNamespace(refresh=Mock(return_value=True))
+        client = SimpleNamespace(_auth=auth)
+
+        self.assertTrue(_force_playerauctions_auth_refresh(client))
+        auth.refresh.assert_called_once_with()

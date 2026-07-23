@@ -756,15 +756,20 @@ def remove_pool_item(request, pool_id, item_id):
             'error': '; '.join(result.errors) or 'Key removal failed',
         }, status=409)
 
-    item.refresh_from_db(fields=['status'])
+    item.refresh_from_db(fields=['status', 'pool_offer'])
     return JsonResponse({
         'ok': True,
         'removed_from_marketplace': result.remote_removed,
+        'returned_to_available_pool': result.released_to_pool,
         'status': item.status,
         'message': (
-            'Key removed from the marketplace offer and Pool.'
-            if result.remote_removed
-            else 'Key removed from the Pool assignment.'
+            'PlayerAuctions offer deleted and the verified-unsold key returned to available pool stock.'
+            if result.released_to_pool
+            else (
+                'Key removed from the marketplace offer and Pool.'
+                if result.remote_removed
+                else 'Key removed from the Pool assignment.'
+            )
         ),
     })
 

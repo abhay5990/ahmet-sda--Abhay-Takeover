@@ -1763,7 +1763,7 @@ async function recoverUnsoldItem(poolId, itemId, login, btn) {
 
 async function removeItem(poolId, itemId, status, assignedToOffer, btn) {
     const message = assignedToOffer
-        ? 'Delete this individual key from the Pool? If it is still live, it will also be removed from the marketplace offer. The account remains in inventory and will not be auto-added again.'
+        ? 'Delete this individual key from the Pool? If it is still live, SDA will delete the marketplace offer first. For a verified-unsold PlayerAuctions key, successful deletion returns the account to available pool stock. Confirmed sales are always blocked.'
         : 'Remove this pending key from the Pool? The account remains in inventory.';
     if (!confirm(message)) return;
 
@@ -1780,6 +1780,7 @@ async function removeItem(poolId, itemId, status, assignedToOffer, btn) {
         });
         const data = await resp.json().catch(() => ({}));
         if (!resp.ok) throw new Error(data.error || 'Failed to remove key');
+        if (data.message) alert(data.message);
         window.location.reload();
     } catch (error) {
         alert(error.message || 'Failed to remove key');

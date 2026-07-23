@@ -8,7 +8,11 @@ from dataclasses import dataclass, field
 from django.db import models, transaction
 from django.utils import timezone
 
-from apps.integrations.providers.registry import get_or_build_client, get_provider
+from apps.integrations.providers.registry import (
+    get_or_build_client,
+    get_provider,
+    invalidate_client,
+)
 from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
 from apps.listings.enums import ListingStatus
 from apps.listings.models import ListingOwnedProduct
@@ -22,6 +26,7 @@ from apps.posting.models import (
     PoolDispatchStatus,
     PoolOffer,
     PoolOfferStatus,
+    PoolSaleEvent,
 )
 
 from .formatter import format_credential_for_marketplace
@@ -41,6 +46,7 @@ class RemoveItemResult:
     ok: bool
     removed: bool = False
     remote_removed: bool = False
+    released_to_pool: bool = False
     errors: list[str] = field(default_factory=list)
 
 
@@ -50,7 +56,7 @@ def remove_pool_item(
     *,
     listing,
 ) -> RemoveItemResult:
-    """Remove one user-selected key without allowing it to be replenished again."""
+    """Remove one key remotely and, for an unsold PA clone, return it to stock."""
     pool_offer = PoolOffer.objects.select_related(
         'pool', 'pool__credential_spec', 'pool__variant',
         'listing', 'listing__integration_account',
@@ -89,6 +95,11 @@ def remove_pool_item(
             ok=False,
             errors=['This key is reserved by an in-progress dispatch. Try again after it finishes.'],
         )
+    if _has_confirmed_sale_evidence(item):
+        return RemoveItemResult(
+            ok=False,
+            errors=['Confirmed marketplace sale evidence exists for this key; it cannot be returned to the pool.'],
+        )
     if item.status not in {
         OfferPoolItemStatus.QUEUED,
         OfferPoolItemStatus.PUSHED,
@@ -119,14 +130,20 @@ def remove_pool_item(
         _finish_remove_failures(pool_offer, attempts, error, unknown=False)
         return RemoveItemResult(ok=False, errors=errors or [error])
 
-    _finalize_single_item_removal(
+    released_to_pool = _finalize_single_item_removal(
         pool_offer,
         item,
         listing=listing,
         attempt=attempt,
         decrement_remote=True,
+        release_to_pool=_should_auto_release_after_remote_removal(pool_offer),
     )
-    return RemoveItemResult(ok=True, removed=True, remote_removed=True)
+    return RemoveItemResult(
+        ok=True,
+        removed=True,
+        remote_removed=True,
+        released_to_pool=released_to_pool,
+    )
 
 
 def _finalize_single_item_removal(
@@ -136,15 +153,34 @@ def _finalize_single_item_removal(
     listing,
     attempt,
     decrement_remote,
-):
+    release_to_pool: bool = False,
+) -> bool:
+    """Persist a confirmed deletion and optionally release a verified-unsold PA key."""
     now = timezone.now()
+    released_to_pool = False
     with transaction.atomic():
         item = OfferPoolItem.objects.select_for_update().get(pk=item.pk)
+        linked_listing_ids = {listing.pk}
+        linked_listing_ids.update(
+            OfferPoolActiveOffer.objects.filter(
+                pool_offer=pool_offer,
+                pool_item_id=item.pk,
+            ).exclude(listing_id__isnull=True).values_list('listing_id', flat=True),
+        )
         ListingOwnedProduct.objects.filter(
-            listing=listing,
+            listing_id__in=linked_listing_ids,
             owned_product_id=item.owned_product_id,
         ).delete()
-        if item.status != OfferPoolItemStatus.CONSUMED:
+        can_release = release_to_pool and not _has_confirmed_sale_evidence(item)
+        if can_release:
+            item.status = OfferPoolItemStatus.PENDING
+            item.pool_offer = None
+            item.target_offer_id = ''
+            item.pushed_at = None
+            item.consumed_at = None
+            item.reservation = None
+            released_to_pool = True
+        elif item.status != OfferPoolItemStatus.CONSUMED:
             item.status = OfferPoolItemStatus.REMOVED
         item.remote_state = 'absent'
         item.remote_credential_id = ''
@@ -153,7 +189,8 @@ def _finalize_single_item_removal(
         item.error_message = ''
         item.failure_stage = ''
         item.save(update_fields=[
-            'status', 'remote_state', 'remote_credential_id', 'claim_token',
+            'status', 'pool_offer', 'target_offer_id', 'pushed_at', 'consumed_at',
+            'reservation', 'remote_state', 'remote_credential_id', 'claim_token',
             'claimed_at', 'error_message', 'failure_stage', 'updated_at',
         ])
         if attempt is not None:
@@ -168,6 +205,26 @@ def _finalize_single_item_removal(
                 current_remote_count=models.F('current_remote_count') - 1,
                 last_error='',
             )
+    return released_to_pool
+
+
+def _has_confirmed_sale_evidence(item: OfferPoolItem) -> bool:
+    """Return true only for durable marketplace sale evidence, never for a pending order."""
+    return (
+        PoolSaleEvent.objects.filter(pool_item_id=item.pk).exists()
+        or OfferPoolActiveOffer.objects.filter(
+            pool_item_id=item.pk,
+            status=OfferPoolActiveOfferStatus.SOLD,
+        ).exists()
+    )
+
+
+def _should_auto_release_after_remote_removal(pool_offer: PoolOffer) -> bool:
+    """PA clones are individual offers, so a confirmed delete can safely free one key."""
+    return (
+        pool_offer.marketplace == 'playerauctions'
+        and pool_offer.strategy == 'clone'
+    )
 
 
 def detach_pool_offer(pool_offer: PoolOffer, mode: str) -> DetachResult:
@@ -278,7 +335,6 @@ def _client(pool_offer: PoolOffer):
 
 
 def _remove_pa(pool_offer, items):
-    client, _proxy_group = _client(pool_offer)
     provider = get_provider('playerauctions')
     removed = set()
     errors = []
@@ -296,7 +352,11 @@ def _remove_pa(pool_offer, items):
             errors.append(f'Item #{item.pk}: active PA offer not found')
             continue
         try:
-            result = provider.delete_listing(client, active_offer.store_listing_id)
+            result = _delete_pa_listing_with_fresh_auth_retry(
+                pool_offer,
+                provider,
+                active_offer.store_listing_id,
+            )
             if result is not None and hasattr(result, 'ok') and not result.ok:
                 errors.append(f'Item #{item.pk}: {result.error}')
                 continue
@@ -312,6 +372,59 @@ def _remove_pa(pool_offer, items):
         except Exception as exc:
             errors.append(f'Item #{item.pk}: {exc}')
     return removed, errors
+
+
+def _delete_pa_listing_with_fresh_auth_retry(pool_offer, provider, offer_id):
+    """Delete one PA clone, rebuilding a stale client once after an auth rejection.
+
+    PlayerAuctions browser sessions are persisted after refresh.  The integration
+    registry also caches a facade by credential, so this retry deliberately
+    discards a stale cached facade and lets the normal 401-refresh mechanism run
+    once on a freshly constructed client.  It never retries a successful write
+    or a non-authentication error.
+    """
+    client, _proxy_group = _client(pool_offer)
+    try:
+        result = provider.delete_listing(client, offer_id)
+    except Exception as exc:
+        if not _is_playerauctions_auth_failure(exc):
+            raise
+        result = exc
+
+    if not _is_playerauctions_auth_failure(result):
+        return result
+
+    credential_pk = getattr(getattr(pool_offer.store, 'credential', None), 'pk', None)
+    if credential_pk is not None:
+        invalidate_client(credential_pk)
+    refreshed_client, _proxy_group = _client(pool_offer)
+    reset_auth = getattr(refreshed_client, 'reset_auth_failure', None)
+    if callable(reset_auth):
+        reset_auth()
+    _force_playerauctions_auth_refresh(refreshed_client)
+    return provider.delete_listing(refreshed_client, offer_id)
+
+
+def _force_playerauctions_auth_refresh(client) -> bool:
+    """Force-refresh an existing or newer PA facade without coupling to one SDK version."""
+    force_refresh = getattr(client, 'force_auth_refresh', None)
+    if callable(force_refresh):
+        return bool(force_refresh())
+    auth = getattr(client, '_auth', None)
+    refresh = getattr(auth, 'refresh', None)
+    return bool(refresh()) if callable(refresh) else False
+
+
+def _is_playerauctions_auth_failure(result_or_error) -> bool:
+    """Recognize only explicit PA authorization rejections for the safe retry."""
+    error = getattr(result_or_error, 'error', result_or_error)
+    status_code = getattr(error, 'status_code', None)
+    if status_code is None:
+        status_code = getattr(result_or_error, 'status_code', None)
+    if status_code in {401, 403}:
+        return True
+    text = str(error or result_or_error).lower()
+    return 'unauthorized' in text or 'forbidden' in text or 'authentication' in text
 
 
 def _remove_eldorado(pool_offer, items):
