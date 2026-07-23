@@ -3,6 +3,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 from apis_sdk.clients.marketplaces.playerauctions.auth import PlayerAuctionsAuth
+from apis_sdk.clients.services.pa_relay.client import PaRelayTokenResult
 
 
 class PlayerAuctionsAuthRefreshTests(TestCase):
@@ -21,7 +22,7 @@ class PlayerAuctionsAuthRefreshTests(TestCase):
         auth._relay_client = Mock()
         auth._relay_client.get_token.return_value = SimpleNamespace(
             ok=True,
-            data=SimpleNamespace(
+            data=PaRelayTokenResult(
                 access_token='fresh-token',
                 cookie='fresh-cookie',
                 user_agent='fresh-agent',
@@ -46,7 +47,7 @@ class PlayerAuctionsAuthRefreshTests(TestCase):
         auth._relay_client = Mock()
         auth._relay_client.get_token.return_value = SimpleNamespace(
             ok=True,
-            data=SimpleNamespace(
+            data=PaRelayTokenResult(
                 access_token='cached-token',
                 cookie='cached-cookie',
                 user_agent='cached-agent',

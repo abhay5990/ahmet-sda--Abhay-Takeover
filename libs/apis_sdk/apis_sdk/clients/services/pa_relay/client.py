@@ -32,11 +32,12 @@ RELAY_SECRET_HEADER = "X-Relay-Secret"
 
 @dataclass(frozen=True, slots=True)
 class PaRelayTokenResult:
-    """Parsed token result from /pa-access-token."""
+    """Parsed browser session fields returned by /pa-access-token."""
 
     access_token: str
     cached: bool
     cookie: str = ""
+    user_agent: str = ""
 
 
 class PaRelayClient:
@@ -150,6 +151,7 @@ class PaRelayClient:
             access_token=token,
             cached=bool(body.get("cached", False)),
             cookie=str(body.get("cookie", "") or ""),
+            user_agent=str(body.get("userAgent", body.get("user_agent", "")) or ""),
         )
         self._logger.info(
             "PA Relay token fetched "
