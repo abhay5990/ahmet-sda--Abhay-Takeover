@@ -788,6 +788,14 @@ def trigger_replenish(request, pool_id):
     ))
     for pool_offer in pool_offers:
         try:
+            # Manual replenish is an explicit user retry: recover offers stuck
+            # in ERROR (e.g. from an earlier failed remote key removal) so they
+            # can be topped up/re-published again. Without this, an errored
+            # offer has can_replenish=False and every replenish pushes 0.
+            if pool_offer.status == PoolOfferStatus.ERROR:
+                pool_offer.status = PoolOfferStatus.ACTIVE
+                pool_offer.last_error = ''
+                pool_offer.save(update_fields=['status', 'last_error', 'updated_at'])
             pushed = _check_and_replenish(pool_offer, force=True)
             results.append({
                 'pool_offer_id': pool_offer.pk,
