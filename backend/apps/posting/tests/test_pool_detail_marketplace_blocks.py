@@ -6,8 +6,10 @@ from django.test import SimpleTestCase
 from django.utils import timezone
 
 from apps.posting.models import (
+    OfferPoolStatus,
     OfferPoolActiveOfferStatus,
     OfferPoolItemStatus,
+    PoolOffer,
     PoolOfferStatus,
 )
 from apps.posting.views import (
@@ -20,6 +22,22 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
     def test_pool_detail_template_parses_with_store_lanes_and_sold_ledger(self):
         template = get_template('posting/restock_pool_detail.html')
         self.assertIsNotNone(template)
+        self.assertIn('Consumed or sold pool items', template.template.source)
+        self.assertIn('No sale event', template.template.source)
+
+    def test_active_offer_at_threshold_requires_replenishment(self):
+        offer = SimpleNamespace(
+            pool=SimpleNamespace(status=OfferPoolStatus.ACTIVE),
+            status=PoolOfferStatus.ACTIVE,
+            current_remote_count=1,
+            threshold=1,
+        )
+        offer.can_replenish = PoolOffer.can_replenish.fget(offer)
+
+        self.assertTrue(PoolOffer.needs_replenish.fget(offer))
+
+        offer.current_remote_count = 2
+        self.assertFalse(PoolOffer.needs_replenish.fget(offer))
 
     def make_offer(
         self,

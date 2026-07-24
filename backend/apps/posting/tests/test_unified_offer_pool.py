@@ -118,6 +118,18 @@ class UnifiedPoolTestCase(TestCase):
         self.assertTrue(pool.is_depleted)
         self.assertEqual(pool.health, 'depleted')
 
+    def test_offer_at_threshold_refills_to_target(self):
+        pool = self.make_pool()
+        offer = self.make_pool_offer(pool, target_count=2, threshold=1)
+
+        offer.current_remote_count = 1
+        offer.save(update_fields=['current_remote_count', 'updated_at'])
+        self.assertTrue(offer.needs_replenish)
+
+        offer.current_remote_count = 2
+        offer.save(update_fields=['current_remote_count', 'updated_at'])
+        self.assertFalse(offer.needs_replenish)
+
     def test_owned_product_is_globally_exclusive(self):
         owned = self.make_owned('exclusive@example.test')
         first = self.make_pool('First')

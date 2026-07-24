@@ -55,7 +55,7 @@
     <div class="grid grid-cols-6 gap-4 mb-6">
         <div class="bg-white rounded-lg shadow p-4">
             <div class="text-xs text-gray-500 uppercase">Remote Count</div>
-            <div class="text-2xl font-bold {% if primary_offer and primary_offer.current_remote_count is not None and primary_offer.current_remote_count < primary_offer.threshold %}text-red-600{% else %}text-gray-800{% endif %}">
+            <div class="text-2xl font-bold {% if primary_offer and primary_offer.current_remote_count is not None and primary_offer.current_remote_count <= primary_offer.threshold %}text-red-600{% else %}text-gray-800{% endif %}">
                 {% if primary_offer %}{{ primary_offer.current_remote_count|default:"—" }}{% else %}<span class="text-sm">N/A</span>{% endif %}
             </div>
         </div>
@@ -211,7 +211,7 @@
 
                 <div>
                     <div class="flex items-center justify-between gap-3 mb-2">
-                        <div><h3 class="text-sm font-semibold text-gray-800">Sold pool items</h3><p class="text-xs text-gray-500">{{ block.sold_item_count }} recorded sold or consumed item{{ block.sold_item_count|pluralize }}</p></div>
+                        <div><h3 class="text-sm font-semibold text-gray-800">Consumed or sold pool items</h3><p class="text-xs text-gray-500">{{ block.sold_item_count }} item{{ block.sold_item_count|pluralize }} removed from remote inventory; a sale order is shown only when received.</p></div>
                         {% if block.sold_item_count > block.sold_items|length %}<span class="text-xs text-gray-400">Latest 6 shown</span>{% endif %}
                     </div>
                     {% if block.sold_items %}
@@ -220,13 +220,13 @@
                             <thead class="bg-gray-50 text-gray-500"><tr><th class="px-3 py-2 text-left font-medium">Pool item</th><th class="px-3 py-2 text-left font-medium">Status</th><th class="px-3 py-2 text-right font-medium">Order ID</th></tr></thead>
                             <tbody class="divide-y divide-gray-100">
                                 {% for sold in block.sold_items %}
-                                <tr><td class="px-3 py-2 font-mono text-gray-700">{% firstof sold.item.owned_product.login "—" %}</td><td class="px-3 py-2"><span class="inline-flex rounded-full bg-orange-100 px-2 py-0.5 font-medium text-orange-700">{{ sold.status_label }}</span></td><td class="px-3 py-2 text-right font-mono text-gray-700">{% if sold.order_id %}{{ sold.order_id }}{% elif sold.is_exact_order_match %}<span class="font-sans text-gray-400">No order ID</span>{% else %}<span class="font-sans text-gray-400" title="This marketplace confirms credential consumption independently of the order event.">Reconciled</span>{% endif %}</td></tr>
+                                <tr><td class="px-3 py-2 font-mono text-gray-700">{% firstof sold.item.owned_product.login "—" %}</td><td class="px-3 py-2"><span class="inline-flex rounded-full bg-orange-100 px-2 py-0.5 font-medium text-orange-700">{{ sold.status_label }}</span></td><td class="px-3 py-2 text-right font-mono text-gray-700">{% if sold.order_id %}{{ sold.order_id }}{% elif sold.is_exact_order_match %}<span class="font-sans text-gray-400">No order ID</span>{% else %}<span class="font-sans text-gray-400" title="This marketplace confirmed the credential was consumed independently of a sale event.">No sale event</span>{% endif %}</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
                     {% else %}
-                    <div class="rounded-lg border border-dashed border-gray-200 px-3 py-3 text-xs text-gray-500">No sold pool items recorded for this marketplace yet.</div>
+                    <div class="rounded-lg border border-dashed border-gray-200 px-3 py-3 text-xs text-gray-500">No consumed or sold pool items recorded for this marketplace yet.</div>
                     {% endif %}
                 </div>
 

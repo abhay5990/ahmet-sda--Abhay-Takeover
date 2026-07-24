@@ -1172,9 +1172,11 @@ class PoolOffer(models.Model):
     def needs_replenish(self) -> bool:
         if not self.can_replenish:
             return False
+        # Refill as soon as the remote count reaches the configured threshold.
+        # This lets a target of two restore its second listing when one remains.
         return (
             self.current_remote_count is None
-            or self.current_remote_count < self.threshold
+            or self.current_remote_count <= self.threshold
         )
 
     @classmethod
