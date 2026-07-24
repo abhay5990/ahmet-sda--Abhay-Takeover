@@ -191,6 +191,22 @@ class PlayerAuctionsTargetIncreaseTests(SimpleTestCase):
             "Existing customer-facing description pattern.",
         )
 
+    def test_target_template_preserves_readable_plain_text_line_breaks(self):
+        from apps.posting.services.pool.replenisher import _apply_pa_target_template
+
+        description = "Account overview\n\nImportant warning\nContact support in PlayerAuctions chat."
+        pool = SimpleNamespace(
+            listing=SimpleNamespace(
+                title="GTA 5 Online-PC - Steam - Enhanced",
+                raw_data={"payload": {"title": "Old title", "offerDesc": description}},
+            ),
+        )
+
+        result = _apply_pa_target_template(pool, {"title": "Rebuilt title", "offerDesc": "Fallback"})
+
+        self.assertEqual(result["offerDesc"], description)
+        self.assertNotIn("<br>", result["offerDesc"])
+
     def test_generic_pa_description_is_replaced_with_the_shared_offer_description(self):
         from unittest.mock import patch
         from apps.posting.services.pool.replenisher import (

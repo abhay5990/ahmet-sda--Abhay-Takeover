@@ -205,6 +205,13 @@ class PARelayPoster:
                             auto_del['password'] = enc
                             auto_del['retypePassword'] = enc
                         payload['autoDelivery'] = auto_del
+                    # Keep the durable stored template as plain text, but serialize
+                    # it with PlayerAuctions-native CRLF breaks only at submission.
+                    # Do not add a description to payloads that intentionally omit it.
+                    if payload.get('offerDesc') is not None:
+                        payload['offerDesc'] = pa_format_description(
+                            pa_sanitize(str(payload['offerDesc']))
+                        )
                 else:
                     payload = self._build_json_payload(row)
                 offer_id, error = self._post_one(token, store_slug, payload, cookie=cookie)
@@ -304,7 +311,9 @@ class PARelayPoster:
         price = max(round(price * 100) / 100, 5.0)  # PA minimum $5
 
         title = pa_sanitize(str(row.get("Title", "")))[:150]
-        description = pa_sanitize(str(row.get("Description", "")))[:3000].replace("\n", "<br>")
+        description = pa_format_description(
+            pa_sanitize(str(row.get("Description", "")))
+        )[:3000]
 
         login = str(row.get("Login name  (Auto)", "") or row.get("Login name", "") or "")
         password_plain = str(row.get("Password", "") or "")
@@ -455,6 +464,28 @@ def pa_fake_owner_info(seed: str) -> dict[str, str]:
         "city": cities[_hash("city") % len(cities)],
         "country": countries[_hash("country") % len(countries)],
     }
+
+
+def pa_format_description(text: str) -> str:
+    """Return PlayerAuctions-native multiline text for an outbound offer.
+
+    Templates remain stored as readable plain text. This serializer is used only
+    immediately before relay submission, where PlayerAuctions displays CRLF
+    breaks correctly. It also normalizes legacy HTML-like break markup from
+    older templates so future replacement offers do not flatten into one block.
+    """
+    if not text:
+        return text
+
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+    normalized = re.sub(r"<br\s*/?>", "\n", normalized, flags=re.IGNORECASE)
+    normalized = re.sub(r"</p\s*>", "\n\n", normalized, flags=re.IGNORECASE)
+    normalized = re.sub(r"<p(?:\s+[^>]*)?\s*>", "\n", normalized, flags=re.IGNORECASE)
+    normalized = re.sub(r"</?div(?:\s+[^>]*)?\s*>", "\n", normalized, flags=re.IGNORECASE)
+    normalized = re.sub(r"<[^>]+>", "", normalized)
+    normalized = "\n".join(line.strip() for line in normalized.split("\n"))
+    normalized = re.sub(r"\n{3,}", "\n\n", normalized).strip()
+    return normalized.replace("\n", "\r\n")
 
 
 def pa_sanitize(text: str) -> str:

@@ -12,6 +12,8 @@ from apps.posting.services.stock.pa_relay_poster import (
     PARelayPostResult,
     _format_relay_error,
     fetch_relay_token,
+    pa_format_description,
+    pa_sanitize,
 )
 
 
@@ -236,3 +238,33 @@ class RelayCookiePropagationTests(SimpleTestCase):
 
         sent_body = post.call_args.kwargs["json"]
         self.assertEqual(sent_body["cookie"], "jwt-123")
+
+
+class PlayerAuctionsDescriptionFormattingTests(SimpleTestCase):
+    def test_native_line_breaks_and_legacy_markup_become_visible_paragraphs(self):
+        source = "First line<br>Second line<p>Third paragraph</p>Fourth line"
+
+        result = pa_format_description(pa_sanitize(source))
+
+        self.assertEqual(
+            result,
+            "First line\r\nSecond line\r\nThird paragraph\r\n\r\nFourth line",
+        )
+        self.assertNotIn("<br>", result)
+        self.assertNotIn("<p>", result)
+
+    @patch("apps.posting.services.stock.pa_relay_poster.requests.post")
+    def test_prebuilt_payload_formats_description_without_adding_missing_fields(self, post):
+        response = Mock()
+        response.json.return_value = {"ok": True, "offerId": "123"}
+        post.return_value = response
+        poster = PARelayPoster(relay_url="http://relay.test", relay_secret="s")
+
+        poster.post_batch(
+            "token",
+            "store",
+            [{"serverId": 1, "title": "x", "offerDesc": "One<br>Two"}],
+        )
+
+        payload = post.call_args.kwargs["json"]["payload"]
+        self.assertEqual(payload["offerDesc"], "One\r\nTwo")
