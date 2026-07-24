@@ -1098,3 +1098,62 @@ class UnifiedPoolTestCase(TestCase):
         item.refresh_from_db()
         self.assertEqual(item.status, OfferPoolItemStatus.PUSHED)
         self.assertEqual(item.remote_state, 'present')
+
+    def test_remapped_remote_id_uses_live_credential_text_before_consuming(self):
+        pool = self.make_pool('Remapped Credential Identity')
+        pool_offer = self.make_pool_offer(pool)
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('remapped-remote-id@example.test'),
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+            remote_credential_id='old-remote-id',
+        )
+
+        with patch(
+            'apps.posting.services.pool.replenisher.format_credential_for_marketplace',
+            return_value='live credential',
+        ) as formatter:
+            consumed = _reconcile_pushed_items(
+                _PoolOfferContext(pool_offer),
+                ['live credential'],
+                remote_credential_ids={'new-remote-id'},
+            )
+
+        self.assertEqual(consumed, 0)
+        formatter.assert_called_once()
+        item.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.PUSHED)
+        self.assertEqual(item.remote_state, 'present')
+
+    def test_recover_live_item_with_remapped_eldorado_id(self):
+        from apps.posting.services.pool.recovery import recover_verified_unsold_item
+
+        pool = self.make_pool('Remapped Recovery Identity')
+        pool_offer = self.make_pool_offer(pool)
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('recover-remapped-id@example.test'),
+            status=OfferPoolItemStatus.CONSUMED,
+            remote_state='absent',
+            remote_credential_id='old-remote-id',
+            error_message='Removed from remote offer',
+        )
+
+        with patch(
+            'apps.posting.services.pool.checker._get_remote_credentials',
+            return_value=(2, ['live credential'], {'new-remote-id'}),
+        ), patch(
+            'apps.posting.services.pool.recovery.format_credential_for_marketplace',
+            return_value='live credential',
+        ):
+            result = recover_verified_unsold_item(pool_id=pool.pk, item_id=item.pk)
+
+        self.assertTrue(result.ok)
+        self.assertEqual(result.state, 'live')
+        item.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.PUSHED)
+        self.assertEqual(item.remote_state, 'present')
+        self.assertEqual(item.error_message, '')

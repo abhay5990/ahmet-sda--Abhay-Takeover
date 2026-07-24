@@ -121,11 +121,21 @@ def _recover_append_item(item: OfferPoolItem) -> RecoverUnsoldResult:
         and remote_count > 0
     ):
         is_live = True
-    if not is_live and remote_credential_ids is None and remote_credentials is not None:
-        expected = format_credential_for_marketplace(
-            item.owned_product, pool_offer.marketplace, pool=pool_offer.pool,
+    if not is_live and remote_credentials is not None:
+        try:
+            expected = format_credential_for_marketplace(
+                item.owned_product, pool_offer.marketplace, pool=pool_offer.pool,
+            )
+        except Exception as exc:
+            return RecoverUnsoldResult(
+                ok=False,
+                errors=[f"Remote credential comparison failed: {exc}"],
+            )
+        expected_norm = str(expected).strip()
+        is_live = any(
+            str(remote_credential).strip() == expected_norm
+            for remote_credential in remote_credentials
         )
-        is_live = expected in remote_credentials
 
     if is_live:
         return _restore_live_item(item, "Remote credential is still live; restored to active pool stock.")
@@ -207,7 +217,12 @@ def _recover_playerauctions_item(item: OfferPoolItem) -> RecoverUnsoldResult:
     )
 
 
-def _restore_live_item(item: OfferPoolItem, message: str) -> RecoverUnsoldResult:
+def _restore_live_item(
+    item: OfferPoolItem,
+    message: str,
+    *,
+    remote_credential_id: str | None = None,
+) -> RecoverUnsoldResult:
     """Restore a falsely-consumed key without re-posting a credential already live."""
     with transaction.atomic():
         locked = OfferPoolItem.objects.select_for_update().get(pk=item.pk)
@@ -224,10 +239,14 @@ def _restore_live_item(item: OfferPoolItem, message: str) -> RecoverUnsoldResult
         locked.claim_token = None
         locked.claimed_at = None
         locked.reservation = None
-        locked.save(update_fields=[
+        update_fields = [
             "status", "consumed_at", "failure_stage", "error_message",
             "remote_state", "claim_token", "claimed_at", "reservation", "updated_at",
-        ])
+        ]
+        if remote_credential_id:
+            locked.remote_credential_id = remote_credential_id
+            update_fields.append("remote_credential_id")
+        locked.save(update_fields=update_fields)
     return RecoverUnsoldResult(ok=True, state="live", message=message)
 
 

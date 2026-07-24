@@ -1365,13 +1365,16 @@ def _reconcile_pushed_items(
     remote_creds: list[str],
     *,
     remote_credential_ids: set[str] | None = None,
+    remote_credential_id_by_text: dict[str, str] | None = None,
 ) -> int:
     """Mark only credentials proven absent from the remote offer as consumed.
 
     Prefer the immutable remote credential ID recorded when an item was pushed.
-    Rendering account details again is a compatibility fallback for historical
-    items without an ID because formatting rules and source data can change
-    after the credential was successfully published.
+    A non-matching ID alone is not conclusive, however: Eldorado can rewrite
+    credential IDs while retaining the same credential on a live offer. Before
+    consuming such an item, compare the currently rendered credential text as
+    a second positive-presence check. Rendering is still skipped when the
+    stable remote ID matches, preserving protection against formatting drift.
     """
     pushed_items = list(
         pool.items.filter(
@@ -1390,11 +1393,20 @@ def _reconcile_pushed_items(
         for remote_id in (remote_credential_ids or set())
         if str(remote_id).strip()
     }
+    remote_id_by_text = {
+        str(credential).strip(): str(remote_id).strip()
+        for credential, remote_id in (remote_credential_id_by_text or {}).items()
+        if str(credential).strip() and str(remote_id).strip()
+    }
 
     for item in pushed_items:
-        if item.remote_credential_id and remote_id_set:
-            found = item.remote_credential_id.strip() in remote_id_set
-        else:
+        found = bool(
+            item.remote_credential_id
+            and remote_id_set
+            and item.remote_credential_id.strip() in remote_id_set
+        )
+        matched_remote_id = ''
+        if not found:
             try:
                 expected_cred = format_credential_for_marketplace(
                     item.owned_product, marketplace, pool=pool,
@@ -1406,9 +1418,19 @@ def _reconcile_pushed_items(
                 # PA dict format — not applicable here
                 continue
 
-            # Normalize whitespace for the legacy historical fallback only.
+            # Normalize whitespace before the fallback comparison. This also
+            # handles a live Eldorado credential whose remote ID was remapped.
             expected_norm = expected_cred.strip()
             found = any(rc.strip() == expected_norm for rc in remote_creds)
+            if found:
+                matched_remote_id = remote_id_by_text.get(expected_norm, '')
+
+        if found and matched_remote_id and item.remote_credential_id != matched_remote_id:
+            item.remote_credential_id = matched_remote_id
+            item.remote_state = 'present'
+            item.save(update_fields=[
+                'remote_credential_id', 'remote_state', 'updated_at',
+            ])
 
         if not found:
             item.status = OfferPoolItemStatus.CONSUMED
