@@ -28,7 +28,7 @@ from apps.posting.services.pool.allocation import (
     claim_pending_items,
     quarantine_stale_claims,
 )
-from apps.posting.services.pool.checker import notify_sale
+from apps.posting.services.pool.checker import _check_and_replenish, notify_sale
 from apps.posting.services.pool.lifecycle import detach_pool_offer
 from apps.posting.services.pool.replenisher import (
     _ensure_pa_offer_description,
@@ -129,6 +129,45 @@ class UnifiedPoolTestCase(TestCase):
         offer.current_remote_count = 2
         offer.save(update_fields=['current_remote_count', 'updated_at'])
         self.assertFalse(offer.needs_replenish)
+
+    def test_proactive_eldorado_check_at_threshold_replenishes(self):
+        pool = self.make_pool()
+        offer = self.make_pool_offer(pool, target_count=2, threshold=1)
+
+        with patch(
+            'apps.posting.services.pool.checker._get_remote_credentials',
+            return_value=(1, [], set()),
+        ), patch(
+            'apps.posting.services.pool.checker._reconcile_pushed_items',
+        ), patch(
+            'apps.posting.services.pool.checker.replenish_pool_offer',
+            return_value=1,
+        ) as replenish:
+            pushed = _check_and_replenish(offer)
+
+        self.assertEqual(pushed, 1)
+        replenish.assert_called_once()
+        self.assertEqual(replenish.call_args.args[0].pk, offer.pk)
+
+    def test_reactive_sale_at_threshold_replenishes(self):
+        pool = self.make_pool()
+        offer = self.make_pool_offer(pool, target_count=2, threshold=1)
+        offer.current_remote_count = 2
+        offer.save(update_fields=['current_remote_count', 'updated_at'])
+
+        with patch(
+            'apps.posting.services.pool.checker.replenish_pool_offer',
+        ) as replenish:
+            notify_sale(
+                offer.listing_id,
+                event_key='eldorado:threshold-boundary:order-1',
+                order_id=456,
+            )
+
+        offer.refresh_from_db()
+        self.assertEqual(offer.current_remote_count, 1)
+        replenish.assert_called_once()
+        self.assertEqual(replenish.call_args.args[0].pk, offer.pk)
 
     def test_owned_product_is_globally_exclusive(self):
         owned = self.make_owned('exclusive@example.test')

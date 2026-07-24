@@ -226,7 +226,7 @@ def _record_sale_event(
         event.pool_offer = locked_offer
         event.save(update_fields=['outcome', 'processed_at', 'pool_offer'])
         should_replenish = (
-            remote_count < locked_offer.threshold
+            remote_count <= locked_offer.threshold
             and locked_offer.can_replenish
         )
 
@@ -343,7 +343,7 @@ def _check_and_replenish(pool_offer: PoolOffer, *, force: bool = False) -> int:
         )
         return 0
 
-    if remote_count < pool.threshold:
+    if remote_count <= pool.threshold:
         return replenish_pool_offer(pool_offer)
 
     # Force mode: replenish regardless of threshold (manual trigger)
