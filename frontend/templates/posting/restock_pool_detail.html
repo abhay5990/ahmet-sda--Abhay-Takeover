@@ -959,11 +959,60 @@ const _DEFAULT_CREDENTIAL_COLUMNS = [
 ];
 const _DEFAULT_PRIMARY_KEYS = { login: 'login', password: 'password' };
 
+// Friendly labels for canonical credential fields that a spec/preset may not
+// declare but the smart paste parser can still detect (so they show up as
+// extra columns when captured).
+const _CANONICAL_FIELD_LABELS = {
+    email: 'Email', email_password: 'Email Pass',
+    email_login_link: 'Email Domain',
+    security_email: 'Recovery Email', security_email_password: 'Recovery Email Pass',
+    security_email_login_link: 'Sec. Email Link', birthday: 'Birthday',
+};
+
+// Order used when appending detected extra columns to a spec's table.
+const _CANONICAL_EXTRA_ORDER = [
+    'email', 'email_password', 'email_login_link',
+    'security_email', 'security_email_password', 'security_email_login_link',
+    'birthday',
+];
+
 const _DATE_RE = /^\d{1,4}[\/.\\-]\d{1,2}[\/.\\-]\d{1,4}$/;
+// Domain / email-login-link (e.g. "outlook.com" or "mx.duolashop.com/outlook.com").
+// A '/' inside a single tab-separated cell is kept as one entity (two domains
+// for one account), never split.
 const _LINK_RE = /^(https?:\/\/)?[a-z0-9.-]+\.[a-z]{2,}/i;
 
 function _specFieldsToColumns(fields) {
     return fields.map(f => ({ key: f.key, label: f.label + (f.required ? ' *' : '') }));
+}
+
+// Build a role -> field-key map from spec/preset fields so the smart parser can
+// route detected values into the columns the pool actually uses (falling back
+// to canonical keys when the spec doesn't declare that role).
+function _buildRoleKeys(fields) {
+    const map = {};
+    for (const f of (fields || [])) {
+        if (f.role && f.role !== 'extra') map[f.role] = f.key;
+        if (f.key === 'dob' || f.key === 'birthday') map.birthday = f.key;
+    }
+    return map;
+}
+
+// Classify one "extra" cell (past login/password) by content and store it under
+// the appropriate role key, tracking which slots are already filled.
+function _classifyExtraCell(cred, val, roleKeys, seen) {
+    if (!val) return;
+    if (_DATE_RE.test(val)) {
+        cred[roleKeys.birthday || 'birthday'] = val;
+    } else if (val.includes('@')) {
+        if (!seen.email) { cred[roleKeys.email || 'email'] = val; seen.email = true; }
+        else if (!seen.recoveryEmail) { cred[roleKeys.security_email || 'security_email'] = val; seen.recoveryEmail = true; }
+    } else if (_LINK_RE.test(val)) {
+        if (!seen.link) { cred[roleKeys.email_login_link || 'email_login_link'] = val; seen.link = true; }
+    } else {
+        if (!seen.emailPass) { cred[roleKeys.email_password || 'email_password'] = val; seen.emailPass = true; }
+        else if (!seen.recoveryPass) { cred[roleKeys.security_email_password || 'security_email_password'] = val; seen.recoveryPass = true; }
+    }
 }
 
 function _emptyCredentialForColumns(columns) {
@@ -991,19 +1040,35 @@ function _parseByColumns(cells, columns) {
     return cred;
 }
 
-function _detectColumnsForDetail(cells, columns) {
-    if (columns && columns.length > 0) return _parseByColumns(cells, columns);
+function _detectColumnsForDetail(cells, columns, roleKeys) {
+    if (columns && columns.length > 0) {
+        // Positional fill for the columns the spec/preset declares (safe, keeps
+        // ordered fields like Steam/Rockstar IDs correct). Any surplus cells the
+        // spec has no column for are content-classified into canonical fields so
+        // pasted recovery-email / email-domain data is never silently dropped.
+        const rk = roleKeys || {};
+        const cred = _parseByColumns(cells, columns);
+        if (cells.length > columns.length) {
+            const seen = {
+                email: !!cred[rk.email || 'email'],
+                emailPass: !!cred[rk.email_password || 'email_password'],
+                recoveryEmail: !!cred[rk.security_email || 'security_email'],
+                recoveryPass: !!cred[rk.security_email_password || 'security_email_password'],
+                link: !!cred[rk.email_login_link || 'email_login_link'],
+            };
+            for (let i = columns.length; i < cells.length; i++) {
+                _classifyExtraCell(cred, cells[i].trim(), rk, seen);
+            }
+        }
+        return cred;
+    }
+    // No spec: fully content-aware parse into the default canonical columns.
     const cred = _emptyCredentialForColumns(_DEFAULT_CREDENTIAL_COLUMNS);
     if (cells.length >= 1) cred.login = cells[0].trim();
     if (cells.length >= 2) cred.password = cells[1].trim();
-    let emailSeen = false, emailPassSeen = false, emailLinkSeen = false;
+    const seen = {};
     for (let i = 2; i < cells.length; i++) {
-        const val = cells[i].trim();
-        if (!val) continue;
-        if (_DATE_RE.test(val)) { cred.birthday = val; }
-        else if (val.includes('@')) { if (!emailSeen) { cred.email = val; emailSeen = true; } else { cred.security_email = val; } }
-        else if (_LINK_RE.test(val)) { if (!emailLinkSeen) { cred.email_login_link = val; emailLinkSeen = true; } }
-        else { if (!emailPassSeen) { cred.email_password = val; emailPassSeen = true; } else { cred.security_email_password = val; } }
+        _classifyExtraCell(cred, cells[i].trim(), {}, seen);
     }
     return cred;
 }
@@ -1018,6 +1083,7 @@ function poolDetail() {
         parsedCredentials: [],
         credentialColumns: _DEFAULT_CREDENTIAL_COLUMNS,
         credentialPrimaryKeys: { ..._DEFAULT_PRIMARY_KEYS },
+        credentialRoleKeys: {},
         credentialSpec: null,
         specLoaded: false,
         activeTab: 'offers',
@@ -1089,6 +1155,7 @@ function poolDetail() {
                     this.credentialSpec = data.spec;
                     this.credentialColumns = _specFieldsToColumns(data.spec.fields);
                     this.credentialPrimaryKeys = data.spec.primary_keys || { ..._DEFAULT_PRIMARY_KEYS };
+                    this.credentialRoleKeys = _buildRoleKeys(data.spec.fields);
                 }
             } catch (e) {
                 console.warn('Failed to load credential spec for pool:', e);
@@ -1332,9 +1399,31 @@ function poolDetail() {
             for (const line of dataLines) {
                 if (!line.trim()) continue;
                 const cells = line.split('\t');
-                this.parsedCredentials.push(_detectColumnsForDetail(cells, cols));
+                this.parsedCredentials.push(_detectColumnsForDetail(cells, cols, this.credentialRoleKeys));
             }
+            this._ensureExtraColumns();
             this.pasteText = '';
+        },
+
+        // Reveal columns for any canonical field the smart parser captured that
+        // the pool's spec/preset didn't already declare (e.g. recovery email or
+        // email domain pasted into a generic pool), so the user can verify them.
+        _ensureExtraColumns() {
+            const existing = new Set(this.credentialColumns.map(c => c.key));
+            const extras = [];
+            for (const key of _CANONICAL_EXTRA_ORDER) {
+                if (existing.has(key)) continue;
+                const hasVal = this.parsedCredentials.some(
+                    c => c[key] && String(c[key]).trim(),
+                );
+                if (hasVal) {
+                    extras.push({ key, label: _CANONICAL_FIELD_LABELS[key] || key });
+                    existing.add(key);
+                }
+            }
+            if (extras.length) {
+                this.credentialColumns = [...this.credentialColumns, ...extras];
+            }
         },
 
         addEmptyRow() {
