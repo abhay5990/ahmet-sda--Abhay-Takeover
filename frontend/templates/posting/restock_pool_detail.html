@@ -594,7 +594,7 @@
                                 <td class="px-3 py-2"><div class="font-mono text-gray-800">{{ row.item.owned_product.login }}</div><div class="text-gray-400 truncate max-w-[10rem]">{{ row.item.owned_product.email|default:"—" }}</div></td>
                                 <td class="px-3 py-2 text-center"><span class="inline-flex px-2 py-0.5 rounded-full {% if row.item.status == 'pushed' %}bg-emerald-100 text-emerald-700{% elif row.item.status == 'consumed' %}bg-orange-100 text-orange-700{% elif row.item.status == 'failed' %}bg-red-100 text-red-700{% elif row.item.status == 'pending' %}bg-blue-100 text-blue-700{% else %}bg-gray-100 text-gray-700{% endif %}">{{ row.item.get_status_display }}</span></td>
                                 <td class="px-3 py-2 text-gray-500"><div class="font-mono break-all">{{ row.offer_id|default:"—" }}</div>{% if row.item.error_message %}<div class="text-red-500 mt-0.5 truncate max-w-[12rem]" title="{{ row.item.error_message }}">{{ row.item.error_message }}</div>{% endif %}</td>
-                                <td class="px-3 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if row.item.status == 'consumed' or row.item.status == 'failed' or row.item.status == 'removed' %}<button onclick="recoverUnsoldItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', this)" class="text-emerald-600 hover:text-emerald-800 mr-2 disabled:opacity-50">Verify &amp; return</button>{% endif %}{% if row.item.status == 'reserved' %}<span class="text-amber-600">Working</span>{% elif row.item.pool_offer_id and row.item.status != 'removed' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', true, this)" class="text-red-600 hover:text-red-800 disabled:opacity-50">Delete</button>{% else %}<span class="text-gray-400">—</span>{% endif %}</td>
+                                <td class="px-3 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.security_email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.email_login_link|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if row.item.status == 'consumed' or row.item.status == 'failed' or row.item.status == 'removed' %}<button onclick="recoverUnsoldItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', this)" class="text-emerald-600 hover:text-emerald-800 mr-2 disabled:opacity-50">Verify &amp; return</button>{% endif %}{% if row.item.status == 'reserved' %}<span class="text-amber-600">Working</span>{% elif row.item.pool_offer_id and row.item.status != 'removed' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', true, this)" class="text-red-600 hover:text-red-800 disabled:opacity-50">Delete</button>{% else %}<span class="text-gray-400">—</span>{% endif %}</td>
                             </tr>
                             {% empty %}
                             <tr><td colspan="4" class="px-3 py-5 text-center text-gray-400">No accounts assigned to this store yet.</td></tr>
@@ -624,7 +624,7 @@
                 <thead class="bg-gray-50"><tr><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">#</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Login</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th><th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">State</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Detail</th><th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Action</th></tr></thead>
                 <tbody class="divide-y divide-gray-200">
                     {% for row in shared_item_rows %}
-                    <tr class="hover:bg-gray-50" id="item-{{ row.item.id }}"><td class="px-4 py-2 text-xs text-gray-400">{{ row.item.order }}</td><td class="px-4 py-2 font-mono">{{ row.item.owned_product.login }}</td><td class="px-4 py-2 text-gray-500">{{ row.item.owned_product.email|default:"—" }}</td><td class="px-4 py-2 text-center"><span class="inline-flex px-2 py-0.5 text-xs rounded-full {% if row.item.status == 'pending' %}bg-blue-100 text-blue-700{% elif row.item.status == 'reserved' %}bg-amber-100 text-amber-700{% elif row.item.status == 'failed' %}bg-red-100 text-red-700{% else %}bg-gray-100 text-gray-700{% endif %}">{{ row.item.get_status_display }}</span></td><td class="px-4 py-2 text-xs text-red-500">{{ row.item.error_message|default:"Ready for assignment" }}</td><td class="px-4 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-xs text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if row.item.status == 'pending' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', false, this)" class="text-xs text-red-600 hover:text-red-800 disabled:opacity-50">Remove</button>{% else %}<span class="text-xs text-gray-400">—</span>{% endif %}</td></tr>
+                    <tr class="hover:bg-gray-50" id="item-{{ row.item.id }}"><td class="px-4 py-2 text-xs text-gray-400">{{ row.item.order }}</td><td class="px-4 py-2 font-mono">{{ row.item.owned_product.login }}</td><td class="px-4 py-2 text-gray-500">{{ row.item.owned_product.email|default:"—" }}</td><td class="px-4 py-2 text-center"><span class="inline-flex px-2 py-0.5 text-xs rounded-full {% if row.item.status == 'pending' %}bg-blue-100 text-blue-700{% elif row.item.status == 'reserved' %}bg-amber-100 text-amber-700{% elif row.item.status == 'failed' %}bg-red-100 text-red-700{% else %}bg-gray-100 text-gray-700{% endif %}">{{ row.item.get_status_display }}</span></td><td class="px-4 py-2 text-xs text-red-500">{{ row.item.error_message|default:"Ready for assignment" }}</td><td class="px-4 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.security_email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.email_login_link|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-xs text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if row.item.status == 'pending' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', false, this)" class="text-xs text-red-600 hover:text-red-800 disabled:opacity-50">Remove</button>{% else %}<span class="text-xs text-gray-400">—</span>{% endif %}</td></tr>
                     {% empty %}
                     <tr><td colspan="6" class="px-4 py-7 text-center text-gray-400">All available accounts have been assigned to a store.</td></tr>
                     {% endfor %}
@@ -924,6 +924,18 @@
             <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">Email Password</label>
                 <input id="edit-item-email-password" type="text" class="w-full border rounded px-3 py-2 text-sm" placeholder="Leave blank to keep current">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Email Domain</label>
+                <input id="edit-item-email-login-link" type="text" class="w-full border rounded px-3 py-2 text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Recovery Email</label>
+                <input id="edit-item-security-email" type="text" class="w-full border rounded px-3 py-2 text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Recovery Email Pass</label>
+                <input id="edit-item-security-email-password" type="text" class="w-full border rounded px-3 py-2 text-sm" placeholder="Leave blank to keep current">
             </div>
             <div id="edit-item-warning" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded p-2">
                 ⚠ This item is not PENDING. Editing will use force=true.
@@ -1906,13 +1918,18 @@ async function removeItem(poolId, itemId, status, assignedToOffer, btn) {
 
 
 // ── Edit item ──────────────────────────────────────────────────────────────
-function openEditItem(itemId, login, email, status) {
+function openEditItem(itemId, login, email, securityEmail, emailLoginLink, status) {
     document.getElementById('edit-item-id').value = itemId;
     document.getElementById('edit-item-status').value = status;
     document.getElementById('edit-item-login').value = login;
     document.getElementById('edit-item-password').value = '';
     document.getElementById('edit-item-email').value = email;
     document.getElementById('edit-item-email-password').value = '';
+    // Non-encrypted fields are prefilled so the stored value is visible/editable;
+    // encrypted passwords stay blank ("leave blank to keep current").
+    document.getElementById('edit-item-email-login-link').value = emailLoginLink || '';
+    document.getElementById('edit-item-security-email').value = securityEmail || '';
+    document.getElementById('edit-item-security-email-password').value = '';
     const warn = document.getElementById('edit-item-warning');
     if (status !== 'pending') warn.classList.remove('hidden');
     else warn.classList.add('hidden');
@@ -1935,10 +1952,18 @@ async function saveEditItem() {
     const password = document.getElementById('edit-item-password').value.trim();
     const email = document.getElementById('edit-item-email').value.trim();
     const emailPw = document.getElementById('edit-item-email-password').value.trim();
+    const emailLoginLink = document.getElementById('edit-item-email-login-link').value.trim();
+    const securityEmail = document.getElementById('edit-item-security-email').value.trim();
+    const securityEmailPw = document.getElementById('edit-item-security-email-password').value.trim();
     if (login) body.login = login;
     if (password) body.password = password;
     if (email) body.email = email;
     if (emailPw) body.email_password = emailPw;
+    // Prefilled non-encrypted fields are always sent (so edits/clears take effect);
+    // the encrypted recovery password is sent only when a new value is entered.
+    body.email_login_link = emailLoginLink;
+    body.security_email = securityEmail;
+    if (securityEmailPw) body.security_email_password = securityEmailPw;
     const poolId = {{ pool.id }};
     const resp = await fetch(`/posting/api/pools/${poolId}/items/${itemId}/edit/`, {
         method: 'POST',
