@@ -2253,7 +2253,12 @@ def edit_pool_item(request, pool_id, item_id):
         )
     op = item.owned_product
     changed = False
-    for field in ('login', 'password', 'email', 'email_password'):
+    editable_fields = (
+        'login', 'password', 'email', 'email_password',
+        'security_email', 'security_email_password',
+        'email_login_link', 'security_email_login_link',
+    )
+    for field in editable_fields:
         if field in body and body[field] is not None:
             setattr(op, field, str(body[field]).strip())
             changed = True
