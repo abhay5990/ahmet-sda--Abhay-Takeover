@@ -1972,6 +1972,19 @@ def _get_or_create_owned_product(
         return owned, True
 
 
+# Canonical credential key -> OwnedProduct column. Used to persist smart-parsed
+# email/recovery-email/email-domain values even when a pool's spec/preset does
+# not declare a column with that role.
+_CANONICAL_CREDENTIAL_FIELDS: dict[str, str] = {
+    'email': 'email',
+    'email_password': 'email_password',
+    'email_login_link': 'email_login_link',
+    'security_email': 'security_email',
+    'security_email_password': 'security_email_password',
+    'security_email_login_link': 'security_email_login_link',
+}
+
+
 def _skip_missing_login_password(cred: dict, login: str, result: dict) -> None:
     """Record a credential row that has no usable login/password.
 
@@ -2097,6 +2110,18 @@ def _add_credentials_to_pool(
                     extra_fields[owned_field] = value
                 elif role == 'extra' and value:
                     raw_data[field_key] = value
+
+            # Capture canonical credential fields the smart paste parser may send
+            # even when the resolved spec/preset has no column for them (e.g. a
+            # generic login/password/email pool receiving recovery-email or
+            # email-domain data). Only fills fields the spec didn't already map,
+            # so pasted values are persisted instead of silently dropped.
+            for canon_key, owned_field in _CANONICAL_CREDENTIAL_FIELDS.items():
+                if owned_field in extra_fields:
+                    continue
+                value = str(cred.get(canon_key, '')).strip()
+                if value:
+                    extra_fields[owned_field] = value
 
             owned, _ = _get_or_create_owned_product(
                 game, login, password,
