@@ -38,15 +38,25 @@ class Fh5ManualSourceAdapter:
         offer_details = payload.get("offer_details") or {}
         if not isinstance(offer_details, dict):
             offer_details = {}
+        # The stock-start UI submits values under ``manual_fields``; older/dropship
+        # payloads use ``offer_details`` or top-level keys. Read all three so the
+        # selected platform actually drives the Eldorado trade environment.
+        manual_fields = payload.get("manual_fields") or {}
+        if not isinstance(manual_fields, dict):
+            manual_fields = {}
 
-        platform = (
-            offer_details.get("platform")
-            or payload.get("platform", "")
-        )
-        edition = (
-            offer_details.get("edition")
-            or payload.get("edition", "Standard")
-        )
+        def _val(key: str, default: str = "") -> str:
+            for src in (manual_fields, offer_details, payload):
+                v = src.get(key)
+                if v not in (None, ""):
+                    return str(v).strip()
+            return default
+
+        def _int(key: str, default: int = 0) -> int:
+            for src in (manual_fields, offer_details, payload):
+                if src.get(key) not in (None, ""):
+                    return self._to_int(src.get(key), default=default)
+            return default
 
         return Fh5ManualSource(
             item_id=str(payload.get("item_id") or "").strip(),
@@ -61,10 +71,10 @@ class Fh5ManualSourceAdapter:
             ),
             title=str(payload.get("title") or "").strip(),
             description=str(payload.get("description") or "").strip(),
-            platform=str(platform).strip(),
-            edition=str(edition).strip() or "Standard",
-            cars_count=self._to_int(offer_details.get("cars_count") or payload.get("cars_count"), default=0),
-            credits_count=self._to_int(offer_details.get("credits_count") or payload.get("credits_count"), default=0),
+            platform=_val("platform"),
+            edition=_val("edition", "Standard") or "Standard",
+            cars_count=_int("cars_count"),
+            credits_count=_int("credits_count"),
         )
 
     def _to_int(self, value: Any, default: int) -> int:

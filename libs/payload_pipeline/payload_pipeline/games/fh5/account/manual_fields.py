@@ -9,11 +9,13 @@ from __future__ import annotations
 
 from ....core.manual_fields import FieldOption, ManualFieldSpec, manual_field_registry
 
+# Values MUST match the Forza H5 platform GameVariant source keys (PC / Xbox /
+# PS5) so the selection resolves to the Eldorado tradeEnvironmentId (0/1/2).
+# Steam / Microsoft Store accounts are "PC" on Eldorado.
 _PLATFORM_OPTIONS = (
-    FieldOption("Steam", "Steam"),
+    FieldOption("PC", "PC (Steam / Microsoft Store)"),
     FieldOption("Xbox", "Xbox"),
-    FieldOption("PlayStation", "PlayStation"),
-    FieldOption("PC", "PC"),
+    FieldOption("PS5", "PlayStation (PS5)"),
 )
 
 _EDITION_OPTIONS = (
