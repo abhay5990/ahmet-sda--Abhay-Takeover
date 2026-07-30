@@ -28,6 +28,21 @@ from Crypto.Cipher import PKCS1_v1_5
 
 logger = logging.getLogger(__name__)
 
+# Web-address-like patterns PA may reject. Catches full URLs, www. prefixes and
+# bare domains (which pa_sanitize does NOT strip — it only removes the scheme).
+_WEB_ADDRESS_RE = re.compile(
+    r"https?://\S+|www\.\S+|\b[\w-]+\.(?:com|net|org|gg|io|me|co|ru|tv)\b",
+    re.IGNORECASE,
+)
+
+
+def _web_address_hits(text: str) -> list[str]:
+    """Return distinct web-address-like tokens found in *text* (for diagnostics)."""
+    if not text:
+        return []
+    return sorted(set(_WEB_ADDRESS_RE.findall(text)))
+
+
 # ---------------------------------------------------------------------------
 # PA RSA public key for password encryption (same as code-tracker)
 # ---------------------------------------------------------------------------
@@ -214,6 +229,26 @@ class PARelayPoster:
                         )
                 else:
                     payload = self._build_json_payload(row)
+                # F1: persist exactly what we send so a "web addresses" rejection
+                # can be confirmed/refuted from logs instead of reconstructed.
+                _auto = payload.get("autoDelivery") if isinstance(payload.get("autoDelivery"), dict) else {}
+                _title = str(payload.get("title") or "")
+                _desc = str(payload.get("offerDesc") or "")
+                _instr = str(_auto.get("instruction") or "")
+                _hits = {
+                    field: hits for field, hits in (
+                        ("title", _web_address_hits(_title)),
+                        ("offerDesc", _web_address_hits(_desc)),
+                        ("instruction", _web_address_hits(_instr)),
+                    ) if hits
+                }
+                logger.info(
+                    "PA relay outbound: store=%s login=%r len(title=%d desc=%d instr=%d) web_hits=%s",
+                    store_slug, _auto.get("loginName", ""),
+                    len(_title), len(_desc), len(_instr), _hits or "none",
+                )
+                if _hits:
+                    logger.warning("PA relay outbound contains web-address-like text: %s", _hits)
                 offer_id, error = self._post_one(token, store_slug, payload, cookie=cookie)
                 if offer_id:
                     result.successful[idx] = offer_id
