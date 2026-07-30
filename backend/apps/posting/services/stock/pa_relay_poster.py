@@ -467,12 +467,13 @@ def pa_fake_owner_info(seed: str) -> dict[str, str]:
 
 
 def pa_format_description(text: str) -> str:
-    """Return PlayerAuctions-native multiline text for an outbound offer.
+    """Return PlayerAuctions-visible break markup for an outbound offer.
 
     Templates remain stored as readable plain text. This serializer is used only
-    immediately before relay submission, where PlayerAuctions displays CRLF
-    breaks correctly. It also normalizes legacy HTML-like break markup from
-    older templates so future replacement offers do not flatten into one block.
+    immediately before relay submission. PlayerAuctions collapses CRLF text in
+    its public offer renderer, while ``<br>`` is rendered as a visible line
+    break. Legacy HTML-like break markup is normalized first so future
+    replacement offers keep the same readable section and bullet layout.
     """
     if not text:
         return text
@@ -485,7 +486,7 @@ def pa_format_description(text: str) -> str:
     normalized = re.sub(r"<[^>]+>", "", normalized)
     normalized = "\n".join(line.strip() for line in normalized.split("\n"))
     normalized = re.sub(r"\n{3,}", "\n\n", normalized).strip()
-    return normalized.replace("\n", "\r\n")
+    return normalized.replace("\n", "<br>")
 
 
 def pa_sanitize(text: str) -> str:

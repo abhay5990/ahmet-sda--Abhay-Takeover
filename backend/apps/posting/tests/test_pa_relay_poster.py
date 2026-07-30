@@ -241,17 +241,25 @@ class RelayCookiePropagationTests(SimpleTestCase):
 
 
 class PlayerAuctionsDescriptionFormattingTests(SimpleTestCase):
-    def test_native_line_breaks_and_legacy_markup_become_visible_paragraphs(self):
+    def test_native_line_breaks_and_legacy_markup_become_visible_break_markup(self):
         source = "First line<br>Second line<p>Third paragraph</p>Fourth line"
 
         result = pa_format_description(pa_sanitize(source))
 
         self.assertEqual(
             result,
-            "First line\r\nSecond line\r\nThird paragraph\r\n\r\nFourth line",
+            "First line<br>Second line<br>Third paragraph<br><br>Fourth line",
         )
-        self.assertNotIn("<br>", result)
+        self.assertNotIn("\r\n", result)
         self.assertNotIn("<p>", result)
+
+    def test_plain_text_newlines_become_visible_break_markup(self):
+        result = pa_format_description(pa_sanitize("Headline\n* First bullet\n* Second bullet"))
+
+        self.assertEqual(
+            result,
+            "Headline<br>* First bullet<br>* Second bullet",
+        )
 
     @patch("apps.posting.services.stock.pa_relay_poster.requests.post")
     def test_prebuilt_payload_formats_description_without_adding_missing_fields(self, post):
@@ -267,4 +275,4 @@ class PlayerAuctionsDescriptionFormattingTests(SimpleTestCase):
         )
 
         payload = post.call_args.kwargs["json"]["payload"]
-        self.assertEqual(payload["offerDesc"], "One\r\nTwo")
+        self.assertEqual(payload["offerDesc"], "One<br>Two")
