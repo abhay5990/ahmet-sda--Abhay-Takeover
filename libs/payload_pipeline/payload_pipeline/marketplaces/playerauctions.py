@@ -190,6 +190,52 @@ def _append_album_link(description: str, listing: ListingDraft) -> str:
     return f"{image_block}\n\n{description}"
 
 
+def _normalize_blank_lines(text: str) -> str:
+    """Trim trailing spaces and collapse 3+ blank lines to a single blank line.
+
+    Sellers often paste descriptions with several blank lines between sections;
+    keep the intended paragraph breaks but avoid huge gaps.
+    """
+    if not text:
+        return text
+    out: list[str] = []
+    blanks = 0
+    for line in text.split("\n"):
+        line = line.rstrip()
+        if line == "":
+            blanks += 1
+            if blanks <= 1:
+                out.append("")
+        else:
+            blanks = 0
+            out.append(line)
+    return "\n".join(out).strip("\n")
+
+
+def _format_offer_description(
+    description: str,
+    listing: ListingDraft,
+    *,
+    html_breaks: bool,
+) -> str:
+    """Build the PA offer description, preserving the seller's line breaks.
+
+    Steps: prepend the hosted album link, strip URL schemes, sanitize to
+    Latin-only (emoji -> ``*``), drop PA-banned segments, then normalize blank
+    lines. Line breaks are emitted as real newlines for the bulk-upload path
+    (PA's spreadsheet importer treats the cell as plain text, so ``<br>`` would
+    NOT render) and as ``<br>`` for the single create_offer JSON path.
+    """
+    text = _append_album_link(description, listing)
+    text = _strip_url_schemes(text)
+    text = _sanitize_text(text)
+    text = _strip_banned_segments(text)
+    text = _normalize_blank_lines(text)
+    if html_breaks:
+        text = text.replace("\n", "<br>")
+    return text
+
+
 def _stable_index(seed: str, salt: str, length: int) -> int:
     digest = hashlib.sha256(f"{salt}|{seed}".encode("utf-8")).hexdigest()
     return int(digest[:8], 16) % length
@@ -348,9 +394,7 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
             "freeInsurance": 7,
             "offerDuration": 30,
             "title": _strip_banned_segments(_sanitize_text(_strip_url_schemes(content.title))),
-            "offerDesc": _strip_banned_segments(_sanitize_text(
-                _strip_url_schemes(_append_album_link(content.description, listing)),
-            )).replace("\n", "<br>"),
+            "offerDesc": _format_offer_description(content.description, listing, html_breaks=True),
             "screenShot": "",
             "agreeCheck": True,
             "isAuto": is_stock,
@@ -395,9 +439,9 @@ class BasePlayerAuctionsBuilder(BasePayloadBuilder[Any]):
         server_name = servers[0] if servers else ""
 
         title = _strip_banned_segments(_sanitize_text(_strip_url_schemes(content.title)))
-        description = _strip_banned_segments(_sanitize_text(
-            _strip_url_schemes(_append_album_link(content.description, listing)),
-        )).replace("\n", "<br>")
+        # Bulk-upload (Excel) path: PA imports the Description cell as plain text,
+        # so emit REAL newlines (not <br>) to preserve the seller's line breaks.
+        description = _format_offer_description(content.description, listing, html_breaks=False)
 
         delivery_instructions = _sanitize_text(
             self._format_delivery(subject) if is_stock
