@@ -46,8 +46,25 @@ class RustManualSourceAdapter:
         offer_details = payload.get("offer_details") or {}
         if not isinstance(offer_details, dict):
             offer_details = {}
+        # The stock-start UI submits values under ``manual_fields`` (see
+        # RUST_MANUAL_FIELDS). Older/dropship payloads use ``offer_details`` or
+        # top-level keys, so read all three (manual_fields wins).
+        manual_fields = payload.get("manual_fields") or {}
+        if not isinstance(manual_fields, dict):
+            manual_fields = {}
 
-        platform = offer_details.get("platform") or payload.get("platform", "")
+        def _val(key: str, default: str = "") -> str:
+            for src in (manual_fields, offer_details, payload):
+                v = src.get(key)
+                if v not in (None, ""):
+                    return str(v).strip()
+            return default
+
+        def _int(key: str, default: int = 0) -> int:
+            for src in (manual_fields, offer_details, payload):
+                if src.get(key) not in (None, ""):
+                    return self._to_int(src.get(key), default=default)
+            return default
 
         return RustManualSource(
             item_id=str(payload.get("item_id") or "").strip(),
@@ -62,15 +79,31 @@ class RustManualSourceAdapter:
             ),
             title=str(payload.get("title") or "").strip(),
             description=str(payload.get("description") or "").strip(),
-            platform=str(platform).strip(),
-            premium_status=str(offer_details.get("premium_status") or payload.get("premium_status") or "premium-no").strip(),
-            hours_range=str(offer_details.get("hours_range") or payload.get("hours_range") or "hours-099").strip(),
-            skins_range=str(offer_details.get("skins_range") or payload.get("skins_range") or "skins-014").strip(),
-            steam_level_range=str(offer_details.get("steam_level_range") or payload.get("steam_level_range") or "level-05").strip(),
-            real_hours=self._to_int(offer_details.get("real_hours") or payload.get("real_hours"), default=0),
-            skins_count=self._to_int(offer_details.get("skins_count") or payload.get("skins_count"), default=0),
-            steam_level=self._to_int(offer_details.get("steam_level") or payload.get("steam_level"), default=0),
+            platform=_val("platform"),
+            premium_status=self._premium_to_attr(_val("premium_status", "No")),
+            hours_range=_val("hours_range", "hours-099"),
+            skins_range=_val("skins_range", "skins-014"),
+            steam_level_range=_val("steam_level_range", "level-05"),
+            real_hours=_int("real_hours"),
+            skins_count=_int("skins_count"),
+            steam_level=_int("steam_level"),
         )
+
+    @staticmethod
+    def _premium_to_attr(value: str) -> str:
+        """Map the UI's Yes/No premium selection to Eldorado's attribute id.
+
+        Accepts either the human option ("Yes"/"No") the stock UI submits or an
+        already-resolved Eldorado id ("premium-yes"/"premium-no"/"premium-other").
+        """
+        normalized = value.strip().lower()
+        if normalized in ("yes", "premium-yes", "true"):
+            return "premium-yes"
+        if normalized in ("no", "premium-no", "false", ""):
+            return "premium-no"
+        if normalized.startswith("premium-"):
+            return normalized
+        return "premium-other"
 
     def _to_int(self, value: Any, default: int) -> int:
         try:
