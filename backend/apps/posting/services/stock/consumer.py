@@ -75,6 +75,21 @@ def _is_relay_authorization_failure(error: str | None) -> bool:
     return 'upstream_status=401' in str(error or '').lower()
 
 
+def _is_pa_relay_transient_session_error(error: str | None) -> bool:
+    """True for a post-refresh PA rejection that is a session artifact, not content.
+
+    After a forced session refresh (following a 401), PlayerAuctions has been
+    observed to answer the retry with its generic ``upstream_status=1`` "web
+    addresses" validation text even when the submitted title/description/
+    instruction provably contain no web addresses. Treating it as a permanent
+    content failure writes off good stock; it is safe to retry on a later pass,
+    so the reserved item is returned to the pool (PENDING) and logged as a
+    warning rather than a hard content error.
+    """
+    e = str(error or '').lower()
+    return 'upstream_status=1' in e and 'web address' in e
+
+
 def _retry_relay_authorization_failures(
     result: PARelayPostResult,
     *,
@@ -909,23 +924,34 @@ class StockConsumer:
                     )
             else:
                 error_msg = _relay_result.failed.get(idx, 'PA relay post failed')
+                transient = _is_pa_relay_transient_session_error(error_msg)
                 item.status = PostingJobItemStatus.FAILED
-                item.error_message = error_msg
+                item.error_message = (
+                    f'Transient PA session rejection (returned to pool for retry): {error_msg}'
+                    if transient else error_msg
+                )
                 if owned_product:
                     add_failed_owned_products_to_pool(job, [owned_product])
+                    # 'absent' returns the reserved item to PENDING so a later
+                    # scheduler/replenish pass retries it — correct for both a
+                    # hard failure and a transient PA session rejection.
                     release_dispatch_items_for_job(
                         job, owned_products=[owned_product],
-                        reason=error_msg, remote_outcome='absent',
+                        reason=item.error_message, remote_outcome='absent',
                     )
                 PostingLog.objects.create(
                     task_name='stock_post',
-                    level=PostingLogLevel.ERROR,
-                    message=f"PA relay post failed: {item.login}",
+                    level=PostingLogLevel.WARNING if transient else PostingLogLevel.ERROR,
+                    message=(
+                        f"PA relay transient session rejection (retryable): {item.login}"
+                        if transient else f"PA relay post failed: {item.login}"
+                    ),
                     detail={
                         'item_id': item.id,
                         'job_id': job.id,
                         'stage': 'pa_relay_batch',
                         'error': error_msg,
+                        'transient': transient,
                     },
                     integration_account=store,
                 )
@@ -1325,24 +1351,32 @@ class StockConsumer:
                     )
             else:
                 error_msg = batch_result.failed.get(idx, 'PA upload failed')
+                transient = _is_pa_relay_transient_session_error(error_msg)
                 item.status = PostingJobItemStatus.FAILED
-                item.error_message = error_msg
+                item.error_message = (
+                    f'Transient PA session rejection (returned to pool for retry): {error_msg}'
+                    if transient else error_msg
+                )
                 owned_product = prepared_data_list[idx].get('owned_product')
                 if owned_product:
                     add_failed_owned_products_to_pool(job, [owned_product])
                     release_dispatch_items_for_job(
                         job, owned_products=[owned_product],
-                        reason=error_msg, remote_outcome='absent',
+                        reason=item.error_message, remote_outcome='absent',
                     )
                 PostingLog.objects.create(
                     task_name='stock_post',
-                    level=PostingLogLevel.ERROR,
-                    message=f"PA upload failed: {item.login}",
+                    level=PostingLogLevel.WARNING if transient else PostingLogLevel.ERROR,
+                    message=(
+                        f"PA transient session rejection (retryable): {item.login}"
+                        if transient else f"PA upload failed: {item.login}"
+                    ),
                     detail={
                         'item_id': item.id,
                         'job_id': job.id,
                         'stage': 'build_playerauctions',
                         'error': error_msg,
+                        'transient': transient,
                     },
                     integration_account=item.store,
                 )
