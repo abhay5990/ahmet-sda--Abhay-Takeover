@@ -1399,6 +1399,7 @@ def _reconcile_pushed_items(
         if str(credential).strip() and str(remote_id).strip()
     }
 
+    missing_items: list[OfferPoolItem] = []
     for item in pushed_items:
         found = bool(
             item.remote_credential_id
@@ -1412,6 +1413,7 @@ def _reconcile_pushed_items(
                     item.owned_product, marketplace, pool=pool,
                 )
             except Exception:
+                # Rendering failed — we cannot prove absence, so treat as present.
                 continue
 
             if isinstance(expected_cred, dict):
@@ -1425,34 +1427,61 @@ def _reconcile_pushed_items(
             if found:
                 matched_remote_id = remote_id_by_text.get(expected_norm, '')
 
-        if found and matched_remote_id and item.remote_credential_id != matched_remote_id:
-            item.remote_credential_id = matched_remote_id
-            item.remote_state = 'present'
-            item.save(update_fields=[
-                'remote_credential_id', 'remote_state', 'updated_at',
-            ])
+        if found:
+            if matched_remote_id and item.remote_credential_id != matched_remote_id:
+                item.remote_credential_id = matched_remote_id
+                item.remote_state = 'present'
+                item.save(update_fields=[
+                    'remote_credential_id', 'remote_state', 'updated_at',
+                ])
+            continue
 
-        if not found:
-            item.status = OfferPoolItemStatus.CONSUMED
-            item.consumed_at = timezone.now()
-            item.remote_state = 'absent'
-            item.error_message = 'Removed from remote offer'
-            item.save(update_fields=[
-                'status', 'consumed_at', 'remote_state', 'error_message', 'updated_at',
-            ])
+        missing_items.append(item)
 
-            # Unlink from listing and revert OwnedProduct status
-            if pool.listing_id and item.owned_product_id:
-                ListingOwnedProduct.objects.filter(
-                    listing_id=pool.listing_id,
-                    owned_product_id=item.owned_product_id,
-                ).delete()
-                owned = item.owned_product
-                if owned.status == 'listed':
-                    owned.status = 'draft'
-                    owned.save(update_fields=['status', 'updated_at'])
+    # A credential only leaves a live offer when the remote credential COUNT
+    # drops (a sale/removal). If the offer still holds at least as many
+    # credentials as we pushed, an unmatched item is formatting / field-edit
+    # drift (e.g. an edited recovery email or email domain re-rendering
+    # differently), NOT a sale — consuming it here previously flipped
+    # freshly-pushed accounts to CONSUMED ("sold") by mistake. So only consume
+    # the credentials that the count proves are actually gone.
+    shortfall = max(0, len(pushed_items) - len(remote_creds))
+    if shortfall <= 0 or not missing_items:
+        return 0
 
-            consumed += 1
+    # Prefer items whose recorded remote ID is confirmed absent (strongest proof
+    # of removal), then oldest first; never consume more than the shortfall.
+    def _removal_certainty(candidate: OfferPoolItem):
+        id_absent = bool(
+            candidate.remote_credential_id
+            and remote_id_set
+            and candidate.remote_credential_id.strip() not in remote_id_set
+        )
+        return (0 if id_absent else 1, candidate.order, candidate.pk)
+
+    missing_items.sort(key=_removal_certainty)
+
+    for item in missing_items[:shortfall]:
+        item.status = OfferPoolItemStatus.CONSUMED
+        item.consumed_at = timezone.now()
+        item.remote_state = 'absent'
+        item.error_message = 'Removed from remote offer'
+        item.save(update_fields=[
+            'status', 'consumed_at', 'remote_state', 'error_message', 'updated_at',
+        ])
+
+        # Unlink from listing and revert OwnedProduct status
+        if pool.listing_id and item.owned_product_id:
+            ListingOwnedProduct.objects.filter(
+                listing_id=pool.listing_id,
+                owned_product_id=item.owned_product_id,
+            ).delete()
+            owned = item.owned_product
+            if owned.status == 'listed':
+                owned.status = 'draft'
+                owned.save(update_fields=['status', 'updated_at'])
+
+        consumed += 1
 
     if consumed > 0:
         _log(
