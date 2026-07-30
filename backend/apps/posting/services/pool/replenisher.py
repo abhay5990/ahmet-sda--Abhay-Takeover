@@ -1067,15 +1067,19 @@ def _clone_pa_offer(
     product = item.owned_product
     _apply_pa_auto_delivery_credentials(payload, product, pool=pool)
 
-    # Build Excel-row dict from the legacy create payload, then use the same
-    # relay persistence path as a source-driven replacement.
+    # Post the JSON payload directly. PARelayPoster.post_batch treats a dict with
+    # a ``serverId`` key as a pre-built PA offer payload (correct numeric
+    # gameId/serverId), whereas an Excel-style row is run through
+    # ``_build_json_payload`` which expects the game *name*. Converting the JSON
+    # payload to an Excel row put the numeric gameId into the ``Game`` column,
+    # so PA rejected it with "Please select a game." Passing the payload as-is
+    # mirrors the working source-rebuild path.
     return _post_pa_excel_row(
         pool,
         client,
         item,
-        _build_excel_row_from_payload(payload),
+        payload,
         proxy_group,
-        raw_payload=payload,
     )
 
 
@@ -1543,32 +1547,3 @@ def _mark_items_pushed(
 def _check_depleted(pool: OfferPool) -> None:
     """Depletion is computed health; never overwrite user intent state."""
     return None
-
-def _build_excel_row_from_payload(payload: dict) -> dict:
-    """Convert a PA JSON offer payload back to an Excel-row-style dict for PARelayPoster.
-
-    PARelayPoster._build_json_payload() expects Excel column names.
-    This function reverses that mapping so pool replenisher can use PARelayPoster
-    without needing to rebuild the full Excel row from scratch.
-    """
-    auto_delivery = payload.get('autoDelivery') or {}
-    manual = payload.get('manual') or {}
-    return {
-        'Game': payload.get('gameId', ''),
-        'Server': payload.get('serverId', ''),
-        'Title': payload.get('title', ''),
-        'Description': payload.get('offerDesc', ''),
-        'Price': payload.get('price', 0),
-        'Offer Duration': payload.get('offerDuration', 30),
-        'Seller After-Sale Protection': payload.get('freeInsurance', 7),
-        'Cover image (PA hosted)': payload.get('screenShot', ''),
-        'Auto Delivery': 'Yes' if payload.get('isAuto') else 'No',
-        # Auto delivery credentials
-        'Login': auto_delivery.get('loginName', ''),
-        'Password': auto_delivery.get('password', ''),
-        'Instruction': auto_delivery.get('instruction', ''),
-        'Registration CD Key': auto_delivery.get('firstCDKey', ''),
-        # Pass through the full autoDelivery dict for PARelayPoster to use
-        '_autoDelivery': auto_delivery,
-        '_payload': payload,  # full original payload passthrough
-    }
