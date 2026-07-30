@@ -385,6 +385,13 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
                 'target_count': target_count,
                 'threshold': threshold,
             }
+            # Seed the pool with ALL created accounts as unallocated PENDING stock.
+            # The job only posts the subset selected by the distribution (e.g. 2 to
+            # Eldorado); on success those get promoted to PUSHED and linked to their
+            # offer, leaving the surplus (e.g. the other 28) as shared/unallocated
+            # pool stock. Without this seeding, accounts not included in the job were
+            # never added to the pool and silently vanished from pool inventory.
+            _seed_pool_pending_items(pool, owned_products)
 
     job = PostingJob.objects.create(
         game=game,
@@ -540,6 +547,39 @@ def _build_cross_platform_items(
         for store in stores:
             items.append((owned.login, owned, store))
     return items
+
+
+def _seed_pool_pending_items(pool, owned_products: list[OwnedProduct]) -> None:
+    """Add every created account to the pool as an unallocated PENDING item.
+
+    Idempotent per (pool, owned_product). Only the accounts the job actually
+    posts are later promoted to PUSHED and linked to an offer; the rest remain
+    PENDING/unassigned and show up as shared/unallocated pool stock.
+    """
+    from apps.posting.models import OfferPoolItem, OfferPoolItemStatus
+
+    candidates = [o for o in owned_products if o is not None]
+    if not candidates:
+        return
+    # An OwnedProduct can belong to only one pool (unique_owned_product_across_pools).
+    # Skip any account already tracked in a pool so seeding can never raise an
+    # IntegrityError and crash job creation.
+    existing_ids = set(
+        OfferPoolItem.objects.filter(owned_product__in=candidates)
+        .values_list('owned_product_id', flat=True)
+    )
+    base_order = pool.items.count()
+    for i, owned in enumerate(candidates):
+        if owned.id in existing_ids:
+            continue
+        OfferPoolItem.objects.get_or_create(
+            pool=pool,
+            owned_product=owned,
+            defaults={
+                'status': OfferPoolItemStatus.PENDING,
+                'order': base_order + i,
+            },
+        )
 
 
 def _build_shared_items(

@@ -310,16 +310,32 @@ def _auto_link_listing_to_pool(
         base_order = pool.items.count()
         first_item = None
         for i, owned_product in enumerate(owned_products):
-            pool_item = OfferPoolItem.objects.create(
+            # Promote a pre-seeded PENDING item (from stock-start pool seeding) to
+            # this offer instead of creating a duplicate — (pool, owned_product) is
+            # unique, and the surplus non-posted items stay PENDING/unallocated.
+            pool_item, created = OfferPoolItem.objects.get_or_create(
                 pool=pool,
                 owned_product=owned_product,
-                pool_offer=pool_offer,
-                status=OfferPoolItemStatus.PUSHED,
-                target_offer_id=listing.store_listing_id,
-                remote_state='present',
-                pushed_at=now,
-                order=base_order + i,
+                defaults={
+                    'pool_offer': pool_offer,
+                    'status': OfferPoolItemStatus.PUSHED,
+                    'target_offer_id': listing.store_listing_id,
+                    'remote_state': 'present',
+                    'pushed_at': now,
+                    'order': base_order + i,
+                },
             )
+            if not created:
+                pool_item.pool_offer = pool_offer
+                pool_item.status = OfferPoolItemStatus.PUSHED
+                pool_item.target_offer_id = listing.store_listing_id
+                pool_item.remote_state = 'present'
+                pool_item.pushed_at = now
+                pool_item.reservation = None
+                pool_item.save(update_fields=[
+                    'pool_offer', 'status', 'target_offer_id',
+                    'remote_state', 'pushed_at', 'reservation', 'updated_at',
+                ])
             if first_item is None:
                 first_item = pool_item
 
