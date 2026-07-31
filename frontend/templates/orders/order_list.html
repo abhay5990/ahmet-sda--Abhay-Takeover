@@ -126,6 +126,10 @@
                             {% else %}
                             <span class="px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">Manual</span>
                             {% endif %}
+                            {% with rep=order.replacements.all|first %}{% if rep %}
+                            <span class="ml-1 px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700"
+                                  title="Replaced by {{ rep.employee_name }} — {{ rep.reason }} ({{ rep.created_at|date:'M-d-Y g:i A' }})">Replaced</span>
+                            {% endif %}{% endwith %}
                         </td>
                         <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{% if order.sold_at %}<span data-utc="{{ order.sold_at|date:'c' }}">{{ order.sold_at|date:"M-d-Y g:i A" }}</span>{% else %}-{% endif %}</td>
                         <!-- Actions dropdown -->
@@ -148,6 +152,13 @@
                                         {{ label }}
                                     </button>
                                     {% endfor %}
+                                    {% if order.owned_product_id and not order.dropship_product_id %}
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <button @click="openReplace({{ order.id }}); open = false"
+                                            class="w-full text-left px-3 py-1.5 text-sm text-indigo-600 hover:bg-gray-50 transition-colors">
+                                        Replace account…
+                                    </button>
+                                    {% endif %}
                                 </div>
                             </div>
                         </td>
@@ -163,6 +174,52 @@
     </div>
 
     {% include "includes/_pagination.html" %}
+
+    <!-- Replace account modal -->
+    <div x-show="replaceModal.open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center">
+        <div class="fixed inset-0 bg-black/40" @click="closeReplace()"></div>
+        <div class="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Replace account</h3>
+            <template x-if="!replaceModal.result">
+                <div class="space-y-3">
+                    <p class="text-xs text-gray-500">A new account is taken from unallocated pool stock of the same kind and swapped onto this order. The old account is retired.</p>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Reason *</label>
+                        <textarea x-model="replaceModal.reason" rows="3" class="w-full border rounded px-3 py-2 text-sm" placeholder="Why is this being replaced?"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Employee name *</label>
+                        <input x-model="replaceModal.employeeName" type="text" class="w-full border rounded px-3 py-2 text-sm">
+                    </div>
+                    <p x-show="replaceModal.error" x-text="replaceModal.error" class="text-sm text-red-600"></p>
+                    <div class="flex justify-end gap-3 pt-2">
+                        <button @click="closeReplace()" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+                        <button @click="submitReplace()"
+                                :disabled="replaceModal.submitting || replaceModal.reason.trim().length < 3 || !replaceModal.employeeName.trim()"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700 disabled:opacity-50">
+                            <span x-text="replaceModal.submitting ? 'Assigning\u2026' : 'Assign replacement'"></span>
+                        </button>
+                    </div>
+                </div>
+            </template>
+            <template x-if="replaceModal.result">
+                <div class="space-y-2">
+                    <p class="text-sm text-emerald-700 font-medium">Replacement assigned — send these to the customer.</p>
+                    <div class="bg-gray-50 border rounded p-3 text-sm font-mono space-y-1 break-all">
+                        <div><span class="text-gray-400">Login:</span> <span x-text="replaceModal.result.login"></span></div>
+                        <div><span class="text-gray-400">Password:</span> <span x-text="replaceModal.result.password"></span></div>
+                        <div><span class="text-gray-400">Email:</span> <span x-text="replaceModal.result.email || '\u2014'"></span></div>
+                        <div><span class="text-gray-400">Email pass:</span> <span x-text="replaceModal.result.email_password || '\u2014'"></span></div>
+                        <div><span class="text-gray-400">Ref:</span> <span x-text="replaceModal.result.ref_key || '\u2014'"></span></div>
+                    </div>
+                    <div class="flex justify-end gap-3 pt-2">
+                        <button @click="copyReplacement()" class="px-3 py-2 text-sm border rounded hover:bg-gray-50" x-text="replaceModal.copied ? 'Copied!' : 'Copy'"></button>
+                        <button @click="closeReplace()" class="px-4 py-2 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700">Done</button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -172,6 +229,7 @@ function ordersBrowser() {
         bulkStatus: 'completed',
         loading: false,
         loadingMsg: '',
+        replaceModal: { open: false, orderId: null, reason: '', employeeName: '', submitting: false, error: '', result: null, copied: false },
 
         init() {},
 
@@ -226,6 +284,47 @@ function ordersBrowser() {
                     alert('Error: ' + (data.error || 'Unknown error'));
                 }
             } catch (e) { this.loading = false; alert('Request failed: ' + e.message); }
+        },
+
+        openReplace(id) {
+            this.replaceModal = { open: true, orderId: id, reason: '', employeeName: '', submitting: false, error: '', result: null, copied: false };
+        },
+
+        closeReplace() {
+            const hadResult = !!(this.replaceModal && this.replaceModal.result);
+            this.replaceModal.open = false;
+            // Reload after a successful swap so the row shows the new login + Replaced badge.
+            if (hadResult) location.reload();
+        },
+
+        async submitReplace() {
+            const m = this.replaceModal;
+            if (m.submitting || m.reason.trim().length < 3 || !m.employeeName.trim()) return;
+            m.submitting = true;
+            m.error = '';
+            try {
+                const res = await fetch(`/orders/api/${m.orderId}/replace/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': this.csrfToken() },
+                    body: new URLSearchParams({ reason: m.reason, employee_name: m.employeeName }),
+                });
+                const data = await res.json().catch(() => ({}));
+                if (res.ok && data.ok) {
+                    m.result = data.credentials;
+                } else {
+                    m.error = data.error || 'Replacement failed.';
+                    m.submitting = false;
+                }
+            } catch (e) { m.error = 'Request failed: ' + e.message; m.submitting = false; }
+        },
+
+        copyReplacement() {
+            const r = this.replaceModal.result;
+            if (!r) return;
+            const text = `Login: ${r.login}\nPassword: ${r.password}\nEmail: ${r.email || ''}\nEmail pass: ${r.email_password || ''}\nRef: ${r.ref_key || ''}`;
+            navigator.clipboard?.writeText(text);
+            this.replaceModal.copied = true;
+            setTimeout(() => { if (this.replaceModal) this.replaceModal.copied = false; }, 1500);
         },
     };
 }

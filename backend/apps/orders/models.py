@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from apps.integrations.models import Provider
@@ -177,3 +178,45 @@ class FeeRule(models.Model):
         if self.flat_fee:
             parts.append(f'+{self.flat_fee} {self.flat_fee_currency}')
         return ' | '.join(parts)
+
+
+class OrderReplacement(models.Model):
+    """Audit record of a manual-entry account swapped on an order.
+
+    Immutable: a second replacement creates a second row, so the full
+    old -> new -> newer chain stays reconstructable.
+    """
+    order = models.ForeignKey(
+        'orders.Order', on_delete=models.CASCADE, related_name='replacements',
+    )
+    old_product = models.ForeignKey(
+        'inventory.OwnedProduct', on_delete=models.SET_NULL,
+        null=True, related_name='replaced_out',
+    )
+    new_product = models.ForeignKey(
+        'inventory.OwnedProduct', on_delete=models.SET_NULL,
+        null=True, related_name='replaced_in',
+    )
+    pool_item = models.ForeignKey(
+        'posting.OfferPoolItem', on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='+',
+    )
+    reason = models.TextField()
+    # employee_name is the typed claim; created_by is what actually happened.
+    # Store both, and never use the typed name alone for accountability.
+    employee_name = models.CharField(max_length=120)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'order_replacements'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['order', '-created_at']),
+            models.Index(fields=['-created_at']),
+        ]
+
+    def __str__(self):
+        return f"Replacement for order {self.order_id} by {self.employee_name}"
