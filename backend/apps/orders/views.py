@@ -175,13 +175,14 @@ def order_replace(request, order_id):
         pk=order_id,
     )
 
-    # 1. Eligibility — manual/self-owned stock only (re-checked server-side).
-    # Legacy manual orders do not always have an owned_product FK, so its
-    # absence must not hide the replacement action or make the order look
-    # dropship-sourced. A missing pool link is handled safely below with 409.
-    if order.dropship_product_id:
+    # 1. Eligibility — explicit manual-entry, self-owned account only
+    # (re-checked server-side).  ``is_instant=False`` is the authoritative
+    # manual-entry classification.  The absence of an owned-product FK is
+    # handled safely below with 409 because legacy manual imports may not have
+    # persisted that link.
+    if order.is_instant or order.dropship_product_id:
         return JsonResponse(
-            {'ok': False, 'error': 'Replacement is only available for self-owned manual-entry products.'},
+            {'ok': False, 'error': 'Replacement is only available for self-owned manual-entry accounts.'},
             status=400,
         )
 

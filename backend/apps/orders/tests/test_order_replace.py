@@ -33,9 +33,9 @@ class OrderReplaceTests(TestCase):
             pool=self.pool, owned_product=owned, status=status, order=order, **kw,
         )
 
-    def _order(self, owned=None, dropship=None):
+    def _order(self, owned=None, dropship=None, is_instant=False):
         return Order.objects.create(
-            is_instant=True, store_order_id=f"SO-{owned.login if owned else 'x'}",
+            is_instant=is_instant, store_order_id=f"SO-{owned.login if owned else 'x'}",
             price=Decimal("10.00"), currency="USD",
             owned_product=owned, dropship_product=dropship,
         )
@@ -106,6 +106,20 @@ class OrderReplaceTests(TestCase):
         resp = self._post(order)
         self.assertEqual(resp.status_code, 400)
         self.assertFalse(resp.json()["ok"])
+
+    # Manual entry is explicit: an instant owned account must not receive the
+    # replacement workflow merely because it has no dropship-product link.
+    def test_instant_owned_order_rejected(self):
+        old = self._owned("instant1")
+        self._pool_item(old, status=OfferPoolItemStatus.REMOVED)
+        self._pool_item(self._owned("instant-new"), order=1)
+        order = self._order(owned=old, is_instant=True)
+
+        resp = self._post(order)
+
+        self.assertEqual(resp.status_code, 400)
+        self.assertFalse(resp.json()["ok"])
+        self.assertIn("manual-entry", resp.json()["error"])
 
     # Legacy manual orders are self-owned even when the importer did not
     # persist their owned_product FK. They may open the replacement workflow;
