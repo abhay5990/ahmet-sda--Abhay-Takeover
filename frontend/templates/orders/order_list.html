@@ -152,11 +152,11 @@
                                         {{ label }}
                                     </button>
                                     {% endfor %}
-                                    {% if order.owned_product_id and not order.dropship_product_id %}
+                                    {% if not order.dropship_product_id %}
                                     <div class="border-t border-gray-100 my-1"></div>
                                     <button @click="openReplace({{ order.id }}); open = false"
                                             class="w-full text-left px-3 py-1.5 text-sm text-indigo-600 hover:bg-gray-50 transition-colors">
-                                        Replace account…
+                                        Replace product…
                                     </button>
                                     {% endif %}
                                 </div>

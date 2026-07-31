@@ -107,6 +107,19 @@ class OrderReplaceTests(TestCase):
         self.assertEqual(resp.status_code, 400)
         self.assertFalse(resp.json()["ok"])
 
+    # Legacy manual orders are self-owned even when the importer did not
+    # persist their owned_product FK. They may open the replacement workflow;
+    # execution remains safe and does not mutate anything until a stock-pool
+    # link is available.
+    def test_unlinked_manual_order_is_not_rejected_as_dropship(self):
+        order = self._order(owned=None)
+
+        resp = self._post(order)
+
+        self.assertEqual(resp.status_code, 409)
+        self.assertIn("no recorded stock-pool link", resp.json()["error"])
+        self.assertEqual(OrderReplacement.objects.filter(order=order).count(), 0)
+
     # ── R5: no unallocated stock ──────────────────────────────────────
     def test_no_unallocated_stock(self):
         old = self._owned("old4")

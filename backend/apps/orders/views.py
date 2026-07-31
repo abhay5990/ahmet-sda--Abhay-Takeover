@@ -163,7 +163,7 @@ def order_bulk_update_status(request):
 @require_POST
 @transaction.atomic
 def order_replace(request, order_id):
-    """Swap a manual-entry order's account for a fresh one from the UNALLOCATED pool.
+    """Swap a self-owned manual-entry order from the UNALLOCATED pool.
 
     Only manual-entry accounts qualify (auto-sourced/dropship accounts are
     unique and must never be replaced). The replacement is drawn exclusively
@@ -175,10 +175,13 @@ def order_replace(request, order_id):
         pk=order_id,
     )
 
-    # 1. Eligibility — manual-entry stock only (re-checked server-side)
-    if not order.owned_product_id or order.dropship_product_id:
+    # 1. Eligibility — manual/self-owned stock only (re-checked server-side).
+    # Legacy manual orders do not always have an owned_product FK, so its
+    # absence must not hide the replacement action or make the order look
+    # dropship-sourced. A missing pool link is handled safely below with 409.
+    if order.dropship_product_id:
         return JsonResponse(
-            {'ok': False, 'error': 'Replacement is only available for manual-entry accounts.'},
+            {'ok': False, 'error': 'Replacement is only available for self-owned manual-entry products.'},
             status=400,
         )
 
@@ -191,6 +194,13 @@ def order_replace(request, order_id):
         )
 
     old = order.owned_product
+    if old is None:
+        return JsonResponse(
+            {'ok': False,
+             'error': 'This manual product has no recorded stock-pool link, so a '
+                      'matching replacement cannot be selected automatically.'},
+            status=409,
+        )
 
     # 2. Resolve the pool the replaced unit belongs to (the "kind"). The pool
     #    carries game+variant+credential_spec, so same-pool == same product kind.
