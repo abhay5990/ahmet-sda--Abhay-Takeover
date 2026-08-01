@@ -980,7 +980,21 @@ def restock_pool_detail_page(request, pool_id):
         1 for item in items if item.status == OfferPoolItemStatus.CONSUMED
     )
 
+    # Faulty bucket: accounts replaced via the Orders "Replace" action. The
+    # replacement is drawn from this pool, so its pool_item is in this pool;
+    # each record names the faulty (old) account, why, who, when, the order it
+    # was on, and the replacement account handed out.
+    from apps.orders.models import OrderReplacement
+    faulty_replacements = list(
+        OrderReplacement.objects
+        .filter(pool_item__pool=pool)
+        .select_related('old_product', 'new_product', 'order', 'created_by')
+        .order_by('-created_at')
+    )
+
     return render(request, 'posting/restock_pool_detail.html', {
+        'faulty_replacements': faulty_replacements,
+        'faulty_count': len(faulty_replacements),
         'pool': pool,
         'pool_offers': pool_offers,
         'active_pool_offers': active_pool_offers,

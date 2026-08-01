@@ -259,6 +259,15 @@ def order_replace(request, order_id):
     order.owned_product = new
     order.save(update_fields=['owned_product', 'updated_at'])
 
+    # 5b. Send the replaced (faulty) account's pool item to a terminal state so
+    #     it can never be re-offered as a replacement or counted as stock (both
+    #     paths only consider PENDING items). It surfaces in the pool's Faulty
+    #     section via the OrderReplacement record below.
+    if old_item.status != OfferPoolItemStatus.REMOVED:
+        old_item.status = OfferPoolItemStatus.REMOVED
+        old_item.error_message = f'Replaced (faulty): {reason}'
+        old_item.save(update_fields=['status', 'error_message', 'updated_at'])
+
     # 6. Audit — reason + typed name + the actual logged-in user.
     OrderReplacement.objects.create(
         order=order, old_product=old, new_product=new,
