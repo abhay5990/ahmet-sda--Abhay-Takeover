@@ -140,8 +140,12 @@ def fetch_relay_token(
             cookie = data.get("cookie") or token
             return token, cookie
         logger.warning(
-            "PA relay /pa-access-token returned ok=False for store=%s: %s",
-            store_slug, data.get("error", "unknown"),
+            "PA relay /pa-access-token returned ok=False for store=%s: reason=%r "
+            "upstream_status=%s request_id=%s",
+            store_slug,
+            (data.get("error") or data.get("message") or "unknown"),
+            data.get("status"),
+            data.get("requestId") or data.get("request_id") or "",
         )
         return None, None
     except requests.exceptions.Timeout:

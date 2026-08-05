@@ -90,6 +90,26 @@ def _is_pa_relay_transient_session_error(error: str | None) -> bool:
     return 'upstream_status=1' in e and 'web address' in e
 
 
+def _is_pa_relay_uncertain_outcome(error: str | None) -> bool:
+    """True when a relay failure leaves the remote listing outcome UNKNOWN.
+
+    A gateway/timeout failure (502/503/504, or a client-side timeout waiting on
+    the relay) may have reached PlayerAuctions and created the offer before the
+    relay gave up. Blindly re-dispatching such an item risks a DUPLICATE listing
+    (and a double-sale), so it must be released as 'unknown' (manual
+    reconciliation) rather than 'absent' (auto-retry). A 401/400/content
+    rejection, by contrast, is a definite pre-creation failure and is safe to
+    return to the pool.
+    """
+    e = str(error or '').lower()
+    return (
+        'timeout' in e
+        or 'upstream_status=502' in e
+        or 'upstream_status=503' in e
+        or 'upstream_status=504' in e
+    )
+
+
 def _retry_relay_authorization_failures(
     result: PARelayPostResult,
     *,
@@ -924,25 +944,41 @@ class StockConsumer:
                     )
             else:
                 error_msg = _relay_result.failed.get(idx, 'PA relay post failed')
-                transient = _is_pa_relay_transient_session_error(error_msg)
+                uncertain = _is_pa_relay_uncertain_outcome(error_msg)
+                transient = (not uncertain) and _is_pa_relay_transient_session_error(error_msg)
                 item.status = PostingJobItemStatus.FAILED
-                item.error_message = (
-                    f'Transient PA session rejection (returned to pool for retry): {error_msg}'
-                    if transient else error_msg
-                )
+                if uncertain:
+                    item.error_message = (
+                        f'PA relay outcome uncertain — verify no offer was created '
+                        f'before retrying: {error_msg}'
+                    )
+                elif transient:
+                    item.error_message = (
+                        f'Transient PA session rejection (returned to pool for retry): {error_msg}'
+                    )
+                else:
+                    item.error_message = error_msg
                 if owned_product:
                     add_failed_owned_products_to_pool(job, [owned_product])
-                    # 'absent' returns the reserved item to PENDING so a later
-                    # scheduler/replenish pass retries it — correct for both a
-                    # hard failure and a transient PA session rejection.
+                    # A gateway/timeout leaves the remote outcome UNKNOWN: the
+                    # offer may already exist on PA, so release as 'unknown'
+                    # (manual reconciliation) to avoid a duplicate listing. A
+                    # definite pre-creation failure (401/content) is safe to
+                    # return to the pool as 'absent' for a later retry.
                     release_dispatch_items_for_job(
                         job, owned_products=[owned_product],
-                        reason=item.error_message, remote_outcome='absent',
+                        reason=item.error_message,
+                        remote_outcome='unknown' if uncertain else 'absent',
                     )
                 PostingLog.objects.create(
                     task_name='stock_post',
-                    level=PostingLogLevel.WARNING if transient else PostingLogLevel.ERROR,
+                    level=(
+                        PostingLogLevel.WARNING if (transient or uncertain)
+                        else PostingLogLevel.ERROR
+                    ),
                     message=(
+                        f"PA relay outcome uncertain (verify before retry): {item.login}"
+                        if uncertain else
                         f"PA relay transient session rejection (retryable): {item.login}"
                         if transient else f"PA relay post failed: {item.login}"
                     ),
@@ -952,6 +988,7 @@ class StockConsumer:
                         'stage': 'pa_relay_batch',
                         'error': error_msg,
                         'transient': transient,
+                        'uncertain_outcome': uncertain,
                     },
                     integration_account=store,
                 )
@@ -1351,23 +1388,39 @@ class StockConsumer:
                     )
             else:
                 error_msg = batch_result.failed.get(idx, 'PA upload failed')
-                transient = _is_pa_relay_transient_session_error(error_msg)
+                uncertain = _is_pa_relay_uncertain_outcome(error_msg)
+                transient = (not uncertain) and _is_pa_relay_transient_session_error(error_msg)
                 item.status = PostingJobItemStatus.FAILED
-                item.error_message = (
-                    f'Transient PA session rejection (returned to pool for retry): {error_msg}'
-                    if transient else error_msg
-                )
+                if uncertain:
+                    item.error_message = (
+                        f'PA relay outcome uncertain — verify no offer was created '
+                        f'before retrying: {error_msg}'
+                    )
+                elif transient:
+                    item.error_message = (
+                        f'Transient PA session rejection (returned to pool for retry): {error_msg}'
+                    )
+                else:
+                    item.error_message = error_msg
                 owned_product = prepared_data_list[idx].get('owned_product')
                 if owned_product:
                     add_failed_owned_products_to_pool(job, [owned_product])
+                    # Gateway/timeout → 'unknown' (offer may exist; avoid a
+                    # duplicate on retry). Pre-creation failure → 'absent'.
                     release_dispatch_items_for_job(
                         job, owned_products=[owned_product],
-                        reason=item.error_message, remote_outcome='absent',
+                        reason=item.error_message,
+                        remote_outcome='unknown' if uncertain else 'absent',
                     )
                 PostingLog.objects.create(
                     task_name='stock_post',
-                    level=PostingLogLevel.WARNING if transient else PostingLogLevel.ERROR,
+                    level=(
+                        PostingLogLevel.WARNING if (transient or uncertain)
+                        else PostingLogLevel.ERROR
+                    ),
                     message=(
+                        f"PA relay outcome uncertain (verify before retry): {item.login}"
+                        if uncertain else
                         f"PA transient session rejection (retryable): {item.login}"
                         if transient else f"PA upload failed: {item.login}"
                     ),
@@ -1377,6 +1430,7 @@ class StockConsumer:
                         'stage': 'build_playerauctions',
                         'error': error_msg,
                         'transient': transient,
+                        'uncertain_outcome': uncertain,
                     },
                     integration_account=item.store,
                 )
