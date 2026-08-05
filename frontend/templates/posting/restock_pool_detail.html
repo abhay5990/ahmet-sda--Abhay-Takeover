@@ -908,6 +908,7 @@
                                    class="mt-1 w-full border-gray-300 rounded px-2 py-1.5 text-sm"
                                    placeholder="Leave empty to keep current">
                         </label>
+                        <p x-show="offerDrawer.marketplace === 'gameboost'" class="text-xs text-gray-400 -mt-1">Enter USD — automatically converted to EUR for GameBoost.</p>
                     </div>
                     <div x-show="offerDrawer.editResult" class="mt-2 text-xs px-3 py-2 rounded"
                          :class="offerDrawer.editResult?.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'"
