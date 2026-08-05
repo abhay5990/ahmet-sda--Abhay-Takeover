@@ -237,6 +237,29 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
 
 # ── GameBoost ─────────────────────────────────────────────────────
 
+def _gameboost_usd_to_eur_rate(listing: Listing) -> float:
+    """USD→EUR rate for a GameBoost edit.
+
+    Prefers a configured ``PostingDefault(game, 'gameboost').exchange_rate``;
+    otherwise the shared default. Kept consistent with the create path.
+    """
+    from apps.posting.services.shared.pricing import DEFAULT_GAMEBOOST_USD_TO_EUR
+
+    try:
+        from apps.posting.models import PostingDefault
+        pd = (
+            PostingDefault.objects
+            .filter(marketplace='gameboost', game=listing.game)
+            .exclude(exchange_rate__isnull=True)
+            .first()
+        )
+        if pd and pd.exchange_rate is not None:
+            return float(pd.exchange_rate)
+    except Exception:
+        pass
+    return DEFAULT_GAMEBOOST_USD_TO_EUR
+
+
 def _edit_gameboost(listing: Listing, changes: dict[str, Any], store: IntegrationAccount) -> EditResult:
     proxy_pool = build_proxy_pool()
     proxy_group = get_group_name(store)
@@ -247,8 +270,14 @@ def _edit_gameboost(listing: Listing, changes: dict[str, Any], store: Integratio
         payload['title'] = changes['title']
     if 'description' in changes:
         payload['description'] = changes['description']
+    # The edit UI sends USD, but GameBoost lists in EUR (its API has no currency
+    # field). Convert before posting AND before persisting so the marketplace
+    # price and the stored Listing.price match the create path (EUR).
+    db_changes = dict(changes)
     if 'price' in changes:
-        payload['price'] = float(changes['price'])
+        eur_price = round(float(changes['price']) * _gameboost_usd_to_eur_rate(listing), 2)
+        payload['price'] = eur_price
+        db_changes['price'] = eur_price
 
     provider = get_provider('gameboost')
     result = provider.update_listing(client, listing.store_listing_id, payload)
@@ -261,7 +290,7 @@ def _edit_gameboost(listing: Listing, changes: dict[str, Any], store: Integratio
              detail={'listing_id': listing.pk, 'offer_id': listing.store_listing_id})
         return EditResult(ok=False, error=error_msg)
 
-    _update_listing_db(listing, changes)
+    _update_listing_db(listing, db_changes)
     _log(PostingLogLevel.SUCCESS,
          f'Listing #{listing.pk} edited on GameBoost',
          account=store,
