@@ -76,6 +76,28 @@ STOCK_PRICING_BASELINE = PricingDefaults(
     exchange_rate=None,
 )
 
+# GameBoost lists in EUR (its create API has no currency field), while our
+# source/computed prices are USD. When no explicit rate is configured for a
+# GameBoost store/target, fall back to this default USD→EUR rate so a USD amount
+# is never posted unconverted into GameBoost's EUR price field. Kept in sync
+# with the PostingDefault.exchange_rate / DropshipTargetURL.exchange_rate default.
+DEFAULT_GAMEBOOST_USD_TO_EUR = 0.87
+
+
+def resolve_pricing_for_marketplace(
+    pricing: PricingDefaults, marketplace: str,
+) -> PricingDefaults:
+    """Ensure GameBoost always carries a USD→EUR exchange rate.
+
+    GameBoost posts prices in EUR, so an unconverted USD amount is silently
+    mispriced. If a GameBoost store has no explicit ``exchange_rate`` we apply
+    the default; an explicitly configured rate is respected. Other marketplaces
+    (Eldorado / PlayerAuctions / G2G) stay USD and are returned unchanged.
+    """
+    if marketplace == 'gameboost' and pricing.exchange_rate is None:
+        return replace(pricing, exchange_rate=DEFAULT_GAMEBOOST_USD_TO_EUR)
+    return pricing
+
 
 def build_pricing_rule(defaults: PricingDefaults) -> LibPricingRule:
     """Convert a PricingDefaults into a library-level PricingRule."""

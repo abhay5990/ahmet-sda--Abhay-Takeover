@@ -20,6 +20,7 @@ from apps.posting.pipeline import adapter
 from apps.posting.services.shared.pricing import (
     STOCK_PRICING_BASELINE,
     build_pricing_rule,
+    resolve_pricing_for_marketplace,
 )
 from apps.posting.services.stock.pa_tracking import (
     append_tracking_code,
@@ -65,6 +66,9 @@ def build_item_payload(
         # Missing/partial settings fall back to STOCK_PRICING_BASELINE.
         store_settings = job.settings.get(item.store.slug, {})
         pricing = STOCK_PRICING_BASELINE.with_overrides(store_settings)
+        # GameBoost lists in EUR — guarantee a USD→EUR rate even when the job
+        # settings didn't carry one, so prices aren't posted as raw USD.
+        pricing = resolve_pricing_for_marketplace(pricing, item.marketplace)
 
         # --- Pricing (mirrors lib's internal calculation for Listing.price) ---
         raw_price = prepared.subject.price  # float from lib resolver
