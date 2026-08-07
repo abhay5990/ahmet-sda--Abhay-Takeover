@@ -263,10 +263,18 @@ class UnifiedPoolTestCase(TestCase):
             threshold=1,
             max_concurrent=1,
         )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('pa-closed-clone@example.test'),
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+        )
         active_offer = OfferPoolActiveOffer.objects.create(
             pool=pool,
             pool_offer=pool_offer,
             listing=listing,
+            pool_item=item,
             store_listing_id='pa-closed-clone',
             status=OfferPoolActiveOfferStatus.ACTIVE,
         )

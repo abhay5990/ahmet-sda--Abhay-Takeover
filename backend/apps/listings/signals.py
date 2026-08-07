@@ -83,10 +83,16 @@ def listing_deactivated(sender, instance, **kwargs):
     # not disable that lane before the verified sale notification can replenish
     # it.  The clone itself is still moved to DELISTED below and may be recovered
     # as SOLD when the order feed confirms the sale.
-    pa_clone_pool_offer_ids = OfferPoolActiveOffer.objects.filter(
-        listing=instance,
-        pool_offer__strategy=PoolOfferStrategy.CLONE,
-    ).values_list('pool_offer_id', flat=True)
+    # Materialize the clone IDs before the PoolOffer update. MySQL rejects an
+    # UPDATE that selects from the same target table through a subquery
+    # (error 1093). A closed PA clone must not block a verified order from
+    # being applied and recorded against its pool item.
+    pa_clone_pool_offer_ids = list(
+        OfferPoolActiveOffer.objects.filter(
+            listing=instance,
+            pool_offer__strategy=PoolOfferStrategy.CLONE,
+        ).values_list('pool_offer_id', flat=True)
+    )
 
     # A local listing lifecycle event must never cascade-delete the independent
     # stock pool. Relist/recovery can attach a replacement listing later.

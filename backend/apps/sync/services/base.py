@@ -247,6 +247,7 @@ class BaseSyncService:
 
         fetched_any = False
         caught_up = False
+        parse_failed_any = False
         first_remote_id: str | None = None
         first_remote_ts = None
 
@@ -260,6 +261,7 @@ class BaseSyncService:
             with transaction.atomic():
                 last_remote_id: str | None = None
                 last_remote_ts = None
+                page_parse_failed = False
 
                 for item in items:
                     # Incremental stop condition
@@ -310,15 +312,20 @@ class BaseSyncService:
 
                     # Parse (unless ingest-only)
                     if self._phase != SyncPhase.INGEST:
-                        self._try_parse(raw, run)
+                        if not self._try_parse(raw, run):
+                            page_parse_failed = True
+                            parse_failed_any = True
 
                     last_remote_id = remote_id
                     last_remote_ts = remote_ts
                     run.processed_count += 1
 
-                # Checkpoint: advance cursor always, but for incremental
-                # keep last_seen_remote_id pointing to the newest item.
-                if last_remote_id:
+                # Do not move the high-water mark beyond a payload that did
+                # not apply locally. Otherwise an incremental, newest-first
+                # source can skip that verified remote order forever. The next
+                # run revisits this page; raw ingest resets FAILED payloads to
+                # PENDING for an idempotent retry.
+                if last_remote_id and not parse_failed_any:
                     if is_incremental and first_remote_id:
                         checkpoint.advance(
                             remote_id=first_remote_id,
@@ -331,6 +338,11 @@ class BaseSyncService:
                             remote_timestamp=last_remote_ts,
                             cursor=next_cursor,
                         )
+                elif page_parse_failed:
+                    run.meta = {
+                        **run.meta,
+                        'checkpoint_blocked_on_parse_failure': True,
+                    }
 
                 # Persist run counters periodically
                 run.save(update_fields=[
@@ -339,7 +351,9 @@ class BaseSyncService:
                     'meta', 'updated_at',
                 ])
 
-            if caught_up or not next_cursor:
+            # A later page must never advance beyond an earlier failed order.
+            # Stop here and retry the source page on the next incremental run.
+            if parse_failed_any or caught_up or not next_cursor:
                 break
 
         # Incremental: reset cursor so the next run starts from the
@@ -532,8 +546,12 @@ class BaseSyncService:
         if not created:
             raw.last_seen_at = now
             raw.fetched_at = now
-            if raw.payload_hash != payload_hash:
-                # Payload changed — store new version and request re-parse
+            retry_failed_payload = raw.parse_status == ParseStatus.FAILED
+            if raw.payload_hash != payload_hash or retry_failed_payload:
+                # A changed payload, or a previously failed local application,
+                # must be re-parsed. Keeping FAILED rows terminal would make a
+                # transient database failure permanently invisible once the
+                # source checkpoint advances.
                 raw.payload = item
                 raw.payload_hash = payload_hash
                 raw.parse_status = ParseStatus.PENDING
@@ -553,10 +571,10 @@ class BaseSyncService:
 
     # ── Parse ────────────────────────────────────────────────────────
 
-    def _try_parse(self, raw: RawPayload, run: SyncRun) -> None:
-        """Attempt to parse a raw payload; update status regardless."""
+    def _try_parse(self, raw: RawPayload, run: SyncRun) -> bool:
+        """Attempt to parse a raw payload and report whether it applied."""
         if raw.parse_status != ParseStatus.PENDING:
-            return
+            return True
 
         try:
             result = self.parse_and_apply(raw)
@@ -570,6 +588,7 @@ class BaseSyncService:
                 run.created_count += 1
             elif result == 'updated':
                 run.updated_count += 1
+            return True
         except Exception as exc:
             logger.warning(
                 "Parse failed for %s:%s — %s",
@@ -581,6 +600,7 @@ class BaseSyncService:
                 'parse_status', 'parse_error', 'updated_at',
             ])
             run.error_count += 1
+            return False
 
     # ── Domain upsert helper ─────────────────────────────────────────
 
