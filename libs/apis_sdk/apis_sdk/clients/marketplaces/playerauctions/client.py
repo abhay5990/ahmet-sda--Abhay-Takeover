@@ -237,6 +237,7 @@ class PlayerAuctionsClient:
         page_size: int = 50,
         order_status: str = "All",
         product_type: str = "Accounts",
+        order_id: str = "",
         proxy_url: str | None = None,
     ) -> ApiResult[list[PlayerAuctionsOrderListItem]]:
         """
@@ -252,7 +253,7 @@ class PlayerAuctionsClient:
             "sortOrder": "null",
             "orderStatus": order_status,
             "productType": product_type,
-            "orderId": "",
+            "orderId": order_id,
             "fromTime": "",
             "toTime": "",
         }

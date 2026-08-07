@@ -37,6 +37,15 @@ def run_sync_chain_job():
     run_sync_chain()
 
 
+@apscheduler_util.close_old_connections
+def run_pa_email_recovery_job():
+    """Recover PA email-notified orders through the shared relay path."""
+    from apps.sync.services.playerauctions.email_recovery import (
+        PlayerAuctionsEmailRecovery,
+    )
+    PlayerAuctionsEmailRecovery().run()
+
+
 _review_monitor_first_run = True
 
 @apscheduler_util.close_old_connections
@@ -184,6 +193,17 @@ class Command(BaseCommand):
             trigger=IntervalTrigger(minutes=interval),
             id='sync_chain',
             name='Cross-Platform Sync Chain',
+            max_instances=1,
+            replace_existing=True,
+        )
+
+        # PlayerAuctions Gmail fallback — email is only a trigger; authoritative
+        # order data still comes from the PA relay and normal SDA parser.
+        scheduler.add_job(
+            run_pa_email_recovery_job,
+            trigger=IntervalTrigger(minutes=5),
+            id='playerauctions_email_recovery',
+            name='PlayerAuctions Gmail Order Recovery',
             max_instances=1,
             replace_existing=True,
         )

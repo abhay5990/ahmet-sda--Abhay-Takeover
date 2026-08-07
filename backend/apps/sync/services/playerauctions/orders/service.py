@@ -4,9 +4,11 @@ import logging
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any
 
-from apps.sync.enums import ResourceType, SyncMode, SyncPhase
+from django.db import transaction
+
+from apps.sync.enums import ResourceType, SyncMode, SyncPhase, SyncRunStatus
 from apps.sync.exceptions import SkipItem
-from apps.sync.models import RawPayload, SyncCheckpoint
+from apps.sync.models import RawPayload, SyncCheckpoint, SyncRun
 from apps.sync.services.base import BaseSyncService
 from apps.posting.services.stock.pa_tracking import extract_tracking_code
 from . import mapper
@@ -73,25 +75,96 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
 
     def run(self, account, mode, phase='full'):
         """Preflight every remote order poll through the shared PA relay."""
+        if phase != SyncPhase.PROCESS:
+            self._preflight_relay(account)
+        return super().run(account, mode, phase)
+
+    def _preflight_relay(self, account) -> None:
+        """Refresh the shared PA relay session before any remote order read."""
         if self.client and hasattr(self.client, 'reset_auth_failure'):
             self.client.reset_auth_failure()
-
-        if phase != SyncPhase.PROCESS:
-            refresh = getattr(self.client, 'refresh_relay_session', None)
-            if not callable(refresh):
-                raise RuntimeError(
-                    'PlayerAuctions order sync requires a relay-backed client.'
-                )
-            if not refresh():
-                raise RuntimeError(
-                    'PlayerAuctions relay session preflight failed; '
-                    'order fetch was not attempted.'
-                )
-            logger.info(
-                'PlayerAuctions order sync relay preflight succeeded for %s',
-                getattr(account, 'slug', 'unknown'),
+        refresh = getattr(self.client, 'refresh_relay_session', None)
+        if not callable(refresh):
+            raise RuntimeError(
+                'PlayerAuctions order sync requires a relay-backed client.'
             )
-        return super().run(account, mode, phase)
+        if not refresh():
+            raise RuntimeError(
+                'PlayerAuctions relay session preflight failed; '
+                'order fetch was not attempted.'
+            )
+        logger.info(
+            'PlayerAuctions order sync relay preflight succeeded for %s',
+            getattr(account, 'slug', 'unknown'),
+        )
+
+    def recover_order_by_id(self, account, order_id: str) -> str:
+        """Fetch and apply one PA email-referenced order through the relay.
+
+        This deliberately bypasses the incremental high-water checkpoint: an
+        email can reveal a valid order that was not returned before a relay
+        outage. The normal raw-payload parser remains the only writer of the
+        local Order and pool-sale records, preserving idempotency.
+        """
+        remote_id = str(order_id).strip()
+        if not remote_id.isdigit():
+            raise ValueError('PlayerAuctions order ID must contain digits only.')
+
+        self._preflight_relay(account)
+        result = self.provider.fetch_orders(
+            self.client,
+            page=1,
+            page_size=self.DEFAULT_PAGE_SIZE,
+            order_status=self.order_status,
+            product_type=self.product_type,
+            order_id=remote_id,
+        )
+        if not result.ok:
+            error_msg = result.error.message if result.error else 'unknown error'
+            raise RuntimeError(
+                f'PlayerAuctions API error while recovering order {remote_id}: '
+                f'{error_msg}'
+            )
+
+        matched = None
+        for candidate in result.data or []:
+            item = candidate.model_dump() if hasattr(candidate, 'model_dump') else dict(candidate)
+            if self.extract_remote_id(item) == remote_id:
+                matched = item
+                break
+        if matched is None:
+            raise LookupError(
+                f'PlayerAuctions relay did not return email-referenced order {remote_id}.'
+            )
+        if self.should_skip_item(matched):
+            return 'skipped_incomplete_status'
+
+        run = SyncRun.objects.create(
+            integration_account=account,
+            resource_type=self.resource_type,
+            mode=SyncMode.INCREMENTAL,
+        )
+        try:
+            with transaction.atomic():
+                prepared, extra_meta = self.prepare_item(matched, account)
+                raw = self._ingest_raw(account, remote_id, prepared)
+                if extra_meta:
+                    raw.meta = {**raw.meta, **extra_meta}
+                    raw.save(update_fields=['meta', 'updated_at'])
+                applied = self._try_parse(raw, run)
+                run.processed_count += 1
+                run.save(update_fields=[
+                    'processed_count', 'created_count', 'updated_count',
+                    'error_count', 'updated_at',
+                ])
+                if not applied:
+                    run.finish(SyncRunStatus.FAILED)
+                    return 'parse_failed'
+            run.finish(SyncRunStatus.COMPLETED)
+            return 'recovered'
+        except Exception:
+            run.finish(SyncRunStatus.FAILED)
+            raise
 
     # ── Hook implementations ──────────────────────────────────────────
 

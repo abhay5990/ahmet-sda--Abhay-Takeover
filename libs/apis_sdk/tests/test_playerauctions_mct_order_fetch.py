@@ -41,6 +41,25 @@ class PlayerAuctionsMctOrderFetchTests(TestCase):
         )
         self.assertIsNone(kwargs["proxy_url"])
 
+    def test_order_client_passes_exact_order_id_to_relay_read(self):
+        transport = Mock()
+        transport.request.return_value = SimpleNamespace(
+            is_success=True,
+            status_code=200,
+            headers={},
+            json=lambda: {"data": {"items": [], "count": 0}},
+        )
+        client = PlayerAuctionsClient(PlayerAuctionsConfig(), transport)
+
+        result = client.list_seller_orders(
+            auth_headers={"Authorization": "Bearer relay-jwt"},
+            order_id="16364033",
+        )
+
+        self.assertTrue(result.ok)
+        _, kwargs = transport.request.call_args
+        self.assertEqual(kwargs["params"]["orderId"], "16364033")
+
     def test_order_facade_bypasses_proxy_for_mct_compatible_reads(self):
         low_level_client = Mock()
         low_level_client.list_seller_orders.return_value = ApiResult.success([])
