@@ -115,6 +115,13 @@ class PACompositeClient:
         if hasattr(self._legacy, 'reset_auth_failure'):
             self._legacy.reset_auth_failure()
 
+    def refresh_relay_session(self) -> bool:
+        """Get the current shared relay session before a seller-order poll."""
+        refresh = getattr(self._legacy, 'refresh_relay_session', None)
+        if not callable(refresh):
+            return False
+        return bool(refresh())
+
     # --- Orders (→ legacy, official API has no order endpoints) ---
 
     def list_seller_orders(self, **kwargs: Any) -> Any:

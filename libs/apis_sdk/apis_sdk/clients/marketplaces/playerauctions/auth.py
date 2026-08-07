@@ -181,6 +181,17 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         with self._lock:
             return self._do_refresh(force_refresh=True)
 
+    def refresh_relay_session(self) -> bool:
+        """Obtain the current store session from the PA relay before a poll.
+
+        Seller-order reads deliberately use MCT's direct order-api route, but
+        their Bearer token must still originate from the shared PA relay. This
+        cache-first request keeps the relay as the single authentication source
+        without forcing a browser login for every polling cycle.
+        """
+        with self._lock:
+            return self._do_refresh(force_refresh=False)
+
     # Transient error categories — these should NOT permanently block refresh
     _TRANSIENT_CATEGORIES = frozenset({
         ErrorCategory.NETWORK,

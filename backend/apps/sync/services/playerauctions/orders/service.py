@@ -4,7 +4,7 @@ import logging
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any
 
-from apps.sync.enums import ResourceType, SyncMode
+from apps.sync.enums import ResourceType, SyncMode, SyncPhase
 from apps.sync.exceptions import SkipItem
 from apps.sync.models import RawPayload, SyncCheckpoint
 from apps.sync.services.base import BaseSyncService
@@ -72,9 +72,25 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
         self.product_type = product_type or self.DEFAULT_PRODUCT_TYPE
 
     def run(self, account, mode, phase='full'):
-        """Reset auth failure flag before each sync run."""
+        """Preflight every remote order poll through the shared PA relay."""
         if self.client and hasattr(self.client, 'reset_auth_failure'):
             self.client.reset_auth_failure()
+
+        if phase != SyncPhase.PROCESS:
+            refresh = getattr(self.client, 'refresh_relay_session', None)
+            if not callable(refresh):
+                raise RuntimeError(
+                    'PlayerAuctions order sync requires a relay-backed client.'
+                )
+            if not refresh():
+                raise RuntimeError(
+                    'PlayerAuctions relay session preflight failed; '
+                    'order fetch was not attempted.'
+                )
+            logger.info(
+                'PlayerAuctions order sync relay preflight succeeded for %s',
+                getattr(account, 'slug', 'unknown'),
+            )
         return super().run(account, mode, phase)
 
     # ── Hook implementations ──────────────────────────────────────────
@@ -376,4 +392,3 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
                 remote_id, exc,
             )
             return None
-

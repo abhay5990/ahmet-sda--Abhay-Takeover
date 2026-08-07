@@ -167,6 +167,13 @@ class PlayerAuctionsFacade:
         if hasattr(self._auth, 'reset_failure'):
             self._auth.reset_failure()
 
+    def refresh_relay_session(self) -> bool:
+        """Preflight seller-order reads through the shared PA relay session."""
+        refresh = getattr(self._auth, 'refresh_relay_session', None)
+        if not callable(refresh):
+            return False
+        return bool(refresh())
+
     # ---------------------------------------------------------------------------
     # Throttle (PlayerAuctions-specific)
     # ---------------------------------------------------------------------------
