@@ -726,8 +726,17 @@ class BaseSyncService:
                     event_key=event_key,
                     order_id=getattr(order, 'pk', None),
                 )
-        except Exception:
-            logger.debug('pool notify_sale skipped (error or not configured)')
+        except Exception as exc:
+            # A systematic binding failure must not be invisible: without a
+            # visible signal, orders silently stop binding to pool items and the
+            # UI shows "Remote reconciliation" (blank Order ID) days later.
+            logger.warning(
+                'pool notify_sale FAILED for store_listing_id=%s order=%s: %s',
+                getattr(order, 'store_listing_id', None),
+                getattr(order, 'pk', None),
+                exc,
+                exc_info=True,
+            )
 
     # ── Utilities ────────────────────────────────────────────────────
 
