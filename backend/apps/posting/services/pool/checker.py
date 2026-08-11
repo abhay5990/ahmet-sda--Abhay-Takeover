@@ -126,6 +126,39 @@ def notify_sale(
             logger.exception('pool_checker: reactive PA check failed for active_offer %d', ao.pk)
 
 
+def _consume_sold_pool_item(pool_item_id: int, order_id: int, now) -> None:
+    """Mark a pool item CONSUMED after a verified marketplace sale.
+
+    Must be called inside the sale transaction so the item state and the sale
+    event commit together. Idempotent: an item already in a terminal state
+    (CONSUMED / REMOVED) is left untouched.
+    """
+    from apps.posting.models import OfferPoolItem, OfferPoolItemStatus
+
+    try:
+        item = OfferPoolItem.objects.select_for_update().get(pk=pool_item_id)
+    except OfferPoolItem.DoesNotExist:
+        return
+    if item.status in (
+        OfferPoolItemStatus.CONSUMED,
+        OfferPoolItemStatus.REMOVED,
+    ):
+        return
+    item.status = OfferPoolItemStatus.CONSUMED
+    item.consumed_at = now
+    item.remote_state = 'sold'
+    item.error_message = ''
+    item.failure_stage = ''
+    item.save(update_fields=[
+        'status', 'consumed_at', 'remote_state',
+        'error_message', 'failure_stage', 'updated_at',
+    ])
+    logger.info(
+        'pool_checker: consumed sold pool item %s (order %s)',
+        pool_item_id, order_id,
+    )
+
+
 def _record_sale_event(
     pool_offer: PoolOffer,
     *,
@@ -234,6 +267,17 @@ def _record_sale_event(
         event.processed_at = now
         event.pool_offer = locked_offer
         event.save(update_fields=['outcome', 'processed_at', 'pool_offer'])
+
+        # A verified order is exact evidence that THIS pool account sold, so mark
+        # its pool item CONSUMED. Previously the PA clone was flipped to SOLD (or
+        # an append offer's count decremented) but the linked OfferPoolItem was
+        # left PUSHED, so the account never showed as sold and could be re-offered
+        # or double-counted. For PA clones this is the item behind the just-SOLD
+        # active offer; for append offers it is the item resolved from the order's
+        # OwnedProduct above. Idempotent — terminal items are left untouched.
+        if order_id and pool_item_id:
+            _consume_sold_pool_item(pool_item_id, order_id, now)
+
         should_replenish = (
             remote_count <= locked_offer.threshold
             and locked_offer.can_replenish
