@@ -29,9 +29,10 @@ from Crypto.Cipher import PKCS1_v1_5
 logger = logging.getLogger(__name__)
 
 # Web-address-like patterns PA may reject. Catches full URLs, www. prefixes and
-# bare domains (which pa_sanitize does NOT strip — it only removes the scheme).
+# bare domains, including the configured `.email` login domains. The leading
+# boundary deliberately preserves ordinary email addresses used as credentials.
 _WEB_ADDRESS_RE = re.compile(
-    r"https?://\S+|www\.\S+|\b[\w-]+\.(?:com|net|org|gg|io|me|co|ru|tv)\b",
+    r"(?<![@\w.-])(?:https?://|www\.)[^\s<]+|(?<![@\w.-])(?:[\w-]+\.)+(?:com|net|org|gg|io|me|co|ru|tv|email)\b(?:/[^\s<]*)?",
     re.IGNORECASE,
 )
 
@@ -223,7 +224,13 @@ class PARelayPoster:
                             enc = pa_encrypt(plain_pw)
                             auto_del['password'] = enc
                             auto_del['retypePassword'] = enc
+                        if auto_del.get('instruction') is not None:
+                            auto_del['instruction'] = pa_sanitize(
+                                str(auto_del['instruction'])
+                            )
                         payload['autoDelivery'] = auto_del
+                    if payload.get('title') is not None:
+                        payload['title'] = pa_sanitize(str(payload['title']))[:150]
                     # Keep the durable stored template as plain text, but serialize
                     # it with PlayerAuctions-native CRLF breaks only at submission.
                     # Do not add a description to payloads that intentionally omit it.
@@ -533,8 +540,10 @@ def pa_sanitize(text: str) -> str:
     if not text:
         return text
 
-    # Remove https?:// from URLs
-    text = re.sub(r"https?://", "", text)
+    # PA rejects both full URLs and bare login domains in title, description,
+    # and delivery instruction. Remove the whole token rather than just its
+    # scheme so a configured `.email` address cannot survive as a bare domain.
+    text = _WEB_ADDRESS_RE.sub("", text)
 
     # Replace non-ASCII with *
     text = "".join(c if ord(c) < 128 else "*" for c in text)

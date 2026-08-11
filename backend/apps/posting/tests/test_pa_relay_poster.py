@@ -276,3 +276,44 @@ class PlayerAuctionsDescriptionFormattingTests(SimpleTestCase):
 
         payload = post.call_args.kwargs["json"]["payload"]
         self.assertEqual(payload["offerDesc"], "One<br>Two")
+
+
+class PlayerAuctionsWebAddressSanitizationTests(SimpleTestCase):
+    def test_bare_login_domain_is_removed_but_credential_email_is_preserved(self):
+        result = pa_sanitize(
+            "Email login https://ezsmurfmart.zst.email/portal; "
+            "account owner@proton.me"
+        )
+
+        self.assertNotIn("ezsmurfmart.zst.email", result)
+        self.assertNotIn("https://", result)
+        self.assertIn("owner@proton.me", result)
+
+    @patch("apps.posting.services.stock.pa_relay_poster.requests.post")
+    def test_prebuilt_replenishment_payload_sanitizes_every_pa_rejected_field(self, post):
+        response = Mock()
+        response.json.return_value = {"ok": True, "offerId": "123"}
+        post.return_value = response
+        poster = PARelayPoster(relay_url="http://relay.test", relay_secret="s")
+
+        poster.post_batch(
+            "token",
+            "store",
+            [{
+                "serverId": 1,
+                "title": "170M https://ezsmurfmart.zst.email/portal",
+                "offerDesc": "Use ezsmurfmart.zst.email/portal for login",
+                "autoDelivery": {
+                    "password": "plain-password",
+                    "instruction": "Login at https://ezsmurfmart.zst.email/portal",
+                },
+            }],
+        )
+
+        payload = post.call_args.kwargs["json"]["payload"]
+        self.assertNotIn("ezsmurfmart.zst.email", payload["title"])
+        self.assertNotIn("ezsmurfmart.zst.email", payload["offerDesc"])
+        self.assertNotIn(
+            "ezsmurfmart.zst.email",
+            payload["autoDelivery"]["instruction"],
+        )
