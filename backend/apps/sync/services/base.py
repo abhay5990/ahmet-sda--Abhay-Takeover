@@ -46,6 +46,23 @@ class BaseSyncService:
 
     resource_type: str = ''
 
+    # Bounded retry budget for a raw payload that fails to apply locally.
+    #
+    # A parse failure normally blocks the checkpoint from advancing and stops
+    # pagination so the offending order is retried on the next run — this lets
+    # a *transient* local failure (e.g. a DB deadlock) recover without skipping
+    # a verified remote order. But a *deterministic* failure (bad data, a
+    # missing game mapping, a decryption error, a parser bug) would otherwise
+    # stall this account's ENTIRE order fetch forever: the same page is
+    # re-fetched every run, the checkpoint never advances, older pages are
+    # never reached, and sale detection / pool replenishment silently starve.
+    #
+    # After this many consecutive failed attempts the payload is *quarantined*:
+    # it is kept as FAILED (visible for manual reconciliation) but no longer
+    # blocks the checkpoint or pagination, so newer orders and older pages keep
+    # flowing. Set to 0 on a subclass to disable blocking entirely.
+    MAX_PARSE_RETRY_ATTEMPTS: int = 5
+
     # ── Subclass hooks (MUST implement) ───────────────────────────────
 
     def fetch_page(
@@ -313,8 +330,17 @@ class BaseSyncService:
                     # Parse (unless ingest-only)
                     if self._phase != SyncPhase.INGEST:
                         if not self._try_parse(raw, run):
-                            page_parse_failed = True
-                            parse_failed_any = True
+                            # Block the checkpoint/pagination only while the
+                            # payload is still within its retry budget. Once it
+                            # exhausts MAX_PARSE_RETRY_ATTEMPTS it is quarantined
+                            # (kept FAILED) and must NOT keep stalling the whole
+                            # account's fetch — otherwise one un-parseable order
+                            # freezes order sync (and replenishment) indefinitely.
+                            if self._parse_should_block(raw):
+                                page_parse_failed = True
+                                parse_failed_any = True
+                            else:
+                                self._note_quarantined_payload(raw, run)
 
                     last_remote_id = remote_id
                     last_remote_ts = remote_ts
@@ -546,8 +572,9 @@ class BaseSyncService:
         if not created:
             raw.last_seen_at = now
             raw.fetched_at = now
+            payload_changed = raw.payload_hash != payload_hash
             retry_failed_payload = raw.parse_status == ParseStatus.FAILED
-            if raw.payload_hash != payload_hash or retry_failed_payload:
+            if payload_changed or retry_failed_payload:
                 # A changed payload, or a previously failed local application,
                 # must be re-parsed. Keeping FAILED rows terminal would make a
                 # transient database failure permanently invisible once the
@@ -557,11 +584,20 @@ class BaseSyncService:
                 raw.parse_status = ParseStatus.PENDING
                 raw.parse_error = ''
                 raw.parsed_at = None
-                raw.save(update_fields=[
+                update_fields = [
                     'payload', 'payload_hash', 'parse_status',
                     'parse_error', 'parsed_at',
                     'last_seen_at', 'fetched_at', 'updated_at',
-                ])
+                ]
+                # New remote content deserves a fresh retry budget; a same-payload
+                # retry must keep its counter so a permanent failure eventually
+                # quarantines instead of blocking forever.
+                if payload_changed and raw.meta.get('parse_attempts'):
+                    raw.meta = {
+                        k: v for k, v in raw.meta.items() if k != 'parse_attempts'
+                    }
+                    update_fields.append('meta')
+                raw.save(update_fields=update_fields)
             else:
                 raw.save(update_fields=[
                     'last_seen_at', 'fetched_at', 'updated_at',
@@ -581,26 +617,56 @@ class BaseSyncService:
             raw.parse_status = ParseStatus.PARSED
             raw.parsed_at = timezone.now()
             raw.parse_error = ''
-            raw.save(update_fields=[
-                'parse_status', 'parsed_at', 'parse_error', 'updated_at',
-            ])
+            # Clear the failure budget on success so a future genuine failure
+            # gets a fresh set of retries.
+            update_fields = ['parse_status', 'parsed_at', 'parse_error', 'updated_at']
+            if raw.meta.get('parse_attempts'):
+                raw.meta = {k: v for k, v in raw.meta.items() if k != 'parse_attempts'}
+                update_fields.append('meta')
+            raw.save(update_fields=update_fields)
             if result == 'created':
                 run.created_count += 1
             elif result == 'updated':
                 run.updated_count += 1
             return True
         except Exception as exc:
+            attempts = int(raw.meta.get('parse_attempts', 0)) + 1
             logger.warning(
-                "Parse failed for %s:%s — %s",
-                raw.resource_type, raw.remote_id, exc,
+                "Parse failed for %s:%s (attempt %d/%d) — %s",
+                raw.resource_type, raw.remote_id, attempts,
+                self.MAX_PARSE_RETRY_ATTEMPTS, exc,
             )
             raw.parse_status = ParseStatus.FAILED
             raw.parse_error = str(exc)
+            raw.meta = {**raw.meta, 'parse_attempts': attempts}
             raw.save(update_fields=[
-                'parse_status', 'parse_error', 'updated_at',
+                'parse_status', 'parse_error', 'meta', 'updated_at',
             ])
             run.error_count += 1
             return False
+
+    def _parse_should_block(self, raw: RawPayload) -> bool:
+        """True while a FAILED payload still has retry budget left.
+
+        A blocking failure freezes the checkpoint and stops pagination so the
+        order is retried next run. Once the budget is exhausted the payload is
+        quarantined and stops blocking (see MAX_PARSE_RETRY_ATTEMPTS).
+        """
+        attempts = int(raw.meta.get('parse_attempts', 0))
+        return attempts < self.MAX_PARSE_RETRY_ATTEMPTS
+
+    def _note_quarantined_payload(self, raw: RawPayload, run: SyncRun) -> None:
+        """Record a payload that exhausted its retry budget (non-blocking)."""
+        logger.warning(
+            "Quarantining un-parseable %s:%s after %s attempts — the checkpoint "
+            "will advance past it so order fetch is not stalled. Last error: %s",
+            raw.resource_type, raw.remote_id,
+            raw.meta.get('parse_attempts'), (raw.parse_error or '')[:300],
+        )
+        quarantined = list(run.meta.get('quarantined_remote_ids', []))
+        if raw.remote_id not in quarantined:
+            quarantined.append(raw.remote_id)
+        run.meta = {**run.meta, 'quarantined_remote_ids': quarantined}
 
     # ── Domain upsert helper ─────────────────────────────────────────
 
