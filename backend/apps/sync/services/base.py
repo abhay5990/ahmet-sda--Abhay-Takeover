@@ -707,12 +707,7 @@ class BaseSyncService:
         # only populate its listing reference on a later detail sync.  The pool
         # event key is idempotent, so repeated notifications are safe and allow
         # the exact order/item link to be filled in after the fact.
-        # Only notify on confirmed sales (DELIVERED / COMPLETED / DISPUTED).
-        # PENDING covers early PA statuses like "payment received", "order processing",
-        # "delivery in progress", and "verifying payment" — none of these are confirmed
-        # sales.  "pending buyer inspection" maps to DELIVERED and will trigger here.
-        from apps.orders.enums import OrderStatus as _OS
-        if order.store_listing_id and order.status != _OS.PENDING:
+        if order.store_listing_id:
             self._notify_pool_on_sale(order)
 
         return 'created' if created else 'updated'

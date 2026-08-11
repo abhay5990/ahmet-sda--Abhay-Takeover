@@ -21,10 +21,7 @@ PA_STATUS_MAP = {
     'order processing': OrderStatus.PENDING,
     'delivery in progress': OrderStatus.PENDING,
     'verifying payment': OrderStatus.PENDING,
-    # Confirmed sale — buyer has received the account and is in the inspection window.
-    # This is the earliest PA status that constitutes a confirmed sale for pool purposes.
-    # Maps to DELIVERED (not PENDING) so pool replenishment only triggers at this point.
-    'pending buyer inspection': OrderStatus.DELIVERED,
+    'pending buyer inspection': OrderStatus.PENDING,
     # Completed
     'delivery fully completed': OrderStatus.COMPLETED,
     'completed': OrderStatus.COMPLETED,
