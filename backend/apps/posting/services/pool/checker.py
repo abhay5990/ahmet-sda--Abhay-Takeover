@@ -18,8 +18,10 @@ from apps.posting.models import (
     OfferPool,
     OfferPoolActiveOffer,
     OfferPoolActiveOfferStatus,
+    OfferPoolStatus,
     PoolOffer,
     PoolOfferStatus,
+    PoolOfferStrategy,
     PoolSaleEvent,
     PostingLog,
     PostingLogLevel,
@@ -44,6 +46,13 @@ TASK_NAME = 'pool_checker'
 
 # Sentinel: offer no longer exists on remote (404)
 _OFFER_NOT_FOUND = -1
+
+# A PoolOffer parked in ERROR whose last_error starts with this prefix was
+# disabled purely by the local listing-lifecycle signal when its source Listing
+# was observed CLOSED/DELETED (see apps.listings.signals.listing_deactivated).
+# For append providers this is auto-recoverable once the remote offer state is
+# verified — see _maybe_recover_errored_append_lane.
+_LISTING_CLOSED_ERROR_PREFIX = 'Listing status changed to'
 
 
 # ── Reactive trigger (called from order sync) ────────────────────
@@ -268,7 +277,13 @@ def sweep_all_pools() -> dict[str, int]:
     for pool_offer in pool_offers:
         try:
             stats['checked'] += 1
-            pushed = _check_and_replenish(pool_offer)
+            # The automatic sweep is allowed to recover append lanes that a
+            # local listing-close event parked in ERROR — but only after the
+            # remote offer state is verified (see _check_and_replenish). Without
+            # this, an Eldorado/GameBoost lane whose source listing was observed
+            # closed stays ERROR forever and its keys are never re-added, even
+            # though the shared pool still has stock (pool-30 failure report).
+            pushed = _check_and_replenish(pool_offer, allow_error_recovery=True)
             if pushed > 0:
                 stats['replenished'] += 1
         except Exception:
@@ -291,12 +306,96 @@ def sweep_all_pools() -> dict[str, int]:
 # ── Internal ─────────────────────────────────────────────────────
 
 
-def _check_and_replenish(pool_offer: PoolOffer, *, force: bool = False) -> int:
+def _is_recoverable_errored_append_lane(pool_offer: PoolOffer) -> bool:
+    """True for a non-PA append lane parked in ERROR purely by a local close.
+
+    These lanes were disabled by ``listing_deactivated`` when their source
+    Listing was observed CLOSED/DELETED. A local lifecycle event must NOT be
+    trusted to mean the remote offer is gone, so recovery is gated on a verified
+    remote result in :func:`_maybe_recover_errored_append_lane`.
+    """
+    return (
+        pool_offer.status == PoolOfferStatus.ERROR
+        and pool_offer.strategy == PoolOfferStrategy.APPEND
+        and pool_offer.marketplace in ('eldorado', 'gameboost')
+        and str(pool_offer.last_error or '').startswith(_LISTING_CLOSED_ERROR_PREFIX)
+        and pool_offer.pool.status == OfferPoolStatus.ACTIVE
+    )
+
+
+def _maybe_recover_errored_append_lane(
+    pool_offer: PoolOffer, remote_count: int | None,
+) -> bool:
+    """Reactivate an ERROR append lane once its remote offer state is verified.
+
+    ``remote_count`` is the result of the marketplace query already performed by
+    the caller:
+
+    * ``None`` — inconclusive/unknown (API error). Do NOT recover; acting on an
+      unknown remote state risks duplicating a live offer. The lane stays ERROR.
+    * ``_OFFER_NOT_FOUND`` — verified absent (404). Reactivate so the normal
+      missing-offer recovery path can recreate the offer with pool stock.
+    * any real count — the offer still exists remotely, so the local CLOSED was
+      a lifecycle artifact. Reactivate, correct the stale Listing back to LISTED
+      (so the close signal cannot immediately re-block it), and let the normal
+      append/republish path top it up.
+
+    Returns True when the lane was reactivated.
+    """
+    if remote_count is None or not _is_recoverable_errored_append_lane(pool_offer):
+        return False
+
+    verified_absent = remote_count == _OFFER_NOT_FOUND
+    pool_offer.status = PoolOfferStatus.ACTIVE
+    pool_offer.last_error = ''
+    pool_offer.save(update_fields=['status', 'last_error', 'updated_at'])
+
+    if not verified_absent and pool_offer.listing_id:
+        from apps.listings.enums import ListingStatus
+        from apps.listings.models import Listing
+
+        # Correct the local record to match the verified-present remote offer.
+        # Uses a filtered UPDATE (no post_save) so this does not re-trigger the
+        # listing lifecycle signal.
+        Listing.objects.filter(
+            pk=pool_offer.listing_id,
+            status__in=[ListingStatus.CLOSED, ListingStatus.DELETED],
+        ).update(status=ListingStatus.LISTED, removed_at=None)
+
+    PostingLog.objects.create(
+        task_name=TASK_NAME,
+        level=PostingLogLevel.INFO,
+        message=(
+            f"Pool offer #{pool_offer.pk}: recovered ERROR lane after verifying "
+            f"remote offer {'absent (404)' if verified_absent else f'present ({remote_count})'}"
+            f" — resuming replenishment"
+        ),
+        detail={
+            'pool_offer_id': pool_offer.pk,
+            'marketplace': pool_offer.marketplace,
+            'remote_count': remote_count,
+            'verified_absent': verified_absent,
+        },
+        integration_account=pool_offer.store,
+    )
+    return True
+
+
+def _check_and_replenish(
+    pool_offer: PoolOffer,
+    *,
+    force: bool = False,
+    allow_error_recovery: bool = False,
+) -> int:
     """Fetch remote credential count, reconcile stale items, then replenish if needed.
 
     Args:
         force: If True, replenish even when remote count >= threshold.
                Used for manual "Replenish Now" triggers.
+        allow_error_recovery: If True, an append lane parked in ERROR by a local
+               listing-close event is reactivated once the remote offer state is
+               verified (used by the automatic sweep). Manual replenish already
+               resets ERROR lanes explicitly, so it leaves this False.
     """
     pool_offer = PoolOffer.objects.select_related(
         'pool', 'pool__game', 'pool__credential_spec',
@@ -314,6 +413,11 @@ def _check_and_replenish(pool_offer: PoolOffer, *, force: bool = False) -> int:
         remote_count, remote_creds, remote_credential_ids = _get_remote_credentials(
             pool, marketplace,
         )
+
+    # Recover an append lane that a local listing-close event parked in ERROR,
+    # now that the remote offer state has been verified above.
+    if allow_error_recovery:
+        _maybe_recover_errored_append_lane(pool_offer, remote_count)
 
     # Offer gone from remote — recover by creating a new one
     if remote_count == _OFFER_NOT_FOUND:
