@@ -332,7 +332,15 @@ def _build_pool_item_views(
             sale_event = sale_event_by_listing.get(active_offer.listing_id)
         is_sold_clone = bool(active_offer)
         is_consumed = item.status == OfferPoolItemStatus.CONSUMED
-        is_sale_record = is_sold_clone or is_consumed
+        is_detached_verified_sale = (
+            item.status == OfferPoolItemStatus.REMOVED
+            and sale_event is not None
+            and pool_offer is None
+            and reservation_store is None
+        )
+        is_sale_record = (
+            is_sold_clone or is_consumed or is_detached_verified_sale
+        )
 
         if slot:
             destination_title = slot['title']
@@ -349,6 +357,16 @@ def _build_pool_item_views(
             destination_title = (
                 f'{reservation_store.name} '
                 f'{_MARKETPLACE_DISPLAY_NAMES.get(marketplace, marketplace.title())}'
+            )
+        elif is_detached_verified_sale:
+            sale_listing = getattr(sale_event, 'listing', None)
+            sale_account = getattr(sale_listing, 'integration_account', None)
+            marketplace = getattr(sale_account, 'provider', '') or 'playerauctions'
+            store_name = getattr(sale_account, 'name', '')
+            destination_title = (
+                f'{store_name} '
+                f'{_MARKETPLACE_DISPLAY_NAMES.get(marketplace, marketplace.title())}'
+                if store_name else 'Verified detached sale'
             )
         else:
             marketplace = ''
@@ -372,7 +390,11 @@ def _build_pool_item_views(
                 item.target_offer_id
                 or (listing.store_listing_id if listing else '')
             ),
-            'is_shared': pool_offer is None and reservation_store is None,
+            'is_shared': (
+                pool_offer is None
+                and reservation_store is None
+                and not is_sale_record
+            ),
             'is_sold': is_sale_record,
             'sale_status_label': (
                 'Order confirmed' if sale_event else (
@@ -383,7 +405,9 @@ def _build_pool_item_views(
             ),
             'order_id': _sale_order_reference(sale_event, orders_by_id),
             'sold_at': (
-                active_offer.updated_at if active_offer else item.consumed_at
+                active_offer.updated_at if active_offer else (
+                    item.consumed_at or getattr(sale_event, 'created_at', None)
+                )
             ) if is_sale_record else None,
             'is_exact_order_match': bool(sale_event),
         }
@@ -399,7 +423,7 @@ def _build_pool_item_views(
             unmatched_rows_by_offer.setdefault(
                 f'reservation_{reservation_store.pk}', [],
             ).append(row)
-        else:
+        elif not is_sale_record:
             shared_rows.append(row)
 
     def make_item_block(slot, rows, *, primary_offer=None, is_additional=False):
@@ -915,8 +939,11 @@ def restock_pool_detail_page(request, pool_id):
         .order_by('-created_at')
     )
     sale_events = list(
-        PoolSaleEvent.objects.filter(pool_offer__pool=pool)
-        .select_related('listing', 'pool_offer', 'pool_item')
+        PoolSaleEvent.objects.filter(
+            Q(pool_offer__pool=pool) | Q(pool_item__pool=pool)
+        )
+        .select_related('listing__integration_account', 'pool_offer', 'pool_item')
+        .distinct()
         .order_by('-created_at')
     )
     order_ids = {event.order_id for event in sale_events if event.order_id}

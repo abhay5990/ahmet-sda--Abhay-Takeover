@@ -196,6 +196,44 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertEqual(sold_history[0]['order_id'], 'ELD-ORDER-9010')
         self.assertTrue(sold_history[0]['is_exact_order_match'])
 
+    def test_detached_verified_sale_is_not_shared_and_renders_in_sold_history(self):
+        detached_item = self.make_item(
+            item_id=207,
+            status=OfferPoolItemStatus.REMOVED,
+            login='detached-pa-sale',
+        )
+        sale_event = SimpleNamespace(
+            pool_offer_id=None,
+            pool_item_id=detached_item.pk,
+            listing_id=907,
+            listing=SimpleNamespace(
+                integration_account=SimpleNamespace(
+                    name='Vapenation',
+                    provider='playerauctions',
+                ),
+            ),
+            order_id=9017,
+            created_at=timezone.now(),
+        )
+        marketplace_order = SimpleNamespace(store_order_id='PA-ORDER-9017')
+
+        _, _, shared_rows, sold_history, _ = _build_pool_item_views(
+            [],
+            [detached_item],
+            [],
+            [sale_event],
+            {9017: marketplace_order},
+        )
+
+        self.assertEqual(shared_rows, [])
+        self.assertEqual(len(sold_history), 1)
+        self.assertEqual(
+            sold_history[0]['destination_title'],
+            'Vapenation PlayerAuctions',
+        )
+        self.assertEqual(sold_history[0]['order_id'], 'PA-ORDER-9017')
+        self.assertTrue(sold_history[0]['is_exact_order_match'])
+
     def test_groups_each_item_into_one_store_lane_and_one_unified_sale_ledger(self):
         eldorado = self.make_offer(
             offer_id=24,
