@@ -10,6 +10,47 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
+def dedupe_presets_forward(apps, schema_editor):
+    """Keep one active preset per (game, sha256); soft-delete then hard-delete extras.
+
+    Portable across MySQL and SQLite (avoids MySQL-only UPDATE ... JOIN).
+    """
+    PostingImagePreset = apps.get_model("posting", "PostingImagePreset")
+
+    seen = set()
+    deactivate_ids = []
+    for row in (
+        PostingImagePreset.objects.order_by("id")
+        .values_list("id", "game_id", "sha256")
+        .iterator()
+    ):
+        pk, game_id, sha256 = row
+        key = (game_id, sha256)
+        if key in seen:
+            deactivate_ids.append(pk)
+        else:
+            seen.add(key)
+
+    if deactivate_ids:
+        PostingImagePreset.objects.filter(id__in=deactivate_ids).update(is_active=False)
+
+    # Remove inactive duplicates that are not the kept (min id) row per hash.
+    keep_ids = set()
+    seen.clear()
+    for row in (
+        PostingImagePreset.objects.order_by("id")
+        .values_list("id", "game_id", "sha256")
+        .iterator()
+    ):
+        pk, game_id, sha256 = row
+        key = (game_id, sha256)
+        if key not in seen:
+            seen.add(key)
+            keep_ids.add(pk)
+
+    PostingImagePreset.objects.filter(is_active=False).exclude(id__in=keep_ids).delete()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -47,35 +88,7 @@ class Migration(migrations.Migration):
         ),
         # 4. Deduplicate: keep one active preset per (game, sha256)
         # before adding the new unique constraint.
-        migrations.RunSQL(
-            sql="""
-                UPDATE posting_image_presets t1
-                JOIN (
-                    SELECT MIN(id) AS keep_id, game_id, sha256
-                    FROM posting_image_presets
-                    GROUP BY game_id, sha256
-                    HAVING COUNT(*) > 1
-                ) t2 ON t1.game_id = t2.game_id
-                       AND t1.sha256 = t2.sha256
-                       AND t1.id != t2.keep_id
-                SET t1.is_active = 0;
-            """,
-            reverse_sql=migrations.RunSQL.noop,
-            # Soft-delete duplicates; the constraint below needs uniqueness
-        ),
-        migrations.RunSQL(
-            sql="""
-                DELETE FROM posting_image_presets
-                WHERE is_active = 0
-                  AND id NOT IN (
-                      SELECT keep_id FROM (
-                          SELECT MIN(id) AS keep_id FROM posting_image_presets
-                          GROUP BY game_id, sha256
-                      ) sub
-                  );
-            """,
-            reverse_sql=migrations.RunSQL.noop,
-        ),
+        migrations.RunPython(dedupe_presets_forward, migrations.RunPython.noop),
         # 5. Add new constraint and index
         migrations.AddConstraint(
             model_name="postingimagepreset",
