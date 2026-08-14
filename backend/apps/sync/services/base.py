@@ -702,15 +702,30 @@ class BaseSyncService:
             defaults=defaults,
         )
 
-        # Reactive pool check: an order linked to a pool listing is a sale.
-        # Retry on updates too: several marketplaces create the order first and
-        # only populate its listing reference on a later detail sync.  The pool
-        # event key is idempotent, so repeated notifications are safe and allow
-        # the exact order/item link to be filled in after the fact.
-        if order.store_listing_id:
+        # Reactive pool check: only an order that has reached a sale-confirmed
+        # state may consume pool inventory.  PlayerAuctions exposes Pending
+        # Payment and other pre-delivery states through the same order feed;
+        # treating every linked order as a sale would incorrectly delist an
+        # active offer and move its credential to sold stock.
+        #
+        # Retry on later confirmed-status updates too: several marketplaces
+        # create the order first and only populate its listing reference or
+        # final state on a subsequent detail sync. The pool event key is
+        # idempotent, so repeated confirmed notifications remain safe.
+        if order.store_listing_id and self._is_pool_sale_confirmed(order.status):
             self._notify_pool_on_sale(order)
 
         return 'created' if created else 'updated'
+
+    @staticmethod
+    def _is_pool_sale_confirmed(status: str) -> bool:
+        """Return whether a normalized order status may consume pool stock."""
+        from apps.orders.enums import OrderStatus
+
+        return status in {
+            OrderStatus.DELIVERED,
+            OrderStatus.COMPLETED,
+        }
 
     @staticmethod
     def _link_listing(raw_payload: RawPayload, defaults: dict) -> None:
