@@ -1208,6 +1208,9 @@ def _post_pa_excel_row(
             or listing_variant
         )
 
+    renewed_at = timezone.now()
+    from apps.posting.services.relist import _playerauctions_expiry_after_relist
+
     with transaction.atomic():
         new_listing = Listing.objects.create(
             is_instant=True,
@@ -1215,9 +1218,16 @@ def _post_pa_excel_row(
             game=pool.game,
             store_listing_id=new_offer_id,
             variant=listing_variant,
+            status='listed',
             title=(excel_row.get('Title') or excel_row.get('title') or pool.listing.title),
             price=pool.listing.price,
             currency=pool.listing.currency,
+            listed_at=renewed_at,
+            marketplace_expires_at=_playerauctions_expiry_after_relist(
+                persisted_payload,
+                {'offer_id': new_offer_id},
+                renewed_at,
+            ),
             raw_data=raw_data,
         )
         ListingOwnedProduct.objects.create(

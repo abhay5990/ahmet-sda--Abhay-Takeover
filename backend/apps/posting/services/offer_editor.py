@@ -332,11 +332,11 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
 
     _apply_pa_changes(original_payload, changes)
     pool_offer = PoolOffer.objects.filter(listing=listing).select_related('pool').first()
-    active_offer = (
+    active_offers = list(
         OfferPoolActiveOffer.objects.filter(listing=listing)
         .select_related('pool', 'pool_offer__pool')
-        .first()
     )
+    active_offer = active_offers[0] if active_offers else None
     legacy_pool = OfferPool.objects.filter(listing=listing).first()
     effective_pool = (
         pool_offer.pool
@@ -375,9 +375,9 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
             'edit_recreate_failed': error_message,
         }
         listing.save(update_fields=['status', 'removed_at', 'raw_data', 'updated_at'])
-        if active_offer:
-            active_offer.status = OfferPoolActiveOfferStatus.FAILED
-            active_offer.save(update_fields=['status', 'updated_at'])
+        for current_active_offer in active_offers:
+            current_active_offer.status = OfferPoolActiveOfferStatus.FAILED
+            current_active_offer.save(update_fields=['status', 'updated_at'])
 
     # Step 4: Create new offer
     try:
@@ -411,20 +411,43 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
         _mark_listing_orphaned('Recreate succeeded but no offer ID returned')
         return EditResult(ok=False, error='Recreate succeeded but no offer ID returned')
 
-    # Step 5: Update DB
+    # Step 5: Atomically retain the same local account/clone ownership while
+    # recording PA's replacement offer ID and its fresh lifecycle window.
+    from apps.posting.services.relist import (
+        _handoff_active_offer_replacement,
+        _playerauctions_expiry_after_relist,
+    )
+
+    renewed_at = timezone.now()
+    marketplace_expires_at = _playerauctions_expiry_after_relist(
+        original_payload,
+        getattr(create_result, 'data', None),
+        renewed_at,
+    )
     old_offer_id = listing.store_listing_id
     listing.store_listing_id = new_offer_id
-    _update_listing_db(listing, changes, extra_fields=['store_listing_id'])
+    listing.status = ListingStatus.LISTED
+    listing.removed_at = None
+    listing.listed_at = renewed_at
+    listing.marketplace_expires_at = marketplace_expires_at
+    _update_listing_db(
+        listing,
+        changes,
+        extra_fields=[
+            'store_listing_id', 'status', 'removed_at', 'listed_at',
+            'marketplace_expires_at',
+        ],
+    )
 
-    # Update OfferPoolActiveOffer if exists
-    if active_offer:
-        active_offer.store_listing_id = new_offer_id
-        active_offer.save(update_fields=['store_listing_id', 'updated_at'])
-    else:
-        OfferPoolActiveOffer.objects.filter(
+    # Rebind every matching clone and its exact pool item before the response
+    # is returned. A PA edit cancels/recreates the remote offer, so retaining
+    # an old ID here would make the card and future sale reconciliation stale.
+    if not active_offers:
+        active_offers = list(OfferPoolActiveOffer.objects.filter(
             pool_offer__listing__integration_account=store,
             store_listing_id=old_offer_id,
-        ).update(store_listing_id=new_offer_id)
+        ).select_related('pool_item'))
+    _handoff_active_offer_replacement(active_offers, new_offer_id)
 
     _log(PostingLogLevel.SUCCESS,
          f'PA listing #{listing.pk} edited: {old_offer_id} → {new_offer_id}',
@@ -604,6 +627,9 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
                     result.errors.append(f'{_ao_login(ao)}: no offer ID in PA response')
                     continue
 
+                renewed_at = timezone.now()
+                from apps.posting.services.relist import _playerauctions_expiry_after_relist
+
                 new_listing = Listing.objects.create(
                     is_instant=True,
                     integration_account=store,
@@ -611,10 +637,16 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
                     store_listing_id=new_offer_id,
                     product_category=pool.listing.product_category,
                     variant=pool.listing.variant,
+                    status=ListingStatus.LISTED,
                     title=changes.get('title', pool.listing.title),
                     price=changes.get('price', pool.listing.price),
                     currency=pool.listing.currency,
-                    listed_at=timezone.now(),
+                    listed_at=renewed_at,
+                    marketplace_expires_at=_playerauctions_expiry_after_relist(
+                        original_payload,
+                        None,
+                        renewed_at,
+                    ),
                     raw_data=_raw_data_with_changes(pool.listing.raw_data, changes),
                 )
 

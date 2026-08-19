@@ -21,7 +21,7 @@ from apps.integrations.providers import registry
 from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
 from apps.listings.enums import ListingStatus
 from apps.listings.models import Listing, ListingOwnedProduct
-from apps.posting.models import OfferPool, PoolOffer, PoolOfferStatus
+from apps.posting.models import OfferPool, OfferPoolActiveOffer, PoolOffer, PoolOfferStatus
 from core.marketplace.normalizers import normalize_offer_response
 from core.marketplace.payload_extractor import extract_create_payload
 
@@ -345,6 +345,32 @@ def _mark_deleted(listing: Listing) -> None:
     listing.save(update_fields=['status', 'removed_at', 'updated_at'])
 
 
+def _handoff_active_offer_replacement(
+    active_offers,
+    new_offer_id: str,
+    *,
+    new_listing: Listing | None = None,
+) -> None:
+    """Point clone tracking and its exact stock item at PA's replacement ID.
+
+    PlayerAuctions changes cancel an existing offer and create a replacement.
+    This helper keeps the clone record, its item-level target ID, and—when a
+    new Listing exists—the Listing relation in one deterministic handoff.
+    """
+    for active_offer in active_offers:
+        update_fields = ['store_listing_id', 'updated_at']
+        active_offer.store_listing_id = new_offer_id
+        if new_listing is not None:
+            active_offer.listing = new_listing
+            update_fields.insert(0, 'listing')
+        active_offer.save(update_fields=update_fields)
+        if active_offer.pool_item_id:
+            active_offer.pool_item.target_offer_id = new_offer_id
+            active_offer.pool_item.save(update_fields=[
+                'target_offer_id', 'updated_at',
+            ])
+
+
 def _replace_in_db(
     old_listing: Listing,
     new_offer_id: str,
@@ -366,6 +392,11 @@ def _replace_in_db(
         legacy_pools = list(OfferPool.objects.filter(listing=old_listing))
         pool_offers = list(
             PoolOffer.objects.select_for_update().filter(listing=old_listing)
+        )
+        active_offers = list(
+            OfferPoolActiveOffer.objects.select_for_update()
+            .select_related('pool_item')
+            .filter(listing=old_listing)
         )
 
         # Mark old listing DELETED
@@ -429,5 +460,14 @@ def _replace_in_db(
             pool_offer.save(update_fields=[
                 'listing', 'status', 'last_error', 'updated_at',
             ])
+
+        # A PlayerAuctions replacement receives a new remote offer ID. Keep
+        # clone tracking and its exact account pointed at that replacement so
+        # future order/sale reconciliation never follows the cancelled offer.
+        _handoff_active_offer_replacement(
+            active_offers,
+            new_offer_id,
+            new_listing=new_listing,
+        )
 
     return new_listing
