@@ -5,6 +5,8 @@ from django.test import SimpleTestCase
 from apis_sdk.clients.marketplaces.playerauctions.models import (
     PlayerAuctionsOrderListItem,
 )
+from apps.orders.enums import OrderStatus
+from apps.sync.services.playerauctions.orders import mapper
 from apps.sync.services.playerauctions.orders.service import (
     PlayerAuctionsOrderSyncService,
 )
@@ -43,3 +45,15 @@ class PlayerAuctionsOrderSummaryTests(SimpleTestCase):
         self.assertEqual(prepared, summary)
         self.assertEqual(prepared["offer_id"], 292889759)
         self.assertEqual(metadata, {})
+
+    def test_pending_buyer_inspection_is_a_confirmed_delivery_state(self):
+        self.assertEqual(
+            mapper.map_status("Pending Buyer Inspection"),
+            OrderStatus.DELIVERED,
+        )
+
+    def test_pending_payment_remains_a_non_sale_state(self):
+        self.assertEqual(
+            mapper.map_status("Pending Payment"),
+            OrderStatus.PENDING,
+        )

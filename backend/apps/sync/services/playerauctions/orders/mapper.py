@@ -21,7 +21,10 @@ PA_STATUS_MAP = {
     'order processing': OrderStatus.PENDING,
     'delivery in progress': OrderStatus.PENDING,
     'verifying payment': OrderStatus.PENDING,
-    'pending buyer inspection': OrderStatus.PENDING,
+    # The account has been delivered and is in the buyer-inspection window.
+    # It is a confirmed sale for pool allocation, unlike Pending Payment or
+    # payment-verification states which must remain non-sale states.
+    'pending buyer inspection': OrderStatus.DELIVERED,
     # Completed
     'delivery fully completed': OrderStatus.COMPLETED,
     'completed': OrderStatus.COMPLETED,
