@@ -3,6 +3,7 @@ from unittest import TestCase
 
 from apps.sync.services.playerauctions.email_recovery import (
     parse_playerauctions_email,
+    select_recovery_uids,
 )
 
 
@@ -48,3 +49,38 @@ class PlayerAuctionsEmailRecoveryTests(TestCase):
         message.set_content('Order ID: 16363599')
 
         self.assertIsNone(parse_playerauctions_email(message, RECIPIENT_MAP))
+
+    def test_select_recovery_uids_keeps_recent_window_and_advances_old_backlog(self):
+        uids = [str(value).encode() for value in range(1, 594)]
+
+        recent, backlog = select_recovery_uids(
+            uids,
+            limit=100,
+            backfill_cursor=0,
+        )
+
+        self.assertEqual(recent[0], b'494')
+        self.assertEqual(recent[-1], b'593')
+        self.assertEqual(backlog[0], b'1')
+        self.assertEqual(backlog[-1], b'100')
+
+        _, next_backlog = select_recovery_uids(
+            uids,
+            limit=100,
+            backfill_cursor=100,
+        )
+
+        self.assertEqual(next_backlog[0], b'101')
+        self.assertEqual(next_backlog[-1], b'200')
+
+    def test_select_recovery_uids_does_not_repeat_old_messages_after_cursor(self):
+        uids = [str(value).encode() for value in range(1, 151)]
+
+        recent, backlog = select_recovery_uids(
+            uids,
+            limit=100,
+            backfill_cursor=50,
+        )
+
+        self.assertEqual(recent[0], b'51')
+        self.assertEqual(backlog, [])

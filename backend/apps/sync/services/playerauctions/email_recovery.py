@@ -44,6 +44,7 @@ RECIPIENT_HEADERS = (
     'X-Envelope-To', 'To', 'Cc',
 )
 IMAP_CREDENTIAL_SLUG = 'playerauctions-imap-recovery'
+IMAP_BACKFILL_CURSOR_KEY = 'playerauctions_email_backfill_uid'
 
 
 @dataclass(frozen=True)
@@ -127,11 +128,32 @@ def parse_playerauctions_email(
     )
 
 
+def select_recovery_uids(
+    uids: list[bytes],
+    *,
+    limit: int,
+    backfill_cursor: int,
+) -> tuple[list[bytes], list[bytes]]:
+    """Return newest messages plus the next unseen older backlog page.
+
+    The fresh window is intentionally re-read on every five-minute run so a
+    newly arrived order can be recovered promptly.  A separate advancing page
+    walks the older portion of the same search result, preventing a busy inbox
+    from permanently hiding notifications beyond the newest fixed-size window.
+    """
+    bounded_limit = max(1, limit)
+    recent = uids[-bounded_limit:]
+    older = uids[:-bounded_limit]
+    backlog = [uid for uid in older if int(uid) > backfill_cursor][:bounded_limit]
+    return recent, backlog
+
+
 class PlayerAuctionsEmailRecovery:
     """Read bounded PA notifications and recover only orders absent from SDA."""
 
     def __init__(self) -> None:
         self.recipient_map: dict[str, str] = {}
+        self._credential: ServiceCredential | None = None
 
     def _load_config(self) -> dict | None:
         credential = ServiceCredential.objects.filter(
@@ -140,6 +162,7 @@ class PlayerAuctionsEmailRecovery:
         ).first()
         if credential is None:
             return None
+        self._credential = credential
         config = credential.credentials or {}
         self.recipient_map = {
             str(address).lower(): str(slug)
@@ -153,10 +176,25 @@ class PlayerAuctionsEmailRecovery:
             return None
         return config
 
+    def _backfill_cursor(self, config: dict) -> int:
+        try:
+            return max(0, int(config.get(IMAP_BACKFILL_CURSOR_KEY, 0)))
+        except (TypeError, ValueError):
+            return 0
+
+    def _save_backfill_cursor(self, config: dict, uid: bytes) -> None:
+        if self._credential is None:
+            return
+        updated = dict(config)
+        updated[IMAP_BACKFILL_CURSOR_KEY] = int(uid)
+        self._credential.credentials = updated
+        self._credential.save(update_fields=['credentials'])
+
     def run(self, *, days: int = 7, limit: int = 100) -> dict[str, int]:
         summary = {
             'examined': 0, 'candidates': 0, 'existing': 0,
             'recovered': 0, 'incomplete': 0, 'failed': 0,
+            'backlog_examined': 0,
         }
         config = self._load_config()
         if config is None:
@@ -180,8 +218,13 @@ class PlayerAuctionsEmailRecovery:
             status, data = client.uid('search', None, 'SINCE', since, 'FROM', PA_SENDER)
             if status != 'OK':
                 raise RuntimeError('Could not search PlayerAuctions notification emails.')
-            uids = (data[0] or b'').split()[-max(1, limit):]
-            for uid in uids:
+            all_uids = (data[0] or b'').split()
+            recent_uids, backlog_uids = select_recovery_uids(
+                all_uids,
+                limit=limit,
+                backfill_cursor=self._backfill_cursor(config),
+            )
+            for uid in recent_uids:
                 candidate = self._candidate_from_uid(client, uid)
                 summary['examined'] += 1
                 if not candidate:
@@ -190,6 +233,16 @@ class PlayerAuctionsEmailRecovery:
                 outcome = self._recover_candidate(candidate)
                 if outcome in summary:
                     summary[outcome] += 1
+            for uid in backlog_uids:
+                candidate = self._candidate_from_uid(client, uid)
+                summary['examined'] += 1
+                summary['backlog_examined'] += 1
+                if candidate:
+                    summary['candidates'] += 1
+                    outcome = self._recover_candidate(candidate)
+                    if outcome in summary:
+                        summary[outcome] += 1
+                self._save_backfill_cursor(config, uid)
         finally:
             try:
                 client.logout()
