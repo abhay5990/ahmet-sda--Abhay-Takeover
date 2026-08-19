@@ -446,12 +446,29 @@ def _build_pool_item_views(
         elif not is_sale_record:
             shared_rows.append(row)
 
-    def make_item_block(slot, rows, *, primary_offer=None, is_additional=False):
+    def make_item_block(
+        slot,
+        rows,
+        *,
+        primary_offer=None,
+        offers=None,
+        is_additional=False,
+    ):
+        offers = offers or ([] if primary_offer is None else [primary_offer])
+        active_pa_offers = [
+            offer for offer in offers
+            if (
+                slot['provider'] == 'playerauctions'
+                and offer.status == PoolOfferStatus.ACTIVE
+                and getattr(offer, 'listing', None) is not None
+            )
+        ]
         return {
             'key': slot['key'],
             'title': slot['title'],
             'marketplace': slot['provider'],
             'primary_offer': primary_offer,
+            'active_pa_offers': active_pa_offers,
             'rows': rows,
             'item_count': len(rows),
             'listed_count': sum(
@@ -489,6 +506,7 @@ def _build_pool_item_views(
             slot,
             rows_by_slot[slot['key']],
             primary_offer=offers[0] if offers else None,
+            offers=offers,
         ))
 
     additional_item_blocks = []
@@ -507,6 +525,7 @@ def _build_pool_item_views(
             },
             unmatched_rows_by_offer.get(pool_offer.pk, []),
             primary_offer=pool_offer,
+            offers=[pool_offer],
             is_additional=True,
         ))
 

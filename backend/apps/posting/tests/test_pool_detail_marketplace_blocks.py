@@ -267,6 +267,11 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
             marketplace='playerauctions',
             store_name='VapeNation',
         )
+        second_playerauctions = self.make_offer(
+            offer_id=26,
+            marketplace='playerauctions',
+            store_name='VapeNation',
+        )
         mart_item = self.make_item(
             item_id=201,
             status=OfferPoolItemStatus.PUSHED,
@@ -320,7 +325,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         )
 
         blocks, additional_blocks, shared_rows, sold_history, all_rows = _build_pool_item_views(
-            [eldorado, playerauctions],
+            [eldorado, playerauctions, second_playerauctions],
             [mart_item, consumed_item, pa_item, shared_item, reserved_item],
             [sold_pa_clone],
             [pa_sale],
@@ -338,6 +343,10 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertEqual(blocks[3]['processing_count'], 1)
         self.assertEqual(blocks[5]['title'], 'Vapenation PlayerAuctions')
         self.assertEqual([row['item'] for row in blocks[5]['rows']], [pa_item])
+        self.assertEqual(
+            {offer.pk for offer in blocks[5]['active_pa_offers']},
+            {playerauctions.pk, second_playerauctions.pk},
+        )
         self.assertEqual(shared_rows[0]['item'], shared_item)
         self.assertEqual(shared_rows[0]['destination_title'], 'Shared pool stock')
         self.assertEqual(shared_rows[0]['unique_code'], '#REF204')
