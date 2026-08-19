@@ -180,7 +180,10 @@ class PaRelayClient:
                 provider=self.PROVIDER,
             )
 
-        url = f"{self._config.management_base_url}/pa-cancel-offers"
+        management_base_url = (
+            self._config.management_base_url or self._config.base_url
+        ).rstrip("/")
+        url = f"{management_base_url}/pa-cancel-offers"
         payload: dict[str, Any] = {
             "username": username,
             "password": password,

@@ -80,6 +80,20 @@ class PlayerAuctionsAuthRefreshTests(TestCase):
             offer_ids=[12345],
         )
 
+    def test_browser_cancellation_defaults_to_the_configured_token_relay(self):
+        auth = PlayerAuctionsAuth(
+            transport=Mock(),
+            username='seller@example.com',
+            password='secret',
+            store_slug='ezsmurfmart',
+            relay_url='http://healthy-relay.test:3001',
+        )
+
+        self.assertEqual(
+            auth._relay_client._config.management_base_url,
+            'http://healthy-relay.test:3001',
+        )
+
     def test_legacy_facade_cancellation_prefers_browser_relay(self):
         auth = Mock()
         expected = ApiResult.success({'ok': True, 'offerIds': [12345]})
@@ -119,6 +133,31 @@ class PlayerAuctionsAuthRefreshTests(TestCase):
         self.assertEqual(
             transport.request.call_args.args[1],
             'http://management-relay.test:3001/pa-cancel-offers',
+        )
+
+    def test_browser_cancellation_falls_back_to_base_relay_url(self):
+        transport = Mock()
+        transport.request.return_value = SimpleNamespace(
+            is_success=True,
+            status_code=200,
+            json=lambda: {'ok': True, 'offerIds': [12345]},
+        )
+        client = PaRelayClient(
+            config=PaRelayConfig(base_url='http://healthy-relay.test:3001'),
+            transport=transport,
+        )
+
+        result = client.cancel_offers_in_browser(
+            username='seller@example.com',
+            password='secret',
+            store='ezsmurfmart',
+            offer_ids=[12345],
+        )
+
+        self.assertTrue(result.ok)
+        self.assertEqual(
+            transport.request.call_args.args[1],
+            'http://healthy-relay.test:3001/pa-cancel-offers',
         )
 
     def test_initial_session_refresh_keeps_cache_first_behavior(self):

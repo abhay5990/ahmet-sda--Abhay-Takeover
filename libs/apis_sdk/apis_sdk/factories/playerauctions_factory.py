@@ -44,6 +44,7 @@ class PlayerAuctionsFactory:
         offer_base_url: str = "https://offer-api.playerauctions.com",
         order_base_url: str = "https://order-api.playerauctions.com",
         relay_url: str = "http://35.231.166.148:3001",
+        management_relay_url: str = "",
         relay_secret: str = "pa-relay-secret-2026",
         store_slug: str = "",
         # Legacy params kept for backward compatibility — ignored
@@ -103,6 +104,7 @@ class PlayerAuctionsFactory:
             proxy_pool=proxy_pool,
             proxy_group=proxy_group,
             relay_url=relay_url,
+            management_relay_url=management_relay_url,
             relay_secret=relay_secret,
             store_slug=store_slug,
             on_refresh=on_refresh,

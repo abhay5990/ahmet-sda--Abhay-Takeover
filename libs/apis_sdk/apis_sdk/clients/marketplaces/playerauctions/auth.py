@@ -57,6 +57,7 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         proxy_pool: ProxyPool | None = None,
         proxy_group: str | None = None,
         relay_url: str = "http://35.231.166.148:3001",
+        management_relay_url: str = "",
         relay_secret: str = "pa-relay-secret-2026",
         store_slug: str = "",
         on_refresh: Callable[[str, str, str], None] | None = None,
@@ -83,6 +84,7 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         self._relay_client = PaRelayClient(
             config=PaRelayConfig(
                 base_url=relay_url,
+                management_base_url=management_relay_url or relay_url,
                 relay_secret=relay_secret,
             ),
             transport=transport,

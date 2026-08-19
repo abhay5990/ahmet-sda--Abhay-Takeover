@@ -196,6 +196,7 @@ class PlayerAuctionsProvider(AbstractProvider):
 
         # Relay config — read from credential or fall back to defaults
         relay_url = creds.get('relay_url', 'http://35.231.166.148:3001')
+        management_relay_url = creds.get('management_relay_url') or relay_url
         relay_secret = creds.get('relay_secret', 'pa-relay-secret-2026')
         # store_slug maps our internal account slug to the relay's store identifier
         store_slug = creds.get('store_slug', '') or credential.account.slug or ''
@@ -223,6 +224,7 @@ class PlayerAuctionsProvider(AbstractProvider):
                 proxy_pool=proxy_pool,
                 proxy_group=proxy_group,
                 relay_url=relay_url,
+                management_relay_url=management_relay_url,
                 relay_secret=relay_secret,
                 store_slug=store_slug,
                 on_refresh=persist_callback,
@@ -241,6 +243,7 @@ class PlayerAuctionsProvider(AbstractProvider):
             proxy_pool=proxy_pool,
             proxy_group=proxy_group,
             relay_url=relay_url,
+            management_relay_url=management_relay_url,
             relay_secret=relay_secret,
             store_slug=store_slug,
             on_refresh=persist_callback,
