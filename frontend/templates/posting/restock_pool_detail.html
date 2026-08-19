@@ -198,10 +198,14 @@
                 </div>
 
                 {% if block.marketplace == 'playerauctions' %}
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div class="rounded-lg border border-violet-100 bg-violet-50 p-3"><div class="text-[11px] uppercase tracking-wide font-semibold text-violet-700">Listed</div><div class="mt-1 text-sm font-medium text-violet-900">{{ block.primary_offer.listing.listed_at|date:"Y-m-d H:i"|default:"—" }}</div></div>
-                    <div class="rounded-lg border border-violet-100 bg-violet-50 p-3"><div class="text-[11px] uppercase tracking-wide font-semibold text-violet-700">PA expiry</div><div class="mt-1 text-sm font-medium text-violet-900">{{ block.primary_offer.listing.marketplace_expires_at|date:"Y-m-d H:i"|default:"—" }}</div></div>
-                </div>
+                    {% if block.active_pa_offers %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="rounded-lg border border-violet-100 bg-violet-50 p-3"><div class="text-[11px] uppercase tracking-wide font-semibold text-violet-700">Listed</div><div class="mt-1 text-sm font-medium text-violet-900">{{ block.active_pa_offers.0.listing.listed_at|date:"Y-m-d H:i"|default:"—" }}</div></div>
+                        <div class="rounded-lg border border-violet-100 bg-violet-50 p-3"><div class="text-[11px] uppercase tracking-wide font-semibold text-violet-700">PA expiry</div><div class="mt-1 text-sm font-medium text-violet-900">{{ block.active_pa_offers.0.listing.marketplace_expires_at|date:"Y-m-d H:i"|default:"—" }}</div></div>
+                    </div>
+                    {% else %}
+                    <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">0 active PA offers — historical listings are retained below for audit only.</div>
+                    {% endif %}
                 {% endif %}
 
                 {% if block.active_listing_ids %}
@@ -591,9 +595,10 @@
                     <label><span class="block text-gray-400">Threshold</span><input type="number" min="1" value="{{ block.primary_offer.threshold }}" data-listing-id="{{ block.primary_offer.listing.id }}" data-field="threshold" class="alloc-input w-full mt-0.5 border border-indigo-200 rounded px-1.5 py-1 text-center"></label>
                     <div><span class="block text-gray-400">Remote</span><span class="font-semibold {% if block.primary_offer.current_remote_count is not None and block.primary_offer.current_remote_count < block.primary_offer.threshold %}text-red-600{% else %}text-gray-700{% endif %}">{{ block.primary_offer.current_remote_count|default:"—" }}</span></div>
                 </div>
-                {% if block.marketplace == 'playerauctions' and block.active_pa_offers %}
+                {% if block.marketplace == 'playerauctions' %}
                 <div class="px-4 py-3 bg-violet-50 border-b border-violet-100 text-xs">
                     <div class="mb-2 font-semibold uppercase tracking-wide text-violet-700">Active PA offers</div>
+                    {% if block.active_pa_offers %}
                     <div class="grid grid-cols-1 gap-2">
                         {% for offer in block.active_pa_offers %}
                         <div class="rounded-lg border border-violet-100 bg-white px-3 py-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -603,6 +608,9 @@
                         </div>
                         {% endfor %}
                     </div>
+                    {% else %}
+                    <div class="rounded-lg border border-violet-100 bg-white px-3 py-2 text-violet-800">0 active PA offers</div>
+                    {% endif %}
                 </div>
                 {% endif %}
                 {% endif %}

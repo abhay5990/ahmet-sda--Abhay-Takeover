@@ -28,6 +28,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertIn('PA expiry', template.template.source)
         self.assertIn('PA listed', template.template.source)
         self.assertIn('Active PA offers', template.template.source)
+        self.assertIn('0 active PA offers', template.template.source)
         self.assertIn('block.active_pa_offers', template.template.source)
 
     def test_active_offer_at_threshold_requires_replenishment(self):
@@ -133,6 +134,16 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
             status=OfferPoolActiveOfferStatus.SOLD,
             updated_at=timezone.now(),
         )
+        active_pa_clone = SimpleNamespace(
+            pk=502,
+            pool_offer_id=second_playerauctions.pk,
+            pool_item_id=None,
+            listing_id=second_playerauctions.listing.pk,
+            store_listing_id=second_playerauctions.listing.store_listing_id,
+            listing=second_playerauctions.listing,
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+            updated_at=timezone.now(),
+        )
         pa_sale = SimpleNamespace(
             pool_offer_id=playerauctions.pk,
             listing_id=pa_clone_listing_id,
@@ -143,7 +154,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         blocks, additional_blocks, unallocated = _build_pool_marketplace_blocks(
             [eldorado, gameboost, playerauctions, second_playerauctions],
             [consumed_eldorado_item, sold_pa_item, unallocated_item],
-            [sold_pa_clone],
+            [sold_pa_clone, active_pa_clone],
             [pa_sale],
         )
 
@@ -175,7 +186,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         )
         self.assertEqual(
             {offer.pk for offer in pa_block['active_pa_offers']},
-            {playerauctions.pk, second_playerauctions.pk},
+            {active_pa_clone.pk},
         )
         self.assertEqual(pa_block['sold_item_count'], 1)
         self.assertEqual(pa_block['sold_items'][0]['order_id'], 9001)
@@ -316,6 +327,15 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
             status=OfferPoolActiveOfferStatus.SOLD,
             updated_at=timezone.now(),
         )
+        active_pa_clone = SimpleNamespace(
+            pk=602,
+            pool_offer_id=second_playerauctions.pk,
+            pool_item_id=None,
+            listing_id=second_playerauctions.listing.pk,
+            listing=second_playerauctions.listing,
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+            updated_at=timezone.now(),
+        )
         pa_sale = SimpleNamespace(
             pool_offer_id=playerauctions.pk,
             pool_item_id=pa_item.pk,
@@ -327,7 +347,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         blocks, additional_blocks, shared_rows, sold_history, all_rows = _build_pool_item_views(
             [eldorado, playerauctions, second_playerauctions],
             [mart_item, consumed_item, pa_item, shared_item, reserved_item],
-            [sold_pa_clone],
+            [sold_pa_clone, active_pa_clone],
             [pa_sale],
             {9002: SimpleNamespace(store_order_id='PA-ORDER-9002')},
         )
@@ -345,7 +365,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertEqual([row['item'] for row in blocks[5]['rows']], [pa_item])
         self.assertEqual(
             {offer.pk for offer in blocks[5]['active_pa_offers']},
-            {playerauctions.pk, second_playerauctions.pk},
+            {active_pa_clone.pk},
         )
         self.assertEqual(shared_rows[0]['item'], shared_item)
         self.assertEqual(shared_rows[0]['destination_title'], 'Shared pool stock')

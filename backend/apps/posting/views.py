@@ -223,11 +223,16 @@ def _build_pool_marketplace_blocks(
 
         active_pa_offers = []
         if slot['provider'] == 'playerauctions':
+            # A PoolOffer is a lane/template and can remain ACTIVE after all
+            # of its concrete PA listings have sold.  Render lifecycle rows
+            # only from concrete ACTIVE clones so sold-out lanes show zero.
             active_pa_offers = [
-                offer for offer in offers
+                active_offer
+                for offer in offers
+                for active_offer in active_by_offer.get(offer.pk, [])
                 if (
-                    offer.status == PoolOfferStatus.ACTIVE
-                    and getattr(offer, 'listing', None) is not None
+                    active_offer.status == OfferPoolActiveOfferStatus.ACTIVE
+                    and getattr(active_offer, 'listing', None) is not None
                 )
             ]
 
@@ -302,7 +307,13 @@ def _build_pool_item_views(
 
     clone_by_item_id = {}
     sold_active_by_item_id = {}
+    active_pa_offer_ids = set()
     for active_offer in active_offers:
+        if (
+            active_offer.status == OfferPoolActiveOfferStatus.ACTIVE
+            and active_offer.pool_offer_id
+        ):
+            active_pa_offer_ids.add(active_offer.pool_offer_id)
         if active_offer.pool_item_id:
             clone_by_item_id.setdefault(active_offer.pool_item_id, active_offer)
         if (
@@ -455,12 +466,16 @@ def _build_pool_item_views(
         is_additional=False,
     ):
         offers = offers or ([] if primary_offer is None else [primary_offer])
+        offer_ids = {offer.pk for offer in offers}
         active_pa_offers = [
-            offer for offer in offers
+            active_offer
+            for active_offer in active_offers
             if (
                 slot['provider'] == 'playerauctions'
-                and offer.status == PoolOfferStatus.ACTIVE
-                and getattr(offer, 'listing', None) is not None
+                and active_offer.pool_offer_id in offer_ids
+                and active_offer.pool_offer_id in active_pa_offer_ids
+                and active_offer.status == OfferPoolActiveOfferStatus.ACTIVE
+                and getattr(active_offer, 'listing', None) is not None
             )
         ]
         return {
