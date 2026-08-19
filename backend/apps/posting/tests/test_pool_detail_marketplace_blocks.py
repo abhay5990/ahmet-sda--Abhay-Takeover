@@ -26,6 +26,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertIn('No sale event', template.template.source)
         self.assertIn('Unique code', template.template.source)
         self.assertIn('PA expiry', template.template.source)
+        self.assertIn('PA listed', template.template.source)
 
     def test_active_offer_at_threshold_requires_replenishment(self):
         offer = SimpleNamespace(
