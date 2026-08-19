@@ -24,6 +24,8 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertIsNotNone(template)
         self.assertIn('Consumed or sold pool items', template.template.source)
         self.assertIn('No sale event', template.template.source)
+        self.assertIn('Unique code', template.template.source)
+        self.assertIn('PA expiry', template.template.source)
 
     def test_active_offer_at_threshold_requires_replenishment(self):
         offer = SimpleNamespace(
@@ -71,7 +73,10 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
             pk=item_id,
             status=status,
             pool_offer_id=pool_offer_id,
-            owned_product=SimpleNamespace(login=login or f'login-{item_id}'),
+            owned_product=SimpleNamespace(
+                login=login or f'login-{item_id}',
+                ref_key=f'#REF{item_id}',
+            ),
             target_offer_id='',
             error_message='',
             reservation=reservation,
@@ -318,6 +323,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertEqual([row['item'] for row in blocks[5]['rows']], [pa_item])
         self.assertEqual(shared_rows[0]['item'], shared_item)
         self.assertEqual(shared_rows[0]['destination_title'], 'Shared pool stock')
+        self.assertEqual(shared_rows[0]['unique_code'], '#REF204')
         self.assertEqual(len(all_rows), 5)
 
         sold_by_login = {entry['item'].owned_product.login: entry for entry in sold_history}

@@ -1,8 +1,8 @@
-"""Pause listings that are approaching their marketplace expiry threshold.
+"""Pause non-PlayerAuctions listings that are approaching expiry.
 
-Eldorado offers expire after ~21 days, PlayerAuctions after ~30 days.
-This command marks LISTED listings as PAUSED in the DB once they exceed
-the provider-specific threshold (no API calls).
+Eldorado offers expire after ~21 days. PlayerAuctions uses the separate
+guarded renewal command so an active offer receives a fresh marketplace timer
+before it expires rather than being paused locally.
 
 Usage:
     python manage.py pause_expiring_listings              # dry-run
@@ -23,12 +23,11 @@ logger = logging.getLogger(__name__)
 # Provider → max listing age in days (hardcoded for now)
 EXPIRY_THRESHOLDS: dict[str, int] = {
     'eldorado': 21,
-    'playerauctions': 30,
 }
 
 
 class Command(BaseCommand):
-    help = 'Pause listings approaching marketplace expiry (DB-only, no API calls).'
+    help = 'Pause non-PlayerAuctions listings approaching marketplace expiry (DB-only).'
 
     def add_arguments(self, parser):
         parser.add_argument(

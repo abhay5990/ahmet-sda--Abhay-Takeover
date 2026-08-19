@@ -132,6 +132,16 @@ def run_pause_expiring_listings_job():
 
 
 @apscheduler_util.close_old_connections
+def run_renew_expiring_playerauctions_job():
+    """Renew only verified-active PA offers before their recorded expiry."""
+    from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled
+    if not is_sync_feature_enabled(SyncFlag.RENEW_EXPIRING_PA):
+        return
+    from django.core.management import call_command
+    call_command('renew_expiring_playerauctions', '--execute')
+
+
+@apscheduler_util.close_old_connections
 def run_robuxcrate_batch_processor_job():
     """APScheduler wrapper — processes pending RobuxCrate order batches."""
     from apps.tools.services.robuxcrate import process_pending_batches
@@ -256,6 +266,17 @@ class Command(BaseCommand):
             trigger=IntervalTrigger(hours=3),
             id='pause_expiring_listings',
             name='Pause Expiring Listings (Eldorado/PA)',
+            max_instances=1,
+            replace_existing=True,
+        )
+
+        # PlayerAuctions renewal — the command verifies the local sale/order
+        # state and current remote offer before it can recreate an offer.
+        scheduler.add_job(
+            run_renew_expiring_playerauctions_job,
+            trigger=IntervalTrigger(hours=3),
+            id='renew_expiring_playerauctions',
+            name='Renew Expiring PlayerAuctions Offers',
             max_instances=1,
             replace_existing=True,
         )

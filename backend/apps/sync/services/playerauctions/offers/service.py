@@ -34,6 +34,15 @@ def _expire_to_listed(expire_dt, payload):
     return expire_dt - timedelta(days=int(duration))
 
 
+def _payload_expiry(payload):
+    """Return the authoritative PlayerAuctions expiry timestamp when present."""
+    return mapper.parse_pa_datetime(
+        payload.get('expired_time_string')
+        or payload.get('expiredTimeString')
+        or '',
+    )
+
+
 class PlayerAuctionsOfferSyncService(BaseSyncService):
     """Offer sync orchestration for PlayerAuctions.
 
@@ -279,6 +288,7 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
             or ''
         )
 
+        expiry_at = _payload_expiry(payload)
         defaults = {
             'is_instant': instant,
             'product_category': mapper.map_category(
@@ -296,17 +306,15 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
                 slug_lookup=slug_lookup,
                 game_slug=game.slug if game else '',
             ),
-            'listed_at': _expire_to_listed(
-                mapper.parse_pa_datetime(
-                    payload.get('expired_time_string')
-                    or payload.get('expiredTimeString')
-                    or '',
-                ),
-                payload,
-            ),
             'last_synced_at': raw_payload.fetched_at,
             'raw_data': normalize_offer_response('playerauctions', payload),
         }
+        # Do not erase an earlier known lifecycle timestamp when the remote
+        # summary temporarily omits its expiry.  The following sync with an
+        # authoritative value replaces both fields.
+        if expiry_at is not None:
+            defaults['listed_at'] = _expire_to_listed(expiry_at, payload)
+            defaults['marketplace_expires_at'] = expiry_at
 
         result = self._upsert_listing(raw_payload, defaults)
 

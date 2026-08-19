@@ -17,6 +17,7 @@ from apps.posting.models import (
     PoolOffer, PoolOfferStatus, PoolSaleEvent, PostingJob, PostingLog,
 )
 from apps.posting.models import GameVariant
+from apps.posting.services.stock.pa_tracking import extract_tracking_code
 from payload_pipeline.core.enums import GameSlug
 
 SUPPORTED_GAME_SLUGS = {gs.value for gs in GameSlug}
@@ -288,8 +289,11 @@ def _build_pool_item_views(
     all_rows = []
     sold_history = []
 
+    clone_by_item_id = {}
     sold_active_by_item_id = {}
     for active_offer in active_offers:
+        if active_offer.pool_item_id:
+            clone_by_item_id.setdefault(active_offer.pool_item_id, active_offer)
         if (
             active_offer.status == OfferPoolActiveOfferStatus.SOLD
             and active_offer.pool_item_id
@@ -372,7 +376,11 @@ def _build_pool_item_views(
             marketplace = ''
             destination_title = 'Shared pool stock'
 
-        listing = pool_offer.listing if pool_offer else None
+        clone = clone_by_item_id.get(item.pk)
+        clone_listing = getattr(clone, 'listing', None)
+        listing = clone_listing or (pool_offer.listing if pool_offer else None)
+        listing_code = extract_tracking_code(getattr(listing, 'title', ''))
+        unique_code = listing_code or getattr(item.owned_product, 'ref_key', '')
         row = {
             'item': item,
             'pool_offer': pool_offer,
@@ -390,6 +398,7 @@ def _build_pool_item_views(
                 item.target_offer_id
                 or (listing.store_listing_id if listing else '')
             ),
+            'unique_code': unique_code,
             'is_shared': (
                 pool_offer is None
                 and reservation_store is None

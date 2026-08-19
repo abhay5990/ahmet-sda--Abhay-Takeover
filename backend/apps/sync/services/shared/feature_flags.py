@@ -30,6 +30,7 @@ class SyncFlag:
     ORDER_STATUS_REFRESH = 'sync.order_status_refresh'
     POOL_SWEEP = 'sync.pool_sweep'
     PAUSE_EXPIRING = 'sync.pause_expiring'
+    RENEW_EXPIRING_PA = 'sync.renew_expiring_playerauctions'
 
 
 def is_sync_feature_enabled(key: str, *, default: bool = True) -> bool:

@@ -51,6 +51,11 @@ class Listing(models.Model):
     currency = models.CharField(max_length=3, default='USD')
 
     listed_at = models.DateTimeField(null=True, blank=True)
+    marketplace_expires_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text='Provider-reported or provider-duration expiry for this offer.',
+    )
     removed_at = models.DateTimeField(null=True, blank=True)
     last_synced_at = models.DateTimeField(null=True, blank=True)
 
@@ -73,6 +78,10 @@ class Listing(models.Model):
             models.Index(fields=['store_listing_id']),
             models.Index(fields=['-created_at']),
             models.Index(fields=['-listed_at']),
+            models.Index(
+                fields=['integration_account', 'status', 'marketplace_expires_at'],
+                name='listing_acct_stat_exp_idx',
+            ),
             models.Index(fields=['-removed_at']),
             models.Index(fields=['integration_account', '-created_at']),
             models.Index(

@@ -11,6 +11,7 @@ Usage:
 from __future__ import annotations
 
 import logging
+from datetime import timedelta
 from typing import Any, NamedTuple
 
 from django.db import transaction
@@ -25,6 +26,31 @@ from core.marketplace.normalizers import normalize_offer_response
 from core.marketplace.payload_extractor import extract_create_payload
 
 logger = logging.getLogger(__name__)
+
+
+def _playerauctions_expiry_after_relist(
+    payload: dict,
+    response_data: Any,
+    listed_at,
+):
+    """Prefer a provider response expiry and otherwise derive PA's duration."""
+    from apps.sync.services.playerauctions.offers import mapper as pa_mapper
+
+    for source in (response_data, payload, payload.get('details') or {}):
+        if not isinstance(source, dict):
+            continue
+        expiry = pa_mapper.parse_pa_datetime(
+            source.get('expired_time_string') or source.get('expiredTimeString') or '',
+        )
+        if expiry is not None:
+            return expiry
+
+    duration = (payload.get('details') or {}).get('offerDuration') or 30
+    try:
+        duration = max(1, int(duration))
+    except (TypeError, ValueError):
+        duration = 30
+    return listed_at + timedelta(days=duration)
 
 
 class RelistResult(NamedTuple):
@@ -356,6 +382,15 @@ def _replace_in_db(
             proxy_group=proxy_group,
         )
 
+        renewed_at = timezone.now()
+        marketplace_expires_at = None
+        if marketplace == 'playerauctions':
+            marketplace_expires_at = _playerauctions_expiry_after_relist(
+                payload,
+                response_data,
+                renewed_at,
+            )
+
         # Create new listing
         new_listing = Listing.objects.create(
             integration_account=old_listing.integration_account,
@@ -367,7 +402,8 @@ def _replace_in_db(
             title=old_listing.title,
             price=old_listing.price,
             currency=old_listing.currency,
-            listed_at=timezone.now(),
+            listed_at=renewed_at,
+            marketplace_expires_at=marketplace_expires_at,
             is_instant=old_listing.is_instant,
             dropship_product=old_listing.dropship_product,
             raw_data=new_raw_data,
