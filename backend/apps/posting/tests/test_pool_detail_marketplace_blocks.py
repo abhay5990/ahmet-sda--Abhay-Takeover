@@ -27,6 +27,8 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertIn('Unique code', template.template.source)
         self.assertIn('PA expiry', template.template.source)
         self.assertIn('PA listed', template.template.source)
+        self.assertIn('Active PA offers', template.template.source)
+        self.assertIn('block.active_pa_offers', template.template.source)
 
     def test_active_offer_at_threshold_requires_replenishment(self):
         offer = SimpleNamespace(
@@ -55,6 +57,8 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
             pk=offer_id + 100,
             store_listing_id=f'remote-{offer_id}',
             title=f'Listing {offer_id}',
+            listed_at=now,
+            marketplace_expires_at=now + timedelta(days=30),
         )
         return SimpleNamespace(
             pk=offer_id,
@@ -101,6 +105,11 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
             marketplace='playerauctions',
             store_name='Csgosmurfkings',
         )
+        second_playerauctions = self.make_offer(
+            offer_id=19,
+            marketplace='playerauctions',
+            store_name='Csgosmurfkings',
+        )
         consumed_eldorado_item = self.make_item(
             item_id=101,
             status=OfferPoolItemStatus.CONSUMED,
@@ -132,7 +141,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         )
 
         blocks, additional_blocks, unallocated = _build_pool_marketplace_blocks(
-            [eldorado, gameboost, playerauctions],
+            [eldorado, gameboost, playerauctions, second_playerauctions],
             [consumed_eldorado_item, sold_pa_item, unallocated_item],
             [sold_pa_clone],
             [pa_sale],
@@ -160,7 +169,14 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertFalse(eldorado_block['sold_items'][0]['is_exact_order_match'])
 
         pa_block = blocks[4]
-        self.assertIs(pa_block['primary_offer'], playerauctions)
+        self.assertIn(
+            pa_block['primary_offer'],
+            [playerauctions, second_playerauctions],
+        )
+        self.assertEqual(
+            {offer.pk for offer in pa_block['active_pa_offers']},
+            {playerauctions.pk, second_playerauctions.pk},
+        )
         self.assertEqual(pa_block['sold_item_count'], 1)
         self.assertEqual(pa_block['sold_items'][0]['order_id'], 9001)
         self.assertTrue(pa_block['sold_items'][0]['is_exact_order_match'])

@@ -221,6 +221,16 @@ def _build_pool_marketplace_blocks(
                 if active_offer.status == OfferPoolActiveOfferStatus.ACTIVE
             ]
 
+        active_pa_offers = []
+        if slot['provider'] == 'playerauctions':
+            active_pa_offers = [
+                offer for offer in offers
+                if (
+                    offer.status == PoolOfferStatus.ACTIVE
+                    and getattr(offer, 'listing', None) is not None
+                )
+            ]
+
         return {
             'key': slot['key'],
             'title': slot['title'],
@@ -229,6 +239,7 @@ def _build_pool_marketplace_blocks(
             'offer_history_count': len(offers),
             'has_additional_history': len(offers) > 1,
             'active_listing_ids': active_listing_ids,
+            'active_pa_offers': active_pa_offers,
             'sold_items': sold_items[:6],
             'sold_item_count': len(sold_items),
             'sale_history': sale_history[:6],
