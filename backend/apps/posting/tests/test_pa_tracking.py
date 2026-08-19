@@ -106,6 +106,21 @@ class ReservedPoolReturnGuardTests(SimpleTestCase):
         self.assertFalse(_reserved_return_allowed(active_reservation, now=now)[0])
         self.assertFalse(_reserved_return_allowed(recent_reservation, now=now)[0])
 
+    def test_failed_dispatch_reservation_can_be_returned_when_no_job_is_active(self):
+        from datetime import timedelta
+        from django.utils import timezone
+        from apps.posting.models import PoolDispatchReservationStatus, PostingJobStatus
+        from apps.posting.services.pool.recovery import _reserved_return_allowed
+
+        now = timezone.now()
+        reservation = SimpleNamespace(
+            status=PoolDispatchReservationStatus.FAILED,
+            job=SimpleNamespace(status=PostingJobStatus.COMPLETED),
+            created_at=now - timedelta(minutes=1),
+        )
+
+        self.assertTrue(_reserved_return_allowed(reservation, now=now)[0])
+
 
 class PlayerAuctionsPayloadTrackingTests(SimpleTestCase):
     def _build_inputs(self, mode):

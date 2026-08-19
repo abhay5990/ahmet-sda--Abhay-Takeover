@@ -98,11 +98,11 @@ def _reserved_return_allowed(reservation, *, now=None) -> tuple[bool, str]:
     """Allow manual release only for a demonstrably abandoned dispatch."""
     if reservation is None:
         return True, ""
-    if reservation.status != PoolDispatchReservationStatus.ACTIVE:
-        return False, "The reservation is not active; refresh the Pool before attempting a return."
     job = getattr(reservation, "job", None)
     if job and job.status in {PostingJobStatus.PENDING, PostingJobStatus.RUNNING}:
         return False, "This reservation still has an active posting job and cannot be returned."
+    if reservation.status != PoolDispatchReservationStatus.ACTIVE:
+        return True, ""
     now = now or timezone.now()
     if reservation.created_at > now - MANUAL_RESERVED_RETURN_AGE:
         return False, "This reservation is still within its 30-minute dispatch window; wait for completion or retry after it becomes stale."
