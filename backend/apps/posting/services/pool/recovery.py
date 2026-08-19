@@ -8,8 +8,10 @@ when it is absent remotely it is detached and returned to ``PENDING`` stock.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import timedelta
 
 from django.db import transaction
+from django.utils import timezone
 
 from apps.integrations.providers.registry import get_or_build_client
 from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
@@ -19,11 +21,16 @@ from apps.posting.models import (
     OfferPoolActiveOfferStatus,
     OfferPoolItem,
     OfferPoolItemStatus,
+    PoolDispatchReservationStatus,
     PoolSaleEvent,
+    PostingJobStatus,
 )
 
 from .formatter import format_credential_for_marketplace
 from .replenisher import _PoolOfferContext
+
+
+MANUAL_RESERVED_RETURN_AGE = timedelta(minutes=30)
 
 
 @dataclass
@@ -44,6 +51,7 @@ def recover_verified_unsold_item(*, pool_id: int, item_id: int) -> RecoverUnsold
                 "pool_offer__listing__integration_account",
                 "pool_offer__listing__integration_account__credential",
                 "owned_product",
+                "reservation__job",
             )
             .get(pk=item_id, pool_id=pool_id)
         )
@@ -56,10 +64,12 @@ def recover_verified_unsold_item(*, pool_id: int, item_id: int) -> RecoverUnsold
             state="available",
             message="This key is already available in the pool.",
         )
-    if item.status in {OfferPoolItemStatus.RESERVED, OfferPoolItemStatus.QUEUED}:
+    if item.status == OfferPoolItemStatus.RESERVED:
+        return _recover_reserved_item(item)
+    if item.status == OfferPoolItemStatus.QUEUED:
         return RecoverUnsoldResult(
             ok=False,
-            errors=["This key is currently being dispatched and cannot be recovered."],
+            errors=["This key is queued for dispatch and cannot be returned until the dispatch state is reconciled."],
         )
     if PoolSaleEvent.objects.filter(pool_item_id=item.pk).exists():
         return RecoverUnsoldResult(
@@ -82,6 +92,64 @@ def recover_verified_unsold_item(*, pool_id: int, item_id: int) -> RecoverUnsold
     if pool_offer.marketplace == "playerauctions":
         return _recover_playerauctions_item(item)
     return _recover_append_item(item)
+
+
+def _reserved_return_allowed(reservation, *, now=None) -> tuple[bool, str]:
+    """Allow manual release only for a demonstrably abandoned dispatch."""
+    if reservation is None:
+        return True, ""
+    if reservation.status != PoolDispatchReservationStatus.ACTIVE:
+        return False, "The reservation is not active; refresh the Pool before attempting a return."
+    job = getattr(reservation, "job", None)
+    if job and job.status in {PostingJobStatus.PENDING, PostingJobStatus.RUNNING}:
+        return False, "This reservation still has an active posting job and cannot be returned."
+    now = now or timezone.now()
+    if reservation.created_at > now - MANUAL_RESERVED_RETURN_AGE:
+        return False, "This reservation is still within its 30-minute dispatch window; wait for completion or retry after it becomes stale."
+    return True, ""
+
+
+def _recover_reserved_item(item: OfferPoolItem) -> RecoverUnsoldResult:
+    """Return a stale reserved key only after local sale and listing evidence is clean."""
+    if PoolSaleEvent.objects.filter(pool_item_id=item.pk).exists():
+        return RecoverUnsoldResult(
+            ok=False,
+            errors=["Confirmed marketplace sale evidence exists for this key; it cannot be returned to the pool."],
+        )
+    if item.pool_offer_id or OfferPoolActiveOffer.objects.filter(pool_item_id=item.pk).exists():
+        return RecoverUnsoldResult(
+            ok=False,
+            errors=["This reserved key has a marketplace assignment or clone and must be reconciled before it can be returned."],
+        )
+    allowed, error = _reserved_return_allowed(item.reservation)
+    if not allowed:
+        return RecoverUnsoldResult(ok=False, errors=[error])
+    if item.reservation_id:
+        from .dispatcher import release_reserved_items
+
+        with transaction.atomic():
+            reservation = (
+                item.reservation.__class__.objects.select_for_update()
+                .select_related("job")
+                .get(pk=item.reservation_id)
+            )
+            allowed, error = _reserved_return_allowed(reservation)
+            if not allowed:
+                return RecoverUnsoldResult(ok=False, errors=[error])
+            release_reserved_items(
+                reservation,
+                reason="Staff-verified stale reservation returned to available pool stock.",
+                remote_outcome="absent",
+            )
+        return RecoverUnsoldResult(
+            ok=True,
+            state="available",
+            message="The stale reservation has no marketplace assignment, clone, or sale evidence; its reserved keys were returned to available pool stock.",
+        )
+    return _make_available(
+        item,
+        "The unlinked reserved key has no marketplace assignment, clone, or sale evidence; it was returned to available pool stock.",
+    )
 
 
 def _recover_append_item(item: OfferPoolItem) -> RecoverUnsoldResult:

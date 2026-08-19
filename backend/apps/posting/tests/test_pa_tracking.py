@@ -65,6 +65,48 @@ class PlayerAuctionsTrackingTests(SimpleTestCase):
         )
 
 
+class ReservedPoolReturnGuardTests(SimpleTestCase):
+    def test_jobless_stale_active_reservation_can_be_verified_for_return(self):
+        from datetime import timedelta
+        from django.utils import timezone
+        from apps.posting.models import PoolDispatchReservationStatus
+        from apps.posting.services.pool.recovery import _reserved_return_allowed
+
+        now = timezone.now()
+        reservation = SimpleNamespace(
+            status=PoolDispatchReservationStatus.ACTIVE,
+            job=None,
+            created_at=now - timedelta(minutes=31),
+        )
+
+        allowed, error = _reserved_return_allowed(reservation, now=now)
+
+        self.assertTrue(allowed)
+        self.assertEqual(error, "")
+
+    def test_active_or_recent_reservations_remain_blocked(self):
+        from datetime import timedelta
+        from django.utils import timezone
+        from apps.posting.models import PoolDispatchReservationStatus, PostingJobStatus
+        from apps.posting.services.pool.recovery import _reserved_return_allowed
+
+        now = timezone.now()
+        active_job = SimpleNamespace(status=PostingJobStatus.RUNNING)
+        active_reservation = SimpleNamespace(
+            status=PoolDispatchReservationStatus.ACTIVE,
+            job=active_job,
+            created_at=now - timedelta(hours=2),
+        )
+        recent_reservation = SimpleNamespace(
+            status=PoolDispatchReservationStatus.ACTIVE,
+            job=None,
+            created_at=now - timedelta(minutes=5),
+        )
+
+        self.assertFalse(_reserved_return_allowed(active_reservation, now=now)[0])
+        self.assertFalse(_reserved_return_allowed(recent_reservation, now=now)[0])
+
+
 class PlayerAuctionsPayloadTrackingTests(SimpleTestCase):
     def _build_inputs(self, mode):
         item = SimpleNamespace(
