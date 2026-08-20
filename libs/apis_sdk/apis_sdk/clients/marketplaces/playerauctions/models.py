@@ -22,7 +22,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class PlayerAuctionsPagination(BaseModel):
@@ -127,6 +127,12 @@ class PlayerAuctionsOrderDetail(BaseModel):
 
     # Actions (buttons like "SEE DISPUTE")
     actions: list[dict[str, Any]] = Field(default_factory=list)
+
+    @field_validator("actions", mode="before")
+    @classmethod
+    def _normalize_null_actions(cls, value: Any) -> list[dict[str, Any]]:
+        """Treat the provider's occasional null actions field as no actions."""
+        return [] if value is None else value
 
     # Core order data
     order_info: dict[str, Any] = Field(default_factory=dict, alias="orderInfo")

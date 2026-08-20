@@ -131,6 +131,18 @@ class TestPlayerAuctionsOrderDetailParsing:
         assert len(detail.actions) == 1
         assert detail.actions[0]["key"] == "SeeDispute"
 
+    def test_null_actions_normalized_to_empty_list(self):
+        data = {
+            "id": 16408663,
+            "status": {"current": "Pending Buyer Inspection"},
+            "actions": None,
+            "orderInfo": {"offerId": "294450927"},
+        }
+        detail = PlayerAuctionsOrderDetail.model_validate(data)
+
+        assert detail.actions == []
+        assert detail.order_info["offerId"] == "294450927"
+
     def test_visibility_fields(self, order_detail_response):
         data = order_detail_response["data"]
         detail = PlayerAuctionsOrderDetail.model_validate(data)
