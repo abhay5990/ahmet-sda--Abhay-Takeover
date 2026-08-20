@@ -6,9 +6,16 @@ from django.test import SimpleTestCase
 from apps.sync.services.playerauctions.orders.service import (
     PlayerAuctionsOrderSyncService,
 )
+from apps.sync.services.playerauctions.orders.mapper import extract_listing_id_from_detail
 
 
 class PlayerAuctionsOneOrderRecoveryTests(SimpleTestCase):
+    def test_list_payload_top_level_offer_id_is_used_for_listing_linkage(self):
+        self.assertEqual(
+            extract_listing_id_from_detail({"order_id": "16408663", "offer_id": "294161691"}),
+            "294161691",
+        )
+
     def test_bounded_scan_avoids_unsupported_order_id_parameter(self):
         provider = Mock()
         client = Mock()

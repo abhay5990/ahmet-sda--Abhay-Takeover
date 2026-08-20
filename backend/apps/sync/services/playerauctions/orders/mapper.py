@@ -255,11 +255,17 @@ _OFFER_ID_RE = re.compile(r'^(\d+)')
 
 
 def extract_listing_id_from_detail(detail: dict) -> str:
-    """Extract numeric offer/listing ID from detail orderInfo.
+    """Extract numeric offer/listing ID from a PA detail or list payload.
 
-    Tries ``offerId`` first. If absent, extracts the numeric prefix
-    from ``offerInfo.link`` slug (e.g. ``150539471a!...`` -> ``150539471``).
+    PA's seller order-list endpoint uses top-level ``offer_id`` while the
+    detail endpoint uses ``orderInfo.offerId``. If neither direct field is
+    present, extract the numeric prefix from ``offerInfo.link`` slug
+    (e.g. ``150539471a!...`` -> ``150539471``).
     """
+    offer_id = detail.get('offer_id') or detail.get('offerId') or ''
+    if offer_id:
+        return str(offer_id)
+
     order_info = detail.get('order_info') or detail.get('orderInfo') or {}
 
     # Direct offer ID
