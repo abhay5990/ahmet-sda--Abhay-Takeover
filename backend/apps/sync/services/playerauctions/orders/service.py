@@ -51,6 +51,7 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
     DEFAULT_ORDER_STATUS = 'All'
     DEFAULT_PRODUCT_TYPE = 'Accounts'
     DEFAULT_PAGE_SIZE = 50
+    RECOVERY_MAX_PAGES = 3
 
     SKIP_STATUSES: frozenset[str] = frozenset({
         'Pending Payment',
@@ -111,27 +112,7 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
             raise ValueError('PlayerAuctions order ID must contain digits only.')
 
         self._preflight_relay(account)
-        result = self.provider.fetch_orders(
-            self.client,
-            page=1,
-            page_size=self.DEFAULT_PAGE_SIZE,
-            order_status=self.order_status,
-            product_type=self.product_type,
-            order_id=remote_id,
-        )
-        if not result.ok:
-            error_msg = result.error.message if result.error else 'unknown error'
-            raise RuntimeError(
-                f'PlayerAuctions API error while recovering order {remote_id}: '
-                f'{error_msg}'
-            )
-
-        matched = None
-        for candidate in result.data or []:
-            item = candidate.model_dump() if hasattr(candidate, 'model_dump') else dict(candidate)
-            if self.extract_remote_id(item) == remote_id:
-                matched = item
-                break
+        matched = self._find_recent_order_for_recovery(remote_id)
         if matched is None:
             raise LookupError(
                 f'PlayerAuctions relay did not return email-referenced order {remote_id}.'
@@ -165,6 +146,31 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
         except Exception:
             run.finish(SyncRunStatus.FAILED)
             raise
+
+    def _find_recent_order_for_recovery(self, remote_id: str) -> dict | None:
+        """Find one recent remote order without unsupported API filter params."""
+        for page in range(1, self.RECOVERY_MAX_PAGES + 1):
+            result = self.provider.fetch_orders(
+                self.client,
+                page=page,
+                page_size=self.DEFAULT_PAGE_SIZE,
+                order_status=self.order_status,
+                product_type=self.product_type,
+            )
+            if not result.ok:
+                error_msg = result.error.message if result.error else 'unknown error'
+                raise RuntimeError(
+                    f'PlayerAuctions API error while recovering order {remote_id}: '
+                    f'{error_msg}'
+                )
+            candidates = result.data or []
+            for candidate in candidates:
+                item = candidate.model_dump() if hasattr(candidate, 'model_dump') else dict(candidate)
+                if self.extract_remote_id(item) == remote_id:
+                    return item
+            if len(candidates) < self.DEFAULT_PAGE_SIZE:
+                break
+        return None
 
     # ── Hook implementations ──────────────────────────────────────────
 
