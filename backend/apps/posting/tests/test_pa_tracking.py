@@ -64,6 +64,14 @@ class PlayerAuctionsTrackingTests(SimpleTestCase):
             "#AB12CD",
         )
 
+    def test_legacy_pool_code_can_be_found_in_summary_only_order_title(self):
+        self.assertEqual(
+            extract_tracking_code(
+                "[PS5] 95M Total Assets | Instant Delivery # #1-8OTDV"
+            ),
+            "#1-8OTDV",
+        )
+
 
 class ReservedPoolReturnGuardTests(SimpleTestCase):
     def test_jobless_stale_active_reservation_can_be_verified_for_return(self):

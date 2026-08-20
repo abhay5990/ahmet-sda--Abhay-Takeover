@@ -13,12 +13,16 @@ from typing import Any
 
 PA_TITLE_MAX_LENGTH = 150
 _SHORT_CODE_RE = re.compile(r"(?<![A-Z0-9])#[A-Z0-9]{6,8}\b", re.IGNORECASE)
+_LEGACY_POOL_CODE_RE = re.compile(
+    r"(?<![A-Z0-9])#\d+-[A-Z0-9]{5,8}\b",
+    re.IGNORECASE,
+)
 _LEGACY_TRACKING_CODE_RE = re.compile(
     r"\[PA-(?:J\d+-I\d+|P\d+-K\d+-A[0-9A-F]{8})\]",
     re.IGNORECASE,
 )
 PA_TRACKING_CODE_RE = re.compile(
-    rf"(?:{_SHORT_CODE_RE.pattern}|{_LEGACY_TRACKING_CODE_RE.pattern})",
+    rf"(?:{_SHORT_CODE_RE.pattern}|{_LEGACY_POOL_CODE_RE.pattern}|{_LEGACY_TRACKING_CODE_RE.pattern})",
     re.IGNORECASE,
 )
 _CODE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
