@@ -63,6 +63,7 @@ from .allocation import (
     mark_items_pushed as finalize_items_pushed,
     release_claims_as_pending,
 )
+from .order_binding import refresh_and_bind_consumed_items
 
 logger = logging.getLogger(__name__)
 
@@ -1498,11 +1499,21 @@ def _reconcile_pushed_items(
         consumed += 1
 
     if consumed > 0:
+        binding = refresh_and_bind_consumed_items(missing_items[:shortfall])
         _log(
             PostingLogLevel.INFO,
-            f"Pool #{pool.pk}: reconciled {consumed} item(s) as CONSUMED (no longer on remote)",
+            (
+                f"Pool #{pool.pk}: reconciled {consumed} item(s) as CONSUMED "
+                f"(no longer on remote); first-pass order bindings={len(binding.bound_item_ids)}"
+            ),
             account=pool.store,
-            detail={'pool_id': pool.pk, 'consumed': consumed},
+            detail={
+                'pool_id': pool.pk,
+                'consumed': consumed,
+                'first_pass_bound_item_ids': list(binding.bound_item_ids),
+                'first_pass_skipped_item_ids': list(binding.skipped_item_ids),
+                'first_pass_sync_error': binding.sync_error,
+            },
         )
 
     return consumed

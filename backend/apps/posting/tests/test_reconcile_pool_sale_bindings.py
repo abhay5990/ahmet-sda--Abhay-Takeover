@@ -28,6 +28,9 @@ from apps.posting.models import (
     PoolOfferStrategy,
     PoolSaleEvent,
 )
+from apps.posting.services.pool.order_binding import (
+    bind_consumed_items_to_confirmed_orders,
+)
 
 
 class ReconcilePoolSaleBindingsTests(TestCase):
@@ -144,3 +147,24 @@ class ReconcilePoolSaleBindingsTests(TestCase):
 
         event = PoolSaleEvent.objects.get(pool_item=item)
         self.assertEqual(event.order_id, order.pk)
+
+    def test_first_pass_binder_creates_exact_confirmed_sale_event(self):
+        _pool, _pool_offer, owned, item = self._pool_with_consumed_item('first-pass')
+        order = self._order(owned, store_order_id='PA-FIRST', status=OrderStatus.COMPLETED)
+
+        result = bind_consumed_items_to_confirmed_orders([item])
+
+        self.assertEqual(result.bound_item_ids, (item.pk,))
+        event = PoolSaleEvent.objects.get(pool_item=item)
+        self.assertEqual(event.order_id, order.pk)
+        item.refresh_from_db()
+        self.assertEqual(item.remote_state, 'sold')
+
+    def test_first_pass_binder_rejects_pending_order(self):
+        _pool, _pool_offer, owned, item = self._pool_with_consumed_item('pending-first-pass')
+        self._order(owned, store_order_id='PA-PENDING', status=OrderStatus.PENDING)
+
+        result = bind_consumed_items_to_confirmed_orders([item])
+
+        self.assertEqual(result.bound_item_ids, ())
+        self.assertFalse(PoolSaleEvent.objects.filter(pool_item=item).exists())

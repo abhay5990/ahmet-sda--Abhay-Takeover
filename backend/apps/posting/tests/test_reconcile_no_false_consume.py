@@ -25,6 +25,7 @@ from apps.posting.services.pool.replenisher import (
     _PoolOfferContext,
     _reconcile_pushed_items,
 )
+from apps.posting.services.pool.order_binding import OrderBindingResult
 from django.test import TestCase
 
 _FMT = 'apps.posting.services.pool.replenisher.format_credential_for_marketplace'
@@ -91,7 +92,13 @@ class ReconcileNoFalseConsumeTests(TestCase):
             return "live-A" if owned.login == "acct0" else "live-B"
 
         # Remote now has only 'live-A' — acct1 ('live-B') is gone.
-        with patch(_FMT, side_effect=_fmt):
+        with (
+            patch(_FMT, side_effect=_fmt),
+            patch(
+                'apps.posting.services.pool.replenisher.refresh_and_bind_consumed_items',
+                return_value=OrderBindingResult((), (items[1].pk,)),
+            ) as first_pass,
+        ):
             consumed = _reconcile_pushed_items(
                 _PoolOfferContext(pool_offer),
                 ["live-A"],
@@ -103,6 +110,8 @@ class ReconcileNoFalseConsumeTests(TestCase):
         sold.refresh_from_db()
         self.assertEqual(present.status, OfferPoolItemStatus.PUSHED)
         self.assertEqual(sold.status, OfferPoolItemStatus.CONSUMED)
+        first_pass.assert_called_once()
+        self.assertEqual([item.pk for item in first_pass.call_args.args[0]], [sold.pk])
 
     def test_all_gone_consumes_all(self):
         """Offer emptied (count → 0) → all pushed items consumed."""
