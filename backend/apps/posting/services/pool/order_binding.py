@@ -10,11 +10,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from django.db import transaction
+from django.db.models import Exists, OuterRef
 from django.utils import timezone
 
 from apps.orders.enums import OrderStatus
 from apps.orders.models import Order
-from apps.posting.models import OfferPoolItemStatus, PoolSaleEvent
+from apps.posting.models import OfferPoolItem, OfferPoolItemStatus, PoolSaleEvent
 from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
 from apps.sync.enums import ResourceType, SyncMode
 from apps.sync.services.registry import build_service, get_service_class
@@ -159,3 +160,48 @@ def refresh_and_bind_consumed_items(items) -> OrderBindingResult:
         )
 
     return bind_consumed_items_to_confirmed_orders(item_list)
+
+
+def recover_unbound_remote_removals(*, max_lanes: int = 8) -> dict:
+    """Retry exact-order recovery for pre-existing unbound remote removals.
+
+    This is deliberately bounded and runs one provider refresh per marketplace
+    lane, not per account.  It lets old removals reconcile themselves after a
+    transient provider/order-ingestion delay without staff needing to provide
+    order IDs.  Failed or ambiguous rows stay fail-closed.
+    """
+    bound_event = PoolSaleEvent.objects.filter(
+        pool_item_id=OuterRef('pk'), order_id__isnull=False,
+    )
+    candidates = list(
+        OfferPoolItem.objects.filter(
+            status=OfferPoolItemStatus.CONSUMED,
+            remote_state='absent',
+            pool_offer__listing__integration_account__is_active=True,
+        )
+        .annotate(has_bound_event=Exists(bound_event))
+        .filter(has_bound_event=False)
+        .select_related('pool_offer__listing__integration_account__credential')
+        .order_by('consumed_at', 'pk')
+    )
+
+    by_lane: dict[int, list] = {}
+    for item in candidates:
+        if item.pool_offer_id:
+            by_lane.setdefault(item.pool_offer_id, []).append(item)
+
+    summary = {
+        'lanes_scanned': 0,
+        'items_considered': 0,
+        'bound_item_ids': [],
+        'sync_errors': {},
+    }
+    for pool_offer_id in sorted(by_lane)[:max_lanes]:
+        items = by_lane[pool_offer_id]
+        result = refresh_and_bind_consumed_items(items)
+        summary['lanes_scanned'] += 1
+        summary['items_considered'] += len(items)
+        summary['bound_item_ids'].extend(result.bound_item_ids)
+        if result.sync_error:
+            summary['sync_errors'][str(pool_offer_id)] = result.sync_error
+    return summary

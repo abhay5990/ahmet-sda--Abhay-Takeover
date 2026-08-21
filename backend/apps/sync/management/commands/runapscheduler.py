@@ -149,6 +149,15 @@ def run_playerauctions_edit_queue_job():
 
 
 @apscheduler_util.close_old_connections
+def run_unbound_pool_sale_recovery_job():
+    """Bind delayed confirmed orders for any marketplace without stock reuse."""
+    from apps.posting.services.pool.order_binding import recover_unbound_remote_removals
+
+    summary = recover_unbound_remote_removals()
+    logger.info('unbound_pool_sale_recovery: %s', summary)
+
+
+@apscheduler_util.close_old_connections
 def run_robuxcrate_batch_processor_job():
     """APScheduler wrapper — processes pending RobuxCrate order batches."""
     from apps.tools.services.robuxcrate import process_pending_batches
@@ -293,6 +302,18 @@ class Command(BaseCommand):
             trigger=IntervalTrigger(minutes=1),
             id='playerauctions_edit_queue',
             name='PlayerAuctions Manual Edit Queue',
+            max_instances=1,
+            replace_existing=True,
+        )
+
+        # Cross-platform fallback for remote removals whose first inline
+        # order refresh raced the marketplace. The recovery is lane-bounded,
+        # idempotent, and requires exact confirmed account/order evidence.
+        scheduler.add_job(
+            run_unbound_pool_sale_recovery_job,
+            trigger=IntervalTrigger(minutes=5),
+            id='unbound_pool_sale_recovery',
+            name='Cross-Platform Unbound Pool Sale Recovery',
             max_instances=1,
             replace_existing=True,
         )
