@@ -125,6 +125,24 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         from a different network fingerprint than the browser that obtained
         it. The relay keeps that browser context intact for this mutation.
         """
+        result = self._relay_client.cancel_offers_in_browser(
+            username=self._username,
+            password=self._password,
+            store=self._store_slug or self._username,
+            offer_ids=offer_ids,
+        )
+        error = getattr(result, 'error', None)
+        if getattr(error, 'category', None) != ErrorCategory.AUTHENTICATION:
+            return result
+
+        # A browser cancellation 401 means PA rejected that one authenticated
+        # browser session before any offer was cancelled. Mirror the SDK's
+        # normal write contract: force exactly one fresh relay session, then
+        # retry the same selected IDs once—never a pool-wide or stock action.
+        self._logger.warning(
+            'PlayerAuctions browser cancellation was unauthorized; retrying once with a fresh relay session.'
+        )
+        self.refresh()
         return self._relay_client.cancel_offers_in_browser(
             username=self._username,
             password=self._password,

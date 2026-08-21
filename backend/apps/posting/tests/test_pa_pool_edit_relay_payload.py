@@ -129,3 +129,12 @@ class PlayerAuctionsPoolEditRelayPayloadTests(SimpleTestCase):
 
         self.assertFalse(result.ok)
         self.assertIn('Only a pushed PlayerAuctions account', result.error)
+
+    def test_bump_reuses_the_existing_unique_code_without_a_price_change(self):
+        listing = SimpleNamespace(title='GTA V full access #XCZY3P')
+        item = SimpleNamespace(owned_product=SimpleNamespace(ref_key=''))
+
+        code, title = offer_editor._bump_title_with_existing_tracking_code(listing, item)
+
+        self.assertEqual(code, '#XCZY3P')
+        self.assertEqual(title, 'GTA V full access #XCZY3P')

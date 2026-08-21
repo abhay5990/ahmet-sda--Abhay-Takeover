@@ -39,6 +39,7 @@ from apps.posting.models import (
 from apps.posting.services.stock.pa_relay_poster import PARelayPoster, fetch_relay_token
 from apps.posting.services.stock.pa_tracking import (
     append_tracking_code_for_code,
+    extract_tracking_code,
     pool_clone_tracking_code,
 )
 from core.marketplace.normalizers import normalize_offer_response
@@ -129,13 +130,13 @@ def edit_pool_offer(pool_offer: PoolOffer, changes: dict[str, Any]) -> EditResul
 
 
 def relist_pa_pool_item(item: OfferPoolItem) -> EditResult:
-    """Relist one active PlayerAuctions pool clone with a fresh trace code.
+    """Bump one PlayerAuctions account while preserving its existing trace code.
 
     The action is deliberately narrow: it accepts only a pushed item with one
     active PA clone, validates all local linkage before the remote cancellation,
     and delegates the replacement handoff to ``_edit_pa_single``.  Successful
-    handoff preserves the exact Pool item and clone while recording PA's new
-    offer ID, listed time, expiry, and a new unique tracking suffix.
+    handoff preserves the exact Pool item, clone, title code, and price while
+    recording only PA's replacement offer ID and fresh lifecycle dates.
     """
     if item.status != OfferPoolItemStatus.PUSHED:
         return EditResult(
@@ -190,19 +191,44 @@ def relist_pa_pool_item(item: OfferPoolItem) -> EditResult:
             error=f'Active clone listing is not relistable (current status: {listing.status}).',
         )
 
-    tracking_code = pool_clone_tracking_code(
-        item.pool_offer.pool,
-        item,
-        uuid.uuid4().hex,
-    )
-    title = append_tracking_code_for_code(
-        listing.title or item.pool_offer.listing.title,
-        tracking_code,
-    )
+    try:
+        tracking_code, title = _bump_title_with_existing_tracking_code(listing, item)
+    except ValueError as exc:
+        return EditResult(ok=False, error=str(exc))
+
+    # _edit_pa_single rebuilds autoDelivery from this same item, including
+    # retypeLoginName/retypePassword.  No price change is passed here.
     result = _edit_pa_single(listing, {'title': title}, store)
     if result.ok:
         result.new_tracking_code = tracking_code
     return result
+
+
+def _bump_title_with_existing_tracking_code(
+    listing: Listing,
+    item: OfferPoolItem,
+) -> tuple[str, str]:
+    """Keep an account’s durable PA code exactly unchanged during a bump."""
+    product = getattr(item, 'owned_product', None)
+    tracking_code = extract_tracking_code(
+        getattr(listing, 'title', ''),
+        getattr(product, 'ref_key', ''),
+    )
+    if not tracking_code:
+        raise ValueError(
+            'This account has no existing PlayerAuctions unique code, so Bump PA Offer is blocked. '
+            'Add the correct code first rather than generating a different one.'
+        )
+    try:
+        title = append_tracking_code_for_code(
+            listing.title or '',
+            tracking_code,
+        )
+    except ValueError as exc:
+        raise ValueError(
+            f'The existing PlayerAuctions unique code cannot be preserved safely: {exc}'
+        ) from exc
+    return tracking_code, title
 
 
 def edit_pool_offers(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResult:

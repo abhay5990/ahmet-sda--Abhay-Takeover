@@ -1042,7 +1042,7 @@ def edit_single_pool_offer(request, pool_id, offer_id):
 @login_required
 @require_POST
 def relist_playerauctions_pool_item(request, pool_id, item_id):
-    """Relist exactly one active PA pool account with fresh offer tracking."""
+    """Bump exactly one PA account while retaining its existing unique code."""
     try:
         item = (
             OfferPoolItem.objects
@@ -1065,8 +1065,8 @@ def relist_playerauctions_pool_item(request, pool_id, item_id):
     return JsonResponse({
         'ok': True,
         'new_offer_id': result.new_offer_id,
-        'new_tracking_code': result.new_tracking_code,
-        'message': 'PlayerAuctions offer relisted and replacement tracking recorded.',
+        'unique_code': result.new_tracking_code,
+        'message': 'PlayerAuctions offer bumped; the same unique code was retained and the replacement offer ID was recorded.',
     })
 
 

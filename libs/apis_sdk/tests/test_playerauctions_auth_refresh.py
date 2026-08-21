@@ -6,6 +6,7 @@ from unittest.mock import Mock
 from apis_sdk.clients.marketplaces.playerauctions.auth import PlayerAuctionsAuth
 from apis_sdk.clients.marketplaces.playerauctions.facade import PlayerAuctionsFacade
 from apis_sdk.clients.marketplaces.playerauctions.models import PlayerAuctionsCancelRequest
+from apis_sdk.core.enums import ErrorCategory
 from apis_sdk.core.result import ApiResult
 from apis_sdk.infrastructure.logging.logger import StdlibLogger
 from apis_sdk.clients.services.pa_relay.client import PaRelayClient, PaRelayTokenResult
@@ -79,6 +80,21 @@ class PlayerAuctionsAuthRefreshTests(TestCase):
             store='vapenation',
             offer_ids=[12345],
         )
+
+    def test_browser_cancellation_retries_once_after_unauthorized(self):
+        auth = self.make_auth()
+        auth._relay_client = Mock()
+        auth._relay_client.cancel_offers_in_browser.side_effect = [
+            ApiResult.from_error(ErrorCategory.AUTHENTICATION, 'Unauthorized'),
+            ApiResult.success({'ok': True, 'offerIds': [12345]}),
+        ]
+        auth.refresh = Mock(return_value=True)
+
+        result = auth.cancel_offers_in_browser([12345])
+
+        self.assertTrue(result.ok)
+        self.assertEqual(auth._relay_client.cancel_offers_in_browser.call_count, 2)
+        auth.refresh.assert_called_once_with()
 
     def test_browser_cancellation_defaults_to_the_configured_token_relay(self):
         auth = PlayerAuctionsAuth(
