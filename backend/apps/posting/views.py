@@ -315,7 +315,13 @@ def _build_pool_item_views(
         ):
             active_pa_offer_ids.add(active_offer.pool_offer_id)
         if active_offer.pool_item_id:
-            clone_by_item_id.setdefault(active_offer.pool_item_id, active_offer)
+            # Prefer the concrete active clone when a historical failed or
+            # delisted clone exists for the same pool item.  Item-level PA
+            # actions must never target a stale offer record.
+            if active_offer.status == OfferPoolActiveOfferStatus.ACTIVE:
+                clone_by_item_id[active_offer.pool_item_id] = active_offer
+            else:
+                clone_by_item_id.setdefault(active_offer.pool_item_id, active_offer)
         if (
             active_offer.status == OfferPoolActiveOfferStatus.SOLD
             and active_offer.pool_item_id
@@ -421,6 +427,11 @@ def _build_pool_item_views(
                 or (listing.store_listing_id if listing else '')
             ),
             'unique_code': unique_code,
+            'active_clone': (
+                clone
+                if getattr(clone, 'status', None) == OfferPoolActiveOfferStatus.ACTIVE
+                else None
+            ),
             'is_shared': (
                 pool_offer is None
                 and reservation_store is None
