@@ -38,3 +38,27 @@ class PlayerAuctionsOneOrderRecoveryTests(SimpleTestCase):
         for call in provider.fetch_orders.call_args_list:
             self.assertNotIn("order_id", call.kwargs)
             self.assertEqual(call.kwargs["page_size"], 50)
+
+    def test_detail_enrichment_preserves_summary_fields_and_adds_login_evidence(self):
+        provider = Mock()
+        provider.fetch_order_details.return_value = SimpleNamespace(
+            ok=True,
+            data={
+                "orderInfo": {"loginName": "cbtkngg3uzb", "offerId": "294436960"},
+                "status": {"current": "Pending Buyer Inspection"},
+            },
+        )
+        service = PlayerAuctionsOrderSyncService(provider=provider, client=Mock())
+
+        merged = service._fetch_and_merge_detail(
+            {
+                "orderId": "16407126",
+                "createTime": "Aug-20-2026 09:00:00 PM",
+                "productType": "Accounts",
+            },
+            "16407126",
+        )
+
+        self.assertEqual(merged["orderInfo"]["loginName"], "cbtkngg3uzb")
+        self.assertEqual(merged["createTime"], "Aug-20-2026 09:00:00 PM")
+        self.assertEqual(merged["productType"], "Accounts")

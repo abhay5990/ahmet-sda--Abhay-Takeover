@@ -266,6 +266,7 @@ class PlayerAuctionsEmailRecovery:
 
     def _recover_candidate(self, candidate: EmailOrderCandidate) -> str:
         from apps.orders.models import Order
+        from apps.orders.enums import OrderStatus
 
         account = IntegrationAccount.objects.select_related('credential', 'group').filter(
             slug=candidate.account_slug,
@@ -276,9 +277,21 @@ class PlayerAuctionsEmailRecovery:
         if account is None:
             logger.warning('pa_email_recovery: inactive mapped account %s', candidate.account_slug)
             return 'failed'
-        if Order.objects.filter(
+        existing = Order.objects.filter(
             integration_account=account, store_order_id=candidate.order_id,
-        ).exists():
+        ).first()
+        # Existing summaries that are already linked are truly idempotent.
+        # A confirmed but unlinked summary, however, may lack the delivery
+        # login needed to identify its pool account.  Replay only that narrow
+        # case through the detail-enriched recovery path.
+        if existing and not (
+            existing.status in (
+                OrderStatus.DELIVERED,
+                OrderStatus.COMPLETED,
+                OrderStatus.DISPUTED,
+            )
+            and existing.owned_product_id is None
+        ):
             return 'existing'
 
         clear_client_cache()

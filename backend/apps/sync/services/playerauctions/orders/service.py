@@ -120,6 +120,16 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
         if self.should_skip_item(matched):
             return 'skipped_incomplete_status'
 
+        # A seller-order summary can confirm a sale but omit the delivery
+        # login.  Enrich email-referenced recoveries with the authoritative
+        # detail payload when available, so an already-ingested unlinked
+        # order can match its exact OwnedProduct rather than relying only on
+        # an offer ID or title tracking code.  Detail failure stays
+        # non-destructive: the verified summary is still persisted.
+        detail_enriched = self._fetch_and_merge_detail(matched, remote_id)
+        if detail_enriched is not None:
+            matched = detail_enriched
+
         run = SyncRun.objects.create(
             integration_account=account,
             resource_type=self.resource_type,
