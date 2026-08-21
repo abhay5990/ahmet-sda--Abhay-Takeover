@@ -357,7 +357,12 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertEqual([row['item'] for row in blocks[0]['rows']], [mart_item, consumed_item])
         self.assertEqual(blocks[0]['title'], 'Eldorado Mart')
         self.assertEqual(blocks[0]['listed_count'], 1)
-        self.assertEqual(blocks[0]['sold_count'], 1)
+        self.assertEqual(blocks[0]['sold_count'], 0)
+        consumed_row = next(
+            row for row in blocks[0]['rows'] if row['item'] is consumed_item
+        )
+        self.assertTrue(consumed_row['is_reconciliation_pending'])
+        self.assertFalse(consumed_row['is_sold'])
         self.assertEqual(blocks[3]['title'], 'GamerInstanty GameBoost')
         self.assertEqual([row['item'] for row in blocks[3]['rows']], [reserved_item])
         self.assertEqual(blocks[3]['processing_count'], 1)
@@ -373,9 +378,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertEqual(len(all_rows), 5)
 
         sold_by_login = {entry['item'].owned_product.login: entry for entry in sold_history}
-        self.assertEqual(sold_by_login['eldorado-sold']['destination_title'], 'Eldorado Mart')
-        self.assertIsNone(sold_by_login['eldorado-sold']['order_id'])
-        self.assertFalse(sold_by_login['eldorado-sold']['is_exact_order_match'])
+        self.assertNotIn('eldorado-sold', sold_by_login)
         self.assertEqual(sold_by_login['pa-sold']['destination_title'], 'Vapenation PlayerAuctions')
         self.assertEqual(sold_by_login['pa-sold']['order_id'], 'PA-ORDER-9002')
         self.assertTrue(sold_by_login['pa-sold']['is_exact_order_match'])

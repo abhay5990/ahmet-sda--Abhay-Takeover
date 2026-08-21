@@ -371,8 +371,13 @@ def _build_pool_item_views(
             and pool_offer is None
             and reservation_store is None
         )
+        is_reconciliation_pending = (
+            is_consumed
+            and sale_event is None
+            and not is_sold_clone
+        )
         is_sale_record = (
-            is_sold_clone or is_consumed or is_detached_verified_sale
+            is_sold_clone or sale_event is not None or is_detached_verified_sale
         )
 
         if slot:
@@ -445,10 +450,12 @@ def _build_pool_item_views(
                 and not is_sale_record
             ),
             'is_sold': is_sale_record,
+            'is_reconciliation_pending': is_reconciliation_pending,
             'sale_status_label': (
                 'Order confirmed' if sale_event else (
                     'Sold clone' if is_sold_clone else (
-                        'Remote reconciliation' if is_consumed else ''
+                        'Awaiting verified marketplace order'
+                        if is_reconciliation_pending else ''
                     )
                 )
             ),
