@@ -1028,19 +1028,62 @@ def _post_pa_relay_payloads(
             }
         )
     token, cookie, store_slug, relay_url, relay_secret = resolved_session
-    return PARelayPoster(
+    poster = PARelayPoster(
         relay_url=relay_url,
         relay_secret=relay_secret,
-    ).post_batch(
+    )
+    result = poster.post_batch(
         token,
         store_slug,
         payloads,
         cookie=(cookie or token),
     )
 
+    # This custom JSON relay route bypasses the PA SDK facade's normal
+    # authentication retry.  A cached credential can be accepted for the
+    # cancellation but rejected for the subsequent recreate.  On *only* a
+    # 401/Unauthorized result, obtain one forced-fresh relay session and retry
+    # only the rejected rows.  Successful rows are never reposted.
+    retry_indices = [
+        idx
+        for idx, error in result.failed.items()
+        if _is_pa_unauthorized(error)
+    ]
+    if not retry_indices:
+        return result
+
+    refreshed_session = _resolve_pa_relay_session(store, force_refresh=True)
+    if refreshed_session is None:
+        return result
+    fresh_token, fresh_cookie, fresh_store_slug, fresh_relay_url, fresh_relay_secret = refreshed_session
+    retry_result = PARelayPoster(
+        relay_url=fresh_relay_url,
+        relay_secret=fresh_relay_secret,
+    ).post_batch(
+        fresh_token,
+        fresh_store_slug,
+        [payloads[idx] for idx in retry_indices],
+        cookie=(fresh_cookie or fresh_token),
+    )
+    for retry_idx, original_idx in enumerate(retry_indices):
+        if retry_idx in retry_result.successful:
+            result.successful[original_idx] = retry_result.successful[retry_idx]
+            result.failed.pop(original_idx, None)
+        elif retry_idx in retry_result.failed:
+            result.failed[original_idx] = retry_result.failed[retry_idx]
+    return result
+
+
+def _is_pa_unauthorized(error: Any) -> bool:
+    """Recognize only PA authentication rejections eligible for one retry."""
+    value = str(error or '').lower()
+    return 'unauthorized' in value or 'http 401' in value or 'status=401' in value
+
 
 def _resolve_pa_relay_session(
     store: IntegrationAccount,
+    *,
+    force_refresh: bool = False,
 ) -> tuple[str, str, str, str, str] | None:
     """Return a usable PA relay session before an offer-cancel operation."""
     credentials = getattr(getattr(store, 'credential', None), 'credentials', None) or {}
@@ -1051,13 +1094,14 @@ def _resolve_pa_relay_session(
     relay_secret = credentials.get('relay_secret', 'pa-relay-secret-2026')
     token = credentials.get('access_token', '')
     cookie = credentials.get('cookie', '')
-    if not token and username and password and store_slug:
+    if username and password and store_slug and (force_refresh or not token):
         token, cookie = fetch_relay_token(
             username,
             password,
             store_slug,
             relay_url=relay_url,
             relay_secret=relay_secret,
+            force_refresh=force_refresh,
         )
     if not token:
         return None

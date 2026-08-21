@@ -57,6 +57,48 @@ class PlayerAuctionsPoolEditRelayPayloadTests(SimpleTestCase):
 
         self.assertIsNone(offer_editor._resolve_pa_relay_session(store))
 
+    def test_unauthorized_relay_post_retries_once_with_forced_fresh_session(self):
+        calls = []
+
+        class _Poster:
+            def __init__(self, **kwargs):
+                pass
+
+            def post_batch(self, token, store_slug, payloads, *, cookie):
+                calls.append((token, store_slug, payloads, cookie))
+                if token == 'stale-token':
+                    return SimpleNamespace(successful={}, failed={0: 'Unauthorized'})
+                return SimpleNamespace(successful={0: '294600002'}, failed={})
+
+        store = SimpleNamespace(
+            credential=SimpleNamespace(credentials={
+                'access_token': 'stale-token',
+                'cookie': 'stale-cookie',
+                'username': 'user',
+                'password': 'pass',
+                'store_slug': 'ezsmurfmart',
+                'relay_url': 'http://relay',
+                'relay_secret': 'secret',
+            }),
+        )
+        payload = {'gameId': 5917, 'serverId': 5921, 'title': 'GTA #ABC123'}
+
+        with patch.object(offer_editor, 'PARelayPoster', _Poster), patch.object(
+            offer_editor,
+            'fetch_relay_token',
+            return_value=('fresh-token', 'fresh-cookie'),
+        ) as fetch_token:
+            result = offer_editor._post_pa_relay_payloads(
+                store,
+                [payload],
+                session=('stale-token', 'stale-cookie', 'ezsmurfmart', 'http://relay', 'secret'),
+            )
+
+        self.assertEqual(result.successful, {0: '294600002'})
+        self.assertEqual(result.failed, {})
+        self.assertEqual([call[0] for call in calls], ['stale-token', 'fresh-token'])
+        self.assertTrue(fetch_token.call_args.kwargs['force_refresh'])
+
     def test_selective_relist_rejects_non_pushed_pool_items_before_marketplace_call(self):
         item = SimpleNamespace(
             status='pending',
