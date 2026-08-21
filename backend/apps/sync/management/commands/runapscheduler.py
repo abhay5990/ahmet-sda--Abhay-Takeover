@@ -71,6 +71,7 @@ def run_order_status_refresh_job():
 
 
 POOL_SWEEP_DEFAULT_INTERVAL = 30  # minutes
+PA_MISSED_ORDER_RECOVERY_INTERVAL = 15  # minutes
 
 
 @apscheduler_util.close_old_connections
@@ -223,13 +224,14 @@ class Command(BaseCommand):
             replace_existing=True,
         )
 
-        # PlayerAuctions Gmail fallback — email is only a trigger; authoritative
-        # order data still comes from the PA relay and normal SDA parser.
+        # PlayerAuctions missed-order fallback — the shared configured Gmail
+        # recipient map covers both PA stores; authoritative order data still
+        # comes from the PA relay and normal SDA parser.
         scheduler.add_job(
             run_pa_email_recovery_job,
-            trigger=IntervalTrigger(minutes=5),
+            trigger=IntervalTrigger(minutes=PA_MISSED_ORDER_RECOVERY_INTERVAL),
             id='playerauctions_email_recovery',
-            name='PlayerAuctions Gmail Order Recovery',
+            name='PlayerAuctions 15-Minute Missed-Order Recovery',
             max_instances=1,
             replace_existing=True,
         )
