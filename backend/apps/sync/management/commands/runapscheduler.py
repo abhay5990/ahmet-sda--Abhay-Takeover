@@ -142,6 +142,13 @@ def run_renew_expiring_playerauctions_job():
 
 
 @apscheduler_util.close_old_connections
+def run_playerauctions_edit_queue_job():
+    """Process at most one globally queued manual PA edit per minute."""
+    from apps.posting.services.pa_edit_queue import process_next_pa_edit
+    process_next_pa_edit()
+
+
+@apscheduler_util.close_old_connections
 def run_robuxcrate_batch_processor_job():
     """APScheduler wrapper — processes pending RobuxCrate order batches."""
     from apps.tools.services.robuxcrate import process_pending_batches
@@ -277,6 +284,15 @@ class Command(BaseCommand):
             trigger=IntervalTrigger(hours=3),
             id='renew_expiring_playerauctions',
             name='Renew Expiring PlayerAuctions Offers',
+            max_instances=1,
+            replace_existing=True,
+        )
+
+        scheduler.add_job(
+            run_playerauctions_edit_queue_job,
+            trigger=IntervalTrigger(minutes=1),
+            id='playerauctions_edit_queue',
+            name='PlayerAuctions Manual Edit Queue',
             max_instances=1,
             replace_existing=True,
         )

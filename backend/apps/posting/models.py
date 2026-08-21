@@ -1594,3 +1594,62 @@ class PoolSaleEvent(models.Model):
                 name='pool_sale_item_created_idx',
             ),
         ]
+
+
+class PlayerAuctionsEditRequestStatus(models.TextChoices):
+    QUEUED = 'queued', 'Queued'
+    RUNNING = 'running', 'Running'
+    SUCCEEDED = 'succeeded', 'Succeeded'
+    FAILED = 'failed', 'Failed'
+
+
+class PlayerAuctionsEditRequest(models.Model):
+    """Durable, globally serialized manual PlayerAuctions offer update."""
+
+    listing = models.ForeignKey(
+        'listings.Listing',
+        on_delete=models.PROTECT,
+        related_name='playerauctions_edit_requests',
+    )
+    pool_offer = models.ForeignKey(
+        PoolOffer,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='playerauctions_edit_requests',
+    )
+    pool_item = models.ForeignKey(
+        OfferPoolItem,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='playerauctions_edit_requests',
+    )
+    active_offer = models.ForeignKey(
+        OfferPoolActiveOffer,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='playerauctions_edit_requests',
+    )
+    changes = models.JSONField(default=dict)
+    status = models.CharField(
+        max_length=16,
+        choices=PlayerAuctionsEditRequestStatus.choices,
+        default=PlayerAuctionsEditRequestStatus.QUEUED,
+    )
+    error_message = models.TextField(blank=True)
+    returned_offer_id = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'playerauctions_edit_requests'
+        indexes = [
+            models.Index(fields=['status', 'created_at'], name='pa_edit_request_queue_idx'),
+            models.Index(fields=['listing', 'status'], name='pa_edit_request_listing_idx'),
+        ]
+
+    def __str__(self):
+        return f"PA edit #{self.pk} — {self.listing_id} ({self.status})"

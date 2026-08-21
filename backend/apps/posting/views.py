@@ -513,9 +513,13 @@ def _build_pool_item_views(
             'active_pa_offers': active_pa_offers,
             'rows': rows,
             'item_count': len(rows),
-            'listed_count': sum(
-                1 for row in rows
-                if row['item'].status == OfferPoolItemStatus.PUSHED
+            'listed_count': (
+                len(active_pa_offers)
+                if slot['provider'] == 'playerauctions'
+                else sum(
+                    1 for row in rows
+                    if row['item'].status == OfferPoolItemStatus.PUSHED
+                )
             ),
             'processing_count': sum(
                 1 for row in rows

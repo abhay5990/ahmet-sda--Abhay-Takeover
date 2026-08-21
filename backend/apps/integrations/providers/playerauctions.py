@@ -94,6 +94,10 @@ class PACompositeClient:
             offer_ids = request.offer_ids
         return self._official.cancel_offers(offer_ids=offer_ids, proxy_group=proxy_group)
 
+    def edit_offer_in_browser(self, **kwargs: Any) -> Any:
+        """Use the legacy browser session only for PA's credential retype form."""
+        return self._legacy.edit_offer_in_browser(**kwargs)
+
     def set_display_status(self, **kwargs: Any) -> Any:
         return self._official.set_display_status(**kwargs)
 
@@ -274,8 +278,23 @@ class PlayerAuctionsProvider(AbstractProvider):
         )
 
     def update_listing(self, client: Any, external_id: str, product_data: dict) -> Any:
-        raise NotImplementedError(
-            "PlayerAuctions does not support direct offer updates via API."
+        payload = product_data.get('payload', product_data)
+        auto_delivery = payload.get('autoDelivery') or {}
+        login_name = str(auto_delivery.get('retypeLoginName') or auto_delivery.get('loginName') or '')
+        account_password = str(auto_delivery.get('retypePassword') or auto_delivery.get('password') or '')
+        if not login_name or not account_password:
+            from apis_sdk.core.enums import ErrorCategory
+            from apis_sdk.core.result import ApiResult
+
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION,
+                'PlayerAuctions edit requires stored login and password confirmation fields',
+                provider='playerauctions',
+            )
+        return client.edit_offer_in_browser(
+            offer_id=int(external_id),
+            login_name=login_name,
+            account_password=account_password,
         )
 
     def delete_listing(self, client: Any, external_id: str) -> Any:

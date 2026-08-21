@@ -233,6 +233,20 @@ class PlayerAuctionsFacade:
             proxy_group=proxy_group,
         )
 
+    def edit_offer_in_browser(
+        self,
+        *,
+        offer_id: int,
+        login_name: str,
+        account_password: str,
+    ):
+        """Retype delivery credentials on one existing PA offer in browser."""
+        return self._auth.edit_offer_in_browser(
+            offer_id=offer_id,
+            login_name=login_name,
+            account_password=account_password,
+        )
+
     # ---------------------------------------------------------------------------
     # Orders — list operations
     # ---------------------------------------------------------------------------

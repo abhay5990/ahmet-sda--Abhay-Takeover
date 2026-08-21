@@ -96,6 +96,47 @@ class PlayerAuctionsAuthRefreshTests(TestCase):
         self.assertEqual(auth._relay_client.cancel_offers_in_browser.call_count, 2)
         auth.refresh.assert_called_once_with()
 
+    def test_browser_edit_uses_store_scoped_relay_session(self):
+        auth = self.make_auth()
+        auth._relay_client = Mock()
+        expected = ApiResult.success({'ok': True, 'offerId': 12345})
+        auth._relay_client.edit_offer_in_browser.return_value = expected
+
+        result = auth.edit_offer_in_browser(
+            offer_id=12345,
+            login_name='account@example.com',
+            account_password='account-password',
+        )
+
+        self.assertIs(result, expected)
+        auth._relay_client.edit_offer_in_browser.assert_called_once_with(
+            username='seller@example.com',
+            password='secret',
+            store='vapenation',
+            offer_id=12345,
+            login_name='account@example.com',
+            account_password='account-password',
+        )
+
+    def test_browser_edit_retries_once_after_unauthorized(self):
+        auth = self.make_auth()
+        auth._relay_client = Mock()
+        auth._relay_client.edit_offer_in_browser.side_effect = [
+            ApiResult.from_error(ErrorCategory.AUTHENTICATION, 'Unauthorized'),
+            ApiResult.success({'ok': True, 'offerId': 12345}),
+        ]
+        auth.refresh = Mock(return_value=True)
+
+        result = auth.edit_offer_in_browser(
+            offer_id=12345,
+            login_name='account@example.com',
+            account_password='account-password',
+        )
+
+        self.assertTrue(result.ok)
+        self.assertEqual(auth._relay_client.edit_offer_in_browser.call_count, 2)
+        auth.refresh.assert_called_once_with()
+
     def test_browser_cancellation_defaults_to_the_configured_token_relay(self):
         auth = PlayerAuctionsAuth(
             transport=Mock(),

@@ -150,6 +150,38 @@ class PlayerAuctionsAuth(BaseAuthProvider):
             offer_ids=offer_ids,
         )
 
+    def edit_offer_in_browser(
+        self,
+        *,
+        offer_id: int,
+        login_name: str,
+        account_password: str,
+    ):
+        """Submit one existing PA offer's credential-retype edit form once."""
+        result = self._relay_client.edit_offer_in_browser(
+            username=self._username,
+            password=self._password,
+            store=self._store_slug or self._username,
+            offer_id=offer_id,
+            login_name=login_name,
+            account_password=account_password,
+        )
+        error = getattr(result, 'error', None)
+        if getattr(error, 'category', None) != ErrorCategory.AUTHENTICATION:
+            return result
+        self._logger.warning(
+            'PlayerAuctions browser edit was unauthorized; retrying once with a fresh relay session.'
+        )
+        self.refresh()
+        return self._relay_client.edit_offer_in_browser(
+            username=self._username,
+            password=self._password,
+            store=self._store_slug or self._username,
+            offer_id=offer_id,
+            login_name=login_name,
+            account_password=account_password,
+        )
+
     def reset_failure(self) -> None:
         """Reset the refresh-failed flag so the next 401 can retry.
 

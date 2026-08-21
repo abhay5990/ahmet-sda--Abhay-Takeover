@@ -62,6 +62,7 @@ class EditResult:
     error: str = ''
     new_offer_id: str = ''
     new_tracking_code: str = ''
+    queue_request_id: int | None = None
 
 
 @dataclass
@@ -121,7 +122,7 @@ def edit_pool_offer(pool_offer: PoolOffer, changes: dict[str, Any]) -> EditResul
     if pool_offer.strategy == OfferPool.Strategy.CLONE:
         from apps.posting.services.pool.replenisher import _PoolOfferContext
 
-        bulk = _edit_pa_pool_bulk(_PoolOfferContext(pool_offer), changes)
+        bulk = _queue_pa_pool_bulk(_PoolOfferContext(pool_offer), changes)
         return EditResult(
             ok=bulk.failed == 0,
             error='; '.join(error for error in bulk.errors if error)[:500],
@@ -150,27 +151,14 @@ def relist_pa_pool_item(item: OfferPoolItem) -> EditResult:
         OfferPoolActiveOffer.objects.filter(
             pool_item=item,
             pool_offer=item.pool_offer,
-            status__in=(
-                OfferPoolActiveOfferStatus.ACTIVE,
-                OfferPoolActiveOfferStatus.DELISTED,
-            ),
+            status=OfferPoolActiveOfferStatus.ACTIVE,
         ).select_related('listing', 'listing__integration_account', 'pool__game')
     )
-    relistable_clones = [
-        clone
-        for clone in relistable_clones
-        if clone.status == OfferPoolActiveOfferStatus.ACTIVE
-        or (
-            clone.status == OfferPoolActiveOfferStatus.DELISTED
-            and clone.listing
-            and clone.listing.status in (ListingStatus.CLOSED, ListingStatus.DELETED)
-        )
-    ]
     if len(relistable_clones) != 1:
         return EditResult(
             ok=False,
             error=(
-                'Expected exactly one live or verified-closed PlayerAuctions clone for this account; '
+                'Expected exactly one live PlayerAuctions clone for this account; '
                 f'found {len(relistable_clones)}. No marketplace action was taken.'
             ),
         )
@@ -196,12 +184,59 @@ def relist_pa_pool_item(item: OfferPoolItem) -> EditResult:
     except ValueError as exc:
         return EditResult(ok=False, error=str(exc))
 
-    # _edit_pa_single rebuilds autoDelivery from this same item, including
-    # retypeLoginName/retypePassword.  No price change is passed here.
-    result = _edit_pa_single(listing, {'title': title}, store)
-    if result.ok:
-        result.new_tracking_code = tracking_code
-    return result
+    from apps.posting.services.pa_edit_queue import enqueue_pa_edit
+
+    request = enqueue_pa_edit(
+        listing=listing,
+        changes={},
+        pool_offer=item.pool_offer,
+        pool_item=item,
+        active_offer=active_clone,
+    )
+    return EditResult(
+        ok=True,
+        new_tracking_code=tracking_code,
+        queue_request_id=request.pk,
+    )
+
+
+def _queue_pa_pool_bulk(pool: Any, changes: dict[str, Any]) -> BulkEditResult:
+    """Queue one same-offer PA update per current active clone, globally serial."""
+    from apps.posting.services.pa_edit_queue import enqueue_pa_edit
+
+    active_clones = list(
+        OfferPoolActiveOffer.objects.filter(
+            pool_offer=pool.pool_offer,
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+        ).select_related('listing', 'pool_item')
+    )
+    if not active_clones:
+        return BulkEditResult(
+            total=0,
+            failed=1,
+            errors=['No current PlayerAuctions offer is available to queue for update.'],
+        )
+
+    queued = 0
+    errors = []
+    for clone in active_clones:
+        if not clone.listing_id or not clone.pool_item_id:
+            errors.append(f'Clone {clone.pk} is missing listing or pool-item linkage.')
+            continue
+        enqueue_pa_edit(
+            listing=clone.listing,
+            changes=changes,
+            pool_offer=pool.pool_offer,
+            pool_item=clone.pool_item,
+            active_offer=clone,
+        )
+        queued += 1
+    return BulkEditResult(
+        total=len(active_clones),
+        succeeded=queued,
+        failed=len(errors),
+        errors=errors,
+    )
 
 
 def _bump_title_with_existing_tracking_code(
@@ -241,7 +276,7 @@ def edit_pool_offers(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResult
     ).order_by('pk')
     for pool_offer in pool_offers:
         if pool_offer.strategy == OfferPool.Strategy.CLONE:
-            result = _edit_pa_pool_bulk(_PoolOfferContext(pool_offer), changes)
+            result = _queue_pa_pool_bulk(_PoolOfferContext(pool_offer), changes)
         else:
             edited = edit_offer(pool_offer.listing, changes)
             result = BulkEditResult(total=1)
@@ -412,7 +447,86 @@ def _edit_gameboost(listing: Listing, changes: dict[str, Any], store: Integratio
 # ── PlayerAuctions — single listing ──────────────────────────────
 
 def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: IntegrationAccount) -> EditResult:
-    """Edit a single PA listing: validate, cancel, then recreate."""
+    """Update one existing PA offer without cancelling or rebuilding it."""
+    proxy_pool = build_proxy_pool()
+    proxy_group = get_group_name(store)
+    client = get_or_build_client('playerauctions', store.credential, proxy_pool=proxy_pool, proxy_group=proxy_group)
+    provider = get_provider('playerauctions')
+
+    from core.marketplace.payload_extractor import extract_create_payload
+    from apps.posting.services.pool.replenisher import _apply_pa_auto_delivery_credentials
+
+    original_payload = extract_create_payload(
+        listing.raw_data or {}, 'playerauctions', client=client, proxy_group=proxy_group,
+    )
+    if not original_payload:
+        return EditResult(ok=False, error='No original payload found - listing has no raw_data')
+
+    linked_product = listing.listing_owned_products.select_related('owned_product').first()
+    if not linked_product:
+        return EditResult(ok=False, error='No linked credential found - cannot update PA listing')
+
+    _apply_pa_changes(original_payload, changes)
+    pool_offer = PoolOffer.objects.filter(listing=listing).select_related('pool').first()
+    active_offers = list(OfferPoolActiveOffer.objects.filter(listing=listing).select_related('pool'))
+    active_offer = active_offers[0] if active_offers else None
+    legacy_pool = OfferPool.objects.filter(listing=listing).first()
+    effective_pool = pool_offer.pool if pool_offer else (
+        active_offer.pool if active_offer else legacy_pool
+    )
+    _apply_pa_auto_delivery_credentials(original_payload, linked_product.owned_product, pool=effective_pool)
+
+    result = provider.update_listing(
+        client,
+        listing.store_listing_id,
+        {'payload': original_payload, 'proxy_group': proxy_group},
+    )
+    if not (result and getattr(result, 'ok', False)):
+        error_message = str(getattr(result, 'error', 'PlayerAuctions edit failed'))
+        _log(
+            PostingLogLevel.ERROR,
+            f'PA same-offer edit failed for #{listing.pk}: {error_message}',
+            account=store,
+            detail={'listing_id': listing.pk, 'offer_id': listing.store_listing_id},
+        )
+        return EditResult(ok=False, error=error_message)
+
+    response_data = getattr(result, 'data', {}) or {}
+    replacement_offer_id = str(response_data.get('replacementOfferId') or '').strip()
+    old_offer_id = listing.store_listing_id
+    extra_fields = []
+    if replacement_offer_id and replacement_offer_id != old_offer_id:
+        from apps.posting.services.relist import (
+            _handoff_active_offer_replacement,
+            _playerauctions_expiry_after_relist,
+        )
+
+        renewed_at = timezone.now()
+        listing.store_listing_id = replacement_offer_id
+        listing.listed_at = renewed_at
+        listing.marketplace_expires_at = _playerauctions_expiry_after_relist(
+            original_payload, response_data, renewed_at,
+        )
+        extra_fields = ['store_listing_id', 'listed_at', 'marketplace_expires_at']
+        _handoff_active_offer_replacement(active_offers, replacement_offer_id)
+
+    _update_listing_db(listing, changes, extra_fields=extra_fields)
+    _log(
+        PostingLogLevel.SUCCESS,
+        f'PA same-offer edit succeeded for #{listing.pk}',
+        account=store,
+        detail={
+            'listing_id': listing.pk,
+            'offer_id': old_offer_id,
+            'replacement_offer_id': replacement_offer_id or None,
+            'changes': list(changes.keys()),
+        },
+    )
+    return EditResult(ok=True, new_offer_id=replacement_offer_id or None)
+
+
+def _edit_pa_single_cancel_recreate(listing: Listing, changes: dict[str, Any], store: IntegrationAccount) -> EditResult:
+    """Legacy cancellation/recreate flow retained only for explicit future recovery tooling."""
     proxy_pool = build_proxy_pool()
     proxy_group = get_group_name(store)
     client = get_or_build_client('playerauctions', store.credential, proxy_pool=proxy_pool, proxy_group=proxy_group)

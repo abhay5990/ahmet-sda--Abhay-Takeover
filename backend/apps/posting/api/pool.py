@@ -1064,9 +1064,9 @@ def relist_playerauctions_pool_item(request, pool_id, item_id):
         return JsonResponse({'error': result.error}, status=409)
     return JsonResponse({
         'ok': True,
-        'new_offer_id': result.new_offer_id,
+        'request_id': result.queue_request_id,
         'unique_code': result.new_tracking_code,
-        'message': 'PlayerAuctions offer bumped; the same unique code was retained and the replacement offer ID was recorded.',
+        'message': 'PlayerAuctions bump queued. It will update only this same account after the global one-minute PA gap; price, title, and unique code remain unchanged.',
     })
 
 

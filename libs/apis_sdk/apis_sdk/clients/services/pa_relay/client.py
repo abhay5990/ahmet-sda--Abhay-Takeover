@@ -234,6 +234,74 @@ class PaRelayClient:
             status_code=response.status_code,
         )
 
+    def edit_offer_in_browser(
+        self,
+        *,
+        username: str,
+        password: str,
+        store: str,
+        offer_id: int,
+        login_name: str,
+        account_password: str,
+    ) -> ApiResult[dict[str, Any]]:
+        """Retype one account's PA delivery credentials on its existing offer.
+
+        This is deliberately narrower than create/cancel: it submits PA's edit
+        form for one existing offer without changing title, description, price,
+        or the account's local tracking code.
+        """
+        management_base_url = (
+            self._config.management_base_url or self._config.base_url
+        ).rstrip("/")
+        url = f"{management_base_url}/pa-edit-offer"
+        payload: dict[str, Any] = {
+            "username": username,
+            "password": password,
+            "store": store,
+            "offerId": offer_id,
+            "loginName": login_name,
+            "accountPassword": account_password,
+        }
+        try:
+            response = self._transport.request(
+                HttpMethod.POST,
+                url,
+                json_body=payload,
+                headers={
+                    "Content-Type": "application/json",
+                    RELAY_SECRET_HEADER: self._config.relay_secret,
+                },
+                timeout=max(self._config.token_timeout, 120.0),
+            )
+        except Exception as exc:
+            return ApiResult.from_error(
+                ErrorCategory.NETWORK,
+                f"PA Relay browser edit connection error: {exc}",
+                provider=self.PROVIDER,
+                is_retryable=True,
+            )
+        try:
+            body = response.json()
+        except Exception:
+            body = {}
+        if not response.is_success or not body.get("ok"):
+            detail = body.get("error") or f"PA Relay browser edit HTTP {response.status_code}"
+            category = (
+                ErrorCategory.AUTHENTICATION
+                if response.status_code in {401, 403}
+                else ErrorCategory.VALIDATION
+                if response.status_code == 422
+                else ErrorCategory.SERVER_ERROR
+            )
+            return ApiResult.from_error(
+                category,
+                f"PA Relay browser edit failed: {detail}",
+                status_code=response.status_code,
+                provider=self.PROVIDER,
+                is_retryable=response.status_code >= 500,
+            )
+        return ApiResult.success(body, status_code=response.status_code)
+
     def warmup(
         self,
         stores: list[dict[str, str]],
