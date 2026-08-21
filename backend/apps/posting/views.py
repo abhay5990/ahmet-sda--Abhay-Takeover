@@ -436,16 +436,7 @@ def _build_pool_item_views(
             'relistable_pa_clone': (
                 clone
                 if marketplace == 'playerauctions'
-                and (
-                    getattr(clone, 'status', None) == OfferPoolActiveOfferStatus.ACTIVE
-                    or (
-                        getattr(clone, 'status', None) == OfferPoolActiveOfferStatus.DELISTED
-                        and getattr(clone_listing, 'status', None) in {
-                            ListingStatus.CLOSED,
-                            ListingStatus.DELETED,
-                        }
-                    )
-                )
+                and getattr(clone, 'status', None) == OfferPoolActiveOfferStatus.ACTIVE
                 else None
             ),
             'is_shared': (

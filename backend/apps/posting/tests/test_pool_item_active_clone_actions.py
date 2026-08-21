@@ -46,7 +46,7 @@ class PoolItemActiveCloneActionTests(SimpleTestCase):
         self.assertIs(row['relistable_pa_clone'], active)
         self.assertEqual(row['offer_id'], '294600001')
 
-    def test_item_row_marks_closed_delisted_pa_clone_relistable(self):
+    def test_item_row_does_not_mark_closed_delisted_pa_clone_relistable(self):
         item = SimpleNamespace(
             pk=1,
             pool_offer_id=9,
@@ -76,4 +76,4 @@ class PoolItemActiveCloneActionTests(SimpleTestCase):
             [],
         )
 
-        self.assertIs(all_rows[0]['relistable_pa_clone'], delisted)
+        self.assertIsNone(all_rows[0]['relistable_pa_clone'])
