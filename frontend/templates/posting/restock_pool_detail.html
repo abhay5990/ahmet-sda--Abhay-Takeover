@@ -624,7 +624,7 @@
                                 <td class="px-3 py-2 font-mono text-indigo-700 whitespace-nowrap">{{ row.unique_code|default:"—" }}</td>
                                 <td class="px-3 py-2 text-center"><span class="inline-flex px-2 py-0.5 rounded-full {% if row.item.status == 'pushed' %}bg-emerald-100 text-emerald-700{% elif row.item.status == 'consumed' %}bg-orange-100 text-orange-700{% elif row.item.status == 'failed' %}bg-red-100 text-red-700{% elif row.item.status == 'pending' %}bg-blue-100 text-blue-700{% else %}bg-gray-100 text-gray-700{% endif %}">{{ row.item.get_status_display }}</span></td>
                                 <td class="px-3 py-2 text-gray-500"><div class="font-mono break-all">{{ row.offer_id|default:"—" }}</div>{% if row.item.error_message %}<div class="text-red-500 mt-0.5 truncate max-w-[12rem]" title="{{ row.item.error_message }}">{{ row.item.error_message }}</div>{% endif %}</td>
-                                <td class="px-3 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.security_email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.email_login_link|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if row.item.status == 'consumed' or row.item.status == 'failed' or row.item.status == 'removed' or row.item.status == 'reserved' %}<button onclick="recoverUnsoldItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', this)" class="text-emerald-600 hover:text-emerald-800 mr-2 disabled:opacity-50">Verify &amp; return</button>{% endif %}{% if row.item.status == 'reserved' %}{% elif row.item.pool_offer_id and row.item.status != 'removed' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', true, this)" class="text-red-600 hover:text-red-800 disabled:opacity-50">Delete</button>{% else %}<span class="text-gray-400">—</span>{% endif %}</td>
+                                <td class="px-3 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.security_email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.email_login_link|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if block.marketplace == 'playerauctions' and row.item.status == 'pushed' and row.active_clone %}<button onclick="relistPlayerAuctionsItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', this)" class="text-violet-700 hover:text-violet-900 mr-2 disabled:opacity-50">Relist PA</button>{% endif %}{% if row.item.status == 'consumed' or row.item.status == 'failed' or row.item.status == 'removed' or row.item.status == 'reserved' %}<button onclick="recoverUnsoldItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', this)" class="text-emerald-600 hover:text-emerald-800 mr-2 disabled:opacity-50">Verify &amp; return</button>{% endif %}{% if row.item.status == 'reserved' %}{% elif row.item.pool_offer_id and row.item.status != 'removed' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', true, this)" class="text-red-600 hover:text-red-800 disabled:opacity-50">Delete</button>{% else %}<span class="text-gray-400">—</span>{% endif %}</td>
                             </tr>
                             {% empty %}
                             <tr><td colspan="5" class="px-3 py-5 text-center text-gray-400">No accounts assigned to this store yet.</td></tr>
@@ -1923,6 +1923,32 @@ async function recoverUnsoldItem(poolId, itemId, login, btn) {
         window.location.reload();
     } catch (error) {
         alert(error.message || 'Unable to verify and return this key');
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+    }
+}
+
+async function relistPlayerAuctionsItem(poolId, itemId, login, btn) {
+    const message = `Relist only “${login}” on PlayerAuctions?\n\nThis cancels its current PA offer and creates one replacement. SDA will record the new offer ID, a new unique code, and fresh listed/expiry dates for this account only.`;
+    if (!confirm(message)) return;
+
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Relisting...';
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value
+        || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+    try {
+        const response = await fetch(
+            `/posting/api/pools/${poolId}/items/${itemId}/relist-playerauctions/`,
+            { method: 'POST', headers: { 'X-CSRFToken': csrf } },
+        );
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || `PA relist failed (${response.status})`);
+        alert(`Relisted. New PA offer: ${data.new_offer_id}; unique code: ${data.new_tracking_code}.`);
+        window.location.reload();
+    } catch (error) {
+        alert(error.message || 'Unable to relist this PlayerAuctions account');
         btn.disabled = false;
         btn.textContent = originalLabel;
     }

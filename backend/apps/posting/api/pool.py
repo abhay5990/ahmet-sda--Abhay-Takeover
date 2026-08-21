@@ -1039,6 +1039,37 @@ def edit_single_pool_offer(request, pool_id, offer_id):
     }, status=200 if result.ok else 502)
 
 
+@login_required
+@require_POST
+def relist_playerauctions_pool_item(request, pool_id, item_id):
+    """Relist exactly one active PA pool account with fresh offer tracking."""
+    try:
+        item = (
+            OfferPoolItem.objects
+            .select_related(
+                'pool_offer',
+                'pool_offer__pool',
+                'pool_offer__listing',
+                'owned_product',
+            )
+            .get(pk=item_id, pool_id=pool_id)
+        )
+    except OfferPoolItem.DoesNotExist:
+        return JsonResponse({'error': 'Pool item not found'}, status=404)
+
+    from apps.posting.services.offer_editor import relist_pa_pool_item
+
+    result = relist_pa_pool_item(item)
+    if not result.ok:
+        return JsonResponse({'error': result.error}, status=409)
+    return JsonResponse({
+        'ok': True,
+        'new_offer_id': result.new_offer_id,
+        'new_tracking_code': result.new_tracking_code,
+        'message': 'PlayerAuctions offer relisted and replacement tracking recorded.',
+    })
+
+
 # ── Activity Log ─────────────────────────────────────────────────
 
 

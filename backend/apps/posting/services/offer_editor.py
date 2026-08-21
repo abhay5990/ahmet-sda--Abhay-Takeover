@@ -35,6 +35,12 @@ from apps.posting.models import (
     PostingLog,
     PostingLogLevel,
 )
+from apps.posting.services.stock.pa_relay_poster import PARelayPoster, fetch_relay_token
+from apps.posting.services.stock.pa_tracking import (
+    append_tracking_code_for_code,
+    pool_clone_tracking_code,
+)
+from core.marketplace.normalizers import normalize_offer_response
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +59,7 @@ class EditResult:
     ok: bool = True
     error: str = ''
     new_offer_id: str = ''
+    new_tracking_code: str = ''
 
 
 @dataclass
@@ -118,6 +125,65 @@ def edit_pool_offer(pool_offer: PoolOffer, changes: dict[str, Any]) -> EditResul
             error='; '.join(error for error in bulk.errors if error)[:500],
         )
     return edit_offer(pool_offer.listing, changes)
+
+
+def relist_pa_pool_item(item: OfferPoolItem) -> EditResult:
+    """Relist one active PlayerAuctions pool clone with a fresh trace code.
+
+    The action is deliberately narrow: it accepts only a pushed item with one
+    active PA clone, validates all local linkage before the remote cancellation,
+    and delegates the replacement handoff to ``_edit_pa_single``.  Successful
+    handoff preserves the exact Pool item and clone while recording PA's new
+    offer ID, listed time, expiry, and a new unique tracking suffix.
+    """
+    if item.status != OfferPoolItemStatus.PUSHED:
+        return EditResult(
+            ok=False,
+            error=f'Only a pushed PlayerAuctions account can be relisted (current status: {item.status}).',
+        )
+    if not item.pool_offer_id or item.pool_offer.marketplace != 'playerauctions':
+        return EditResult(ok=False, error='This account is not assigned to a PlayerAuctions offer.')
+
+    active_clones = list(
+        OfferPoolActiveOffer.objects.filter(
+            pool_item=item,
+            pool_offer=item.pool_offer,
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+        ).select_related('listing', 'listing__integration_account', 'pool__game')
+    )
+    if len(active_clones) != 1:
+        return EditResult(
+            ok=False,
+            error=(
+                'Expected exactly one active PlayerAuctions clone for this account; '
+                f'found {len(active_clones)}. No marketplace action was taken.'
+            ),
+        )
+
+    active_clone = active_clones[0]
+    listing = active_clone.listing
+    store = getattr(listing, 'integration_account', None) if listing else None
+    if not listing or not store or store.provider != 'playerauctions':
+        return EditResult(ok=False, error='Active clone has no valid PlayerAuctions listing link.')
+    if listing.status not in (ListingStatus.LISTED, ListingStatus.PAUSED):
+        return EditResult(
+            ok=False,
+            error=f'Active clone listing is not relistable (current status: {listing.status}).',
+        )
+
+    tracking_code = pool_clone_tracking_code(
+        item.pool_offer.pool,
+        item,
+        uuid.uuid4().hex,
+    )
+    title = append_tracking_code_for_code(
+        listing.title or item.pool_offer.listing.title,
+        tracking_code,
+    )
+    result = _edit_pa_single(listing, {'title': title}, store)
+    if result.ok:
+        result.new_tracking_code = tracking_code
+    return result
 
 
 def edit_pool_offers(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResult:
@@ -462,7 +528,6 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
 def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResult:
     """Edit active PA clone offers without leaving stale local listings."""
     from apps.posting.services.pool.replenisher import _apply_pa_auto_delivery_credentials
-    from apps.posting.services.stock.pa_bulk_uploader import PABulkUploader
     from core.marketplace.payload_extractor import extract_create_payload
 
     store = pool.store
@@ -500,7 +565,7 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
 
     _apply_pa_changes(original_payload, changes)
 
-    excel_rows: list[dict[str, Any]] = []
+    relay_payloads: list[dict[str, Any]] = []
     ao_mapping: list[OfferPoolActiveOffer] = []
     invalid_offer_ids: list[str] = []
 
@@ -511,7 +576,16 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
 
         row_payload = copy.deepcopy(original_payload)
         _apply_pa_auto_delivery_credentials(row_payload, ao.pool_item.owned_product, pool=pool)
-        excel_rows.append(_pa_payload_to_excel_row(row_payload))
+        tracking_code = pool_clone_tracking_code(
+            pool.aggregate,
+            ao.pool_item,
+            uuid.uuid4().hex,
+        )
+        row_payload['title'] = append_tracking_code_for_code(
+            row_payload.get('title', '') or pool.listing.title,
+            tracking_code,
+        )
+        relay_payloads.append(row_payload)
         ao_mapping.append(ao)
 
     if invalid_offer_ids:
@@ -527,7 +601,7 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
         )
         return result
 
-    if not excel_rows:
+    if not relay_payloads:
         _log(
             PostingLogLevel.WARNING,
             f'Pool #{pool.pk}: no valid rows to upload before edit',
@@ -536,6 +610,14 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
         )
         result.failed = result.total
         result.errors.append('No valid credential rows to upload')
+        return result
+
+    relay_session = _resolve_pa_relay_session(store)
+    if relay_session is None:
+        result.failed = result.total
+        result.errors.append(
+            'PlayerAuctions relay session is unavailable; no active offer was cancelled.'
+        )
         return result
 
     try:
@@ -587,22 +669,11 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
     old_listing_ids = _mark_old_active_offer_listings_deleted(ao_mapping, pool)
 
     try:
-        from apis_sdk.factories.playerauctions_factory import PlayerAuctionsFactory
-        from apis_sdk.factories.transport_factory import TransportFactory
-
-        creds = store.credential.credentials
-        transport = TransportFactory.create_requests_transport(timeout=60.0)
-        facade = PlayerAuctionsFactory.create(
-            username=creds.get('username', ''),
-            password=creds.get('password', ''),
-            access_token=creds.get('access_token', '') or creds.get('bearer_token', ''),
-            transport=transport,
-            proxy_pool=proxy_pool_inst,
-            proxy_group=proxy_group,
+        batch_result = _post_pa_relay_payloads(
+            store,
+            relay_payloads,
+            session=relay_session,
         )
-
-        uploader = PABulkUploader()
-        batch_result = uploader.upload_batch(facade, excel_rows, proxy_group=proxy_group)
     except Exception as exc:
         with transaction.atomic():
             for ao in ao_mapping:
@@ -638,8 +709,8 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
                     product_category=pool.listing.product_category,
                     variant=pool.listing.variant,
                     status=ListingStatus.LISTED,
-                    title=changes.get('title', pool.listing.title),
-                    price=changes.get('price', pool.listing.price),
+                    title=relay_payloads[idx].get('title', changes.get('title', pool.listing.title)),
+                    price=relay_payloads[idx].get('price', changes.get('price', pool.listing.price)),
                     currency=pool.listing.currency,
                     listed_at=renewed_at,
                     marketplace_expires_at=_playerauctions_expiry_after_relist(
@@ -647,7 +718,11 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
                         None,
                         renewed_at,
                     ),
-                    raw_data=_raw_data_with_changes(pool.listing.raw_data, changes),
+                    raw_data=normalize_offer_response(
+                        'playerauctions',
+                        {'offer_id': new_offer_id},
+                        payload=relay_payloads[idx],
+                    ),
                 )
 
                 if ao.pool_item and ao.pool_item.owned_product:
@@ -906,6 +981,67 @@ def _pa_payload_to_excel_row(payload: dict) -> dict[str, Any]:
         'Delivery guarantee': '',
         'Delivery info': '',
     }
+
+
+def _post_pa_relay_payloads(
+    store: IntegrationAccount,
+    payloads: list[dict[str, Any]],
+    *,
+    session: tuple[str, str, str, str, str] | None = None,
+):
+    """Submit PA JSON payloads through the working relay JSON branch.
+
+    PlayerAuctions clone payloads contain numeric ``gameId`` and ``serverId``.
+    Passing them through the Excel uploader turns the numeric game ID into the
+    name-based ``Game`` cell and causes PA to reject otherwise valid GTA rows.
+    ``PARelayPoster`` preserves those provider IDs when a payload has
+    ``serverId`` and returns the same index-based result contract used below.
+    """
+    resolved_session = session or _resolve_pa_relay_session(store)
+    if resolved_session is None:
+        from apps.posting.services.stock.pa_bulk_uploader import PABatchResult
+
+        return PABatchResult(
+            failed={
+                idx: 'PA relay: could not obtain an access token for offer edit'
+                for idx in range(len(payloads))
+            }
+        )
+    token, cookie, store_slug, relay_url, relay_secret = resolved_session
+    return PARelayPoster(
+        relay_url=relay_url,
+        relay_secret=relay_secret,
+    ).post_batch(
+        token,
+        store_slug,
+        payloads,
+        cookie=(cookie or token),
+    )
+
+
+def _resolve_pa_relay_session(
+    store: IntegrationAccount,
+) -> tuple[str, str, str, str, str] | None:
+    """Return a usable PA relay session before an offer-cancel operation."""
+    credentials = getattr(getattr(store, 'credential', None), 'credentials', None) or {}
+    username = credentials.get('username', '')
+    password = credentials.get('password', '')
+    store_slug = credentials.get('store_slug', '')
+    relay_url = credentials.get('relay_url', 'http://35.196.132.30:3001')
+    relay_secret = credentials.get('relay_secret', 'pa-relay-secret-2026')
+    token = credentials.get('access_token', '')
+    cookie = credentials.get('cookie', '')
+    if not token and username and password and store_slug:
+        token, cookie = fetch_relay_token(
+            username,
+            password,
+            store_slug,
+            relay_url=relay_url,
+            relay_secret=relay_secret,
+        )
+    if not token:
+        return None
+    return token, cookie, store_slug, relay_url, relay_secret
 
 
 def _mark_old_active_offer_listings_deleted(
