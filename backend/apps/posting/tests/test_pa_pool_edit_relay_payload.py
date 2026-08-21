@@ -99,6 +99,25 @@ class PlayerAuctionsPoolEditRelayPayloadTests(SimpleTestCase):
         self.assertEqual([call[0] for call in calls], ['stale-token', 'fresh-token'])
         self.assertTrue(fetch_token.call_args.kwargs['force_refresh'])
 
+    def test_pa_edit_lock_uses_only_the_marketplace_lane(self):
+        lane = SimpleNamespace(
+            status='active',
+            last_error='',
+            save=lambda **kwargs: None,
+        )
+        context = SimpleNamespace(pool_offer=lane)
+
+        previous = offer_editor._begin_pa_pool_edit_lock(context)
+
+        self.assertEqual(previous, ('active', ''))
+        self.assertEqual(lane.status, 'error')
+        self.assertIn('Automatic replenishment', lane.last_error)
+
+        offer_editor._finish_pa_pool_edit_lock(context, previous)
+
+        self.assertEqual(lane.status, 'active')
+        self.assertEqual(lane.last_error, '')
+
     def test_selective_relist_rejects_non_pushed_pool_items_before_marketplace_call(self):
         item = SimpleNamespace(
             status='pending',

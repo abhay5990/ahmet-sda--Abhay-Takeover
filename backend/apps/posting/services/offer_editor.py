@@ -29,6 +29,7 @@ from apps.posting.models import (
     OfferPoolItem,
     OfferPoolItemStatus,
     PoolOffer,
+    PoolOfferStatus,
     PoolDispatchAttempt,
     PoolDispatchOperation,
     PoolDispatchStatus,
@@ -653,6 +654,8 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
         result.errors.append(f'Invalid PlayerAuctions offer ID: {exc}')
         return result
 
+    edit_lock_state = _begin_pa_pool_edit_lock(pool)
+
     try:
         from apis_sdk.clients.marketplaces.playerauctions.models import PlayerAuctionsCancelRequest
 
@@ -667,6 +670,7 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
             )
             result.failed = result.total
             result.errors.append(f'Bulk cancel failed: {error_msg}')
+            _finish_pa_pool_edit_lock(pool, edit_lock_state)
             return result
     except Exception as exc:
         _log(
@@ -677,6 +681,7 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
         )
         result.failed = result.total
         result.errors.append(f'Bulk cancel failed: {exc}')
+        _finish_pa_pool_edit_lock(pool, edit_lock_state)
         return result
 
     _log(
@@ -706,6 +711,11 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
         )
         result.failed = result.total
         result.errors.append(f'Bulk upload failed after cancel: {exc}')
+        _finish_pa_pool_edit_lock(
+            pool,
+            edit_lock_state,
+            f'Manual PA edit failed after cancellation: {str(exc)[:200]}',
+        )
         return result
 
     with transaction.atomic():
@@ -774,6 +784,15 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
                 result.errors.append(f'{_ao_login(ao)}: no PA result returned')
 
     _update_listing_db(pool.listing, changes)
+    if result.failed:
+        _finish_pa_pool_edit_lock(
+            pool,
+            edit_lock_state,
+            'Manual PA edit recreated only some offers or failed after cancellation. '
+            'Review and use the explicit per-account relist action; automatic replenishment is paused.',
+        )
+    else:
+        _finish_pa_pool_edit_lock(pool, edit_lock_state)
 
     _log(
         PostingLogLevel.SUCCESS if result.failed == 0 else PostingLogLevel.WARNING,
@@ -1106,6 +1125,40 @@ def _resolve_pa_relay_session(
     if not token:
         return None
     return token, cookie, store_slug, relay_url, relay_secret
+
+
+def _begin_pa_pool_edit_lock(pool: OfferPool) -> tuple[str, str] | None:
+    """Pause only this PA lane before its active offers are cancelled for edit."""
+    pool_offer = getattr(pool, 'pool_offer', None)
+    if pool_offer is None:
+        return None
+    previous = (pool_offer.status, pool_offer.last_error)
+    pool_offer.status = PoolOfferStatus.ERROR
+    pool_offer.last_error = (
+        'Manual PlayerAuctions offer edit is recreating its selected accounts. '
+        'Automatic replenishment is temporarily paused.'
+    )
+    pool_offer.save(update_fields=['status', 'last_error', 'updated_at'])
+    return previous
+
+
+def _finish_pa_pool_edit_lock(
+    pool: OfferPool,
+    previous: tuple[str, str] | None,
+    error: str = '',
+) -> None:
+    """Restore a clean edit lane or retain an explicit pause after cancellation."""
+    if previous is None:
+        return
+    pool_offer = getattr(pool, 'pool_offer', None)
+    if pool_offer is None:
+        return
+    if error:
+        pool_offer.status = PoolOfferStatus.ERROR
+        pool_offer.last_error = error
+    else:
+        pool_offer.status, pool_offer.last_error = previous
+    pool_offer.save(update_fields=['status', 'last_error', 'updated_at'])
 
 
 def _mark_old_active_offer_listings_deleted(
