@@ -144,28 +144,46 @@ def relist_pa_pool_item(item: OfferPoolItem) -> EditResult:
     if not item.pool_offer_id or item.pool_offer.marketplace != 'playerauctions':
         return EditResult(ok=False, error='This account is not assigned to a PlayerAuctions offer.')
 
-    active_clones = list(
+    relistable_clones = list(
         OfferPoolActiveOffer.objects.filter(
             pool_item=item,
             pool_offer=item.pool_offer,
-            status=OfferPoolActiveOfferStatus.ACTIVE,
+            status__in=(
+                OfferPoolActiveOfferStatus.ACTIVE,
+                OfferPoolActiveOfferStatus.DELISTED,
+            ),
         ).select_related('listing', 'listing__integration_account', 'pool__game')
     )
-    if len(active_clones) != 1:
+    relistable_clones = [
+        clone
+        for clone in relistable_clones
+        if clone.status == OfferPoolActiveOfferStatus.ACTIVE
+        or (
+            clone.status == OfferPoolActiveOfferStatus.DELISTED
+            and clone.listing
+            and clone.listing.status in (ListingStatus.CLOSED, ListingStatus.DELETED)
+        )
+    ]
+    if len(relistable_clones) != 1:
         return EditResult(
             ok=False,
             error=(
-                'Expected exactly one active PlayerAuctions clone for this account; '
-                f'found {len(active_clones)}. No marketplace action was taken.'
+                'Expected exactly one live or verified-closed PlayerAuctions clone for this account; '
+                f'found {len(relistable_clones)}. No marketplace action was taken.'
             ),
         )
 
-    active_clone = active_clones[0]
+    active_clone = relistable_clones[0]
     listing = active_clone.listing
     store = getattr(listing, 'integration_account', None) if listing else None
     if not listing or not store or store.provider != 'playerauctions':
         return EditResult(ok=False, error='Active clone has no valid PlayerAuctions listing link.')
-    if listing.status not in (ListingStatus.LISTED, ListingStatus.PAUSED):
+    if listing.status not in (
+        ListingStatus.LISTED,
+        ListingStatus.PAUSED,
+        ListingStatus.CLOSED,
+        ListingStatus.DELETED,
+    ):
         return EditResult(
             ok=False,
             error=f'Active clone listing is not relistable (current status: {listing.status}).',
@@ -415,21 +433,23 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
     )
     _apply_pa_auto_delivery_credentials(original_payload, lop.owned_product, pool=effective_pool)
 
-    # Step 1: Cancel existing offer
-    try:
-        cancel_result = provider.delete_listing(client, listing.store_listing_id)
-        if cancel_result and hasattr(cancel_result, 'ok') and not cancel_result.ok:
-            error_msg = str(getattr(cancel_result, 'error', 'Cancel failed'))
+    # Step 1: Cancel a live offer only.  A closed/deleted clone is already
+    # absent from PA, so recreating it must not issue a second delete request.
+    if listing.status not in (ListingStatus.CLOSED, ListingStatus.DELETED):
+        try:
+            cancel_result = provider.delete_listing(client, listing.store_listing_id)
+            if cancel_result and hasattr(cancel_result, 'ok') and not cancel_result.ok:
+                error_msg = str(getattr(cancel_result, 'error', 'Cancel failed'))
+                _log(PostingLogLevel.ERROR,
+                     f'PA cancel failed for #{listing.pk}: {error_msg}',
+                     account=store,
+                     detail={'listing_id': listing.pk, 'offer_id': listing.store_listing_id})
+                return EditResult(ok=False, error=f'Cancel failed: {error_msg}')
+        except Exception as exc:
             _log(PostingLogLevel.ERROR,
-                 f'PA cancel failed for #{listing.pk}: {error_msg}',
-                 account=store,
-                 detail={'listing_id': listing.pk, 'offer_id': listing.store_listing_id})
-            return EditResult(ok=False, error=f'Cancel failed: {error_msg}')
-    except Exception as exc:
-        _log(PostingLogLevel.ERROR,
-             f'PA cancel failed for #{listing.pk}: {exc}',
-             account=store)
-        return EditResult(ok=False, error=f'Cancel failed: {exc}')
+                 f'PA cancel failed for #{listing.pk}: {exc}',
+                 account=store)
+            return EditResult(ok=False, error=f'Cancel failed: {exc}')
 
     old_offer_id = listing.store_listing_id
 

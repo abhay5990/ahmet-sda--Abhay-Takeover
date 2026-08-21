@@ -10,6 +10,7 @@ from apps.accounts.decorators import role_required
 from apps.integrations.models import IntegrationAccount
 from apps.inventory.enums import DropshipProductStatus
 from apps.inventory.models import DropshipProduct, Game, GamePlatformMapping
+from apps.listings.enums import ListingStatus
 from apps.listings.models import Listing
 from apps.posting.models import (
     ContentTemplate, DropshippingJobConfig, OfferPool,
@@ -430,6 +431,21 @@ def _build_pool_item_views(
             'active_clone': (
                 clone
                 if getattr(clone, 'status', None) == OfferPoolActiveOfferStatus.ACTIVE
+                else None
+            ),
+            'relistable_pa_clone': (
+                clone
+                if marketplace == 'playerauctions'
+                and (
+                    getattr(clone, 'status', None) == OfferPoolActiveOfferStatus.ACTIVE
+                    or (
+                        getattr(clone, 'status', None) == OfferPoolActiveOfferStatus.DELISTED
+                        and getattr(clone_listing, 'status', None) in {
+                            ListingStatus.CLOSED,
+                            ListingStatus.DELETED,
+                        }
+                    )
+                )
                 else None
             ),
             'is_shared': (
