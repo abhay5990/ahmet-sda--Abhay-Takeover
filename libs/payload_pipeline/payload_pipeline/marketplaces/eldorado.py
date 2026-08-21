@@ -133,6 +133,7 @@ class BaseEldoradoBuilder(BasePayloadBuilder[Any]):
                 "offerTitle": content.title,
                 "mainOfferImage": {},
                 "offerImages": [],
+                # Email credentials do not prove original-email ownership.
                 "hasOriginalEmail": False,
             },
             "augmentedGame": {
@@ -147,7 +148,9 @@ class BaseEldoradoBuilder(BasePayloadBuilder[Any]):
         if not is_dropship:
             payload["accountSecretDetails"] = []
             if not credentials.is_empty:
-                payload["accountSecretDetails"] = [credentials.to_multiline()]
+                payload["accountSecretDetails"] = [
+                    credentials.to_eldorado_account_secret()
+                ]
 
         # Attributes — Eldorado expects offerAttributes array format
         if attributes:

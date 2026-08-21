@@ -72,6 +72,7 @@ class CredentialBundle:
     email_login_link: str = ""
     security_email: str = ""
     security_email_password: str = ""
+    additional_info: str = ""
 
     def __post_init__(self) -> None:
         # Outlook format: very long password with colons — keep only before first ':'
@@ -118,6 +119,62 @@ class CredentialBundle:
         if self.email_login_link:
             lines.append(f"Email Login Link: {self.email_login_link}")
         return "\n".join(lines)
+
+    def to_eldorado_account_secret(self) -> str:
+        """Return one structured, API-supported Eldorado account secret entry.
+
+        Eldorado's account-create contract accepts an ``accountSecretDetails``
+        array of strings.  Its seller UI renders the information as account,
+        email, two-factor, and additional-information blocks.  Keep every
+        secret in the encrypted delivery entry; only explicit, non-sensitive
+        seller notes may be appended as additional information.
+        """
+        sections: list[str] = []
+
+        account_lines = ["Account details"]
+        if self.login:
+            account_lines.append(f"Login: {self.login}")
+        if self.password:
+            account_lines.append(f"Password: {self.password}")
+        if len(account_lines) > 1:
+            sections.append("\n".join(account_lines))
+
+        email_lines = ["Email details"]
+        if self.email_login_link:
+            email_lines.append(f"Provider URL: {self.email_login_link}")
+        if self.email_login:
+            email_lines.append(f"Login: {self.email_login}")
+        if self.email_password:
+            email_lines.append(f"Password: {self.email_password}")
+        if len(email_lines) > 1:
+            sections.append("\n".join(email_lines))
+
+        two_factor_lines = ["2FA details"]
+        if self.security_email:
+            two_factor_lines.append(f"Login: {self.security_email}")
+        if self.security_email_password:
+            two_factor_lines.append(f"Password: {self.security_email_password}")
+        if len(two_factor_lines) > 1:
+            sections.append("\n".join(two_factor_lines))
+
+        note = self.additional_info.strip()
+        if note:
+            lowered = note.lower()
+            sensitive_markers = (
+                "password",
+                "pass:",
+                "login:",
+                "token",
+                "secret",
+                "@",
+            )
+            if any(marker in lowered for marker in sensitive_markers):
+                raise ValueError(
+                    "Eldorado additional_info must not contain credentials or personal data."
+                )
+            sections.append(f"Additional information\n{note}")
+
+        return "\n\n".join(sections)
 
 
 @dataclass(slots=True)

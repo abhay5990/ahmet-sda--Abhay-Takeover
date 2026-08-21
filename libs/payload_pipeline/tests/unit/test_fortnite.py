@@ -177,6 +177,12 @@ class TestFortnitePipeline:
         assert result.payload["augmentedGame"]["category"] == "Account"
         assert result.payload["details"]["pricing"]["pricePerUnit"]["currency"] == "USD"
         assert result.payload["accountSecretDetails"]
+        detail = result.payload["accountSecretDetails"][0]
+        assert "Account details" in detail
+        assert "Email details" in detail
+        assert "Login: novikov.gg7ts@rambler.ru" in detail
+        assert "Password: BB=v3Fq/;M`vP6w" in detail
+        assert result.payload["details"]["hasOriginalEmail"] is False
 
     def test_gameboost_payload_shape(self, load_fixture):
         sources = {"lzt": load_fixture("lzt_fn.json")}
