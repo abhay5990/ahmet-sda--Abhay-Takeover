@@ -475,14 +475,20 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
     )
     if 'title' in changes and active_offer:
         try:
+            tracking_code = extract_tracking_code(
+                listing.title,
+                original_payload.get('title', ''),
+                getattr(linked_product.owned_product, 'ref_key', ''),
+            )
+            if not tracking_code:
+                return EditResult(
+                    ok=False,
+                    error='PlayerAuctions title edit is blocked because the existing unique code could not be verified.',
+                )
             changes = dict(changes)
             changes['title'] = append_tracking_code_for_code(
                 changes['title'],
-                pool_clone_tracking_code(
-                    active_offer.pool,
-                    active_offer.pool_item,
-                    active_offer.attempt_token,
-                ),
+                tracking_code,
             )
         except ValueError as exc:
             return EditResult(ok=False, error=f'PlayerAuctions title code error: {exc}')
