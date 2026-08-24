@@ -118,6 +118,28 @@ class PlayerAuctionsAuthRefreshTests(TestCase):
             account_password='account-password',
         )
 
+    def test_browser_edit_forwards_requested_title(self):
+        auth = self.make_auth()
+        auth._relay_client = Mock()
+        auth._relay_client.edit_offer_in_browser.return_value = ApiResult.success({'ok': True})
+
+        auth.edit_offer_in_browser(
+            offer_id=12345,
+            login_name='account@example.com',
+            account_password='account-password',
+            title='Updated title',
+        )
+
+        auth._relay_client.edit_offer_in_browser.assert_called_once_with(
+            username='seller@example.com',
+            password='secret',
+            store='vapenation',
+            offer_id=12345,
+            login_name='account@example.com',
+            account_password='account-password',
+            title='Updated title',
+        )
+
     def test_browser_edit_retries_once_after_unauthorized(self):
         auth = self.make_auth()
         auth._relay_client = Mock()

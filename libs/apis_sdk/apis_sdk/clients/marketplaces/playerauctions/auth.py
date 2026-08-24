@@ -156,15 +156,21 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         offer_id: int,
         login_name: str,
         account_password: str,
+        title: str = '',
     ):
         """Submit one existing PA offer's credential-retype edit form once."""
+        request = {
+            'username': self._username,
+            'password': self._password,
+            'store': self._store_slug or self._username,
+            'offer_id': offer_id,
+            'login_name': login_name,
+            'account_password': account_password,
+        }
+        if title:
+            request['title'] = title
         result = self._relay_client.edit_offer_in_browser(
-            username=self._username,
-            password=self._password,
-            store=self._store_slug or self._username,
-            offer_id=offer_id,
-            login_name=login_name,
-            account_password=account_password,
+            **request,
         )
         error = getattr(result, 'error', None)
         if getattr(error, 'category', None) != ErrorCategory.AUTHENTICATION:
@@ -173,13 +179,12 @@ class PlayerAuctionsAuth(BaseAuthProvider):
             'PlayerAuctions browser edit was unauthorized; retrying once with a fresh relay session.'
         )
         self.refresh()
+        if title:
+            request['title'] = title
+        else:
+            request.pop('title', None)
         return self._relay_client.edit_offer_in_browser(
-            username=self._username,
-            password=self._password,
-            store=self._store_slug or self._username,
-            offer_id=offer_id,
-            login_name=login_name,
-            account_password=account_password,
+            **request,
         )
 
     def reset_failure(self) -> None:

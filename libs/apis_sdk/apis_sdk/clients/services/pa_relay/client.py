@@ -243,12 +243,13 @@ class PaRelayClient:
         offer_id: int,
         login_name: str,
         account_password: str,
+        title: str = '',
     ) -> ApiResult[dict[str, Any]]:
-        """Retype one account's PA delivery credentials on its existing offer.
+        """Update one existing PA offer through its authenticated browser form.
 
-        This is deliberately narrower than create/cancel: it submits PA's edit
-        form for one existing offer without changing title, description, price,
-        or the account's local tracking code.
+        The existing delivery credentials are always retyped. ``title`` is
+        optional, and when supplied the relay verifies the exact persisted title
+        before it reports success to SDA.
         """
         management_base_url = (
             self._config.management_base_url or self._config.base_url
@@ -262,6 +263,8 @@ class PaRelayClient:
             "loginName": login_name,
             "accountPassword": account_password,
         }
+        if title:
+            payload['title'] = title
         try:
             response = self._transport.request(
                 HttpMethod.POST,

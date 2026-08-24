@@ -282,6 +282,7 @@ class PlayerAuctionsProvider(AbstractProvider):
         auto_delivery = payload.get('autoDelivery') or {}
         login_name = str(auto_delivery.get('retypeLoginName') or auto_delivery.get('loginName') or '')
         account_password = str(auto_delivery.get('retypePassword') or auto_delivery.get('password') or '')
+        title = str(payload.get('title') or '')
         if not login_name or not account_password:
             from apis_sdk.core.enums import ErrorCategory
             from apis_sdk.core.result import ApiResult
@@ -295,6 +296,7 @@ class PlayerAuctionsProvider(AbstractProvider):
             offer_id=int(external_id),
             login_name=login_name,
             account_password=account_password,
+            title=title,
         )
 
     def delete_listing(self, client: Any, external_id: str) -> Any:

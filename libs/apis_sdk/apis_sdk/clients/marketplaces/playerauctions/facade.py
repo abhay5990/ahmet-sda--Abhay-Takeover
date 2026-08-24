@@ -239,12 +239,14 @@ class PlayerAuctionsFacade:
         offer_id: int,
         login_name: str,
         account_password: str,
+        title: str = '',
     ):
         """Retype delivery credentials on one existing PA offer in browser."""
         return self._auth.edit_offer_in_browser(
             offer_id=offer_id,
             login_name=login_name,
             account_password=account_password,
+            title=title,
         )
 
     # ---------------------------------------------------------------------------
