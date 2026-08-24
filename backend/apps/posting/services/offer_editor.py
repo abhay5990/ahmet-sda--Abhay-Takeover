@@ -466,7 +466,6 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
     if not linked_product:
         return EditResult(ok=False, error='No linked credential found - cannot update PA listing')
 
-    _apply_pa_changes(original_payload, changes)
     pool_offer = PoolOffer.objects.filter(listing=listing).select_related('pool').first()
     active_offers = list(OfferPoolActiveOffer.objects.filter(listing=listing).select_related('pool'))
     active_offer = active_offers[0] if active_offers else None
@@ -474,6 +473,20 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
     effective_pool = pool_offer.pool if pool_offer else (
         active_offer.pool if active_offer else legacy_pool
     )
+    if 'title' in changes and active_offer:
+        try:
+            changes = dict(changes)
+            changes['title'] = append_tracking_code_for_code(
+                changes['title'],
+                pool_clone_tracking_code(
+                    active_offer.pool,
+                    active_offer.pool_item,
+                    active_offer.attempt_token,
+                ),
+            )
+        except ValueError as exc:
+            return EditResult(ok=False, error=f'PlayerAuctions title code error: {exc}')
+    _apply_pa_changes(original_payload, changes)
     _apply_pa_auto_delivery_credentials(original_payload, linked_product.owned_product, pool=effective_pool)
 
     result = provider.update_listing(
