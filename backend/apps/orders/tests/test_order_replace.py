@@ -172,6 +172,21 @@ class OrderReplaceTests(TestCase):
         self.assertEqual(new_item.status, OfferPoolItemStatus.REMOVED)
         self.assertIn("Emergency sold-ledger binding", replacement.reason)
 
+    def test_emergency_replace_allows_confirmed_instant_order_with_exact_sold_key(self):
+        old = self._owned("emergency-instant-old")
+        old_item = self._pool_item(old, status=OfferPoolItemStatus.REMOVED)
+        new = self._owned("emergency-instant-new")
+        self._pool_item(new, order=1)
+        order = self._order(owned=None, is_instant=True)
+        order.status = "delivered"
+        order.save(update_fields=["status"])
+
+        response = self._emergency_post(order, old_item)
+
+        self.assertEqual(response.status_code, 200, response.content)
+        order.refresh_from_db()
+        self.assertEqual(order.owned_product_id, new.id)
+
     def test_emergency_replace_rejects_pending_old_account(self):
         old = self._owned("emergency-pending-old")
         old_item = self._pool_item(old)
