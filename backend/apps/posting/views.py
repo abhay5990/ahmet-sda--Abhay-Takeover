@@ -19,7 +19,10 @@ from apps.posting.models import (
 )
 from apps.posting.models import GameVariant
 from apps.posting.services.stock.pa_tracking import extract_tracking_code
-from apps.orders.services.replacement_eligibility import replacement_visibility
+from apps.orders.services.replacement_eligibility import (
+    REPLACEABLE_SOLD_STATUSES,
+    replacement_visibility,
+)
 from payload_pipeline.core.enums import GameSlug
 
 SUPPORTED_GAME_SLUGS = {gs.value for gs in GameSlug}
@@ -435,6 +438,23 @@ def _build_pool_item_views(
             already_replaced=bool(order_pk and order_pk in replaced_order_ids),
         )
         replacement_order_id = order_pk if replacement_state == 'eligible' else None
+        emergency_replacement_order_id = None
+        emergency_replacement_pool_item_id = None
+        if (
+            replacement_order_id is None
+            and order
+            and sale_event
+            and order_pk not in replaced_order_ids
+            and not getattr(order, 'dropship_product_id', None)
+            and getattr(order, 'status', None) in REPLACEABLE_SOLD_STATUSES
+            and getattr(item, 'status', None) in {
+                OfferPoolItemStatus.CONSUMED,
+                OfferPoolItemStatus.REMOVED,
+            }
+            and item_owned_product_id
+        ):
+            emergency_replacement_order_id = order_pk
+            emergency_replacement_pool_item_id = getattr(item, 'pk', None)
         row = {
             'item': item,
             'pool_offer': pool_offer,
@@ -481,6 +501,8 @@ def _build_pool_item_views(
             ),
             'order_id': _sale_order_reference(sale_event, orders_by_id),
             'replacement_order_id': replacement_order_id,
+            'emergency_replacement_order_id': emergency_replacement_order_id,
+            'emergency_replacement_pool_item_id': emergency_replacement_pool_item_id,
             'replacement_state': replacement_state,
             'replacement_label': replacement_label,
             'replacement_reason': replacement_reason,

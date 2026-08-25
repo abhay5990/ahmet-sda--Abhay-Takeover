@@ -16,7 +16,7 @@ from apps.inventory.models import Game
 from apps.posting.models import OfferPoolItem, OfferPoolItemStatus
 from .models import Order, OrderReplacement, ReplacementDeliveryStatus
 from .services.replacement_delivery import deliver_replacement
-from .services.replacement_eligibility import is_replaceable_manual_order
+from .services.replacement_eligibility import REPLACEABLE_SOLD_STATUSES, is_replaceable_manual_order
 from .enums import OrderStatus
 
 logger = logging.getLogger(__name__)
@@ -301,6 +301,136 @@ def order_replace(request, order_id):
     # The database replacement is committed before any non-idempotent customer
     # message call.  A message failure is stored and shown; it never rolls back
     # or disguises the stock transition.
+    delivery = deliver_replacement(order, replacement)
+    return JsonResponse({'ok': True, 'credentials': {
+        'login': new.login,
+        'password': new.password,
+        'email': new.email,
+        'email_password': new.email_password,
+        'ref_key': new.ref_key,
+    }, 'delivery': delivery})
+
+
+@role_required('admin', 'user')
+@require_POST
+def order_emergency_replace(request, order_id):
+    """Replace an explicitly selected faulty sold pool account.
+
+    Historical/instant orders can be missing ``Order.owned_product`` even when
+    the sold ledger retains the exact pool item.  This is deliberately a
+    separate path: the staff action identifies that old item explicitly and the
+    endpoint verifies its confirmed sale state before making an atomic swap.
+    """
+    try:
+        old_pool_item_id = int(request.POST.get('old_pool_item_id', ''))
+    except (TypeError, ValueError):
+        return JsonResponse({'ok': False, 'error': 'Select the exact faulty sold account.'}, status=400)
+
+    reason = (request.POST.get('reason') or '').strip()
+    employee_name = (request.POST.get('employee_name') or '').strip()
+    if len(reason) < 3 or not employee_name:
+        return JsonResponse({'ok': False, 'error': 'Reason and employee name are required.'}, status=400)
+
+    with transaction.atomic():
+        order = get_object_or_404(
+            Order.objects.select_for_update().select_related(
+                'owned_product', 'integration_account', 'integration_account__credential', 'game',
+            ),
+            pk=order_id,
+        )
+        if order.dropship_product_id:
+            return JsonResponse(
+                {'ok': False, 'error': 'Dropship accounts cannot use emergency pool replacement.'},
+                status=400,
+            )
+        if order.status not in REPLACEABLE_SOLD_STATUSES:
+            return JsonResponse(
+                {'ok': False, 'error': 'Emergency replacement requires a confirmed sold order.'},
+                status=409,
+            )
+
+        old_item = get_object_or_404(
+            OfferPoolItem.objects.select_for_update().select_related('owned_product', 'pool', 'owned_product__game'),
+            pk=old_pool_item_id,
+        )
+        old = old_item.owned_product
+        if old is None or old_item.status not in {
+            OfferPoolItemStatus.CONSUMED,
+            OfferPoolItemStatus.REMOVED,
+        }:
+            return JsonResponse(
+                {'ok': False, 'error': 'The selected account is not a retired sold pool account.'},
+                status=409,
+            )
+        if order.game_id and old.game_id and order.game_id != old.game_id:
+            return JsonResponse(
+                {'ok': False, 'error': 'The selected faulty account does not match this order game.'},
+                status=409,
+            )
+        if OrderReplacement.objects.filter(order=order, old_product=old).exists():
+            return JsonResponse(
+                {'ok': False, 'error': 'This sold account has already been replaced for this order.'},
+                status=409,
+            )
+
+        item = (
+            OfferPoolItem.objects.select_for_update(skip_locked=True)
+            .filter(
+                pool_id=old_item.pool_id,
+                status=OfferPoolItemStatus.PENDING,
+                pool_offer__isnull=True,
+                reservation__isnull=True,
+            )
+            .exclude(owned_product_id=old.pk)
+            .exclude(error_message__gt='')
+            .select_related('owned_product')
+            .order_by('id')
+            .first()
+        )
+        if item is None:
+            return JsonResponse(
+                {'ok': False, 'error': 'No unallocated pool stock available for this product.'},
+                status=409,
+            )
+
+        new = item.owned_product
+        item.status = OfferPoolItemStatus.REMOVED
+        item.consumed_at = timezone.now()
+        item.save(update_fields=['status', 'consumed_at', 'updated_at'])
+
+        old.status = OwnedProductStatus.REPLACED
+        old.save(update_fields=['status', 'updated_at'])
+        order.owned_product = new
+        order.save(update_fields=['owned_product', 'updated_at'])
+
+        old_item.status = OfferPoolItemStatus.REMOVED
+        old_item.error_message = f'Emergency replaced (faulty): {reason}'
+        old_item.save(update_fields=['status', 'error_message', 'updated_at'])
+
+        replacement = OrderReplacement.objects.create(
+            order=order,
+            old_product=old,
+            new_product=new,
+            pool_item=item,
+            reason=f'Emergency sold-ledger binding: {reason}',
+            employee_name=employee_name,
+            created_by=request.user,
+            delivery_status=(
+                ReplacementDeliveryStatus.PENDING
+                if order.integration_account and order.integration_account.provider == 'gameboost'
+                else ReplacementDeliveryStatus.MANUAL
+            ),
+            delivery_channel=(
+                'gameboost_chat'
+                if order.integration_account and order.integration_account.provider == 'gameboost'
+                else 'manual_handoff'
+            ),
+        )
+        logger.info(
+            'Emergency replacement for order %s: explicitly bound owned_product %s -> %s (pool_item %s, by %s)',
+            order.pk, old.pk, new.pk, item.pk, request.user,
+        )
+
     delivery = deliver_replacement(order, replacement)
     return JsonResponse({'ok': True, 'credentials': {
         'login': new.login,

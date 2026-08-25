@@ -49,6 +49,17 @@ class OrderReplaceTests(TestCase):
             data={"reason": reason, "employee_name": employee},
         )
 
+    def _emergency_post(self, order, old_item, reason="account faulty", employee="Alice"):
+        self.client.force_login(self.user)
+        return self.client.post(
+            reverse("orders:api_emergency_replace", args=[order.id]),
+            data={
+                "old_pool_item_id": old_item.id,
+                "reason": reason,
+                "employee_name": employee,
+            },
+        )
+
     # ── R2: happy path ────────────────────────────────────────────────
     def test_replace_swaps_from_unallocated_pool(self):
         old = self._owned("old1")
@@ -134,6 +145,44 @@ class OrderReplaceTests(TestCase):
 
         self.assertEqual(resp.status_code, 409)
         self.assertIn("no recorded stock-pool link", resp.json()["error"])
+        self.assertEqual(OrderReplacement.objects.filter(order=order).count(), 0)
+
+    def test_emergency_replace_explicitly_binds_confirmed_sold_pool_account(self):
+        old = self._owned("emergency-old")
+        old_item = self._pool_item(old, status=OfferPoolItemStatus.REMOVED)
+        new = self._owned("emergency-new")
+        new_item = self._pool_item(new, order=1)
+        order = self._order(owned=None)
+        order.status = "delivered"
+        order.save(update_fields=["status"])
+
+        response = self._emergency_post(order, old_item)
+
+        self.assertEqual(response.status_code, 200, response.content)
+        order.refresh_from_db()
+        old.refresh_from_db()
+        old_item.refresh_from_db()
+        new_item.refresh_from_db()
+        replacement = OrderReplacement.objects.get(order=order)
+        self.assertEqual(order.owned_product_id, new.id)
+        self.assertEqual(replacement.old_product_id, old.id)
+        self.assertEqual(replacement.new_product_id, new.id)
+        self.assertEqual(old.status, "replaced")
+        self.assertEqual(old_item.status, OfferPoolItemStatus.REMOVED)
+        self.assertEqual(new_item.status, OfferPoolItemStatus.REMOVED)
+        self.assertIn("Emergency sold-ledger binding", replacement.reason)
+
+    def test_emergency_replace_rejects_pending_old_account(self):
+        old = self._owned("emergency-pending-old")
+        old_item = self._pool_item(old)
+        self._pool_item(self._owned("emergency-pending-new"), order=1)
+        order = self._order(owned=None)
+        order.status = "delivered"
+        order.save(update_fields=["status"])
+
+        response = self._emergency_post(order, old_item)
+
+        self.assertEqual(response.status_code, 409)
         self.assertEqual(OrderReplacement.objects.filter(order=order).count(), 0)
 
     # ── R5: no unallocated stock ──────────────────────────────────────
