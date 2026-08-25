@@ -301,6 +301,41 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         )
 
         self.assertEqual(sold_history[0]['replacement_order_id'], 9018)
+        self.assertEqual(sold_history[0]['replacement_label'], 'Replace')
+
+    def test_instant_sale_displays_a_non_replaceable_state(self):
+        sold_item = self.make_item(
+            item_id=209,
+            status=OfferPoolItemStatus.REMOVED,
+            login='instant-from-pool',
+        )
+        sale_event = SimpleNamespace(
+            pool_offer_id=None,
+            pool_item_id=sold_item.pk,
+            listing_id=909,
+            listing=SimpleNamespace(
+                integration_account=SimpleNamespace(
+                    name='EzSmurfMart', provider='eldorado',
+                ),
+            ),
+            order_id=9019,
+            created_at=timezone.now(),
+        )
+        order = SimpleNamespace(
+            pk=9019,
+            store_order_id='ELD-ORDER-9019',
+            is_instant=True,
+            dropship_product_id=None,
+            owned_product_id=sold_item.owned_product_id,
+            status='delivered',
+        )
+
+        _, _, _, sold_history, _ = _build_pool_item_views(
+            [], [sold_item], [], [sale_event], {9019: order},
+        )
+
+        self.assertIsNone(sold_history[0]['replacement_order_id'])
+        self.assertEqual(sold_history[0]['replacement_label'], 'Instant order')
 
     def test_groups_each_item_into_one_store_lane_and_one_unified_sale_ledger(self):
         eldorado = self.make_offer(

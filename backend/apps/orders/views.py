@@ -16,6 +16,7 @@ from apps.inventory.models import Game
 from apps.posting.models import OfferPoolItem, OfferPoolItemStatus
 from .models import Order, OrderReplacement, ReplacementDeliveryStatus
 from .services.replacement_delivery import deliver_replacement
+from .services.replacement_eligibility import is_replaceable_manual_order
 from .enums import OrderStatus
 
 logger = logging.getLogger(__name__)
@@ -93,18 +94,7 @@ def order_list(request):
     page_obj = paginator.get_page(request.GET.get('page'))
     replacement_order_ids = {
         order.pk for order in page_obj.object_list
-        if (
-            not order.is_instant
-            and not order.dropship_product_id
-            and order.owned_product_id
-            and order.status in {
-                OrderStatus.DELIVERED,
-                OrderStatus.COMPLETED,
-                OrderStatus.DISPUTED,
-                OrderStatus.DISPUTE_RESOLVED,
-            }
-            and OfferPoolItem.objects.filter(owned_product_id=order.owned_product_id).exists()
-        )
+        if is_replaceable_manual_order(order)
     }
 
     return render(request, 'orders/order_list.html', {

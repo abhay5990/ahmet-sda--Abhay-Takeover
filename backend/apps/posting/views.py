@@ -19,7 +19,7 @@ from apps.posting.models import (
 )
 from apps.posting.models import GameVariant
 from apps.posting.services.stock.pa_tracking import extract_tracking_code
-from apps.orders.services.replacement_eligibility import is_replaceable_manual_order
+from apps.orders.services.replacement_eligibility import replacement_visibility
 from payload_pipeline.core.enums import GameSlug
 
 SUPPORTED_GAME_SLUGS = {gs.value for gs in GameSlug}
@@ -290,6 +290,7 @@ def _build_pool_item_views(
     active_offers,
     sale_events,
     orders_by_id=None,
+    replaced_order_ids=None,
 ):
     """Build item-level marketplace assignments and one cross-store sale ledger.
 
@@ -299,6 +300,7 @@ def _build_pool_item_views(
     append marketplaces retain the destination but only provide a reconciled
     removal signal, so their order IDs are deliberately not guessed.
     """
+    replaced_order_ids = replaced_order_ids or set()
     slots_by_key = {slot['key']: slot for slot in _POOL_MARKETPLACE_SLOTS}
     offers_by_id = {offer.pk: offer for offer in pool_offers}
     rows_by_slot = {slot['key']: [] for slot in _POOL_MARKETPLACE_SLOTS}
@@ -423,15 +425,16 @@ def _build_pool_item_views(
         order_owned_product_id = getattr(
             order, 'owned_product_id', getattr(getattr(order, 'owned_product', None), 'pk', None),
         ) if order else None
-        replacement_order_id = (
-            order.pk
-            if (
-                order
-                and order_owned_product_id == item_owned_product_id
-                and is_replaceable_manual_order(order, has_pool_item=True)
-            )
-            else None
+        order_pk = getattr(order, 'pk', None) if order else None
+        has_matching_pool_item = bool(
+            order and order_owned_product_id == item_owned_product_id
         )
+        replacement_state, replacement_label, replacement_reason = replacement_visibility(
+            order,
+            has_pool_item=has_matching_pool_item,
+            already_replaced=bool(order_pk and order_pk in replaced_order_ids),
+        )
+        replacement_order_id = order_pk if replacement_state == 'eligible' else None
         row = {
             'item': item,
             'pool_offer': pool_offer,
@@ -478,6 +481,9 @@ def _build_pool_item_views(
             ),
             'order_id': _sale_order_reference(sale_event, orders_by_id),
             'replacement_order_id': replacement_order_id,
+            'replacement_state': replacement_state,
+            'replacement_label': replacement_label,
+            'replacement_reason': replacement_reason,
             'sold_at': (
                 active_offer.updated_at if active_offer else (
                     item.consumed_at or getattr(sale_event, 'created_at', None)
@@ -1049,7 +1055,7 @@ def restock_pool_detail_page(request, pool_id):
     )
     order_ids = {event.order_id for event in sale_events if event.order_id}
     if order_ids:
-        from apps.orders.models import Order
+        from apps.orders.models import Order, OrderReplacement
         orders_by_id = {
             order.pk: order
             for order in Order.objects.filter(pk__in=order_ids).only(
@@ -1057,8 +1063,13 @@ def restock_pool_detail_page(request, pool_id):
                 'dropship_product_id', 'owned_product_id',
             )
         }
+        replaced_order_ids = set(
+            OrderReplacement.objects.filter(order_id__in=order_ids)
+            .values_list('order_id', flat=True)
+        )
     else:
         orders_by_id = {}
+        replaced_order_ids = set()
     for sale_event in sale_events:
         # The template also renders offer-level event pills, so expose a
         # marketplace-facing reference there rather than the internal PK.
@@ -1088,6 +1099,7 @@ def restock_pool_detail_page(request, pool_id):
         active_offers,
         sale_events,
         orders_by_id,
+        replaced_order_ids,
     )
 
     # Linked OwnedProducts via ListingOwnedProduct M2M
