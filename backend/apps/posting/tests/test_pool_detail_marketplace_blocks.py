@@ -28,6 +28,8 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertIn('PA expiry', template.template.source)
         self.assertIn('PA listed', template.template.source)
         self.assertIn('Active PA offers', template.template.source)
+        self.assertIn('Replace account', template.template.source)
+        self.assertIn('replacement_reason', template.template.source)
         self.assertIn('0 active PA offers', template.template.source)
         self.assertIn('block.active_pa_offers', template.template.source)
 
