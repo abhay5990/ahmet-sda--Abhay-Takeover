@@ -14,6 +14,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET, require_http_methods
 
 from apps.integrations.models import IntegrationAccount
+from apps.inventory.enums import OwnedProductStatus
 from apps.inventory.models import Game, OwnedProduct
 from apps.listings.models import Listing, ListingOwnedProduct
 from apps.listings.utils import parse_price
@@ -39,6 +40,105 @@ from apps.posting.models import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+@login_required
+@require_POST
+def return_faulty_account_to_common_stock(request, pool_id: int, replacement_id: int):
+    """Return a repaired faulty account only when durable safety guards pass."""
+    from apps.orders.models import FaultyAccountReturn, OrderReplacement
+
+    try:
+        payload = json.loads(request.body or '{}')
+    except json.JSONDecodeError:
+        return JsonResponse({'ok': False, 'error': 'Invalid JSON.'}, status=400)
+    reason = str(payload.get('reason') or '').strip()
+    employee_name = str(payload.get('employee_name') or '').strip()
+    if len(reason) < 3 or not employee_name:
+        return JsonResponse(
+            {'ok': False, 'error': 'Reason and employee name are required.'}, status=400,
+        )
+
+    with transaction.atomic():
+        replacement = (
+            OrderReplacement.objects.select_for_update().select_related('old_product')
+            .filter(pk=replacement_id).first()
+        )
+        if replacement is None:
+            return JsonResponse({'ok': False, 'error': 'Replacement record not found.'}, status=404)
+        if FaultyAccountReturn.objects.filter(replacement_id=replacement.pk).exists():
+            return JsonResponse(
+                {'ok': False, 'error': 'This faulty account was already returned to common stock.'},
+                status=409,
+            )
+        if not replacement.old_product_id:
+            return JsonResponse(
+                {'ok': False, 'error': 'The original account record is unavailable.'}, status=409,
+            )
+        item = (
+            OfferPoolItem.objects.select_for_update().select_related('owned_product')
+            .filter(pool_id=pool_id, owned_product_id=replacement.old_product_id).first()
+        )
+        if item is None:
+            return JsonResponse(
+                {'ok': False, 'error': 'The faulty account is not linked to this pool.'}, status=409,
+            )
+        if item.status != OfferPoolItemStatus.REMOVED:
+            return JsonResponse(
+                {'ok': False, 'error': f'Faulty account must be removed before return (current state: {item.status}).'},
+                status=409,
+            )
+        if item.reservation_id or item.pool_offer_id or item.target_offer_id or item.remote_credential_id:
+            return JsonResponse(
+                {'ok': False, 'error': 'Faulty account still has a marketplace or dispatch link; verify it is fully delisted first.'},
+                status=409,
+            )
+        if item.remote_state not in {'', 'absent'}:
+            return JsonResponse(
+                {'ok': False, 'error': 'Remote listing state is not verified absent; account cannot be returned.'},
+                status=409,
+            )
+        if PoolSaleEvent.objects.filter(pool_item_id=item.pk).exists() or OfferPoolActiveOffer.objects.filter(
+            pool_item_id=item.pk,
+            status__in=[OfferPoolActiveOfferStatus.ACTIVE, OfferPoolActiveOfferStatus.SOLD],
+        ).exists():
+            return JsonResponse(
+                {'ok': False, 'error': 'Sale evidence or an active clone exists; account cannot be returned.'},
+                status=409,
+            )
+
+        item.status = OfferPoolItemStatus.PENDING
+        item.pool_offer = None
+        item.reservation = None
+        item.pushed_at = None
+        item.consumed_at = None
+        item.error_message = ''
+        item.target_offer_id = ''
+        item.remote_credential_id = ''
+        item.claim_token = None
+        item.claimed_at = None
+        item.failure_stage = ''
+        item.remote_state = 'absent'
+        item.save(update_fields=[
+            'status', 'pool_offer', 'reservation', 'pushed_at', 'consumed_at',
+            'error_message', 'target_offer_id', 'remote_credential_id',
+            'claim_token', 'claimed_at', 'failure_stage', 'remote_state', 'updated_at',
+        ])
+        replacement.old_product.status = OwnedProductStatus.RECOVERED
+        replacement.old_product.save(update_fields=['status', 'updated_at'])
+        FaultyAccountReturn.objects.create(
+            replacement=replacement,
+            pool_item=item,
+            reason=reason,
+            employee_name=employee_name,
+            created_by=request.user,
+        )
+
+    return JsonResponse({
+        'ok': True,
+        'message': 'Faulty account returned to normal common stock.',
+        'pool_item_id': item.pk,
+    })
 
 
 # ── Pool CRUD ─────────────────────────────────────────────────────

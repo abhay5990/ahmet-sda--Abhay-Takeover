@@ -132,9 +132,16 @@
                             {% endif %}{% endwith %}
                         </td>
                         <td class="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{% if order.sold_at %}<span data-utc="{{ order.sold_at|date:'c' }}">{{ order.sold_at|date:"M-d-Y g:i A" }}</span>{% else %}-{% endif %}</td>
-                        <!-- Actions dropdown -->
+                        <!-- Actions -->
                         <td class="px-4 py-3 text-sm">
-                            <div class="relative" x-data="{ open: false }">
+                            <div class="flex items-center justify-end gap-2">
+                                {% if order.id in replacement_order_ids %}
+                                <button @click="openReplace({{ order.id }})"
+                                        class="px-2.5 py-1 rounded text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100">
+                                    Replace
+                                </button>
+                                {% endif %}
+                                <div class="relative" x-data="{ open: false }">
                                 {% include "includes/_action_dropdown.html" %}
                                 <div x-show="open" x-cloak
                                      x-transition:enter="transition ease-out duration-100"
@@ -152,13 +159,7 @@
                                         {{ label }}
                                     </button>
                                     {% endfor %}
-                                    {% if not order.is_instant and not order.dropship_product_id %}
-                                    <div class="border-t border-gray-100 my-1"></div>
-                                    <button @click="openReplace({{ order.id }}); open = false"
-                                            class="w-full text-left px-3 py-1.5 text-sm text-indigo-600 hover:bg-gray-50 transition-colors">
-                                        Replace account…
-                                    </button>
-                                    {% endif %}
+                                </div>
                                 </div>
                             </div>
                         </td>
@@ -204,7 +205,10 @@
             </template>
             <template x-if="replaceModal.result">
                 <div class="space-y-2">
-                    <p class="text-sm text-emerald-700 font-medium">Replacement assigned — send these to the customer.</p>
+                    <p class="text-sm text-emerald-700 font-medium">Replacement assigned.</p>
+                    <p x-show="replaceModal.delivery?.status === 'sent'" class="text-xs text-emerald-700" x-text="replaceModal.delivery?.message"></p>
+                    <p x-show="replaceModal.delivery?.status === 'manual'" class="text-xs text-amber-700">Manual customer handoff required — copy the credentials below. No marketplace message has been claimed as sent.</p>
+                    <p x-show="replaceModal.delivery?.status === 'failed'" class="text-xs text-red-700" x-text="replaceModal.delivery?.message"></p>
                     <div class="bg-gray-50 border rounded p-3 text-sm font-mono space-y-1 break-all">
                         <div><span class="text-gray-400">Login:</span> <span x-text="replaceModal.result.login"></span></div>
                         <div><span class="text-gray-400">Password:</span> <span x-text="replaceModal.result.password"></span></div>
@@ -311,6 +315,7 @@ function ordersBrowser() {
                 const data = await res.json().catch(() => ({}));
                 if (res.ok && data.ok) {
                     m.result = data.credentials;
+                    m.delivery = data.delivery || { status: 'manual' };
                 } else {
                     m.error = data.error || 'Replacement failed.';
                     m.submitting = false;

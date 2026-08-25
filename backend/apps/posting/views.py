@@ -14,7 +14,7 @@ from apps.listings.enums import ListingStatus
 from apps.listings.models import Listing
 from apps.posting.models import (
     ContentTemplate, DropshippingJobConfig, OfferPool,
-    OfferPoolActiveOffer, OfferPoolActiveOfferStatus, OfferPoolItemStatus,
+    OfferPoolActiveOffer, OfferPoolActiveOfferStatus, OfferPoolItem, OfferPoolItemStatus,
     PoolOffer, PoolOfferStatus, PoolSaleEvent, PostingJob, PostingLog,
 )
 from apps.posting.models import GameVariant
@@ -1094,13 +1094,38 @@ def restock_pool_detail_page(request, pool_id):
     # replacement is drawn from this pool, so its pool_item is in this pool;
     # each record names the faulty (old) account, why, who, when, the order it
     # was on, and the replacement account handed out.
-    from apps.orders.models import OrderReplacement
+    from apps.orders.models import FaultyAccountReturn, OrderReplacement
     faulty_replacements = list(
         OrderReplacement.objects
         .filter(pool_item__pool=pool)
         .select_related('old_product', 'new_product', 'order', 'created_by')
         .order_by('-created_at')
     )
+    faulty_items = {
+        item.owned_product_id: item
+        for item in OfferPoolItem.objects.filter(
+            pool=pool,
+            owned_product_id__in=[r.old_product_id for r in faulty_replacements if r.old_product_id],
+        ).select_related('owned_product')
+    }
+    returned_faulty_replacement_ids = set(
+        FaultyAccountReturn.objects.filter(
+            replacement_id__in=[r.pk for r in faulty_replacements],
+        ).values_list('replacement_id', flat=True)
+    )
+    for replacement in faulty_replacements:
+        replacement.faulty_pool_item = faulty_items.get(replacement.old_product_id)
+        replacement.returned_to_common_stock = replacement.pk in returned_faulty_replacement_ids
+        replacement.can_return_to_common_stock = bool(
+            replacement.faulty_pool_item
+            and not replacement.returned_to_common_stock
+            and replacement.faulty_pool_item.status == OfferPoolItemStatus.REMOVED
+            and not replacement.faulty_pool_item.pool_offer_id
+            and not replacement.faulty_pool_item.reservation_id
+            and not replacement.faulty_pool_item.target_offer_id
+            and not replacement.faulty_pool_item.remote_credential_id
+            and replacement.faulty_pool_item.remote_state in {'', 'absent'}
+        )
 
     return render(request, 'posting/restock_pool_detail.html', {
         'faulty_replacements': faulty_replacements,

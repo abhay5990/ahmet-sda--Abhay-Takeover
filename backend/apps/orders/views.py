@@ -14,7 +14,8 @@ from apps.integrations.models import IntegrationAccount, Provider
 from apps.inventory.enums import OwnedProductStatus
 from apps.inventory.models import Game
 from apps.posting.models import OfferPoolItem, OfferPoolItemStatus
-from .models import Order, OrderReplacement
+from .models import Order, OrderReplacement, ReplacementDeliveryStatus
+from .services.replacement_delivery import deliver_replacement
 from .enums import OrderStatus
 
 logger = logging.getLogger(__name__)
@@ -90,6 +91,21 @@ def order_list(request):
     # --- Pagination ---
     paginator = Paginator(orders, 50)
     page_obj = paginator.get_page(request.GET.get('page'))
+    replacement_order_ids = {
+        order.pk for order in page_obj.object_list
+        if (
+            not order.is_instant
+            and not order.dropship_product_id
+            and order.owned_product_id
+            and order.status in {
+                OrderStatus.DELIVERED,
+                OrderStatus.COMPLETED,
+                OrderStatus.DISPUTED,
+                OrderStatus.DISPUTE_RESOLVED,
+            }
+            and OfferPoolItem.objects.filter(owned_product_id=order.owned_product_id).exists()
+        )
+    }
 
     return render(request, 'orders/order_list.html', {
         'page_obj': page_obj,
@@ -105,6 +121,7 @@ def order_list(request):
         'selected_instant': is_instant or '',
         'instant_types': [('1', 'Instant'), ('0', 'Manual / Dropship')],
         'search_query': search,
+        'replacement_order_ids': replacement_order_ids,
     })
 
 
@@ -161,7 +178,6 @@ def order_bulk_update_status(request):
 
 @role_required('admin', 'user')
 @require_POST
-@transaction.atomic
 def order_replace(request, order_id):
     """Swap a self-owned manual-entry order from the UNALLOCATED pool.
 
@@ -170,119 +186,136 @@ def order_replace(request, order_id):
     from the same pool's unallocated pending stock — items on no marketplace —
     so there is no delist, no race window, and no possibility of a double-sale.
     """
-    order = get_object_or_404(
-        Order.objects.select_for_update().select_related('owned_product'),
-        pk=order_id,
-    )
+    with transaction.atomic():
+        order = get_object_or_404(
+            Order.objects.select_for_update().select_related(
+                'owned_product', 'integration_account', 'integration_account__credential',
+            ),
+            pk=order_id,
+        )
 
     # 1. Eligibility — explicit manual-entry, self-owned account only
     # (re-checked server-side).  ``is_instant=False`` is the authoritative
     # manual-entry classification.  The absence of an owned-product FK is
     # handled safely below with 409 because legacy manual imports may not have
     # persisted that link.
-    if order.is_instant or order.dropship_product_id:
-        return JsonResponse(
-            {'ok': False, 'error': 'Replacement is only available for self-owned manual-entry accounts.'},
-            status=400,
-        )
+        if order.is_instant or order.dropship_product_id:
+            return JsonResponse(
+                {'ok': False, 'error': 'Replacement is only available for self-owned manual-entry accounts.'},
+                status=400,
+            )
 
-    reason = (request.POST.get('reason') or '').strip()
-    employee_name = (request.POST.get('employee_name') or '').strip()
-    if len(reason) < 3 or not employee_name:
-        return JsonResponse(
-            {'ok': False, 'error': 'Reason and employee name are required.'},
-            status=400,
-        )
+        reason = (request.POST.get('reason') or '').strip()
+        employee_name = (request.POST.get('employee_name') or '').strip()
+        if len(reason) < 3 or not employee_name:
+            return JsonResponse(
+                {'ok': False, 'error': 'Reason and employee name are required.'},
+                status=400,
+            )
 
-    old = order.owned_product
-    if old is None:
-        return JsonResponse(
-            {'ok': False,
-             'error': 'This manual product has no recorded stock-pool link, so a '
-                      'matching replacement cannot be selected automatically.'},
-            status=409,
-        )
+        old = order.owned_product
+        if old is None:
+            return JsonResponse(
+                {'ok': False,
+                 'error': 'This manual product has no recorded stock-pool link, so a '
+                          'matching replacement cannot be selected automatically.'},
+                status=409,
+            )
 
     # 2. Resolve the pool the replaced unit belongs to (the "kind"). The pool
     #    carries game+variant+credential_spec, so same-pool == same product kind.
-    old_item = (
-        OfferPoolItem.objects
-        .filter(owned_product_id=old.pk)
-        .order_by('-id')
-        .first()
-    )
-    if old_item is None:
-        return JsonResponse(
-            {'ok': False,
-             'error': 'This account is not linked to a stock pool, so a matching '
-                      'replacement cannot be selected automatically.'},
-            status=409,
+        old_item = (
+            OfferPoolItem.objects.select_for_update()
+            .filter(owned_product_id=old.pk)
+            .order_by('-id')
+            .first()
         )
+        if old_item is None:
+            return JsonResponse(
+                {'ok': False,
+                 'error': 'This account is not linked to a stock pool, so a matching '
+                          'replacement cannot be selected automatically.'},
+                status=409,
+            )
 
     # 3. Claim ONE unallocated item atomically. skip_locked => simultaneous
     #    clicks take DIFFERENT units, never the same one.
-    item = (
-        OfferPoolItem.objects
-        .select_for_update(skip_locked=True)
-        .filter(
-            pool_id=old_item.pool_id,
-            status=OfferPoolItemStatus.PENDING,
-            pool_offer__isnull=True,      # unallocated
-            reservation__isnull=True,     # not reserved by a dispatch
+        item = (
+            OfferPoolItem.objects
+            .select_for_update(skip_locked=True)
+            .filter(
+                pool_id=old_item.pool_id,
+                status=OfferPoolItemStatus.PENDING,
+                pool_offer__isnull=True,
+                reservation__isnull=True,
+            )
+            .exclude(owned_product_id=old.pk)
+            .exclude(error_message__gt='')
+            .select_related('owned_product')
+            .order_by('id')
+            .first()
         )
-        .exclude(owned_product_id=old.pk)
-        .exclude(error_message__gt='')    # skip units with a known failure
-        .select_related('owned_product')
-        .order_by('id')                   # FIFO — rotate stock
-        .first()
-    )
-    if item is None:
-        return JsonResponse(
-            {'ok': False, 'error': 'No unallocated pool stock available for this product.'},
-            status=409,
-        )
+        if item is None:
+            return JsonResponse(
+                {'ok': False, 'error': 'No unallocated pool stock available for this product.'},
+                status=409,
+            )
 
-    new = item.owned_product
+        new = item.owned_product
 
     # 4. Take the pool item out of the pool so the dispatcher can never pick it
     #    up later. It is unallocated (no pool_offer), and the schema's
     #    ``assigned_pool_item_has_offer`` constraint forbids CONSUMED without a
     #    pool_offer, so REMOVED is the correct terminal state here — equally
     #    un-dispatchable (the dispatcher only claims PENDING items).
-    item.status = OfferPoolItemStatus.REMOVED
-    item.consumed_at = timezone.now()
-    item.save(update_fields=['status', 'consumed_at', 'updated_at'])
+        item.status = OfferPoolItemStatus.REMOVED
+        item.consumed_at = timezone.now()
+        item.save(update_fields=['status', 'consumed_at', 'updated_at'])
 
     # 5. Retire the old unit, swap it on the order.
-    old.status = OwnedProductStatus.REPLACED
-    old.save(update_fields=['status', 'updated_at'])
-    order.owned_product = new
-    order.save(update_fields=['owned_product', 'updated_at'])
+        old.status = OwnedProductStatus.REPLACED
+        old.save(update_fields=['status', 'updated_at'])
+        order.owned_product = new
+        order.save(update_fields=['owned_product', 'updated_at'])
 
     # 5b. Send the replaced (faulty) account's pool item to a terminal state so
     #     it can never be re-offered as a replacement or counted as stock (both
     #     paths only consider PENDING items). It surfaces in the pool's Faulty
     #     section via the OrderReplacement record below.
-    if old_item.status != OfferPoolItemStatus.REMOVED:
-        old_item.status = OfferPoolItemStatus.REMOVED
-        old_item.error_message = f'Replaced (faulty): {reason}'
-        old_item.save(update_fields=['status', 'error_message', 'updated_at'])
+        if old_item.status != OfferPoolItemStatus.REMOVED:
+            old_item.status = OfferPoolItemStatus.REMOVED
+            old_item.error_message = f'Replaced (faulty): {reason}'
+            old_item.save(update_fields=['status', 'error_message', 'updated_at'])
 
     # 6. Audit — reason + typed name + the actual logged-in user.
-    OrderReplacement.objects.create(
-        order=order, old_product=old, new_product=new,
-        pool_item=item, reason=reason,
-        employee_name=employee_name, created_by=request.user,
-    )
-    logger.info(
-        "Order %s replaced: owned_product %s -> %s (pool_item %s, by %s)",
-        order.pk, old.pk, new.pk, item.pk, request.user,
-    )
+        replacement = OrderReplacement.objects.create(
+            order=order, old_product=old, new_product=new,
+            pool_item=item, reason=reason,
+            employee_name=employee_name, created_by=request.user,
+            delivery_status=(
+                ReplacementDeliveryStatus.PENDING
+                if order.integration_account and order.integration_account.provider == 'gameboost'
+                else ReplacementDeliveryStatus.MANUAL
+            ),
+            delivery_channel=(
+                'gameboost_chat'
+                if order.integration_account and order.integration_account.provider == 'gameboost'
+                else 'manual_handoff'
+            ),
+        )
+        logger.info(
+            "Order %s replaced: owned_product %s -> %s (pool_item %s, by %s)",
+            order.pk, old.pk, new.pk, item.pk, request.user,
+        )
 
+    # The database replacement is committed before any non-idempotent customer
+    # message call.  A message failure is stored and shown; it never rolls back
+    # or disguises the stock transition.
+    delivery = deliver_replacement(order, replacement)
     return JsonResponse({'ok': True, 'credentials': {
         'login': new.login,
         'password': new.password,
         'email': new.email,
         'email_password': new.email_password,
         'ref_key': new.ref_key,
-    }})
+    }, 'delivery': delivery})

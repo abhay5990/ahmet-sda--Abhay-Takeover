@@ -1,6 +1,8 @@
 """Tests for Order Replacement from the unallocated pool (spec v2, R1-R9)."""
 from decimal import Decimal
+from unittest.mock import patch
 
+from apps.integrations.models import IntegrationAccount
 from apps.inventory.models import Category, DropshipProduct, Game, OwnedProduct
 from apps.orders.models import Order, OrderReplacement
 from apps.posting.models import OfferPool, OfferPoolItem, OfferPoolItemStatus, OfferPoolStatus
@@ -195,3 +197,38 @@ class OrderReplaceTests(TestCase):
         resp = self._post(order)
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["credentials"]["login"], "good8")
+
+    def test_visible_replace_button_only_for_confirmed_manual_pool_order(self):
+        old = self._owned("visible-old")
+        self._pool_item(old, status=OfferPoolItemStatus.REMOVED)
+        order = self._order(owned=old)
+        order.status = "delivered"
+        order.save(update_fields=["status"])
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("orders:list"))
+
+        self.assertContains(response, "Replace")
+
+    @patch("apps.orders.views.deliver_replacement")
+    def test_replacement_returns_verified_delivery_status(self, deliver_replacement):
+        deliver_replacement.return_value = {
+            "status": "sent",
+            "channel": "gameboost_chat",
+            "message": "GameBoost customer message sent and confirmed by the provider.",
+        }
+        account = IntegrationAccount.objects.create(
+            name="GB", slug="gb-replace", provider="gameboost",
+        )
+        old = self._owned("gb-old")
+        self._pool_item(old, status=OfferPoolItemStatus.REMOVED)
+        self._pool_item(self._owned("gb-new"), order=1)
+        order = self._order(owned=old)
+        order.integration_account = account
+        order.save(update_fields=["integration_account"])
+
+        response = self._post(order)
+
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertEqual(response.json()["delivery"]["status"], "sent")
+        deliver_replacement.assert_called_once()

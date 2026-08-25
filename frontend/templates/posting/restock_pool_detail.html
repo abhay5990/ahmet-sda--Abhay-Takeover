@@ -698,6 +698,7 @@
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">On order</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Replacement given</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">When</th>
+                    <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
                 </tr></thead>
                 <tbody class="divide-y divide-gray-200">
                     {% for rep in faulty_replacements %}
@@ -708,9 +709,19 @@
                         <td class="px-4 py-2 font-mono text-gray-700">{% if rep.order %}{{ rep.order.store_order_id }}{% else %}—{% endif %}</td>
                         <td class="px-4 py-2 font-mono text-gray-700">{% if rep.new_product %}{{ rep.new_product.login }}{% else %}—{% endif %}</td>
                         <td class="px-4 py-2 text-xs text-gray-500">{{ rep.created_at|date:"Y-m-d H:i" }}</td>
+                        <td class="px-4 py-2 text-right whitespace-nowrap">
+                            {% if rep.returned_to_common_stock %}
+                            <span class="text-xs text-emerald-700">Returned to common</span>
+                            {% elif rep.can_return_to_common_stock %}
+                            <button onclick="returnFaultyToCommon({{ pool.id }}, {{ rep.id }}, '{{ rep.old_product.login|escapejs }}', this)"
+                                    class="text-xs text-emerald-700 hover:text-emerald-900">Return to common stock</button>
+                            {% else %}
+                            <span class="text-xs text-gray-400">Verify/delist first</span>
+                            {% endif %}
+                        </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">No faulty/replaced accounts from this pool.</td></tr>
+                    <tr><td colspan="7" class="px-4 py-8 text-center text-gray-400">No faulty/replaced accounts from this pool.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -1923,6 +1934,40 @@ async function recoverUnsoldItem(poolId, itemId, login, btn) {
         window.location.reload();
     } catch (error) {
         alert(error.message || 'Unable to verify and return this key');
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+    }
+}
+
+async function returnFaultyToCommon(poolId, replacementId, login, btn) {
+    const employeeName = prompt(`Return repaired faulty account “${login}” to common stock.\n\nEmployee name:`);
+    if (!employeeName || !employeeName.trim()) return;
+    const reason = prompt('Why is this account fixed and safe to return to common stock?');
+    if (!reason || reason.trim().length < 3) {
+        alert('A return reason of at least 3 characters is required.');
+        return;
+    }
+    if (!confirm(`Return “${login}” to pending common stock?\n\nThis is blocked if it has any sale evidence, active clone/listing, reservation, or remote link.`)) return;
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Returning...';
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value
+        || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+    try {
+        const response = await fetch(
+            `/posting/api/pools/${poolId}/faulty/${replacementId}/return-to-common/`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+                body: JSON.stringify({ reason: reason.trim(), employee_name: employeeName.trim() }),
+            },
+        );
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.ok) throw new Error(data.error || 'Faulty return failed.');
+        alert(data.message || 'Faulty account returned to common stock.');
+        location.reload();
+    } catch (error) {
+        alert(error.message || 'Faulty return failed.');
         btn.disabled = false;
         btn.textContent = originalLabel;
     }

@@ -3,7 +3,8 @@ never re-offered, and surfaced in the pool's Faulty section."""
 from decimal import Decimal
 
 from apps.inventory.models import Category, Game, OwnedProduct
-from apps.orders.models import Order, OrderReplacement
+from apps.inventory.enums import OwnedProductStatus
+from apps.orders.models import FaultyAccountReturn, Order, OrderReplacement
 from apps.posting.models import (
     OfferPool,
     OfferPoolItem,
@@ -102,3 +103,28 @@ class FaultyPoolTests(TestCase):
         resp = self.client.get(reverse("posting:restock_pool_detail", args=[self.pool.id]))
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.context["faulty_count"], 1)
+
+    def test_fixed_faulty_account_can_return_to_pending_common_stock(self):
+        old = self._owned("fixed-faulty")
+        old_item = self._item(old, status=OfferPoolItemStatus.FAILED)
+        self._item(self._owned("replacement-good"), order=1)
+        order = self._order(old)
+        self.assertEqual(self._replace(order).status_code, 200)
+        replacement = OrderReplacement.objects.get(order=order)
+
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse(
+                "posting:api_return_faulty_to_common_stock",
+                args=[self.pool.id, replacement.id],
+            ),
+            data='{"reason":"Credentials repaired and tested","employee_name":"Alice"}',
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 200, response.content)
+        old_item.refresh_from_db()
+        old.refresh_from_db()
+        self.assertEqual(old_item.status, OfferPoolItemStatus.PENDING)
+        self.assertEqual(old.status, OwnedProductStatus.RECOVERED)
+        self.assertTrue(FaultyAccountReturn.objects.filter(replacement=replacement).exists())

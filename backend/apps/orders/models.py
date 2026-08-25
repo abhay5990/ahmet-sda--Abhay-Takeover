@@ -180,6 +180,15 @@ class FeeRule(models.Model):
         return ' | '.join(parts)
 
 
+class ReplacementDeliveryStatus(models.TextChoices):
+    """Durable outcome of the replacement handoff, never a claimed send."""
+
+    PENDING = 'pending', 'Pending verified delivery'
+    MANUAL = 'manual', 'Manual staff handoff required'
+    SENT = 'sent', 'Provider-confirmed customer message sent'
+    FAILED = 'failed', 'Customer message failed'
+
+
 class OrderReplacement(models.Model):
     """Audit record of a manual-entry account swapped on an order.
 
@@ -208,6 +217,14 @@ class OrderReplacement(models.Model):
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True,
     )
+    delivery_status = models.CharField(
+        max_length=20,
+        choices=ReplacementDeliveryStatus.choices,
+        default=ReplacementDeliveryStatus.MANUAL,
+    )
+    delivery_channel = models.CharField(max_length=30, default='manual_handoff')
+    delivery_message_id = models.CharField(max_length=255, blank=True)
+    delivery_error = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -220,3 +237,32 @@ class OrderReplacement(models.Model):
 
     def __str__(self):
         return f"Replacement for order {self.order_id} by {self.employee_name}"
+
+
+class FaultyAccountReturn(models.Model):
+    """Immutable audit row for an explicit faulty-account stock return."""
+
+    replacement = models.ForeignKey(
+        OrderReplacement, on_delete=models.PROTECT, related_name='faulty_returns',
+    )
+    pool_item = models.ForeignKey(
+        'posting.OfferPoolItem', on_delete=models.PROTECT, related_name='faulty_returns',
+    )
+    reason = models.TextField()
+    employee_name = models.CharField(max_length=120)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'faulty_account_returns'
+        ordering = ['-created_at']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['replacement'], name='unique_faulty_return_per_replacement',
+            ),
+        ]
+
+    def __str__(self):
+        return f"Faulty return for replacement {self.replacement_id}"
