@@ -79,7 +79,9 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
             pk=item_id,
             status=status,
             pool_offer_id=pool_offer_id,
+            owned_product_id=item_id + 1000,
             owned_product=SimpleNamespace(
+                pk=item_id + 1000,
                 login=login or f'login-{item_id}',
                 ref_key=f'#REF{item_id}',
             ),
@@ -266,6 +268,39 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         )
         self.assertEqual(sold_history[0]['order_id'], 'PA-ORDER-9017')
         self.assertTrue(sold_history[0]['is_exact_order_match'])
+
+    def test_exact_manual_sale_exposes_its_guarded_replacement_order_id(self):
+        sold_item = self.make_item(
+            item_id=208,
+            status=OfferPoolItemStatus.REMOVED,
+            login='replace-from-pool',
+        )
+        sale_event = SimpleNamespace(
+            pool_offer_id=None,
+            pool_item_id=sold_item.pk,
+            listing_id=908,
+            listing=SimpleNamespace(
+                integration_account=SimpleNamespace(
+                    name='CsgoSmurfkings', provider='playerauctions',
+                ),
+            ),
+            order_id=9018,
+            created_at=timezone.now(),
+        )
+        order = SimpleNamespace(
+            pk=9018,
+            store_order_id='PA-ORDER-9018',
+            is_instant=False,
+            dropship_product_id=None,
+            owned_product_id=sold_item.owned_product_id,
+            status='delivered',
+        )
+
+        _, _, _, sold_history, _ = _build_pool_item_views(
+            [], [sold_item], [], [sale_event], {9018: order},
+        )
+
+        self.assertEqual(sold_history[0]['replacement_order_id'], 9018)
 
     def test_groups_each_item_into_one_store_lane_and_one_unified_sale_ledger(self):
         eldorado = self.make_offer(

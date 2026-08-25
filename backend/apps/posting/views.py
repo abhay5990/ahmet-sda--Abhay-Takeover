@@ -19,6 +19,7 @@ from apps.posting.models import (
 )
 from apps.posting.models import GameVariant
 from apps.posting.services.stock.pa_tracking import extract_tracking_code
+from apps.orders.services.replacement_eligibility import is_replaceable_manual_order
 from payload_pipeline.core.enums import GameSlug
 
 SUPPORTED_GAME_SLUGS = {gs.value for gs in GameSlug}
@@ -415,6 +416,22 @@ def _build_pool_item_views(
         listing = clone_listing or (pool_offer.listing if pool_offer else None)
         listing_code = extract_tracking_code(getattr(listing, 'title', ''))
         unique_code = listing_code or getattr(item.owned_product, 'ref_key', '')
+        order = orders_by_id.get(getattr(sale_event, 'order_id', None)) if sale_event else None
+        item_owned_product_id = getattr(
+            item, 'owned_product_id', getattr(item.owned_product, 'pk', None),
+        )
+        order_owned_product_id = getattr(
+            order, 'owned_product_id', getattr(getattr(order, 'owned_product', None), 'pk', None),
+        ) if order else None
+        replacement_order_id = (
+            order.pk
+            if (
+                order
+                and order_owned_product_id == item_owned_product_id
+                and is_replaceable_manual_order(order, has_pool_item=True)
+            )
+            else None
+        )
         row = {
             'item': item,
             'pool_offer': pool_offer,
@@ -460,6 +477,7 @@ def _build_pool_item_views(
                 )
             ),
             'order_id': _sale_order_reference(sale_event, orders_by_id),
+            'replacement_order_id': replacement_order_id,
             'sold_at': (
                 active_offer.updated_at if active_offer else (
                     item.consumed_at or getattr(sale_event, 'created_at', None)
@@ -1035,7 +1053,8 @@ def restock_pool_detail_page(request, pool_id):
         orders_by_id = {
             order.pk: order
             for order in Order.objects.filter(pk__in=order_ids).only(
-                'pk', 'store_order_id', 'status', 'sold_at',
+                'pk', 'store_order_id', 'status', 'sold_at', 'is_instant',
+                'dropship_product_id', 'owned_product_id',
             )
         }
     else:
