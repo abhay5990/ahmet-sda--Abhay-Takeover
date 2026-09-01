@@ -59,7 +59,7 @@ class KeySearchPageTests(TestCase):
     def test_empty_query_does_not_claim_a_match(self):
         response = self.client.get(reverse('posting:key_search'))
         self.assertNotContains(response, 'No exact SDA record found')
-        self.assertContains(response, 'Enter an exact reference key')
+        self.assertContains(response, 'Enter an exact login ID')
 
     def test_exact_source_id_returns_dropship_location_without_credentials(self):
         DropshipProduct.objects.create(
@@ -77,3 +77,18 @@ class KeySearchPageTests(TestCase):
         self.assertContains(response, 'Dropship product #')
         self.assertContains(response, 'Safe visible product title')
         self.assertNotContains(response, 'must-not-appear')
+
+    def test_exact_login_id_returns_safe_owned_stock_location(self):
+        OwnedProduct.objects.create(
+            category=self.category,
+            game=self.game,
+            login='game-login-987',
+            password='private-password-must-not-appear',
+            ref_key='#L987',
+        )
+
+        response = self.client.get(reverse('posting:key_search'), {'q': 'GAME-LOGIN-987'})
+
+        self.assertContains(response, 'Owned stock')
+        self.assertContains(response, 'Inventory product #')
+        self.assertNotContains(response, 'private-password-must-not-appear')

@@ -49,7 +49,7 @@ def key_search_page(request):
     results = []
 
     if candidates:
-        owned_filter = _exact_filter(('ref_key', 'source_product_id'), candidates)
+        owned_filter = _exact_filter(('ref_key', 'source_product_id', 'login'), candidates)
         for product in (
             OwnedProduct.objects.filter(owned_filter)
             .select_related('game', 'category')
@@ -69,6 +69,7 @@ def key_search_page(request):
             'store_listing_id',
             'listing_owned_products__owned_product__ref_key',
             'listing_owned_products__owned_product__source_product_id',
+            'listing_owned_products__owned_product__login',
         ), candidates)
         for listing in (
             Listing.objects.filter(listing_filter)
@@ -102,7 +103,7 @@ def key_search_page(request):
             ))
 
         pool_filter = _exact_filter((
-            'owned_product__ref_key', 'owned_product__source_product_id',
+            'owned_product__ref_key', 'owned_product__source_product_id', 'owned_product__login',
         ), candidates)
         for item in (
             OfferPoolItem.objects.filter(pool_filter)
@@ -124,7 +125,7 @@ def key_search_page(request):
             ))
 
         posting_filter = _exact_filter((
-            'owned_product__ref_key', 'owned_product__source_product_id',
+            'owned_product__ref_key', 'owned_product__source_product_id', 'owned_product__login',
         ), candidates)
         for item in (
             PostingJobItem.objects.filter(posting_filter)

@@ -7,18 +7,18 @@
     <div class="mb-6">
         <p class="text-sm font-semibold uppercase tracking-wider text-emerald-600">SDA record finder</p>
         <h1 class="mt-1 text-2xl font-bold text-gray-900">Key Search</h1>
-        <p class="mt-2 text-sm text-gray-600">Enter an exact reference key, source ID, or marketplace offer ID to check whether it is in SDA and where it was added.</p>
+        <p class="mt-2 text-sm text-gray-600">Enter an exact login ID, reference key, source ID, or marketplace offer ID to check whether it is in SDA and where it was added.</p>
     </div>
 
     <form method="get" class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
         <label for="key-search" class="block text-sm font-medium text-gray-700">Key or code</label>
         <div class="mt-2 flex flex-col gap-2 sm:flex-row">
             <input id="key-search" name="q" value="{{ q }}" maxlength="128" autofocus
-                   placeholder="Example: #EMWE37 or an offer ID"
+                   placeholder="Example: a login ID, #EMWE37, or an offer ID"
                    class="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
             <button type="submit" class="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">Search SDA</button>
         </div>
-        <p class="mt-2 text-xs text-gray-500">The search uses exact matches only and does not display account passwords or other credentials.</p>
+        <p class="mt-2 text-xs text-gray-500">The search uses exact login or key matches only and does not display account passwords or other credentials.</p>
     </form>
 
     {% if searched %}
