@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from apps.integrations.models import IntegrationAccount
-from apps.inventory.models import Category, Game, OwnedProduct
+from apps.inventory.models import Category, DropshipProduct, Game, OwnedProduct
 from apps.listings.models import Listing, ListingOwnedProduct
 
 
@@ -60,3 +60,20 @@ class KeySearchPageTests(TestCase):
         response = self.client.get(reverse('posting:key_search'))
         self.assertNotContains(response, 'No exact SDA record found')
         self.assertContains(response, 'Enter an exact reference key')
+
+    def test_exact_source_id_returns_dropship_location_without_credentials(self):
+        DropshipProduct.objects.create(
+            source_product_id='7654321',
+            category=self.category,
+            game=self.game,
+            status='listed',
+            price=Decimal('8.00'),
+            product_title='Safe visible product title',
+        )
+
+        response = self.client.get(reverse('posting:key_search'), {'q': '7654321'})
+
+        self.assertContains(response, 'Dropship product')
+        self.assertContains(response, 'Dropship product #')
+        self.assertContains(response, 'Safe visible product title')
+        self.assertNotContains(response, 'must-not-appear')
