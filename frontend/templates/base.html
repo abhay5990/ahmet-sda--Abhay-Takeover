@@ -172,6 +172,11 @@
                               {% if request.resolver_match.url_name == 'stock_history' %}text-emerald-400{% endif %}">
                         History
                     </a>
+                    <a href="{% url 'posting:key_search' %}"
+                       class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
+                              {% if request.resolver_match.url_name == 'key_search' %}text-emerald-400{% endif %}">
+                        Key Search
+                    </a>
                     <a href="{% url 'posting:content_templates' %}"
                        class="flex items-center pl-14 pr-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors
                               {% if request.resolver_match.url_name == 'content_templates' %}text-emerald-400{% endif %}">

@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+from . import key_search
 from .api import stock as stock_api
 from .api import dropship as dropship_api
 from .api import image_presets as image_presets_api
@@ -19,6 +20,7 @@ urlpatterns = [
     path('stock/active/', views.stock_active_page, name='stock_active'),
     path('stock/history/', views.stock_history_page, name='stock_history'),
     path('stock/jobs/<int:job_id>/', views.stock_job_detail, name='stock_job_detail'),
+    path('key-search/', key_search.key_search_page, name='key_search'),
     path('templates/', views.content_templates_page, name='content_templates'),
     path('templates/editor/', views.content_template_editor_page, name='content_template_editor'),
     path('templates/editor/<int:template_id>/', views.content_template_editor_page, name='content_template_editor_edit'),
