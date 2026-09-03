@@ -227,3 +227,46 @@ class EldoradoEditPayloadTests(TestCase):
         replacement = Listing.objects.get(store_listing_id="eldorado-offer-2")
         self.assertEqual(replacement.title, "Recreated title")
         self.assertEqual(replacement.price, Decimal("22.25"))
+
+    def test_verified_account_entries_recreate_on_legacy_instant_delivery_error(self):
+        listing = self._listing()
+        product = OwnedProduct.objects.create(
+            login="legacy-login",
+            password="legacy-pass",
+            password_hash="legacy-hash",
+            email="legacy@example.com",
+            email_password="legacy-email-pass",
+            category=self.category,
+            game=self.game,
+        )
+        ListingOwnedProduct.objects.create(listing=listing, owned_product=product)
+        calls = []
+
+        class Provider:
+            def update_listing(self, client, external_id, payload):
+                calls.append(("update", len(payload["accountSecretDetails"])))
+                return SimpleNamespace(
+                    ok=False,
+                    error="HTTP 400: Instant delivery must contain account details.",
+                )
+
+            def create_listing(self, client, product_data):
+                calls.append(("create", len(product_data["payload"]["accountSecretDetails"])))
+                return SimpleNamespace(ok=True, data={"id": "eldorado-offer-legacy-recreated"})
+
+            def delete_listing(self, client, external_id):
+                calls.append(("delete", external_id))
+                return SimpleNamespace(ok=True, error=None)
+
+        client = SimpleNamespace(
+            get_offer_account_details=lambda offer_id, proxy_group=None: SimpleNamespace(ok=False, data=None),
+        )
+        with patch("apps.posting.services.offer_editor.build_proxy_pool", return_value=None), \
+                patch("apps.posting.services.offer_editor.get_group_name", return_value=""), \
+                patch("apps.posting.services.offer_editor.get_or_build_client", return_value=client), \
+                patch("apps.posting.services.offer_editor.get_provider", return_value=Provider()):
+            result = offer_editor.edit_offer(listing, {"price": Decimal("24.00")})
+
+        self.assertTrue(result.ok, result.error)
+        self.assertEqual(result.new_offer_id, "eldorado-offer-legacy-recreated")
+        self.assertEqual(calls, [("update", 1), ("create", 1), ("delete", "eldorado-offer-1")])

@@ -369,7 +369,10 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
 
     if not (result and getattr(result, 'ok', True)):
         error_msg = str(getattr(result, 'error', 'Unknown error'))
-        if _is_eldorado_legacy_edit_error(error_msg):
+        if _is_eldorado_legacy_edit_error(
+            error_msg,
+            has_account_details=bool(account_secret_details),
+        ):
             recreated = _recreate_eldorado_offer(
                 listing,
                 changes,
@@ -435,12 +438,27 @@ def _managed_eldorado_secret_entries(listing: Listing) -> list[str]:
     return entries
 
 
-def _is_eldorado_legacy_edit_error(error: str) -> bool:
-    """Recognize Eldorado's explicit legacy-entry edit rejection only."""
+def _is_eldorado_legacy_edit_error(
+    error: str,
+    *,
+    has_account_details: bool = False,
+) -> bool:
+    """Recognize legacy-offer update rejections eligible for safe recreation.
+
+    Some legacy offers report the generic Instant-delivery validation even when
+    the request carries non-empty accountSecretDetails.  Only treat that exact
+    response as a legacy rejection after the editor has independently verified
+    that it assembled credential entries; a genuinely empty payload must still
+    fail closed without creating or deleting an offer.
+    """
     text = str(error or '').lower()
     return (
         'legacy account entry' in text
         or ('structured details' in text and 'creation flow' in text)
+        or (
+            has_account_details
+            and 'instant delivery must contain account details' in text
+        )
     )
 
 
