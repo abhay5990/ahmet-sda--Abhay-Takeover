@@ -11,6 +11,7 @@ import copy
 import logging
 import uuid
 from dataclasses import dataclass, field
+from types import SimpleNamespace
 from decimal import Decimal
 from typing import Any
 
@@ -310,13 +311,13 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
         resp = creds_result.data
         src = resp.accountsDetails or resp.secretDetails or []
         account_secret_details = [
-            {'id': e.id, 'secretDetails': e.secretDetails}
+            e.secretDetails
             for e in src if e.secretDetails
         ]
     if not account_secret_details:
         # Fallback: use stored canonical credential entries.
         account_secret_details = [
-            {'id': e.get('id', ''), 'secretDetails': e['secretDetails']}
+            e['secretDetails']
             for e in (raw.get('_credential_entries') or [])
             if e.get('secretDetails')
         ]
@@ -368,6 +369,29 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
 
     if not (result and getattr(result, 'ok', True)):
         error_msg = str(getattr(result, 'error', 'Unknown error'))
+        if _is_eldorado_legacy_edit_error(error_msg):
+            recreated = _recreate_eldorado_offer(
+                listing,
+                changes,
+                payload,
+                client=client,
+                provider=provider,
+                proxy_group=proxy_group,
+            )
+            if recreated.ok:
+                _log(
+                    PostingLogLevel.SUCCESS,
+                    f'Eldorado legacy listing #{listing.pk} recreated for edit',
+                    account=store,
+                    detail={
+                        'listing_id': listing.pk,
+                        'old_offer_id': offer_id,
+                        'new_offer_id': recreated.new_offer_id,
+                        'changes': list(changes.keys()),
+                    },
+                )
+                return recreated
+            error_msg = recreated.error or error_msg
         _log(PostingLogLevel.ERROR,
              f'Eldorado edit failed for #{listing.pk}: {error_msg}',
              account=store,
@@ -380,6 +404,81 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
          account=store,
          detail={'listing_id': listing.pk, 'offer_id': offer_id, 'changes': list(changes.keys())})
     return EditResult(ok=True)
+
+
+def _is_eldorado_legacy_edit_error(error: str) -> bool:
+    """Recognize Eldorado's explicit legacy-entry edit rejection only."""
+    text = str(error or '').lower()
+    return (
+        'legacy account entry' in text
+        or ('structured details' in text and 'creation flow' in text)
+    )
+
+
+def _recreate_eldorado_offer(
+    listing: Listing,
+    changes: dict[str, Any],
+    payload: dict[str, Any],
+    *,
+    client: Any,
+    provider: Any,
+    proxy_group: str | None,
+) -> EditResult:
+    """Create a replacement offer first, delete the old offer, then hand off local links.
+
+    Eldorado legacy offers reject structured edits.  Creation is performed before
+    deletion so a failed create never destroys the current listing.  The local
+    Listing/PoolOffer handoff happens only after the new offer exists and the old
+    offer has been deleted successfully.
+    """
+    from apps.posting.services.relist import _extract_offer_id, _replace_in_db
+
+    product_data: dict[str, Any] = {'payload': payload}
+    if proxy_group:
+        product_data['proxy_group'] = proxy_group
+    try:
+        created = provider.create_listing(client, product_data)
+    except Exception as exc:
+        return EditResult(ok=False, error=f'Legacy offer recreation create failed: {exc}')
+
+    if not created or not getattr(created, 'ok', True):
+        return EditResult(
+            ok=False,
+            error=f'Legacy offer recreation create failed: {getattr(created, "error", created)}',
+        )
+
+    new_offer_id = _extract_offer_id(created, 'eldorado')
+    if not new_offer_id:
+        return EditResult(ok=False, error='Legacy offer recreation created no new offer ID.')
+
+    try:
+        deleted = provider.delete_listing(client, listing.store_listing_id)
+    except Exception as exc:
+        deleted = SimpleNamespace(ok=False, error=str(exc))
+    if not deleted or not getattr(deleted, 'ok', True):
+        try:
+            provider.delete_listing(client, new_offer_id)
+        except Exception:
+            logger.exception('Failed to clean up replacement Eldorado offer %s', new_offer_id)
+        return EditResult(
+            ok=False,
+            error=(
+                'Legacy offer recreation created the replacement but could not delete the old offer: '
+                f'{getattr(deleted, "error", deleted)}'
+            ),
+        )
+
+    response_data = created.data if hasattr(created, 'data') else created
+    new_listing = _replace_in_db(
+        listing,
+        new_offer_id,
+        response_data,
+        payload,
+        client=client,
+        proxy_group=proxy_group,
+    )
+    _update_listing_db(new_listing, changes)
+    return EditResult(ok=True, new_offer_id=new_offer_id)
 
 
 # ── GameBoost ─────────────────────────────────────────────────────

@@ -80,7 +80,7 @@ class EldoradoEditPayloadTests(TestCase):
         payload = captured["payload"]
         self.assertIn("accountSecretDetails", payload)
         self.assertNotIn("accountDetails", payload)
-        self.assertEqual(payload["accountSecretDetails"][0]["id"], "credential-1")
+        self.assertEqual(payload["accountSecretDetails"][0], "login\npassword")
         self.assertEqual(payload["details"]["offerTitle"], "New title")
         self.assertEqual(payload["details"]["description"], "New description")
         self.assertEqual(payload["details"]["pricing"]["pricePerUnit"]["amount"], 31.5)
@@ -88,3 +88,53 @@ class EldoradoEditPayloadTests(TestCase):
         self.assertEqual(payload["details"]["pricing"]["volumeDiscounts"], [])
         self.assertEqual(payload["augmentedGame"]["gameId"], "70")
         self.assertIsNone(payload["augmentedGame"]["tradeEnvironmentId"])
+
+    def test_legacy_edit_recreates_offer_and_hands_off_listing(self):
+        listing = self._listing()
+        calls = []
+
+        class Provider:
+            def update_listing(self, client, external_id, payload):
+                calls.append(("update", external_id))
+                return SimpleNamespace(
+                    ok=False,
+                    error=(
+                        "ErrorDetail(message='Cannot update structured details on "
+                        "a legacy account entry. Use the structured creation flow instead.')"
+                    ),
+                )
+
+            def create_listing(self, client, product_data):
+                calls.append(("create", product_data["payload"]))
+                return SimpleNamespace(ok=True, data={"id": "eldorado-offer-2"})
+
+            def delete_listing(self, client, external_id):
+                calls.append(("delete", external_id))
+                return SimpleNamespace(ok=True, error=None)
+
+        client = SimpleNamespace(
+            get_offer_account_details=lambda offer_id, proxy_group=None: SimpleNamespace(
+                ok=False, data=None,
+            ),
+        )
+        with patch("apps.posting.services.offer_editor.build_proxy_pool", return_value=None), \
+                patch("apps.posting.services.offer_editor.get_group_name", return_value=""), \
+                patch("apps.posting.services.offer_editor.get_or_build_client", return_value=client), \
+                patch("apps.posting.services.offer_editor.get_provider", return_value=Provider()):
+            result = offer_editor.edit_offer(
+                listing,
+                {"title": "Recreated title", "price": Decimal("22.25")},
+            )
+
+        self.assertTrue(result.ok, result.error)
+        self.assertEqual(result.new_offer_id, "eldorado-offer-2")
+        self.assertEqual([item[0] for item in calls], ["update", "create", "delete"])
+        self.assertEqual(calls[1][1]["details"]["offerTitle"], "Recreated title")
+        self.assertEqual(
+            calls[1][1]["details"]["pricing"]["pricePerUnit"]["amount"],
+            22.25,
+        )
+        self.assertFalse(Listing.objects.filter(pk=listing.pk, status="listed").exists())
+        replacement = Listing.objects.get(store_listing_id="eldorado-offer-2")
+        self.assertEqual(replacement.title, "Recreated title")
+        self.assertEqual(replacement.price, Decimal("22.25"))
