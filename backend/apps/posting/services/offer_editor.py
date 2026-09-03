@@ -304,18 +304,18 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
     raw = listing.raw_data or {}
 
     # Fetch live account details to include them in the update payload
-    account_details: list[dict] = []
+    account_secret_details: list[dict] = []
     creds_result = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
     if creds_result.ok and creds_result.data:
         resp = creds_result.data
         src = resp.accountsDetails or resp.secretDetails or []
-        account_details = [
+        account_secret_details = [
             {'id': e.id, 'secretDetails': e.secretDetails}
             for e in src if e.secretDetails
         ]
-    if not account_details:
-        # Fallback: use stored credential entries
-        account_details = [
+    if not account_secret_details:
+        # Fallback: use stored canonical credential entries.
+        account_secret_details = [
             {'id': e.get('id', ''), 'secretDetails': e['secretDetails']}
             for e in (raw.get('_credential_entries') or [])
             if e.get('secretDetails')
@@ -325,12 +325,13 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
     raw_price = raw.get('pricePerUnit') or {}
     details: dict[str, Any] = {
         'pricing': {
-            'quantity': len(account_details) or raw.get('quantity', 1),
+            'quantity': len(account_secret_details) or raw.get('quantity', 1),
+            'minQuantity': raw.get('minQuantity', 1),
             'pricePerUnit': {
                 'amount': float(changes['price']) if 'price' in changes else float(raw_price.get('amount', 0)),
                 'currency': raw_price.get('currency', 'USD'),
             },
-            'volumeDiscounts': raw.get('volumeDiscounts') or None,
+            'volumeDiscounts': raw.get('volumeDiscounts') or [],
         },
         'offerTitle': changes.get('title', raw.get('offerTitle', '')),
         'description': changes.get('description', raw.get('description', '')),
@@ -342,7 +343,7 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
 
     # Build augmentedGame block from flat raw_data
     trade_envs = raw.get('tradeEnvironmentValues') or []
-    trade_env_id = str(trade_envs[0]['id']) if trade_envs else '0'
+    trade_env_id = str(trade_envs[0]['id']) if trade_envs and trade_envs[0].get('id') is not None else None
     raw_attrs = raw.get('attributes') or []
     offer_attributes = [
         {'id': a.get('id', ''), 'type': 'Select', 'value': (a.get('value') or {}).get('id', '')}
@@ -359,7 +360,7 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
     payload: dict[str, Any] = {
         'details': details,
         'augmentedGame': augmented_game,
-        'accountDetails': account_details,
+        'accountSecretDetails': account_secret_details,
     }
 
     provider = get_provider('eldorado')
