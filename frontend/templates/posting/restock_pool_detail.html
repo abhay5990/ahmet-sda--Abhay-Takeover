@@ -1747,7 +1747,7 @@ function poolDetail() {
 
         async unlinkOffer(offerId, mode) {
             const message = mode === 'remove_remote'
-                ? 'Remove managed credentials from the remote offer and return them to pending stock?'
+                ? 'Delete this remote marketplace listing and return its unsold pool stock to pending? Confirmed sold items remain protected.'
                 : 'Detach monitoring while leaving remote credentials untouched?';
             if (!confirm(message)) return;
             const response = await fetch(`/posting/api/pools/${poolId}/offers/${offerId}/unlink/`, {
@@ -1763,7 +1763,10 @@ function poolDetail() {
                 this.showToast(false, (data.errors || [data.error || 'Detach failed']).join('; '), 8000);
                 return;
             }
-            this.showToast(true, `Offer detached; ${data.released || 0} item(s) returned to pool`);
+            const successMessage = mode === 'remove_remote'
+                ? `Remote offer removed; ${data.released || 0} unsold item(s) returned to pending stock`
+                : 'Offer detached; the remote listing was left untouched';
+            this.showToast(true, successMessage);
             setTimeout(() => location.reload(), 900);
         },
 

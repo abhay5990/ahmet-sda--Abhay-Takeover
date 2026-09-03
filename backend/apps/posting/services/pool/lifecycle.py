@@ -563,87 +563,31 @@ def _is_playerauctions_auth_failure(result_or_error) -> bool:
 
 
 def _remove_eldorado(pool_offer, items):
+    """Delete the whole Eldorado append offer so every remote entry is removed.
+
+    Append offers are shared-stock listings.  Trying to remove individual entries
+    by exact credential text is unsafe for legacy/structured offers because the
+    provider may return a different representation.  The pool-card Remove action
+    means remove the listing itself, so delete the offer atomically from the
+    provider first, then release every locally attached unsold item.
+    """
     client, proxy_group = _client(pool_offer)
     offer_id = pool_offer.listing.store_listing_id
-    details = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
-    if not details.ok:
-        return set(), [str(details.error)]
-
-    response = details.data
-    entries = getattr(response, 'secretDetails', None) or getattr(
-        response, 'accountsDetails', None,
-    ) or []
-    existing = [entry.secretDetails for entry in entries if entry.secretDetails]
-    remove_values = [
-        format_credential_for_marketplace(
-            item.owned_product, 'eldorado', pool=pool_offer.pool,
-        ).strip()
-        for item in items
-    ]
-    remaining = list(existing)
-    removed = set()
-    for item, value in zip(items, remove_values):
-        match = next((entry for entry in remaining if entry.strip() == value), None)
-        if match is not None:
-            remaining.remove(match)
-            removed.add(item.pk)
-
-    if not removed:
-        return set(), ['No managed Eldorado credentials matched remote state']
-    if remaining:
-        result = client.update_offer(
-            offer_id,
-            {'accountSecretDetails': remaining},
-            proxy_group=proxy_group,
-        )
-    else:
-        result = client.delete_offer(offer_id, proxy_group=proxy_group)
+    result = client.delete_offer(offer_id, proxy_group=proxy_group)
     if not result.ok:
         return set(), [str(result.error)]
-    return removed, []
+    return {item.pk for item in items}, []
 
 
 def _remove_gameboost(pool_offer, items):
+    """Delete the whole GameBoost append offer before releasing its stock."""
     client, proxy_group = _client(pool_offer)
     offer_id = pool_offer.listing.store_listing_id
-    if _is_gameboost_legacy_payload(pool_offer.listing):
-        result = client.delete_offer(offer_id, proxy_group=proxy_group)
-        return (
-            ({item.pk for item in items}, [])
-            if result.ok else (set(), [str(result.error)])
-        )
-
-    result = client.list_offer_credentials(offer_id, proxy_group=proxy_group)
+    result = client.delete_offer(offer_id, proxy_group=proxy_group)
     if not result.ok:
         return set(), [str(result.error)]
-    entries = list(result.data or [])
-    by_text = {
-        str(getattr(entry, 'credentials', '')).strip(): str(getattr(entry, 'id', ''))
-        for entry in entries
-    }
-    remote_ids: list[int] = []
-    item_by_remote = {}
-    for item in items:
-        remote_id = item.remote_credential_id
-        if not remote_id:
-            rendered = format_credential_for_marketplace(
-                item.owned_product, 'gameboost', pool=pool_offer.pool,
-            )
-            remote_id = by_text.get(str(rendered).strip(), '')
-        if remote_id:
-            numeric_id = int(remote_id)
-            remote_ids.append(numeric_id)
-            item_by_remote[numeric_id] = item.pk
-    if not remote_ids:
-        return set(), ['No managed GameBoost credential IDs matched remote state']
-    deleted = client.bulk_delete_offer_credentials(
-        offer_id,
-        remote_ids,
-        proxy_group=proxy_group,
-    )
-    if not deleted.ok:
-        return set(), [str(deleted.error)]
-    return {item_by_remote[remote_id] for remote_id in remote_ids}, []
+    return {item.pk for item in items}, []
+
 
 
 def _release_removed_items(pool_offer, items, attempts):

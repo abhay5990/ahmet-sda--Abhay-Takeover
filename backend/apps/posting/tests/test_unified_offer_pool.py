@@ -1,6 +1,7 @@
 from decimal import Decimal
 from datetime import timedelta
-from unittest.mock import patch
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
 from django.db import IntegrityError, transaction
 from django.contrib.auth import get_user_model
@@ -29,7 +30,11 @@ from apps.posting.services.pool.allocation import (
     quarantine_stale_claims,
 )
 from apps.posting.services.pool.checker import _check_and_replenish, notify_sale
-from apps.posting.services.pool.lifecycle import detach_pool_offer
+from apps.posting.services.pool.lifecycle import (
+    _remove_gameboost,
+    _remove_eldorado,
+    detach_pool_offer,
+)
 from apps.posting.services.pool.replenisher import (
     _ensure_pa_offer_description,
     _PoolOfferContext,
@@ -694,6 +699,102 @@ class UnifiedPoolTestCase(TestCase):
         self.assertIsNone(item.pool_offer_id)
         self.assertEqual(item.remote_state, 'absent')
         self.assertEqual(item.dispatch_attempts.get().status, 'succeeded')
+
+    def test_remove_remote_eldorado_deletes_whole_offer_and_releases_all_items(self):
+        pool = self.make_pool('Eldorado Whole Offer Remove Pool')
+        pool_offer = self.make_pool_offer(pool, target_count=2, threshold=1)
+        items = []
+        for suffix in ('one', 'two'):
+            product = self.make_owned(f'eldorado-remove-{suffix}')
+            item = OfferPoolItem.objects.create(
+                pool=pool,
+                pool_offer=pool_offer,
+                owned_product=product,
+                status=OfferPoolItemStatus.PUSHED,
+                remote_state='present',
+                target_offer_id=pool_offer.listing.store_listing_id,
+            )
+            ListingOwnedProduct.objects.create(
+                listing=pool_offer.listing,
+                owned_product=product,
+            )
+            items.append(item)
+
+        client = Mock()
+        client.delete_offer.return_value = SimpleNamespace(ok=True)
+        with patch(
+            'apps.posting.services.pool.lifecycle._client',
+            return_value=(client, 'proxy-group'),
+        ):
+            result = detach_pool_offer(pool_offer, 'remove_remote')
+
+        self.assertTrue(result.ok)
+        self.assertEqual(result.released, 2)
+        client.delete_offer.assert_called_once_with(
+            pool_offer.listing.store_listing_id,
+            proxy_group='proxy-group',
+        )
+        pool_offer.refresh_from_db()
+        self.assertEqual(pool_offer.status, PoolOfferStatus.DETACHED)
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, OfferPoolItemStatus.PENDING)
+            self.assertIsNone(item.pool_offer_id)
+            self.assertEqual(item.remote_state, 'absent')
+
+    def test_remove_gameboost_deletes_whole_offer_instead_of_matching_credentials(self):
+        pool = self.make_pool('GameBoost Whole Offer Remove Pool')
+        pool_offer = self.make_pool_offer(pool)
+        items = [
+            OfferPoolItem(
+                pk=index,
+                pool=pool,
+                pool_offer=pool_offer,
+                status=OfferPoolItemStatus.PUSHED,
+            )
+            for index in (901, 902)
+        ]
+        client = Mock()
+        client.delete_offer.return_value = SimpleNamespace(ok=True)
+        with patch(
+            'apps.posting.services.pool.lifecycle._client',
+            return_value=(client, 'proxy-group'),
+        ):
+            removed, errors = _remove_gameboost(pool_offer, items)
+
+        self.assertEqual(removed, {901, 902})
+        self.assertEqual(errors, [])
+        client.delete_offer.assert_called_once_with(
+            pool_offer.listing.store_listing_id,
+            proxy_group='proxy-group',
+        )
+
+    def test_remove_eldorado_deletes_whole_offer_instead_of_matching_credentials(self):
+        pool = self.make_pool('Eldorado Helper Remove Pool')
+        pool_offer = self.make_pool_offer(pool)
+        items = [
+            OfferPoolItem(
+                pk=index,
+                pool=pool,
+                pool_offer=pool_offer,
+                status=OfferPoolItemStatus.PUSHED,
+            )
+            for index in (903, 904)
+        ]
+        client = Mock()
+        client.delete_offer.return_value = SimpleNamespace(ok=True)
+        with patch(
+            'apps.posting.services.pool.lifecycle._client',
+            return_value=(client, 'proxy-group'),
+        ):
+            removed, errors = _remove_eldorado(pool_offer, items)
+
+        self.assertEqual(removed, {903, 904})
+        self.assertEqual(errors, [])
+        client.delete_offer.assert_called_once_with(
+            pool_offer.listing.store_listing_id,
+            proxy_group='proxy-group',
+        )
 
     def test_recover_removed_absent_pa_clone_returns_to_available_without_remote_lookup(self):
         from apps.posting.services.pool.recovery import recover_verified_unsold_item
