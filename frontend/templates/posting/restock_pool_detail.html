@@ -1815,12 +1815,20 @@ function poolDetail() {
                 m.saving = false;
                 if (res.status === 207) {
                     m.open = false;
-                    const msg = `${data.succeeded}/${data.total} updated, ${data.failed} failed`;
+                    const completed = Number(data.succeeded || 0);
+                    const queued = Number(data.queued || 0);
+                    const msg = `${completed} verified update(s), ${queued} PlayerAuctions update(s) queued, ${data.failed} failed. Queued PA edits are not complete until the worker verifies them.`;
                     this.showToast(false, msg, 8000);
                     setTimeout(() => location.reload(), 3000);
                 } else if (res.ok) {
                     m.open = false;
-                    this.showToast(true, `Updated ${data.succeeded}/${data.total} offer(s)`);
+                    const completed = Number(data.succeeded || 0);
+                    const queued = Number(data.queued || 0);
+                    if (queued) {
+                        this.showToast(false, `${queued} PlayerAuctions update(s) queued. They will show complete only after remote verification.`, 8000);
+                    } else {
+                        this.showToast(true, `Verified ${completed}/${data.total} marketplace update(s)`);
+                    }
                     setTimeout(() => location.reload(), 1500);
                 } else {
                     this.showToast(false, 'Edit failed: ' + (data.error || 'Unknown error'), 6000);
@@ -1906,7 +1914,12 @@ function poolDetail() {
                 });
                 const data = await resp.json().catch(() => ({}));
                 if (resp.ok && data.ok) {
-                    d.editResult = { ok: true, msg: 'Marketplace updated' };
+                    if (data.queued) {
+                        const requestIds = (data.queue_request_ids || []).join(', ') || data.queue_request_id || 'pending';
+                        d.editResult = { ok: false, msg: `PlayerAuctions update queued (request ${requestIds}). It is not marked updated until the worker verifies the live offer.` };
+                    } else {
+                        d.editResult = { ok: true, msg: 'Marketplace update verified' };
+                    }
                 } else {
                     const details = data.error || (Array.isArray(data.errors) ? data.errors.filter(Boolean).join('; ') : '');
                     d.editResult = { ok: false, msg: 'Error: ' + (details || 'Remote update failed') };

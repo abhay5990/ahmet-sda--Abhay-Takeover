@@ -65,14 +65,18 @@ class EditResult:
     new_offer_id: str = ''
     new_tracking_code: str = ''
     queue_request_id: int | None = None
+    queue_request_ids: list[int] = field(default_factory=list)
+    queued: int = 0
 
 
 @dataclass
 class BulkEditResult:
     total: int = 0
     succeeded: int = 0
+    queued: int = 0
     failed: int = 0
     errors: list[str] = field(default_factory=list)
+    queue_request_ids: list[int] = field(default_factory=list)
 
 
 # ── Logging helper ────────────────────────────────────────────────
@@ -128,6 +132,9 @@ def edit_pool_offer(pool_offer: PoolOffer, changes: dict[str, Any]) -> EditResul
         return EditResult(
             ok=bulk.failed == 0,
             error='; '.join(error for error in bulk.errors if error)[:500],
+            queue_request_id=(bulk.queue_request_ids[0] if len(bulk.queue_request_ids) == 1 else None),
+            queue_request_ids=bulk.queue_request_ids,
+            queued=bulk.queued,
         )
     return edit_offer(pool_offer.listing, changes)
 
@@ -220,12 +227,13 @@ def _queue_pa_pool_bulk(pool: Any, changes: dict[str, Any]) -> BulkEditResult:
         )
 
     queued = 0
+    queue_request_ids = []
     errors = []
     for clone in active_clones:
         if not clone.listing_id or not clone.pool_item_id:
             errors.append(f'Clone {clone.pk} is missing listing or pool-item linkage.')
             continue
-        enqueue_pa_edit(
+        request = enqueue_pa_edit(
             listing=clone.listing,
             changes=changes,
             pool_offer=pool.pool_offer,
@@ -233,11 +241,13 @@ def _queue_pa_pool_bulk(pool: Any, changes: dict[str, Any]) -> BulkEditResult:
             active_offer=clone,
         )
         queued += 1
+        queue_request_ids.append(request.pk)
     return BulkEditResult(
         total=len(active_clones),
-        succeeded=queued,
+        queued=queued,
         failed=len(errors),
         errors=errors,
+        queue_request_ids=queue_request_ids,
     )
 
 
@@ -289,8 +299,10 @@ def edit_pool_offers(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResult
                 result.errors.append(edited.error)
         aggregate.total += result.total
         aggregate.succeeded += result.succeeded
+        aggregate.queued += result.queued
         aggregate.failed += result.failed
         aggregate.errors.extend(result.errors)
+        aggregate.queue_request_ids.extend(result.queue_request_ids)
     return aggregate
 
 

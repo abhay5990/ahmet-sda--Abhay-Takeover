@@ -1084,6 +1084,8 @@ def edit_pool_offers(request, pool_id):
         'ok': result.failed == 0,
         'total': result.total,
         'succeeded': result.succeeded,
+        'queued': result.queued,
+        'queue_request_ids': result.queue_request_ids,
         'failed': result.failed,
         'errors': result.errors,
     }, status=status_code)
@@ -1135,6 +1137,9 @@ def edit_single_pool_offer(request, pool_id, offer_id):
     return JsonResponse({
         'ok': result.ok,
         'error': result.error,
+        'queue_request_id': result.queue_request_id,
+        'queue_request_ids': result.queue_request_ids,
+        'queued': result.queued,
         'pool_offer': _pool_offer_to_dict(pool_offer),
     }, status=200 if result.ok else 502)
 
