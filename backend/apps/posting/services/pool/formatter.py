@@ -83,14 +83,22 @@ def _legacy_format(product: OwnedProduct, marketplace: str) -> str:
     extras = _get_credential_extras(product)
 
     result = format_platform_credentials(platform, creds, extras)
-
     if marketplace == "eldorado":
         raw = product.raw_data or {}
         backup_codes = raw.get("email_backup_codes", "")
         if backup_codes:
             result += f"\nBackup Codes:\n{backup_codes}"
-
+        canonical = creds.to_eldorado_account_secret()
+        required_markers = (
+            f"Login: {product.login}",
+            f"Password: {product.password}",
+            f"Email: {product.email}",
+            f"Email Password: {product.email_password}",
+        )
+        if canonical and any(marker not in result for marker in required_markers if marker.split(": ", 1)[1]):
+            return f"{result}\n\n{canonical}".strip() if result else canonical
     return result
+
 
 
 # ── Spec-driven rendering ────────────────────────────────────────
@@ -229,7 +237,23 @@ def format_credential_for_marketplace(
         # PA returns dict from format_credential_by_spec; for non-PA callers
         # that expect a string (Eldorado/Gameboost), join dict values
         if isinstance(result, dict):
-            return result.get("instruction", "\n".join(str(v) for v in result.values()))
+            result = result.get("instruction", "\n".join(str(v) for v in result.values()))
+        if marketplace == "eldorado":
+            # The provider’s encrypted accountSecretDetails entry must always
+            # carry the managed login/password/email/email-password bundle.
+            # Preserve any game-specific spec fields, adding the canonical
+            # bundle only when the spec omitted one or more core values.
+            rendered = str(result or "")
+            canonical = build_credential_bundle(product).to_eldorado_account_secret()
+            required_markers = (
+                f"Login: {product.login}",
+                f"Password: {product.password}",
+                f"Email: {product.email}",
+                f"Email Password: {product.email_password}",
+            )
+            if canonical and any(marker not in rendered for marker in required_markers if marker.split(": ", 1)[1]):
+                return f"{rendered}\n\n{canonical}".strip() if rendered else canonical
+            return rendered
         return result
 
     return _legacy_format(product, marketplace)

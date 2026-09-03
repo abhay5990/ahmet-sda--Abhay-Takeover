@@ -37,6 +37,7 @@ from apps.posting.models import (
     PostingLog,
     PostingLogLevel,
 )
+from apps.posting.services.pool.formatter import build_credential_bundle
 from apps.posting.services.stock.pa_relay_poster import PARelayPoster, fetch_relay_token
 from apps.posting.services.stock.pa_tracking import (
     append_tracking_code_for_code,
@@ -304,18 +305,17 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
     offer_id = listing.store_listing_id
     raw = listing.raw_data or {}
 
-    # Fetch live account details to include them in the update payload
-    account_secret_details: list[dict] = []
-    creds_result = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
-    if creds_result.ok and creds_result.data:
-        resp = creds_result.data
-        src = resp.accountsDetails or resp.secretDetails or []
-        account_secret_details = [
-            e.secretDetails
-            for e in src if e.secretDetails
-        ]
+    # Prefer authoritative managed pool credentials so every new/recreated
+    # Eldorado entry contains login, password, email, and email password.
+    account_secret_details = _managed_eldorado_secret_entries(listing)
     if not account_secret_details:
-        # Fallback: use stored canonical credential entries.
+        # Legacy fallback: read the provider entry, then persisted canonical text.
+        creds_result = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
+        if creds_result.ok and creds_result.data:
+            resp = creds_result.data
+            src = resp.accountsDetails or resp.secretDetails or []
+            account_secret_details = [e.secretDetails for e in src if e.secretDetails]
+    if not account_secret_details:
         account_secret_details = [
             e['secretDetails']
             for e in (raw.get('_credential_entries') or [])
@@ -404,6 +404,27 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
          account=store,
          detail={'listing_id': listing.pk, 'offer_id': offer_id, 'changes': list(changes.keys())})
     return EditResult(ok=True)
+
+
+def _managed_eldorado_secret_entries(listing: Listing) -> list[str]:
+    """Build canonical structured credential strings from linked managed stock."""
+    products = []
+    for link in ListingOwnedProduct.objects.filter(listing=listing).select_related('owned_product').order_by('pk'):
+        products.append(link.owned_product)
+    if not products:
+        for active in OfferPoolActiveOffer.objects.filter(listing=listing).select_related('pool_item__owned_product').order_by('pk'):
+            if active.pool_item and active.pool_item.owned_product:
+                products.append(active.pool_item.owned_product)
+    entries: list[str] = []
+    seen_ids: set[int] = set()
+    for product in products:
+        if product.pk in seen_ids:
+            continue
+        seen_ids.add(product.pk)
+        entry = build_credential_bundle(product).to_eldorado_account_secret()
+        if entry:
+            entries.append(entry)
+    return entries
 
 
 def _is_eldorado_legacy_edit_error(error: str) -> bool:

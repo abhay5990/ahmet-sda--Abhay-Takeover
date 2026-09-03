@@ -5,8 +5,8 @@ from unittest.mock import patch
 from django.test import TestCase
 
 from apps.integrations.models import IntegrationAccount, IntegrationCredential
-from apps.inventory.models import Category, Game
-from apps.listings.models import Listing
+from apps.inventory.models import Category, Game, OwnedProduct
+from apps.listings.models import Listing, ListingOwnedProduct
 from apps.posting.services import offer_editor
 
 
@@ -88,6 +88,42 @@ class EldoradoEditPayloadTests(TestCase):
         self.assertEqual(payload["details"]["pricing"]["volumeDiscounts"], [])
         self.assertEqual(payload["augmentedGame"]["gameId"], "70")
         self.assertIsNone(payload["augmentedGame"]["tradeEnvironmentId"])
+
+    def test_edit_prefers_managed_stock_and_includes_full_credentials(self):
+        listing = self._listing()
+        product = OwnedProduct.objects.create(
+            login="managed-login",
+            password="managed-pass",
+            password_hash="managed-hash",
+            email="managed@example.com",
+            email_password="managed-email-pass",
+            category=self.category,
+            game=self.game,
+        )
+        ListingOwnedProduct.objects.create(listing=listing, owned_product=product)
+        captured = {}
+
+        class Provider:
+            def update_listing(self, client, external_id, payload):
+                captured["payload"] = payload
+                return SimpleNamespace(ok=True, error=None)
+
+        class Client:
+            def get_offer_account_details(self, *args, **kwargs):
+                raise AssertionError("managed credentials should avoid remote credential lookup")
+
+        with patch("apps.posting.services.offer_editor.build_proxy_pool", return_value=None), \
+                patch("apps.posting.services.offer_editor.get_group_name", return_value=""), \
+                patch("apps.posting.services.offer_editor.get_or_build_client", return_value=Client()), \
+                patch("apps.posting.services.offer_editor.get_provider", return_value=Provider()):
+            result = offer_editor.edit_offer(listing, {"title": "Managed credentials title"})
+
+        self.assertTrue(result.ok, result.error)
+        secret = captured["payload"]["accountSecretDetails"][0]
+        self.assertIn("Login: managed-login", secret)
+        self.assertIn("Password: managed-pass", secret)
+        self.assertIn("Login: managed@example.com", secret)
+        self.assertIn("Password: managed-email-pass", secret)
 
     def test_legacy_edit_recreates_offer_and_hands_off_listing(self):
         listing = self._listing()
