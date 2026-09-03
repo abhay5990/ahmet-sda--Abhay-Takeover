@@ -409,8 +409,16 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
 def _managed_eldorado_secret_entries(listing: Listing) -> list[str]:
     """Build canonical structured credential strings from linked managed stock."""
     products = []
-    for link in ListingOwnedProduct.objects.filter(listing=listing).select_related('owned_product').order_by('pk'):
-        products.append(link.owned_product)
+    # Append-pool listings link stock through PoolOffer -> OfferPoolItem;
+    # these PUSHED items are the authoritative accounts currently on the offer.
+    for item in OfferPoolItem.objects.filter(
+        pool_offer__listing=listing,
+        status=OfferPoolItemStatus.PUSHED,
+    ).select_related('owned_product').order_by('order', 'pk'):
+        products.append(item.owned_product)
+    if not products:
+        for link in ListingOwnedProduct.objects.filter(listing=listing).select_related('owned_product').order_by('pk'):
+            products.append(link.owned_product)
     if not products:
         for active in OfferPoolActiveOffer.objects.filter(listing=listing).select_related('pool_item__owned_product').order_by('pk'):
             if active.pool_item and active.pool_item.owned_product:

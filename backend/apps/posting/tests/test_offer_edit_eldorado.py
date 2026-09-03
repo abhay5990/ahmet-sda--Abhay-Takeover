@@ -7,6 +7,7 @@ from django.test import TestCase
 from apps.integrations.models import IntegrationAccount, IntegrationCredential
 from apps.inventory.models import Category, Game, OwnedProduct
 from apps.listings.models import Listing, ListingOwnedProduct
+from apps.posting.models import OfferPool, OfferPoolItem, OfferPoolItemStatus, PoolOffer
 from apps.posting.services import offer_editor
 
 
@@ -124,6 +125,58 @@ class EldoradoEditPayloadTests(TestCase):
         self.assertIn("Password: managed-pass", secret)
         self.assertIn("Login: managed@example.com", secret)
         self.assertIn("Password: managed-email-pass", secret)
+
+    def test_pool_pushed_item_supplies_credentials_for_instant_delivery_edit(self):
+        listing = self._listing()
+        pool = OfferPool.objects.create(
+            game=self.game,
+            store=listing.integration_account,
+            strategy="append",
+        )
+        pool_offer = PoolOffer.objects.create(
+            pool=pool,
+            listing=listing,
+            strategy="append",
+            target_count=1,
+            threshold=1,
+        )
+        product = OwnedProduct.objects.create(
+            login="pool-login",
+            password="pool-pass",
+            password_hash="pool-hash",
+            email="pool@example.com",
+            email_password="pool-email-pass",
+            category=self.category,
+            game=self.game,
+        )
+        OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=product,
+            status=OfferPoolItemStatus.PUSHED,
+        )
+        captured = {}
+
+        class Provider:
+            def update_listing(self, client, external_id, payload):
+                captured["payload"] = payload
+                return SimpleNamespace(ok=True, error=None)
+
+        client = SimpleNamespace(
+            get_offer_account_details=lambda *args, **kwargs: SimpleNamespace(ok=False, data=None),
+        )
+        with patch("apps.posting.services.offer_editor.build_proxy_pool", return_value=None), \
+                patch("apps.posting.services.offer_editor.get_group_name", return_value=""), \
+                patch("apps.posting.services.offer_editor.get_or_build_client", return_value=client), \
+                patch("apps.posting.services.offer_editor.get_provider", return_value=Provider()):
+            result = offer_editor.edit_offer(listing, {"price": Decimal("22.00")})
+
+        self.assertTrue(result.ok, result.error)
+        secret = captured["payload"]["accountSecretDetails"][0]
+        self.assertIn("Login: pool-login", secret)
+        self.assertIn("Password: pool-pass", secret)
+        self.assertIn("Login: pool@example.com", secret)
+        self.assertIn("Password: pool-email-pass", secret)
 
     def test_legacy_edit_recreates_offer_and_hands_off_listing(self):
         listing = self._listing()
