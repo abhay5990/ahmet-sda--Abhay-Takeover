@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from datetime import timedelta
+from decimal import Decimal
 from typing import Any
 
 from django.db import transaction
@@ -17,6 +18,23 @@ from apps.posting.models import (
 
 logger = logging.getLogger(__name__)
 MINIMUM_GAP = timedelta(seconds=60)
+
+
+def _json_safe_changes(value: Any) -> Any:
+    """Convert queue-change values to JSON-safe primitives without price drift.
+
+    The browser/API layer parses a submitted price as ``Decimal``.  Queue rows
+    persist ``changes`` in a JSONField, which cannot serialize Decimal directly.
+    A decimal string keeps the exact user-entered value and is accepted by the
+    downstream PA payload and Listing DecimalField handlers.
+    """
+    if isinstance(value, Decimal):
+        return format(value, "f")
+    if isinstance(value, dict):
+        return {str(key): _json_safe_changes(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe_changes(item) for item in value]
+    return value
 
 
 def enqueue_pa_edit(
@@ -48,7 +66,7 @@ def enqueue_pa_edit(
             pool_offer=pool_offer,
             pool_item=pool_item,
             active_offer=active_offer,
-            changes=dict(changes),
+            changes=_json_safe_changes(dict(changes)),
         )
 
 

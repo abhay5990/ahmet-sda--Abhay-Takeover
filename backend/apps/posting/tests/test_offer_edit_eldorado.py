@@ -8,6 +8,7 @@ from apps.integrations.models import IntegrationAccount, IntegrationCredential
 from apps.inventory.models import Category, Game, OwnedProduct
 from apps.listings.models import Listing, ListingOwnedProduct
 from apps.posting.models import OfferPool, OfferPoolItem, OfferPoolItemStatus, PoolOffer
+from apps.posting.services.pa_edit_queue import enqueue_pa_edit
 from apps.posting.services import offer_editor
 
 
@@ -177,6 +178,22 @@ class EldoradoEditPayloadTests(TestCase):
         self.assertIn("Password: pool-pass", secret)
         self.assertIn("Login: pool@example.com", secret)
         self.assertIn("Password: pool-email-pass", secret)
+
+    def test_pa_queue_persists_decimal_price_as_json_safe_value(self):
+        listing = self._listing()
+
+        request = enqueue_pa_edit(
+            listing=listing,
+            changes={
+                "title": "Queued title",
+                "description": "Queued description",
+                "price": Decimal("34.90"),
+            },
+        )
+
+        self.assertEqual(request.changes["price"], "34.90")
+        self.assertEqual(request.changes["title"], "Queued title")
+        self.assertEqual(request.changes["description"], "Queued description")
 
     def test_legacy_edit_recreates_offer_and_hands_off_listing(self):
         listing = self._listing()
