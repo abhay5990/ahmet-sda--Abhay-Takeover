@@ -35,3 +35,34 @@ class PlayerAuctionsRelayOrderSessionTests(TestCase):
         self.assertEqual(auth.access_token, 'relay-jwt')
         self.assertEqual(auth.cookie, 'browser-cookie')
         self.assertEqual(auth.user_agent, 'relay-agent')
+
+    def test_browser_edit_forwards_title_description_and_price_to_relay(self):
+        auth = PlayerAuctionsAuth(
+            transport=Mock(),
+            username='seller@example.test',
+            password='secret',
+            store_slug='ezsmurfmart',
+        )
+        auth._relay_client = Mock()
+        auth._relay_client.edit_offer_in_browser.return_value = ApiResult.success({})
+
+        auth.edit_offer_in_browser(
+            offer_id=295390832,
+            login_name='account-login',
+            account_password='account-password',
+            title='Updated title',
+            description='Updated description',
+            price='248.50',
+        )
+
+        auth._relay_client.edit_offer_in_browser.assert_called_once_with(
+            username='seller@example.test',
+            password='secret',
+            store='ezsmurfmart',
+            offer_id=295390832,
+            login_name='account-login',
+            account_password='account-password',
+            title='Updated title',
+            description='Updated description',
+            price='248.50',
+        )

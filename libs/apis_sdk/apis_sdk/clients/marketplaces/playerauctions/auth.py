@@ -157,6 +157,8 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         login_name: str,
         account_password: str,
         title: str = '',
+        description: str = '',
+        price: str | float | int | None = None,
     ):
         """Submit one existing PA offer's credential-retype edit form once."""
         request = {
@@ -169,6 +171,10 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         }
         if title:
             request['title'] = title
+        if description:
+            request['description'] = description
+        if price is not None and str(price).strip() != '':
+            request['price'] = str(price)
         result = self._relay_client.edit_offer_in_browser(
             **request,
         )
@@ -183,6 +189,14 @@ class PlayerAuctionsAuth(BaseAuthProvider):
             request['title'] = title
         else:
             request.pop('title', None)
+        if description:
+            request['description'] = description
+        else:
+            request.pop('description', None)
+        if price is not None and str(price).strip() != '':
+            request['price'] = str(price)
+        else:
+            request.pop('price', None)
         return self._relay_client.edit_offer_in_browser(
             **request,
         )
