@@ -294,14 +294,17 @@ class PlayerAuctionsProvider(AbstractProvider):
                 'PlayerAuctions edit requires stored login and password confirmation fields',
                 provider='playerauctions',
             )
-        return client.edit_offer_in_browser(
-            offer_id=int(external_id),
-            login_name=login_name,
-            account_password=account_password,
-            title=title,
-            description=description,
-            price=price,
-        )
+        edit_kwargs = {
+            'offer_id': int(external_id),
+            'login_name': login_name,
+            'account_password': account_password,
+            'title': title,
+            'description': description,
+            'price': price,
+        }
+        if payload.get('isAgree') is True:
+            edit_kwargs['confirm_secure_delivery_agreement'] = True
+        return client.edit_offer_in_browser(**edit_kwargs)
 
     def delete_listing(self, client: Any, external_id: str) -> Any:
         return client.cancel_offers(

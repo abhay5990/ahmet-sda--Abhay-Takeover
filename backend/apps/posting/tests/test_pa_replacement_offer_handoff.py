@@ -96,15 +96,19 @@ class PlayerAuctionsReplacementOfferHandoffTests(SimpleTestCase):
                 select_related=lambda *args: SimpleNamespace(first=lambda: SimpleNamespace(owned_product=product)),
             ),
             status=ListingStatus.LISTED,
+            title='Original title',
             removed_at=None,
             listed_at=None,
             marketplace_expires_at=None,
         )
         provider = SimpleNamespace(
-            delete_listing=Mock(return_value=SimpleNamespace(ok=True)),
-            create_listing=Mock(return_value=SimpleNamespace(
+            update_listing=Mock(return_value=SimpleNamespace(
                 ok=True,
-                data={'offer_id': '294100002'},
+                data={
+                    'verifiedOfferId': '294100002',
+                    'replacementOfferId': '294100002',
+                    'verifiedOfferDuration': 30,
+                },
             )),
         )
         payload = {
@@ -139,11 +143,11 @@ class PlayerAuctionsReplacementOfferHandoffTests(SimpleTestCase):
             'objects',
             SimpleNamespace(filter=lambda **kwargs: _EmptyQuery()),
         ):
-            result = offer_editor._edit_pa_single(listing, {'title': 'Updated title'}, listing.integration_account)
+            result = offer_editor._edit_pa_single(listing, {'price': '249.99'}, listing.integration_account)
 
         self.assertTrue(result.ok, result.error)
         self.assertEqual(result.new_offer_id, '294100002')
-        self.assertEqual(provider.delete_listing.call_args.args[1], '294100001')
+        self.assertEqual(provider.update_listing.call_args.args[1], '294100001')
         self.assertEqual(listing.store_listing_id, '294100002')
         self.assertEqual(listing.status, ListingStatus.LISTED)
         self.assertIsNotNone(listing.listed_at)

@@ -246,6 +246,7 @@ class PaRelayClient:
         title: str = '',
         description: str = '',
         price: str | float | int | None = None,
+        confirm_secure_delivery_agreement: bool = False,
     ) -> ApiResult[dict[str, Any]]:
         """Update one existing PA offer through its authenticated browser form.
 
@@ -271,6 +272,8 @@ class PaRelayClient:
             payload['description'] = description
         if price is not None and str(price).strip() != '':
             payload['price'] = str(price)
+        if confirm_secure_delivery_agreement:
+            payload['confirmSecureDeliveryAgreement'] = True
         try:
             response = self._transport.request(
                 HttpMethod.POST,

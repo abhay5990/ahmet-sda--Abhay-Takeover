@@ -670,23 +670,38 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
         return EditResult(ok=False, error=error_message)
 
     response_data = getattr(result, 'data', {}) or {}
+    verified_offer_id = str(
+        response_data.get('verifiedOfferId')
+        or response_data.get('offerId')
+        or response_data.get('replacementOfferId')
+        or listing.store_listing_id
+    ).strip()
     replacement_offer_id = str(response_data.get('replacementOfferId') or '').strip()
     old_offer_id = listing.store_listing_id
-    extra_fields = []
-    if replacement_offer_id and replacement_offer_id != old_offer_id:
+    if not verified_offer_id:
+        return EditResult(ok=False, error='PlayerAuctions edit verified no offer ID; local lifecycle was not changed.')
+    from apps.posting.services.relist import _playerauctions_expiry_after_relist
+
+    verified_payload = copy.deepcopy(original_payload)
+    verified_duration = response_data.get('verifiedOfferDuration')
+    if verified_duration is not None:
+        verified_payload.setdefault('details', {})['offerDuration'] = verified_duration
+    renewed_at = timezone.now()
+    listing.listed_at = renewed_at
+    listing.marketplace_expires_at = _playerauctions_expiry_after_relist(
+        verified_payload,
+        response_data,
+        renewed_at,
+    )
+    extra_fields = ['listed_at', 'marketplace_expires_at']
+    if verified_offer_id != old_offer_id:
         from apps.posting.services.relist import (
             _handoff_active_offer_replacement,
-            _playerauctions_expiry_after_relist,
         )
 
-        renewed_at = timezone.now()
-        listing.store_listing_id = replacement_offer_id
-        listing.listed_at = renewed_at
-        listing.marketplace_expires_at = _playerauctions_expiry_after_relist(
-            original_payload, response_data, renewed_at,
-        )
-        extra_fields = ['store_listing_id', 'listed_at', 'marketplace_expires_at']
-        _handoff_active_offer_replacement(active_offers, replacement_offer_id)
+        listing.store_listing_id = verified_offer_id
+        extra_fields.insert(0, 'store_listing_id')
+        _handoff_active_offer_replacement(active_offers, verified_offer_id)
 
     _update_listing_db(listing, changes, extra_fields=extra_fields)
     _log(
@@ -700,7 +715,7 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
             'changes': list(changes.keys()),
         },
     )
-    return EditResult(ok=True, new_offer_id=replacement_offer_id or None)
+    return EditResult(ok=True, new_offer_id=(verified_offer_id if verified_offer_id != old_offer_id else None))
 
 
 def _edit_pa_single_cancel_recreate(listing: Listing, changes: dict[str, Any], store: IntegrationAccount) -> EditResult:
