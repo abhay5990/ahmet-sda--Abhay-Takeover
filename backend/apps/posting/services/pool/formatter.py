@@ -28,8 +28,29 @@ _EMPTY_VALUE_LINE_RE = re.compile(r"^[^:]+:\s*$")
 
 
 def _is_empty_value_line(line: str) -> bool:
-    """Check if a line is a label with no value (e.g. 'Security Email: ')."""
+    """Check if a line is a label with no value (e.g. "Security Email: ")."""
     return bool(_EMPTY_VALUE_LINE_RE.match(line))
+
+
+def append_playerauctions_recovery_email(
+    instruction: str,
+    recovery_email: str,
+) -> str:
+    """Append a labelled recovery address to PA Additional Info.
+
+    PlayerAuctions marks its Additional Info field as unencrypted.  It may carry
+    a recovery *address* for the buyer, but it must never be used for a recovery
+    password or any other secret.  The dedicated delivery password fields remain
+    the only place where account-password values are submitted.
+    """
+    normalized_instruction = str(instruction or "").strip()
+    normalized_email = str(recovery_email or "").strip()
+    if not normalized_email:
+        return normalized_instruction
+    if re.search(r"(?im)^\s*Recovery Email\s*:", normalized_instruction):
+        return normalized_instruction
+    note = f"Recovery Email: {normalized_email}"
+    return f"{normalized_instruction}\n{note}".strip()
 
 
 # ── Legacy helpers (kept for GTA fallback) ───────────────────────
@@ -254,9 +275,20 @@ def format_credential_for_marketplace(
             if canonical and any(marker not in rendered for marker in required_markers if marker.split(": ", 1)[1]):
                 return f"{rendered}\n\n{canonical}".strip() if rendered else canonical
             return rendered
+        if marketplace == "playerauctions":
+            return append_playerauctions_recovery_email(
+                str(result or ""),
+                getattr(product, "security_email", ""),
+            )
         return result
 
-    return _legacy_format(product, marketplace)
+    result = _legacy_format(product, marketplace)
+    if marketplace == "playerauctions":
+        return append_playerauctions_recovery_email(
+            result,
+            getattr(product, "security_email", ""),
+        )
+    return result
 
 
 def _resolve_product_spec(

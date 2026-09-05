@@ -1258,6 +1258,7 @@ def _apply_pa_auto_delivery_credentials(
     pool: OfferPool | None = None,
 ) -> None:
     """Apply PA autoDelivery credentials — spec-driven with legacy fallback."""
+    from .formatter import append_playerauctions_recovery_email
     from .spec_resolver import resolve_spec
 
     spec = resolve_spec(pool) if pool else None
@@ -1272,7 +1273,10 @@ def _apply_pa_auto_delivery_credentials(
 
             auto_delivery['loginName'] = rendered.get('loginName', '')
             auto_delivery['password'] = rendered.get('password', '')
-            auto_delivery['instruction'] = rendered.get('instruction', '')
+            auto_delivery['instruction'] = append_playerauctions_recovery_email(
+                rendered.get('instruction', ''),
+                getattr(product, 'security_email', ''),
+            )
 
             # Always overwrite retype from final values
             auto_delivery['retypeLoginName'] = auto_delivery['loginName']
@@ -1301,7 +1305,10 @@ def _apply_pa_auto_delivery_credentials(
             auto_delivery['password'] = pass_val
             auto_delivery['retypeLoginName'] = login_val
             auto_delivery['retypePassword'] = pass_val
-            auto_delivery['instruction'] = instruction
+            auto_delivery['instruction'] = append_playerauctions_recovery_email(
+                instruction,
+                getattr(product, 'security_email', ''),
+            )
     else:
         # Legacy fallback
         bundle = build_credential_bundle(product)
@@ -1310,7 +1317,10 @@ def _apply_pa_auto_delivery_credentials(
             'retypeLoginName': bundle.login,
             'password': bundle.password,
             'retypePassword': bundle.password,
-            'instruction': format_credential_for_marketplace(product, 'playerauctions'),
+            'instruction': append_playerauctions_recovery_email(
+                format_credential_for_marketplace(product, 'playerauctions'),
+                getattr(product, 'security_email', ''),
+            ),
         })
 
         if bundle.email_login:
