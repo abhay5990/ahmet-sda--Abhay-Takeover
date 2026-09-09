@@ -59,6 +59,15 @@ class Command(BaseCommand):
             action='store_true',
             help='Reset completed backfill checkpoint before running',
         )
+        parser.add_argument(
+            '--max-pages',
+            type=int,
+            default=None,
+            help=(
+                'Stop after this many fully persisted provider pages, preserving '
+                'the checkpoint for a later resume (primarily for long backfills).'
+            ),
+        )
 
     def handle(self, *args, **options):
         slug = options['account']
@@ -67,6 +76,10 @@ class Command(BaseCommand):
         resource = options['resource']
         dry_run = options['dry_run']
         reset = options['reset']
+        max_pages = options['max_pages']
+
+        if max_pages is not None and max_pages < 1:
+            raise CommandError('--max-pages must be a positive integer.')
 
         # 1. Account lookup
         try:
@@ -109,12 +122,16 @@ class Command(BaseCommand):
             raise CommandError(
                 f'Failed to build service for "{slug}": {exc}'
             )
+        if max_pages is not None:
+            service.max_pages = max_pages
 
         self.stdout.write(
             f"Sync: account={account.slug} "
             f"provider={account.provider} resource={resource} "
             f"mode={mode} phase={phase}"
         )
+        if max_pages is not None:
+            self.stdout.write(f"Page limit: {max_pages}")
         if proxy_pool and proxy_group:
             group_count = len(proxy_pool.get_all(group=proxy_group))
             self.stdout.write(f"Proxy: group={proxy_group} ({group_count} proxies)")

@@ -267,6 +267,15 @@ class BaseSyncService:
         parse_failed_any = False
         first_remote_id: str | None = None
         first_remote_ts = None
+        page_limit = getattr(self, 'max_pages', None)
+        if page_limit is not None:
+            try:
+                page_limit = int(page_limit)
+            except (TypeError, ValueError) as exc:
+                raise ValueError('max_pages must be a positive integer.') from exc
+            if page_limit < 1:
+                raise ValueError('max_pages must be a positive integer.')
+        pages_fetched = 0
 
         while True:
             items, next_cursor = self.fetch_page(account, checkpoint)
@@ -376,10 +385,25 @@ class BaseSyncService:
                     'updated_count', 'error_count',
                     'meta', 'updated_at',
                 ])
+                pages_fetched += 1
 
             # A later page must never advance beyond an earlier failed order.
             # Stop here and retry the source page on the next incremental run.
             if parse_failed_any or caught_up or not next_cursor:
+                break
+            # Bounded historical passes stop only after the current page and
+            # checkpoint are durable. The next invocation resumes at
+            # ``next_cursor`` rather than replaying earlier provider pages.
+            if page_limit is not None and pages_fetched >= page_limit:
+                run.meta = {
+                    **run.meta,
+                    'page_limit_reached': page_limit,
+                }
+                run.save(update_fields=['meta', 'updated_at'])
+                logger.info(
+                    'SyncRun %s reached max_pages=%s; checkpoint preserved for resume.',
+                    run.pk, page_limit,
+                )
                 break
 
         # Incremental: reset cursor so the next run starts from the
