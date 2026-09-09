@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the E-Commerce Scheduler Freshness Watchdog Every Two Minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=2min
+Persistent=true
+Unit=ecom-scheduler-watchdog.service
+
+[Install]
+WantedBy=timers.target

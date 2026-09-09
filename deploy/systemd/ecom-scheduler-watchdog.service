@@ -1,0 +1,11 @@
+[Unit]
+Description=E-Commerce Scheduler Freshness Watchdog
+After=ecom-scheduler.service
+Wants=ecom-scheduler.service
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=${PROJECT_DIR}/backend
+EnvironmentFile=${PROJECT_DIR}/.env
+ExecStart=/bin/bash -lc '${PROJECT_DIR}/venv/bin/python manage.py check_scheduler_health --settings=config.settings.prod || systemctl restart ecom-scheduler'

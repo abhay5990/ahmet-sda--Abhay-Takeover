@@ -35,7 +35,10 @@ mkdir -p "$REPO_DIR/backend/logs"
 
 # ── 1. Git pull ───────────────────────────────────────────────────────────────
 info "Pulling latest code..."
-git pull origin "$(git rev-parse --abbrev-ref HEAD)"
+DEPLOY_REMOTE="${DEPLOY_GIT_REMOTE:-github}"
+git remote get-url "$DEPLOY_REMOTE" >/dev/null 2>&1 \
+    || error "Required deployment remote '$DEPLOY_REMOTE' is not configured."
+git pull --ff-only "$DEPLOY_REMOTE" "$(git rev-parse --abbrev-ref HEAD)"
 
 # ── 2. System packages (Xvfb + Chrome for Cloudflare bypass) ─────────────────
 # The R6Locker tracker sits behind Cloudflare Turnstile. nodriver drives a REAL
@@ -107,6 +110,7 @@ nginx -t || error "Nginx config test failed. Fix the error above and re-run."
 SYSTEMD_DIR="/etc/systemd/system"
 # xvfb first — it provides DISPLAY=:99 that the ecom services depend on (R6 Cloudflare).
 SERVICES=(xvfb ecom-gunicorn ecom-dropship ecom-scheduler)
+WATCHDOG_UNITS=(ecom-scheduler-watchdog.service ecom-scheduler-watchdog.timer)
 CHANGED=0
 
 for svc in "${SERVICES[@]}"; do
@@ -121,17 +125,30 @@ for svc in "${SERVICES[@]}"; do
     fi
 done
 
+for unit in "${WATCHDOG_UNITS[@]}"; do
+    SRC="$REPO_DIR/deploy/systemd/${unit}"
+    DST="$SYSTEMD_DIR/${unit}"
+    RENDERED=$(envsubst '${PROJECT_DIR} ${GUNICORN_WORKERS}' < "$SRC")
+    if [ ! -f "$DST" ] || [ "$RENDERED" != "$(cat "$DST")" ]; then
+        echo "$RENDERED" > "$DST"
+        CHANGED=1
+        info "Installed ${unit}"
+    fi
+done
+
 [ $CHANGED -eq 1 ] && systemctl daemon-reload
 
 for svc in "${SERVICES[@]}"; do
     systemctl enable "$svc" --quiet 2>/dev/null || true
 done
+systemctl enable ecom-scheduler-watchdog.timer --quiet 2>/dev/null || true
 
 # ── 7. Restart app services ───────────────────────────────────────────────────
 info "Restarting application services..."
 for svc in "${SERVICES[@]}"; do
     systemctl restart "$svc"
 done
+systemctl restart ecom-scheduler-watchdog.timer
 
 # ── 8. Start or reload nginx ─────────────────────────────────────────────────
 if systemctl is-active --quiet nginx; then
@@ -147,7 +164,7 @@ fi
 echo ""
 info "═══ Service Status ═════════════════════════════"
 ALL_OK=true
-for svc in "${SERVICES[@]}" nginx; do
+for svc in "${SERVICES[@]}" ecom-scheduler-watchdog.timer nginx; do
     STATUS=$(systemctl is-active "$svc" 2>/dev/null || echo "not-found")
     if [ "$STATUS" = "active" ]; then
         echo -e "  ${GREEN}✓${NC} $svc"

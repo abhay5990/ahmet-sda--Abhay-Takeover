@@ -222,6 +222,7 @@ class Command(BaseCommand):
             name='Cross-Platform Sync Chain',
             max_instances=1,
             replace_existing=True,
+            next_run_time=datetime.now(),
         )
 
         # PlayerAuctions missed-order fallback — the shared configured Gmail
@@ -276,6 +277,7 @@ class Command(BaseCommand):
             name='Offer Pool Auto-Restock Sweep',
             max_instances=1,
             replace_existing=True,
+            next_run_time=datetime.now(),
         )
 
         # Pause expiring listings — runs every 3 hours
