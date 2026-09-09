@@ -332,6 +332,42 @@ class SyncLog(models.Model):
         return f"[{self.level}] {self.task_name}: {self.message[:80]}"
 
 
+class GameBoostWebhookEvent(models.Model):
+    """Durable event-ID idempotency and processing state for GameBoost callbacks."""
+
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'Pending'
+        PROCESSING = 'processing', 'Processing'
+        COMPLETED = 'completed', 'Completed'
+        FAILED = 'failed', 'Failed'
+
+    integration_account = models.ForeignKey(
+        'integrations.IntegrationAccount',
+        on_delete=models.CASCADE,
+        related_name='gameboost_webhook_events',
+    )
+    event_id = models.CharField(max_length=255, unique=True)
+    topic = models.CharField(max_length=120)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    attempts = models.PositiveIntegerField(default=0)
+    last_error = models.TextField(blank=True)
+    received_at = models.DateTimeField(auto_now_add=True)
+    processed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'gameboost_webhook_events'
+        indexes = [
+            models.Index(fields=['status', 'received_at']),
+            models.Index(fields=['integration_account', 'status']),
+        ]
+        ordering = ['received_at']
+
+    def __str__(self):
+        return f'{self.topic}:{self.event_id} ({self.status})'
+
+
 class SyncFeatureFlag(models.Model):
     """Runtime feature toggles for sync chain steps.
 

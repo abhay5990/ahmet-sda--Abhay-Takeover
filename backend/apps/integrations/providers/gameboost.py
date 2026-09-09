@@ -20,6 +20,13 @@ class GameboostProvider(AbstractProvider):
     def get_credential_fields(cls) -> list[CredentialField]:
         return [
             CredentialField('api_key', 'API Key', field_type='password'),
+            CredentialField(
+                'webhook_secret',
+                'Webhook Signing Secret',
+                field_type='password',
+                required=False,
+                help_text='GameBoost webhook destination secret; stored encrypted and used only to verify incoming signed events.',
+            ),
         ]
 
     def build_client(self, credential: IntegrationCredential, *, proxy_pool=None, proxy_group=None) -> Any:

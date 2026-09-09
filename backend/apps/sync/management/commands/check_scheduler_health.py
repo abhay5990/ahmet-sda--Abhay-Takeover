@@ -61,6 +61,7 @@ class Command(BaseCommand):
             SchedulerHealthCheck('sync_chain', SYNC_CHAIN_MAX_AGE_MINUTES),
             SchedulerHealthCheck('unbound_pool_sale_recovery', UNBOUND_RECOVERY_MAX_AGE_MINUTES),
             SchedulerHealthCheck('offer_pool_sweep', self._pool_sweep_max_age_minutes()),
+            SchedulerHealthCheck('gameboost_webhook_events', 5),
         )
         now = timezone.now()
         latest_run_by_job: dict[str, datetime | None] = {}

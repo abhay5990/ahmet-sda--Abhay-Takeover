@@ -159,6 +159,15 @@ def run_unbound_pool_sale_recovery_job():
 
 
 @apscheduler_util.close_old_connections
+def run_gameboost_webhook_event_job():
+    """Process one signed GameBoost purchase event per minute."""
+    from apps.integrations.proxy_pool import build_proxy_pool
+    from apps.sync.services.gameboost.webhooks import process_next_gameboost_purchase_event
+
+    process_next_gameboost_purchase_event(proxy_pool=build_proxy_pool())
+
+
+@apscheduler_util.close_old_connections
 def run_robuxcrate_batch_processor_job():
     """APScheduler wrapper — processes pending RobuxCrate order batches."""
     from apps.tools.services.robuxcrate import process_pending_batches
@@ -320,6 +329,16 @@ class Command(BaseCommand):
             name='Cross-Platform Unbound Pool Sale Recovery',
             max_instances=1,
             replace_existing=True,
+        )
+
+        scheduler.add_job(
+            run_gameboost_webhook_event_job,
+            trigger=IntervalTrigger(minutes=1),
+            id='gameboost_webhook_events',
+            name='GameBoost Signed Purchase Event Processor',
+            max_instances=1,
+            replace_existing=True,
+            next_run_time=datetime.now(),
         )
 
         # RobuxCrate batch processor — runs every 5 minutes
