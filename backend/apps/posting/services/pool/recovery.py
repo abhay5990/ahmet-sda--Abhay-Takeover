@@ -180,6 +180,11 @@ def _recover_append_item(item: OfferPoolItem) -> RecoverUnsoldResult:
             errors=["Remote verification was unavailable; the key was not changed."],
         )
     if remote_count == -1:
+        if pool_offer.marketplace in {"eldorado", "gameboost"}:
+            return _make_available(
+                item,
+                f"The {pool_offer.marketplace.title()} offer is confirmed absent and no sale evidence was found; key returned to available pool stock.",
+            )
         return RecoverUnsoldResult(
             ok=False,
             errors=["The marketplace offer no longer exists; recreate or relink the offer before recovering this key."],

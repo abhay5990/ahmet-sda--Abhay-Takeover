@@ -19,6 +19,7 @@ from apps.inventory.models import Game, OwnedProduct
 from apps.listings.models import Listing, ListingOwnedProduct
 from apps.listings.utils import parse_price
 from apps.orders.enums import OrderStatus
+from apps.orders.models import Order
 from apps.posting.models import (
     OfferPool,
     OfferPoolActiveOffer,
@@ -834,18 +835,30 @@ def remove_pool_item(request, pool_id, item_id):
             'error': 'This key is reserved by an in-progress dispatch. Try again after it finishes.',
         }, status=409)
 
-    if item.status == OfferPoolItemStatus.PENDING and item.pool_offer_id is None:
+    if item.pool_offer_id is None:
+        has_sale_event = PoolSaleEvent.objects.filter(pool_item_id=item.pk).exists()
+        has_sold_clone = OfferPoolActiveOffer.objects.filter(
+            pool_item_id=item.pk,
+            status=OfferPoolActiveOfferStatus.SOLD,
+        ).exists()
+        has_final_order = Order.objects.filter(
+            owned_product_id=item.owned_product_id,
+            status__in=[OrderStatus.COMPLETED, OrderStatus.DELIVERED],
+        ).exists()
+        if has_sale_event or has_sold_clone or has_final_order:
+            return JsonResponse({
+                'error': 'Confirmed marketplace sale evidence exists for this key; it cannot be removed from the pool.',
+            }, status=409)
+        if item.status == OfferPoolItemStatus.QUEUED:
+            return JsonResponse({
+                'error': 'This key is queued for dispatch and cannot be removed until the dispatch state is reconciled.',
+            }, status=409)
         item.delete()
         return JsonResponse({
             'ok': True,
             'removed_from_marketplace': False,
-            'message': 'Pending key removed from the Pool. The account remains in inventory.',
+            'message': 'Verified-unsold key removed from the Pool. The account remains in inventory.',
         })
-
-    if not item.pool_offer_id:
-        return JsonResponse({
-            'error': f'Cannot safely remove an unassigned key with status {item.status}.',
-        }, status=409)
 
     try:
         payload = json.loads(request.body or '{}')

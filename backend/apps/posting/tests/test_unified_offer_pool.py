@@ -893,6 +893,59 @@ class UnifiedPoolTestCase(TestCase):
         self.assertFalse(OfferPoolItem.objects.filter(pk=item.pk).exists())
         self.assertTrue(OwnedProduct.objects.filter(pk=product.pk).exists())
 
+    def test_pool_detail_removes_unassigned_failed_key_without_sale_evidence(self):
+        user = get_user_model().objects.create_user(
+            username='pool-unassigned-failed-remove-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Unassigned Failed Key Removal Pool')
+        product = self.make_owned('unassigned-failed-pool-key')
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=product,
+            status=OfferPoolItemStatus.FAILED,
+            remote_state='absent',
+        )
+
+        response = self.client.post(
+            f'/posting/api/pools/{pool.pk}/items/{item.pk}/remove/',
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(OfferPoolItem.objects.filter(pk=item.pk).exists())
+        self.assertTrue(OwnedProduct.objects.filter(pk=product.pk).exists())
+
+    def test_pool_detail_blocks_unassigned_key_removal_when_sale_event_exists(self):
+        user = get_user_model().objects.create_user(
+            username='pool-unassigned-sold-remove-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Unassigned Sold Key Removal Pool')
+        product = self.make_owned('unassigned-sold-pool-key')
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=product,
+            status=OfferPoolItemStatus.CONSUMED,
+            remote_state='absent',
+        )
+        listing = self.make_listing(remote_id='unassigned-sale-evidence')
+        PoolSaleEvent.objects.create(
+            event_key='unassigned-sold-remove-event',
+            listing=listing,
+            pool_item=item,
+            outcome='sold',
+        )
+
+        response = self.client.post(
+            f'/posting/api/pools/{pool.pk}/items/{item.pk}/remove/',
+        )
+
+        self.assertEqual(response.status_code, 409)
+        self.assertIn('Confirmed marketplace sale evidence', response.json()['error'])
+        self.assertTrue(OfferPoolItem.objects.filter(pk=item.pk).exists())
+
     def test_pool_detail_removes_assigned_key_from_marketplace_and_pool(self):
         user = get_user_model().objects.create_user(
             username='pool-assigned-remove-user',
@@ -1285,6 +1338,35 @@ class UnifiedPoolTestCase(TestCase):
         with patch(
             'apps.posting.services.pool.checker._get_remote_credentials',
             side_effect=MarketplaceAPIError('eldorado', 'Offer not found', 404),
+        ):
+            result = recover_verified_unsold_item(pool_id=pool.pk, item_id=item.pk)
+
+        self.assertTrue(result.ok)
+        self.assertEqual(result.state, 'available')
+        item.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.PENDING)
+        self.assertIsNone(item.pool_offer_id)
+        self.assertEqual(item.remote_state, 'absent')
+
+    def test_recover_missing_gameboost_offer_from_exact_404_returns_unsold_key(self):
+        from apps.posting.services.pool.recovery import recover_verified_unsold_item
+
+        pool = self.make_pool('Deleted GameBoost Offer Recovery')
+        self.eldorado.provider = 'gameboost'
+        self.eldorado.save(update_fields=['provider'])
+        pool_offer = self.make_pool_offer(pool)
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('recover-gameboost-404@example.test'),
+            status=OfferPoolItemStatus.FAILED,
+            remote_state='unknown',
+            error_message='Remote offer not found',
+        )
+
+        with patch(
+            'apps.posting.services.pool.recovery._get_remote_credentials',
+            return_value=(-1, None, None),
         ):
             result = recover_verified_unsold_item(pool_id=pool.pk, item_id=item.pk)
 

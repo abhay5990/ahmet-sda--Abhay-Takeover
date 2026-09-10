@@ -591,6 +591,12 @@ def _fetch_gameboost(
         # Legacy: get_offer to check if the single credential is still there
         offer_result = client.get_offer(offer_id, proxy_group=proxy_group)
         if not offer_result.ok:
+            status_code = getattr(getattr(offer_result, 'error', None), 'status_code', None)
+            if status_code == 404:
+                logger.warning(
+                    'pool_checker: GameBoost offer %s not found (404)', offer_id,
+                )
+                return _OFFER_NOT_FOUND, None, None
             logger.warning(
                 'pool_checker: Gameboost get_offer failed for %s: %s',
                 offer_id, offer_result.error,
@@ -607,6 +613,12 @@ def _fetch_gameboost(
     # New format: fetch via /credentials endpoint
     result = client.list_offer_credentials(offer_id, proxy_group=proxy_group)
     if not result.ok:
+        status_code = getattr(getattr(result, 'error', None), 'status_code', None)
+        if status_code == 404:
+            logger.warning(
+                'pool_checker: GameBoost offer %s not found (404)', offer_id,
+            )
+            return _OFFER_NOT_FOUND, None, None
         logger.warning(
             'pool_checker: Gameboost count failed for offer %s: %s',
             offer_id, result.error,
