@@ -9,6 +9,7 @@ from datetime import timedelta
 from django.db import connection, transaction
 from django.utils import timezone
 
+from apps.orders.enums import OrderStatus
 from apps.posting.models import (
     OfferPoolItem,
     OfferPoolItemStatus,
@@ -16,6 +17,12 @@ from apps.posting.models import (
     PoolDispatchOperation,
     PoolDispatchStatus,
     PoolOffer,
+)
+
+
+_FINAL_SALE_ORDER_STATUSES = (
+    OrderStatus.COMPLETED,
+    OrderStatus.DELIVERED,
 )
 
 
@@ -48,6 +55,13 @@ def claim_pending_items(pool_offer: PoolOffer, limit: int) -> list[OfferPoolItem
                 pool_id=locked_offer.pool_id,
                 status=OfferPoolItemStatus.PENDING,
                 pool_offer__isnull=True,
+            )
+            # This is a final safety gate for missed asynchronous state
+            # transitions: an Order's OwnedProduct link is exact account-level
+            # evidence, so completed/delivered products can never be claimed for
+            # another marketplace refill while reconciliation catches up.
+            .exclude(
+                owned_product__orders__status__in=_FINAL_SALE_ORDER_STATUSES,
             )
             .select_related('owned_product')
             .order_by('order', 'created_at')
