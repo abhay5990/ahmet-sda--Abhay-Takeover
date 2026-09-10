@@ -35,7 +35,7 @@ from .replenisher import (
     _reconcile_pushed_items,
     replenish_pool_offer,
 )
-from .allocation import quarantine_stale_claims
+from .allocation import claim_pending_items, quarantine_stale_claims, release_claims_as_pending
 from .dispatcher import release_stale_reservations
 from apps.posting.services.shared.utils import extract_listing_id
 from core.marketplace.payload_extractor import extract_create_payload
@@ -698,8 +698,10 @@ def _get_pa_active_count(pool: OfferPool) -> int | None:
 def _recover_missing_offer(pool: OfferPool, marketplace: str) -> int:
     """Recreate an offer that no longer exists on remote (404).
 
-    Builds a new offer from the listing's original payload, attaches
-    existing PUSHED credentials, and links the pool to the new offer.
+    Builds a new offer from the original non-credential payload and newly
+    claimed PENDING stock only. A missing remote offer is not proof that old
+    PUSHED credentials are still unsold, so historical/local payload
+    credentials must never be reused automatically.
     """
     if marketplace != 'eldorado':
         # Only Eldorado recovery supported for now
@@ -727,39 +729,43 @@ def _recover_missing_offer(pool: OfferPool, marketplace: str) -> int:
         )
         return 0
 
-    # Gather existing PUSHED credentials (still valid, just lost their remote offer)
+    # A deleted/closed remote offer does not prove that previously pushed
+    # credentials were unsold. Reuse only fresh, unassigned PENDING pool stock;
+    # otherwise leave the lane unchanged for staff reconciliation.
     from .formatter import format_credential_for_marketplace
-    from apps.posting.models import OfferPoolItem, OfferPoolItemStatus
-
-    pushed_items = list(
-        pool.items.filter(
-            status=OfferPoolItemStatus.PUSHED,
-            pool_offer=pool.pool_offer,
-        )
-        .select_related('owned_product')
-    )
-
-    existing_creds: list[str] = []
-    valid_items: list[OfferPoolItem] = []
-    for item in pushed_items:
-        try:
-            cred_str = format_credential_for_marketplace(item.owned_product, 'eldorado', pool=pool)
-            existing_creds.append(cred_str)
-            valid_items.append(item)
-        except Exception:
-            pass
-
-    # If no pushed creds, use the credentials from the original payload
-    if not existing_creds:
-        existing_creds = original_payload.get('accountSecretDetails', [])
-        if isinstance(existing_creds, str):
-            existing_creds = [existing_creds] if existing_creds else []
-
-    if not existing_creds:
+    pending_items = claim_pending_items(pool.pool_offer, pool.target_count)
+    if not pending_items:
         PostingLog.objects.create(
             task_name=TASK_NAME,
-            level=PostingLogLevel.ERROR,
-            message=f"Pool #{pool.pk}: cannot recover — no credentials to create offer with",
+            level=PostingLogLevel.WARNING,
+            message=(
+                f"Pool #{pool.pk}: missing Eldorado offer not recreated — "
+                "no verified pending stock"
+            ),
+            detail={'pool_id': pool.pk, 'reason': 'no_pending_stock'},
+            integration_account=pool.store,
+        )
+        return 0
+
+    pending_creds: list[str] = []
+    valid_items = []
+    for item in pending_items:
+        try:
+            cred_str = format_credential_for_marketplace(item.owned_product, 'eldorado', pool=pool)
+            pending_creds.append(cred_str)
+            valid_items.append(item)
+        except Exception as exc:
+            release_claims_as_pending([item], f'Could not format pending recovery stock: {exc}')
+
+    if not pending_creds:
+        PostingLog.objects.create(
+            task_name=TASK_NAME,
+            level=PostingLogLevel.WARNING,
+            message=(
+                f"Pool #{pool.pk}: missing Eldorado offer not recreated — "
+                "no format-valid pending stock"
+            ),
+            detail={'pool_id': pool.pk, 'reason': 'no_format_valid_pending_stock'},
             integration_account=pool.store,
         )
         return 0
@@ -767,7 +773,10 @@ def _recover_missing_offer(pool: OfferPool, marketplace: str) -> int:
     PostingLog.objects.create(
         task_name=TASK_NAME,
         level=PostingLogLevel.INFO,
-        message=f"Pool #{pool.pk}: offer {old_offer_id} missing on remote, recovering with {len(existing_creds)} cred(s)",
+        message=(
+            f"Pool #{pool.pk}: offer {old_offer_id} missing on remote, "
+            f"recovering with {len(pending_creds)} pending cred(s)"
+        ),
         detail={'pool_id': pool.pk, 'old_offer_id': old_offer_id},
         integration_account=pool.store,
     )
@@ -784,11 +793,18 @@ def _recover_missing_offer(pool: OfferPool, marketplace: str) -> int:
     )
 
     pushed = _create_eldorado_offer(
-        pool, client, original_payload, existing_creds, valid_items, proxy_group,
+        pool, client, original_payload, pending_creds, valid_items, proxy_group,
     )
 
     if pushed > 0:
-        # Trigger normal replenish to fill up to target
+        # The replacement already contains the newly claimed credentials. Record
+        # that authoritative local count before normal guarded top-up, otherwise
+        # the follow-on replenish path would treat the new offer as empty.
+        pool.current_remote_count = pushed
+        pool.last_checked_at = timezone.now()
+        pool.save(update_fields=['current_remote_count', 'last_checked_at', 'updated_at'])
+        # Trigger normal replenish only if the fresh replacement remains below
+        # its configured target. This path will claim PENDING stock only.
         replenish_pool_offer(pool.pool_offer)
 
     return pushed
