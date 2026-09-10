@@ -163,6 +163,15 @@ def _recover_append_item(item: OfferPoolItem) -> RecoverUnsoldResult:
             pool_ctx, pool_offer.marketplace,
         )
     except Exception as exc:  # Remote failure must never make stock available.
+        status_code = getattr(exc, "status_code", None)
+        nested_error = getattr(exc, "error", None)
+        if status_code is None:
+            status_code = getattr(nested_error, "status_code", None)
+        if pool_offer.marketplace == "eldorado" and status_code == 404:
+            return _make_available(
+                item,
+                "The Eldorado offer is confirmed absent and no sale evidence was found; key returned to available pool stock.",
+            )
         return RecoverUnsoldResult(ok=False, errors=[f"Remote verification failed: {exc}"])
 
     if remote_count is None:

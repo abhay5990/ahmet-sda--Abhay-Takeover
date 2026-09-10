@@ -1266,3 +1266,31 @@ class UnifiedPoolTestCase(TestCase):
         self.assertEqual(item.status, OfferPoolItemStatus.PUSHED)
         self.assertEqual(item.remote_state, 'present')
         self.assertEqual(item.error_message, '')
+
+    def test_recover_missing_eldorado_offer_from_exact_404_returns_unsold_key(self):
+        from apps.posting.services.pool.recovery import recover_verified_unsold_item
+        from core.exceptions import MarketplaceAPIError
+
+        pool = self.make_pool('Deleted Eldorado Offer Recovery')
+        pool_offer = self.make_pool_offer(pool)
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('recover-eldorado-404@example.test'),
+            status=OfferPoolItemStatus.FAILED,
+            remote_state='unknown',
+            error_message='Remote offer not found',
+        )
+
+        with patch(
+            'apps.posting.services.pool.checker._get_remote_credentials',
+            side_effect=MarketplaceAPIError('eldorado', 'Offer not found', 404),
+        ):
+            result = recover_verified_unsold_item(pool_id=pool.pk, item_id=item.pk)
+
+        self.assertTrue(result.ok)
+        self.assertEqual(result.state, 'available')
+        item.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.PENDING)
+        self.assertIsNone(item.pool_offer_id)
+        self.assertEqual(item.remote_state, 'absent')
