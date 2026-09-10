@@ -32,6 +32,8 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertIn('replacement_reason', template.template.source)
         self.assertIn('0 active PA offers', template.template.source)
         self.assertIn('block.active_pa_offers', template.template.source)
+        self.assertIn('Individual account status appears in the table below.', template.template.source)
+        self.assertIn('Sold — removed from active stock', template.template.source)
 
     def test_active_offer_at_threshold_requires_replenishment(self):
         offer = SimpleNamespace(
