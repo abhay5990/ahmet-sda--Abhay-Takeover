@@ -853,11 +853,19 @@ def remove_pool_item(request, pool_id, item_id):
             return JsonResponse({
                 'error': 'This key is queued for dispatch and cannot be removed until the dispatch state is reconciled.',
             }, status=409)
-        item.delete()
+        # PoolDispatchAttempt keeps immutable operational history with a
+        # PROTECT foreign key to this item. A key that was listed previously
+        # can therefore have safe historical attempts even after it has been
+        # returned to shared stock. Marking it REMOVED removes it from usable
+        # stock while retaining that audit trail instead of raising a 500 from
+        # a physical delete.
+        item.status = OfferPoolItemStatus.REMOVED
+        item.error_message = 'Removed by staff from shared pool stock.'
+        item.save(update_fields=['status', 'error_message', 'updated_at'])
         return JsonResponse({
             'ok': True,
             'removed_from_marketplace': False,
-            'message': 'Verified-unsold key removed from the Pool. The account remains in inventory.',
+            'message': 'Verified-unsold key removed from shared pool stock. The account remains in inventory and its dispatch history is retained.',
         })
 
     try:

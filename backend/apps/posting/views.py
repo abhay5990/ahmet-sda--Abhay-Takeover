@@ -488,6 +488,7 @@ def _build_pool_item_views(
                 pool_offer is None
                 and reservation_store is None
                 and not is_sale_record
+                and item.status != OfferPoolItemStatus.REMOVED
             ),
             'is_sold': is_sale_record,
             'is_reconciliation_pending': is_reconciliation_pending,
@@ -525,7 +526,7 @@ def _build_pool_item_views(
             unmatched_rows_by_offer.setdefault(
                 f'reservation_{reservation_store.pk}', [],
             ).append(row)
-        elif not is_sale_record:
+        elif not is_sale_record and item.status != OfferPoolItemStatus.REMOVED:
             shared_rows.append(row)
 
     def make_item_block(

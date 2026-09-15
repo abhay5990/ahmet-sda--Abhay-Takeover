@@ -21,6 +21,9 @@ from apps.posting.models import (
     OfferPoolStatus,
     PoolOfferStatus,
     PoolDispatchReservation,
+    PoolDispatchAttempt,
+    PoolDispatchOperation,
+    PoolDispatchStatus,
     PoolOffer,
     PoolOfferStrategy,
     PoolSaleEvent,
@@ -1017,6 +1020,43 @@ class UnifiedPoolTestCase(TestCase):
         self.assertEqual(response.status_code, 409)
         self.assertIn('in-progress dispatch', response.json()['error'])
         self.assertTrue(OfferPoolItem.objects.filter(pk=item.pk).exists())
+
+    def test_pool_detail_soft_removes_shared_key_with_protected_dispatch_history(self):
+        user = get_user_model().objects.create_user(
+            username='pool-history-safe-remove-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Protected History Shared Removal Pool')
+        pool_offer = self.make_pool_offer(pool)
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=self.make_owned('historical-shared-remove-key'),
+            status=OfferPoolItemStatus.PENDING,
+        )
+        attempt = PoolDispatchAttempt.objects.create(
+            item=item,
+            pool_offer=pool_offer,
+            operation=PoolDispatchOperation.RECONCILE,
+            status=PoolDispatchStatus.SUCCEEDED,
+            request_fingerprint='a' * 64,
+        )
+
+        response = self.client.post(
+            f'/posting/api/pools/{pool.pk}/items/{item.pk}/remove/',
+        )
+
+        self.assertEqual(response.status_code, 200)
+        item.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.REMOVED)
+        self.assertEqual(
+            item.error_message,
+            'Removed by staff from shared pool stock.',
+        )
+        self.assertTrue(PoolDispatchAttempt.objects.filter(pk=attempt.pk).exists())
+        detail_response = self.client.get(f'/posting/restock/pools/{pool.pk}/')
+        self.assertEqual(detail_response.status_code, 200)
+        self.assertNotContains(detail_response, 'historical-shared-remove-key')
 
     def test_pool_detail_exposes_individual_pending_and_assigned_key_actions(self):
         user = get_user_model().objects.create_user(
