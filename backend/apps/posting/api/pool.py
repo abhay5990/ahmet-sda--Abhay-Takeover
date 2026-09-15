@@ -213,7 +213,7 @@ def list_pools(request):
 @login_required
 @require_POST
 def create_pool(request):
-    """Create an offer-independent stock pool."""
+    """Create a pool and, when supplied, atomically link its marketplace offer."""
     try:
         body = json.loads(request.body)
     except json.JSONDecodeError:
@@ -247,33 +247,65 @@ def create_pool(request):
         except CredentialSpec.DoesNotExist:
             return JsonResponse({'error': 'Credential spec not found for this game'}, status=400)
 
-    pool = OfferPool(
-        name=name[:255],
-        game=game,
-        variant=variant,
-        credential_spec=credential_spec,
-        status=OfferPoolStatus.ACTIVE,
-    )
+    listing_id = body.get('listing_id')
+    if listing_id is not None:
+        try:
+            listing_id = int(listing_id)
+        except (TypeError, ValueError):
+            return JsonResponse({'error': 'listing_id must be an integer'}, status=400)
+
     try:
-        pool.full_clean()
-        pool.save()
+        target_count = int(body.get('target_count', 5))
+        threshold = int(body.get('threshold', 2))
+        max_concurrent = int(body.get('max_concurrent', 10))
+    except (TypeError, ValueError):
+        return JsonResponse({'error': 'Invalid pool offer configuration'}, status=400)
+
+    create_result = {'added': 0, 'skipped': [], 'warnings': [], 'needs_confirmation': []}
+    pool_offer = None
+    try:
+        with transaction.atomic():
+            pool = OfferPool(
+                name=name[:255],
+                game=game,
+                variant=variant,
+                credential_spec=credential_spec,
+                status=OfferPoolStatus.ACTIVE,
+            )
+            pool.full_clean()
+            pool.save()
+
+            credentials = body.get('credentials', [])
+            if credentials:
+                _add_credentials_to_pool(
+                    pool, credentials, game, listing=None,
+                    force=True, result=create_result,
+                )
+
+            if listing_id is not None:
+                pool_offer = _create_pool_offer(
+                    pool,
+                    listing_id=listing_id,
+                    target_count=target_count,
+                    threshold=threshold,
+                    max_concurrent=max_concurrent,
+                )
     except ValidationError as exc:
         return JsonResponse({'error': exc.message_dict}, status=400)
-
-    # Add initial credentials if provided
-    credentials = body.get('credentials', [])
-    create_result = {'added': 0, 'skipped': [], 'warnings': [], 'needs_confirmation': []}
-    if credentials:
-        _add_credentials_to_pool(
-            pool, credentials, game, listing=None,
-            force=True, result=create_result,
-        )
+    except IntegrityError:
+        return JsonResponse({
+            'error': 'Listing is already linked to a pool',
+            'error_code': 'listing_already_linked',
+        }, status=409)
 
     pool.refresh_from_db()
-    return JsonResponse({
+    response = {
         'pool': _pool_to_dict(pool),
         **create_result,
-    }, status=201)
+    }
+    if pool_offer is not None:
+        response['pool_offer'] = _pool_offer_to_dict(pool_offer)
+    return JsonResponse(response, status=201)
 
 
 @login_required
@@ -446,6 +478,64 @@ def delete_pool(request, pool_id):
 # ── Linked Offer Management ─────────────────────────────────────
 
 
+def _create_pool_offer(
+    pool: OfferPool,
+    *,
+    listing_id: int,
+    target_count: int,
+    threshold: int,
+    max_concurrent: int,
+) -> PoolOffer:
+    """Validate and link one eligible source listing to a pool.
+
+    Callers use this within their own transaction so a failed link cannot leave
+    a newly created active pool without a marketplace binding.
+    """
+    try:
+        listing = Listing.objects.select_related(
+            'integration_account', 'integration_account__credential', 'game',
+        ).get(pk=listing_id)
+    except Listing.DoesNotExist:
+        raise ValidationError({'listing': 'Listing not found'})
+
+    if listing.status != 'listed' or not listing.is_instant:
+        raise ValidationError({'listing': 'Listing must be an active instant listing'})
+    if listing.pool_active_offers.exists():
+        raise ValidationError({
+            'listing': 'Listing is already managed as a PlayerAuctions active offer',
+        })
+    if not listing.integration_account_id:
+        raise ValidationError({'listing': 'Listing has no integration account'})
+    try:
+        credential = listing.integration_account.credential
+    except ObjectDoesNotExist:
+        credential = None
+    if not credential or not credential.is_active:
+        raise ValidationError({'listing': 'Listing store has no active credential'})
+    if listing.game_id != pool.game_id:
+        raise ValidationError({'listing': 'Listing game does not match pool game'})
+    if pool.variant_id:
+        from apps.posting.services.pool.spec_resolver import variant_value_contains_slug
+        if not variant_value_contains_slug(listing.variant, pool.variant.slug):
+            raise ValidationError({'listing': 'Listing variant does not match pool variant'})
+
+    strategy = PoolOffer.strategy_for_provider(listing.integration_account.provider)
+    configured_max = max_concurrent if strategy == PoolOfferStrategy.CLONE else None
+    pool_offer = PoolOffer(
+        pool=pool,
+        listing=listing,
+        strategy=strategy,
+        target_count=target_count,
+        threshold=threshold,
+        max_concurrent=configured_max,
+    )
+    pool_offer.full_clean()
+    pool_offer.save()
+    if strategy == PoolOfferStrategy.CLONE:
+        _adopt_pa_source_listing(pool_offer)
+    return pool_offer
+
+
 @login_required
 @require_POST
 def add_pool_offer(request, pool_id):
@@ -463,61 +553,19 @@ def add_pool_offer(request, pool_id):
         return JsonResponse({'error': 'Invalid listing/config payload'}, status=400)
 
     try:
-        listing = Listing.objects.select_related(
-            'integration_account', 'integration_account__credential', 'game',
-        ).get(pk=listing_id)
-    except Listing.DoesNotExist:
-        return JsonResponse({'error': 'Listing not found'}, status=404)
-
-    if listing.status != 'listed' or not listing.is_instant:
-        return JsonResponse({'error': 'Listing must be an active instant listing'}, status=400)
-    if listing.pool_active_offers.exists():
-        return JsonResponse({
-            'error': 'Listing is already managed as a PlayerAuctions active offer',
-            'error_code': 'listing_already_managed',
-        }, status=409)
-    if not listing.integration_account_id:
-        return JsonResponse({'error': 'Listing has no integration account'}, status=400)
-    try:
-        credential = listing.integration_account.credential
-    except ObjectDoesNotExist:
-        credential = None
-    if not credential or not credential.is_active:
-        return JsonResponse({'error': 'Listing store has no active credential'}, status=400)
-    if listing.game_id != pool.game_id:
-        return JsonResponse({'error': 'Listing game does not match pool game'}, status=400)
-    if pool.variant_id:
-        from apps.posting.services.pool.spec_resolver import variant_value_contains_slug
-        if not variant_value_contains_slug(listing.variant, pool.variant.slug):
-            return JsonResponse({'error': 'Listing variant does not match pool variant'}, status=400)
-
-    try:
-        strategy = PoolOffer.strategy_for_provider(listing.integration_account.provider)
-    except ValidationError as exc:
-        return JsonResponse({'error': str(exc)}, status=400)
-    max_concurrent = None
-    if strategy == PoolOfferStrategy.CLONE:
-        try:
-            max_concurrent = int(body.get('max_concurrent', 10))
-        except (TypeError, ValueError):
-            return JsonResponse({'error': 'max_concurrent must be an integer'}, status=400)
-
-    pool_offer = PoolOffer(
-        pool=pool,
-        listing=listing,
-        strategy=strategy,
-        target_count=target_count,
-        threshold=threshold,
-        max_concurrent=max_concurrent,
-    )
-    try:
+        max_concurrent = int(body.get('max_concurrent', 10))
         with transaction.atomic():
-            pool_offer.full_clean()
-            pool_offer.save()
-            if strategy == PoolOfferStrategy.CLONE:
-                _adopt_pa_source_listing(pool_offer)
+            pool_offer = _create_pool_offer(
+                pool,
+                listing_id=listing_id,
+                target_count=target_count,
+                threshold=threshold,
+                max_concurrent=max_concurrent,
+            )
     except ValidationError as exc:
         return JsonResponse({'error': exc.message_dict}, status=400)
+    except (TypeError, ValueError):
+        return JsonResponse({'error': 'max_concurrent must be an integer'}, status=400)
     except IntegrityError:
         return JsonResponse({
             'error': 'Listing is already linked to a pool',

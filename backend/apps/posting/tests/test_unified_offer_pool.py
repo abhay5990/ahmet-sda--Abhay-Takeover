@@ -429,7 +429,7 @@ class UnifiedPoolTestCase(TestCase):
         pool_offer.refresh_from_db()
         self.assertEqual(pool_offer.current_remote_count, 1)
 
-    def test_api_creates_independent_pool_then_links_offer(self):
+    def test_api_creates_pool_and_links_offer_atomically(self):
         user = get_user_model().objects.create_user(
             username='pool-admin',
             password='test-password',
@@ -442,6 +442,10 @@ class UnifiedPoolTestCase(TestCase):
             data={
                 'name': 'API Unified Pool',
                 'game_id': self.game.pk,
+                'listing_id': listing.pk,
+                'target_count': 5,
+                'threshold': 2,
+                'max_concurrent': 10,
             },
             content_type='application/json',
         )
@@ -449,23 +453,33 @@ class UnifiedPoolTestCase(TestCase):
         pool_id = create_response.json()['pool']['id']
         pool = OfferPool.objects.get(pk=pool_id)
         self.assertIsNone(pool.listing_id)
-        self.assertEqual(pool.pool_offers.count(), 0)
-
-        link_response = self.client.post(
-            f'/posting/api/pools/{pool_id}/offers/',
-            data={
-                'listing_id': listing.pk,
-                'target_count': 5,
-                'threshold': 2,
-                'max_concurrent': 10,  # ignored for append providers
-            },
-            content_type='application/json',
-        )
-        self.assertEqual(link_response.status_code, 201, link_response.content)
         linked = PoolOffer.objects.get(pool=pool)
         self.assertEqual(linked.listing_id, listing.pk)
         self.assertEqual(linked.strategy, PoolOfferStrategy.APPEND)
         self.assertIsNone(linked.max_concurrent)
+
+    def test_api_rolls_back_new_pool_when_requested_offer_is_invalid(self):
+        user = get_user_model().objects.create_user(
+            username='pool-atomic-rollback',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        before = OfferPool.objects.count()
+
+        response = self.client.post(
+            '/posting/api/pools/',
+            data={
+                'name': 'No orphan pool',
+                'game_id': self.game.pk,
+                'listing_id': 999999,
+                'target_count': 5,
+                'threshold': 2,
+            },
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 400, response.content)
+        self.assertEqual(OfferPool.objects.count(), before)
 
     def test_pool_api_rename_trims_name_and_rejects_blank(self):
         user = get_user_model().objects.create_user(
