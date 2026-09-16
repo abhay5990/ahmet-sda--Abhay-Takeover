@@ -110,6 +110,24 @@ def remove_pool_item(
             errors=[f'Key cannot be removed while its Pool state is {item.status}.'],
         )
 
+    # Eldorado and GameBoost append credentials into one shared remote offer.
+    # Removing any one row therefore removes the offer itself. Reconcile the
+    # whole offer so each eligible linked unsold row is released together rather
+    # than leaving later rows falsely pushed after a confirmed remote deletion.
+    if (
+        pool_offer.strategy == 'append'
+        and pool_offer.marketplace in {'eldorado', 'gameboost'}
+    ):
+        detached = detach_pool_offer(pool_offer, 'remove_remote')
+        if not detached.ok:
+            return RemoveItemResult(ok=False, errors=detached.errors)
+        return RemoveItemResult(
+            ok=True,
+            removed=True,
+            remote_removed=True,
+            released_to_pool=bool(detached.released),
+        )
+
     attempts = _start_remove_attempts(pool_offer, [item])
     attempt = attempts[item.pk]
     try:
@@ -376,7 +394,7 @@ def detach_pool_offer(pool_offer: PoolOffer, mode: str) -> DetachResult:
         pool_offer.save(update_fields=['status', 'updated_at'])
         return DetachResult(ok=True, detached=True)
 
-    items = list(
+    candidate_items = list(
         pool_offer.items.filter(
             status__in=[
                 OfferPoolItemStatus.QUEUED,
@@ -385,6 +403,13 @@ def detach_pool_offer(pool_offer: PoolOffer, mode: str) -> DetachResult:
             ],
         ).select_related('owned_product')
     )
+    # A remote append offer can contain both a sold historical row and unsold
+    # rows.  Its confirmed absence permits detaching the offer, but never makes
+    # sale-evidenced stock available again.
+    items = [
+        item for item in candidate_items
+        if not _has_confirmed_sale_evidence(item)
+    ]
     if not items:
         pool_offer.status = PoolOfferStatus.DETACHED
         pool_offer.save(update_fields=['status', 'updated_at'])
@@ -562,6 +587,15 @@ def _is_playerauctions_auth_failure(result_or_error) -> bool:
     return 'unauthorized' in text or 'forbidden' in text or 'authentication' in text
 
 
+def _is_exact_remote_not_found(result_or_error) -> bool:
+    """Recognize only an explicit provider HTTP 404 as remote absence evidence."""
+    error = getattr(result_or_error, 'error', result_or_error)
+    status_code = getattr(error, 'status_code', None)
+    if status_code is None:
+        status_code = getattr(result_or_error, 'status_code', None)
+    return status_code == 404
+
+
 def _remove_eldorado(pool_offer, items):
     """Delete the whole Eldorado append offer so every remote entry is removed.
 
@@ -575,6 +609,8 @@ def _remove_eldorado(pool_offer, items):
     offer_id = pool_offer.listing.store_listing_id
     result = client.delete_offer(offer_id, proxy_group=proxy_group)
     if not result.ok:
+        if _is_exact_remote_not_found(result):
+            return {item.pk for item in items}, []
         return set(), [str(result.error)]
     return {item.pk for item in items}, []
 
@@ -585,6 +621,8 @@ def _remove_gameboost(pool_offer, items):
     offer_id = pool_offer.listing.store_listing_id
     result = client.delete_offer(offer_id, proxy_group=proxy_group)
     if not result.ok:
+        if _is_exact_remote_not_found(result):
+            return {item.pk for item in items}, []
         return set(), [str(result.error)]
     return {item.pk for item in items}, []
 

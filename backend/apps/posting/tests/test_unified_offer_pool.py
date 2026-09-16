@@ -37,6 +37,7 @@ from apps.posting.services.pool.lifecycle import (
     _remove_gameboost,
     _remove_eldorado,
     detach_pool_offer,
+    remove_pool_item,
 )
 from apps.posting.services.pool.replenisher import (
     _ensure_pa_offer_description,
@@ -812,6 +813,126 @@ class UnifiedPoolTestCase(TestCase):
             pool_offer.listing.store_listing_id,
             proxy_group='proxy-group',
         )
+
+    def test_remove_eldorado_exact_404_confirms_absence_for_all_append_items(self):
+        pool = self.make_pool('Eldorado Exact 404 Pool')
+        pool_offer = self.make_pool_offer(pool)
+        items = [
+            OfferPoolItem(
+                pk=index,
+                pool=pool,
+                pool_offer=pool_offer,
+                status=OfferPoolItemStatus.PUSHED,
+            )
+            for index in (905, 906)
+        ]
+        client = Mock()
+        client.delete_offer.return_value = SimpleNamespace(
+            ok=False,
+            error=SimpleNamespace(status_code=404, message='Offer not found'),
+        )
+        with patch(
+            'apps.posting.services.pool.lifecycle._client',
+            return_value=(client, 'proxy-group'),
+        ):
+            removed, errors = _remove_eldorado(pool_offer, items)
+
+        self.assertEqual(removed, {905, 906})
+        self.assertEqual(errors, [])
+
+    def test_append_item_remove_reconciles_all_unsold_rows_after_remote_404(self):
+        pool = self.make_pool('Whole Offer 404 Reconcile Pool')
+        pool_offer = self.make_pool_offer(pool)
+        items = []
+        for suffix in ('one', 'two'):
+            product = self.make_owned(f'whole-offer-404-{suffix}')
+            items.append(OfferPoolItem.objects.create(
+                pool=pool,
+                pool_offer=pool_offer,
+                owned_product=product,
+                status=OfferPoolItemStatus.PUSHED,
+                remote_state='present',
+                target_offer_id=pool_offer.listing.store_listing_id,
+            ))
+            ListingOwnedProduct.objects.create(
+                listing=pool_offer.listing,
+                owned_product=product,
+            )
+
+        client = Mock()
+        client.delete_offer.return_value = SimpleNamespace(
+            ok=False,
+            error=SimpleNamespace(status_code=404, message='Offer not found'),
+        )
+        with patch(
+            'apps.posting.services.pool.lifecycle._client',
+            return_value=(client, 'proxy-group'),
+        ):
+            result = remove_pool_item(
+                pool_offer,
+                items[0],
+                listing=pool_offer.listing,
+            )
+
+        self.assertTrue(result.ok)
+        self.assertTrue(result.released_to_pool)
+        pool_offer.refresh_from_db()
+        self.assertEqual(pool_offer.status, PoolOfferStatus.DETACHED)
+        self.assertEqual(pool_offer.current_remote_count, 0)
+        for item in items:
+            item.refresh_from_db()
+            self.assertEqual(item.status, OfferPoolItemStatus.PENDING)
+            self.assertIsNone(item.pool_offer_id)
+            self.assertEqual(item.remote_state, 'absent')
+
+    def test_append_item_remove_404_keeps_sale_evidenced_row_protected(self):
+        pool = self.make_pool('Whole Offer 404 Sale Guard Pool')
+        pool_offer = self.make_pool_offer(pool)
+        unsold = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('whole-offer-404-unsold'),
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+            target_offer_id=pool_offer.listing.store_listing_id,
+        )
+        sold = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('whole-offer-404-sold'),
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+            target_offer_id=pool_offer.listing.store_listing_id,
+        )
+        PoolSaleEvent.objects.create(
+            event_key='eldorado:whole-offer-404:sold-row',
+            listing=pool_offer.listing,
+            pool_offer=pool_offer,
+            pool_item=sold,
+        )
+
+        client = Mock()
+        client.delete_offer.return_value = SimpleNamespace(
+            ok=False,
+            error=SimpleNamespace(status_code=404, message='Offer not found'),
+        )
+        with patch(
+            'apps.posting.services.pool.lifecycle._client',
+            return_value=(client, 'proxy-group'),
+        ):
+            result = remove_pool_item(
+                pool_offer,
+                unsold,
+                listing=pool_offer.listing,
+            )
+
+        self.assertTrue(result.ok)
+        unsold.refresh_from_db()
+        sold.refresh_from_db()
+        self.assertEqual(unsold.status, OfferPoolItemStatus.PENDING)
+        self.assertIsNone(unsold.pool_offer_id)
+        self.assertEqual(sold.status, OfferPoolItemStatus.PUSHED)
+        self.assertEqual(sold.pool_offer_id, pool_offer.pk)
 
     def test_recover_removed_absent_pa_clone_returns_to_available_without_remote_lookup(self):
         from apps.posting.services.pool.recovery import recover_verified_unsold_item
