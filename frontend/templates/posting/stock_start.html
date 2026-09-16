@@ -952,7 +952,24 @@
                     <span x-show="!submitting">Start Posting</span>
                     <span x-show="submitting">Submitting...</span>
                 </button>
-<p x-show="submitError" class="text-sm text-red-600" x-text="submitError"></p>
+                <div x-show="submitError" class="text-sm text-red-600 space-y-2" role="alert">
+                    <p x-text="submitError"></p>
+                    <ul x-show="submitBlockers.length" class="list-disc pl-5 space-y-1 text-red-700">
+                        <template x-for="blocker in submitBlockers" :key="`${blocker.ref_key}-${blocker.pool_id ?? 'order'}`">
+                            <li class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                <span>Blocked key:</span>
+                                <code class="font-mono text-xs bg-red-50 px-1 rounded" x-text="blocker.ref_key || 'No unique code' "></code>
+                                <span class="text-red-600" x-text="blocker.reason === 'final_order' ? 'has a final order' : 'is still protected by an older pool'"></span>
+                                <a x-show="blocker.ref_key"
+                                   :href="`/posting/key-search/?q=${encodeURIComponent(blocker.ref_key)}`"
+                                   class="underline font-medium">Search key</a>
+                                <a x-show="blocker.pool_id"
+                                   :href="`/posting/restock/pools/${blocker.pool_id}/`"
+                                   class="underline font-medium">Open old pool</a>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -1202,6 +1219,7 @@ function stockStart() {
         templatesByMarketplace: {},  // { marketplace: { title: [...], description: [...] } }
         submitting: false,
         submitError: '',
+        submitBlockers: [],
 
         get sheetHasSalesPrice() {
             if ((this.sourceType !== 'sheet' && this.sourceType !== 'r6_sheet') || this.sheetAccounts.length === 0) return false;
@@ -1979,6 +1997,7 @@ function stockStart() {
         async submitJob() {
             this.submitting = true;
             this.submitError = '';
+            this.submitBlockers = [];
 
             const body = this._buildPayload();
 
@@ -1996,6 +2015,7 @@ function stockStart() {
 
                 if (!resp.ok) {
                     this.submitError = data.error || 'Failed to create job';
+                    this.submitBlockers = Array.isArray(data.blockers) ? data.blockers : [];
                     this.submitting = false;
                     return;
                 }

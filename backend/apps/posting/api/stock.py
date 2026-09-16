@@ -353,6 +353,7 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
         ))
         blocked_existing_product_ids = _protected_pool_product_ids(existing_products)
         if blocked_existing_product_ids:
+            blockers = _protected_pool_blockers(existing_products)
             return JsonResponse(
                 {
                     'error': (
@@ -360,7 +361,8 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
                         f'{len(blocked_existing_product_ids)} account(s) still have '
                         'protected pool ownership. Verify the old remote offer is '
                         'absent or resolve its sale/reservation state before listing again.'
-                    )
+                    ),
+                    'blockers': blockers,
                 },
                 status=409,
             )
@@ -408,6 +410,7 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
             credential_spec = resolve_spec_for_game_variant(game, platform)
             blocked_product_ids = _protected_pool_product_ids(owned_products)
             if blocked_product_ids:
+                blockers = _protected_pool_blockers(owned_products)
                 return JsonResponse(
                     {
                         'error': (
@@ -415,7 +418,8 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
                             f'{len(blocked_product_ids)} account(s) still have protected '
                             'pool ownership. Verify the old remote offer is absent or '
                             'resolve its sale/reservation state before listing again.'
-                        )
+                        ),
+                        'blockers': blockers,
                     },
                     status=409,
                 )
@@ -649,6 +653,62 @@ def _protected_pool_product_ids(
         ).values_list('owned_product_id', flat=True)
     )
     return live_owner_product_ids | final_order_product_ids
+
+
+def _protected_pool_blockers(
+    owned_products: list[OwnedProduct],
+) -> list[dict[str, int | str | None]]:
+    """Return staff-safe references for products blocked from a new pool.
+
+    The response intentionally contains only a tracking reference, reason, and
+    optional old-pool ID. It never exposes a login, password, email, source ID,
+    remote offer ID, order ID, or provider credentials.
+    """
+    candidates = [owned for owned in owned_products if owned is not None]
+    if not candidates:
+        return []
+
+    product_by_id = {owned.id: owned for owned in candidates}
+    blockers: dict[int, dict[str, int | str | None]] = {}
+    live_rows = (
+        OfferPoolItem.objects.filter(live_owned_product__in=candidates)
+        .select_related('pool', 'live_owned_product')
+        .order_by('pool_id', 'id')
+    )
+    for item in live_rows:
+        product_id = item.live_owned_product_id
+        if product_id not in blockers:
+            blockers[product_id] = {
+                'ref_key': item.live_owned_product.ref_key or '',
+                'reason': 'pool_ownership',
+                'pool_id': item.pool_id,
+            }
+
+    # A final order remains a hard block even if a historical pool row is no
+    # longer live-owned. Keep this response anonymous other than ref_key.
+    from apps.orders.enums import OrderStatus
+    from apps.orders.models import Order
+    final_order_product_ids = set(
+        Order.objects.filter(
+            owned_product__in=candidates,
+            status__in=[OrderStatus.COMPLETED, OrderStatus.DELIVERED],
+        ).values_list('owned_product_id', flat=True)
+    )
+    for product_id in final_order_product_ids:
+        blockers.setdefault(
+            product_id,
+            {
+                'ref_key': product_by_id[product_id].ref_key or '',
+                'reason': 'final_order',
+                'pool_id': None,
+            },
+        )
+
+    return [
+        blockers[owned.id]
+        for owned in candidates
+        if owned.id in blockers
+    ]
 
 
 def _build_shared_items(

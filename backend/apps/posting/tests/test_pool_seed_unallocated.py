@@ -11,6 +11,7 @@ from apps.integrations.models import IntegrationAccount
 from apps.inventory.models import Category, Game, OwnedProduct
 from apps.listings.models import Listing
 from apps.posting.api.stock import (
+    _protected_pool_blockers,
     _protected_pool_product_ids,
     _seed_pool_pending_items,
 )
@@ -155,6 +156,31 @@ class SeedUnallocatedStockTests(TestCase):
         )
 
         self.assertSetEqual(_protected_pool_product_ids([account]), {account.id})
+
+    def test_protected_owner_blocker_exposes_only_safe_tracking_reference(self):
+        """Staff can find a blocker without receiving credential or offer data."""
+        account = self._accounts(1)[0]
+        account.ref_key = '#SAFE123'
+        account.save(update_fields=['ref_key'])
+        old_pool = OfferPool.objects.create(
+            name="Protected", game=self.game, status=OfferPoolStatus.ACTIVE,
+        )
+        OfferPoolItem.objects.create(
+            pool=old_pool,
+            owned_product=account,
+            live_owned_product=account,
+            status=OfferPoolItemStatus.REMOVED,
+            remote_state='unknown',
+        )
+
+        self.assertEqual(
+            _protected_pool_blockers([account]),
+            [{
+                'ref_key': '#SAFE123',
+                'reason': 'pool_ownership',
+                'pool_id': old_pool.id,
+            }],
+        )
 
     def test_protected_owner_preflight_allows_safely_released_account(self):
         """A fully detached removed row remains reusable for stock posting."""
