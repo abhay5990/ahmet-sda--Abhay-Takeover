@@ -1252,6 +1252,18 @@ class OfferPoolItem(models.Model):
         on_delete=models.PROTECT,
         related_name='pool_items',
     )
+    live_owned_product = models.ForeignKey(
+        'inventory.OwnedProduct',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        editable=False,
+        related_name='live_pool_items',
+        help_text=(
+            'Current exclusive pool ownership. Cleared only after a guarded '
+            'unsold removal so historical removed rows can be retained safely.'
+        ),
+    )
     pool_offer = models.ForeignKey(
         PoolOffer,
         null=True,
@@ -1300,8 +1312,8 @@ class OfferPoolItem(models.Model):
                 name='unique_pool_owned_product',
             ),
             models.UniqueConstraint(
-                fields=['owned_product'],
-                name='unique_owned_product_across_pools',
+                fields=['live_owned_product'],
+                name='unique_live_owned_product_across_pools',
             ),
             models.CheckConstraint(
                 condition=(
@@ -1361,6 +1373,23 @@ class OfferPoolItem(models.Model):
 
     def __str__(self):
         return f"PoolItem #{self.pk} — {self.owned_product.login} ({self.status})"
+
+    def save(self, *args, **kwargs):
+        """Keep the exclusive live-owner lock aligned with non-removed rows.
+
+        A removed row may retain the lock when it still has sale or remote
+        evidence. Guarded unsold removal paths explicitly clear it before
+        saving, allowing the same product to seed a future stock-posting pool
+        while preserving the old row and its immutable audit relations.
+        """
+        if self.status != OfferPoolItemStatus.REMOVED:
+            self.live_owned_product_id = self.owned_product_id
+            update_fields = kwargs.get('update_fields')
+            if update_fields is not None:
+                kwargs['update_fields'] = set(update_fields) | {
+                    'live_owned_product',
+                }
+        super().save(*args, **kwargs)
 
 
 class OfferPoolActiveOffer(models.Model):

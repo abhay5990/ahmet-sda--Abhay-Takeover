@@ -1055,14 +1055,31 @@ def restock_pool_detail_page(request, pool_id):
         pool.pool_offers.select_related('listing', 'listing__integration_account')
         .order_by('created_at')
     )
-    active_pool_offers = [
-        offer for offer in pool_offers if offer.status != 'detached'
+    # Old offer configurations are not live inventory. Keep them out of the
+    # primary view; sale events still retain their exact store/order evidence.
+    pool_offers = [
+        offer for offer in pool_offers if offer.status == PoolOfferStatus.ACTIVE
     ]
+    active_pool_offers = pool_offers
+    has_live_pool_offer = bool(pool_offers)
+    visible_item_filter = (
+        ~Q(status=OfferPoolItemStatus.REMOVED)
+        | Q(sale_events__isnull=False)
+        | Q(active_offers__status=OfferPoolActiveOfferStatus.SOLD)
+    )
+    # A pool with no live offer is historical. Its detail page retains only
+    # proven sale evidence; deleted, removed, pending, detached, and stale
+    # historical rows must not inflate its Rows or count cards.
+    if not has_live_pool_offer:
+        visible_item_filter = (
+            Q(sale_events__isnull=False)
+            | Q(active_offers__status=OfferPoolActiveOfferStatus.SOLD)
+        )
     items = list(pool.items.select_related(
         'owned_product',
         'pool_offer__listing__integration_account',
         'reservation__store',
-    ).order_by('order', 'created_at'))
+    ).filter(visible_item_filter).distinct().order_by('order', 'created_at'))
     active_offers = list(
         OfferPoolActiveOffer.objects.filter(pool_offer__pool=pool)
         .select_related('listing', 'pool_item', 'pool_item__owned_product', 'pool_offer')

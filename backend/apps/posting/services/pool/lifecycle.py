@@ -335,6 +335,10 @@ def _finalize_single_item_removal(
             released_to_pool = True
         elif item.status != OfferPoolItemStatus.CONSUMED:
             item.status = OfferPoolItemStatus.REMOVED
+            # This is reached only after the established sale/reservation
+            # guards. Keep the removed row for audit, but release its live
+            # ownership so a future stock-posting pool can use the account.
+            item.live_owned_product = None
         item.remote_state = 'absent'
         item.remote_credential_id = ''
         item.claim_token = None
@@ -344,7 +348,8 @@ def _finalize_single_item_removal(
         item.save(update_fields=[
             'status', 'pool_offer', 'target_offer_id', 'pushed_at', 'consumed_at',
             'reservation', 'remote_state', 'remote_credential_id', 'claim_token',
-            'claimed_at', 'error_message', 'failure_stage', 'updated_at',
+            'claimed_at', 'error_message', 'failure_stage',
+            'live_owned_product', 'updated_at',
         ])
         if attempt is not None:
             attempt.status = PoolDispatchStatus.SUCCEEDED

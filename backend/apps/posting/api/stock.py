@@ -561,16 +561,26 @@ def _seed_pool_pending_items(pool, owned_products: list[OwnedProduct]) -> None:
     candidates = [o for o in owned_products if o is not None]
     if not candidates:
         return
-    # An OwnedProduct can belong to only one pool (unique_owned_product_across_pools).
-    # Skip any account already tracked in a pool so seeding can never raise an
-    # IntegrityError and crash job creation.
+    # A product can belong to one *live* pool at a time. A safely removed old
+    # row deliberately clears its live owner lock but remains as historical
+    # audit evidence, so it must not block a fresh stock-posting pool.
     existing_ids = set(
-        OfferPoolItem.objects.filter(owned_product__in=candidates)
-        .values_list('owned_product_id', flat=True)
+        OfferPoolItem.objects.filter(live_owned_product__in=candidates)
+        .values_list('live_owned_product_id', flat=True)
+    )
+    # Never reuse stock with durable final-order evidence, even if an old
+    # unsold-looking pool row has already released its live ownership lock.
+    from apps.orders.enums import OrderStatus
+    from apps.orders.models import Order
+    final_order_product_ids = set(
+        Order.objects.filter(
+            owned_product__in=candidates,
+            status__in=[OrderStatus.COMPLETED, OrderStatus.DELIVERED],
+        ).values_list('owned_product_id', flat=True)
     )
     base_order = pool.items.count()
     for i, owned in enumerate(candidates):
-        if owned.id in existing_ids:
+        if owned.id in existing_ids or owned.id in final_order_product_ids:
             continue
         OfferPoolItem.objects.get_or_create(
             pool=pool,

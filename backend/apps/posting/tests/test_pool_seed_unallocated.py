@@ -95,6 +95,48 @@ class SeedUnallocatedStockTests(TestCase):
             OfferPoolItem.objects.filter(pool=pool, owned_product=accounts[0]).exists()
         )
 
+    def test_seeding_reuses_safely_removed_historical_account(self):
+        """A fully detached unsold removed row must not block a fresh pool."""
+        account = self._accounts(1)[0]
+        old_pool = OfferPool.objects.create(
+            name="Old", game=self.game, status=OfferPoolStatus.ACTIVE,
+        )
+        OfferPoolItem.objects.create(
+            pool=old_pool,
+            owned_product=account,
+            live_owned_product=None,
+            status=OfferPoolItemStatus.REMOVED,
+            remote_state='absent',
+        )
+
+        pool = self._pool()
+        _seed_pool_pending_items(pool, [account])
+
+        new_item = OfferPoolItem.objects.get(pool=pool, owned_product=account)
+        self.assertEqual(new_item.status, OfferPoolItemStatus.PENDING)
+        self.assertEqual(new_item.live_owned_product_id, account.id)
+
+    def test_seeding_keeps_removed_item_blocked_when_live_lock_remains(self):
+        """Removed rows with retained remote or sale protection stay exclusive."""
+        account = self._accounts(1)[0]
+        old_pool = OfferPool.objects.create(
+            name="Protected", game=self.game, status=OfferPoolStatus.ACTIVE,
+        )
+        OfferPoolItem.objects.create(
+            pool=old_pool,
+            owned_product=account,
+            live_owned_product=account,
+            status=OfferPoolItemStatus.REMOVED,
+            remote_state='unknown',
+        )
+
+        pool = self._pool()
+        _seed_pool_pending_items(pool, [account])
+
+        self.assertFalse(
+            OfferPoolItem.objects.filter(pool=pool, owned_product=account).exists()
+        )
+
     def test_posted_subset_promoted_surplus_stays_unallocated(self):
         """After seeding 30 and posting 2, exactly 2 are PUSHED and 28 stay shared."""
         pool = self._pool()

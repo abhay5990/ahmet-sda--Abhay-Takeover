@@ -908,8 +908,11 @@ def remove_pool_item(request, pool_id, item_id):
         # stock while retaining that audit trail instead of raising a 500 from
         # a physical delete.
         item.status = OfferPoolItemStatus.REMOVED
+        item.live_owned_product = None
         item.error_message = 'Removed by staff from shared pool stock.'
-        item.save(update_fields=['status', 'error_message', 'updated_at'])
+        item.save(update_fields=[
+            'status', 'live_owned_product', 'error_message', 'updated_at',
+        ])
         return JsonResponse({
             'ok': True,
             'removed_from_marketplace': False,

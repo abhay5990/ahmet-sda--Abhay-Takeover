@@ -1008,6 +1008,50 @@ class UnifiedPoolTestCase(TestCase):
         self.assertContains(detail_response, 'Rendered Pool')
         self.assertContains(detail_response, 'Linked Offers')
 
+    def test_history_only_pool_hides_unsold_removed_rows_but_keeps_verified_sale(self):
+        user = get_user_model().objects.create_user(
+            username='pool-sold-only-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('Sold-only history pool')
+        listing = self.make_listing(remote_id='sold-only-history-offer')
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            status=PoolOfferStatus.DETACHED,
+        )
+        removed_unsold = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=self.make_owned('old-unsold-history'),
+            live_owned_product=None,
+            status=OfferPoolItemStatus.REMOVED,
+            remote_state='absent',
+        )
+        sold_item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('old-sold-history'),
+            status=OfferPoolItemStatus.CONSUMED,
+        )
+        PoolSaleEvent.objects.create(
+            event_key='sold-only-history-event',
+            listing=listing,
+            pool_offer=pool_offer,
+            pool_item=sold_item,
+            outcome='confirmed',
+        )
+
+        response = self.client.get(f'/posting/restock/pools/{pool.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['pool_offers'], [])
+        self.assertEqual(
+            [item.pk for item in response.context['items']], [sold_item.pk],
+        )
+        self.assertEqual(len(response.context['sold_item_history']), 1)
+        self.assertNotContains(response, removed_unsold.owned_product.login)
+
     def test_pool_detail_removes_pending_key_but_keeps_account_inventory(self):
         user = get_user_model().objects.create_user(
             username='pool-pending-remove-user',
