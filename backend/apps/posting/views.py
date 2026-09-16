@@ -1062,15 +1062,25 @@ def restock_pool_detail_page(request, pool_id):
     ]
     active_pool_offers = pool_offers
     has_live_pool_offer = bool(pool_offers)
+    has_current_unassigned_stock = pool.items.filter(
+        live_owned_product_id__isnull=False,
+        status__in=[
+            OfferPoolItemStatus.PENDING,
+            OfferPoolItemStatus.RESERVED,
+            OfferPoolItemStatus.QUEUED,
+            OfferPoolItemStatus.PUSHED,
+            OfferPoolItemStatus.FAILED,
+        ],
+    ).exists()
     visible_item_filter = (
         ~Q(status=OfferPoolItemStatus.REMOVED)
         | Q(sale_events__isnull=False)
         | Q(active_offers__status=OfferPoolActiveOfferStatus.SOLD)
     )
-    # A pool with no live offer is historical. Its detail page retains only
-    # proven sale evidence; deleted, removed, pending, detached, and stale
-    # historical rows must not inflate its Rows or count cards.
-    if not has_live_pool_offer:
+    # A no-offer pool may be either a freshly created pool waiting for its
+    # first dispatch or an old historical pool. Retain normal live rows for
+    # the former; only the latter is limited to proven sold evidence.
+    if not has_live_pool_offer and not has_current_unassigned_stock:
         visible_item_filter = (
             Q(sale_events__isnull=False)
             | Q(active_offers__status=OfferPoolActiveOfferStatus.SOLD)

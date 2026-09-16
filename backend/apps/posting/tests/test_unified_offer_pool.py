@@ -1052,6 +1052,27 @@ class UnifiedPoolTestCase(TestCase):
         self.assertEqual(len(response.context['sold_item_history']), 1)
         self.assertNotContains(response, removed_unsold.owned_product.login)
 
+    def test_new_pool_without_offer_keeps_current_pending_stock_visible(self):
+        user = get_user_model().objects.create_user(
+            username='pool-new-stock-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('New pending stock pool')
+        pending_item = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=self.make_owned('new-pending-stock'),
+            status=OfferPoolItemStatus.PENDING,
+        )
+
+        response = self.client.get(f'/posting/restock/pools/{pool.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [item.pk for item in response.context['items']], [pending_item.pk],
+        )
+        self.assertEqual(len(response.context['shared_item_rows']), 1)
+
     def test_pool_detail_removes_pending_key_but_keeps_account_inventory(self):
         user = get_user_model().objects.create_user(
             username='pool-pending-remove-user',
