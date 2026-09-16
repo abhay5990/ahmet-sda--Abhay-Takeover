@@ -23,6 +23,7 @@ from apps.posting.api.media_override import (
 from apps.posting.models import (
     ContentTemplate,
     OfferPool,
+    OfferPoolItem,
     OfferPoolStatus,
     PostingDefault,
     PostingJob,
@@ -331,7 +332,40 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
         if manual_fields:
             batch_data['manual_fields'] = manual_fields
 
-    # Create OwnedProducts with LZT-compatible raw_data
+    # Reject a protected historical account before updating its manual data or
+    # launching a job.  Otherwise a stock-posting request could overwrite an
+    # old pool-owned record and create a marketplace listing that its new pool
+    # is not allowed to own.
+    pool_config_raw = body.get('pool_config')
+    pool_name = (
+        str(pool_config_raw.get('name', '')).strip()
+        if isinstance(pool_config_raw, dict)
+        else ''
+    )
+    if pool_name:
+        requested_logins = {
+            _extract_platform_credentials(credential, platform)[0]
+            for credential in credentials
+        }
+        existing_products = list(OwnedProduct.objects.filter(
+            category=game.category,
+            login__in=requested_logins,
+        ))
+        blocked_existing_product_ids = _protected_pool_product_ids(existing_products)
+        if blocked_existing_product_ids:
+            return JsonResponse(
+                {
+                    'error': (
+                        'Cannot create a linked stock-posting pool because '
+                        f'{len(blocked_existing_product_ids)} account(s) still have '
+                        'protected pool ownership. Verify the old remote offer is '
+                        'absent or resolve its sale/reservation state before listing again.'
+                    )
+                },
+                status=409,
+            )
+
+    # Create OwnedProducts with LZT-compatible raw_data.
     owned_products = _create_manual_owned_products(credentials, batch_data, game)
 
     # Build job items based on distribution mode
@@ -355,9 +389,7 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
     }
 
     # Optional: auto-create a restock pool for this job
-    pool_config_raw = body.get('pool_config')
     if pool_config_raw and isinstance(pool_config_raw, dict):
-        pool_name = str(pool_config_raw.get('name', '')).strip()
         if pool_name:
             try:
                 target_count = max(1, int(pool_config_raw.get('target_count', 5)))
@@ -374,6 +406,19 @@ def _create_manual_job(body: dict, game: Game, stores: list, job_settings: dict,
                 )
             from apps.posting.services.pool.spec_resolver import resolve_spec_for_game_variant
             credential_spec = resolve_spec_for_game_variant(game, platform)
+            blocked_product_ids = _protected_pool_product_ids(owned_products)
+            if blocked_product_ids:
+                return JsonResponse(
+                    {
+                        'error': (
+                            'Cannot create a linked stock-posting pool because '
+                            f'{len(blocked_product_ids)} account(s) still have protected '
+                            'pool ownership. Verify the old remote offer is absent or '
+                            'resolve its sale/reservation state before listing again.'
+                        )
+                    },
+                    status=409,
+                )
             pool = OfferPool.objects.create(
                 name=pool_name,
                 game=game,
@@ -556,15 +601,40 @@ def _seed_pool_pending_items(pool, owned_products: list[OwnedProduct]) -> None:
     posts are later promoted to PUSHED and linked to an offer; the rest remain
     PENDING/unassigned and show up as shared/unallocated pool stock.
     """
-    from apps.posting.models import OfferPoolItem, OfferPoolItemStatus
+    from apps.posting.models import OfferPoolItemStatus
 
     candidates = [o for o in owned_products if o is not None]
     if not candidates:
         return
-    # A product can belong to one *live* pool at a time. A safely removed old
-    # row deliberately clears its live owner lock but remains as historical
-    # audit evidence, so it must not block a fresh stock-posting pool.
-    existing_ids = set(
+    blocked_product_ids = _protected_pool_product_ids(candidates)
+    base_order = pool.items.count()
+    for i, owned in enumerate(candidates):
+        if owned.id in blocked_product_ids:
+            continue
+        OfferPoolItem.objects.get_or_create(
+            pool=pool,
+            owned_product=owned,
+            defaults={
+                'status': OfferPoolItemStatus.PENDING,
+                'order': base_order + i,
+            },
+        )
+
+
+def _protected_pool_product_ids(
+    owned_products: list[OwnedProduct],
+) -> set[int]:
+    """Return products that cannot safely enter a fresh stock-posting pool.
+
+    A historical row is reusable only after its guarded removal has cleared
+    ``live_owned_product``.  This prevents a posting job from creating a live
+    marketplace offer for an account that could not be seeded into its new
+    pool, which previously left successful offers without exact pool links.
+    """
+    candidates = [owned for owned in owned_products if owned is not None]
+    if not candidates:
+        return set()
+    live_owner_product_ids = set(
         OfferPoolItem.objects.filter(live_owned_product__in=candidates)
         .values_list('live_owned_product_id', flat=True)
     )
@@ -578,18 +648,7 @@ def _seed_pool_pending_items(pool, owned_products: list[OwnedProduct]) -> None:
             status__in=[OrderStatus.COMPLETED, OrderStatus.DELIVERED],
         ).values_list('owned_product_id', flat=True)
     )
-    base_order = pool.items.count()
-    for i, owned in enumerate(candidates):
-        if owned.id in existing_ids or owned.id in final_order_product_ids:
-            continue
-        OfferPoolItem.objects.get_or_create(
-            pool=pool,
-            owned_product=owned,
-            defaults={
-                'status': OfferPoolItemStatus.PENDING,
-                'order': base_order + i,
-            },
-        )
+    return live_owner_product_ids | final_order_product_ids
 
 
 def _build_shared_items(

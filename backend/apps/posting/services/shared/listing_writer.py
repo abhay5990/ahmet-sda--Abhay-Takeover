@@ -295,16 +295,23 @@ def _auto_link_listing_to_pool(
     pool = OfferPool.objects.get(pk=pool_id)
 
     with transaction.atomic():
-        pool_offer = PoolOffer.objects.create(
-            pool=pool,
+        pool_offer, _pool_offer_created = PoolOffer.objects.get_or_create(
             listing=listing,
-            strategy=strategy,
-            target_count=target_count,
-            threshold=threshold,
-            max_concurrent=max_concurrent,
-            current_remote_count=cred_count,
-            status=PoolOfferStatus.ACTIVE,
+            defaults={
+                'pool': pool,
+                'strategy': strategy,
+                'target_count': target_count,
+                'threshold': threshold,
+                'max_concurrent': max_concurrent,
+                'current_remote_count': cred_count,
+                'status': PoolOfferStatus.ACTIVE,
+            },
         )
+        if pool_offer.pool_id != pool.id:
+            raise ValueError(
+                f'Listing {listing.id} is already linked to pool {pool_offer.pool_id}, '
+                f'not requested pool {pool.id}.'
+            )
 
         now = timezone.now()
         base_order = pool.items.count()
@@ -340,13 +347,20 @@ def _auto_link_listing_to_pool(
                 first_item = pool_item
 
         if strategy == PoolOfferStrategy.CLONE and first_item is not None:
-            OfferPoolActiveOffer.objects.create(
-                pool=pool,
+            active_offer, active_offer_created = OfferPoolActiveOffer.objects.get_or_create(
                 pool_offer=pool_offer,
-                listing=listing,
-                pool_item=first_item,
                 store_listing_id=listing.store_listing_id,
+                defaults={
+                    'pool': pool,
+                    'listing': listing,
+                    'pool_item': first_item,
+                },
             )
+            if not active_offer_created and active_offer.pool_item_id != first_item.id:
+                raise ValueError(
+                    f'Listing {listing.id} already has a different active pool item '
+                    f'for pool offer {pool_offer.id}.'
+                )
 
 
 def _finalize_dispatch_success(
