@@ -2062,9 +2062,12 @@ def _validate_pool_candidate(
         'warnings': [],
     }
 
-    # Global exclusivity: one credential has one durable pool item for life.
+    # Global exclusivity applies to current live ownership, not immutable
+    # historical rows. A guarded unsold removal clears live_owned_product so a
+    # fresh stock-posting or pool can safely reuse the credential while the
+    # original removed row remains as audit history.
     existing_item = (
-        OfferPoolItem.objects.filter(owned_product=owned)
+        OfferPoolItem.objects.filter(live_owned_product=owned)
         .select_related('pool')
         .first()
     )

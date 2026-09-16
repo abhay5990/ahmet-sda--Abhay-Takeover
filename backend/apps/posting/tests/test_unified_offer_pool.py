@@ -11,7 +11,10 @@ from django.utils import timezone
 from apps.integrations.models import IntegrationAccount, IntegrationCredential
 from apps.inventory.models import Category, Game, OwnedProduct
 from apps.listings.models import Listing, ListingOwnedProduct
-from apps.posting.api.pool import _adopt_pa_source_listing
+from apps.posting.api.pool import (
+    _adopt_pa_source_listing,
+    _validate_pool_candidate,
+)
 from apps.posting.models import (
     OfferPool,
     OfferPoolActiveOffer,
@@ -186,6 +189,42 @@ class UnifiedPoolTestCase(TestCase):
 
         with self.assertRaises(IntegrityError), transaction.atomic():
             OfferPoolItem.objects.create(pool=second, owned_product=owned)
+
+    def test_pool_candidate_allows_safely_released_historical_row(self):
+        """A detached historical removal cannot block reuse in a fresh pool."""
+        owned = self.make_owned('released-history@example.test')
+        old_pool = self.make_pool('Old')
+        new_pool = self.make_pool('New')
+        OfferPoolItem.objects.create(
+            pool=old_pool,
+            owned_product=owned,
+            status=OfferPoolItemStatus.REMOVED,
+            remote_state='absent',
+            live_owned_product=None,
+        )
+
+        check = _validate_pool_candidate(owned, new_pool)
+
+        self.assertFalse(check['block'])
+
+    def test_pool_candidate_blocks_retained_live_owner(self):
+        """A removed history row stays exclusive while it retains a live lock."""
+        owned = self.make_owned('retained-history@example.test')
+        old_pool = self.make_pool('Old')
+        new_pool = self.make_pool('New')
+        OfferPoolItem.objects.create(
+            pool=old_pool,
+            owned_product=owned,
+            status=OfferPoolItemStatus.REMOVED,
+            remote_state='unknown',
+            live_owned_product=owned,
+        )
+
+        check = _validate_pool_candidate(owned, new_pool)
+
+        self.assertTrue(check['block'])
+        self.assertEqual(check['block_reason'], 'in_another_pool')
+        self.assertIn('Old', check['block_detail'])
 
     def test_claim_prevents_second_offer_from_taking_same_item(self):
         pool = self.make_pool()
