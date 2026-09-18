@@ -1096,10 +1096,12 @@ def listing_link(request, gb_offer_id: str):
         if not dp:
             return JsonResponse({"ok": False, "error": "Listing has no linked DropshipProduct"}, status=404)
 
+        from apps.posting.services.dropship.non_sab_cleanup import extract_eldorado_game_id
         return JsonResponse({
             "ok": True,
             "gameboostOfferId": gb_offer_id,
             "eldoradoOfferId": dp.source_product_id,
+            "eldoradoGameId": extract_eldorado_game_id(dp.raw_data),
             "store": listing.integration_account.name if listing.integration_account else None,
             "game": listing.game.slug if listing.game else None,
             "title": listing.title or "",
@@ -1172,6 +1174,59 @@ def listing_link_stats(request):
 
 
 @csrf_exempt
+def delist_non_sab_items(request):
+    """
+    POST /posting/api/delist-non-sab-items/
+    Find LISTED steal-a-brainrot DropshipProducts whose Eldorado source
+    gameId is not SAB (259) and archive their GameBoost offers.
+
+    Auth: X-Bridge-Secret header.
+    Body (optional JSON):
+      {"dry_run": true, "limit": 100}
+    """
+    from django.conf import settings as django_settings
+    secret = request.headers.get("X-Bridge-Secret", "")
+    expected = getattr(django_settings, "CT_BRIDGE_SECRET", "") or ""
+    if not expected or secret != expected:
+        return JsonResponse({"ok": False, "error": "Unauthorized"}, status=401)
+    if request.method != "POST":
+        return JsonResponse({"ok": False, "error": "POST required"}, status=405)
+
+    dry_run = True
+    limit = None
+    if request.body:
+        try:
+            body = json.loads(request.body)
+        except (json.JSONDecodeError, ValueError) as e:
+            return JsonResponse({"ok": False, "error": f"Invalid JSON: {e}"}, status=400)
+        if "dry_run" in body:
+            dry_run = bool(body.get("dry_run"))
+        if body.get("limit") is not None:
+            try:
+                limit = int(body["limit"])
+            except (TypeError, ValueError):
+                return JsonResponse({"ok": False, "error": "limit must be an integer"}, status=400)
+            if limit < 1:
+                return JsonResponse({"ok": False, "error": "limit must be >= 1"}, status=400)
+
+    from apps.posting.services.dropship.non_sab_cleanup import cleanup_non_sab_item_listings
+    result = cleanup_non_sab_item_listings(dry_run=dry_run, limit=limit)
+    return JsonResponse({
+        "ok": result.failed == 0,
+        "dry_run": result.dry_run,
+        "scanned": result.scanned,
+        "sab_kept": result.sab_kept,
+        "unknown_game_id": result.unknown_game_id,
+        "non_sab_found": result.non_sab_found,
+        "delisted": result.delisted,
+        "failed": result.failed,
+        "non_sab_offer_ids": result.non_sab_offer_ids[:500],
+        "non_sab_offer_id_count": len(result.non_sab_offer_ids),
+        "errors": result.errors,
+    }, status=200 if result.failed == 0 else 207)
+
+
+@csrf_exempt
 def bulk_delist_by_gb_offer(request):
     """
     POST /posting/api/bulk-delist-by-gb-offer/
@@ -1197,7 +1252,10 @@ def bulk_delist_by_gb_offer(request):
     offer_ids = body.get("offerIds", [])
     if not offer_ids or not isinstance(offer_ids, list):
         return JsonResponse({"ok": False, "error": "offerIds must be a non-empty list"}, status=400)
-    from apps.posting.services.dropship.delist import delist_single
+    from apps.posting.services.dropship.delist import (
+        _delete_one_listing,
+        _mark_dp_deleted,
+    )
     succeeded = []
     failed = []
     errors = {}
@@ -1206,7 +1264,12 @@ def bulk_delist_by_gb_offer(request):
         try:
             listing = (
                 Listing.objects
-                .select_related("dropship_product")
+                .select_related(
+                    "dropship_product",
+                    "integration_account",
+                    "integration_account__credential",
+                    "game",
+                )
                 .filter(
                     store_listing_id=offer_id,
                     integration_account__provider="gameboost",
@@ -1217,17 +1280,25 @@ def bulk_delist_by_gb_offer(request):
                 failed.append(offer_id)
                 errors[offer_id] = "No GameBoost listing found"
                 continue
-            dp = listing.dropship_product
-            if not dp:
+
+            # Always hit GameBoost for this offer id. delist_single() is a
+            # marketplace no-op when local listing rows are already non-LISTED,
+            # which left stale GB item offers live during non-SAB cleanup.
+            if not _delete_one_listing(listing):
                 failed.append(offer_id)
-                errors[offer_id] = "Listing has no linked DropshipProduct"
+                errors[offer_id] = "Failed to archive GameBoost offer"
                 continue
-            result = delist_single(dp)
-            if result.ok:
-                succeeded.append(offer_id)
-            else:
-                failed.append(offer_id)
-                errors[offer_id] = result.error
+
+            dp = listing.dropship_product
+            if dp is not None:
+                still_listed = Listing.objects.filter(
+                    dropship_product=dp,
+                    status=ListingStatus.LISTED,
+                ).exists()
+                if not still_listed:
+                    _mark_dp_deleted(dp)
+
+            succeeded.append(offer_id)
         except Exception as exc:
             failed.append(offer_id)
             errors[offer_id] = str(exc)
