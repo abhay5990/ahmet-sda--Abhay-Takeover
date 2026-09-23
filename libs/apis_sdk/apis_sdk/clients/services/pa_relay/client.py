@@ -159,6 +159,86 @@ class PaRelayClient:
         )
         return ApiResult.success(result, status_code=response.status_code)
 
+    def list_seller_orders_in_existing_browser(
+        self,
+        *,
+        store: str,
+        page: int = 1,
+        page_size: int = 50,
+    ) -> ApiResult[dict[str, Any]]:
+        """Read Mart seller orders through the relay without credential handoff.
+
+        This route is limited to the relay-managed browser identity.  It never
+        sends a username, password, bearer token, cookie, or proxy input from
+        SDA.  A held or unverified Mart session is returned as a safe
+        unavailable result without starting AdsPower.
+        """
+        url = f"{self._config.base_url}/pa-orders"
+        payload: dict[str, Any] = {
+            "store": store,
+            "existingBrowserOnly": True,
+            "pageIndex": page,
+            "pageSize": page_size,
+        }
+        try:
+            response = self._transport.request(
+                HttpMethod.POST,
+                url,
+                json_body=payload,
+                headers={
+                    "Content-Type": "application/json",
+                    RELAY_SECRET_HEADER: self._config.relay_secret,
+                },
+                timeout=max(self._config.token_timeout, 90.0),
+            )
+        except Exception as exc:
+            return ApiResult.from_error(
+                ErrorCategory.NETWORK,
+                f"Mart unavailable: PA relay order read connection error: {exc}",
+                provider=self.PROVIDER,
+                is_retryable=True,
+            )
+
+        try:
+            body = response.json()
+        except Exception as exc:
+            return ApiResult.from_error(
+                ErrorCategory.UNKNOWN,
+                f"Mart unavailable: PA relay order read returned invalid JSON: {exc}",
+                status_code=response.status_code,
+                provider=self.PROVIDER,
+            )
+
+        if not response.is_success or not isinstance(body, dict) or not body.get("ok"):
+            error_code = str(body.get("errorCode", "") if isinstance(body, dict) else "")
+            if response.status_code == 423 or error_code == "relay_store_hold":
+                return ApiResult.from_error(
+                    ErrorCategory.AUTHENTICATION,
+                    "Mart unavailable: relay authentication hold is active; order fetch was not attempted.",
+                    status_code=response.status_code,
+                    provider=self.PROVIDER,
+                    details={"errorCode": "relay_store_hold"},
+                )
+            detail = str(body.get("error", "relay browser order read unavailable") if isinstance(body, dict) else "relay browser order read unavailable")
+            return ApiResult.from_error(
+                ErrorCategory.SERVER_ERROR,
+                f"Mart unavailable: {detail}",
+                status_code=response.status_code,
+                provider=self.PROVIDER,
+                is_retryable=response.status_code >= 500,
+                details={"errorCode": error_code} if error_code else None,
+            )
+
+        data = body.get("data")
+        if not isinstance(data, dict):
+            return ApiResult.from_error(
+                ErrorCategory.UNKNOWN,
+                "Mart unavailable: PA relay returned no seller-order payload.",
+                status_code=response.status_code,
+                provider=self.PROVIDER,
+            )
+        return ApiResult.success(data, status_code=response.status_code)
+
     def cancel_offers_in_browser(
         self,
         *,

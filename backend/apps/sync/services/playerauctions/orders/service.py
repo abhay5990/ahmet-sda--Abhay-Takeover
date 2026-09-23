@@ -82,6 +82,12 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
 
     def _preflight_relay(self, account) -> None:
         """Refresh the shared PA relay session before any remote order read."""
+        relay_only = getattr(self.client, 'uses_relay_browser_order_reads', None)
+        if callable(relay_only) and relay_only() is True:
+            logger.info(
+                'PlayerAuctions Mart order sync is relay-only; no SDA token refresh or browser start will be attempted.'
+            )
+            return
         if self.client and hasattr(self.client, 'reset_auth_failure'):
             self.client.reset_auth_failure()
         refresh = getattr(self.client, 'refresh_relay_session', None)
@@ -211,6 +217,8 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
             error_msg = ''
             if result.error:
                 error_msg = result.error.message
+            if error_msg.startswith('Mart unavailable:'):
+                raise RuntimeError(error_msg)
             raise RuntimeError(
                 f"PlayerAuctions API error on page {page}: {error_msg}"
             )

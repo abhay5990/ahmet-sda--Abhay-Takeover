@@ -174,6 +174,11 @@ class PlayerAuctionsFacade:
             return False
         return bool(refresh())
 
+    def uses_relay_browser_order_reads(self) -> bool:
+        """Whether this store's seller-order reads must remain relay-only."""
+        uses_relay = getattr(self._auth, 'uses_relay_browser_order_reads', None)
+        return uses_relay() is True if callable(uses_relay) else False
+
     # ---------------------------------------------------------------------------
     # Throttle (PlayerAuctions-specific)
     # ---------------------------------------------------------------------------
@@ -266,13 +271,16 @@ class PlayerAuctionsFacade:
         product_type: str = "Accounts",
         proxy_group: str | None = None,
     ) -> ApiResult[list[PlayerAuctionsOrder]]:
-        """List seller orders using MCT's direct relay-token request route.
+        """List seller orders using the store's approved request identity.
 
-        PlayerAuctions seller orders are read directly from the order API with
-        the relay JWT.  MCT's production fetcher intentionally bypasses the
-        marketplace proxy for this endpoint, so do the same here while still
-        retaining the SDK's one-time authentication retry on a 401/403.
+        Mart is always read through the relay-managed browser session; no SDA
+        credential, token, cookie, proxy, or direct order-API call is used.
+        Other stores retain the legacy direct route with one-time auth retry.
         """
+        if self.uses_relay_browser_order_reads() is True:
+            relay_read = getattr(self._auth, 'list_seller_orders_in_existing_browser', None)
+            if callable(relay_read):
+                return relay_read(page=page, page_size=page_size)
         return self._exec.execute_with_retry(
             lambda _proxy_url: self._client.list_seller_orders(
                 auth_headers=self._exec.get_auth_headers(),

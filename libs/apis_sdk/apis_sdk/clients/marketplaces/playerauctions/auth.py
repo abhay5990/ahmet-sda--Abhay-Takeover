@@ -22,7 +22,9 @@ from apis_sdk.clients.services.pa_relay import (
     PaRelayClient,
     PaRelayConfig,
 )
+from apis_sdk.clients.marketplaces.playerauctions.models import PlayerAuctionsOrderListItem
 from apis_sdk.core.enums import ErrorCategory
+from apis_sdk.core.result import ApiResult
 from apis_sdk.infrastructure.auth.base import BaseAuthProvider
 from apis_sdk.infrastructure.http.base import BaseHttpTransport
 from apis_sdk.infrastructure.logging.logger import NullLogger, SdkLogger
@@ -262,6 +264,54 @@ class PlayerAuctionsAuth(BaseAuthProvider):
         """
         with self._lock:
             return self._do_refresh(force_refresh=False)
+
+    def uses_relay_browser_order_reads(self) -> bool:
+        """Whether seller-order reads must stay inside the relay identity."""
+        return self._store_slug == 'ezsmurfmart'
+
+    def list_seller_orders_in_existing_browser(
+        self,
+        *,
+        page: int = 1,
+        page_size: int = 50,
+    ) -> ApiResult[list[PlayerAuctionsOrderListItem]]:
+        """Read Mart seller orders without a credential or token handoff.
+
+        The relay owns the only browser identity.  SDA uses this path solely
+        for Mart and receives a safe unavailable result when the relay hold is
+        active, rather than triggering a token refresh or browser startup.
+        """
+        if not self.uses_relay_browser_order_reads():
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION,
+                'Relay browser order reads are limited to ezsmurfmart.',
+                provider='pa_relay',
+            )
+        result = self._relay_client.list_seller_orders_in_existing_browser(
+            store=self._store_slug,
+            page=page,
+            page_size=page_size,
+        )
+        if not result.ok:
+            return result  # type: ignore[return-value]
+
+        data_wrapper = result.data or {}
+        items_raw = data_wrapper.get('items', []) if isinstance(data_wrapper, dict) else []
+        orders = [
+            PlayerAuctionsOrderListItem.model_validate(item)
+            for item in items_raw
+            if isinstance(item, dict)
+        ]
+        meta: dict[str, object] = {}
+        if isinstance(data_wrapper, dict):
+            count = data_wrapper.get('count') or data_wrapper.get('totalCount')
+            if count is not None:
+                meta['total_count'] = count
+        return ApiResult.success(
+            orders,
+            status_code=result.status_code,
+            meta=meta,
+        )
 
     # Transient error categories — these should NOT permanently block refresh
     _TRANSIENT_CATEGORIES = frozenset({

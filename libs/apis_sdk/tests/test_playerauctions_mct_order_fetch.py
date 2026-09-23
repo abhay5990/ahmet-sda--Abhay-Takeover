@@ -100,3 +100,16 @@ class PlayerAuctionsMctOrderFetchTests(TestCase):
 
         self.assertTrue(result.ok)
         self.assertIsNone(low_level_client.get_order_details.call_args.kwargs["proxy_url"])
+
+    def test_mart_order_facade_uses_relay_browser_without_direct_api_headers(self):
+        low_level_client = Mock()
+        auth = Mock()
+        auth.uses_relay_browser_order_reads.return_value = True
+        auth.list_seller_orders_in_existing_browser.return_value = ApiResult.success([])
+        facade = PlayerAuctionsFacade(low_level_client, auth, rate_limit_delay=0)
+
+        result = facade.list_seller_orders(page=3, page_size=50)
+
+        self.assertTrue(result.ok)
+        auth.list_seller_orders_in_existing_browser.assert_called_once_with(page=3, page_size=50)
+        low_level_client.list_seller_orders.assert_not_called()

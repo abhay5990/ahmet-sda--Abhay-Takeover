@@ -41,3 +41,16 @@ class PlayerAuctionsRelayPreflightTests(SimpleTestCase):
 
         with self.assertRaisesRegex(RuntimeError, 'relay session preflight failed'):
             service.run(Mock(), SyncMode.INCREMENTAL)
+
+    def test_mart_relay_only_orders_skip_sda_token_refresh(self):
+        client = Mock()
+        client.uses_relay_browser_order_reads.return_value = True
+        service = PlayerAuctionsOrderSyncService(client=client)
+
+        with patch.object(BaseSyncService, 'run', return_value='sync-run') as base_run:
+            result = service.run(Mock(slug='playerauctions-csgosmurfkings'), SyncMode.INCREMENTAL)
+
+        self.assertEqual(result, 'sync-run')
+        client.refresh_relay_session.assert_not_called()
+        client.reset_auth_failure.assert_not_called()
+        base_run.assert_called_once()

@@ -126,6 +126,11 @@ class PACompositeClient:
             return False
         return bool(refresh())
 
+    def uses_relay_browser_order_reads(self) -> bool:
+        """Expose Mart's relay-only order-read boundary to the sync service."""
+        uses_relay = getattr(self._legacy, 'uses_relay_browser_order_reads', None)
+        return uses_relay() is True if callable(uses_relay) else False
+
     # --- Orders (→ legacy, official API has no order endpoints) ---
 
     def list_seller_orders(self, **kwargs: Any) -> Any:
