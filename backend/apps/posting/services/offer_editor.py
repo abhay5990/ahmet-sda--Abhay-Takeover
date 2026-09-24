@@ -670,6 +670,15 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
         return EditResult(ok=False, error=error_message)
 
     response_data = getattr(result, 'data', {}) or {}
+    # Official API responses are Pydantic models; legacy relay responses are
+    # dictionaries.  Keep the lifecycle code provider-neutral without reading
+    # or logging the delivery payload.
+    if hasattr(response_data, 'model_dump'):
+        response_data = response_data.model_dump(by_alias=True)
+    elif hasattr(response_data, 'dict'):
+        response_data = response_data.dict()
+    if not isinstance(response_data, dict):
+        response_data = {}
     verified_offer_id = str(
         response_data.get('verifiedOfferId')
         or response_data.get('offerId')
