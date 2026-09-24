@@ -1,8 +1,15 @@
 from __future__ import annotations
 
+import base64
 import copy
+import json
 import logging
+import os
+import uuid
 from typing import TYPE_CHECKING, Any
+
+import requests
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 from apis_sdk.core.enums import ErrorCategory
 from apis_sdk.core.result import ApiResult
@@ -31,6 +38,125 @@ _OFFICIAL_MART_STORE_SLUGS = frozenset({"csgosmurfkings", "ezsmurfmart"})
 
 # Module-level encryptor — key loaded once, reused for all requests.
 _encryptor = PAPasswordEncryptor()
+
+_MCT_MART_DELEGATION_PATH = '/api/sda/pa-mart/delegate'
+_MCT_MART_DELEGATION_TIMEOUT = 45
+
+
+def _env_flag_enabled(value: str | None) -> bool:
+    return str(value or '').strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+def _mart_mct_delegation_enabled(env: dict[str, str] | None = None) -> bool:
+    runtime_env = os.environ if env is None else env
+    return _env_flag_enabled(runtime_env.get('PA_MART_MCT_DELEGATION_ENABLED'))
+
+
+def _get_mct_mart_delegation_config(
+    env: dict[str, str] | None = None,
+) -> tuple[str, str, bytes]:
+    """Load only the protected SDA→MCT Mart delegation configuration.
+
+    This key protects the account-offer payload in transit and is separate from
+    every PlayerAuctions credential. The payload is AES-GCM encrypted before the
+    private MCT bridge request; only MCT's whitelisted worker decrypts it.
+    """
+    runtime_env = os.environ if env is None else env
+    url = str(runtime_env.get('PA_MART_MCT_DELEGATION_URL') or '').strip().rstrip('/')
+    token = str(runtime_env.get('PA_MART_MCT_DELEGATION_TOKEN') or '').strip()
+    raw_key = str(runtime_env.get('PA_MART_MCT_DELEGATION_KEY') or '').strip()
+    if not url.endswith(_MCT_MART_DELEGATION_PATH) or not token or not raw_key:
+        raise RuntimeError('Mart MCT delegation environment configuration is incomplete')
+    try:
+        key = base64.b64decode(raw_key.encode('ascii'), validate=True)
+    except Exception as exc:
+        raise RuntimeError('Mart MCT delegation key is invalid') from exc
+    if len(key) != 32:
+        raise RuntimeError('Mart MCT delegation key is invalid')
+    return url, token, key
+
+
+class MctMartDelegationClient:
+    """Mart-only encrypted caller for the whitelisted MCT official API worker.
+
+    It has no official API key, browser credentials, bearer-token route, or relay
+    route. An ambiguous transport/server outcome remains unknown so SDA cannot
+    safely retry the create path and make a duplicate listing.
+    """
+
+    needs_password_encryption = False
+
+    def __init__(self, *, url: str, token: str, key: bytes) -> None:
+        self._url = url
+        self._token = token
+        self._key = key
+
+    def uses_official_offer_api_only(self) -> bool:
+        return True
+
+    def uses_relay_browser_order_reads(self) -> bool:
+        return False
+
+    def _encrypted_envelope(self, payload: dict[str, Any]) -> dict[str, Any]:
+        nonce = os.urandom(12)
+        ciphertext = AESGCM(self._key).encrypt(nonce, json.dumps(payload, separators=(',', ':')).encode('utf-8'), None)
+        return {
+            'v': 1,
+            'iv': base64.b64encode(nonce).decode('ascii'),
+            'data': base64.b64encode(ciphertext[:-16]).decode('ascii'),
+            'tag': base64.b64encode(ciphertext[-16:]).decode('ascii'),
+        }
+
+    def _delegate(self, action: str, payload: dict[str, Any]) -> ApiResult[dict[str, Any]]:
+        request_id = uuid.uuid4().hex + uuid.uuid4().hex[:8]
+        try:
+            response = requests.post(
+                self._url,
+                json={'requestId': request_id, 'action': action, 'envelope': self._encrypted_envelope(payload)},
+                headers={'X-Bridge-Secret': self._token, 'Content-Type': 'application/json'},
+                timeout=_MCT_MART_DELEGATION_TIMEOUT,
+            )
+            data = response.json() if response.content else {}
+        except (requests.RequestException, ValueError):
+            return ApiResult.from_error(
+                ErrorCategory.SERVER_ERROR,
+                'MCT Mart delegation transport outcome is unknown; reconcile the request before retrying.',
+                provider='playerauctions', is_retryable=True,
+                details={'request_id': request_id, 'delegation_outcome': 'unknown'},
+            )
+        if response.ok and data.get('ok'):
+            return ApiResult.success({'offer_id': str(data.get('offerId') or ''), 'request_id': request_id}, status_code=response.status_code)
+        unknown = response.status_code >= 500 or data.get('status') in {'pending', 'unknown'}
+        return ApiResult.from_error(
+            ErrorCategory.SERVER_ERROR if unknown else ErrorCategory.VALIDATION,
+            'MCT Mart delegation outcome is unknown; reconcile the request before retrying.' if unknown else 'MCT Mart delegation rejected the request before a confirmed marketplace write.',
+            provider='playerauctions', is_retryable=unknown,
+            details={
+                'request_id': request_id,
+                'delegation_outcome': 'unknown' if unknown else 'rejected',
+                'error_code': str(data.get('errorCode') or data.get('error') or 'mct_delegation_rejected')[:96],
+            },
+        )
+
+    def create_offer(self, product_type: str, payload: dict[str, Any], **_kwargs: Any) -> ApiResult[dict[str, Any]]:
+        if product_type != 'account':
+            return ApiResult.from_error(ErrorCategory.VALIDATION, 'MCT Mart delegation only supports account offers.', provider='playerauctions')
+        return self._delegate('create', payload)
+
+    def edit_offer(self, product_type: str, payload: dict[str, Any], **_kwargs: Any) -> ApiResult[dict[str, Any]]:
+        if product_type != 'account':
+            return ApiResult.from_error(ErrorCategory.VALIDATION, 'MCT Mart delegation only supports account offers.', provider='playerauctions')
+        return self._delegate('update', payload)
+
+    def cancel_offers(self, request: PlayerAuctionsCancelRequest | None = None, *, offer_ids: list[int] | None = None, **_kwargs: Any) -> ApiResult[dict[str, Any]]:
+        resolved = request.offer_ids if request is not None else offer_ids or []
+        return self._delegate('cancel', {'offerIds': [int(value) for value in resolved]})
+
+    def list_seller_orders(self, **_kwargs: Any) -> ApiResult[Any]:
+        return ApiResult.from_error(ErrorCategory.VALIDATION, 'Mart seller-order reads stay on the Gmail order bridge.', provider='playerauctions')
+
+    def get_order_details(self, **_kwargs: Any) -> ApiResult[Any]:
+        return ApiResult.from_error(ErrorCategory.VALIDATION, 'Mart seller-order reads stay on the Gmail order bridge.', provider='playerauctions')
 
 
 # ---------------------------------------------------------------------------
@@ -241,6 +367,14 @@ class PlayerAuctionsProvider(AbstractProvider):
         relay_secret = creds.get('relay_secret', 'pa-relay-secret-2026')
         # store_slug maps our internal account slug to the relay's store identifier
         store_slug = creds.get('store_slug', '') or credential.account.slug or ''
+
+        # Mart-only cutover: the MCT worker has the approved official-API egress.
+        # Do this before local official or legacy client construction so Mart
+        # cannot create a browser session or browser-relay request in this mode.
+        if _is_official_mart_credential(credential, creds) and _mart_mct_delegation_enabled():
+            url, token, key = _get_mct_mart_delegation_config()
+            logger.info('Mart PlayerAuctions account delegates official account-offer writes to MCT')
+            return MctMartDelegationClient(url=url, token=token, key=key)
 
         api_key = creds.get('api_key', '')
         secret_key = creds.get('secret_key', '')

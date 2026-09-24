@@ -1,13 +1,19 @@
 from __future__ import annotations
 
+import base64
+import json
 from types import SimpleNamespace
 from unittest.mock import Mock
 
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from django.test import SimpleTestCase
 
 from apps.integrations.providers.playerauctions import (
+    MctMartDelegationClient,
     PACompositeClient,
     PlayerAuctionsProvider,
+    _get_mct_mart_delegation_config,
+    _mart_mct_delegation_enabled,
     _normalize_official_account_payload,
 )
 
@@ -96,3 +102,36 @@ class PlayerAuctionsOfficialMartTests(SimpleTestCase):
         self.assertEqual(edit_args.args[0], 'account')
         self.assertEqual(edit_args.args[1]['offerId'], 123456)
         self.assertEqual(edit_args.kwargs['proxy_group'], 'mart')
+
+    def test_mart_delegation_requires_protected_endpoint_and_aes_key(self):
+        key = base64.b64encode(b'x' * 32).decode('ascii')
+        url, token, decoded = _get_mct_mart_delegation_config({
+            'PA_MART_MCT_DELEGATION_URL': 'https://mct.example/api/sda/pa-mart/delegate',
+            'PA_MART_MCT_DELEGATION_TOKEN': 'bridge-token',
+            'PA_MART_MCT_DELEGATION_KEY': key,
+        })
+
+        self.assertEqual(url, 'https://mct.example/api/sda/pa-mart/delegate')
+        self.assertEqual(token, 'bridge-token')
+        self.assertEqual(decoded, b'x' * 32)
+        self.assertTrue(_mart_mct_delegation_enabled({'PA_MART_MCT_DELEGATION_ENABLED': 'true'}))
+        self.assertFalse(_mart_mct_delegation_enabled({}))
+        with self.assertRaisesRegex(RuntimeError, 'configuration is incomplete'):
+            _get_mct_mart_delegation_config({'PA_MART_MCT_DELEGATION_URL': 'http://mct.example/api/sda/pa-mart/delegate'})
+
+    def test_mart_delegation_encrypts_delivery_payload_before_transport(self):
+        key = b'y' * 32
+        client = MctMartDelegationClient(
+            url='https://mct.example/api/sda/pa-mart/delegate',
+            token='bridge-token',
+            key=key,
+        )
+        payload = {'autoDelivery': {'loginName': 'user', 'password': 'secret-password'}}
+        envelope = client._encrypted_envelope(payload)
+
+        self.assertNotIn('secret-password', json.dumps(envelope))
+        nonce = base64.b64decode(envelope['iv'])
+        ciphertext = base64.b64decode(envelope['data']) + base64.b64decode(envelope['tag'])
+        self.assertEqual(json.loads(AESGCM(key).decrypt(nonce, ciphertext, None)), payload)
+        self.assertTrue(client.uses_official_offer_api_only())
+        self.assertFalse(client.uses_relay_browser_order_reads())
