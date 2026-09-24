@@ -168,6 +168,11 @@ CREDENTIAL_ENCRYPTION_KEY = config('CREDENTIAL_ENCRYPTION_KEY', default='')
 CT_BRIDGE_URL = config('CT_BRIDGE_URL', default='')
 CT_BRIDGE_SECRET = config('CT_BRIDGE_SECRET', default='')
 
+# Minimal signed PA order events from CodeTracker's dedicated Gmail bridge.
+# This is intentionally distinct from marketplace credentials and grants no
+# Gmail or marketplace write access to SDA.
+CT_PA_GMAIL_EVENT_SECRET = config('CT_PA_GMAIL_EVENT_SECRET', default='')
+
 # PlayerAuctions legacy relay guard.
 # The browser-session relay posts account offers to the obsolete
 # offer-api.playerauctions.com endpoint, which now returns HTTP 405. It is

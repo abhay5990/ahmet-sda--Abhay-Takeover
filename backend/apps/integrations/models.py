@@ -160,6 +160,70 @@ class ServiceCredential(models.Model):
         return f"{self.name} ({self.get_service_type_display()})"
 
 
+class PaGmailOrderEvent(models.Model):
+    """Minimal, signed PA Gmail order event received from CodeTracker.
+
+    This is an audit and order-report bridge only.  It retains no Gmail body,
+    credentials, customer data, links, or marketplace authority.  The event is
+    accepted once and matches only an active official-Mart SDA listing by its
+    human-visible tracking code.
+    """
+
+    class Disposition(models.TextChoices):
+        CREATED = 'created', 'Created order report'
+        DUPLICATE = 'duplicate', 'Already recorded'
+        UNMATCHED = 'unmatched', 'No unique SDA Mart listing matched'
+
+    event_id = models.UUIDField(unique=True)
+    source = models.CharField(max_length=64)
+    external_order_id = models.CharField(max_length=128)
+    tracking_code = models.CharField(max_length=16)
+    market = models.CharField(max_length=160, blank=True)
+    automatic_delivery = models.BooleanField(null=True, blank=True)
+    observed_at_ms = models.BigIntegerField()
+    disposition = models.CharField(
+        max_length=20,
+        choices=Disposition.choices,
+        default=Disposition.UNMATCHED,
+    )
+    integration_account = models.ForeignKey(
+        IntegrationAccount,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='pa_gmail_order_events',
+    )
+    listing = models.ForeignKey(
+        'listings.Listing',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='pa_gmail_order_events',
+    )
+    order = models.ForeignKey(
+        'orders.Order',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='pa_gmail_events',
+    )
+    received_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'pa_gmail_order_events'
+        ordering = ['-received_at']
+        indexes = [
+            models.Index(fields=['external_order_id'], name='pa_gmail_event_order_idx'),
+            models.Index(fields=['tracking_code'], name='pa_gmail_event_code_idx'),
+            models.Index(fields=['disposition', 'received_at'], name='pa_gmail_event_status_idx'),
+        ]
+
+    def __str__(self):
+        return f'PA Gmail event {self.event_id} ({self.get_disposition_display()})'
+
+
 class TokenApiClient(models.Model):
     """API client authorized to request tokens from the token broker endpoint."""
 
