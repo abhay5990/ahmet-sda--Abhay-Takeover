@@ -2,7 +2,7 @@ from datetime import timedelta
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
-from django.test import SimpleTestCase
+from django.test import TestCase
 from django.utils import timezone
 
 from apps.listings.enums import ListingStatus
@@ -39,7 +39,7 @@ class _OfferQuery:
         return self.offers
 
 
-class PlayerAuctionsReplacementOfferHandoffTests(SimpleTestCase):
+class PlayerAuctionsReplacementOfferHandoffTests(TestCase):
     def test_handoff_moves_clone_and_exact_item_to_replacement_offer(self):
         old_listing = object()
         new_listing = object()
@@ -157,3 +157,71 @@ class PlayerAuctionsReplacementOfferHandoffTests(SimpleTestCase):
         )
         self.assertEqual(active_offer.store_listing_id, '294100002')
         self.assertEqual(item.target_offer_id, '294100002')
+
+    def test_pa_edit_handoffs_the_mct_bridge_offer_id_alias(self):
+        item = _Saved(target_offer_id='294100011')
+        active_offer = _Saved(
+            store_listing_id='294100011',
+            pool_item=item,
+            pool_item_id=31,
+            pool_offer=SimpleNamespace(pool=object()),
+            pool_offer_id=1,
+            pool=None,
+        )
+        product = SimpleNamespace()
+        listing = _Saved(
+            pk=18,
+            store_listing_id='294100011',
+            integration_account=SimpleNamespace(provider='playerauctions', credential=object()),
+            raw_data={'payload': {'details': {'offerDuration': 30}}},
+            listing_owned_products=SimpleNamespace(
+                select_related=lambda *args: SimpleNamespace(first=lambda: SimpleNamespace(owned_product=product)),
+            ),
+            status=ListingStatus.LISTED,
+            title='Original title',
+            removed_at=None,
+            listed_at=None,
+            marketplace_expires_at=None,
+        )
+        provider = SimpleNamespace(
+            update_listing=Mock(return_value=SimpleNamespace(
+                ok=True,
+                data={'offer_id': '294100012', 'verifiedOfferDuration': 30},
+            )),
+        )
+        payload = {
+            'title': 'Original title',
+            'offerDesc': 'Original description',
+            'price': 20,
+            'details': {'offerDuration': 30},
+            'autoDelivery': {},
+        }
+        active_offer_manager = SimpleNamespace(filter=lambda **kwargs: _OfferQuery([active_offer]))
+        pool_offer_manager = SimpleNamespace(filter=lambda **kwargs: _EmptyQuery())
+
+        with patch(
+            'core.marketplace.payload_extractor.extract_create_payload', return_value=payload,
+        ), patch(
+            'apps.posting.services.pool.replenisher._apply_pa_auto_delivery_credentials',
+        ), patch(
+            'apps.posting.services.offer_editor.build_proxy_pool', return_value=None,
+        ), patch(
+            'apps.posting.services.offer_editor.get_group_name', return_value='',
+        ), patch(
+            'apps.posting.services.offer_editor.get_or_build_client', return_value=object(),
+        ), patch(
+            'apps.posting.services.offer_editor.get_provider', return_value=provider,
+        ), patch(
+            'apps.posting.services.offer_editor._log',
+        ), patch.object(offer_editor.PoolOffer, 'objects', pool_offer_manager), patch.object(
+            offer_editor.OfferPoolActiveOffer, 'objects', active_offer_manager,
+        ), patch.object(
+            offer_editor.OfferPool, 'objects', SimpleNamespace(filter=lambda **kwargs: _EmptyQuery()),
+        ):
+            result = offer_editor._edit_pa_single(listing, {'price': '249.99'}, listing.integration_account)
+
+        self.assertTrue(result.ok, result.error)
+        self.assertEqual(result.new_offer_id, '294100012')
+        self.assertEqual(listing.store_listing_id, '294100012')
+        self.assertEqual(active_offer.store_listing_id, '294100012')
+        self.assertEqual(item.target_offer_id, '294100012')

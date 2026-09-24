@@ -37,6 +37,7 @@ from apps.posting.models import (
     PoolOfferStatus,
     PoolOfferStrategy,
     PoolSaleEvent,
+    PlayerAuctionsEditRequest,
     PostingDefault,
 )
 
@@ -1102,6 +1103,21 @@ def trigger_replenish(request, pool_id):
 # ── Pool Offer Edit ──────────────────────────────────────────────
 
 
+def _pa_edit_request_to_dict(request):
+    """Return a safe, pollable outcome for one pool-scoped PA edit.
+
+    The identifier is the official provider response persisted by the queue.
+    No payload, credentials, bridge token, or remote response body is exposed.
+    """
+    return {
+        'id': request.pk,
+        'status': request.status,
+        'returned_offer_id': request.returned_offer_id or None,
+        'error': request.error_message or None,
+        'finished_at': request.finished_at.isoformat() if request.finished_at else None,
+    }
+
+
 @login_required
 @require_POST
 def edit_pool_offers(request, pool_id):
@@ -1214,6 +1230,23 @@ def edit_single_pool_offer(request, pool_id, offer_id):
         'queued': result.queued,
         'pool_offer': _pool_offer_to_dict(pool_offer),
     }, status=200 if result.ok else 502)
+
+
+@login_required
+@require_GET
+def playerauctions_edit_request_status(request, pool_id, request_id):
+    """Read a queued PA pool edit outcome without exposing its edit payload."""
+    queued_edit = (
+        PlayerAuctionsEditRequest.objects
+        .filter(pk=request_id, pool_offer__pool_id=pool_id)
+        .only(
+            'pk', 'status', 'returned_offer_id', 'error_message', 'finished_at',
+        )
+        .first()
+    )
+    if queued_edit is None:
+        return JsonResponse({'error': 'PlayerAuctions edit request not found'}, status=404)
+    return JsonResponse({'ok': True, 'request': _pa_edit_request_to_dict(queued_edit)})
 
 
 @login_required

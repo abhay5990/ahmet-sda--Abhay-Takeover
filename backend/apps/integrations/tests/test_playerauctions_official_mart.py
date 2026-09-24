@@ -3,7 +3,7 @@ from __future__ import annotations
 import base64
 import json
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from django.test import SimpleTestCase
@@ -135,3 +135,26 @@ class PlayerAuctionsOfficialMartTests(SimpleTestCase):
         self.assertEqual(json.loads(AESGCM(key).decrypt(nonce, ciphertext, None)), payload)
         self.assertTrue(client.uses_official_offer_api_only())
         self.assertFalse(client.uses_relay_browser_order_reads())
+
+    @patch('apps.integrations.providers.playerauctions.requests.post')
+    def test_mart_delegated_edit_returns_the_provider_confirmed_offer_id(self, post):
+        client = MctMartDelegationClient(
+            url='https://mct.example/api/sda/pa-mart/delegate',
+            token='bridge-token',
+            key=b'z' * 32,
+        )
+        post.return_value = SimpleNamespace(
+            ok=True,
+            status_code=200,
+            content=b'{}',
+            json=lambda: {
+                'ok': True,
+                'status': 'succeeded',
+                'offerId': '294100002',
+            },
+        )
+
+        result = client.edit_offer('account', {'offerId': 294100001})
+
+        self.assertTrue(result.ok)
+        self.assertEqual(result.data['offer_id'], '294100002')

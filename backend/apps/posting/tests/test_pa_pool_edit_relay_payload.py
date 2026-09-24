@@ -2,7 +2,9 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from django.test import SimpleTestCase
+from django.utils import timezone
 
+from apps.posting.api.pool import _pa_edit_request_to_dict
 from apps.posting.services import offer_editor
 
 
@@ -138,3 +140,21 @@ class PlayerAuctionsPoolEditRelayPayloadTests(SimpleTestCase):
 
         self.assertEqual(code, '#XCZY3P')
         self.assertEqual(title, 'GTA V full access #XCZY3P')
+
+    def test_edit_status_exposes_only_the_verified_offer_id_and_safe_outcome(self):
+        request = SimpleNamespace(
+            pk=31,
+            status='succeeded',
+            returned_offer_id='294100012',
+            error_message='',
+            finished_at=timezone.now(),
+            changes={'price': '299.99', 'autoDelivery': {'password': 'must-not-leak'}},
+        )
+
+        result = _pa_edit_request_to_dict(request)
+
+        self.assertEqual(result['id'], 31)
+        self.assertEqual(result['status'], 'succeeded')
+        self.assertEqual(result['returned_offer_id'], '294100012')
+        self.assertNotIn('changes', result)
+        self.assertNotIn('password', str(result))

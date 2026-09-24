@@ -1915,8 +1915,9 @@ function poolDetail() {
                 const data = await resp.json().catch(() => ({}));
                 if (resp.ok && data.ok) {
                     if (data.queued) {
-                        const requestIds = (data.queue_request_ids || []).join(', ') || data.queue_request_id || 'pending';
-                        d.editResult = { ok: false, msg: `PlayerAuctions update queued (request ${requestIds}). It is not marked updated until the worker verifies the live offer.` };
+                        const requestId = data.queue_request_id || (data.queue_request_ids || [])[0];
+                        d.editResult = { ok: false, msg: `PlayerAuctions update queued (request ${requestId || 'pending'}). Waiting for the official API's verified offer ID…` };
+                        if (requestId) this.watchPlayerAuctionsEdit(requestId, d);
                     } else {
                         d.editResult = { ok: true, msg: 'Marketplace update verified' };
                     }
@@ -1929,6 +1930,35 @@ function poolDetail() {
             } finally {
                 d.editSaving = false;
             }
+        },
+
+        async watchPlayerAuctionsEdit(requestId, drawer) {
+            // The PA queue is deliberately serialised. Poll only this request
+            // for a bounded period and render the provider-confirmed offer ID
+            // once SDA has atomically updated the pool linkage.
+            const deadline = Date.now() + 90000;
+            while (Date.now() < deadline) {
+                try {
+                    const resp = await fetch(`/posting/api/pools/${poolId}/playerauctions-edits/${requestId}/`);
+                    const data = await resp.json().catch(() => ({}));
+                    const request = data.request || {};
+                    if (resp.ok && request.status === 'succeeded') {
+                        const offerId = request.returned_offer_id || 'verified';
+                        drawer.editResult = { ok: true, msg: `PlayerAuctions update verified. Current offer ID: ${offerId}.` };
+                        setTimeout(() => location.reload(), 900);
+                        return;
+                    }
+                    if (resp.ok && request.status === 'failed') {
+                        drawer.editResult = { ok: false, msg: `PlayerAuctions update failed: ${request.error || 'remote update was not verified'}` };
+                        return;
+                    }
+                } catch (_error) {
+                    // Leave the durable queue request intact. The next bounded
+                    // poll may still retrieve its verified outcome.
+                }
+                await new Promise(resolve => setTimeout(resolve, 3000));
+            }
+            drawer.editResult = { ok: false, msg: `PlayerAuctions update is still queued (request ${requestId}). It will show the verified offer ID after the worker completes.` };
         },
 
         async loadActivity() {

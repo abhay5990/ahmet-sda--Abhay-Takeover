@@ -143,6 +143,7 @@ urlpatterns = [
     path('api/pools/<int:pool_id>/offers/<int:offer_id>/', pool_api.update_pool_offer, name='api_update_pool_offer'),
     path('api/pools/<int:pool_id>/offers/<int:offer_id>/unlink/', pool_api.unlink_pool_offer, name='api_unlink_pool_offer'),
     path('api/pools/<int:pool_id>/offers/<int:offer_id>/edit/', pool_api.edit_single_pool_offer, name='api_edit_single_pool_offer'),
+    path('api/pools/<int:pool_id>/playerauctions-edits/<int:request_id>/', pool_api.playerauctions_edit_request_status, name='api_playerauctions_edit_request_status'),
     path('api/pools/<int:pool_id>/replenish/', pool_api.trigger_replenish, name='api_trigger_replenish'),
     path('api/pools/<int:pool_id>/dispatch-prefill/', pool_api.dispatch_prefill, name='api_pool_dispatch_prefill'),
     path('api/pools/<int:pool_id>/dispatch-offer/', pool_api.dispatch_offer, name='api_pool_dispatch_offer'),

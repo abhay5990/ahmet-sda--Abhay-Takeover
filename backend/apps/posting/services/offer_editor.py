@@ -679,40 +679,51 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
         response_data = response_data.dict()
     if not isinstance(response_data, dict):
         response_data = {}
+    # The encrypted Mart bridge returns the provider's documented `offerId` as
+    # `offer_id`.  Treat it as the authoritative result before any legacy
+    # aliases: an official PA edit may create a replacement offer, and retaining
+    # the request's old ID would leave the pool card and sale matching stale.
     verified_offer_id = str(
         response_data.get('verifiedOfferId')
+        or response_data.get('offer_id')
         or response_data.get('offerId')
         or response_data.get('replacementOfferId')
         or listing.store_listing_id
     ).strip()
-    replacement_offer_id = str(response_data.get('replacementOfferId') or '').strip()
     old_offer_id = listing.store_listing_id
     if not verified_offer_id:
         return EditResult(ok=False, error='PlayerAuctions edit verified no offer ID; local lifecycle was not changed.')
+    replacement_offer_id = str(
+        response_data.get('replacementOfferId')
+        or (verified_offer_id if verified_offer_id != old_offer_id else '')
+    ).strip()
     from apps.posting.services.relist import _playerauctions_expiry_after_relist
 
     verified_payload = copy.deepcopy(original_payload)
     verified_duration = response_data.get('verifiedOfferDuration')
     if verified_duration is not None:
         verified_payload.setdefault('details', {})['offerDuration'] = verified_duration
-    renewed_at = timezone.now()
-    listing.listed_at = renewed_at
-    listing.marketplace_expires_at = _playerauctions_expiry_after_relist(
-        verified_payload,
-        response_data,
-        renewed_at,
-    )
-    extra_fields = ['listed_at', 'marketplace_expires_at']
-    if verified_offer_id != old_offer_id:
-        from apps.posting.services.relist import (
-            _handoff_active_offer_replacement,
+    # Keep the listing and every concrete pool clone/item in one transaction.
+    # A returned replacement ID is never partially persisted.
+    with transaction.atomic():
+        renewed_at = timezone.now()
+        listing.listed_at = renewed_at
+        listing.marketplace_expires_at = _playerauctions_expiry_after_relist(
+            verified_payload,
+            response_data,
+            renewed_at,
         )
+        extra_fields = ['listed_at', 'marketplace_expires_at']
+        if verified_offer_id != old_offer_id:
+            from apps.posting.services.relist import (
+                _handoff_active_offer_replacement,
+            )
 
-        listing.store_listing_id = verified_offer_id
-        extra_fields.insert(0, 'store_listing_id')
-        _handoff_active_offer_replacement(active_offers, verified_offer_id)
+            listing.store_listing_id = verified_offer_id
+            extra_fields.insert(0, 'store_listing_id')
+            _handoff_active_offer_replacement(active_offers, verified_offer_id)
 
-    _update_listing_db(listing, changes, extra_fields=extra_fields)
+        _update_listing_db(listing, changes, extra_fields=extra_fields)
     _log(
         PostingLogLevel.SUCCESS,
         f'PA same-offer edit succeeded for #{listing.pk}',
@@ -724,7 +735,9 @@ def _edit_pa_single(listing: Listing, changes: dict[str, Any], store: Integratio
             'changes': list(changes.keys()),
         },
     )
-    return EditResult(ok=True, new_offer_id=(verified_offer_id if verified_offer_id != old_offer_id else None))
+    # The durable queue must retain the provider-confirmed ID even when it did
+    # not change, so the pool UI can display the exact offer verified by PA.
+    return EditResult(ok=True, new_offer_id=verified_offer_id)
 
 
 def _edit_pa_single_cancel_recreate(listing: Listing, changes: dict[str, Any], store: IntegrationAccount) -> EditResult:
