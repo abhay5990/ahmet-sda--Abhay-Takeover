@@ -75,7 +75,21 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
         self.product_type = product_type or self.DEFAULT_PRODUCT_TYPE
 
     def run(self, account, mode, phase='full'):
-        """Preflight every remote order poll through the shared PA relay."""
+        """Run remote order sync only for an explicitly supported client.
+
+        Mart uses the documented Offer API only.  That API has no published
+        seller-order endpoint, so quietly falling through to a relay/browser
+        poll would reintroduce the retired authentication path.  SDA's Mart
+        stock is dedicated and has no deletion workflow, therefore skipping
+        this remote order ingest is intentional and auditable.
+        """
+        official_only = getattr(self.client, 'uses_official_offer_api_only', None)
+        if phase != SyncPhase.PROCESS and callable(official_only) and official_only() is True:
+            logger.info(
+                'PlayerAuctions Mart order sync skipped: documented Offer API has no seller-order endpoint; '
+                'no relay request was made.'
+            )
+            return None
         if phase != SyncPhase.PROCESS:
             self._preflight_relay(account)
         return super().run(account, mode, phase)
@@ -113,6 +127,13 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
         outage. The normal raw-payload parser remains the only writer of the
         local Order and pool-sale records, preserving idempotency.
         """
+        official_only = getattr(self.client, 'uses_official_offer_api_only', None)
+        if callable(official_only) and official_only() is True:
+            raise RuntimeError(
+                'PlayerAuctions Mart order recovery is unavailable: the documented Offer API does not expose seller-order reads. '
+                'No relay fallback was attempted.'
+            )
+
         remote_id = str(order_id).strip()
         if not remote_id.isdigit():
             raise ValueError('PlayerAuctions order ID must contain digits only.')

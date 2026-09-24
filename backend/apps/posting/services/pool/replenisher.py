@@ -1106,85 +1106,109 @@ def _post_pa_excel_row(
         raw_payload = dict(raw_payload)
         raw_payload['title'] = excel_row[title_key]
 
-    store_credentials = (
-        getattr(pool.listing.integration_account.credential, 'credentials', None) or {}
-        if getattr(pool.listing.integration_account, 'credential', None)
-        else {}
-    )
-    username = store_credentials.get('username', '')
-    password = store_credentials.get('password', '')
-    store_slug = store_credentials.get('store_slug', '')
-    relay_url = store_credentials.get('relay_url', 'http://35.196.132.30:3001')
-    relay_secret = store_credentials.get('relay_secret', 'pa-relay-secret-2026')
-    token = store_credentials.get('access_token', '')
-    cookie = store_credentials.get('cookie', '')
+    official_only = getattr(client, 'uses_official_offer_api_only', None)
+    if callable(official_only) and official_only() is True:
+        # Mart uses the signed official Account Offer API.  The payload remains
+        # plain-text at this layer because the official contract (unlike the
+        # historical browser endpoint) handles the documented delivery fields
+        # directly; no relay token or browser session is requested.
+        from apps.integrations.providers.registry import get_provider
 
-    if not token and username and password and store_slug:
-        token, cookie = fetch_relay_token(
-            username,
-            password,
-            store_slug,
-            relay_url=relay_url,
-            relay_secret=relay_secret,
+        official_result = get_provider('playerauctions').create_listing(
+            client,
+            {'payload': excel_row, 'proxy_group': proxy_group},
         )
-    if not token:
-        mark_item_failed(
-            item,
-            error_message='PA relay: could not obtain access token for pool replacement',
-            failure_stage='remote_push',
-            remote_state='absent',
-            retryable=True,
-        )
-        return 0
-
-    relay_poster = PARelayPoster(
-        relay_url=relay_url,
-        relay_secret=relay_secret,
-    )
-    relay_result = relay_poster.post_batch(
-        token,
-        store_slug,
-        [excel_row],
-        cookie=(cookie or token),
-    )
-    if (
-        0 in relay_result.failed
-        and _is_pa_relay_authorization_error(relay_result.failed[0])
-        and username
-        and password
-        and store_slug
-    ):
-        logger.info(
-            'PA relay rejected the stored session; forcing one fresh browser session for pool offer %s',
-            pool.pk,
-        )
-        fresh_token, fresh_cookie = fetch_relay_token(
-            username,
-            password,
-            store_slug,
-            relay_url=relay_url,
-            relay_secret=relay_secret,
-            force_refresh=True,
-        )
-        if fresh_token:
-            relay_result = relay_poster.post_batch(
-                fresh_token,
-                store_slug,
-                [excel_row],
-                cookie=(fresh_cookie or fresh_token),
+        if not official_result or not getattr(official_result, 'ok', False):
+            error_str = str(getattr(official_result, 'error', 'Official PA account-offer create failed'))
+            mark_item_failed(
+                item,
+                error_message=f"PA official replacement failed: {error_str[:200]}",
+                failure_stage='remote_push',
+                remote_state='absent',
+                retryable=False,
             )
-    if 0 in relay_result.failed:
-        error_str = relay_result.failed[0]
-        mark_item_failed(
-            item,
-            error_message=f"PA relay replacement failed: {error_str[:200]}",
-            failure_stage='remote_push',
-            remote_state='absent',
-            retryable=True,
+            return 0
+        new_offer_id = extract_listing_id(getattr(official_result, 'data', None))
+    else:
+        store_credentials = (
+            getattr(pool.listing.integration_account.credential, 'credentials', None) or {}
+            if getattr(pool.listing.integration_account, 'credential', None)
+            else {}
         )
-        return 0
+        username = store_credentials.get('username', '')
+        password = store_credentials.get('password', '')
+        store_slug = store_credentials.get('store_slug', '')
+        relay_url = store_credentials.get('relay_url', 'http://35.196.132.30:3001')
+        relay_secret = store_credentials.get('relay_secret', 'pa-relay-secret-2026')
+        token = store_credentials.get('access_token', '')
+        cookie = store_credentials.get('cookie', '')
 
-    new_offer_id = relay_result.successful.get(0, '')
+        if not token and username and password and store_slug:
+            token, cookie = fetch_relay_token(
+                username,
+                password,
+                store_slug,
+                relay_url=relay_url,
+                relay_secret=relay_secret,
+            )
+        if not token:
+            mark_item_failed(
+                item,
+                error_message='PA relay: could not obtain access token for pool replacement',
+                failure_stage='remote_push',
+                remote_state='absent',
+                retryable=True,
+            )
+            return 0
+
+        relay_poster = PARelayPoster(
+            relay_url=relay_url,
+            relay_secret=relay_secret,
+        )
+        relay_result = relay_poster.post_batch(
+            token,
+            store_slug,
+            [excel_row],
+            cookie=(cookie or token),
+        )
+        if (
+            0 in relay_result.failed
+            and _is_pa_relay_authorization_error(relay_result.failed[0])
+            and username
+            and password
+            and store_slug
+        ):
+            logger.info(
+                'PA relay rejected the stored session; forcing one fresh browser session for pool offer %s',
+                pool.pk,
+            )
+            fresh_token, fresh_cookie = fetch_relay_token(
+                username,
+                password,
+                store_slug,
+                relay_url=relay_url,
+                relay_secret=relay_secret,
+                force_refresh=True,
+            )
+            if fresh_token:
+                relay_result = relay_poster.post_batch(
+                    fresh_token,
+                    store_slug,
+                    [excel_row],
+                    cookie=(fresh_cookie or fresh_token),
+                )
+        if 0 in relay_result.failed:
+            error_str = relay_result.failed[0]
+            mark_item_failed(
+                item,
+                error_message=f"PA relay replacement failed: {error_str[:200]}",
+                failure_stage='remote_push',
+                remote_state='absent',
+                retryable=True,
+            )
+            return 0
+
+        new_offer_id = relay_result.successful.get(0, '')
     if not new_offer_id:
         mark_item_failed(
             item,

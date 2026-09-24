@@ -58,6 +58,14 @@ _PA_LEGACY_DISABLED_MESSAGE = (
 )
 
 
+class _OfficialPAWriteFailure(RuntimeError):
+    """Expected official API write failure with safe outcome classification."""
+
+    def __init__(self, message: str, *, retryable: bool) -> None:
+        super().__init__(message)
+        self.retryable = retryable
+
+
 def _pa_legacy_relay_disabled() -> bool:
     """True when the obsolete PA legacy relay must not be used (default)."""
     from django.conf import settings
@@ -774,7 +782,12 @@ class StockConsumer:
         entries: list[tuple],
         job,
     ) -> None:
-        """Route all PA items through the relay poster — never direct SDK calls.
+        """Route PA items through the approved client for the store.
+
+        Mart's approved client is signed official API-only and must never ask
+        the relay for a token.  Other accounts retain the legacy relay lane
+        until separately migrated.
+
         Collects all items for a store, builds payload dicts, posts via
         PARelayPoster, then persists results.
         """
@@ -786,13 +799,30 @@ class StockConsumer:
         if not entries:
             return
 
+        first_item = entries[0][0]
+        store = first_item.store
+        proxy_group = get_group_name(store)
+        try:
+            facade = registry.get_or_build_client(
+                'playerauctions', store.credential,
+                proxy_pool=self._proxy_pool, proxy_group=proxy_group,
+            )
+        except Exception as exc:
+            logger.error('Unable to build PlayerAuctions client for stock job %s: %s', job.id, exc)
+            self._fail_pa_legacy_disabled(entries, job)
+            return
+        official_only = getattr(facade, 'uses_official_offer_api_only', None)
+        if callable(official_only) and official_only() is True:
+            self._process_pa_official_batch(
+                entries, job, facade=facade, proxy_group=proxy_group,
+            )
+            return
+
         # Fail fast instead of hitting the obsolete legacy relay endpoint.
         if _pa_legacy_relay_disabled():
             self._fail_pa_legacy_disabled(entries, job)
             return
 
-        first_item = entries[0][0]
-        store = first_item.store
         creds = store.credential.credentials or {}
         store_slug = creds.get('store_slug', '')
         relay_url = creds.get('relay_url', 'http://35.196.132.30:3001')
@@ -890,19 +920,6 @@ class StockConsumer:
         )
 
         # Build PA client for normalize_offer_response (optional, graceful fallback)
-        facade = None
-        proxy_group = None
-        try:
-            from apps.posting.services.stock.proxy import get_group_name
-            from apps.posting.services.stock.registry import registry
-            proxy_group = get_group_name(store)
-            facade = registry.get_or_build_client(
-                'playerauctions', store.credential,
-                proxy_pool=self._proxy_pool, proxy_group=proxy_group,
-            )
-        except Exception:
-            pass
-
         for idx, (item, prepared_data) in enumerate(valid_entries):
             owned_product = prepared_data.get('owned_product')
             if idx in _relay_result.successful:
@@ -993,6 +1010,131 @@ class StockConsumer:
                     integration_account=store,
                 )
             item.save(update_fields=['status', 'error_message', 'listing', 'updated_at'])
+
+    def _process_pa_official_batch(
+        self,
+        entries: list[tuple],
+        job: PostingJob,
+        *,
+        facade,
+        proxy_group: str | None,
+    ) -> None:
+        """Create Mart Account Offers through the documented signed API only.
+
+        This path is intentionally sequential.  It preserves existing per-item
+        persistence and pool-release safeguards while avoiding both browser
+        state and a relay batch token.  An official 5xx is treated as an
+        unknown remote outcome because a post may have reached the marketplace;
+        a non-retryable contract rejection is a confirmed absent outcome.
+        """
+        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
+
+        if not entries:
+            return
+        store = entries[0][0].store
+        variant_ctx = build_variant_context(
+            store=store, game=job.game, marketplace='playerauctions',
+        )
+        router = VariantRouter(variant_ctx, mode='stock')
+        provider = registry.get_provider('playerauctions')
+
+        for item, prepared_data in entries:
+            owned_product = prepared_data.get('owned_product') if isinstance(prepared_data, dict) else None
+            try:
+                build_result = build_item_payload(
+                    item, prepared_data, job,
+                    variant_ctx=variant_ctx, router=router,
+                )
+                if not build_result.get('ok'):
+                    raise ValueError(f"[{build_result.get('stage', 'payload')}] {build_result.get('error', 'payload build failed')}")
+                payload = build_result['data']['payload']
+                result = provider.create_listing(
+                    facade,
+                    {'payload': payload, 'proxy_group': proxy_group},
+                )
+                if not result or not getattr(result, 'ok', False):
+                    error_detail = getattr(result, 'error', None)
+                    error_message = getattr(error_detail, 'message', None) or str(error_detail or 'official account-offer create failed')
+                    retryable = bool(getattr(error_detail, 'is_retryable', False))
+                    raise _OfficialPAWriteFailure(error_message, retryable=retryable)
+                offer_id = extract_listing_id(getattr(result, 'data', None)).strip()
+                if not offer_id or not offer_id.isdigit():
+                    raise _OfficialPAWriteFailure(
+                        'official account-offer creation returned no numeric offer ID',
+                        retryable=False,
+                    )
+
+                final_price = build_result['data']['final_price']
+                variant_slug = build_result['data']['variant_slug']
+                listing_variant_slug = build_result['data'].get('listing_variant_slug', variant_slug)
+                normalized_raw = normalize_offer_response(
+                    'playerauctions',
+                    {'offer_id': offer_id},
+                    payload=payload,
+                    client=facade,
+                    proxy_group=proxy_group,
+                )
+                persist_success(
+                    item=item,
+                    job=job,
+                    owned_product=owned_product,
+                    store_listing_id=offer_id,
+                    variant_slug=listing_variant_slug,
+                    final_price=final_price,
+                    payload=payload,
+                    response_data={'offer_id': offer_id},
+                    raw_data_override=normalized_raw,
+                )
+                item.save(update_fields=['status', 'error_message', 'listing', 'updated_at'])
+                PostingLog.objects.create(
+                    task_name='stock_post',
+                    level=PostingLogLevel.SUCCESS,
+                    message=f'PA official offer created: {item.login}',
+                    detail={
+                        'item_id': item.id,
+                        'job_id': job.id,
+                        'stage': 'pa_official_account_create',
+                        'offer_id': offer_id,
+                    },
+                    integration_account=store,
+                )
+            except _OfficialPAWriteFailure as exc:
+                item.status = PostingJobItemStatus.FAILED
+                item.error_message = f'PA official create failed: {str(exc)[:500]}'
+                item.save(update_fields=['status', 'error_message', 'listing', 'updated_at'])
+                if owned_product:
+                    add_failed_owned_products_to_pool(job, [owned_product])
+                    release_dispatch_items_for_job(
+                        job,
+                        owned_products=[owned_product],
+                        reason=item.error_message,
+                        remote_outcome='unknown' if exc.retryable else 'absent',
+                    )
+                PostingLog.objects.create(
+                    task_name='stock_post',
+                    level=PostingLogLevel.WARNING if exc.retryable else PostingLogLevel.ERROR,
+                    message=f'PA official offer create failed: {item.login}',
+                    detail={
+                        'item_id': item.id,
+                        'job_id': job.id,
+                        'stage': 'pa_official_account_create',
+                        'retryable': exc.retryable,
+                    },
+                    integration_account=store,
+                )
+            except Exception as exc:
+                item.status = PostingJobItemStatus.FAILED
+                item.error_message = f'PA official payload or persist failure: {str(exc)[:500]}'
+                item.save(update_fields=['status', 'error_message', 'listing', 'updated_at'])
+                if owned_product:
+                    add_failed_owned_products_to_pool(job, [owned_product])
+                    release_dispatch_items_for_job(
+                        job,
+                        owned_products=[owned_product],
+                        reason=item.error_message,
+                        remote_outcome='unknown',
+                    )
+                logger.exception('PA official stock posting failed for item %s', item.id)
 
     def _retry_with_variant_fallback(
         self,
@@ -1277,6 +1419,16 @@ class StockConsumer:
 
         logger.info("PA flush: %d rows (job=%d)", len(excel_rows), job.id)
 
+        official_only = getattr(facade, 'uses_official_offer_api_only', None)
+        if callable(official_only) and official_only() is True:
+            self._flush_pa_official_batch(
+                batch,
+                facade=facade,
+                job=job,
+                proxy_group=proxy_group,
+            )
+            return
+
         # [RELAY-ALWAYS] All PA posting goes through relay — no XLSX fallback
         _auth = getattr(facade, '_auth', None)
         _relay_token = (_auth.access_token if _auth and _auth.access_token else None)
@@ -1435,4 +1587,105 @@ class StockConsumer:
                     integration_account=item.store,
                 )
 
+            item.save(update_fields=['status', 'error_message', 'listing', 'updated_at'])
+
+    def _flush_pa_official_batch(
+        self,
+        batch: list[tuple],
+        *,
+        facade,
+        job: PostingJob,
+        proxy_group: str | None,
+    ) -> None:
+        """Persist a prebuilt Mart batch with sequential official API writes."""
+        from apps.posting.services.pool.dispatcher import release_dispatch_items_for_job
+
+        provider = registry.get_provider('playerauctions')
+        for item, prepared_data, payload, build_data in batch:
+            owned_product = prepared_data.get('owned_product') if isinstance(prepared_data, dict) else None
+            try:
+                result = provider.create_listing(
+                    facade,
+                    {'payload': payload, 'proxy_group': proxy_group},
+                )
+                if not result or not getattr(result, 'ok', False):
+                    error_detail = getattr(result, 'error', None)
+                    error_message = getattr(error_detail, 'message', None) or str(error_detail or 'official account-offer create failed')
+                    raise _OfficialPAWriteFailure(
+                        error_message,
+                        retryable=bool(getattr(error_detail, 'is_retryable', False)),
+                    )
+                offer_id = extract_listing_id(getattr(result, 'data', None)).strip()
+                if not offer_id or not offer_id.isdigit():
+                    raise _OfficialPAWriteFailure(
+                        'official account-offer creation returned no numeric offer ID',
+                        retryable=False,
+                    )
+                variant_slug = build_data['variant_slug']
+                listing_variant_slug = build_data.get('listing_variant_slug', variant_slug)
+                normalized_raw = normalize_offer_response(
+                    'playerauctions',
+                    {'offer_id': offer_id},
+                    payload=payload,
+                    client=facade,
+                    proxy_group=proxy_group,
+                )
+                persist_success(
+                    item=item,
+                    job=job,
+                    owned_product=owned_product,
+                    store_listing_id=offer_id,
+                    variant_slug=listing_variant_slug,
+                    final_price=build_data['final_price'],
+                    payload=payload,
+                    response_data={'offer_id': offer_id},
+                    raw_data_override=normalized_raw,
+                )
+                PostingLog.objects.create(
+                    task_name='stock_post',
+                    level=PostingLogLevel.SUCCESS,
+                    message=f'PA official offer created: {item.login}',
+                    detail={
+                        'item_id': item.id,
+                        'job_id': job.id,
+                        'stage': 'pa_official_account_create',
+                        'offer_id': offer_id,
+                    },
+                    integration_account=item.store,
+                )
+            except _OfficialPAWriteFailure as exc:
+                item.status = PostingJobItemStatus.FAILED
+                item.error_message = f'PA official create failed: {str(exc)[:500]}'
+                if owned_product:
+                    add_failed_owned_products_to_pool(job, [owned_product])
+                    release_dispatch_items_for_job(
+                        job,
+                        owned_products=[owned_product],
+                        reason=item.error_message,
+                        remote_outcome='unknown' if exc.retryable else 'absent',
+                    )
+                PostingLog.objects.create(
+                    task_name='stock_post',
+                    level=PostingLogLevel.WARNING if exc.retryable else PostingLogLevel.ERROR,
+                    message=f'PA official offer create failed: {item.login}',
+                    detail={
+                        'item_id': item.id,
+                        'job_id': job.id,
+                        'stage': 'pa_official_account_create',
+                        'retryable': exc.retryable,
+                    },
+                    integration_account=item.store,
+                )
+            except Exception as exc:
+                item.status = PostingJobItemStatus.FAILED
+                item.error_message = f'PA official payload or persist failure: {str(exc)[:500]}'
+                if owned_product:
+                    add_failed_owned_products_to_pool(job, [owned_product])
+                    release_dispatch_items_for_job(
+                        job,
+                        owned_products=[owned_product],
+                        reason=item.error_message,
+                        remote_outcome='unknown',
+                    )
+                logger.exception('PA official batch persist failed for item %s', item.id)
             item.save(update_fields=['status', 'error_message', 'listing', 'updated_at'])

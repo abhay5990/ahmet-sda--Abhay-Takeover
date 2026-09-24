@@ -1,8 +1,9 @@
 """Safely renew PlayerAuctions offers before their recorded marketplace expiry.
 
-The command fails closed: a listing is renewed only when it is locally active,
-has no order or confirmed sale evidence, and the current remote offer is proven
-active through PlayerAuctions before the existing relist service is invoked.
+The official Mart lane queries and edits the *same* Account Offer with the
+documented signed Offer API.  It never cancels/recreates an offer and never
+starts a relay/browser session.  Other PA accounts retain the older relist
+path until separately migrated.
 """
 
 from datetime import timedelta
@@ -18,12 +19,19 @@ from apps.posting.models import OfferPoolActiveOffer, OfferPoolActiveOfferStatus
 from apps.posting.services.relist import relist_listing
 
 
-DEFAULT_RENEWAL_LEAD_HOURS = 72
+DEFAULT_RENEWAL_LEAD_HOURS = 96
 _PA_ACTIVE_STATE = 1
 
 
 def _remote_payload(result):
     data = getattr(result, 'data', None)
+    if hasattr(data, 'model_dump'):
+        dumped = data.model_dump(by_alias=True)
+        extra = dumped.pop('extra', {})
+        return {
+            **(extra if isinstance(extra, dict) else {}),
+            **dumped,
+        }
     if not isinstance(data, dict):
         return {}
     nested = data.get('data') or data.get('offer') or data.get('result')
@@ -67,6 +75,79 @@ def _remote_offer_is_verified_active(listing: Listing) -> bool:
         return False
 
 
+def _uses_official_offer_api_only(client) -> bool:
+    marker = getattr(client, 'uses_official_offer_api_only', None)
+    return bool(marker()) if callable(marker) else False
+
+
+def _renew_official_mart_account_offer(listing: Listing, client) -> tuple[bool, str]:
+    """Renew one Mart account offer in place after query/edit/re-query proof.
+
+    Account-offer edits are replace-style requests.  The source is always the
+    current signed remote query, not a partial local title/price patch.  The
+    small HTML comment makes the renewal attributable and lets the re-query
+    prove that the exact update reached the marketplace without changing buyer
+    visible copy.
+    """
+    offer_id = str(listing.store_listing_id or '').strip()
+    if not offer_id.isdigit():
+        return False, 'listing has no numeric PlayerAuctions offer ID'
+    try:
+        detail = client.get_offer_details(offer_id, product_type='account')
+    except Exception as exc:
+        return False, f'official offer query failed: {exc}'
+    if not _remote_offer_is_active(detail):
+        return False, 'remote offer was not verified active'
+    payload = _remote_payload(detail)
+    if not payload:
+        return False, 'official offer query returned no safe account payload'
+
+    marker = f'<!--sda-renew:{offer_id}-{timezone.now().strftime("%Y%m%d%H%M%S")}-->'
+    description = str(payload.get('offerDesc') or '')
+    if len(description) + len(marker) > 3000:
+        return False, 'official offer description has no room for the renewal marker'
+    payload['offerDesc'] = f'{description}{marker}'
+    payload['offerDuration'] = 30
+
+    try:
+        provider = registry.get_provider('playerauctions')
+        updated = provider.update_listing(
+            client,
+            offer_id,
+            {'payload': payload},
+        )
+    except Exception as exc:
+        return False, f'official offer edit failed: {exc}'
+    if not updated or not getattr(updated, 'ok', False):
+        error = getattr(getattr(updated, 'error', None), 'message', None) or getattr(updated, 'error', None) or 'unknown official edit error'
+        return False, f'official offer edit failed: {error}'
+
+    try:
+        verified = client.get_offer_details(offer_id, product_type='account')
+    except Exception as exc:
+        return False, f'official offer re-query failed: {exc}'
+    verified_payload = _remote_payload(verified)
+    if not (
+        _remote_offer_is_active(verified)
+        and int(verified_payload.get('offerDuration') or 0) == 30
+        and marker in str(verified_payload.get('offerDesc') or '')
+    ):
+        return False, 'official offer renewal could not be re-verified'
+
+    renewed_at = timezone.now()
+    listing.listed_at = renewed_at
+    listing.marketplace_expires_at = renewed_at + timedelta(days=30)
+    listing.raw_data = {
+        **(listing.raw_data or {}),
+        'payload': payload,
+        'official_renewal_marker': marker,
+    }
+    listing.save(update_fields=[
+        'listed_at', 'marketplace_expires_at', 'raw_data', 'updated_at',
+    ])
+    return True, 'official account offer renewed and re-verified'
+
+
 class Command(BaseCommand):
     help = 'Renew safely verified PlayerAuctions offers before marketplace expiry.'
 
@@ -76,7 +157,7 @@ class Command(BaseCommand):
             '--lead-hours',
             type=int,
             default=DEFAULT_RENEWAL_LEAD_HOURS,
-            help='Renew listings expiring within this many hours (default: 72).',
+            help='Renew listings expiring within this many hours (default: 96 / four days).',
         )
 
     def handle(self, *args, **options):
@@ -103,6 +184,29 @@ class Command(BaseCommand):
                     f'READY {listing.store_listing_id}: expires '
                     f'{listing.marketplace_expires_at.isoformat()}'
                 )
+                continue
+            store = listing.integration_account
+            client = None
+            try:
+                client = registry.get_or_build_client('playerauctions', store.credential)
+            except Exception as exc:
+                stats['failed'] += 1
+                self.stdout.write(self.style.ERROR(
+                    f'FAILED {listing.store_listing_id}: unable to build PlayerAuctions client: {exc}'
+                ))
+                continue
+            if _uses_official_offer_api_only(client):
+                renewed, message = _renew_official_mart_account_offer(listing, client)
+                if renewed:
+                    stats['renewed'] += 1
+                    self.stdout.write(self.style.SUCCESS(
+                        f'RENEWED {listing.store_listing_id}: {message}'
+                    ))
+                else:
+                    stats['failed'] += 1
+                    self.stdout.write(self.style.ERROR(
+                        f'FAILED {listing.store_listing_id}: {message}'
+                    ))
                 continue
             if not _remote_offer_is_verified_active(listing):
                 stats['skipped'] += 1

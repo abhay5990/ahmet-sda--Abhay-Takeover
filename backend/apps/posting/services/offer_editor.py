@@ -907,6 +907,36 @@ def _edit_pa_pool_bulk(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResu
         proxy_group=proxy_group,
     )
 
+    official_only = getattr(client, 'uses_official_offer_api_only', None)
+    if callable(official_only) and official_only() is True:
+        # Mart updates each existing Account Offer in place through the signed
+        # official API.  Queue the same narrow single-offer operation used by
+        # the normal UI rather than cancelling/recreating a whole pool through
+        # the browser relay.
+        from apps.posting.services.pa_edit_queue import enqueue_pa_edit
+
+        queue_request_ids = []
+        errors = []
+        for active_offer in active_offers:
+            if not active_offer.listing_id or not active_offer.pool_item_id:
+                errors.append(f'Clone {active_offer.pk} is missing listing or pool-item linkage.')
+                continue
+            request = enqueue_pa_edit(
+                listing=active_offer.listing,
+                changes=changes,
+                pool_offer=active_offer.pool_offer,
+                pool_item=active_offer.pool_item,
+                active_offer=active_offer,
+            )
+            queue_request_ids.append(request.pk)
+        return BulkEditResult(
+            total=result.total,
+            queued=len(queue_request_ids),
+            failed=len(errors),
+            errors=errors,
+            queue_request_ids=queue_request_ids,
+        )
+
     raw = pool.listing.raw_data or {}
     original_payload = extract_create_payload(raw, 'playerauctions', client=client, proxy_group=proxy_group)
     if not original_payload:

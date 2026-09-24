@@ -4,6 +4,8 @@ import copy
 import logging
 from typing import TYPE_CHECKING, Any
 
+from apis_sdk.core.enums import ErrorCategory
+from apis_sdk.core.result import ApiResult
 from apis_sdk.clients.marketplaces.playerauctions.encryption import (
     PAPasswordEncryptor,
 )
@@ -21,6 +23,11 @@ if TYPE_CHECKING:
     from apps.integrations.models import IntegrationCredential
 
 logger = logging.getLogger(__name__)
+
+# The seller mailbox and official credentials used for the Mart account are
+# intentionally scoped to this known relay-store identifier.  Shop keeps its
+# existing configuration and is never opted in by this code path.
+_OFFICIAL_MART_STORE_SLUGS = frozenset({"csgosmurfkings", "ezsmurfmart"})
 
 # Module-level encryptor — key loaded once, reused for all requests.
 _encryptor = PAPasswordEncryptor()
@@ -46,7 +53,7 @@ class PACompositeClient:
     # Official API accepts plain text — encryption is legacy-only.
     needs_password_encryption = False
 
-    def __init__(self, official_facade: Any, legacy_facade: Any) -> None:
+    def __init__(self, official_facade: Any, legacy_facade: Any | None = None) -> None:
         self._official = official_facade
         self._legacy = legacy_facade
 
@@ -95,7 +102,12 @@ class PACompositeClient:
         return self._official.cancel_offers(offer_ids=offer_ids, proxy_group=proxy_group)
 
     def edit_offer_in_browser(self, **kwargs: Any) -> Any:
-        """Use the legacy browser session only for PA's credential retype form."""
+        """Use the legacy browser session only where that lane is explicitly retained."""
+        if self._legacy is None:
+            raise RuntimeError(
+                "Mart is configured for the official PlayerAuctions Offer API only; "
+                "browser-session edits are disabled."
+            )
         return self._legacy.edit_offer_in_browser(**kwargs)
 
     def set_display_status(self, **kwargs: Any) -> Any:
@@ -116,11 +128,13 @@ class PACompositeClient:
 
     def reset_auth_failure(self) -> None:
         """Reset auth failure flags on both facades."""
-        if hasattr(self._legacy, 'reset_auth_failure'):
+        if self._legacy is not None and hasattr(self._legacy, 'reset_auth_failure'):
             self._legacy.reset_auth_failure()
 
     def refresh_relay_session(self) -> bool:
         """Get the current shared relay session before a seller-order poll."""
+        if self._legacy is None:
+            return False
         refresh = getattr(self._legacy, 'refresh_relay_session', None)
         if not callable(refresh):
             return False
@@ -128,15 +142,33 @@ class PACompositeClient:
 
     def uses_relay_browser_order_reads(self) -> bool:
         """Expose Mart's relay-only order-read boundary to the sync service."""
+        if self._legacy is None:
+            return False
         uses_relay = getattr(self._legacy, 'uses_relay_browser_order_reads', None)
         return uses_relay() is True if callable(uses_relay) else False
+
+    def uses_official_offer_api_only(self) -> bool:
+        """True only for the Mart lane that must never create a browser session."""
+        return self._legacy is None
 
     # --- Orders (→ legacy, official API has no order endpoints) ---
 
     def list_seller_orders(self, **kwargs: Any) -> Any:
+        if self._legacy is None:
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION,
+                "The documented PlayerAuctions Offer API does not expose seller-order reads for Mart.",
+                provider='playerauctions',
+            )
         return self._legacy.list_seller_orders(**kwargs)
 
     def get_order_details(self, order_id: str, **kwargs: Any) -> Any:
+        if self._legacy is None:
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION,
+                "The documented PlayerAuctions Offer API does not expose seller-order detail for Mart.",
+                provider='playerauctions',
+            )
         return self._legacy.get_order_details(order_id, **kwargs)
 
 
@@ -214,7 +246,9 @@ class PlayerAuctionsProvider(AbstractProvider):
         secret_key = creds.get('secret_key', '')
 
         if api_key and secret_key:
-            # Official + legacy composite: offers via official, orders via legacy
+            # Mart is deliberately official-offer-API-only.  Do not instantiate
+            # the legacy browser client: merely constructing it leaves a future
+            # caller able to trigger the old relay/session path.
             logger.info("Using official PA Seller API (HMAC-SHA256) for %s", credential.account.name)
             official = PAOfficialFactory.create(
                 api_key=api_key,
@@ -223,6 +257,12 @@ class PlayerAuctionsProvider(AbstractProvider):
                 proxy_pool=proxy_pool,
                 logger=StdlibLogger("apis_sdk.playerauctions_official"),
             )
+            if _is_official_mart_credential(credential, creds):
+                logger.info("Mart PlayerAuctions account is official-offer-API-only; relay is disabled for this client")
+                return PACompositeClient(official_facade=official)
+
+            # Other accounts retain the previous mixed routing until separately
+            # approved and migrated.
             legacy = PlayerAuctionsFactory.create(
                 username=creds.get('username', ''),
                 password=creds.get('password', ''),
@@ -274,6 +314,19 @@ class PlayerAuctionsProvider(AbstractProvider):
         payload = product_data.get('payload', product_data)
         proxy_group = product_data.get('proxy_group')
 
+        if _uses_official_offer_api_only(client):
+            official_payload = _normalize_official_account_payload(payload, None)
+            if official_payload is None:
+                return ApiResult.from_error(
+                    ErrorCategory.VALIDATION,
+                    'PlayerAuctions official account-offer creation requires a complete safe account payload.',
+                    provider='playerauctions',
+                )
+            return client.create_offer(
+                'account', official_payload,
+                proxy_group=proxy_group,
+            )
+
         if getattr(client, 'needs_password_encryption', True):
             payload = _encrypt_pa_passwords(payload)
 
@@ -284,6 +337,19 @@ class PlayerAuctionsProvider(AbstractProvider):
 
     def update_listing(self, client: Any, external_id: str, product_data: dict) -> Any:
         payload = product_data.get('payload', product_data)
+        if _uses_official_offer_api_only(client):
+            official_payload = _normalize_official_account_payload(payload, external_id)
+            if official_payload is None:
+                return ApiResult.from_error(
+                    ErrorCategory.VALIDATION,
+                    'PlayerAuctions official account-offer edit requires a complete safe account payload.',
+                    provider='playerauctions',
+                )
+            return client.edit_offer(
+                'account', official_payload,
+                proxy_group=product_data.get('proxy_group'),
+            )
+
         auto_delivery = payload.get('autoDelivery') or {}
         login_name = str(auto_delivery.get('retypeLoginName') or auto_delivery.get('loginName') or '')
         account_password = str(auto_delivery.get('retypePassword') or auto_delivery.get('password') or '')
@@ -322,6 +388,102 @@ class PlayerAuctionsProvider(AbstractProvider):
     def fetch_order_details(self, client: Any, order_id: str) -> Any:
         """Fetch rich order detail for a single order."""
         return client.get_order_details(order_id=order_id)
+
+
+def _is_official_mart_credential(credential: Any, creds: dict[str, Any]) -> bool:
+    """Identify the explicitly approved Mart account without examining secrets."""
+    candidates = (
+        creds.get('store_slug', ''),
+        getattr(getattr(credential, 'account', None), 'slug', ''),
+    )
+    return any(str(value or '').strip().lower() in _OFFICIAL_MART_STORE_SLUGS for value in candidates)
+
+
+def _uses_official_offer_api_only(client: Any) -> bool:
+    enabled = getattr(client, 'uses_official_offer_api_only', None)
+    return bool(enabled()) if callable(enabled) else False
+
+
+def _normalize_official_account_payload(
+    payload: dict[str, Any],
+    external_id: str | None,
+) -> dict[str, Any] | None:
+    """Build the documented full Account Offer update shape without a relay.
+
+    The official API replaces the offer body on PUT.  Do not submit a partial
+    title/price patch: retain only the validated current fields, including the
+    delivery block, and reject incomplete historical payloads.
+    """
+    if not isinstance(payload, dict):
+        return None
+    try:
+        game_id = int(payload.get('gameId'))
+        server_id = int(payload.get('serverId'))
+        category_id = int(payload.get('categoryId'))
+        price = float(payload.get('price'))
+        duration = int(payload.get('offerDuration', 30))
+    except (TypeError, ValueError):
+        return None
+    protection = payload.get(
+        'selleraftersaleprotection',
+        payload.get('sellerAfterSaleProtection', payload.get('freeInsurance')),
+    )
+    try:
+        protection = int(protection)
+    except (TypeError, ValueError):
+        return None
+    title = str(payload.get('title') or '').strip()
+    is_auto = payload.get('isAuto')
+    offer_id: int | None = None
+    if external_id is not None:
+        try:
+            offer_id = int(str(external_id))
+        except (TypeError, ValueError):
+            return None
+    if (
+        (offer_id is not None and offer_id <= 0)
+        or game_id <= 0 or server_id <= 0 or category_id <= 0
+        or price <= 0 or duration not in {3, 7, 14, 30}
+        or protection not in {0, 7, 14, 30} or not title
+        or not isinstance(is_auto, bool)
+    ):
+        return None
+    normalized: dict[str, Any] = {
+        'gameId': game_id,
+        'serverId': server_id,
+        'categoryId': category_id,
+        'price': price,
+        'selleraftersaleprotection': protection,
+        'offerDuration': duration,
+        'title': title[:150],
+        'offerDesc': str(payload.get('offerDesc') or '')[:3000],
+        'screenShot': str(payload.get('screenShot') or ''),
+        'agreeCheck': True,
+        'isAuto': is_auto,
+    }
+    if offer_id is not None:
+        normalized['offerId'] = offer_id
+    if is_auto:
+        delivery = copy.deepcopy(payload.get('autoDelivery') or {})
+        required = ('loginName', 'password', 'original', 'current')
+        if not isinstance(delivery, dict) or any(not delivery.get(key) for key in required):
+            return None
+        if not isinstance(delivery.get('isInfoSame'), bool) or not isinstance(delivery.get('choose5'), bool):
+            return None
+        delivery['retypeLoginName'] = delivery.get('retypeLoginName') or delivery['loginName']
+        delivery['retypePassword'] = delivery.get('retypePassword') or delivery['password']
+        normalized['autoDelivery'] = delivery
+        return normalized
+
+    manual = copy.deepcopy(payload.get('manual') or {})
+    if not isinstance(manual, dict) or not manual.get('loginName') or not manual.get('deliveryGuarantee'):
+        return None
+    for field in ('choose1', 'choose2', 'choose3', 'choose4', 'choose5'):
+        if manual.get(field) is not True:
+            return None
+    manual['retypeLoginName'] = manual.get('retypeLoginName') or manual['loginName']
+    normalized['manual'] = manual
+    return normalized
 
 
 def _make_persist_callback(credential_pk: int):
