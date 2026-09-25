@@ -80,3 +80,13 @@ def test_sda_receiver_excludes_codetracker_owned_games():
     source = Path('backend/apps/integrations/api/pa_gmail_order_event.py').read_text()
     assert '_CODETRACKER_OWNED_GAME_SLUGS' in source
     assert ".exclude(game__slug__in=_CODETRACKER_OWNED_GAME_SLUGS)" in source
+
+
+def test_sda_receiver_closes_only_the_exact_matched_local_listing():
+    from pathlib import Path
+
+    source = Path('backend/apps/integrations/api/pa_gmail_order_event.py').read_text()
+    assert 'if listing.status != ListingStatus.CLOSED:' in source
+    assert 'listing.status = ListingStatus.CLOSED' in source
+    assert "listing.save(update_fields=['status', 'removed_at', 'updated_at'])" in source
+    assert 'no PA offer mutation or deletion' in source

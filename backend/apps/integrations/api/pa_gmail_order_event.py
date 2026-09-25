@@ -143,6 +143,13 @@ def create_order_report(*, event: PaGmailOrderEvent, listing: Listing) -> tuple[
             },
         },
     )
+    # The exact tracking-code match is now durably sold in SDA. Close the local
+    # listing record so renewal/relist logic cannot offer that dedicated stock
+    # again. This is a local state change only: no PA offer mutation or deletion.
+    if listing.status != ListingStatus.CLOSED:
+        listing.status = ListingStatus.CLOSED
+        listing.removed_at = timezone.now()
+        listing.save(update_fields=['status', 'removed_at', 'updated_at'])
     return order, created
 
 
