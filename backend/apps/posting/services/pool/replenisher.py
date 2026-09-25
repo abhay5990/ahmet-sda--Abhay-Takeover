@@ -8,6 +8,7 @@ Handles three strategies:
 from __future__ import annotations
 
 import logging
+import os
 from typing import Any
 
 from django.db import transaction
@@ -68,6 +69,27 @@ from .order_binding import refresh_and_bind_consumed_items
 logger = logging.getLogger(__name__)
 
 TASK_NAME = 'pool_replenish'
+
+_MART_ACCOUNT_SLUG = 'playerauctions-csgosmurfkings'
+_MART_CREATE_HOLD_ENV = 'PA_MART_CREATE_HOLD'
+
+
+def mart_pool_replenishment_is_held(pool_offer: PoolOffer) -> bool:
+    """Return whether Mart account-offer pool creation is explicitly held.
+
+    This protects every pool entry point (scheduled sweep, sale-triggered
+    replenishment, and explicit pool action) before any item can be claimed or
+    a marketplace client can be built. It is intentionally narrower than the
+    SDA delegation-client hold: only Mart PlayerAuctions account-offer pools are
+    blocked; other stores and marketplaces retain their existing behavior.
+    """
+    store = getattr(pool_offer, 'store', None)
+    return (
+        getattr(pool_offer, 'marketplace', None) == 'playerauctions'
+        and getattr(store, 'slug', None) == _MART_ACCOUNT_SLUG
+        and os.environ.get(_MART_CREATE_HOLD_ENV, '').strip().lower()
+        in {'1', 'true', 'yes', 'on'}
+    )
 
 _PA_SOURCE_REBUILD_DESCRIPTION = (
     'Instant delivery. Account access details are provided automatically '
@@ -243,6 +265,12 @@ def replenish_pool_offer(pool_offer: PoolOffer) -> int:
         'listing__integration_account__credential',
     ).get(pk=pool_offer.pk)
     if not pool_offer.can_replenish:
+        return 0
+    if mart_pool_replenishment_is_held(pool_offer):
+        logger.warning(
+            'pool_replenish: Mart account-offer replenish held for pool_offer %d',
+            pool_offer.pk,
+        )
         return 0
 
     pool = _PoolOfferContext(pool_offer)

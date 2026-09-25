@@ -424,6 +424,47 @@ class UnifiedPoolTestCase(TestCase):
         pool_offer.refresh_from_db()
         self.assertEqual(pool_offer.current_remote_count, 1)
 
+    @patch.dict(
+        'apps.posting.services.pool.replenisher.os.environ',
+        {'PA_MART_CREATE_HOLD': 'true'},
+        clear=False,
+    )
+    def test_mart_pool_replenishment_hold_blocks_before_stock_claim_or_client(self):
+        mart = IntegrationAccount.objects.create(
+            name='Mart Test',
+            slug='playerauctions-csgosmurfkings',
+            provider='playerauctions',
+            role='sell',
+        )
+        IntegrationCredential.objects.create(
+            account=mart,
+            credentials={'test': 'credential'},
+        )
+        pool = self.make_pool('Mart Pool')
+        listing = self.make_listing(account=mart, remote_id='mart-template')
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=1,
+            threshold=1,
+            max_concurrent=1,
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=self.make_owned('mart-held@example.test'),
+        )
+
+        with patch(
+            'apps.posting.services.pool.replenisher.get_or_build_client',
+        ) as build_client:
+            pushed = replenish_pool_offer(pool_offer)
+
+        self.assertEqual(pushed, 0)
+        build_client.assert_not_called()
+        item.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.PENDING)
+
     def test_pa_source_rebuild_supplies_description_only_when_blank(self):
         blank_payload = {'offerDesc': '   '}
         populated = _ensure_pa_offer_description(blank_payload)
