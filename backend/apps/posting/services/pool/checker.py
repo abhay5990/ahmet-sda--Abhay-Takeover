@@ -669,6 +669,53 @@ def _get_pa_active_count(pool: OfferPool) -> int | None:
         proxy_pool=proxy_pool,
         proxy_group=proxy_group,
     )
+
+    # Mart reads are deliberately limited to MCT's exact-ID Official active
+    # snapshot. That source can positively prove an offer is active, but an ID
+    # missing from it must never be interpreted as proof of a remote deletion:
+    # a partial game partition or cache-coverage defect would otherwise delist
+    # every local clone and trigger replacement creates.
+    #
+    # Genuine Mart absence/relist recovery has a separate guarded command with
+    # snapshot freshness, sale/order/reservation checks, and explicit approval.
+    uses_mct_snapshot = getattr(client, 'uses_mct_official_offer_snapshot', None)
+    if callable(uses_mct_snapshot) and uses_mct_snapshot():
+        offer_ids = [str(active_offer.store_listing_id) for active_offer in active_offers]
+        try:
+            result = client.list_offers(
+                offer_ids=offer_ids,
+                listing_status='Active',
+                page=1,
+                page_size=len(offer_ids),
+            )
+        except Exception:
+            logger.exception(
+                'pool_checker: Mart Official active-offer snapshot failed for pool %s',
+                pool.pk,
+            )
+            return None
+        if not result.ok:
+            logger.warning(
+                'pool_checker: Mart Official active-offer snapshot unavailable for pool %s: %s',
+                pool.pk,
+                result.error,
+            )
+            return None
+        confirmed_ids = {
+            str(offer.get('offerId') or offer.get('offer_id') or '').strip()
+            for offer in (result.data or [])
+            if isinstance(offer, dict)
+        }
+        missing_ids = sorted(set(offer_ids) - confirmed_ids)
+        if missing_ids:
+            logger.warning(
+                'pool_checker: Mart snapshot did not confirm %d active offer(s) '
+                'for pool %s; preserving local state and skipping replenishment',
+                len(missing_ids), pool.pk,
+            )
+            return None
+        return len(active_offers)
+
     for active_offer in active_offers:
         result = client.get_offer_details(
             active_offer.store_listing_id,

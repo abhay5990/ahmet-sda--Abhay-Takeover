@@ -35,7 +35,11 @@ from apps.posting.services.pool.allocation import (
     claim_pending_items,
     quarantine_stale_claims,
 )
-from apps.posting.services.pool.checker import _check_and_replenish, notify_sale
+from apps.posting.services.pool.checker import (
+    _check_and_replenish,
+    _get_pa_active_count,
+    notify_sale,
+)
 from apps.posting.services.pool.lifecycle import (
     _remove_gameboost,
     _remove_eldorado,
@@ -464,6 +468,72 @@ class UnifiedPoolTestCase(TestCase):
         build_client.assert_not_called()
         item.refresh_from_db()
         self.assertEqual(item.status, OfferPoolItemStatus.PENDING)
+
+    def test_mart_snapshot_missing_id_preserves_clone_and_skips_replenishment(self):
+        mart = IntegrationAccount.objects.create(
+            name='Mart Snapshot Test',
+            slug='playerauctions-csgosmurfkings',
+            provider='playerauctions',
+            role='sell',
+        )
+        IntegrationCredential.objects.create(
+            account=mart,
+            credentials={'test': 'credential'},
+        )
+        pool = self.make_pool('Mart Snapshot Pool')
+        listing = self.make_listing(account=mart, remote_id='294100001')
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=1,
+            threshold=1,
+            max_concurrent=1,
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('mart-snapshot@example.test'),
+            status=OfferPoolItemStatus.FAILED,
+            target_offer_id='294100001',
+            remote_state='absent',
+            failure_stage='pa_remote_missing',
+        )
+        active_offer = OfferPoolActiveOffer.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            listing=listing,
+            pool_item=item,
+            store_listing_id='294100001',
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+        )
+        client = Mock()
+        client.uses_mct_official_offer_snapshot.return_value = True
+        client.list_offers.return_value = SimpleNamespace(
+            ok=True,
+            data=[],
+            meta={'snapshot_age_seconds': 10},
+        )
+
+        with patch(
+            'apps.posting.services.pool.checker.get_or_build_client',
+            return_value=client,
+        ):
+            count = _get_pa_active_count(_PoolOfferContext(pool_offer))
+
+        self.assertIsNone(count)
+        client.get_offer_details.assert_not_called()
+        client.list_offers.assert_called_once_with(
+            offer_ids=['294100001'],
+            listing_status='Active',
+            page=1,
+            page_size=1,
+        )
+        active_offer.refresh_from_db()
+        item.refresh_from_db()
+        self.assertEqual(active_offer.status, OfferPoolActiveOfferStatus.ACTIVE)
+        self.assertEqual(item.status, OfferPoolItemStatus.FAILED)
+        self.assertEqual(item.failure_stage, 'pa_remote_missing')
 
     def test_pa_source_rebuild_supplies_description_only_when_blank(self):
         blank_payload = {'offerDesc': '   '}
