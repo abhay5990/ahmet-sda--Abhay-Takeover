@@ -45,6 +45,10 @@ RECIPIENT_HEADERS = (
 )
 IMAP_CREDENTIAL_SLUG = 'playerauctions-imap-recovery'
 IMAP_BACKFILL_CURSOR_KEY = 'playerauctions_email_backfill_uid'
+MART_GMAIL_BRIDGE_ACCOUNT_SLUGS = frozenset({
+    'playerauctions-csgosmurfkings',
+    'ezsmurfmart',
+})
 
 
 @dataclass(frozen=True)
@@ -53,6 +57,11 @@ class EmailOrderCandidate:
     account_slug: str
     message_id: str
     subject: str
+
+
+def is_mart_gmail_bridge_candidate(account_slug: str) -> bool:
+    """Return whether a notification belongs to the signed Mart Gmail bridge."""
+    return account_slug.strip().lower() in MART_GMAIL_BRIDGE_ACCOUNT_SLUGS
 
 
 def _decode_header(value: str | None) -> str:
@@ -194,7 +203,7 @@ class PlayerAuctionsEmailRecovery:
         summary = {
             'examined': 0, 'candidates': 0, 'existing': 0,
             'recovered': 0, 'incomplete': 0, 'failed': 0,
-            'backlog_examined': 0,
+            'backlog_examined': 0, 'bridge_owned': 0,
         }
         config = self._load_config()
         if config is None:
@@ -277,6 +286,18 @@ class PlayerAuctionsEmailRecovery:
         if account is None:
             logger.warning('pa_email_recovery: inactive mapped account %s', candidate.account_slug)
             return 'failed'
+        # Mart order intake is owned by the signed CodeTracker Gmail bridge.
+        # Its minimal, exact-code event is the only route that can create a
+        # Mart order report without requesting an unsupported seller-order API
+        # or starting a relay/browser session. Keep this legacy IMAP reader
+        # inert for Mart, while retaining Shop's established recovery path.
+        if is_mart_gmail_bridge_candidate(candidate.account_slug):
+            logger.info(
+                'pa_email_recovery: Mart candidate %s skipped; '
+                'the signed CodeTracker Gmail bridge owns Mart order import',
+                candidate.order_id,
+            )
+            return 'bridge_owned'
         existing = Order.objects.filter(
             integration_account=account, store_order_id=candidate.order_id,
         ).first()

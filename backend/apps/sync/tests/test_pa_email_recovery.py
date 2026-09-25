@@ -2,6 +2,7 @@ from email.message import EmailMessage
 from unittest import TestCase
 
 from apps.sync.services.playerauctions.email_recovery import (
+    is_mart_gmail_bridge_candidate,
     parse_playerauctions_email,
     select_recovery_uids,
 )
@@ -26,6 +27,11 @@ class PlayerAuctionsEmailRecoveryTests(TestCase):
         self.assertIsNotNone(candidate)
         self.assertEqual(candidate.order_id, '16364033')
         self.assertEqual(candidate.account_slug, 'playerauctions-csgosmurfkings')
+
+    def test_identifies_mart_candidates_for_signed_gmail_bridge_only(self):
+        self.assertTrue(is_mart_gmail_bridge_candidate('playerauctions-csgosmurfkings'))
+        self.assertTrue(is_mart_gmail_bridge_candidate('EzSmurfMart'))
+        self.assertFalse(is_mart_gmail_bridge_candidate('playerauctions-vapenation234'))
 
     def test_maps_forwarded_shop_email_from_original_recipient_header(self):
         message = EmailMessage()
