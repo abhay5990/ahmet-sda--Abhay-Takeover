@@ -237,6 +237,11 @@ class Command(BaseCommand):
         # PlayerAuctions missed-order fallback — the shared configured Gmail
         # recipient map covers both PA stores; authoritative order data still
         # comes from the PA relay and normal SDA parser.
+        #
+        # Run once on scheduler boot. The external scheduler-health watchdog
+        # requires the independent recovery jobs to have durable execution
+        # evidence; waiting 15 minutes after every boot lets a restart loop
+        # prevent the Gmail recovery from ever running.
         scheduler.add_job(
             run_pa_email_recovery_job,
             trigger=IntervalTrigger(minutes=PA_MISSED_ORDER_RECOVERY_INTERVAL),
@@ -244,6 +249,7 @@ class Command(BaseCommand):
             name='PlayerAuctions 15-Minute Missed-Order Recovery',
             max_instances=1,
             replace_existing=True,
+            next_run_time=datetime.now(),
         )
 
         # NOTE: Dropship poster + cleaner moved to run_dropship_scheduler command.
@@ -329,6 +335,10 @@ class Command(BaseCommand):
             name='Cross-Platform Unbound Pool Sale Recovery',
             max_instances=1,
             replace_existing=True,
+            # This is a mandatory freshness-check job. It must run once
+            # immediately after boot rather than wait five minutes while the
+            # watchdog sees it as absent and restarts the scheduler.
+            next_run_time=datetime.now(),
         )
 
         scheduler.add_job(
