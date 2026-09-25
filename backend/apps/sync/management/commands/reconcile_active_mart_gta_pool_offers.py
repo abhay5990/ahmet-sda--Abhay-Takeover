@@ -112,18 +112,21 @@ def _active_offer_ids_from_snapshot(
     )
 
 
-def _candidate_queryset():
+def _candidate_queryset(*, pool_id: int | None = None):
     """Only locally listed, stale-marked Mart GTA 5 clones are candidates."""
+    filters = {
+        "listing__integration_account__slug": MART_ACCOUNT_SLUG,
+        "listing__game__slug": GTA_GAME_SLUG,
+        "listing__status": ListingStatus.LISTED,
+        "status__in": (
+            OfferPoolActiveOfferStatus.DELISTED,
+            OfferPoolActiveOfferStatus.FAILED,
+        ),
+    }
+    if pool_id is not None:
+        filters["pool_id"] = pool_id
     return (
-        OfferPoolActiveOffer.objects.filter(
-            listing__integration_account__slug=MART_ACCOUNT_SLUG,
-            listing__game__slug=GTA_GAME_SLUG,
-            listing__status=ListingStatus.LISTED,
-            status__in=(
-                OfferPoolActiveOfferStatus.DELISTED,
-                OfferPoolActiveOfferStatus.FAILED,
-            ),
-        )
+        OfferPoolActiveOffer.objects.filter(**filters)
         .select_related(
             "listing__integration_account__credential",
             "pool_offer",
@@ -256,6 +259,12 @@ class Command(BaseCommand):
             default=DEFAULT_SNAPSHOT_MAX_AGE_SECONDS,
             help="Reject a snapshot older than this limit (default 600).",
         )
+        parser.add_argument(
+            "--pool-id",
+            type=int,
+            default=None,
+            help="Restrict recovery to one exact SDA pool ID.",
+        )
 
     def handle(self, *args, **options):
         limit = int(options["limit"])
@@ -264,8 +273,11 @@ class Command(BaseCommand):
         max_age = int(options["snapshot_max_age_seconds"])
         if max_age < 1:
             raise CommandError("--snapshot-max-age-seconds must be positive")
+        pool_id = options.get("pool_id")
+        if pool_id is not None and int(pool_id) < 1:
+            raise CommandError("--pool-id must be positive")
 
-        candidates = list(_candidate_queryset()[:limit])
+        candidates = list(_candidate_queryset(pool_id=pool_id)[:limit])
         stats = {
             "selected": len(candidates),
             "snapshot_active": 0,
@@ -276,7 +288,10 @@ class Command(BaseCommand):
             "changed_before_apply": 0,
         }
         if not candidates:
-            self.stdout.write("No locally listed Mart GTA 5 failed/delisted pool rows found.")
+            scope = f" in pool {pool_id}" if pool_id is not None else ""
+            self.stdout.write(
+                f"No locally listed Mart GTA 5 failed/delisted pool rows found{scope}."
+            )
             return
 
         account = candidates[0].listing.integration_account

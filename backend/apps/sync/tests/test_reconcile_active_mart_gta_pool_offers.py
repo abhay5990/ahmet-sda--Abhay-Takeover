@@ -5,6 +5,7 @@ from django.core.management.base import CommandError
 from django.test import SimpleTestCase
 
 from apps.sync.management.commands.reconcile_active_mart_gta_pool_offers import (
+    Command,
     MAX_LIMIT,
     _active_offer_ids_from_snapshot,
     _snapshot_is_fresh,
@@ -12,6 +13,15 @@ from apps.sync.management.commands.reconcile_active_mart_gta_pool_offers import 
 
 
 class MartGtaPoolSnapshotProofTests(SimpleTestCase):
+    def test_command_accepts_exact_pool_scope(self):
+        command = Command()
+        parser = command.create_parser("manage.py", "reconcile_active_mart_gta_pool_offers")
+
+        options = parser.parse_args(["--pool-id", "80", "--limit", "39"])
+
+        self.assertEqual(options.pool_id, 80)
+        self.assertEqual(options.limit, 39)
+
     def test_accepts_only_fresh_exact_active_ids_and_batches_requests(self):
         client = Mock()
         client.list_offers.side_effect = [
