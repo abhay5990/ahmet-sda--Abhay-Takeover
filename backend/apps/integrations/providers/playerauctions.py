@@ -226,6 +226,55 @@ class MctMartDelegationClient:
             details={'error_code': error_code},
         )
 
+    def get_offer_details(
+        self,
+        offer_id: str | int,
+        **_kwargs: Any,
+    ) -> ApiResult[dict[str, Any]]:
+        """Verify one Mart offer against the fresh active-only MCT snapshot.
+
+        This compatibility method exists for the pool checker. It performs no
+        PlayerAuctions detail request and does not reveal credentials. A 404 is
+        emitted only after the authenticated MCT cache route has accepted the
+        exact known ID and returned a complete fresh snapshot without it.
+        """
+        try:
+            normalized_id = int(offer_id)
+        except (TypeError, ValueError):
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION,
+                'Mart offer verification requires a numeric offer ID.',
+                provider='playerauctions',
+            )
+        if normalized_id <= 0:
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION,
+                'Mart offer verification requires a numeric offer ID.',
+                provider='playerauctions',
+            )
+        result = self.list_offers(
+            offer_ids=[normalized_id],
+            listing_status='Active',
+            page=1,
+            page_size=1,
+        )
+        if not result.ok:
+            return ApiResult.failure(result.error) if result.error else ApiResult.from_error(
+                ErrorCategory.SERVER_ERROR,
+                'Mart Official active-offer snapshot is unavailable.',
+                provider='playerauctions',
+                is_retryable=True,
+            )
+        for offer in result.data or []:
+            if str(offer.get('offerId') or offer.get('offer_id') or '') == str(normalized_id):
+                return ApiResult.success(offer, status_code=result.status_code, meta=result.meta)
+        return ApiResult.from_error(
+            ErrorCategory.NOT_FOUND,
+            'Mart offer is absent from the fresh Official active-offer snapshot.',
+            provider='playerauctions',
+            status_code=404,
+        )
+
     def create_offer(self, product_type: str, payload: dict[str, Any], **_kwargs: Any) -> ApiResult[dict[str, Any]]:
         if product_type != 'account':
             return ApiResult.from_error(ErrorCategory.VALIDATION, 'MCT Mart delegation only supports account offers.', provider='playerauctions')

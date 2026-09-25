@@ -186,6 +186,55 @@ class PlayerAuctionsOfficialMartTests(SimpleTestCase):
         self.assertFalse(result.ok)
         self.assertIn('requires SDA-known offer IDs', result.error.message)
 
+    @patch('apps.integrations.providers.playerauctions.requests.post')
+    def test_mart_pool_offer_verification_reads_snapshot_without_pa_detail(self, post):
+        client = MctMartDelegationClient(
+            url='https://mct.example/api/sda/pa-mart/delegate',
+            token='bridge-token',
+            key=b'u' * 32,
+        )
+        post.return_value = SimpleNamespace(
+            ok=True,
+            status_code=200,
+            content=b'{}',
+            json=lambda: {
+                'ok': True,
+                'offers': [{'offerId': 294100001, 'systemStatus': 'Active'}],
+                'pagination': {'currentPage': 1, 'totalPages': 1},
+            },
+        )
+
+        result = client.get_offer_details('294100001', proxy_group='mart')
+
+        self.assertTrue(result.ok)
+        self.assertEqual(result.data['offerId'], 294100001)
+        self.assertEqual(post.call_count, 1)
+        self.assertIn('official-active-offers', post.call_args.args[0])
+
+    @patch('apps.integrations.providers.playerauctions.requests.post')
+    def test_mart_pool_offer_verification_only_returns_not_found_from_snapshot(self, post):
+        client = MctMartDelegationClient(
+            url='https://mct.example/api/sda/pa-mart/delegate',
+            token='bridge-token',
+            key=b'v' * 32,
+        )
+        post.return_value = SimpleNamespace(
+            ok=True,
+            status_code=200,
+            content=b'{}',
+            json=lambda: {
+                'ok': True,
+                'offers': [],
+                'pagination': {'currentPage': 1, 'totalPages': 1},
+            },
+        )
+
+        result = client.get_offer_details(294100001)
+
+        self.assertFalse(result.ok)
+        self.assertEqual(result.error.status_code, 404)
+        self.assertEqual(result.error.category.value, 'not_found')
+
     def test_mart_snapshot_sync_does_not_request_offer_details(self):
         client = Mock()
         client.uses_mct_official_offer_snapshot.return_value = True
