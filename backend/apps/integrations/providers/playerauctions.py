@@ -34,7 +34,13 @@ logger = logging.getLogger(__name__)
 # The seller mailbox and official credentials used for the Mart account are
 # intentionally scoped to this known relay-store identifier.  Shop keeps its
 # existing configuration and is never opted in by this code path.
-_OFFICIAL_MART_STORE_SLUGS = frozenset({"csgosmurfkings", "ezsmurfmart"})
+_OFFICIAL_MART_STORE_SLUGS = frozenset({
+    "csgosmurfkings",
+    "ezsmurfmart",
+    # SDA integration slugs include the provider prefix. Keep the exact
+    # deployed Mart identifier rather than broad prefix matching.
+    "playerauctions-csgosmurfkings",
+})
 
 # Module-level encryptor — key loaded once, reused for all requests.
 _encryptor = PAPasswordEncryptor()

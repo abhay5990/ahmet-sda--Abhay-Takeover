@@ -13,6 +13,7 @@ from apps.integrations.providers.playerauctions import (
     PACompositeClient,
     PlayerAuctionsProvider,
     _get_mct_mart_delegation_config,
+    _is_official_mart_credential,
     _mart_mct_delegation_enabled,
     _normalize_official_account_payload,
 )
@@ -121,6 +122,17 @@ class PlayerAuctionsOfficialMartTests(SimpleTestCase):
         self.assertFalse(_mart_mct_delegation_enabled({}))
         with self.assertRaisesRegex(RuntimeError, 'configuration is incomplete'):
             _get_mct_mart_delegation_config({'PA_MART_MCT_DELEGATION_URL': 'http://mct.example/api/sda/pa-mart/delegate'})
+
+    def test_deployed_mart_integration_slug_enables_official_snapshot_route(self):
+        credential = SimpleNamespace(
+            account=SimpleNamespace(slug='playerauctions-csgosmurfkings'),
+        )
+
+        self.assertTrue(_is_official_mart_credential(credential, {}))
+        self.assertFalse(_is_official_mart_credential(
+            SimpleNamespace(account=SimpleNamespace(slug='playerauctions-vapenation234')),
+            {},
+        ))
 
     def test_mart_delegation_encrypts_delivery_payload_before_transport(self):
         key = b'y' * 32
