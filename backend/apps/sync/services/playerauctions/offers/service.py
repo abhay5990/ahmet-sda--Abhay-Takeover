@@ -90,6 +90,11 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
         Status progression: Active (all pages) → Hidden (all pages) → done.
         Tracked via ``checkpoint.meta._current_status``.
         """
+        if self._uses_mct_official_offer_snapshot():
+            return self._fetch_mct_official_active_snapshot_page(
+                account, checkpoint,
+            )
+
         current_status = checkpoint.meta.get(
             '_current_status', _FETCH_STATUSES[0],
         )
@@ -208,12 +213,89 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
 
         return items, next_cursor
 
+    def _uses_mct_official_offer_snapshot(self) -> bool:
+        """Whether this Mart client is restricted to the MCT cache reader."""
+        enabled = getattr(
+            self.client, 'uses_mct_official_offer_snapshot', None,
+        )
+        return enabled() is True if callable(enabled) else False
+
+    def _fetch_mct_official_active_snapshot_page(
+        self,
+        account: IntegrationAccount,
+        checkpoint: SyncCheckpoint,
+    ) -> tuple[list[dict], str]:
+        """Refresh already-known active Mart offers from the MCT Official cache.
+
+        This path intentionally reads no PlayerAuctions credentials, browser
+        session, relay, offer detail, or provider search. It sends only the
+        numeric IDs already present in SDA as listed Mart records. Absence from
+        one cache response is never interpreted as a deletion or pause.
+        """
+        from apps.listings.enums import ListingStatus
+        from apps.listings.models import Listing
+
+        try:
+            page = int(checkpoint.cursor) if checkpoint.cursor else 1
+        except (TypeError, ValueError):
+            page = 1
+        page = max(1, page)
+        known_ids: list[int] = []
+        for value in Listing.objects.filter(
+            integration_account=account,
+            status=ListingStatus.LISTED,
+        ).values_list('store_listing_id', flat=True):
+            try:
+                offer_id = int(value)
+            except (TypeError, ValueError):
+                continue
+            if offer_id > 0:
+                known_ids.append(offer_id)
+        known_ids = sorted(set(known_ids))
+        if not known_ids:
+            return [], ''
+        if len(known_ids) > 2000:
+            raise RuntimeError(
+                'Mart Official active-offer snapshot has more than 2000 SDA-known '
+                'active IDs; the safe bridge requires an explicit bounded batch extension.'
+            )
+
+        result = self.provider.fetch_products(
+            self.client,
+            page=page,
+            page_size=self.DEFAULT_PAGE_SIZE,
+            listing_status='Active',
+            offer_ids=known_ids,
+        )
+        if not result.ok:
+            error_msg = result.error.message if result.error else ''
+            raise RuntimeError(
+                'Mart Official active-offer snapshot is unavailable: '
+                f'{error_msg}'
+            )
+
+        items = [
+            offer.model_dump() if hasattr(offer, 'model_dump')
+            else offer if isinstance(offer, dict) else dict(offer)
+            for offer in (result.data or [])
+        ]
+        pagination = result.meta.get('pagination', {})
+        current_page = int(pagination.get('current_page', page))
+        total_pages = int(pagination.get('total_pages', current_page))
+        next_cursor = str(current_page + 1) if current_page < total_pages else ''
+        return items, next_cursor
+
     def is_already_seen(
         self,
         item: dict,
         stop_remote_id: str,
     ) -> bool:
         """Stop incremental sync when we hit an already-seen offer."""
+        if self._uses_mct_official_offer_snapshot():
+            # Snapshot pages are exact-ID batches rather than a provider-owned
+            # newest-first feed, so an old checkpoint must not suppress a later
+            # known Mart offer batch.
+            return False
         if not stop_remote_id:
             return False
         return self.extract_remote_id(item) == stop_remote_id
@@ -243,6 +325,11 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
         The list endpoint only returns flat summaries. The detail endpoint
         returns ``autoDelivery`` (credentials), ``gameId``, ``isAuto``, etc.
         """
+        if self._uses_mct_official_offer_snapshot():
+            # The cache is deliberately summary-only. Do not request per-offer
+            # detail because that would reintroduce a direct PA/relay call and
+            # could expose delivery credentials to the sync path.
+            return item, {'detail_source': 'mct_official_active_snapshot'}
         offer_id = self.extract_remote_id(item)
         try:
             result = self.client.get_offer_details(
@@ -271,6 +358,9 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
 
     def parse_and_apply(self, raw_payload: RawPayload) -> str | None:
         """Parse raw offer payload, upsert Listing, and link OwnedProducts."""
+        if self._uses_mct_official_offer_snapshot():
+            return self._apply_mct_official_active_snapshot(raw_payload)
+
         payload = raw_payload.payload
         price_value, currency = mapper.extract_price(payload)
 
@@ -325,6 +415,75 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
             )
 
         return result
+
+    def _apply_mct_official_active_snapshot(
+        self,
+        raw_payload: RawPayload,
+    ) -> str | None:
+        """Update safe fields on one pre-existing listed Mart record only.
+
+        The MCT snapshot is not a discovery feed. It never creates listings,
+        changes game/platform/category/instant ownership, links stock, or
+        changes state based on an absent/malformed summary. This prevents
+        CodeTracker-owned listings or incomplete records from leaking into SDA.
+        """
+        from apps.listings.enums import ListingStatus
+        from apps.listings.models import Listing
+
+        listing = Listing.objects.filter(
+            integration_account=raw_payload.integration_account,
+            store_listing_id=raw_payload.remote_id,
+            status=ListingStatus.LISTED,
+        ).first()
+        if listing is None:
+            return None
+
+        payload = raw_payload.payload
+        updates: list[str] = []
+        title = str(payload.get('title') or '').strip()[:500]
+        if title and title != listing.title:
+            listing.title = title
+            updates.append('title')
+
+        price_value, currency = mapper.extract_price(payload)
+        if price_value > 0 and (listing.price != price_value or listing.currency != currency):
+            listing.price = price_value
+            listing.currency = currency
+            updates.extend(['price', 'currency'])
+
+        expiry_at = _payload_expiry(payload)
+        if expiry_at is not None:
+            listed_at = _expire_to_listed(expiry_at, payload)
+            if listing.marketplace_expires_at != expiry_at:
+                listing.marketplace_expires_at = expiry_at
+                updates.append('marketplace_expires_at')
+            if listing.listed_at != listed_at:
+                listing.listed_at = listed_at
+                updates.append('listed_at')
+
+        raw_data = normalize_offer_response('playerauctions', payload)
+        if listing.raw_data != raw_data:
+            listing.raw_data = raw_data
+            updates.append('raw_data')
+        listing.last_synced_at = raw_payload.fetched_at
+        updates.append('last_synced_at')
+        listing.save(update_fields=[*dict.fromkeys(updates), 'updated_at'])
+        return 'updated'
+
+    def _reconcile_stale(self, account, run) -> None:
+        """Never delete Mart records from an active-only cache snapshot.
+
+        A missing record may be hidden/expired or the worker cache may be
+        incomplete. Any status transition requires a separate verified remote
+        lifecycle path, never this safe summary reader.
+        """
+        if self._uses_mct_official_offer_snapshot():
+            logger.info(
+                'Skipped stale reconciliation for Mart Official active-offer snapshot account=%s',
+                account.slug,
+            )
+            return
+        super()._reconcile_stale(account, run)
 
     # ── Private helpers ───────────────────────────────────────────────
 

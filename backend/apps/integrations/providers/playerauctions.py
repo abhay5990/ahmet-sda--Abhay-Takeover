@@ -41,6 +41,7 @@ _encryptor = PAPasswordEncryptor()
 
 _MCT_MART_DELEGATION_PATH = '/api/sda/pa-mart/delegate'
 _MCT_MART_DELEGATION_TIMEOUT = 45
+_MCT_MART_OFFICIAL_OFFER_SNAPSHOT_PATH = '/api/sda/pa-mart/official-active-offers'
 
 
 def _env_flag_enabled(value: str | None) -> bool:
@@ -90,12 +91,25 @@ class MctMartDelegationClient:
         self._url = url
         self._token = token
         self._key = key
+        self._official_offer_snapshot_url = (
+            f"{url[:-len(_MCT_MART_DELEGATION_PATH)]}"
+            f"{_MCT_MART_OFFICIAL_OFFER_SNAPSHOT_PATH}"
+        )
 
     def uses_official_offer_api_only(self) -> bool:
         return True
 
     def uses_relay_browser_order_reads(self) -> bool:
         return False
+
+    def uses_mct_official_offer_snapshot(self) -> bool:
+        """True only for Mart's existing-listing snapshot synchronization.
+
+        The offer sync service uses this signal to request exact SDA-owned offer
+        IDs from the durable MCT Official API cache. It never asks MCT to
+        discover listings by game, title, or credential.
+        """
+        return True
 
     def _encrypted_envelope(self, payload: dict[str, Any]) -> dict[str, Any]:
         nonce = os.urandom(12)
@@ -136,6 +150,80 @@ class MctMartDelegationClient:
                 'delegation_outcome': 'unknown' if unknown else 'rejected',
                 'error_code': str(data.get('errorCode') or data.get('error') or 'mct_delegation_rejected')[:96],
             },
+        )
+
+    def list_offers(
+        self,
+        *,
+        page: int = 1,
+        page_size: int = 50,
+        listing_status: str = '',
+        offer_ids: list[int] | None = None,
+        **_kwargs: Any,
+    ) -> ApiResult[list[dict[str, Any]]]:
+        """Read only SDA-known Active Mart offers from MCT's fresh snapshot.
+
+        This call contains no PlayerAuctions key, secret, username, password,
+        browser cookie, proxy, or delivery data. The MCT route accepts exact
+        offer IDs only and returns safe summary fields from its Official API
+        cache. Hidden offers are deliberately outside this active-only cache.
+        """
+        if str(listing_status or 'Active').strip().lower() not in {'', 'active'}:
+            return ApiResult.success(
+                [],
+                meta={'pagination': {'current_page': page, 'total_pages': page}},
+            )
+        normalized_ids: list[int] = []
+        for value in offer_ids or []:
+            try:
+                parsed = int(value)
+            except (TypeError, ValueError):
+                continue
+            if parsed > 0 and parsed not in normalized_ids:
+                normalized_ids.append(parsed)
+        if not normalized_ids:
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION,
+                'Mart Official active-offer snapshot requires SDA-known offer IDs.',
+                provider='playerauctions',
+            )
+        try:
+            response = requests.post(
+                self._official_offer_snapshot_url,
+                json={'offerIds': normalized_ids, 'pageIndex': page, 'pageSize': page_size},
+                headers={'X-Bridge-Secret': self._token, 'Content-Type': 'application/json'},
+                timeout=_MCT_MART_DELEGATION_TIMEOUT,
+            )
+            data = response.json() if response.content else {}
+        except (requests.RequestException, ValueError):
+            return ApiResult.from_error(
+                ErrorCategory.SERVER_ERROR,
+                'Mart Official active-offer snapshot is unavailable; no PlayerAuctions request was attempted.',
+                provider='playerauctions',
+                is_retryable=True,
+            )
+        if response.ok and data.get('ok') and isinstance(data.get('offers'), list):
+            pagination = data.get('pagination') if isinstance(data.get('pagination'), dict) else {}
+            return ApiResult.success(
+                [offer for offer in data['offers'] if isinstance(offer, dict)],
+                status_code=response.status_code,
+                meta={
+                    'pagination': {
+                        'current_page': pagination.get('currentPage', page),
+                        'total_pages': pagination.get('totalPages', page),
+                    },
+                    'snapshot_refreshed_at': str(data.get('snapshotRefreshedAt') or ''),
+                    'snapshot_age_seconds': data.get('snapshotAgeSeconds'),
+                },
+            )
+        error_code = str(data.get('error') or 'official_mart_snapshot_unavailable')[:96]
+        return ApiResult.from_error(
+            ErrorCategory.SERVER_ERROR,
+            f'Mart Official active-offer snapshot unavailable: {error_code}',
+            provider='playerauctions',
+            status_code=response.status_code,
+            is_retryable=True,
+            details={'error_code': error_code},
         )
 
     def create_offer(self, product_type: str, payload: dict[str, Any], **_kwargs: Any) -> ApiResult[dict[str, Any]]:
