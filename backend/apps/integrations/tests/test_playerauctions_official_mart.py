@@ -200,6 +200,22 @@ class PlayerAuctionsOfficialMartTests(SimpleTestCase):
         self.assertFalse(result.ok)
         self.assertIn('requires SDA-known offer IDs', result.error.message)
 
+    @patch.dict('apps.integrations.providers.playerauctions.os.environ', {'PA_MART_CREATE_HOLD': 'true'}, clear=False)
+    @patch('apps.integrations.providers.playerauctions.requests.post')
+    def test_mart_create_hold_blocks_only_new_account_offers(self, post):
+        client = MctMartDelegationClient(
+            url='https://mct.example/api/sda/pa-mart/delegate',
+            token='bridge-token',
+            key=b'h' * 32,
+        )
+
+        result = client.create_offer('account', self._payload())
+
+        self.assertFalse(result.ok)
+        self.assertFalse(result.error.is_retryable)
+        self.assertIn('held pending reconciliation', result.error.message)
+        post.assert_not_called()
+
     @patch('apps.integrations.providers.playerauctions.requests.post')
     def test_mart_pool_offer_verification_reads_snapshot_without_pa_detail(self, post):
         client = MctMartDelegationClient(

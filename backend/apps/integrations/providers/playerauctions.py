@@ -59,6 +59,16 @@ def _mart_mct_delegation_enabled(env: dict[str, str] | None = None) -> bool:
     return _env_flag_enabled(runtime_env.get('PA_MART_MCT_DELEGATION_ENABLED'))
 
 
+def _mart_create_held(env: dict[str, str] | None = None) -> bool:
+    """Block only new Mart account-offer creates during a verified incident.
+
+    Reads, Gmail order handling, reconciliations, edits, and exact-ID
+    cancellations deliberately remain outside this narrow emergency boundary.
+    """
+    runtime_env = os.environ if env is None else env
+    return _env_flag_enabled(runtime_env.get('PA_MART_CREATE_HOLD'))
+
+
 def _get_mct_mart_delegation_config(
     env: dict[str, str] | None = None,
 ) -> tuple[str, str, bytes]:
@@ -284,6 +294,13 @@ class MctMartDelegationClient:
     def create_offer(self, product_type: str, payload: dict[str, Any], **_kwargs: Any) -> ApiResult[dict[str, Any]]:
         if product_type != 'account':
             return ApiResult.from_error(ErrorCategory.VALIDATION, 'MCT Mart delegation only supports account offers.', provider='playerauctions')
+        if _mart_create_held():
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION,
+                'Mart account-offer creation is held pending reconciliation.',
+                provider='playerauctions',
+                is_retryable=False,
+            )
         return self._delegate('create', payload)
 
     def edit_offer(self, product_type: str, payload: dict[str, Any], **_kwargs: Any) -> ApiResult[dict[str, Any]]:
