@@ -8,6 +8,8 @@ from unittest.mock import Mock, patch
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from django.test import SimpleTestCase
 
+from apis_sdk.core.result import ApiResult
+
 from apps.integrations.providers.playerauctions import (
     MctMartDelegationClient,
     PACompositeClient,
@@ -258,6 +260,44 @@ class PlayerAuctionsOfficialMartTests(SimpleTestCase):
         self.assertEqual(prepared, item)
         self.assertEqual(meta, {'detail_source': 'mct_official_active_snapshot'})
         client.get_offer_details.assert_not_called()
+
+    @patch('apps.listings.models.Listing.objects.filter')
+    def test_mart_snapshot_skips_empty_id_batch_before_later_match(self, filter_listings):
+        class _QuerySet:
+            def values_list(self, *_args, **_kwargs):
+                return list(range(1, 2_002))
+
+        filter_listings.return_value = _QuerySet()
+        client = Mock()
+        client.uses_mct_official_offer_snapshot.return_value = True
+        provider = Mock()
+        provider.fetch_products.side_effect = [
+            ApiResult.success(
+                [], meta={'pagination': {'current_page': 1, 'total_pages': 1}},
+            ),
+            ApiResult.success(
+                [{'offerId': 2_001}],
+                meta={'pagination': {'current_page': 1, 'total_pages': 1}},
+            ),
+        ]
+        service = PlayerAuctionsOfferSyncService(provider=provider, client=client)
+        checkpoint = SimpleNamespace(meta={}, save=Mock())
+
+        items, next_cursor = service._fetch_mct_official_active_snapshot_page(
+            SimpleNamespace(), checkpoint,
+        )
+
+        self.assertEqual(items, [{'offerId': 2_001}])
+        self.assertEqual(next_cursor, '')
+        self.assertEqual(provider.fetch_products.call_count, 2)
+        self.assertEqual(
+            provider.fetch_products.call_args_list[0].kwargs['offer_ids'],
+            list(range(1, 2_001)),
+        )
+        self.assertEqual(
+            provider.fetch_products.call_args_list[1].kwargs['offer_ids'],
+            [2_001],
+        )
 
     @patch('apps.integrations.providers.playerauctions.requests.post')
     def test_mart_delegated_edit_returns_the_provider_confirmed_offer_id(self, post):

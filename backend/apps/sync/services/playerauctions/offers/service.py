@@ -24,6 +24,13 @@ _FETCH_STATUSES = ('Active', 'Hidden')
 # Default offer duration (days) when details.offerDuration is missing
 _DEFAULT_OFFER_DURATION_DAYS = 30
 
+# The MCT bridge intentionally accepts only a bounded set of exact SDA-known
+# IDs per request. These checkpoint keys preserve a safe continuation through
+# a large Mart estate without widening the bridge contract.
+_MCT_SNAPSHOT_ID_BATCH_SIZE = 2_000
+_MCT_SNAPSHOT_BATCH_META_KEY = '_mct_snapshot_batch_index'
+_MCT_SNAPSHOT_PAGE_META_KEY = '_mct_snapshot_page'
+
 
 def _expire_to_listed(expire_dt, payload):
     """Derive listed_at from expired_time by subtracting offerDuration."""
@@ -235,11 +242,6 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
         from apps.listings.enums import ListingStatus
         from apps.listings.models import Listing
 
-        try:
-            page = int(checkpoint.cursor) if checkpoint.cursor else 1
-        except (TypeError, ValueError):
-            page = 1
-        page = max(1, page)
         known_ids: list[int] = []
         for value in Listing.objects.filter(
             integration_account=account,
@@ -254,36 +256,88 @@ class PlayerAuctionsOfferSyncService(BaseSyncService):
         known_ids = sorted(set(known_ids))
         if not known_ids:
             return [], ''
-        if len(known_ids) > 2000:
-            raise RuntimeError(
-                'Mart Official active-offer snapshot has more than 2000 SDA-known '
-                'active IDs; the safe bridge requires an explicit bounded batch extension.'
+
+        batch_count = (
+            len(known_ids) + _MCT_SNAPSHOT_ID_BATCH_SIZE - 1
+        ) // _MCT_SNAPSHOT_ID_BATCH_SIZE
+        try:
+            batch_index = int(
+                checkpoint.meta.get(_MCT_SNAPSHOT_BATCH_META_KEY, 0),
+            )
+        except (TypeError, ValueError):
+            batch_index = 0
+        batch_index = min(max(0, batch_index), batch_count - 1)
+        try:
+            page = int(checkpoint.meta.get(_MCT_SNAPSHOT_PAGE_META_KEY, 1))
+        except (TypeError, ValueError):
+            page = 1
+        page = max(1, page)
+
+        # An exact-ID batch can validly have zero active matches because SDA
+        # keeps history the active-only cache will not expose. Skip an empty
+        # batch internally: BaseSyncService treats an empty returned page as the
+        # end of the run, so returning it would leave later batches unchecked.
+        while batch_index < batch_count:
+            start = batch_index * _MCT_SNAPSHOT_ID_BATCH_SIZE
+            result = self.provider.fetch_products(
+                self.client,
+                page=page,
+                page_size=self.DEFAULT_PAGE_SIZE,
+                listing_status='Active',
+                offer_ids=known_ids[
+                    start:start + _MCT_SNAPSHOT_ID_BATCH_SIZE
+                ],
+            )
+            if not result.ok:
+                error_msg = result.error.message if result.error else ''
+                raise RuntimeError(
+                    'Mart Official active-offer snapshot is unavailable: '
+                    f'{error_msg}'
+                )
+
+            items = [
+                offer.model_dump() if hasattr(offer, 'model_dump')
+                else offer if isinstance(offer, dict) else dict(offer)
+                for offer in (result.data or [])
+            ]
+            pagination = result.meta.get('pagination', {})
+            current_page = int(pagination.get('current_page', page))
+            total_pages = max(
+                current_page,
+                int(pagination.get('total_pages', current_page)),
             )
 
-        result = self.provider.fetch_products(
-            self.client,
-            page=page,
-            page_size=self.DEFAULT_PAGE_SIZE,
-            listing_status='Active',
-            offer_ids=known_ids,
-        )
-        if not result.ok:
-            error_msg = result.error.message if result.error else ''
-            raise RuntimeError(
-                'Mart Official active-offer snapshot is unavailable: '
-                f'{error_msg}'
-            )
+            if current_page < total_pages:
+                checkpoint.meta = {
+                    **checkpoint.meta,
+                    _MCT_SNAPSHOT_BATCH_META_KEY: batch_index,
+                    _MCT_SNAPSHOT_PAGE_META_KEY: current_page + 1,
+                }
+                checkpoint.save(update_fields=['meta', 'updated_at'])
+                return items, f'mct:{batch_index}:{current_page + 1}'
 
-        items = [
-            offer.model_dump() if hasattr(offer, 'model_dump')
-            else offer if isinstance(offer, dict) else dict(offer)
-            for offer in (result.data or [])
-        ]
-        pagination = result.meta.get('pagination', {})
-        current_page = int(pagination.get('current_page', page))
-        total_pages = int(pagination.get('total_pages', current_page))
-        next_cursor = str(current_page + 1) if current_page < total_pages else ''
-        return items, next_cursor
+            if batch_index + 1 < batch_count:
+                batch_index += 1
+                page = 1
+                checkpoint.meta = {
+                    **checkpoint.meta,
+                    _MCT_SNAPSHOT_BATCH_META_KEY: batch_index,
+                    _MCT_SNAPSHOT_PAGE_META_KEY: page,
+                }
+                checkpoint.save(update_fields=['meta', 'updated_at'])
+                if items:
+                    return items, f'mct:{batch_index}:{page}'
+                continue
+
+            # Reset completion state. A parse failure is safe to retry from the
+            # first exact-ID batch because this reader performs only idempotent
+            # local summary updates.
+            checkpoint.meta.pop(_MCT_SNAPSHOT_BATCH_META_KEY, None)
+            checkpoint.meta.pop(_MCT_SNAPSHOT_PAGE_META_KEY, None)
+            checkpoint.save(update_fields=['meta', 'updated_at'])
+            return items, ''
+
+        return [], ''
 
     def is_already_seen(
         self,
