@@ -40,7 +40,7 @@ SIGNATURE_VERSION = 'v1'
 MAX_AGE_MS = 10 * 60 * 1000
 _CODE_RE = re.compile(r'^#[A-Z0-9]{6,8}$')
 # Covers both known Mart store identifiers during their controlled transition.
-_MART_STORE_SLUGS = ('csgosmurfkings', 'ezsmurfmart')
+_MART_STORE_SLUGS = ('csgosmurfkings', 'ezsmurfmart', 'playerauctions-csgosmurfkings')
 # CodeTracker owns these games. SDA must never create an order report for one
 # even if a manual configuration mistake exposes a matching listing here.
 _CODETRACKER_OWNED_GAME_SLUGS = ('fortnite', 'valorant', 'league-of-legends', 'league-of-legends-wild-rift', 'lol', 'rainbow-six-siege', 'r6')
@@ -153,6 +153,27 @@ def create_order_report(*, event: PaGmailOrderEvent, listing: Listing) -> tuple[
     return order, created
 
 
+def recover_unmatched_event(*, event: PaGmailOrderEvent) -> tuple[Order, bool] | None:
+    """Re-evaluate a prior unmatched event only after a receiver routing correction.
+
+    The event ID, external order ID, and visible tracking code are immutable.  This
+    never searches historical rows or changes a marketplace offer; it can only bind
+    the same event to exactly one current SDA-owned Mart listing.
+    """
+    if event.disposition != PaGmailOrderEvent.Disposition.UNMATCHED or event.order_id:
+        return None
+    listing = find_unique_mart_listing(event.tracking_code)
+    if listing is None:
+        return None
+    order, created = create_order_report(event=event, listing=listing)
+    event.integration_account = listing.integration_account
+    event.listing = listing
+    event.order = order
+    event.disposition = PaGmailOrderEvent.Disposition.CREATED if created else PaGmailOrderEvent.Disposition.DUPLICATE
+    event.save(update_fields=['integration_account', 'listing', 'order', 'disposition', 'updated_at'])
+    return order, created
+
+
 @csrf_exempt
 @require_POST
 def pa_gmail_order_event(request: HttpRequest) -> HttpResponse:
@@ -181,6 +202,13 @@ def pa_gmail_order_event(request: HttpRequest) -> HttpResponse:
     with transaction.atomic():
         existing = PaGmailOrderEvent.objects.select_related('order').filter(event_id=payload['eventId']).first()
         if existing:
+            repaired = recover_unmatched_event(event=existing)
+            if repaired:
+                _, created = repaired
+                return JsonResponse(
+                    {'accepted': True, 'disposition': 'created' if created else 'duplicate'},
+                    status=202 if created else 200,
+                )
             return JsonResponse({'accepted': True, 'disposition': 'duplicate'}, status=200)
 
         listing = find_unique_mart_listing(payload['code'])

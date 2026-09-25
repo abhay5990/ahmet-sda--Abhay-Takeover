@@ -82,6 +82,16 @@ def test_sda_receiver_excludes_codetracker_owned_games():
     assert ".exclude(game__slug__in=_CODETRACKER_OWNED_GAME_SLUGS)" in source
 
 
+def test_sda_receiver_accepts_the_deployed_mart_slug_and_repairs_only_prior_unmatched_events():
+    from pathlib import Path
+
+    source = Path('backend/apps/integrations/api/pa_gmail_order_event.py').read_text()
+    assert "'playerauctions-csgosmurfkings'" in source
+    assert "if event.disposition != PaGmailOrderEvent.Disposition.UNMATCHED or event.order_id:" in source
+    assert 'repaired = recover_unmatched_event(event=existing)' in source
+    assert "event.save(update_fields=['integration_account', 'listing', 'order', 'disposition', 'updated_at'])" in source
+
+
 def test_sda_receiver_closes_only_the_exact_matched_local_listing():
     from pathlib import Path
 
