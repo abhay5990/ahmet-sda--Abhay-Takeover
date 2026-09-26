@@ -30,6 +30,10 @@ from types import FrameType
 from django.db import close_old_connections
 from django.utils import timezone
 
+from apps.integrations.providers.playerauctions import (
+    _OFFICIAL_MART_STORE_SLUGS,
+    _mart_create_held,
+)
 from apps.posting.models import (
     CleanerConfig,
     DropshippingJobConfig,
@@ -238,6 +242,12 @@ class DropshipScheduler:
                 # No thread running — should we start one?
                 config.refresh_from_db()
                 if config.enabled and not config.poster_running:
+                    if self._mart_poster_is_held(config):
+                        logger.warning(
+                            "Mart dropship poster held before thread start: config #%d",
+                            config.id,
+                        )
+                        continue
                     reason = self._check_config_prerequisites(config)
                     if reason:
                         logger.warning(
@@ -274,6 +284,23 @@ class DropshipScheduler:
                     if entry is not None:
                         entry[1].set()  # stop_event
                     self._poster_threads.pop(config_id, None)
+
+    @staticmethod
+    def _mart_poster_is_held(config: DropshippingJobConfig) -> bool:
+        """Return whether the global Mart creation hold blocks this config.
+
+        This worker-level boundary runs before a poster thread can fetch a
+        source item, build media, or enqueue a marketplace write. The provider
+        independently rejects Mart account-offer creates as a second guard.
+        A held config remains enabled rather than being falsely marked failed.
+        """
+        store = config.store
+        return (
+            _mart_create_held()
+            and str(getattr(store, 'provider', '') or '').strip().lower() == 'playerauctions'
+            and str(getattr(store, 'slug', '') or '').strip().lower()
+            in _OFFICIAL_MART_STORE_SLUGS
+        )
 
     @staticmethod
     def _check_config_prerequisites(config: DropshippingJobConfig) -> str | None:
