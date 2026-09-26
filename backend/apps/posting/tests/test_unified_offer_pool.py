@@ -389,6 +389,53 @@ class UnifiedPoolTestCase(TestCase):
         self.assertEqual(event.pool_item_id, item.pk)
         self.assertEqual(event.outcome, 'processed')
 
+    def test_verified_pa_order_can_consume_clone_without_replenishment(self):
+        pool = self.make_pool()
+        listing = self.make_listing(
+            account=self.playerauctions,
+            remote_id='pa-automatic-delivery-clone',
+        )
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=1,
+            threshold=1,
+            max_concurrent=1,
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('pa-automatic-delivery@example.test'),
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='absent',
+        )
+        active_offer = OfferPoolActiveOffer.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            listing=listing,
+            pool_item=item,
+            store_listing_id='pa-automatic-delivery-clone',
+            status=OfferPoolActiveOfferStatus.DELISTED,
+        )
+
+        with patch(
+            'apps.posting.services.pool.checker.replenish_pool_offer',
+        ) as replenish:
+            notify_sale(
+                listing.pk,
+                event_key='playerauctions:pa-test:automatic-delivery',
+                order_id=91235,
+                allow_replenish=False,
+            )
+
+        active_offer.refresh_from_db()
+        item.refresh_from_db()
+        self.assertEqual(active_offer.status, OfferPoolActiveOfferStatus.SOLD)
+        self.assertEqual(item.status, OfferPoolItemStatus.CONSUMED)
+        self.assertEqual(item.remote_state, 'sold')
+        replenish.assert_not_called()
+
     def test_pa_replenish_rebuilds_from_stock_when_template_is_missing(self):
         pool = self.make_pool()
         listing = self.make_listing(

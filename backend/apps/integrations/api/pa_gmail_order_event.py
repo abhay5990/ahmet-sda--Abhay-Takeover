@@ -28,9 +28,11 @@ from django.views.decorators.http import require_POST
 
 from apps.integrations.models import IntegrationAccount, PaGmailOrderEvent, Provider
 from apps.listings.enums import ListingStatus
-from apps.listings.models import Listing
+from apps.listings.models import Listing, ListingOwnedProduct
 from apps.orders.enums import OrderStatus
 from apps.orders.models import Order
+from apps.posting.models import OfferPoolActiveOffer, OfferPoolActiveOfferStatus
+from apps.posting.services.pool.checker import notify_sale
 from apps.posting.services.stock.pa_tracking import extract_tracking_code
 
 logger = logging.getLogger(__name__)
@@ -119,6 +121,62 @@ def find_unique_mart_listing(code: str) -> Listing | None:
     return matches[0] if len(matches) == 1 else None
 
 
+def _has_exact_pool_clone_linkage(listing: Listing) -> bool:
+    """Require one exact live-or-delisted clone with the listing's owned product."""
+    clone_rows = list(
+        OfferPoolActiveOffer.objects.filter(
+            listing=listing,
+            pool_item__isnull=False,
+            status__in=(
+                OfferPoolActiveOfferStatus.ACTIVE,
+                OfferPoolActiveOfferStatus.DELISTED,
+            ),
+        ).values_list('pool_item__owned_product_id', flat=True)
+    )
+    if len(clone_rows) != 1:
+        return False
+    return ListingOwnedProduct.objects.filter(
+        listing=listing,
+        owned_product_id=clone_rows[0],
+    ).exists()
+
+
+def _finalize_exact_automatic_delivery(*, event: PaGmailOrderEvent, listing: Listing, order: Order) -> None:
+    """Record a final automatic-delivery sale without scheduling a replacement.
+
+    The only accepted evidence is the signed Gmail event, its exact visible
+    tracking-code listing match, and a one-to-one local clone/product link. Any
+    mismatch remains an SDA order report only; no pool account is consumed.
+    """
+    if event.automatic_delivery is not True:
+        return
+    if (
+        order.integration_account_id != listing.integration_account_id
+        or order.listing_id != listing.pk
+        or str(order.store_listing_id) != str(listing.store_listing_id)
+        or not _has_exact_pool_clone_linkage(listing)
+    ):
+        logger.warning(
+            'PA Gmail automatic delivery %s has no exact SDA pool clone linkage',
+            event.external_order_id,
+        )
+        return
+    if order.status == OrderStatus.PENDING:
+        order.status = OrderStatus.DELIVERED
+        order.save(update_fields=['status', 'updated_at'])
+    if order.status not in (OrderStatus.DELIVERED, OrderStatus.COMPLETED):
+        return
+
+    # This creates only an idempotent local PoolSaleEvent/SOLD handoff. Do not
+    # let a Gmail order receipt start an automated Mart replenishment/create.
+    transaction.on_commit(lambda: notify_sale(
+        listing.pk,
+        event_key=f'{SOURCE}:automatic-delivery:{event.event_id}',
+        order_id=order.pk,
+        allow_replenish=False,
+    ))
+
+
 def create_order_report(*, event: PaGmailOrderEvent, listing: Listing) -> tuple[Order, bool]:
     sold_at = datetime.fromtimestamp(event.observed_at_ms / 1000, tz=dt_timezone.utc)
     order, created = Order.objects.get_or_create(
@@ -130,7 +188,7 @@ def create_order_report(*, event: PaGmailOrderEvent, listing: Listing) -> tuple[
             'listing': listing,
             'game': listing.game,
             'store_listing_id': listing.store_listing_id,
-            'status': OrderStatus.PENDING,
+            'status': OrderStatus.DELIVERED if event.automatic_delivery is True else OrderStatus.PENDING,
             'price': listing.price or Decimal('0'),
             'currency': listing.currency or 'USD',
             'sold_at': sold_at,
@@ -150,6 +208,7 @@ def create_order_report(*, event: PaGmailOrderEvent, listing: Listing) -> tuple[
         listing.status = ListingStatus.CLOSED
         listing.removed_at = timezone.now()
         listing.save(update_fields=['status', 'removed_at', 'updated_at'])
+    _finalize_exact_automatic_delivery(event=event, listing=listing, order=order)
     return order, created
 
 
@@ -208,6 +267,12 @@ def pa_gmail_order_event(request: HttpRequest) -> HttpResponse:
                 return JsonResponse(
                     {'accepted': True, 'disposition': 'created' if created else 'duplicate'},
                     status=202 if created else 200,
+                )
+            if existing.order_id and existing.listing_id:
+                _finalize_exact_automatic_delivery(
+                    event=existing,
+                    listing=existing.listing,
+                    order=existing.order,
                 )
             return JsonResponse({'accepted': True, 'disposition': 'duplicate'}, status=200)
 

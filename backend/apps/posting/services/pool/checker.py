@@ -63,6 +63,7 @@ def notify_sale(
     *,
     event_key: str | None = None,
     order_id: int | None = None,
+    allow_replenish: bool = True,
 ) -> None:
     """Called when an order is detected for a listing.
 
@@ -88,7 +89,7 @@ def notify_sale(
                 event_key=f'{base_event_key}:offer:{pool_offer.pk}',
                 order_id=order_id,
             )
-            if should_replenish:
+            if should_replenish and allow_replenish:
                 replenish_pool_offer(pool_offer)
         except Exception:
             logger.exception(
@@ -120,7 +121,7 @@ def notify_sale(
                 order_id=order_id,
                 active_offer=ao,
             )
-            if should_replenish:
+            if should_replenish and allow_replenish:
                 replenish_pool_offer(ao.pool_offer)
         except Exception:
             logger.exception('pool_checker: reactive PA check failed for active_offer %d', ao.pk)

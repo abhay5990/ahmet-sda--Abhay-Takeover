@@ -4,13 +4,19 @@ import hashlib
 import hmac
 import json
 import uuid
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
+
+from django.test import SimpleTestCase
 
 from apps.integrations.api.pa_gmail_order_event import (
     SIGNATURE_VERSION,
+    _finalize_exact_automatic_delivery,
     canonical_payload_json,
     parse_payload,
     signature_is_valid,
 )
+from apps.orders.enums import OrderStatus
 
 
 SECRET = 'A' * 48
@@ -100,3 +106,57 @@ def test_sda_receiver_closes_only_the_exact_matched_local_listing():
     assert 'listing.status = ListingStatus.CLOSED' in source
     assert "listing.save(update_fields=['status', 'removed_at', 'updated_at'])" in source
     assert 'no PA offer mutation or deletion' in source
+
+
+class AutomaticDeliveryPoolHandoffTests(SimpleTestCase):
+    def test_signed_automatic_delivery_marks_only_an_exact_pool_clone_as_delivered(self):
+        event = SimpleNamespace(
+            automatic_delivery=True,
+            external_order_id='16523033',
+            event_id=uuid.uuid4(),
+        )
+        listing = SimpleNamespace(pk=42, integration_account_id=8, store_listing_id='296700001')
+        order = SimpleNamespace(
+            pk=13,
+            integration_account_id=8,
+            listing_id=42,
+            store_listing_id='296700001',
+            status=OrderStatus.PENDING,
+            save=Mock(),
+        )
+
+        with patch(
+            'apps.integrations.api.pa_gmail_order_event._has_exact_pool_clone_linkage',
+            return_value=True,
+        ), patch(
+            'apps.integrations.api.pa_gmail_order_event.transaction.on_commit',
+            side_effect=lambda callback: callback(),
+        ), patch('apps.integrations.api.pa_gmail_order_event.notify_sale') as notify:
+            _finalize_exact_automatic_delivery(event=event, listing=listing, order=order)
+
+        self.assertEqual(order.status, OrderStatus.DELIVERED)
+        order.save.assert_called_once_with(update_fields=['status', 'updated_at'])
+        notify.assert_called_once_with(
+            42,
+            event_key=f'codetracker-pa-gmail:automatic-delivery:{event.event_id}',
+            order_id=13,
+            allow_replenish=False,
+        )
+
+    def test_nonautomatic_event_never_marks_or_consumes_a_pool_item(self):
+        event = SimpleNamespace(automatic_delivery=False, external_order_id='16523034', event_id=uuid.uuid4())
+        listing = SimpleNamespace(pk=42, integration_account_id=8, store_listing_id='296700001')
+        order = SimpleNamespace(
+            pk=13,
+            integration_account_id=8,
+            listing_id=42,
+            store_listing_id='296700001',
+            status=OrderStatus.PENDING,
+            save=Mock(),
+        )
+
+        with patch('apps.integrations.api.pa_gmail_order_event.notify_sale') as notify:
+            _finalize_exact_automatic_delivery(event=event, listing=listing, order=order)
+
+        order.save.assert_not_called()
+        notify.assert_not_called()
