@@ -906,7 +906,7 @@ def _gameboost_recreate(
 
 
 def _replenish_pa(pool: OfferPool) -> int:
-    """PlayerAuctions: fill to target_count without exceeding max_concurrent."""
+    """PlayerAuctions: refill only the verified shortfall up to the clone cap."""
     active_count = pool.active_offers.filter(
         status=OfferPoolActiveOfferStatus.ACTIVE,
     ).count()
@@ -938,7 +938,16 @@ def _replenish_pa(pool: OfferPool) -> int:
         proxy_group=proxy_group,
     )
 
-    pending_items = claim_pending_items(pool.pool_offer, need)
+    # This is deliberately a second capacity gate under PoolOffer's row lock.
+    # ``active_count`` is a snapshot taken before remote I/O. A concurrent run
+    # can have already reserved QUEUED items that do not yet have ACTIVE clone
+    # rows; counting those claims prevents multiple runs from overfilling a
+    # two-clone lane while previous creates are still in flight.
+    pending_items = claim_pending_items(
+        pool.pool_offer,
+        need,
+        max_active_offers=desired,
+    )
     if not pending_items:
         _check_depleted(pool)
         return 0

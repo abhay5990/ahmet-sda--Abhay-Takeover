@@ -146,6 +146,108 @@ class UnifiedPoolTestCase(TestCase):
         offer.save(update_fields=['current_remote_count', 'updated_at'])
         self.assertFalse(offer.needs_replenish)
 
+    def test_pa_clone_claim_cannot_exceed_configured_capacity(self):
+        pool = self.make_pool()
+        listing = self.make_listing(
+            account=self.playerauctions,
+            remote_id='pa-capacity-source',
+        )
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=2,
+            threshold=1,
+            max_concurrent=2,
+        )
+        active_item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('pa-capacity-active@example.test'),
+            status=OfferPoolItemStatus.PUSHED,
+        )
+        OfferPoolActiveOffer.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            listing=listing,
+            pool_item=active_item,
+            store_listing_id='pa-active-capacity-clone',
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+        )
+        first_pending = OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=self.make_owned('pa-capacity-first@example.test'),
+        )
+        OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=self.make_owned('pa-capacity-second@example.test'),
+        )
+
+        claimed = claim_pending_items(
+            pool_offer,
+            2,
+            max_active_offers=2,
+        )
+
+        self.assertEqual([item.pk for item in claimed], [first_pending.pk])
+        self.assertEqual(
+            OfferPoolItem.objects.filter(
+                pool_offer=pool_offer,
+                status=OfferPoolItemStatus.QUEUED,
+            ).count(),
+            1,
+        )
+
+    def test_pa_clone_queued_claim_consumes_capacity_before_create_finishes(self):
+        pool = self.make_pool()
+        listing = self.make_listing(
+            account=self.playerauctions,
+            remote_id='pa-queued-capacity-source',
+        )
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=2,
+            threshold=1,
+            max_concurrent=2,
+        )
+        active_item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('pa-queued-capacity-active@example.test'),
+            status=OfferPoolItemStatus.PUSHED,
+        )
+        OfferPoolActiveOffer.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            listing=listing,
+            pool_item=active_item,
+            store_listing_id='pa-queued-capacity-active-clone',
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+        )
+        queued_item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('pa-queued-capacity-inflight@example.test'),
+            status=OfferPoolItemStatus.QUEUED,
+            claim_token='00000000-0000-0000-0000-000000000001',
+        )
+        OfferPoolItem.objects.create(
+            pool=pool,
+            owned_product=self.make_owned('pa-queued-capacity-pending@example.test'),
+        )
+
+        claimed = claim_pending_items(
+            pool_offer,
+            1,
+            max_active_offers=2,
+        )
+
+        self.assertEqual(claimed, [])
+        queued_item.refresh_from_db()
+        self.assertEqual(queued_item.status, OfferPoolItemStatus.QUEUED)
+
     def test_proactive_eldorado_check_at_threshold_replenishes(self):
         pool = self.make_pool()
         offer = self.make_pool_offer(pool, target_count=2, threshold=1)

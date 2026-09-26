@@ -13,6 +13,8 @@ from apps.orders.enums import OrderStatus
 from apps.posting.models import (
     OfferPoolItem,
     OfferPoolItemStatus,
+    OfferPoolActiveOffer,
+    OfferPoolActiveOfferStatus,
     PoolDispatchAttempt,
     PoolDispatchOperation,
     PoolDispatchStatus,
@@ -31,11 +33,22 @@ def _request_fingerprint(pool_offer_id: int, item_id: int, token: uuid.UUID) -> 
     return hashlib.sha256(value.encode()).hexdigest()
 
 
-def claim_pending_items(pool_offer: PoolOffer, limit: int) -> list[OfferPoolItem]:
+def claim_pending_items(
+    pool_offer: PoolOffer,
+    limit: int,
+    *,
+    max_active_offers: int | None = None,
+) -> list[OfferPoolItem]:
     """Atomically reserve up to ``limit`` unassigned items for one PoolOffer.
 
     The database transaction ends before callers perform remote I/O. A durable
     attempt and claim token make a lost/unknown remote response reconcilable.
+
+    When ``max_active_offers`` is supplied, the same row lock also enforces a
+    strict PlayerAuctions clone cap. Existing ACTIVE clones and in-flight QUEUED
+    claims both consume capacity, so overlapping scheduler/manual calls cannot
+    reserve more accounts than the configured cap while an offer create is still
+    awaiting its durable outcome.
     """
     if limit <= 0:
         return []
@@ -48,6 +61,20 @@ def claim_pending_items(pool_offer: PoolOffer, limit: int) -> list[OfferPoolItem
         )
         if not locked_offer.can_replenish:
             return []
+
+        if max_active_offers is not None:
+            active_count = OfferPoolActiveOffer.objects.filter(
+                pool_offer=locked_offer,
+                status=OfferPoolActiveOfferStatus.ACTIVE,
+            ).count()
+            queued_count = OfferPoolItem.objects.filter(
+                pool_offer=locked_offer,
+                status=OfferPoolItemStatus.QUEUED,
+            ).count()
+            remaining_capacity = max(0, max_active_offers - active_count - queued_count)
+            limit = min(limit, remaining_capacity)
+            if limit <= 0:
+                return []
 
         items_qs = (
             OfferPoolItem.objects
