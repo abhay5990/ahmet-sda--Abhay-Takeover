@@ -98,6 +98,14 @@ def test_sda_receiver_accepts_the_deployed_mart_slug_and_repairs_only_prior_unma
     assert "event.save(update_fields=['integration_account', 'listing', 'order', 'disposition', 'updated_at'])" in source
 
 
+def test_sda_receiver_never_reports_an_unmatched_event_as_a_duplicate_success():
+    from pathlib import Path
+
+    source = Path('backend/apps/integrations/api/pa_gmail_order_event.py').read_text()
+    assert 'if existing.disposition == PaGmailOrderEvent.Disposition.UNMATCHED:' in source
+    assert "return JsonResponse({'accepted': True, 'disposition': 'unmatched'}, status=202)" in source
+
+
 def test_sda_receiver_closes_only_the_exact_matched_local_listing():
     from pathlib import Path
 

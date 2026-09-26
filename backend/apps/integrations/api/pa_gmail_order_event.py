@@ -268,6 +268,11 @@ def pa_gmail_order_event(request: HttpRequest) -> HttpResponse:
                     {'accepted': True, 'disposition': 'created' if created else 'duplicate'},
                     status=202 if created else 200,
                 )
+            # A previously accepted unmatched event is not a completed SDA
+            # handoff. Preserve that disposition so MCT cannot treat a retry as
+            # a successful duplicate acknowledgement.
+            if existing.disposition == PaGmailOrderEvent.Disposition.UNMATCHED:
+                return JsonResponse({'accepted': True, 'disposition': 'unmatched'}, status=202)
             if existing.order_id and existing.listing_id:
                 _finalize_exact_automatic_delivery(
                     event=existing,
