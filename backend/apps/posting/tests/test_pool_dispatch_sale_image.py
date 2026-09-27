@@ -178,3 +178,12 @@ class PoolDispatchSaleImageTests(TestCase):
         self.assertIn('selected_image_preset_id', source)
         self.assertNotIn('Low multiplier</label>', source)
         self.assertNotIn('Purchased $</label>', source)
+
+    def test_create_offer_drawer_reenables_post_after_rejected_dispatch(self):
+        source = get_template('posting/restock_pool_detail.html').template.source
+        rejection_handler = """if (!resp.ok) {
+                    this.dispatchDrawer.error = data.error || 'Dispatch failed.';
+                    this.dispatchDrawer.submitting = false;
+                    return;
+                }"""
+        self.assertIn(rejection_handler, source)

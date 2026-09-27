@@ -1486,6 +1486,7 @@ function poolDetail() {
                 const data = await resp.json();
                 if (!resp.ok) {
                     this.dispatchDrawer.error = data.error || 'Dispatch failed.';
+                    this.dispatchDrawer.submitting = false;
                     return;
                 }
                 // Poll job status
