@@ -49,6 +49,16 @@ class PoolDispatchSaleImageTests(TestCase):
             account=cls.store,
             credentials={'test': 'credential'},
         )
+        cls.mart_store = IntegrationAccount.objects.create(
+            name='Pool Sale Image Mart',
+            slug='playerauctions-csgosmurfkings',
+            provider='playerauctions',
+            role='sell',
+        )
+        IntegrationCredential.objects.create(
+            account=cls.mart_store,
+            credentials={'test': 'credential'},
+        )
         cls.pool = OfferPool.objects.create(
             name='Pool Sale Image Test',
             game=cls.game,
@@ -113,6 +123,28 @@ class PoolDispatchSaleImageTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json()['error'], 'Please select or upload a listing image')
+
+    @patch.dict(
+        'apps.integrations.providers.playerauctions.os.environ',
+        {'PA_MART_CREATE_HOLD': 'true'},
+        clear=False,
+    )
+    @patch('apps.posting.services.pool.dispatcher.dispatch_offer_from_pool')
+    def test_held_mart_dispatch_returns_before_job_or_reservation(self, dispatch_mock):
+        payload = dict(self.base_payload)
+        payload.update({
+            'store_id': self.mart_store.pk,
+            'target_count': 2,
+            'threshold': 2,
+            'max_concurrent': 2,
+        })
+
+        response = self.client.post(self.url, data=payload, content_type='application/json')
+
+        self.assertEqual(response.status_code, 409, response.content)
+        self.assertEqual(response.json()['error_code'], 'mart_create_held')
+        self.assertIn('No listing job or stock reservation was created.', response.json()['error'])
+        dispatch_mock.assert_not_called()
 
     @patch('apps.posting.services.pool.dispatcher._launch_orchestrator')
     def test_real_dispatch_resolves_marketplace_strategy(self, launch_mock):

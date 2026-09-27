@@ -69,6 +69,20 @@ def _mart_create_held(env: dict[str, str] | None = None) -> bool:
     return _env_flag_enabled(runtime_env.get('PA_MART_CREATE_HOLD'))
 
 
+def mart_account_offer_creation_is_held(account: Any, env: dict[str, str] | None = None) -> bool:
+    """Return whether a selected SDA store is the held Mart create route.
+
+    This narrow API preflight prevents direct pool dispatch from reserving stock
+    and launching a job that the provider would later reject. It does not affect
+    Mart reads, Gmail order handling, reconciliations, updates, or cancellations.
+    """
+    return (
+        str(getattr(account, 'provider', '') or '').strip().lower() == 'playerauctions'
+        and str(getattr(account, 'slug', '') or '').strip().lower() in _OFFICIAL_MART_STORE_SLUGS
+        and _mart_create_held(env)
+    )
+
+
 def _get_mct_mart_delegation_config(
     env: dict[str, str] | None = None,
 ) -> tuple[str, str, bytes]:

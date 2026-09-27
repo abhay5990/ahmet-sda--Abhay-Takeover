@@ -1733,6 +1733,20 @@ def dispatch_offer(request, pool_id):
     except IntegrationAccount.DoesNotExist:
         return JsonResponse({'error': 'Store not found or not eligible'}, status=400)
 
+    from apps.integrations.providers.playerauctions import mart_account_offer_creation_is_held
+
+    if mart_account_offer_creation_is_held(store):
+        return JsonResponse(
+            {
+                'error': (
+                    'Mart account-offer creation is temporarily held pending reconciliation. '
+                    'No listing job or stock reservation was created.'
+                ),
+                'error_code': 'mart_create_held',
+            },
+            status=409,
+        )
+
     # Validate provider supported
     try:
         PoolOffer.strategy_for_provider(store.provider)
