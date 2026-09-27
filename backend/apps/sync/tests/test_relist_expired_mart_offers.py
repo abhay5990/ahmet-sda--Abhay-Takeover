@@ -1,5 +1,10 @@
+from types import SimpleNamespace
+from unittest.mock import Mock
+
 from django.test import SimpleTestCase
 
+from apps.inventory.enums import OwnedProductStatus
+from apps.posting.services.relist import _restore_draft_owned_products_after_bulk_link
 from apps.sync.management.commands.relist_expired_mart_offers import (
     _chunked,
     _snapshot_is_fresh,
@@ -20,3 +25,30 @@ class RelistExpiredMartOfferCommandTests(SimpleTestCase):
         self.assertEqual([len(batch) for batch in batches], [100, 100, 5])
         self.assertEqual(batches[0][0], "0")
         self.assertEqual(batches[-1][-1], "204")
+
+
+class RelistLifecyclePreservationTests(SimpleTestCase):
+    def test_bulk_link_restore_marks_only_draft_inventory_listed(self):
+        query = Mock()
+        query.update.return_value = 2
+        model = SimpleNamespace(objects=Mock())
+        model.objects.filter.return_value = query
+
+        restored = _restore_draft_owned_products_after_bulk_link(
+            [101, 102], owned_product_model=model,
+        )
+
+        self.assertEqual(restored, 2)
+        model.objects.filter.assert_called_once_with(
+            pk__in=[101, 102], status=OwnedProductStatus.DRAFT,
+        )
+        query.update.assert_called_once_with(status=OwnedProductStatus.LISTED)
+
+    def test_bulk_link_restore_skips_empty_inventory(self):
+        model = SimpleNamespace(objects=Mock())
+
+        self.assertEqual(
+            _restore_draft_owned_products_after_bulk_link([], owned_product_model=model),
+            0,
+        )
+        model.objects.filter.assert_not_called()

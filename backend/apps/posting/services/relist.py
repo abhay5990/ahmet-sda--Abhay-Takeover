@@ -17,6 +17,8 @@ from typing import Any, NamedTuple
 from django.db import transaction
 from django.utils import timezone
 
+from apps.inventory.enums import OwnedProductStatus
+from apps.inventory.models import OwnedProduct
 from apps.integrations.providers import registry
 from apps.integrations.proxy_pool import build_proxy_pool, get_group_name
 from apps.listings.enums import ListingStatus
@@ -371,6 +373,27 @@ def _handoff_active_offer_replacement(
             ])
 
 
+def _restore_draft_owned_products_after_bulk_link(
+    owned_product_ids: list[int],
+    *,
+    owned_product_model=OwnedProduct,
+) -> int:
+    """Restore only safe draft rows after a bulk ListingOwnedProduct transfer.
+
+    ``bulk_create`` intentionally bypasses the ListingOwnedProduct post-save
+    signal. During a replacement, the old listing is deactivated first, so
+    that signal can temporarily set an otherwise unsold account to ``draft``.
+    The replacement is already a listed record at this point. Restore only
+    ``draft`` inventory; never overwrite sold, replaced, or protected states.
+    """
+    if not owned_product_ids:
+        return 0
+    return owned_product_model.objects.filter(
+        pk__in=owned_product_ids,
+        status=OwnedProductStatus.DRAFT,
+    ).update(status=OwnedProductStatus.LISTED)
+
+
 def _replace_in_db(
     old_listing: Listing,
     new_offer_id: str,
@@ -446,6 +469,7 @@ def _replace_in_db(
                 ListingOwnedProduct(listing=new_listing, owned_product_id=op_id)
                 for op_id in owned_products
             ])
+            _restore_draft_owned_products_after_bulk_link(owned_products)
 
         # Transitional dual-write for the legacy relation.
         for pool in legacy_pools:
