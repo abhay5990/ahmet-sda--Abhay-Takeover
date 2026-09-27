@@ -1830,7 +1830,10 @@ def dispatch_offer(request, pool_id):
         return media_error
 
     # --- Dispatch ---
-    from apps.posting.services.pool.dispatcher import dispatch_offer_from_pool
+    from apps.posting.services.pool.dispatcher import (
+        PoolDispatchConflict,
+        dispatch_offer_from_pool,
+    )
 
     try:
         job = dispatch_offer_from_pool(
@@ -1845,6 +1848,14 @@ def dispatch_offer(request, pool_id):
             media_settings=media_settings,
         )
         mark_image_override_used(job.settings)
+    except PoolDispatchConflict as e:
+        return JsonResponse(
+            {
+                'error': str(e),
+                'error_code': 'mart_pool_lane_conflict',
+            },
+            status=409,
+        )
     except ValueError as e:
         return JsonResponse({'error': str(e)}, status=400)
     except Exception as e:

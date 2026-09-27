@@ -69,6 +69,14 @@ def _mart_create_held(env: dict[str, str] | None = None) -> bool:
     return _env_flag_enabled(runtime_env.get('PA_MART_CREATE_HOLD'))
 
 
+def is_mart_account_store(account: Any) -> bool:
+    """Return whether an SDA integration account is the guarded Mart route."""
+    return (
+        str(getattr(account, 'provider', '') or '').strip().lower() == 'playerauctions'
+        and str(getattr(account, 'slug', '') or '').strip().lower() in _OFFICIAL_MART_STORE_SLUGS
+    )
+
+
 def mart_account_offer_creation_is_held(account: Any, env: dict[str, str] | None = None) -> bool:
     """Return whether a selected SDA store is the held Mart create route.
 
@@ -76,11 +84,7 @@ def mart_account_offer_creation_is_held(account: Any, env: dict[str, str] | None
     and launching a job that the provider would later reject. It does not affect
     Mart reads, Gmail order handling, reconciliations, updates, or cancellations.
     """
-    return (
-        str(getattr(account, 'provider', '') or '').strip().lower() == 'playerauctions'
-        and str(getattr(account, 'slug', '') or '').strip().lower() in _OFFICIAL_MART_STORE_SLUGS
-        and _mart_create_held(env)
-    )
+    return is_mart_account_store(account) and _mart_create_held(env)
 
 
 def _get_mct_mart_delegation_config(

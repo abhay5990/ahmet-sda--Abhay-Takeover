@@ -31,6 +31,8 @@ from apps.posting.models import (
     OfferPool,
     OfferPoolItem,
     OfferPoolItemStatus,
+    PoolOffer,
+    PoolOfferStatus,
     PoolDispatchReservation,
     PoolDispatchReservationStatus,
     PostingJob,
@@ -40,6 +42,11 @@ from apps.posting.models import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class PoolDispatchConflict(ValueError):
+    """A safe, durable conflict that must not create a second listing lane."""
+
 
 # ---------------------------------------------------------------------------
 # Overlay helpers
@@ -128,6 +135,34 @@ def reserve_pending_items_for_new_offer(
     """
     # Lock the pool row to prevent concurrent reservations racing
     locked_pool = OfferPool.objects.select_for_update().get(pk=pool.pk)
+
+    # A Mart pool has one configured PlayerAuctions clone lane. Once it has a
+    # live lane, threshold/capacity work belongs to that lane's replenisher;
+    # creating another manual lane would give the same pool a second target and
+    # could double the configured threshold. The pool-row lock makes this check
+    # atomic with the concurrent reservation guard below.
+    from apps.integrations.providers.playerauctions import is_mart_account_store
+    if is_mart_account_store(store):
+        has_live_mart_lane = PoolOffer.objects.filter(
+            pool=locked_pool,
+            listing__integration_account=store,
+        ).exclude(status=PoolOfferStatus.DETACHED).exists()
+        if has_live_mart_lane:
+            raise PoolDispatchConflict(
+                'This pool already has a Mart offer lane for the selected store. '
+                'Use that lane for threshold-controlled replenishment; a second lane is blocked.'
+            )
+
+        has_active_mart_dispatch = PoolDispatchReservation.objects.filter(
+            pool=locked_pool,
+            store=store,
+            status=PoolDispatchReservationStatus.ACTIVE,
+        ).exists()
+        if has_active_mart_dispatch:
+            raise PoolDispatchConflict(
+                'A Mart Create Offer request is already processing for this pool. '
+                'Wait for its verified result; a second job is blocked.'
+            )
 
     reservation = PoolDispatchReservation.objects.create(
         pool=locked_pool,
