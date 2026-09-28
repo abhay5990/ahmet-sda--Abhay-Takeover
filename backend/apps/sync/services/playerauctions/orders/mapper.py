@@ -25,6 +25,10 @@ PA_STATUS_MAP = {
     # It is a confirmed sale for pool allocation, unlike Pending Payment or
     # payment-verification states which must remain non-sale states.
     'pending buyer inspection': OrderStatus.DELIVERED,
+    # PlayerAuctions' plain "Disputing" state is a confirmed delivered sale
+    # for inventory allocation. Keep detailed dispute outcomes below: a
+    # not-completed dispute must still remain non-sale.
+    'disputing': OrderStatus.DELIVERED,
     # Completed
     'delivery fully completed': OrderStatus.COMPLETED,
     'completed': OrderStatus.COMPLETED,

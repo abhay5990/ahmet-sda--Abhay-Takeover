@@ -23,3 +23,6 @@ class PoolSaleStatusGuardTests(SimpleTestCase):
         self.assertFalse(
             BaseSyncService._is_pool_sale_confirmed(OrderStatus.REFUNDED),
         )
+        self.assertFalse(
+            BaseSyncService._is_pool_sale_confirmed(OrderStatus.DISPUTED),
+        )

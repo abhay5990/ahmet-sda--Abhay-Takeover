@@ -52,6 +52,18 @@ class PlayerAuctionsOrderSummaryTests(SimpleTestCase):
             OrderStatus.DELIVERED,
         )
 
+    def test_disputing_is_a_confirmed_delivery_state(self):
+        self.assertEqual(
+            mapper.map_status("Disputing"),
+            OrderStatus.DELIVERED,
+        )
+
+    def test_disputed_delivery_not_completed_remains_non_sale(self):
+        self.assertEqual(
+            mapper.map_status("Disputed Delivery Not Completed"),
+            OrderStatus.DISPUTED,
+        )
+
     def test_pending_payment_remains_a_non_sale_state(self):
         self.assertEqual(
             mapper.map_status("Pending Payment"),
