@@ -128,6 +128,37 @@ class ConsumeItemOnSaleTests(TestCase):
         self.assertEqual(clone.status, OfferPoolActiveOfferStatus.SOLD)
         self.assertEqual(item.status, OfferPoolItemStatus.CONSUMED)
 
+    def test_failed_pa_clone_requires_explicit_exact_sale_recovery_flag(self):
+        store = self._store("playerauctions", "pa-store-failed")
+        pool, listing, pool_offer = self._pool(store, strategy=PoolOfferStrategy.CLONE)
+        owned = self._owned("pa-acct-failed")
+        item = self._item(pool, pool_offer, owned, status=OfferPoolItemStatus.FAILED)
+        clone = OfferPoolActiveOffer.objects.create(
+            pool=pool, pool_offer=pool_offer, listing=listing,
+            store_listing_id="pa-clone-failed", pool_item=item,
+            status=OfferPoolActiveOfferStatus.FAILED,
+        )
+        order = self._order(store, owned, "PA-FAILED")
+
+        _record_sale_event(
+            pool_offer, listing_id=listing.pk, event_key="pa:failed-default",
+            order_id=order.pk, active_offer=clone,
+        )
+        clone.refresh_from_db()
+        item.refresh_from_db()
+        self.assertEqual(clone.status, OfferPoolActiveOfferStatus.FAILED)
+        self.assertEqual(item.status, OfferPoolItemStatus.FAILED)
+
+        _record_sale_event(
+            pool_offer, listing_id=listing.pk, event_key="pa:failed-exact",
+            order_id=order.pk, active_offer=clone,
+            allow_failed_exact_clone_sale=True,
+        )
+        clone.refresh_from_db()
+        item.refresh_from_db()
+        self.assertEqual(clone.status, OfferPoolActiveOfferStatus.SOLD)
+        self.assertEqual(item.status, OfferPoolItemStatus.CONSUMED)
+
     def test_append_sale_consumes_exact_item_by_owned_product(self):
         store = self._store("eldorado", "eldorado-store")
         pool, listing, pool_offer = self._pool(store, strategy=PoolOfferStrategy.APPEND)

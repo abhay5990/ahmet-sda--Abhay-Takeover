@@ -64,6 +64,7 @@ def notify_sale(
     event_key: str | None = None,
     order_id: int | None = None,
     allow_replenish: bool = True,
+    allow_failed_exact_clone_sale: bool = False,
 ) -> None:
     """Called when an order is detected for a listing.
 
@@ -103,6 +104,11 @@ def notify_sale(
     active_offer_statuses = [OfferPoolActiveOfferStatus.ACTIVE]
     if order_id is not None:
         active_offer_statuses.append(OfferPoolActiveOfferStatus.DELISTED)
+    # FAILED is intentionally excluded from normal order sync and periodic
+    # paths. Only SDA's signed exact-code Gmail automatic-delivery receiver can
+    # opt in after it has independently verified listing/product linkage.
+    if allow_failed_exact_clone_sale and order_id is not None:
+        active_offer_statuses.append(OfferPoolActiveOfferStatus.FAILED)
     active_offers = OfferPoolActiveOffer.objects.filter(
         listing_id=listing_id,
         status__in=active_offer_statuses,
@@ -120,6 +126,7 @@ def notify_sale(
                 event_key=f'{base_event_key}:active-offer:{ao.pk}',
                 order_id=order_id,
                 active_offer=ao,
+                allow_failed_exact_clone_sale=allow_failed_exact_clone_sale,
             )
             if should_replenish and allow_replenish:
                 replenish_pool_offer(ao.pool_offer)
@@ -167,6 +174,7 @@ def _record_sale_event(
     event_key: str,
     order_id: int | None,
     active_offer: OfferPoolActiveOffer | None = None,
+    allow_failed_exact_clone_sale: bool = False,
 ) -> bool | None:
     """Persist sale deduplication and the PA SOLD transition atomically."""
     if len(event_key) > 255:
@@ -232,9 +240,15 @@ def _record_sale_event(
                 locked.status == OfferPoolActiveOfferStatus.DELISTED
                 and order_id is not None
             )
+            can_recover_failed_exact_sale = (
+                locked.status == OfferPoolActiveOfferStatus.FAILED
+                and order_id is not None
+                and allow_failed_exact_clone_sale
+            )
             if (
                 locked.status != OfferPoolActiveOfferStatus.ACTIVE
                 and not can_recover_delisted_sale
+                and not can_recover_failed_exact_sale
             ):
                 event.outcome = 'already_processed'
                 event.processed_at = timezone.now()

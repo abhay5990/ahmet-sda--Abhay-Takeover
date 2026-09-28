@@ -149,6 +149,7 @@ class AutomaticDeliveryPoolHandoffTests(SimpleTestCase):
             event_key=f'codetracker-pa-gmail:automatic-delivery:{event.event_id}',
             order_id=13,
             allow_replenish=False,
+            allow_failed_exact_clone_sale=True,
         )
 
     def test_nonautomatic_event_never_marks_or_consumes_a_pool_item(self):
@@ -168,3 +169,10 @@ class AutomaticDeliveryPoolHandoffTests(SimpleTestCase):
 
         order.save.assert_not_called()
         notify.assert_not_called()
+
+    def test_receiver_source_allows_failed_clones_only_for_signed_gmail_recovery(self):
+        from pathlib import Path
+
+        source = (Path(__file__).resolve().parents[1] / 'api' / 'pa_gmail_order_event.py').read_text()
+        assert 'OfferPoolActiveOfferStatus.FAILED' in source
+        assert 'allow_failed_exact_clone_sale=True' in source

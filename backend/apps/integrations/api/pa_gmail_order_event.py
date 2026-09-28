@@ -122,7 +122,14 @@ def find_unique_mart_listing(code: str) -> Listing | None:
 
 
 def _has_exact_pool_clone_linkage(listing: Listing) -> bool:
-    """Require one exact live-or-delisted clone with the listing's owned product."""
+    """Require one exact clone with the listing's owned product.
+
+    A clone can already be marked FAILED when the read-only active-offer snapshot
+    observed it absent before the final automatic-delivery notice arrived.  That
+    state is accepted here only because this function is the signed Gmail sale
+    handoff's exact-code gate; periodic reconciliation never treats FAILED as a
+    sellable clone.
+    """
     clone_rows = list(
         OfferPoolActiveOffer.objects.filter(
             listing=listing,
@@ -130,6 +137,7 @@ def _has_exact_pool_clone_linkage(listing: Listing) -> bool:
             status__in=(
                 OfferPoolActiveOfferStatus.ACTIVE,
                 OfferPoolActiveOfferStatus.DELISTED,
+                OfferPoolActiveOfferStatus.FAILED,
             ),
         ).values_list('pool_item__owned_product_id', flat=True)
     )
@@ -174,6 +182,7 @@ def _finalize_exact_automatic_delivery(*, event: PaGmailOrderEvent, listing: Lis
         event_key=f'{SOURCE}:automatic-delivery:{event.event_id}',
         order_id=order.pk,
         allow_replenish=False,
+        allow_failed_exact_clone_sale=True,
     ))
 
 
