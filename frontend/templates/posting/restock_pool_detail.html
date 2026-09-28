@@ -443,7 +443,7 @@
                 <div class="grid grid-cols-3 gap-3">
                     <div>
                         <label class="block text-xs text-gray-500 mb-1">Target Count</label>
-                        <input type="number" x-model.number="dispatchForm.target_count" min="1"
+                        <input type="number" x-model.number="dispatchForm.target_count" min="1" @input="syncPaCapacity()"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
                     </div>
                     <div>
@@ -453,7 +453,7 @@
                     </div>
                     <div x-show="isPA()">
                         <label class="block text-xs text-gray-500 mb-1">Max Concurrent</label>
-                        <input type="number" x-model.number="dispatchForm.max_concurrent" min="1" max="10"
+                        <input type="number" x-model.number="dispatchForm.max_concurrent" min="1" max="10" @input="syncPaCapacity()"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
                     </div>
                 </div>
@@ -468,7 +468,7 @@
                 Cancel
             </button>
             <button @click="submitDispatch()"
-                    :disabled="dispatchDrawer.submitting || dispatchDrawer.imageUploading"
+                    :disabled="dispatchDrawer.loading || dispatchDrawer.submitting || dispatchDrawer.imageUploading"
                     class="px-6 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 flex items-center gap-2">
                 <template x-if="dispatchDrawer.submitting">
                     <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -1344,6 +1344,7 @@ function poolDetail() {
                 this.dispatchForm.target_count = data.pool_config?.target_count ?? 5;
                 this.dispatchForm.threshold = data.pool_config?.threshold ?? 2;
                 this.dispatchForm.max_concurrent = data.pool_config?.max_concurrent ?? null;
+                this.syncPaCapacity();
 
                 this.dispatchForm.batch_data.title = data.title || '';
                 this.dispatchForm.batch_data.description = data.description || '';
@@ -1449,8 +1450,16 @@ function poolDetail() {
             return store?.provider === 'playerauctions';
         },
 
+        syncPaCapacity() {
+            if (!this.isPA()) return;
+            const target = Math.max(1, Number(this.dispatchForm.target_count) || 1);
+            const maxConcurrent = Number(this.dispatchForm.max_concurrent) || 0;
+            if (maxConcurrent < target) this.dispatchForm.max_concurrent = target;
+        },
+
         async submitDispatch() {
             this.dispatchDrawer.error = '';
+            if (this.dispatchDrawer.loading) return;
             if (!this.dispatchForm.store_id) {
                 this.dispatchDrawer.error = 'Please select a store.'; return;
             }
@@ -1464,6 +1473,9 @@ function poolDetail() {
                 this.dispatchDrawer.error = 'Select or upload a listing image.'; return;
             }
             const pa = this.isPA();
+            if (pa && Number(this.dispatchForm.max_concurrent) < Number(this.dispatchForm.target_count)) {
+                this.dispatchDrawer.error = 'Max Concurrent cannot be lower than Target Count.'; return;
+            }
             const payload = {
                 store_id: Number(this.dispatchForm.store_id),
                 count: this.dispatchForm.count,

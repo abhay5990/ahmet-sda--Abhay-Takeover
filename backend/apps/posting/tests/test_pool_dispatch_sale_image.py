@@ -290,3 +290,15 @@ class PoolDispatchSaleImageTests(TestCase):
                     return;
                 }"""
         self.assertIn(rejection_handler, source)
+
+    def test_create_offer_drawer_waits_for_store_prefill_and_normalizes_pa_capacity(self):
+        source = get_template('posting/restock_pool_detail.html').template.source
+
+        self.assertIn(
+            ':disabled="dispatchDrawer.loading || dispatchDrawer.submitting || dispatchDrawer.imageUploading"',
+            source,
+        )
+        self.assertIn('this.syncPaCapacity();', source)
+        self.assertIn('syncPaCapacity() {', source)
+        self.assertIn('@input="syncPaCapacity()"', source)
+        self.assertIn("'Max Concurrent cannot be lower than Target Count.'", source)
