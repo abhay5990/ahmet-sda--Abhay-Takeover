@@ -455,6 +455,24 @@ def _build_pool_item_views(
         ):
             emergency_replacement_order_id = order_pk
             emergency_replacement_pool_item_id = getattr(item, 'pk', None)
+        has_unknown_pa_delete = bool(
+            marketplace == 'playerauctions'
+            and item.status == OfferPoolItemStatus.PUSHED
+            and item.remote_state == 'unknown'
+            and getattr(clone, 'status', None) == OfferPoolActiveOfferStatus.ACTIVE
+        )
+        can_verify_unsold = bool(
+            not is_sale_record
+            and (
+                item.status in {
+                    OfferPoolItemStatus.CONSUMED,
+                    OfferPoolItemStatus.FAILED,
+                    OfferPoolItemStatus.REMOVED,
+                    OfferPoolItemStatus.RESERVED,
+                }
+                or has_unknown_pa_delete
+            )
+        )
         row = {
             'item': item,
             'pool_offer': pool_offer,
@@ -491,6 +509,12 @@ def _build_pool_item_views(
                 and item.status != OfferPoolItemStatus.REMOVED
             ),
             'is_sold': is_sale_record,
+            'can_verify_unsold': can_verify_unsold,
+            'verify_unsold_label': (
+                'Verify & return'
+                if has_unknown_pa_delete or not clone
+                else 'Verify live offer'
+            ),
             'is_reconciliation_pending': is_reconciliation_pending,
             'sale_status_label': (
                 'Order confirmed' if sale_event else (

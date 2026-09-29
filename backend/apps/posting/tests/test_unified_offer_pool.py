@@ -1630,6 +1630,51 @@ class UnifiedPoolTestCase(TestCase):
         self.assertContains(response, 'Remote delete: unknown')
         self.assertContains(response, 'Retry delete')
 
+    def test_pool_detail_shows_verify_return_after_unknown_pa_delete(self):
+        user = get_user_model().objects.create_user(
+            username='pool-unknown-pa-delete-verify-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        self.playerauctions.name = 'csgosmurfkings'
+        self.playerauctions.save(update_fields=['name'])
+        pool = self.make_pool('Unknown PA Delete Verify Pool')
+        listing = self.make_listing(
+            account=self.playerauctions,
+            remote_id='pa-unknown-delete-verify',
+        )
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=1,
+            threshold=1,
+            max_concurrent=1,
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('unknown-delete-verify@example.test'),
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='unknown',
+            target_offer_id=listing.store_listing_id,
+        )
+        OfferPoolActiveOffer.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            listing=listing,
+            pool_item=item,
+            store_listing_id=listing.store_listing_id,
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+        )
+
+        response = self.client.get(f'/posting/restock/pools/{pool.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'unknown-delete-verify@example.test')
+        self.assertContains(response, 'Remote delete: unknown')
+        self.assertContains(response, 'Verify &amp; return')
+
     def test_pool_detail_blocks_removal_while_key_is_reserved(self):
         user = get_user_model().objects.create_user(
             username='pool-reserved-remove-user',
