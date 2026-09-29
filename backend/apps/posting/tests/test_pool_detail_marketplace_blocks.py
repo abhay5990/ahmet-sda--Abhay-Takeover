@@ -15,6 +15,7 @@ from apps.posting.models import (
 from apps.posting.views import (
     _build_pool_item_views,
     _build_pool_marketplace_blocks,
+    _pool_offers_visible_in_detail,
 )
 
 
@@ -48,6 +49,40 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
 
         offer.current_remote_count = 2
         self.assertFalse(PoolOffer.needs_replenish.fget(offer))
+
+    def test_active_pa_clone_keeps_error_lane_visible_for_lifecycle_dates(self):
+        active_lane = self.make_offer(
+            offer_id=10,
+            marketplace='playerauctions',
+            store_name='CsgoSmurfkings',
+        )
+        error_lane_with_live_clone = self.make_offer(
+            offer_id=11,
+            marketplace='playerauctions',
+            store_name='CsgoSmurfkings',
+            status=PoolOfferStatus.ERROR,
+        )
+        unrelated_error_lane = self.make_offer(
+            offer_id=12,
+            marketplace='playerauctions',
+            store_name='CsgoSmurfkings',
+            status=PoolOfferStatus.ERROR,
+        )
+        active_clone = SimpleNamespace(
+            pool_offer_id=error_lane_with_live_clone.pk,
+            listing=error_lane_with_live_clone.listing,
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+        )
+
+        visible = _pool_offers_visible_in_detail(
+            [active_lane, error_lane_with_live_clone, unrelated_error_lane],
+            [active_clone],
+        )
+
+        self.assertEqual(
+            visible,
+            [active_lane, error_lane_with_live_clone],
+        )
 
     def make_offer(
         self,

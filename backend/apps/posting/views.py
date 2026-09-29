@@ -104,6 +104,33 @@ def _pool_offer_priority(pool_offer):
     return status_priority.get(pool_offer.status, 4), -timestamp
 
 
+def _pool_offers_visible_in_detail(pool_offers, active_offers):
+    """Keep a lane visible while one of its concrete PA clones is live.
+
+    A PoolOffer can be marked ``error`` after a past dispatch failure while an
+    exact PlayerAuctions clone linked to that lane remains active. Hiding that
+    lane suppresses the clone's stored listing and expiry dates from the pool
+    card. The concrete active clone is the authoritative reason to retain the
+    lane for staff visibility; it does not change its dispatch state.
+    """
+    active_clone_offer_ids = {
+        active_offer.pool_offer_id
+        for active_offer in active_offers
+        if (
+            active_offer.status == OfferPoolActiveOfferStatus.ACTIVE
+            and active_offer.pool_offer_id
+            and getattr(active_offer, 'listing', None) is not None
+        )
+    }
+    return [
+        offer for offer in pool_offers
+        if (
+            offer.status == PoolOfferStatus.ACTIVE
+            or offer.pk in active_clone_offer_ids
+        )
+    ]
+
+
 def _sale_order_reference(sale_event, orders_by_id=None):
     """Return the marketplace-facing order ID for a pool sale event.
 
@@ -1075,15 +1102,19 @@ def restock_pool_detail_page(request, pool_id):
         OfferPool.objects.select_related('game', 'variant', 'credential_spec'),
         id=pool_id,
     )
-    pool_offers = list(
+    all_pool_offers = list(
         pool.pool_offers.select_related('listing', 'listing__integration_account')
         .order_by('created_at')
     )
-    # Old offer configurations are not live inventory. Keep them out of the
-    # primary view; sale events still retain their exact store/order evidence.
-    pool_offers = [
-        offer for offer in pool_offers if offer.status == PoolOfferStatus.ACTIVE
-    ]
+    active_offers = list(
+        OfferPoolActiveOffer.objects.filter(pool_offer__pool=pool)
+        .select_related('listing', 'pool_item', 'pool_item__owned_product', 'pool_offer')
+        .order_by('-created_at')
+    )
+    # Old offer configurations are not live inventory. Retain only normal live
+    # lanes, plus an error lane with a concrete active PA clone so staff can see
+    # its exact lifecycle dates without inferring that the lane may replenish.
+    pool_offers = _pool_offers_visible_in_detail(all_pool_offers, active_offers)
     active_pool_offers = pool_offers
     has_live_pool_offer = bool(pool_offers)
     has_current_unassigned_stock = pool.items.filter(
@@ -1118,11 +1149,6 @@ def restock_pool_detail_page(request, pool_id):
         'pool_offer__listing__integration_account',
         'reservation__store',
     ).filter(visible_item_filter).distinct().order_by('order', 'created_at'))
-    active_offers = list(
-        OfferPoolActiveOffer.objects.filter(pool_offer__pool=pool)
-        .select_related('listing', 'pool_item', 'pool_item__owned_product', 'pool_offer')
-        .order_by('-created_at')
-    )
     sale_events = list(
         PoolSaleEvent.objects.filter(
             Q(pool_offer__pool=pool) | Q(pool_item__pool=pool)
