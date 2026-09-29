@@ -1233,7 +1233,7 @@ class UnifiedPoolTestCase(TestCase):
         self.assertEqual(sold.status, OfferPoolItemStatus.PUSHED)
         self.assertEqual(sold.pool_offer_id, pool_offer.pk)
 
-    def test_recover_removed_absent_pa_clone_returns_to_available_without_remote_lookup(self):
+    def test_recover_removed_absent_pa_clone_verifies_live_offer_before_returning(self):
         from apps.posting.services.pool.recovery import recover_verified_unsold_item
 
         pool = self.make_pool('PA Recovery Pool')
@@ -1268,24 +1268,77 @@ class UnifiedPoolTestCase(TestCase):
             status=OfferPoolActiveOfferStatus.ACTIVE,
         )
 
+        client = Mock()
+        client.get_offer_details.return_value = SimpleNamespace(ok=True)
         with patch(
             'apps.posting.services.pool.recovery.get_or_build_client',
+            return_value=client,
         ) as build_client:
             result = recover_verified_unsold_item(pool_id=pool.pk, item_id=item.pk)
 
         self.assertTrue(result.ok)
-        self.assertEqual(result.state, 'available')
-        build_client.assert_not_called()
+        self.assertEqual(result.state, 'live')
+        build_client.assert_called_once()
+        item.refresh_from_db()
+        active_offer.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.PUSHED)
+        self.assertEqual(item.pool_offer_id, pool_offer.pk)
+        self.assertEqual(item.remote_state, 'present')
+        self.assertEqual(active_offer.status, OfferPoolActiveOfferStatus.ACTIVE)
+        self.assertTrue(ListingOwnedProduct.objects.filter(
+            listing=listing,
+            owned_product=owned,
+        ).exists())
+
+    def test_remove_stale_absent_pa_clone_requires_remote_cancellation(self):
+        pool = self.make_pool('PA Stale Removal Guard Pool')
+        listing = self.make_listing(
+            account=self.playerauctions,
+            remote_id='pa-stale-remove-clone',
+        )
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=1,
+            threshold=1,
+            max_concurrent=1,
+        )
+        owned = self.make_owned('stale-remove-pa-clone@example.test')
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=owned,
+            status=OfferPoolItemStatus.REMOVED,
+            remote_state='absent',
+            target_offer_id=listing.store_listing_id,
+        )
+        ListingOwnedProduct.objects.create(listing=listing, owned_product=owned)
+        active_offer = OfferPoolActiveOffer.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            listing=listing,
+            pool_item=item,
+            store_listing_id=listing.store_listing_id,
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+        )
+
+        with patch(
+            'apps.posting.services.pool.lifecycle._delete_pa_listing_with_fresh_auth_retry',
+            return_value=SimpleNamespace(ok=True),
+        ) as delete_remote:
+            result = remove_pool_item(pool_offer, item, listing=listing)
+
+        self.assertTrue(result.ok)
+        self.assertTrue(result.remote_removed)
+        self.assertTrue(result.released_to_pool)
+        delete_remote.assert_called_once()
         item.refresh_from_db()
         active_offer.refresh_from_db()
         self.assertEqual(item.status, OfferPoolItemStatus.PENDING)
         self.assertIsNone(item.pool_offer_id)
         self.assertEqual(item.remote_state, 'absent')
         self.assertEqual(active_offer.status, OfferPoolActiveOfferStatus.DELISTED)
-        self.assertFalse(ListingOwnedProduct.objects.filter(
-            listing=listing,
-            owned_product=owned,
-        ).exists())
 
     def test_restock_pages_render_with_unified_relations(self):
         user = get_user_model().objects.create_user(
@@ -1491,6 +1544,91 @@ class UnifiedPoolTestCase(TestCase):
         self.assertEqual(item.remote_state, 'absent')
         self.assertEqual(pool_offer.current_remote_count, 2)
         self.assertTrue(OwnedProduct.objects.filter(pk=product.pk).exists())
+
+    def test_pool_detail_blocks_unconfirmed_remote_return_override(self):
+        user = get_user_model().objects.create_user(
+            username='pool-no-unconfirmed-return-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        pool = self.make_pool('No Unconfirmed Return Pool')
+        listing = self.make_listing(
+            account=self.playerauctions,
+            remote_id='pa-no-unconfirmed-return',
+        )
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=1,
+            threshold=1,
+            max_concurrent=1,
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('no-unconfirmed-return@example.test'),
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+            target_offer_id=listing.store_listing_id,
+        )
+
+        response = self.client.post(
+            f'/posting/api/pools/{pool.pk}/items/{item.pk}/remove/',
+            data='{"force_return_to_available": true}',
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 409)
+        self.assertIn('Remote deletion must be confirmed', response.json()['error'])
+        item.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.PUSHED)
+        self.assertEqual(item.pool_offer_id, pool_offer.pk)
+
+    def test_pool_detail_keeps_removed_active_pa_clone_visible_for_retry(self):
+        user = get_user_model().objects.create_user(
+            username='pool-visible-active-clone-user',
+            password='test-password',
+        )
+        self.client.force_login(user)
+        self.playerauctions.name = 'csgosmurfkings'
+        self.playerauctions.save(update_fields=['name'])
+        pool = self.make_pool('Visible Active Clone Pool')
+        listing = self.make_listing(
+            account=self.playerauctions,
+            remote_id='pa-visible-active-clone',
+        )
+        pool_offer = self.make_pool_offer(
+            pool,
+            listing=listing,
+            strategy=PoolOfferStrategy.CLONE,
+            target_count=1,
+            threshold=1,
+            max_concurrent=1,
+        )
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=self.make_owned('visible-active-clone@example.test'),
+            status=OfferPoolItemStatus.REMOVED,
+            remote_state='unknown',
+            target_offer_id=listing.store_listing_id,
+        )
+        OfferPoolActiveOffer.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            listing=listing,
+            pool_item=item,
+            store_listing_id=listing.store_listing_id,
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+        )
+
+        response = self.client.get(f'/posting/restock/pools/{pool.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'visible-active-clone@example.test')
+        self.assertContains(response, 'Remote delete: unknown')
+        self.assertContains(response, 'Retry delete')
 
     def test_pool_detail_blocks_removal_while_key_is_reserved(self):
         user = get_user_model().objects.create_user(

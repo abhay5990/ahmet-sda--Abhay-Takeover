@@ -1076,6 +1076,10 @@ def restock_pool_detail_page(request, pool_id):
         ~Q(status=OfferPoolItemStatus.REMOVED)
         | Q(sale_events__isnull=False)
         | Q(active_offers__status=OfferPoolActiveOfferStatus.SOLD)
+        # Never hide a locally removed row while its exact PlayerAuctions clone
+        # remains active. Staff need the card to see the unconfirmed remote
+        # deletion, retry the guarded cancellation, or verify the exact offer.
+        | Q(active_offers__status=OfferPoolActiveOfferStatus.ACTIVE)
     )
     # A no-offer pool may be either a freshly created pool waiting for its
     # first dispatch or an old historical pool. Retain normal live rows for

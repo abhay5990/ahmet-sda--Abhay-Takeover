@@ -71,7 +71,20 @@ def remove_pool_item(
         ListingStatus.CLOSED,
         ListingStatus.DELETED,
     }
-    is_known_local_only = (
+    # A stale local ``absent`` marker, removed Pool row, or inactive template
+    # listing must never override a durable ACTIVE clone. The clone is the exact
+    # marketplace record and must be cancelled and verified before the key can
+    # be released.
+    active_pa_clone_exists = (
+        pool_offer.marketplace == 'playerauctions'
+        and pool_offer.strategy == 'clone'
+        and OfferPoolActiveOffer.objects.filter(
+            pool_offer=pool_offer,
+            pool_item=item,
+            status=OfferPoolActiveOfferStatus.ACTIVE,
+        ).exists()
+    )
+    is_known_local_only = not active_pa_clone_exists and (
         listing_is_inactive
         or item.remote_state == 'absent'
         or item.status in {
@@ -99,6 +112,32 @@ def remove_pool_item(
         return RemoveItemResult(
             ok=False,
             errors=['Confirmed marketplace sale evidence exists for this key; it cannot be returned to the pool.'],
+        )
+    if active_pa_clone_exists and item.status == OfferPoolItemStatus.REMOVED:
+        # Repair only the stale local marker so the exact active clone remains
+        # visible and continues through the normal remote-delete path below.
+        # This does not free the key.
+        with transaction.atomic():
+            locked_item = OfferPoolItem.objects.select_for_update().get(pk=item.pk)
+            if _has_confirmed_sale_evidence(locked_item):
+                return RemoveItemResult(
+                    ok=False,
+                    errors=['Confirmed marketplace sale evidence exists for this key; it cannot be returned to the pool.'],
+                )
+            locked_item.status = OfferPoolItemStatus.PUSHED
+            locked_item.remote_state = 'unknown'
+            locked_item.error_message = (
+                'Active PlayerAuctions clone found after a stale local removal; '
+                'remote cancellation is being verified.'
+            )
+            locked_item.failure_stage = 'remote_delete_reconciliation'
+            locked_item.save(update_fields=[
+                'status', 'remote_state', 'error_message', 'failure_stage',
+                'updated_at',
+            ])
+        item = OfferPoolItem.objects.select_related('owned_product').get(
+            pk=item.pk,
+            pool_offer=pool_offer,
         )
     if item.status not in {
         OfferPoolItemStatus.QUEUED,
@@ -678,6 +717,20 @@ def _finish_remove_failures(pool_offer, attempts, error, *, unknown):
         attempt.save(update_fields=[
             'status', 'error_code', 'error_message', 'finished_at',
         ])
+        # Keep the key visible and unavailable while a remote deletion is
+        # unconfirmed. Staff can retry or verify the exact offer from its card.
+        OfferPoolItem.objects.filter(pk=attempt.item_id).exclude(
+            status=OfferPoolItemStatus.CONSUMED,
+        ).update(
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='unknown',
+            error_message=(
+                'PlayerAuctions deletion was not confirmed; retry or verify the '
+                f'exact remote offer before returning this key to stock. {error}'
+            )[:2000],
+            failure_stage='remote_remove_unconfirmed',
+            updated_at=now,
+        )
     pool_offer.status = PoolOfferStatus.ERROR
     pool_offer.last_error = error[:2000]
     pool_offer.save(update_fields=['status', 'last_error', 'updated_at'])

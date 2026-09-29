@@ -81,9 +81,14 @@ def recover_verified_unsold_item(*, pool_id: int, item_id: int) -> RecoverUnsold
         return _make_available(item, "No marketplace assignment remains; key returned to available pool stock.")
 
     pool_offer = item.pool_offer
+    active_pa_clone_exists = OfferPoolActiveOffer.objects.filter(
+        pool_item_id=item.pk,
+        status=OfferPoolActiveOfferStatus.ACTIVE,
+    ).exists()
     if (
         pool_offer.marketplace == "playerauctions"
         and item.remote_state == "absent"
+        and not active_pa_clone_exists
     ):
         return _make_available(
             item,
