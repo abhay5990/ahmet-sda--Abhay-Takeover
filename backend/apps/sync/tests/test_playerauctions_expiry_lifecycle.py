@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from apps.sync.management.commands.renew_expiring_playerauctions import (
     _has_sale_or_open_order,
+    _is_unexpired_renewal_candidate,
     _remote_offer_is_active,
 )
 from apps.sync.services.playerauctions.offers.service import (
@@ -69,6 +70,20 @@ class PlayerAuctionsExpiryLifecycleTests(SimpleTestCase):
             pending_orders,
         ):
             self.assertTrue(_has_sale_or_open_order(listing))
+
+    def test_expired_listing_is_excluded_from_automatic_renewal_window(self):
+        now = timezone.now()
+        cutoff = now + timedelta(hours=96)
+
+        self.assertFalse(_is_unexpired_renewal_candidate(
+            now - timedelta(seconds=1), now, cutoff,
+        ))
+        self.assertFalse(_is_unexpired_renewal_candidate(
+            cutoff + timedelta(seconds=1), now, cutoff,
+        ))
+        self.assertTrue(_is_unexpired_renewal_candidate(
+            now + timedelta(hours=1), now, cutoff,
+        ))
 
     def test_playerauctions_relist_derives_a_new_expiry_when_api_omits_one(self):
         from apps.posting.services.relist import _playerauctions_expiry_after_relist

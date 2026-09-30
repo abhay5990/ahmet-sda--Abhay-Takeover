@@ -305,15 +305,18 @@ class Command(BaseCommand):
             replace_existing=True,
         )
 
-        # PlayerAuctions renewal — the command verifies the local sale/order
-        # state and current remote offer before it can recreate an offer.
+        # PlayerAuctions renewal — bounded, still-active offers only. Expired
+        # offers stay in a separate evidence-first recovery lane. Start this
+        # maintenance job immediately so a scheduler restart cannot add a
+        # three-hour delay near marketplace expiry.
         scheduler.add_job(
             run_renew_expiring_playerauctions_job,
-            trigger=IntervalTrigger(hours=3),
+            trigger=IntervalTrigger(minutes=30),
             id='renew_expiring_playerauctions',
             name='Renew Expiring PlayerAuctions Offers',
             max_instances=1,
             replace_existing=True,
+            next_run_time=datetime.now(),
         )
 
         scheduler.add_job(

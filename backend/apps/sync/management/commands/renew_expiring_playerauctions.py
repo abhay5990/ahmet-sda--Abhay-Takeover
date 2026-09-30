@@ -1,14 +1,19 @@
 """Safely renew PlayerAuctions offers before their recorded marketplace expiry.
 
 The official Mart lane queries and edits the *same* Account Offer with the
-documented signed Offer API.  It never cancels/recreates an offer and never
-starts a relay/browser session.  Other PA accounts retain the older relist
-path until separately migrated.
+documented signed Offer API. It never cancels/recreates an offer and never
+starts a relay/browser session. Other PA accounts retain the older relist path
+until separately migrated.
+
+This recurring lane intentionally excludes expired records. Expiry recovery
+needs separate exact remote-state and sale-safety evidence; it must not be
+silently mixed into pre-expiry renewal work.
 """
 
 from datetime import timedelta
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
+from django.db import transaction
 from django.utils import timezone
 
 from apps.integrations.providers import registry
@@ -20,6 +25,8 @@ from apps.posting.services.relist import relist_listing
 
 
 DEFAULT_RENEWAL_LEAD_HOURS = 96
+DEFAULT_RENEWAL_BATCH_SIZE = 75
+MAX_RENEWAL_BATCH_SIZE = 100
 _PA_ACTIVE_STATE = 1
 
 
@@ -80,11 +87,16 @@ def _uses_official_offer_api_only(client) -> bool:
     return bool(marker()) if callable(marker) else False
 
 
+def _is_unexpired_renewal_candidate(expires_at, now, cutoff) -> bool:
+    """Return true only for a still-active listing in the renewal lead window."""
+    return bool(expires_at and now < expires_at <= cutoff)
+
+
 def _renew_official_mart_account_offer(listing: Listing, client) -> tuple[bool, str]:
     """Renew one Mart account offer in place after query/edit/re-query proof.
 
-    Account-offer edits are replace-style requests.  The source is always the
-    current signed remote query, not a partial local title/price patch.  The
+    Account-offer edits are replace-style requests. The source is always the
+    current signed remote query, not a partial local title/price patch. The
     small HTML comment makes the renewal attributable and lets the re-query
     prove that the exact update reached the marketplace without changing buyer
     visible copy.
@@ -159,73 +171,128 @@ class Command(BaseCommand):
             default=DEFAULT_RENEWAL_LEAD_HOURS,
             help='Renew listings expiring within this many hours (default: 96 / four days).',
         )
+        parser.add_argument(
+            '--limit',
+            type=int,
+            default=DEFAULT_RENEWAL_BATCH_SIZE,
+            help=(
+                'Maximum still-active listings to inspect in this run '
+                f'(default: {DEFAULT_RENEWAL_BATCH_SIZE}; maximum: {MAX_RENEWAL_BATCH_SIZE}).'
+            ),
+        )
 
     def handle(self, *args, **options):
         execute = options['execute']
         lead_hours = max(1, options['lead_hours'])
-        cutoff = timezone.now() + timedelta(hours=lead_hours)
+        limit = int(options['limit'])
+        if not 1 <= limit <= MAX_RENEWAL_BATCH_SIZE:
+            raise CommandError(f'--limit must be between 1 and {MAX_RENEWAL_BATCH_SIZE}')
+
+        now = timezone.now()
+        cutoff = now + timedelta(hours=lead_hours)
         candidates = list(
             Listing.objects.filter(
                 integration_account__provider='playerauctions',
                 status=ListingStatus.LISTED,
                 marketplace_expires_at__isnull=False,
+                marketplace_expires_at__gt=now,
                 marketplace_expires_at__lte=cutoff,
-            ).select_related('integration_account__credential').order_by('marketplace_expires_at')
+            )
+            .select_related('integration_account__credential')
+            .order_by('marketplace_expires_at', 'pk')[:limit]
         )
-        stats = {'candidates': len(candidates), 'renewed': 0, 'skipped': 0, 'failed': 0}
+        stats = {
+            'candidates': len(candidates),
+            'renewed': 0,
+            'skipped': 0,
+            'stale': 0,
+            'failed': 0,
+        }
 
-        for listing in candidates:
-            if _has_sale_or_open_order(listing):
-                stats['skipped'] += 1
-                self.stdout.write(f'SKIP {listing.store_listing_id}: sale or order evidence exists')
+        for candidate in candidates:
+            if not _is_unexpired_renewal_candidate(
+                candidate.marketplace_expires_at, now, cutoff,
+            ):
+                stats['stale'] += 1
                 continue
             if not execute:
                 self.stdout.write(
-                    f'READY {listing.store_listing_id}: expires '
-                    f'{listing.marketplace_expires_at.isoformat()}'
+                    f'READY {candidate.store_listing_id}: expires '
+                    f'{candidate.marketplace_expires_at.isoformat()}'
                 )
                 continue
-            store = listing.integration_account
-            client = None
-            try:
-                client = registry.get_or_build_client('playerauctions', store.credential)
-            except Exception as exc:
-                stats['failed'] += 1
-                self.stdout.write(self.style.ERROR(
-                    f'FAILED {listing.store_listing_id}: unable to build PlayerAuctions client: {exc}'
-                ))
-                continue
-            if _uses_official_offer_api_only(client):
-                renewed, message = _renew_official_mart_account_offer(listing, client)
-                if renewed:
+
+            # A scheduled and a manual run can overlap. Re-lock and re-check
+            # the exact record immediately before the non-idempotent remote edit.
+            with transaction.atomic():
+                refreshed_now = timezone.now()
+                refreshed_cutoff = refreshed_now + timedelta(hours=lead_hours)
+                listing = (
+                    Listing.objects.select_for_update()
+                    .select_related('integration_account__credential')
+                    .filter(
+                        pk=candidate.pk,
+                        integration_account__provider='playerauctions',
+                        status=ListingStatus.LISTED,
+                        marketplace_expires_at__gt=refreshed_now,
+                        marketplace_expires_at__lte=refreshed_cutoff,
+                    )
+                    .first()
+                )
+                if listing is None:
+                    stats['stale'] += 1
+                    self.stdout.write(
+                        f'SKIP {candidate.store_listing_id}: local expiry/state changed'
+                    )
+                    continue
+                if _has_sale_or_open_order(listing):
+                    stats['skipped'] += 1
+                    self.stdout.write(f'SKIP {listing.store_listing_id}: sale or order evidence exists')
+                    continue
+
+                store = listing.integration_account
+                try:
+                    client = registry.get_or_build_client('playerauctions', store.credential)
+                except Exception as exc:
+                    stats['failed'] += 1
+                    self.stdout.write(self.style.ERROR(
+                        f'FAILED {listing.store_listing_id}: unable to build PlayerAuctions client: {exc}'
+                    ))
+                    continue
+
+                if _uses_official_offer_api_only(client):
+                    renewed, message = _renew_official_mart_account_offer(listing, client)
+                    if renewed:
+                        stats['renewed'] += 1
+                        self.stdout.write(self.style.SUCCESS(
+                            f'RENEWED {listing.store_listing_id}: {message}'
+                        ))
+                    else:
+                        stats['failed'] += 1
+                        self.stdout.write(self.style.ERROR(
+                            f'FAILED {listing.store_listing_id}: {message}'
+                        ))
+                    continue
+
+                if not _remote_offer_is_verified_active(listing):
+                    stats['skipped'] += 1
+                    self.stdout.write(f'SKIP {listing.store_listing_id}: remote offer not verified active')
+                    continue
+                result = relist_listing(listing)
+                if result.ok:
                     stats['renewed'] += 1
                     self.stdout.write(self.style.SUCCESS(
-                        f'RENEWED {listing.store_listing_id}: {message}'
+                        f'RENEWED {listing.store_listing_id} -> {result.new_listing.store_listing_id}'
                     ))
                 else:
                     stats['failed'] += 1
                     self.stdout.write(self.style.ERROR(
-                        f'FAILED {listing.store_listing_id}: {message}'
+                        f'FAILED {listing.store_listing_id}: {result.error}'
                     ))
-                continue
-            if not _remote_offer_is_verified_active(listing):
-                stats['skipped'] += 1
-                self.stdout.write(f'SKIP {listing.store_listing_id}: remote offer not verified active')
-                continue
-            result = relist_listing(listing)
-            if result.ok:
-                stats['renewed'] += 1
-                self.stdout.write(self.style.SUCCESS(
-                    f'RENEWED {listing.store_listing_id} -> {result.new_listing.store_listing_id}'
-                ))
-            else:
-                stats['failed'] += 1
-                self.stdout.write(self.style.ERROR(
-                    f'FAILED {listing.store_listing_id}: {result.error}'
-                ))
 
         self.stdout.write(
             f"{'EXECUTED' if execute else 'DRY RUN'}: "
             f"candidates={stats['candidates']} renewed={stats['renewed']} "
-            f"skipped={stats['skipped']} failed={stats['failed']}"
+            f"skipped={stats['skipped']} stale={stats['stale']} failed={stats['failed']} "
+            f"limit={limit}; expired listings are intentionally excluded"
         )
