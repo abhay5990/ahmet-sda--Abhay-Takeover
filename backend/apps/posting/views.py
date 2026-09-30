@@ -545,7 +545,7 @@ def _build_pool_item_views(
             'is_sold': is_sale_record,
             'has_unresolved_order_hold': has_unresolved_order_hold,
             'unresolved_order_hold_label': (
-                'Delivery in progress — return blocked'
+                'Sold — delivery in progress; key locked from return to stock'
                 if has_unresolved_order_hold else ''
             ),
             'can_verify_unsold': can_verify_unsold,

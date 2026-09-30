@@ -297,7 +297,7 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertFalse(row['can_verify_unsold'])
         self.assertEqual(
             row['unresolved_order_hold_label'],
-            'Delivery in progress — return blocked',
+            'Sold — delivery in progress; key locked from return to stock',
         )
 
     def test_detached_verified_sale_is_not_shared_and_renders_in_sold_history(self):
