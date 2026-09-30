@@ -250,6 +250,11 @@ def force_return_pool_item_to_available(
                 ok=False,
                 errors=['This key is reserved by an in-progress dispatch. Try again after it finishes.'],
             )
+        if _has_unresolved_marketplace_order(locked):
+            return RemoveItemResult(
+                ok=False,
+                errors=['This key has a marketplace order awaiting final resolution and cannot be returned to stock.'],
+            )
         if _has_confirmed_sale_evidence(locked):
             return RemoveItemResult(
                 ok=False,
@@ -363,7 +368,12 @@ def _finalize_single_item_removal(
             listing_id__in=linked_listing_ids,
             owned_product_id=item.owned_product_id,
         ).delete()
-        can_release = release_to_pool and not _has_confirmed_sale_evidence(item)
+        has_unresolved_order = _has_unresolved_marketplace_order(item)
+        can_release = (
+            release_to_pool
+            and not _has_confirmed_sale_evidence(item)
+            and not has_unresolved_order
+        )
         if can_release:
             item.status = OfferPoolItemStatus.PENDING
             item.pool_offer = None
@@ -373,17 +383,24 @@ def _finalize_single_item_removal(
             item.reservation = None
             released_to_pool = True
         elif item.status != OfferPoolItemStatus.CONSUMED:
-            item.status = OfferPoolItemStatus.REMOVED
-            # This is reached only after the established sale/reservation
-            # guards. Keep the removed row for audit, but release its live
-            # ownership so a future stock-posting pool can use the account.
-            item.live_owned_product = None
+            item.status = (
+                OfferPoolItemStatus.CONSUMED
+                if has_unresolved_order else OfferPoolItemStatus.REMOVED
+            )
+            if not has_unresolved_order:
+                # This is reached only after the established sale/reservation
+                # guards. Keep the removed row for audit, but release its live
+                # ownership so a future stock-posting pool can use the account.
+                item.live_owned_product = None
         item.remote_state = 'absent'
         item.remote_credential_id = ''
         item.claim_token = None
         item.claimed_at = None
-        item.error_message = ''
-        item.failure_stage = ''
+        item.error_message = (
+            'Marketplace order is awaiting final resolution; key remains held outside active stock.'
+            if has_unresolved_order else ''
+        )
+        item.failure_stage = 'marketplace_order_hold' if has_unresolved_order else ''
         item.save(update_fields=[
             'status', 'pool_offer', 'target_offer_id', 'pushed_at', 'consumed_at',
             'reservation', 'remote_state', 'remote_credential_id', 'claim_token',
@@ -414,6 +431,18 @@ def _has_confirmed_sale_evidence(item: OfferPoolItem) -> bool:
             status=OfferPoolActiveOfferStatus.SOLD,
         ).exists()
     )
+
+
+def _has_unresolved_marketplace_order(item: OfferPoolItem) -> bool:
+    """Return true when an exact account still has a non-terminal order."""
+    from apps.orders.enums import OrderStatus
+    from apps.orders.models import Order
+
+    return Order.objects.filter(
+        owned_product_id=item.owned_product_id,
+    ).exclude(
+        status__in=[OrderStatus.CANCELLED, OrderStatus.REFUNDED],
+    ).exists()
 
 
 def _should_auto_release_after_remote_removal(pool_offer: PoolOffer) -> bool:
@@ -684,16 +713,25 @@ def _release_removed_items(pool_offer, items, attempts):
                 models.Q(listing=pool_offer.listing)
                 | models.Q(listing__pool_active_offers__pool_offer=pool_offer)
             ).delete()
-            item.status = OfferPoolItemStatus.PENDING
-            item.pool_offer = None
-            item.target_offer_id = ''
+            has_unresolved_order = _has_unresolved_marketplace_order(item)
+            item.status = (
+                OfferPoolItemStatus.CONSUMED
+                if has_unresolved_order else OfferPoolItemStatus.PENDING
+            )
+            if not has_unresolved_order:
+                item.pool_offer = None
+                item.target_offer_id = ''
             item.remote_credential_id = ''
             item.remote_state = 'absent'
-            item.pushed_at = None
+            if not has_unresolved_order:
+                item.pushed_at = None
             item.claim_token = None
             item.claimed_at = None
-            item.error_message = ''
-            item.failure_stage = ''
+            item.error_message = (
+                'Marketplace order is awaiting final resolution; key remains held outside active stock.'
+                if has_unresolved_order else ''
+            )
+            item.failure_stage = 'marketplace_order_hold' if has_unresolved_order else ''
             item.save(update_fields=[
                 'status', 'pool_offer', 'target_offer_id', 'remote_credential_id',
                 'remote_state', 'pushed_at', 'claim_token', 'claimed_at',
@@ -702,7 +740,8 @@ def _release_removed_items(pool_offer, items, attempts):
             attempts[item.pk].status = PoolDispatchStatus.SUCCEEDED
             attempts[item.pk].finished_at = now
             attempts[item.pk].save(update_fields=['status', 'finished_at'])
-            released += 1
+            if not has_unresolved_order:
+                released += 1
     return released
 
 

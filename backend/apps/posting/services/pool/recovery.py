@@ -58,6 +58,8 @@ def recover_verified_unsold_item(*, pool_id: int, item_id: int) -> RecoverUnsold
     except OfferPoolItem.DoesNotExist:
         return RecoverUnsoldResult(ok=False, errors=["Item not found"])
 
+    if _has_unresolved_marketplace_order(item):
+        return _unresolved_order_hold_result()
     if item.status == OfferPoolItemStatus.PENDING and not item.pool_offer_id:
         return RecoverUnsoldResult(
             ok=True,
@@ -313,6 +315,8 @@ def _restore_live_item(
     """Restore a falsely-consumed key without re-posting a credential already live."""
     with transaction.atomic():
         locked = OfferPoolItem.objects.select_for_update().get(pk=item.pk)
+        if _has_unresolved_marketplace_order(locked):
+            return _unresolved_order_hold_result()
         if PoolSaleEvent.objects.filter(pool_item_id=locked.pk).exists():
             return RecoverUnsoldResult(
                 ok=False,
@@ -341,6 +345,8 @@ def _make_available(item: OfferPoolItem, message: str) -> RecoverUnsoldResult:
     """Detach a remotely absent, unsold key and return it to the pending pool."""
     with transaction.atomic():
         locked = OfferPoolItem.objects.select_for_update().select_related("pool_offer__listing").get(pk=item.pk)
+        if _has_unresolved_marketplace_order(locked):
+            return _unresolved_order_hold_result()
         if PoolSaleEvent.objects.filter(pool_item_id=locked.pk).exists():
             return RecoverUnsoldResult(
                 ok=False,
@@ -385,3 +391,31 @@ def _make_available(item: OfferPoolItem, message: str) -> RecoverUnsoldResult:
             "claim_token", "claimed_at", "failure_stage", "remote_state", "updated_at",
         ])
     return RecoverUnsoldResult(ok=True, state="available", message=message)
+
+
+def _has_unresolved_marketplace_order(item: OfferPoolItem) -> bool:
+    """Return true when this exact account still has a non-terminal order.
+
+    A provider can remove an offer as soon as a buyer starts delivery, before the
+    order becomes a confirmed pool sale.  That remote absence is not permission
+    to re-offer the credential.  Only a cancellation or refund makes a pending
+    account eligible for a later unsold verification.
+    """
+    from apps.orders.enums import OrderStatus
+    from apps.orders.models import Order
+
+    return Order.objects.filter(
+        owned_product_id=item.owned_product_id,
+    ).exclude(
+        status__in=[OrderStatus.CANCELLED, OrderStatus.REFUNDED],
+    ).exists()
+
+
+def _unresolved_order_hold_result() -> RecoverUnsoldResult:
+    return RecoverUnsoldResult(
+        ok=False,
+        errors=[
+            "This account has a marketplace order awaiting final resolution; "
+            "it remains held and cannot be returned to stock."
+        ],
+    )

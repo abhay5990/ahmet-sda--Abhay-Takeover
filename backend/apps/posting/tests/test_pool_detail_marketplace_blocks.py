@@ -270,6 +270,36 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertEqual(sold_history[0]['order_id'], 'ELD-ORDER-9010')
         self.assertTrue(sold_history[0]['is_exact_order_match'])
 
+    def test_unresolved_exact_order_hides_verify_and_return_control(self):
+        gameboost = self.make_offer(
+            offer_id=23,
+            marketplace='gameboost',
+            store_name='GamerInstanty',
+        )
+        held_item = self.make_item(
+            item_id=2010,
+            status=OfferPoolItemStatus.CONSUMED,
+            pool_offer_id=gameboost.pk,
+        )
+
+        blocks, _, _, _, _ = _build_pool_item_views(
+            [gameboost],
+            [held_item],
+            [],
+            [],
+            unresolved_orders_by_owned_product_id={
+                held_item.owned_product_id: SimpleNamespace(status='pending'),
+            },
+        )
+
+        row = blocks[3]['rows'][0]
+        self.assertTrue(row['has_unresolved_order_hold'])
+        self.assertFalse(row['can_verify_unsold'])
+        self.assertEqual(
+            row['unresolved_order_hold_label'],
+            'Delivery in progress — return blocked',
+        )
+
     def test_detached_verified_sale_is_not_shared_and_renders_in_sold_history(self):
         detached_item = self.make_item(
             item_id=207,

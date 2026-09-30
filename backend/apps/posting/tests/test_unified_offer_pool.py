@@ -11,6 +11,8 @@ from django.utils import timezone
 from apps.integrations.models import IntegrationAccount, IntegrationCredential
 from apps.inventory.models import Category, Game, OwnedProduct
 from apps.listings.models import Listing, ListingOwnedProduct
+from apps.orders.enums import OrderStatus
+from apps.orders.models import Order
 from apps.posting.api.pool import (
     _adopt_pa_source_listing,
     _validate_pool_candidate,
@@ -1339,6 +1341,74 @@ class UnifiedPoolTestCase(TestCase):
         self.assertIsNone(item.pool_offer_id)
         self.assertEqual(item.remote_state, 'absent')
         self.assertEqual(active_offer.status, OfferPoolActiveOfferStatus.DELISTED)
+
+    def test_gameboost_delete_holds_item_with_unresolved_exact_order(self):
+        pool = self.make_pool('GameBoost Delivery Hold Pool')
+        self.eldorado.provider = 'gameboost'
+        self.eldorado.save(update_fields=['provider'])
+        pool_offer = self.make_pool_offer(pool)
+        owned = self.make_owned('gameboost-delivery-hold@example.test')
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=owned,
+            status=OfferPoolItemStatus.PUSHED,
+            remote_state='present',
+            target_offer_id=pool_offer.listing.store_listing_id,
+        )
+        Order.objects.create(
+            integration_account=self.eldorado,
+            owned_product=owned,
+            listing=pool_offer.listing,
+            store_order_id='GB-DELIVERY-HOLD',
+            status=OrderStatus.PENDING,
+            price=Decimal('10.00'),
+            currency='USD',
+        )
+
+        with patch(
+            'apps.posting.services.pool.lifecycle._remove_gameboost',
+            return_value=({item.pk}, []),
+        ):
+            result = remove_pool_item(pool_offer, item, listing=pool_offer.listing)
+
+        self.assertTrue(result.ok)
+        self.assertFalse(result.released_to_pool)
+        item.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.CONSUMED)
+        self.assertEqual(item.pool_offer_id, pool_offer.pk)
+        self.assertEqual(item.remote_state, 'absent')
+        self.assertEqual(item.failure_stage, 'marketplace_order_hold')
+        self.assertEqual(item.live_owned_product_id, owned.pk)
+
+    def test_unsold_recovery_rejects_item_with_unresolved_exact_order(self):
+        from apps.posting.services.pool.recovery import recover_verified_unsold_item
+
+        pool = self.make_pool('Recovery Delivery Hold Pool')
+        pool_offer = self.make_pool_offer(pool)
+        owned = self.make_owned('recovery-delivery-hold@example.test')
+        item = OfferPoolItem.objects.create(
+            pool=pool,
+            pool_offer=pool_offer,
+            owned_product=owned,
+            status=OfferPoolItemStatus.CONSUMED,
+            remote_state='absent',
+        )
+        Order.objects.create(
+            integration_account=self.eldorado,
+            owned_product=owned,
+            store_order_id='RECOVERY-DELIVERY-HOLD',
+            status=OrderStatus.PENDING,
+            price=Decimal('10.00'),
+            currency='USD',
+        )
+
+        result = recover_verified_unsold_item(pool_id=pool.pk, item_id=item.pk)
+
+        self.assertFalse(result.ok)
+        self.assertIn('awaiting final resolution', result.errors[0])
+        item.refresh_from_db()
+        self.assertEqual(item.status, OfferPoolItemStatus.CONSUMED)
 
     def test_restock_pages_render_with_unified_relations(self):
         user = get_user_model().objects.create_user(

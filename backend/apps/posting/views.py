@@ -321,6 +321,7 @@ def _build_pool_item_views(
     sale_events,
     orders_by_id=None,
     replaced_order_ids=None,
+    unresolved_orders_by_owned_product_id=None,
 ):
     """Build item-level marketplace assignments and one cross-store sale ledger.
 
@@ -331,6 +332,7 @@ def _build_pool_item_views(
     removal signal, so their order IDs are deliberately not guessed.
     """
     replaced_order_ids = replaced_order_ids or set()
+    unresolved_orders_by_owned_product_id = unresolved_orders_by_owned_product_id or {}
     slots_by_key = {slot['key']: slot for slot in _POOL_MARKETPLACE_SLOTS}
     offers_by_id = {offer.pk: offer for offer in pool_offers}
     rows_by_slot = {slot['key']: [] for slot in _POOL_MARKETPLACE_SLOTS}
@@ -452,6 +454,10 @@ def _build_pool_item_views(
         item_owned_product_id = getattr(
             item, 'owned_product_id', getattr(item.owned_product, 'pk', None),
         )
+        unresolved_order = unresolved_orders_by_owned_product_id.get(
+            item_owned_product_id,
+        )
+        has_unresolved_order_hold = unresolved_order is not None
         order_owned_product_id = getattr(
             order, 'owned_product_id', getattr(getattr(order, 'owned_product', None), 'pk', None),
         ) if order else None
@@ -485,11 +491,12 @@ def _build_pool_item_views(
         has_unknown_pa_delete = bool(
             marketplace == 'playerauctions'
             and item.status == OfferPoolItemStatus.PUSHED
-            and item.remote_state == 'unknown'
+            and getattr(item, 'remote_state', '') == 'unknown'
             and getattr(clone, 'status', None) == OfferPoolActiveOfferStatus.ACTIVE
         )
         can_verify_unsold = bool(
             not is_sale_record
+            and not has_unresolved_order_hold
             and (
                 item.status in {
                     OfferPoolItemStatus.CONSUMED,
@@ -536,6 +543,11 @@ def _build_pool_item_views(
                 and item.status != OfferPoolItemStatus.REMOVED
             ),
             'is_sold': is_sale_record,
+            'has_unresolved_order_hold': has_unresolved_order_hold,
+            'unresolved_order_hold_label': (
+                'Delivery in progress — return blocked'
+                if has_unresolved_order_hold else ''
+            ),
             'can_verify_unsold': can_verify_unsold,
             'verify_unsold_label': (
                 'Verify & return'
@@ -1158,7 +1170,11 @@ def restock_pool_detail_page(request, pool_id):
         .order_by('-created_at')
     )
     order_ids = {event.order_id for event in sale_events if event.order_id}
-    if order_ids:
+    item_owned_product_ids = {
+        item.owned_product_id for item in items if item.owned_product_id
+    }
+    if order_ids or item_owned_product_ids:
+        from apps.orders.enums import OrderStatus
         from apps.orders.models import Order, OrderReplacement
         orders_by_id = {
             order.pk: order
@@ -1171,9 +1187,19 @@ def restock_pool_detail_page(request, pool_id):
             OrderReplacement.objects.filter(order_id__in=order_ids)
             .values_list('order_id', flat=True)
         )
+        unresolved_orders_by_owned_product_id = {}
+        for order in Order.objects.filter(
+            owned_product_id__in=item_owned_product_ids,
+        ).exclude(
+            status__in=[OrderStatus.CANCELLED, OrderStatus.REFUNDED],
+        ).only('pk', 'owned_product_id', 'status').order_by('-updated_at', '-pk'):
+            unresolved_orders_by_owned_product_id.setdefault(
+                order.owned_product_id, order,
+            )
     else:
         orders_by_id = {}
         replaced_order_ids = set()
+        unresolved_orders_by_owned_product_id = {}
     for sale_event in sale_events:
         # The template also renders offer-level event pills, so expose a
         # marketplace-facing reference there rather than the internal PK.
@@ -1204,6 +1230,7 @@ def restock_pool_detail_page(request, pool_id):
         sale_events,
         orders_by_id,
         replaced_order_ids,
+        unresolved_orders_by_owned_product_id,
     )
 
     # Linked OwnedProducts via ListingOwnedProduct M2M
