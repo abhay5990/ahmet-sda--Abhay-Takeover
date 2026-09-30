@@ -36,6 +36,16 @@ class PoolDetailMarketplaceBlocksTests(SimpleTestCase):
         self.assertIn('Individual account status appears in the table below.', template.template.source)
         self.assertIn('Sold — removed from active stock', template.template.source)
 
+    def test_bump_control_waits_for_the_durable_queue_outcome(self):
+        template = get_template('posting/restock_pool_detail.html')
+        source = template.template.source
+
+        self.assertIn('data.request_id', source)
+        self.assertIn('playerauctions-edits/${encodeURIComponent(requestId)}', source)
+        self.assertIn("queued.status === 'succeeded'", source)
+        self.assertIn("queued.status === 'failed'", source)
+        self.assertNotIn('Bumped. New PA offer: ${data.new_offer_id}', source)
+
     def test_active_offer_at_threshold_requires_replenishment(self):
         offer = SimpleNamespace(
             pool=SimpleNamespace(status=OfferPoolStatus.ACTIVE),

@@ -2110,7 +2110,36 @@ async function bumpPlayerAuctionsOffer(poolId, itemId, login, btn) {
         );
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.error || `PA bump failed (${response.status})`);
-        alert(`Bumped. New PA offer: ${data.new_offer_id}; retained unique code: ${data.unique_code}.`);
+        const requestId = Number(data.request_id);
+        if (!Number.isInteger(requestId) || requestId <= 0) {
+            throw new Error('PA bump was not given a durable queue request ID. No completion was claimed.');
+        }
+
+        btn.textContent = 'Bump queued';
+        const statusUrl = `/posting/api/pools/${poolId}/playerauctions-edits/${encodeURIComponent(requestId)}/`;
+        const deadline = Date.now() + 120000;
+        while (Date.now() < deadline) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            const statusResponse = await fetch(statusUrl);
+            const statusData = await statusResponse.json().catch(() => ({}));
+            if (!statusResponse.ok || !statusData.ok || !statusData.request) {
+                throw new Error(statusData.error || 'Unable to read the queued PA bump result. No completion was claimed.');
+            }
+            const queued = statusData.request;
+            if (queued.status === 'succeeded') {
+                const replacement = queued.returned_offer_id
+                    ? ` New PA offer: ${queued.returned_offer_id}.`
+                    : '';
+                alert(`PA bump completed.${replacement} Retained unique code: ${data.unique_code}.`);
+                window.location.reload();
+                return;
+            }
+            if (queued.status === 'failed') {
+                throw new Error(queued.error || 'PA bump failed. No replacement offer was confirmed.');
+            }
+        }
+
+        alert(`PA bump request #${requestId} is still queued. No new offer has been confirmed yet; the page will refresh to keep the state accurate.`);
         window.location.reload();
     } catch (error) {
         alert(error.message || 'Unable to bump this PlayerAuctions account');
