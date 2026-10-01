@@ -1,8 +1,13 @@
-"""Forza Horizon 5 manual entry must read the stock UI's manual_fields so the
-selected platform drives the Eldorado trade environment (previously ignored)."""
+"""Forza manual-entry and marketplace mapping regressions."""
+
+from importlib import import_module
+
 from apps.inventory.models import Category, Game, GamePlatformMapping
+from apps.posting.models import GameVariant, GameVariantMapping
+from django.apps import apps
 from django.test import TestCase
 from payload_pipeline.games.fh5.account.sources.manual import Fh5ManualSourceAdapter
+from payload_pipeline.games.fh6.account.sources.manual import Fh6ManualSourceAdapter
 
 
 class Fh5ManualFieldsTests(TestCase):
@@ -44,3 +49,54 @@ class ForzaEldoradoMappingSeedTests(TestCase):
         rows = GamePlatformMapping.objects.filter(platform="eldorado", external_id="106")
         self.assertEqual(rows.count(), 1)
         self.assertEqual(rows.first().game, game)
+
+
+class Fh6ManualFieldsTests(TestCase):
+    def test_reads_marketplace_fields_from_manual_fields(self):
+        source = Fh6ManualSourceAdapter().parse({
+            "loginData": {"login": "u", "password": "p"},
+            "manual_fields": {
+                "platform": "Xbox",
+                "credits_count": "9000000",
+                "all_cars": "Yes",
+            },
+        })
+        self.assertEqual(source.platform, "Xbox")
+        self.assertEqual(source.credits_count, 9000000)
+        self.assertEqual(source.all_cars, "Yes")
+
+
+class Fh6MarketplaceMappingSeedTests(TestCase):
+    def test_seed_migrations_create_verified_mappings_and_platforms(self):
+        category = Category.objects.create(name="fh6-support-cat", title="FH6 Support")
+        game = Game.objects.create(
+            name="Forza Horizon 6", slug="forza-horizon-6", category=category,
+        )
+        inventory_migration = import_module(
+            "apps.inventory.migrations.0015_seed_fh6_marketplace_mappings",
+        )
+        posting_migration = import_module(
+            "apps.posting.migrations.0036_seed_fh6_marketplace_platform_variants",
+        )
+        inventory_migration.seed_mappings(apps, None)
+        posting_migration.seed_variants(apps, None)
+
+        mappings = {
+            row.platform: row.external_id
+            for row in GamePlatformMapping.objects.filter(game=game)
+        }
+        self.assertEqual(mappings["gameboost"], "forza-horizon-6")
+        self.assertEqual(mappings["playerauctions"], "15127")
+
+        expected = {
+            "pc": {"gameboost": "PC", "playerauctions": "15128"},
+            "xbox": {"gameboost": "Xbox", "playerauctions": "15130"},
+            "ps5": {"gameboost": "PS5", "playerauctions": "15129"},
+        }
+        for slug, marketplace_ids in expected.items():
+            variant = GameVariant.objects.get(game=game, type="platform", slug=slug)
+            actual = {
+                row.marketplace: row.external_id
+                for row in GameVariantMapping.objects.filter(variant=variant)
+            }
+            self.assertEqual(actual, marketplace_ids)

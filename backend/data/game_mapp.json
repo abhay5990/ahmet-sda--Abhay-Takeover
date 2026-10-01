@@ -153,8 +153,14 @@
           "gameId": "414",
           "name": "Forza Horizon 6"
         },
-        "gameboost": null,
-        "playerauctions": null
+        "gameboost": {
+          "id": "forza-horizon-6",
+          "name": "Forza Horizon 6"
+        },
+        "playerauctions": {
+          "gameId": 15127,
+          "name": "Forza Horizon 6"
+        }
       },
       "lztCategory": {
         "id": 1,

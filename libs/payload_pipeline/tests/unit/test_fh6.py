@@ -9,9 +9,13 @@ from payload_pipeline.core.contracts import BuildContext, PipelineRequest
 from payload_pipeline.games.fh6.account import (
     Fh6Composer,
     Fh6EldoradoBuilder,
+    Fh6GameBoostBuilder,
+    Fh6PlayerAuctionsBuilder,
     Fh6Resolver,
 )
 from payload_pipeline.games.fh6.account.sources.manual import Fh6ManualSourceAdapter
+
+from _variant_ctx import fh5_gameboost
 
 
 # ── helpers ──────────────────────────────────────────────────────
@@ -21,6 +25,11 @@ def _manual_source(price: float = 18.0, **kwargs) -> dict:
         "item_id": "fh6-001",
         "price": price,
         "loginData": {"login": "fh6_user@example.com", "password": "Fh6Pass123"},
+        "offer_details": {
+            "platform": "PC",
+            "credits_count": 9_000_000,
+            "all_cars": "Yes",
+        },
     }
     base.update(kwargs)
     return base
@@ -55,6 +64,13 @@ class TestFh6ManualSourceAdapter:
         assert source is not None
         assert source.credentials.login == "fh6_user@example.com"
 
+    def test_parse_extracts_marketplace_fields(self):
+        source = Fh6ManualSourceAdapter().parse(_manual_source())
+        assert source is not None
+        assert source.platform == "PC"
+        assert source.credits_count == 9_000_000
+        assert source.all_cars == "Yes"
+
     def test_parse_handles_nested_item_envelope(self):
         raw = {"item": _manual_source(price=11.0)}
         source = Fh6ManualSourceAdapter().parse(raw)
@@ -69,6 +85,12 @@ class TestFh6Resolver:
         account = Fh6Resolver().resolve(_make_request(kind="stock"))
         assert not account.credentials.is_empty
         assert account.credentials.login == "fh6_user@example.com"
+
+    def test_resolve_populates_marketplace_fields(self):
+        account = Fh6Resolver().resolve(_make_request())
+        assert account.platform == "PC"
+        assert account.credits_count == 9_000_000
+        assert account.all_cars == "Yes"
 
     def test_resolve_dropshipping_clears_credentials(self):
         account = Fh6Resolver().resolve(_make_request(kind="dropshipping"))
@@ -88,9 +110,9 @@ class TestFh6Registration:
     def test_fh6_in_default_registry(self):
         assert build_default_registry().has_game("forza-horizon-6")
 
-    def test_fh6_has_only_eldorado(self):
+    def test_fh6_has_all_supported_marketplaces(self):
         defn = build_default_registry().get_game("forza-horizon-6", "account")
-        assert set(defn.marketplaces.keys()) == {"eldorado"}
+        assert set(defn.marketplaces.keys()) == {"eldorado", "gameboost", "playerauctions"}
 
 
 # ── Eldorado payload ──────────────────────────────────────────────
@@ -126,3 +148,57 @@ class TestFh6EldoradoPayload:
 
     def test_price_set_correctly(self):
         assert self._build()["details"]["pricing"]["pricePerUnit"]["amount"] == 18.0
+
+
+# ── GameBoost payload ─────────────────────────────────────────────
+
+class TestFh6GameBoostPayload:
+    def _build(self, platform: str = "PC") -> dict:
+        pipeline = PayloadPipeline(registry=build_default_registry())
+        raw = _manual_source(offer_details={"platform": platform, "credits_count": 9_000_000, "all_cars": "Yes"})
+        prep = pipeline.prepare_once(_make_request(raw=raw))
+        assert prep.success
+        result = pipeline.build(
+            prep.prepared,
+            BuildContext(kind="stock", marketplace="gameboost", variant_context=fh5_gameboost()),
+        )
+        assert result.success, f"build failed: {result.error}"
+        return result.payload
+
+    def test_game_slug_and_platform_array(self):
+        payload = self._build("Xbox")
+        assert payload["game"] == "forza-horizon-6"
+        assert payload["account_data"]["platforms"] == ["Xbox"]
+
+    def test_account_data_uses_verified_fields(self):
+        payload = self._build()
+        assert payload["account_data"]["credits_count"] == 9_000_000
+        assert payload["account_data"]["all_cars"] == "Yes"
+
+
+# ── PlayerAuctions payload ────────────────────────────────────────
+
+class TestFh6PlayerAuctionsPayload:
+    def _build(self, platform: str = "PC") -> dict:
+        pipeline = PayloadPipeline(registry=build_default_registry())
+        raw = _manual_source(offer_details={"platform": platform})
+        prep = pipeline.prepare_once(_make_request(raw=raw))
+        assert prep.success
+        result = pipeline.build(prep.prepared, BuildContext(kind="stock", marketplace="playerauctions"))
+        assert result.success, f"build failed: {result.error}"
+        return result.payload
+
+    def test_game_and_server_identifiers(self):
+        assert self._build("PC")["gameId"] == 15127
+        assert self._build("PC")["serverId"] == 15128
+        assert self._build("PS5")["serverId"] == 15129
+        assert self._build("Xbox")["serverId"] == 15130
+
+    def test_fallback_server_identifiers_without_variant_context(self):
+        pipeline = PayloadPipeline(registry=build_default_registry())
+        raw = _manual_source(offer_details={"platform": "Xbox"})
+        prep = pipeline.prepare_once(_make_request(raw=raw))
+        assert prep.success
+        result = pipeline.build(prep.prepared, BuildContext(kind="stock", marketplace="playerauctions"))
+        assert result.success, f"build failed: {result.error}"
+        assert result.payload["serverId"] == 15130

@@ -5,7 +5,7 @@ from .content import Fh6Composer
 from .manual_fields import FH6_MANUAL_FIELDS  # noqa: F401 — triggers registration
 from .media import Fh6MediaStrategy
 from .sources import Fh6ManualSourceAdapter
-from .marketplaces import Fh6EldoradoBuilder
+from .marketplaces import Fh6EldoradoBuilder, Fh6GameBoostBuilder, Fh6PlayerAuctionsBuilder
 from ....core.enums import ListingCategory
 from ....core.registry import GameDefinition
 
@@ -20,6 +20,8 @@ def register(registry) -> None:
             media_strategy=Fh6MediaStrategy(),
             marketplaces={
                 "eldorado": Fh6EldoradoBuilder(),
+                "gameboost": Fh6GameBoostBuilder(),
+                "playerauctions": Fh6PlayerAuctionsBuilder(),
             },
         )
     )
@@ -28,8 +30,10 @@ def register(registry) -> None:
 __all__ = [
     "Fh6Composer",
     "Fh6EldoradoBuilder",
+    "Fh6GameBoostBuilder",
     "Fh6ManualSourceAdapter",
     "Fh6MediaStrategy",
+    "Fh6PlayerAuctionsBuilder",
     "Fh6Resolver",
     "register",
 ]

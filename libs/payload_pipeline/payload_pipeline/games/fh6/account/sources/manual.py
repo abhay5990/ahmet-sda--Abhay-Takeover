@@ -18,6 +18,9 @@ class Fh6ManualSource:
     credentials: CredentialBundle = field(default_factory=CredentialBundle)
     title: str = ""
     description: str = ""
+    platform: str = ""
+    credits_count: int = 0
+    all_cars: str = "No"
 
 
 class Fh6ManualSourceAdapter:
@@ -30,6 +33,26 @@ class Fh6ManualSourceAdapter:
         payload = raw_data.get("item") if isinstance(raw_data.get("item"), dict) else raw_data
         login_data = payload.get("loginData") if isinstance(payload.get("loginData"), dict) else {}
         email_data = payload.get("emailLoginData") if isinstance(payload.get("emailLoginData"), dict) else {}
+        offer_details = payload.get("offer_details") or {}
+        if not isinstance(offer_details, dict):
+            offer_details = {}
+        manual_fields = payload.get("manual_fields") or {}
+        if not isinstance(manual_fields, dict):
+            manual_fields = {}
+
+        def _value(key: str, default: str = "") -> str:
+            for source in (manual_fields, offer_details, payload):
+                value = source.get(key)
+                if value not in (None, ""):
+                    return str(value).strip()
+            return default
+
+        def _int_value(key: str, default: int = 0) -> int:
+            for source in (manual_fields, offer_details, payload):
+                value = source.get(key)
+                if value not in (None, ""):
+                    return self._to_int(value, default=default)
+            return default
 
         return Fh6ManualSource(
             item_id=str(payload.get("item_id") or "").strip(),
@@ -44,6 +67,9 @@ class Fh6ManualSourceAdapter:
             ),
             title=str(payload.get("title") or "").strip(),
             description=str(payload.get("description") or "").strip(),
+            platform=_value("platform"),
+            credits_count=_int_value("credits_count"),
+            all_cars=_value("all_cars", "No") or "No",
         )
 
     def _to_int(self, value: Any, default: int) -> int:
