@@ -153,9 +153,9 @@ class TestFh6EldoradoPayload:
 # ── GameBoost payload ─────────────────────────────────────────────
 
 class TestFh6GameBoostPayload:
-    def _build(self, platform: str = "PC") -> dict:
+    def _build(self, platform: str = "PC", all_cars: str | bool = "Yes") -> dict:
         pipeline = PayloadPipeline(registry=build_default_registry())
-        raw = _manual_source(offer_details={"platform": platform, "credits_count": 9_000_000, "all_cars": "Yes"})
+        raw = _manual_source(offer_details={"platform": platform, "credits_count": 9_000_000, "all_cars": all_cars})
         prep = pipeline.prepare_once(_make_request(raw=raw))
         assert prep.success
         result = pipeline.build(
@@ -173,7 +173,11 @@ class TestFh6GameBoostPayload:
     def test_account_data_uses_verified_fields(self):
         payload = self._build()
         assert payload["account_data"]["credits_count"] == 9_000_000
-        assert payload["account_data"]["all_cars"] == "Yes"
+        assert payload["account_data"]["all_cars"] is True
+
+    def test_all_cars_is_a_gameboost_boolean(self):
+        assert self._build(all_cars="No")["account_data"]["all_cars"] is False
+        assert self._build(all_cars=True)["account_data"]["all_cars"] is True
 
 
 # ── PlayerAuctions payload ────────────────────────────────────────

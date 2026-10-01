@@ -29,7 +29,13 @@ class Fh6GameBoostBuilder(BaseGameBoostBuilder):
             ctx.variant_context if ctx else None, "platform", account.platform,
         ) or account.platform
 
-        account_data: dict[str, Any] = {"all_cars": account.all_cars or "No"}
+        all_cars = account.all_cars
+        if isinstance(all_cars, str):
+            all_cars = all_cars.strip().lower() in {"1", "true", "yes"}
+        else:
+            all_cars = bool(all_cars)
+
+        account_data: dict[str, Any] = {"all_cars": all_cars}
         if gameboost_platform:
             account_data["platforms"] = [gameboost_platform]
         if account.credits_count:
