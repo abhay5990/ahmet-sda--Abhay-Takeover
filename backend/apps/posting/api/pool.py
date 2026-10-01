@@ -29,6 +29,7 @@ from apps.posting.models import (
     OfferPoolStatus,
     CredentialSpec,
     GameVariant,
+    ManualFaultyPoolTransfer,
     PoolDispatchAttempt,
     PoolDispatchReservation,
     PoolDispatchReservationStatus,
@@ -38,10 +39,110 @@ from apps.posting.models import (
     PoolOfferStrategy,
     PoolSaleEvent,
     PlayerAuctionsEditRequest,
+    PlayerAuctionsEditRequestStatus,
     PostingDefault,
 )
 
 logger = logging.getLogger(__name__)
+
+
+@login_required
+@require_POST
+def move_pool_item_to_faulty(request, pool_id: int, item_id: int):
+    """Locally quarantine one exact pool key with an immutable staff reason.
+
+    This route performs no provider call and intentionally permits historical
+    marketplace/order evidence.  It only refuses a live local dispatch or PA
+    edit request, because changing state while a worker owns the item could
+    race a marketplace mutation.
+    """
+    try:
+        payload = json.loads(request.body or '{}')
+    except json.JSONDecodeError:
+        return JsonResponse({'ok': False, 'error': 'Invalid JSON.'}, status=400)
+    reason = str(payload.get('reason') or '').strip()
+    if len(reason) < 3:
+        return JsonResponse(
+            {'ok': False, 'error': 'A fault reason of at least 3 characters is required.'},
+            status=400,
+        )
+
+    with transaction.atomic():
+        item = (
+            OfferPoolItem.objects.select_for_update()
+            .select_related('owned_product')
+            .filter(pk=item_id, pool_id=pool_id)
+            .first()
+        )
+        if item is None:
+            return JsonResponse({'ok': False, 'error': 'Pool item not found.'}, status=404)
+        if ManualFaultyPoolTransfer.objects.filter(pool_item_id=item.pk).exists():
+            return JsonResponse(
+                {'ok': False, 'error': 'This account is already in the Faulty Accounts section.'},
+                status=409,
+            )
+        if item.status in {
+            OfferPoolItemStatus.RESERVED,
+            OfferPoolItemStatus.QUEUED,
+        } or PoolDispatchAttempt.objects.filter(
+            item_id=item.pk,
+            status__in=[PoolDispatchStatus.PENDING, PoolDispatchStatus.IN_PROGRESS],
+        ).exists():
+            return JsonResponse(
+                {
+                    'ok': False,
+                    'error': 'This account is being dispatched. Wait for the current dispatch to finish before moving it to Faulty Accounts.',
+                },
+                status=409,
+            )
+        if PlayerAuctionsEditRequest.objects.filter(
+            pool_item_id=item.pk,
+            status__in=[
+                PlayerAuctionsEditRequestStatus.QUEUED,
+                PlayerAuctionsEditRequestStatus.RUNNING,
+            ],
+        ).exists():
+            return JsonResponse(
+                {
+                    'ok': False,
+                    'error': 'This account has a PlayerAuctions edit in progress. Wait for that request to finish before moving it to Faulty Accounts.',
+                },
+                status=409,
+            )
+        if (
+            item.live_owned_product_id
+            and item.live_owned_product_id != item.owned_product_id
+        ):
+            return JsonResponse(
+                {
+                    'ok': False,
+                    'error': 'This historical row no longer owns the account. Move the current pool item instead.',
+                },
+                status=409,
+            )
+
+        # Retain every remote/order/history field.  ``REMOVED`` excludes the
+        # item from allocation while keeping the current live-owner lock in
+        # place, so the same account cannot silently re-enter another pool.
+        item.status = OfferPoolItemStatus.REMOVED
+        item.live_owned_product = item.owned_product
+        item.error_message = f'Manually moved to Faulty Accounts: {reason}'
+        item.failure_stage = 'manual_faulty_hold'
+        item.save(update_fields=[
+            'status', 'live_owned_product', 'error_message', 'failure_stage',
+            'updated_at',
+        ])
+        ManualFaultyPoolTransfer.objects.create(
+            pool_item=item,
+            reason=reason,
+            created_by=request.user,
+        )
+
+    return JsonResponse({
+        'ok': True,
+        'message': 'Account moved to Faulty Accounts. Marketplace and order history were kept; no marketplace action was sent.',
+        'pool_item_id': item.pk,
+    })
 
 
 @login_required

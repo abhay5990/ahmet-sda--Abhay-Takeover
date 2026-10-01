@@ -1625,6 +1625,40 @@ class PoolSaleEvent(models.Model):
         ]
 
 
+class ManualFaultyPoolTransfer(models.Model):
+    """Immutable local audit record for a staff decision to quarantine stock.
+
+    A transfer deliberately never deletes, edits, cancels, or relists a
+    marketplace offer.  The linked pool item retains its existing offer, order,
+    and sale evidence for audit while its terminal local state prevents it from
+    being selected for any future pool dispatch.
+    """
+
+    pool_item = models.OneToOneField(
+        OfferPoolItem,
+        on_delete=models.PROTECT,
+        related_name='manual_faulty_transfer',
+    )
+    reason = models.TextField()
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'manual_faulty_pool_transfers'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['-created_at']),
+        ]
+
+    def __str__(self):
+        return f"Manual faulty transfer for pool item {self.pool_item_id}"
+
+
 class PlayerAuctionsEditRequestStatus(models.TextChoices):
     QUEUED = 'queued', 'Queued'
     RUNNING = 'running', 'Running'

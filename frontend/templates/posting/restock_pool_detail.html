@@ -624,7 +624,7 @@
                                 <td class="px-3 py-2 font-mono text-indigo-700 whitespace-nowrap">{{ row.unique_code|default:"—" }}</td>
                                 <td class="px-3 py-2 text-center">{% if row.has_unresolved_order_hold %}<span class="inline-flex px-2 py-0.5 rounded-full bg-orange-100 text-orange-800">Sold — in delivery</span>{% else %}<span class="inline-flex px-2 py-0.5 rounded-full {% if row.item.status == 'pushed' %}bg-emerald-100 text-emerald-700{% elif row.item.status == 'consumed' %}bg-orange-100 text-orange-700{% elif row.item.status == 'failed' %}bg-red-100 text-red-700{% elif row.item.status == 'pending' %}bg-blue-100 text-blue-700{% else %}bg-gray-100 text-gray-700{% endif %}">{{ row.item.get_status_display }}</span>{% endif %}</td>
                                 <td class="px-3 py-2 text-gray-500">{% if row.is_sold %}<div class="font-medium text-orange-700">Sold — removed from active stock</div>{% if row.order_id %}<div class="mt-0.5 font-mono text-emerald-700">Verified order {{ row.order_id }}</div>{% else %}<div class="mt-0.5 text-gray-400">Sale record retained for audit</div>{% endif %}{% else %}<div class="font-mono break-all">{{ row.offer_id|default:"—" }}</div><div class="mt-0.5 text-[11px] {% if row.item.remote_state == 'present' %}text-emerald-600{% elif row.item.remote_state == 'absent' %}text-gray-400{% else %}text-amber-700{% endif %}">Remote delete: {{ row.item.remote_state|default:"not checked" }}</div>{% if row.has_unresolved_order_hold %}<div class="mt-0.5 text-amber-700">{{ row.unresolved_order_hold_label }}</div>{% elif row.item.error_message %}<div class="text-red-500 mt-0.5 truncate max-w-[12rem]" title="{{ row.item.error_message }}">{{ row.item.error_message }}</div>{% endif %}{% endif %}</td>
-                                <td class="px-3 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.security_email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.email_login_link|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if block.marketplace == 'playerauctions' and row.item.status == 'pushed' and row.relistable_pa_clone %}<button onclick="bumpPlayerAuctionsOffer({{ pool.id }}, {{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', this)" class="text-violet-700 hover:text-violet-900 mr-2 disabled:opacity-50">Bump PA Offer</button>{% endif %}{% if row.can_verify_unsold %}<button onclick="recoverUnsoldItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', this)" class="text-emerald-600 hover:text-emerald-800 mr-2 disabled:opacity-50">{{ row.verify_unsold_label }}</button>{% elif row.has_unresolved_order_hold %}<span class="text-orange-700" title="{{ row.unresolved_order_hold_label }}">Sold — locked</span>{% endif %}{% if row.item.status == 'reserved' %}{% elif row.active_clone and row.item.status == 'removed' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', true, this)" class="text-red-600 hover:text-red-800 disabled:opacity-50">Retry delete</button>{% elif row.item.pool_offer_id and row.item.status != 'removed' and not row.has_unresolved_order_hold or row.has_unresolved_order_hold and row.item.remote_state != 'absent' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', true, this)" class="text-red-600 hover:text-red-800 disabled:opacity-50">Delete</button>{% else %}<span class="text-gray-400">—</span>{% endif %}</td>
+                                <td class="px-3 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.security_email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.email_login_link|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if row.item.status != 'reserved' and row.item.status != 'queued' and row.item.status != 'removed' %}<button onclick="moveItemToFaulty({{ pool.id }}, {{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', this)" class="text-rose-700 hover:text-rose-900 mr-2 disabled:opacity-50">Move to Faulty</button>{% endif %}{% if block.marketplace == 'playerauctions' and row.item.status == 'pushed' and row.relistable_pa_clone %}<button onclick="bumpPlayerAuctionsOffer({{ pool.id }}, {{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', this)" class="text-violet-700 hover:text-violet-900 mr-2 disabled:opacity-50">Bump PA Offer</button>{% endif %}{% if row.can_verify_unsold %}<button onclick="recoverUnsoldItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', this)" class="text-emerald-600 hover:text-emerald-800 mr-2 disabled:opacity-50">{{ row.verify_unsold_label }}</button>{% elif row.has_unresolved_order_hold %}<span class="text-orange-700" title="{{ row.unresolved_order_hold_label }}">Sold — locked</span>{% endif %}{% if row.item.status == 'reserved' %}{% elif row.active_clone and row.item.status == 'removed' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', true, this)" class="text-red-600 hover:text-red-800 disabled:opacity-50">Retry delete</button>{% elif row.item.pool_offer_id and row.item.status != 'removed' and not row.has_unresolved_order_hold or row.has_unresolved_order_hold and row.item.remote_state != 'absent' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', true, this)" class="text-red-600 hover:text-red-800 disabled:opacity-50">Delete</button>{% else %}<span class="text-gray-400">—</span>{% endif %}</td>
                             </tr>
                             {% empty %}
                             <tr><td colspan="5" class="px-3 py-5 text-center text-gray-400">No accounts assigned to this store yet.</td></tr>
@@ -654,7 +654,7 @@
                 <thead class="bg-gray-50"><tr><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">#</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Login</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Unique code</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email Pass</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email Domain</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Recovery Email</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Recovery Email Pass</th><th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">State</th><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Detail</th><th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Action</th></tr></thead>
                 <tbody class="divide-y divide-gray-200">
                     {% for row in shared_item_rows %}
-                    <tr class="hover:bg-gray-50" id="item-{{ row.item.id }}"><td class="px-4 py-2 text-xs text-gray-400">{{ row.item.order }}</td><td class="px-4 py-2 font-mono">{{ row.item.owned_product.login }}</td><td class="px-4 py-2 font-mono text-indigo-700">{{ row.unique_code|default:"—" }}</td><td class="px-4 py-2 text-gray-500">{{ row.item.owned_product.email|default:"—" }}</td><td class="px-4 py-2 text-gray-500 font-mono text-xs">{{ row.item.owned_product.email_password|default:"—" }}</td><td class="px-4 py-2 text-gray-500 text-xs break-all">{{ row.item.owned_product.email_login_link|default:"—" }}</td><td class="px-4 py-2 text-gray-500 text-xs break-all">{{ row.item.owned_product.security_email|default:"—" }}</td><td class="px-4 py-2 text-gray-500 font-mono text-xs">{{ row.item.owned_product.security_email_password|default:"—" }}</td><td class="px-4 py-2 text-center"><span class="inline-flex px-2 py-0.5 text-xs rounded-full {% if row.item.status == 'pending' %}bg-blue-100 text-blue-700{% elif row.item.status == 'reserved' %}bg-amber-100 text-amber-700{% elif row.item.status == 'failed' %}bg-red-100 text-red-700{% else %}bg-gray-100 text-gray-700{% endif %}">{{ row.item.get_status_display }}</span></td><td class="px-4 py-2 text-xs text-red-500">{{ row.item.error_message|default:"Ready for assignment" }}</td><td class="px-4 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.security_email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.email_login_link|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-xs text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if row.item.status != 'reserved' and row.item.status != 'queued' %}<button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', false, this)" class="text-xs text-red-600 hover:text-red-800 disabled:opacity-50">Remove</button>{% else %}<span class="text-xs text-gray-400">—</span>{% endif %}</td></tr>
+                    <tr class="hover:bg-gray-50" id="item-{{ row.item.id }}"><td class="px-4 py-2 text-xs text-gray-400">{{ row.item.order }}</td><td class="px-4 py-2 font-mono">{{ row.item.owned_product.login }}</td><td class="px-4 py-2 font-mono text-indigo-700">{{ row.unique_code|default:"—" }}</td><td class="px-4 py-2 text-gray-500">{{ row.item.owned_product.email|default:"—" }}</td><td class="px-4 py-2 text-gray-500 font-mono text-xs">{{ row.item.owned_product.email_password|default:"—" }}</td><td class="px-4 py-2 text-gray-500 text-xs break-all">{{ row.item.owned_product.email_login_link|default:"—" }}</td><td class="px-4 py-2 text-gray-500 text-xs break-all">{{ row.item.owned_product.security_email|default:"—" }}</td><td class="px-4 py-2 text-gray-500 font-mono text-xs">{{ row.item.owned_product.security_email_password|default:"—" }}</td><td class="px-4 py-2 text-center"><span class="inline-flex px-2 py-0.5 text-xs rounded-full {% if row.item.status == 'pending' %}bg-blue-100 text-blue-700{% elif row.item.status == 'reserved' %}bg-amber-100 text-amber-700{% elif row.item.status == 'failed' %}bg-red-100 text-red-700{% else %}bg-gray-100 text-gray-700{% endif %}">{{ row.item.get_status_display }}</span></td><td class="px-4 py-2 text-xs text-red-500">{{ row.item.error_message|default:"Ready for assignment" }}</td><td class="px-4 py-2 text-right whitespace-nowrap"><button onclick="openEditItem({{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', '{{ row.item.owned_product.email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.security_email|default_if_none:""|escapejs }}', '{{ row.item.owned_product.email_login_link|default_if_none:""|escapejs }}', '{{ row.item.status }}')" class="text-xs text-indigo-600 hover:text-indigo-800 mr-2">Edit</button>{% if row.item.status != 'reserved' and row.item.status != 'queued' %}<button onclick="moveItemToFaulty({{ pool.id }}, {{ row.item.id }}, '{{ row.item.owned_product.login|escapejs }}', this)" class="text-xs text-rose-700 hover:text-rose-900 mr-2 disabled:opacity-50">Move to Faulty</button><button onclick="removeItem({{ pool.id }}, {{ row.item.id }}, '{{ row.item.status }}', false, this)" class="text-xs text-red-600 hover:text-red-800 disabled:opacity-50">Remove</button>{% else %}<span class="text-xs text-gray-400">—</span>{% endif %}</td></tr>
                     {% empty %}
                     <tr><td colspan="11" class="px-4 py-7 text-center text-gray-400">All available accounts have been assigned to a store.</td></tr>
                     {% endfor %}
@@ -732,11 +732,38 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="7" class="px-4 py-8 text-center text-gray-400">No faulty/replaced accounts from this pool.</td></tr>
+                    <tr><td colspan="7" class="px-4 py-8 text-center text-gray-400">No order-replaced accounts from this pool.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        {% if manual_faulty_transfers %}
+        <div class="border-t border-rose-100">
+            <div class="px-5 py-3 bg-rose-50/60 text-xs text-rose-900">Manual staff holds — local stock is quarantined only; original marketplace and order history is retained without a marketplace action.</div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-50"><tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Account</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Reason</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Moved by</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">When</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Marketplace history</th>
+                    </tr></thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for transfer in manual_faulty_transfers %}
+                        <tr class="hover:bg-rose-50/30">
+                            <td class="px-4 py-2 font-mono text-gray-800">{{ transfer.pool_item.owned_product.login }}</td>
+                            <td class="px-4 py-2 text-gray-700">{{ transfer.reason|truncatechars:120 }}</td>
+                            <td class="px-4 py-2 text-gray-700">{% if transfer.created_by %}{{ transfer.created_by.username }}{% else %}—{% endif %}</td>
+                            <td class="px-4 py-2 text-xs text-gray-500">{{ transfer.created_at|date:"Y-m-d H:i" }}</td>
+                            <td class="px-4 py-2 text-xs text-gray-600">{% if transfer.pool_item.pool_offer_id or transfer.pool_item.target_offer_id %}Retained{% else %}No linked offer{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     </div><!-- /ITEMS TAB -->
@@ -2181,6 +2208,40 @@ async function removeItem(poolId, itemId, status, assignedToOffer, btn) {
         window.location.reload();
     } catch (error) {
         alert(error.message || 'Failed to remove key');
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+    }
+}
+
+
+async function moveItemToFaulty(poolId, itemId, login, btn) {
+    const reason = prompt(`Why is “${login}” faulty?\n\nThis removes it from usable SDA pool stock but keeps its marketplace and order history. No marketplace delete, relist, or update will be sent.`);
+    if (!reason || reason.trim().length < 3) {
+        alert('A fault reason of at least 3 characters is required.');
+        return;
+    }
+    if (!confirm(`Move “${login}” to Faulty Accounts?\n\nIt will not be offered again from this pool. Existing marketplace history stays intact.`)) return;
+
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Moving...';
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value
+        || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+    try {
+        const response = await fetch(
+            `/posting/api/pools/${poolId}/items/${itemId}/move-to-faulty/`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+                body: JSON.stringify({ reason: reason.trim() }),
+            },
+        );
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.ok) throw new Error(data.error || 'Could not move account to Faulty Accounts.');
+        alert(data.message || 'Account moved to Faulty Accounts.');
+        location.reload();
+    } catch (error) {
+        alert(error.message || 'Could not move account to Faulty Accounts.');
         btn.disabled = false;
         btn.textContent = originalLabel;
     }

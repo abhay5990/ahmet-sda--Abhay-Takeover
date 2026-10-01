@@ -15,7 +15,7 @@ from apps.listings.models import Listing
 from apps.posting.models import (
     ContentTemplate, DropshippingJobConfig, OfferPool,
     OfferPoolActiveOffer, OfferPoolActiveOfferStatus, OfferPoolItem, OfferPoolItemStatus,
-    PoolOffer, PoolOfferStatus, PoolSaleEvent, PostingJob, PostingLog,
+    ManualFaultyPoolTransfer, PoolOffer, PoolOfferStatus, PoolSaleEvent, PostingJob, PostingLog,
 )
 from apps.posting.models import GameVariant
 from apps.posting.services.stock.pa_tracking import extract_tracking_code
@@ -1263,6 +1263,12 @@ def restock_pool_detail_page(request, pool_id):
         .select_related('old_product', 'new_product', 'order', 'created_by')
         .order_by('-created_at')
     )
+    manual_faulty_transfers = list(
+        ManualFaultyPoolTransfer.objects
+        .filter(pool_item__pool=pool)
+        .select_related('pool_item__owned_product', 'created_by')
+        .order_by('-created_at')
+    )
     faulty_items = {
         item.owned_product_id: item
         for item in OfferPoolItem.objects.filter(
@@ -1291,7 +1297,8 @@ def restock_pool_detail_page(request, pool_id):
 
     return render(request, 'posting/restock_pool_detail.html', {
         'faulty_replacements': faulty_replacements,
-        'faulty_count': len(faulty_replacements),
+        'manual_faulty_transfers': manual_faulty_transfers,
+        'faulty_count': len(faulty_replacements) + len(manual_faulty_transfers),
         'pool': pool,
         'pool_offers': pool_offers,
         'active_pool_offers': active_pool_offers,
