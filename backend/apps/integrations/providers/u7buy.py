@@ -1,8 +1,8 @@
 """U7Buy account-offer provider.
 
-This client intentionally supports no automatic delivery.  It is a narrow seller
-integration for catalog reads, manual-delivery account offers, offer lifecycle,
-and order-detail reads used by the normal SDA synchronization pipeline.
+The provider supports catalog reads, verified manual/automatic account-offer
+payloads, offer lifecycle, and order-detail reads. Automatic delivery remains
+fail-closed unless catalog configuration explicitly enables it.
 """
 
 from __future__ import annotations
@@ -198,7 +198,10 @@ class U7BuyProvider(AbstractProvider):
                 required=False,
                 help_text=(
                     "Optional until a game is enabled. Map the SDA game slug to its verified "
-                    "U7Buy entity_id, spu_id, and any required delivery/attribute IDs."
+                    "U7Buy entity_id, spu_id, and any required delivery/attribute IDs. "
+                    "Automatic account delivery additionally requires delivery_mode=automatic, "
+                    "automatic_delivery_enabled=true, and a catalog-verified "
+                    "automatic_delivery_type_id."
                 ),
             ),
             CredentialField(

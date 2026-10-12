@@ -114,6 +114,29 @@ class CredentialForm(forms.Form):
                 else:
                     if not isinstance(parsed, dict):
                         self.add_error('cred_game_service_config', 'The catalog configuration must be a JSON object.')
+                    else:
+                        for game_slug, service in parsed.items():
+                            if not isinstance(service, dict):
+                                self.add_error(
+                                    'cred_game_service_config',
+                                    f'{game_slug}: each game configuration must be a JSON object.',
+                                )
+                                continue
+                            mode = str(service.get('delivery_mode') or 'manual').strip().lower()
+                            if mode not in {'manual', 'automatic'}:
+                                self.add_error(
+                                    'cred_game_service_config',
+                                    f'{game_slug}: delivery_mode must be manual or automatic.',
+                                )
+                            if mode == 'automatic' and (
+                                service.get('automatic_delivery_enabled') is not True
+                                or not str(service.get('automatic_delivery_type_id') or '').strip()
+                            ):
+                                self.add_error(
+                                    'cred_game_service_config',
+                                    f'{game_slug}: automatic delivery requires automatic_delivery_enabled=true '
+                                    'and a catalog-verified automatic_delivery_type_id.',
+                                )
         return cleaned
 
     def save(self, account):

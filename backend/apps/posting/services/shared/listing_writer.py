@@ -26,6 +26,17 @@ from apps.posting.services.shared.utils import (
 logger = logging.getLogger(__name__)
 
 
+def _payload_for_audit(payload: dict | None, marketplace: str) -> dict | None:
+    """Return an audit-safe payload without marketplace delivery secrets."""
+    if payload is None:
+        return None
+    if marketplace == "u7buy":
+        from payload_pipeline.marketplaces.u7buy import sanitize_u7buy_payload_for_audit
+
+        return sanitize_u7buy_payload_for_audit(payload)
+    return payload
+
+
 def persist_success(
     *,
     item: PostingJobItem,
@@ -76,12 +87,13 @@ def persist_success(
     # Currency: from payload when available
     currency = extract_currency_from_payload(payload, marketplace) if payload else 'USD'
 
+    audit_payload = _payload_for_audit(payload, marketplace)
     if raw_data_override is not None:
         raw_data = raw_data_override
     else:
         raw_data: dict = {}
-        if payload:
-            raw_data['payload'] = payload
+        if audit_payload:
+            raw_data['payload'] = audit_payload
         if response_data is not None:
             raw_data['response'] = serialize_response(response_data)
 
@@ -188,12 +200,13 @@ def persist_multi_cred_success(
 
     currency = extract_currency_from_payload(payload, marketplace) if payload else 'USD'
 
+    audit_payload = _payload_for_audit(payload, marketplace)
     if raw_data_override is not None:
         raw_data = raw_data_override
     else:
         raw_data: dict = {}
-        if payload:
-            raw_data['payload'] = payload
+        if audit_payload:
+            raw_data['payload'] = audit_payload
         if response_data is not None:
             raw_data['response'] = serialize_response(response_data)
 

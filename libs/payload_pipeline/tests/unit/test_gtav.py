@@ -23,7 +23,7 @@ from payload_pipeline.games.gtav.account.credentials import (
 )
 from payload_pipeline.games.gtav.account.sources.manual import GtavManualSourceAdapter
 from payload_pipeline.marketplaces.g2g import G2GConfig
-from payload_pipeline.marketplaces.u7buy import U7BuyConfig
+from payload_pipeline.marketplaces.u7buy import U7BuyConfig, sanitize_u7buy_payload_for_audit
 
 from _variant_ctx import gtav_eldorado, gtav_gameboost, gtav_playerauctions
 
@@ -446,6 +446,46 @@ class TestGtavPipeline:
         assert result.payload["inventory"] == 1
         assert result.payload["deliveryType"] == "1888166069358653442"
         assert "password" not in result.payload["description"].lower()
+
+    def test_u7buy_automatic_payload_keeps_credentials_out_of_audits(self, load_fixture):
+        pipeline = PayloadPipeline(registry=build_default_registry())
+        prepared_result = pipeline.prepare_once(PipelineRequest(
+            game="grand-theft-auto-5",
+            category="account",
+            kind="stock",
+            sources={"lzt": load_fixture("lzt_gtav.json")},
+            context={ctx.DISABLE_MEDIA: True},
+        ))
+        assert prepared_result.success, f"prepare_once failed: {prepared_result.error}"
+        subject = prepared_result.prepared.subject
+
+        result = pipeline.build(
+            prepared_result.prepared,
+            BuildContext(
+                kind="stock",
+                marketplace="u7buy",
+                marketplace_config=U7BuyConfig(game_services={
+                    "grand-theft-auto-5": {
+                        "entity_id": "entity-1",
+                        "spu_id": "spu-1",
+                        "delivery_mode": "automatic",
+                        "automatic_delivery_enabled": True,
+                        "automatic_delivery_type_id": "automatic-1",
+                    },
+                }),
+            ),
+        )
+        assert result.success, f"build failed: {result.error}"
+        assert result.payload["deliveryType"] == "automatic-1"
+        assert "deliveryTime" not in result.payload
+        assert result.payload["keys"] == [{"encrypted": subject.credentials.to_multiline()}]
+        assert subject.credentials.password not in result.payload["description"]
+
+        audit_payload = sanitize_u7buy_payload_for_audit(result.payload)
+        assert "keys" not in audit_payload
+        assert audit_payload["_u7buy_delivery_mode"] == "automatic"
+        assert audit_payload["_u7buy_delivery_key_count"] == 1
+        assert subject.credentials.password not in str(audit_payload)
 
     def test_u7buy_payload_redacts_source_credentials_from_description(self, load_fixture):
         pipeline = PayloadPipeline(registry=build_default_registry())

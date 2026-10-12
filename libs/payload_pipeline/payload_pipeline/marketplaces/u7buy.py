@@ -1,11 +1,14 @@
-"""Manual-delivery U7Buy account-offer payload support.
+"""U7Buy account-offer payload support.
 
-The builder deliberately does not serialize account credentials.  U7Buy orders
-are fulfilled manually through SDA after a verified order-detail read.
+Manual delivery is the default. Automatic delivery is an explicit, catalog-
+verified opt-in that sends one owned account bundle only in U7Buy's documented
+``keys[].encrypted`` field. The bundle must never appear in public content,
+listing audit data, or logs.
 """
 
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import Any
@@ -39,7 +42,7 @@ class U7BuyConfig:
 
 
 class U7BuyAccountBuilder:
-    """Build a single-stock account offer with only manual delivery enabled."""
+    """Build one owned-account U7Buy offer with a verified delivery mode."""
 
     def __init__(self, game_slug: str) -> None:
         self.game_slug = game_slug
@@ -96,12 +99,14 @@ class U7BuyAccountBuilder:
             price *= Decimal(str(ctx.exchange_rate))
         price = price.quantize(Decimal("0.01"))
 
+        delivery_mode = str(service.get("delivery_mode") or "manual").strip().lower()
+        if delivery_mode not in {"manual", "automatic"}:
+            raise ValueError("U7Buy delivery_mode must be either manual or automatic")
+
         payload: dict[str, Any] = {
             "entityId": entity_id,
             "spuId": spu_id,
             "businessId": str(service.get("business_id") or U7BUY_ACCOUNT_BUSINESS_ID),
-            "deliveryType": str(service.get("delivery_type_id") or U7BUY_MANUAL_DELIVERY_ID),
-            "deliveryTime": str(service.get("delivery_time") or U7BUY_MANUAL_DELIVERY_TIME),
             "offerName": title,
             "description": description,
             "priceUsd": f"{price:.2f}",
@@ -109,6 +114,25 @@ class U7BuyAccountBuilder:
             "inventory": 1,
             "inventoryWarning": 1,
         }
+        if delivery_mode == "automatic":
+            if service.get("automatic_delivery_enabled") is not True:
+                raise ValueError(
+                    "U7Buy automatic delivery is disabled; enable it only after "
+                    "a seller catalog read confirms the exact SPU delivery type."
+                )
+            automatic_delivery_type_id = str(service.get("automatic_delivery_type_id") or "").strip()
+            if not automatic_delivery_type_id:
+                raise ValueError(
+                    "U7Buy automatic delivery requires a verified automatic_delivery_type_id"
+                )
+            if str(getattr(subject, "kind", "")) != "stock":
+                raise ValueError("U7Buy automatic delivery supports owned stock only")
+            credential_bundle = _automatic_delivery_bundle(subject)
+            payload["deliveryType"] = automatic_delivery_type_id
+            payload["keys"] = [{"encrypted": credential_bundle}]
+        else:
+            payload["deliveryType"] = str(service.get("delivery_type_id") or U7BUY_MANUAL_DELIVERY_ID)
+            payload["deliveryTime"] = str(service.get("delivery_time") or U7BUY_MANUAL_DELIVERY_TIME)
         if platform_id:
             payload["platId"] = str(platform_id)
         region_id = str(service.get("region_id") or "").strip()
@@ -150,3 +174,38 @@ def _redact_subject_credentials(value: str, subject: Any) -> str:
         if secret and len(str(secret).strip()) >= 3:
             redacted = redacted.replace(str(secret), "[redacted]")
     return redacted
+
+
+def _automatic_delivery_bundle(subject: Any) -> str:
+    """Return the one private account bundle accepted by U7Buy automatic offers.
+
+    U7Buy's documented request field is named ``encrypted``. Its public API does
+    not publish a client-side encryption algorithm or public key, so SDA does not
+    invent cryptography. This bundle is sent only to that documented field over
+    the authenticated HTTPS API and is removed from local audit representations.
+    """
+    credentials = getattr(subject, "credentials", None)
+    if credentials is None or not getattr(credentials, "login", "") or not getattr(credentials, "password", ""):
+        raise ValueError("U7Buy automatic delivery requires a non-empty account login and password")
+    bundle = credentials.to_multiline()
+    if not bundle.strip():
+        raise ValueError("U7Buy automatic delivery requires an account credential bundle")
+    return bundle
+
+
+def sanitize_u7buy_payload_for_audit(payload: dict[str, Any]) -> dict[str, Any]:
+    """Return a safe U7Buy payload copy that contains no delivery credential.
+
+    ``keys`` is intentionally removed instead of masked: a mask can still leak
+    shape or nested credential fields to logs and database JSON. Durable metadata
+    records only that automatic delivery was selected and how many bundles were
+    sent.
+    """
+    safe_payload = deepcopy(payload)
+    keys = safe_payload.pop("keys", None)
+    if isinstance(keys, list):
+        safe_payload["_u7buy_delivery_mode"] = "automatic"
+        safe_payload["_u7buy_delivery_key_count"] = len(keys)
+    else:
+        safe_payload["_u7buy_delivery_mode"] = "manual"
+    return safe_payload

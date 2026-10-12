@@ -1,10 +1,12 @@
 import hashlib
 import hmac
+import json
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 from django.test import RequestFactory, SimpleTestCase
 
+from apps.integrations.forms import CredentialForm
 from apps.integrations.api.u7buy_webhook import u7buy_webhook
 from apps.integrations.providers.u7buy import U7BuyClient, webhook_signature_is_valid
 
@@ -111,3 +113,27 @@ class U7BuyWebhookEndpointTests(SimpleTestCase):
             response = u7buy_webhook(request, self.account.slug)
         self.assertEqual(response.status_code, 401)
         create.assert_not_called()
+
+
+class U7BuyConfigurationTests(SimpleTestCase):
+    def test_automatic_mode_requires_catalog_verified_delivery_id(self):
+        form = CredentialForm(
+            provider="u7buy",
+            data={
+                "cred_app_id": "app-id",
+                "cred_app_secret": "app-secret",
+                "cred_game_service_config": json.dumps({
+                    "rust": {
+                        "entity_id": "entity-1",
+                        "spu_id": "spu-1",
+                        "delivery_mode": "automatic",
+                        "automatic_delivery_enabled": True,
+                    },
+                }),
+            },
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn(
+            "catalog-verified automatic_delivery_type_id",
+            " ".join(form.errors["cred_game_service_config"]),
+        )

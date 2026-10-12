@@ -1,8 +1,9 @@
-"""U7Buy seller-order sync with manual-delivery safety.
+"""U7Buy seller-order sync with manual and verified automatic delivery safety.
 
-No credential material is read from or written to U7Buy orders.  The normal
-SDA order pipeline links a verified offer ID to its Listing and consumes pool
-stock only after U7Buy reaches a confirmed sale state.
+Credential material is never read from U7Buy orders. An automatic account offer
+has already assigned the account at U7Buy's ``Preparing`` state, so SDA marks
+only those locally-tagged offers as instant for exact-offer cleanup. Pool stock
+still consumes only after the provider-confirmed completed state.
 """
 from __future__ import annotations
 
@@ -84,8 +85,7 @@ class U7BuyOrderSyncService(BaseSyncService):
         payload = raw_payload.payload
         price, currency = mapper.parse_price(payload)
         defaults: dict[str, Any] = {
-            # User-directed manual delivery is the only supported U7Buy mode.
-            "is_instant": False,
+            "is_instant": self._is_managed_automatic_offer(raw_payload, payload),
             "product_category": mapper.map_category(payload),
             "status": mapper.map_status(payload),
             "price": Decimal(str(price)),
@@ -102,6 +102,37 @@ class U7BuyOrderSyncService(BaseSyncService):
             if game:
                 defaults["game"] = game
         return self._upsert_order(raw_payload, defaults)
+
+    @staticmethod
+    def _is_managed_automatic_offer(raw_payload: RawPayload, payload: dict[str, Any]) -> bool:
+        """Return true only for an SDA-created U7Buy automatic account offer.
+
+        The provider order payload is not trusted to select delivery behavior.
+        This inspects the local listing's persisted redacted marker. Legacy or
+        manually-created U7Buy offers remain non-instant and never trigger
+        automatic cross-market reconciliation.
+        """
+        listing_id = mapper.extract_listing_id(payload)
+        account = raw_payload.integration_account
+        if not account or account.provider != "u7buy" or not listing_id:
+            return False
+        from apps.listings.models import Listing
+
+        listing = (
+            Listing.objects.filter(
+                integration_account=account,
+                store_listing_id=listing_id,
+            )
+            .only("raw_data")
+            .first()
+        )
+        if not listing or not isinstance(listing.raw_data, dict):
+            return False
+        persisted_payload = listing.raw_data.get("payload")
+        return bool(
+            isinstance(persisted_payload, dict)
+            and persisted_payload.get("_u7buy_delivery_mode") == "automatic"
+        )
 
     def recover_order_by_id(self, account: IntegrationAccount, order_id: str) -> str:
         """Read and apply a single signed-webhook order without moving cursors."""
