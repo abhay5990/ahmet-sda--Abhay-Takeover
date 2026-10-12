@@ -22,8 +22,9 @@
 - [x] Add one signed webhook ingress that dispatches U7Buy order and inventory events, verifies the documented HMAC over raw bytes, deduplicates events, fetches official order detail, and responds with `{"status":"OK"}` only after durable acceptance.
 - [x] Add an idempotent, scoped U7Buy order consumer that records incoming orders, matches an exact U7Buy offer to an SDA listing/pool item, consumes stock only after a provider-confirmed sale status, and schedules safe replenishment without credential auto-delivery.
 - [ ] Add U7Buy account-template defaults for Rust/GTA 5/Forza Horizon 6 and an admin/dashboard page containing connection status, live catalog refresh, mappings, webhook state, templates, and order/offer audit summaries.
-- [ ] Add migrations, unit/contract tests, targeted integration tests, production build/check, and a read-only official API readiness probe.
-- [ ] Save checkpoint(s), push the SDA GitHub release, deploy only after zero active posting/sync work, configure secrets outside Git, register the one verified webhook URL, and perform a read-only deployment health/revision check.
+- [x] Add migrations plus focused U7Buy provider, webhook, order-mapping, manual-delivery, and credential-redaction coverage. The focused suite passed; one unrelated existing Rust payload assertion still fails in the broad suite and was not changed.
+- [x] Push the SDA source release to GitHub at `6c19e0782aae`.
+- [ ] Deploy only after zero active posting/sync work, configure credentials outside Git, register the one verified webhook URL, and perform a read-only production API/health/revision check.
 
 ## Release validation
 
