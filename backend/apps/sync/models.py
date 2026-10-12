@@ -368,6 +368,48 @@ class GameBoostWebhookEvent(models.Model):
         return f'{self.topic}:{self.event_id} ({self.status})'
 
 
+class U7BuyWebhookEvent(models.Model):
+    """Sanitized, idempotent queue state for signed U7Buy callbacks.
+
+    Webhook payloads are intentionally not retained: the only authoritative
+    order data comes from a subsequent U7Buy order-detail read.
+    """
+
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'Pending'
+        PROCESSING = 'processing', 'Processing'
+        COMPLETED = 'completed', 'Completed'
+        FAILED = 'failed', 'Failed'
+
+    integration_account = models.ForeignKey(
+        'integrations.IntegrationAccount',
+        on_delete=models.CASCADE,
+        related_name='u7buy_webhook_events',
+    )
+    event_hash = models.CharField(max_length=64, unique=True)
+    topic = models.CharField(max_length=120)
+    external_order_id = models.CharField(max_length=128, blank=True)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    attempts = models.PositiveIntegerField(default=0)
+    last_error = models.TextField(blank=True)
+    received_at = models.DateTimeField(auto_now_add=True)
+    processed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'u7buy_webhook_events'
+        indexes = [
+            models.Index(fields=['status', 'received_at']),
+            models.Index(fields=['integration_account', 'status']),
+            models.Index(fields=['external_order_id']),
+        ]
+        ordering = ['received_at']
+
+    def __str__(self):
+        return f'{self.topic}:{self.external_order_id or self.event_hash[:12]} ({self.status})'
+
+
 class SyncFeatureFlag(models.Model):
     """Runtime feature toggles for sync chain steps.
 

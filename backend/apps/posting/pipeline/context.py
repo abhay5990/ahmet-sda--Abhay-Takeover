@@ -1,10 +1,12 @@
 """BuildContext factory — converts Django model fields to lib pricing + marketplace config."""
 from __future__ import annotations
+import json
 import logging
 from typing import Any
 from payload_pipeline.core.contracts import BuildContext, ListingKind
 from payload_pipeline.marketplaces.eldorado import EldoradoConfig
 from payload_pipeline.marketplaces.g2g import G2GConfig
+from payload_pipeline.marketplaces.u7buy import U7BuyConfig
 from payload_pipeline.pricing.rules import PricingRule
 
 logger = logging.getLogger(__name__)
@@ -84,6 +86,15 @@ def _marketplace_config(
     if marketplace == 'g2g':
         seller_id = store.credential.credentials.get('seller_id', '')
         return G2GConfig(seller_id=seller_id)
+    if marketplace == 'u7buy':
+        credentials = store.credential.credentials or {}
+        configured = credentials.get('game_service_config', {})
+        if isinstance(configured, str):
+            try:
+                configured = json.loads(configured)
+            except json.JSONDecodeError:
+                configured = {}
+        return U7BuyConfig(game_services=configured if isinstance(configured, dict) else {})
     return None
 
 

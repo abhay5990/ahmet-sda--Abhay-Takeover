@@ -168,6 +168,38 @@ def run_gameboost_webhook_event_job():
 
 
 @apscheduler_util.close_old_connections
+def run_u7buy_webhook_event_job():
+    """Process one signed U7Buy event per minute through its order-detail read."""
+    from apps.sync.services.u7buy.webhooks import process_next_u7buy_webhook_event
+
+    process_next_u7buy_webhook_event()
+
+
+@apscheduler_util.close_old_connections
+def run_u7buy_order_poll_job():
+    """Bounded fallback poll for active U7Buy seller accounts.
+
+    Signed webhooks make new orders prompt, while this poll covers missed or
+    delayed callbacks. U7Buy orders stay manual delivery regardless of source.
+    """
+    from apps.integrations.models import IntegrationAccount
+    from apps.sync.enums import ResourceType
+    from apps.sync.orchestrator import _sync_account
+
+    accounts = IntegrationAccount.objects.filter(
+        provider="u7buy",
+        is_active=True,
+        credential__is_active=True,
+        role__in=[IntegrationAccount.Role.SELL, IntegrationAccount.Role.BOTH],
+    ).select_related("credential")
+    for account in accounts:
+        try:
+            _sync_account(account, ResourceType.ORDERS)
+        except Exception:
+            logger.exception("U7Buy order poll failed for account=%s", account.slug)
+
+
+@apscheduler_util.close_old_connections
 def run_robuxcrate_batch_processor_job():
     """APScheduler wrapper — processes pending RobuxCrate order batches."""
     from apps.tools.services.robuxcrate import process_pending_batches
@@ -349,6 +381,26 @@ class Command(BaseCommand):
             trigger=IntervalTrigger(minutes=1),
             id='gameboost_webhook_events',
             name='GameBoost Signed Purchase Event Processor',
+            max_instances=1,
+            replace_existing=True,
+            next_run_time=datetime.now(),
+        )
+
+        scheduler.add_job(
+            run_u7buy_webhook_event_job,
+            trigger=IntervalTrigger(minutes=1),
+            id='u7buy_webhook_events',
+            name='U7Buy Signed Event Processor',
+            max_instances=1,
+            replace_existing=True,
+            next_run_time=datetime.now(),
+        )
+
+        scheduler.add_job(
+            run_u7buy_order_poll_job,
+            trigger=IntervalTrigger(minutes=2),
+            id='u7buy_order_poll',
+            name='U7Buy Seller Order Poll',
             max_instances=1,
             replace_existing=True,
             next_run_time=datetime.now(),

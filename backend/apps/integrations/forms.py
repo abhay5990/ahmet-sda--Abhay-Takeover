@@ -85,6 +85,14 @@ class CredentialForm(forms.Form):
                         'autocomplete': 'off',
                     }),
                 )
+            elif field_def.field_type == 'textarea':
+                self.fields[field_name] = forms.CharField(
+                    label=field_def.label,
+                    required=field_def.required and not (instance and instance.pk),
+                    initial=existing_creds.get(field_def.name, ''),
+                    help_text=field_def.help_text,
+                    widget=forms.Textarea(attrs={'class': TAILWIND_TEXTAREA, 'rows': 8}),
+                )
             else:
                 self.fields[field_name] = forms.CharField(
                     label=field_def.label,
@@ -93,6 +101,20 @@ class CredentialForm(forms.Form):
                     help_text=field_def.help_text,
                     widget=forms.TextInput(attrs={'class': TAILWIND_INPUT}),
                 )
+
+    def clean(self):
+        cleaned = super().clean()
+        if self.provider == 'u7buy':
+            value = cleaned.get('cred_game_service_config', '').strip()
+            if value:
+                try:
+                    parsed = json.loads(value)
+                except json.JSONDecodeError:
+                    self.add_error('cred_game_service_config', 'Enter valid JSON.')
+                else:
+                    if not isinstance(parsed, dict):
+                        self.add_error('cred_game_service_config', 'The catalog configuration must be a JSON object.')
+        return cleaned
 
     def save(self, account):
         credential, created = IntegrationCredential.objects.get_or_create(

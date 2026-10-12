@@ -30,6 +30,8 @@ def extract_title_from_payload(payload: dict, marketplace: str) -> str:
         # PA bulk uploads use the spreadsheet's capitalized column header,
         # while direct PA API posts use the regular JSON ``title`` key.
         return payload.get('title', '') or payload.get('Title', '')
+    if marketplace == 'u7buy':
+        return payload.get('offerName', '')
     return payload.get('title', '')
 
 
@@ -122,7 +124,7 @@ def extract_listing_id(response_data) -> str:
     """Extract the created offer's ID from a marketplace API response.
 
     Different marketplaces return the ID in different fields.
-    Tries: id → offer_id → listing_id → data (nested dict).
+    Tries: id → offer_id → offerId → listing_id → data (nested dict).
 
     Supports both plain dicts and Pydantic models.
     """
@@ -133,10 +135,10 @@ def extract_listing_id(response_data) -> str:
         response_data = response_data.dict()
 
     if isinstance(response_data, dict):
-        for key in ('id', 'offer_id', 'listing_id', 'data'):
+        for key in ('id', 'offer_id', 'offerId', 'listing_id', 'data'):
             val = response_data.get(key)
             if val is not None:
                 if isinstance(val, dict):
-                    return str(val.get('id', val.get('offer_id', '')))
+                    return str(val.get('id', val.get('offer_id', val.get('offerId', ''))))
                 return str(val)
     return str(response_data)

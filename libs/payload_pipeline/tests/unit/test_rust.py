@@ -159,7 +159,7 @@ class TestRustRegistration:
 
     def test_rust_has_correct_marketplaces(self):
         defn = build_default_registry().get_game("rust", "account")
-        assert set(defn.marketplaces.keys()) == {"eldorado", "gameboost", "playerauctions"}
+        assert set(defn.marketplaces.keys()) == {"eldorado", "gameboost", "playerauctions", "u7buy"}
 
 
 # ── Eldorado payload ──────────────────────────────────────────────

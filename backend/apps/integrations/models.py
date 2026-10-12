@@ -11,6 +11,7 @@ class Provider(models.TextChoices):
     ELDORADO = 'eldorado', 'Eldorado'
     GAMEBOOST = 'gameboost', 'Gameboost'
     PLAYERAUCTIONS = 'playerauctions', 'PlayerAuctions'
+    U7BUY = 'u7buy', 'U7Buy'
 
 
 class AccountGroup(models.Model):

@@ -57,12 +57,22 @@ class Command(BaseCommand):
         return (interval * 2) + 5
 
     def handle(self, *args, **options):
-        checks = (
+        checks = [
             SchedulerHealthCheck('sync_chain', SYNC_CHAIN_MAX_AGE_MINUTES),
             SchedulerHealthCheck('unbound_pool_sale_recovery', UNBOUND_RECOVERY_MAX_AGE_MINUTES),
             SchedulerHealthCheck('offer_pool_sweep', self._pool_sweep_max_age_minutes()),
             SchedulerHealthCheck('gameboost_webhook_events', 5),
-        )
+        ]
+        from apps.integrations.models import IntegrationAccount
+        if IntegrationAccount.objects.filter(
+            provider='u7buy',
+            is_active=True,
+            credential__is_active=True,
+        ).exists():
+            checks.extend([
+                SchedulerHealthCheck('u7buy_webhook_events', 5),
+                SchedulerHealthCheck('u7buy_order_poll', 7),
+            ])
         now = timezone.now()
         latest_run_by_job: dict[str, datetime | None] = {}
         for check in checks:
@@ -77,7 +87,7 @@ class Command(BaseCommand):
         stale = stale_job_ids(
             now=now,
             latest_run_by_job=latest_run_by_job,
-            checks=checks,
+            checks=tuple(checks),
         )
         if stale:
             raise CommandError(

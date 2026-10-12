@@ -6,6 +6,7 @@ from .manual_fields import FH6_MANUAL_FIELDS  # noqa: F401 — triggers registra
 from .media import Fh6MediaStrategy
 from .sources import Fh6ManualSourceAdapter
 from .marketplaces import Fh6EldoradoBuilder, Fh6GameBoostBuilder, Fh6PlayerAuctionsBuilder
+from ....marketplaces.u7buy import U7BuyAccountBuilder
 from ....core.enums import ListingCategory
 from ....core.registry import GameDefinition
 
@@ -22,6 +23,7 @@ def register(registry) -> None:
                 "eldorado": Fh6EldoradoBuilder(),
                 "gameboost": Fh6GameBoostBuilder(),
                 "playerauctions": Fh6PlayerAuctionsBuilder(),
+                "u7buy": U7BuyAccountBuilder("forza-horizon-6"),
             },
         )
     )

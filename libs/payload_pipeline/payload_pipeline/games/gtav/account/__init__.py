@@ -11,6 +11,7 @@ from .marketplaces import (
     GtavGameBoostBuilder,
     GtavPlayerAuctionsBuilder,
 )
+from ....marketplaces.u7buy import U7BuyAccountBuilder
 from ....core.enums import ListingCategory
 from ....core.registry import GameDefinition
 
@@ -28,6 +29,7 @@ def register(registry) -> None:
                 "g2g": GtavG2GBuilder(),
                 "gameboost": GtavGameBoostBuilder(),
                 "playerauctions": GtavPlayerAuctionsBuilder(),
+                "u7buy": U7BuyAccountBuilder("grand-theft-auto-5"),
             },
         )
     )

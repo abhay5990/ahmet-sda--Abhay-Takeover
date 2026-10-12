@@ -8,4 +8,11 @@ class IntegrationsConfig(AppConfig):
 
     def ready(self):
         # Auto-discover and register all providers
-        from apps.integrations.providers import lzt, eldorado, g2g, gameboost, playerauctions  # noqa: F401
+        from apps.integrations.providers import (  # noqa: F401
+            eldorado,
+            g2g,
+            gameboost,
+            lzt,
+            playerauctions,
+            u7buy,
+        )

@@ -4,6 +4,7 @@ from . import views
 from .api.gameboost_webhook import gameboost_purchase_webhook
 from .api.pa_gmail_order_event import pa_gmail_order_event
 from .api.token_broker import token_view
+from .api.u7buy_webhook import u7buy_webhook
 
 app_name = 'integrations'
 
@@ -21,6 +22,11 @@ urlpatterns = [
         'webhooks/gameboost/<slug:account_slug>/',
         gameboost_purchase_webhook,
         name='gameboost_purchase_webhook',
+    ),
+    path(
+        'webhooks/u7buy/<slug:account_slug>/',
+        u7buy_webhook,
+        name='u7buy_webhook',
     ),
     path('<slug:slug>/', views.AccountDetailView.as_view(), name='account_detail'),
     path('<slug:slug>/edit/', views.AccountUpdateView.as_view(), name='account_edit'),

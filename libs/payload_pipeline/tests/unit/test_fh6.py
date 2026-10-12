@@ -112,7 +112,7 @@ class TestFh6Registration:
 
     def test_fh6_has_all_supported_marketplaces(self):
         defn = build_default_registry().get_game("forza-horizon-6", "account")
-        assert set(defn.marketplaces.keys()) == {"eldorado", "gameboost", "playerauctions"}
+        assert set(defn.marketplaces.keys()) == {"eldorado", "gameboost", "playerauctions", "u7buy"}
 
 
 # ── Eldorado payload ──────────────────────────────────────────────

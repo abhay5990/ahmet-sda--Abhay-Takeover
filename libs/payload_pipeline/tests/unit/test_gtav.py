@@ -8,7 +8,13 @@ import pytest
 
 from payload_pipeline import PayloadPipeline, build_default_registry
 from payload_pipeline.core import context_keys as ctx
-from payload_pipeline.core.contracts import BuildContext, CredentialBundle, PipelineRequest
+from payload_pipeline.core.contracts import (
+    BuildContext,
+    CredentialBundle,
+    ListingContent,
+    ListingDraft,
+    PipelineRequest,
+)
 from payload_pipeline.games.gtav.account import GtavMediaStrategy, GtavResolver
 from payload_pipeline.games.gtav.account.media import GtavAccountCardRenderer, GtavCardData
 from payload_pipeline.games.gtav.account.credentials import (
@@ -17,6 +23,7 @@ from payload_pipeline.games.gtav.account.credentials import (
 )
 from payload_pipeline.games.gtav.account.sources.manual import GtavManualSourceAdapter
 from payload_pipeline.marketplaces.g2g import G2GConfig
+from payload_pipeline.marketplaces.u7buy import U7BuyConfig
 
 from _variant_ctx import gtav_eldorado, gtav_gameboost, gtav_playerauctions
 
@@ -308,7 +315,7 @@ class TestGtavRegistration:
         registry = build_default_registry()
         defn = registry.get_game("grand-theft-auto-5", "account")
         assert set(defn.marketplaces.keys()) == {
-            "eldorado", "gameboost", "g2g", "playerauctions",
+            "eldorado", "gameboost", "g2g", "playerauctions", "u7buy",
         }
 
 
@@ -411,6 +418,65 @@ class TestGtavPipeline:
             assert result.success
             results[mp] = result.payload
         assert set(results.keys()) == {"eldorado", "gameboost", "g2g", "playerauctions"}
+
+    def test_u7buy_payload_is_manual_delivery_without_credentials(self, load_fixture):
+        pipeline = PayloadPipeline(registry=build_default_registry())
+        prepared_result = pipeline.prepare_once(PipelineRequest(
+            game="grand-theft-auto-5",
+            category="account",
+            kind="stock",
+            sources={"lzt": load_fixture("lzt_gtav.json")},
+            context={ctx.DISABLE_MEDIA: True},
+        ))
+        assert prepared_result.success, f"prepare_once failed: {prepared_result.error}"
+
+        result = pipeline.build(
+            prepared_result.prepared,
+            BuildContext(
+                kind="stock",
+                marketplace="u7buy",
+                marketplace_config=U7BuyConfig(game_services={
+                    "grand-theft-auto-5": {"entity_id": "entity-1", "spu_id": "spu-1"},
+                }),
+            ),
+        )
+        assert result.success, f"build failed: {result.error}"
+        assert result.payload["entityId"] == "entity-1"
+        assert result.payload["spuId"] == "spu-1"
+        assert result.payload["inventory"] == 1
+        assert result.payload["deliveryType"] == "1888166069358653442"
+        assert "password" not in result.payload["description"].lower()
+
+    def test_u7buy_payload_redacts_source_credentials_from_description(self, load_fixture):
+        pipeline = PayloadPipeline(registry=build_default_registry())
+        prepared_result = pipeline.prepare_once(PipelineRequest(
+            game="grand-theft-auto-5",
+            category="account",
+            kind="stock",
+            sources={"lzt": load_fixture("lzt_gtav.json")},
+            context={ctx.DISABLE_MEDIA: True},
+        ))
+        assert prepared_result.success, f"prepare_once failed: {prepared_result.error}"
+        subject = prepared_result.prepared.subject
+        unsafe_listing = ListingDraft(default=ListingContent(
+            title="GTA V account — manual delivery",
+            description=f"Access: {subject.credentials.login} / {subject.credentials.password}",
+        ))
+
+        result = pipeline.build(
+            replace(prepared_result.prepared, listing=unsafe_listing),
+            BuildContext(
+                kind="stock",
+                marketplace="u7buy",
+                marketplace_config=U7BuyConfig(game_services={
+                    "grand-theft-auto-5": {"entity_id": "entity-1", "spu_id": "spu-1"},
+                }),
+            ),
+        )
+        assert result.success, f"build failed: {result.error}"
+        assert subject.credentials.login not in result.payload["description"]
+        assert subject.credentials.password not in result.payload["description"]
+        assert "[redacted]" in result.payload["description"]
 
     def test_eldorado_payload_shape(self, load_fixture):
         sources = {"lzt": load_fixture("lzt_gtav.json")}
