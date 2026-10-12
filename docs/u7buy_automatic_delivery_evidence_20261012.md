@@ -20,7 +20,7 @@ The owner changed the U7Buy SDA scope from manual account delivery to **automati
 3. Keep the public offer title and description credential-free. Put the account bundle only in `keys[].encrypted`.
 4. Persist only safe metadata for an automatic offer (`delivery_mode`, key count); remove `keys` before `Listing.raw_data` or any audit serialization.
 5. Treat an automatic U7Buy order linked to a managed automatic offer as instant at `Preparing` because credentials were already assigned. This permits existing exact-offer cross-market cleanup while never treating payment-verifying/payment-pending states as sold.
-6. Preserve the existing `Completed`-only pool-consumption rule for manual U7Buy orders. For automatic U7Buy, dispatch replenishment idempotently once a verified `Preparing` order is linked to an owned automatic offer, because the credential can no longer safely be reused after platform delivery.
+6. Preserve the existing `Completed`-only pool-consumption/replenishment rule for both manual and automatic U7Buy orders. Automatic U7Buy orders are marked instant at verified `Preparing` solely for exact-offer cross-market cleanup; they do not bypass the existing confirmed-sale pool rule.
 7. Require a read-only seller catalog check to prove automatic delivery availability for each approved Rust/GTA/FH6 SPU before enabling configuration. Require separate owner approval before any first live offer write.
 
 ## References
