@@ -343,7 +343,8 @@ def sweep_all_pools() -> dict[str, int]:
     due_cutoff = now - pool_check_interval()
     due_offers = [
         offer for offer in pool_offers
-        if offer.last_checked_at is None or offer.last_checked_at <= due_cutoff
+        if offer.marketplace != 'eldorado'
+        or offer.last_checked_at is None or offer.last_checked_at <= due_cutoff
     ]
     stats['not_due'] = len(pool_offers) - len(due_offers)
     pool_offers = due_offers

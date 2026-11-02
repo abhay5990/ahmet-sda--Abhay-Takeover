@@ -21,6 +21,10 @@ Rules enforced here, per Eldorado store:
 * Every request is counted per store per hour (reads, writes, 429s, refusals)
   so the real traffic can be checked: ``manage.py eldorado_traffic``.
 
+* ``ELDORADO_WRITES_HELD`` refuses all mutations locally, but never GETs.
+* A nonblocking per-store/offer lease protects caller read/merge/write cycles.
+  Callers must enter ``offer_mutation(offer_id)`` BEFORE reading inventory.
+
 State is a small JSON file per store guarded by ``fcntl.flock`` so gunicorn,
 the scheduler and the dropship worker on the same host share one budget.
 """
@@ -29,9 +33,11 @@ from __future__ import annotations
 
 import contextlib
 import fcntl
+import hashlib
 import json
 import os
 import re
+import threading
 import time
 from pathlib import Path
 from typing import Any, Callable, Iterator
@@ -39,7 +45,19 @@ from typing import Any, Callable, Iterator
 from apis_sdk.core.enums import ErrorCategory
 from apis_sdk.core.result import ApiResult
 
-WRITE_METHODS = frozenset({"create_offer", "update_offer", "delete_offer"})
+WRITE_METHODS = frozenset({
+    "create_offer", "update_offer", "delete_offer", "upload_image", "deliver_order",
+})
+OFFER_MUTATION_METHODS = frozenset({"update_offer", "delete_offer"})
+# Only confirmed GET operations bypass the write hold. Unknown public methods
+# (including future order status/feedback mutations) fail closed as writes.
+READ_METHODS = frozenset({
+    "search_my_offers", "get_seller_orders", "get_order_by_id",
+    "get_offer_state_counts", "get_order_account_details",
+    "get_offer_account_details", "get_seller_reviews", "get_notifications",
+})
+WRITES_HELD_RETRY_SECONDS = 31_536_000.0
+OFFER_LEASE_RETRY_SECONDS = 1.0
 COWBOY_BACKOFF_SECONDS = (180, 360, 720, 1800)
 COWBOY_CIRCUIT_THRESHOLD = 5
 COWBOY_CIRCUIT_SECONDS = 3600
@@ -47,6 +65,25 @@ READ_COOLDOWN_SECONDS = 60
 DEFAULT_WRITE_MIN_INTERVAL_SECONDS = 120
 DEFAULT_MAX_WRITE_WAIT_SECONDS = 130
 HOURS_KEPT = 72
+
+# Reentrancy is shared across facade/governor instances, but ONLY on the owning
+# thread. Separate opens/flocks prevent another thread from reusing that lease.
+_offer_lease_context = threading.local()
+_offer_lease_fds: set[int] = set()
+
+
+def _close_inherited_offer_leases() -> None:
+    """A forked child must neither reuse nor keep its parent's lease alive."""
+    global _offer_lease_context
+    for fd in _offer_lease_fds:
+        # Close, never LOCK_UN: the inherited open description belongs to the
+        # parent too, and explicitly unlocking it would release the parent lock.
+        os.close(fd)
+    _offer_lease_fds.clear()
+    _offer_lease_context = threading.local()
+
+
+os.register_at_fork(after_in_child=_close_inherited_offer_leases)
 
 
 def _env_float(name: str, default: float) -> float:
@@ -140,13 +177,80 @@ class EldoradoGovernor:
 
     # -- admission -------------------------------------------------------------
 
+    @staticmethod
+    def writes_held() -> bool:
+        """Read the emergency hold at admission time, never cache it."""
+        value = os.environ.get("ELDORADO_WRITES_HELD", "").strip().lower()
+        # Typos must not accidentally enable marketplace writes. Unset/empty
+        # retains the existing default; only explicit false values disable it.
+        return bool(value) and value not in {"false", "0", "no", "off"}
+
+    @contextlib.contextmanager
+    def offer_mutation(self, store: str, offer_id: str) -> Iterator[bool]:
+        """Try a host-local lease spanning the caller's read/merge/write cycle.
+
+        Busy/unavailable/held leases yield False without waiting. Same-thread
+        nesting is admitted, including update/delete inside an outer lease.
+        Files contain no data and their names contain only a hash of identifiers.
+        Never unlink lease files: doing so could create two independently locked
+        inodes for the same offer while an earlier caller still owns its lease.
+        """
+        if self.writes_held():
+            yield False
+            return
+        identifiers = json.dumps([store_key(store), str(offer_id)], ensure_ascii=True)
+        digest = hashlib.sha256(identifiers.encode("utf-8")).hexdigest()
+        path = self._dir / "offer-leases" / f"{digest}.lock"
+        key = (os.getpid(), str(path.resolve()))
+        held = getattr(_offer_lease_context, "held", None)
+        if held is None:
+            held = _offer_lease_context.held = {}
+        if key in held:
+            yield True
+            return
+
+        fd = None
+        acquired = False
+        try:
+            try:
+                path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+                fd = os.open(path, os.O_CREAT | os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW, 0o600)
+                _offer_lease_fds.add(fd)
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                acquired = True
+            except OSError:
+                # Includes contention and unavailable storage: neither is safe
+                # to bypass, and no caller read or write should start.
+                yield False
+                return
+            if self.writes_held():
+                yield False
+                return
+            held[key] = fd
+            try:
+                yield True
+            finally:
+                held.pop(key, None)
+        finally:
+            if fd is not None and key[0] == os.getpid():
+                try:
+                    if acquired:
+                        fcntl.flock(fd, fcntl.LOCK_UN)
+                finally:
+                    _offer_lease_fds.discard(fd)
+                    os.close(fd)
+
     def write_cooldown_remaining(self, store: str) -> float:
         with self._state(store) as state:
             return max(0.0, float(state.get("write_cooldown_until", 0)) - self._clock())
 
     def seconds_until_write(self, store: str) -> float:
         """0 when a write could start now; otherwise how long until it could."""
+        if self.writes_held():
+            return WRITES_HELD_RETRY_SECONDS
         with self._state(store) as state:
+            if self.writes_held():
+                return WRITES_HELD_RETRY_SECONDS
             now = self._clock()
             return max(
                 0.0,
@@ -161,7 +265,11 @@ class EldoradoGovernor:
         """
         waited = 0.0
         while True:
+            if self.writes_held():
+                return False, "writes_held", WRITES_HELD_RETRY_SECONDS
             with self._state(store) as state:
+                if self.writes_held():
+                    return False, "writes_held", WRITES_HELD_RETRY_SECONDS
                 now = self._clock()
                 cooldown = float(state.get("write_cooldown_until", 0)) - now
                 if cooldown > 0:
@@ -276,6 +384,19 @@ class GovernedEldoradoFacade:
     def seconds_until_write(self) -> float:
         return self.governor.seconds_until_write(self.governor_store)
 
+    def writes_held(self) -> bool:
+        return self.governor.writes_held()
+
+    @contextlib.contextmanager
+    def offer_mutation(self, offer_id: str) -> Iterator[bool]:
+        """Enter BEFORE reading; on False, skip work and retry with a fresh read.
+
+        The lease is not a write-budget reservation. Wrapped update/delete still
+        acquire the per-store budget while reusing this thread's outer lease.
+        """
+        with self.governor.offer_mutation(self.governor_store, offer_id) as admitted:
+            yield admitted
+
     def __getattr__(self, name: str) -> Any:
         attr = getattr(self._inner, name)
         if not callable(attr) or name.startswith("_"):
@@ -283,14 +404,41 @@ class GovernedEldoradoFacade:
         store = self.governor_store
         governor = self.governor
 
-        if name in WRITE_METHODS:
+        # Recognize aliases of known bound methods too. Everything except a
+        # confirmed GET is governed as a mutation, not silently treated as read.
+        canonical_name = name
+        if name not in WRITE_METHODS and name not in READ_METHODS:
+            for method in sorted(WRITE_METHODS | READ_METHODS):
+                if attr == getattr(self._inner, method, None):
+                    canonical_name = method
+                    break
+        if canonical_name not in READ_METHODS:
             def governed_write(*args: Any, **kwargs: Any) -> Any:
-                admitted, reason, retry_after = governor.acquire_write(store, max_wait=self._max_write_wait)
-                if not admitted:
-                    return _refused(reason, retry_after, store)
-                result = attr(*args, **kwargs)
-                governor.record_write_result(store, result)
-                return result
+                if governor.writes_held():
+                    return _refused("writes_held", WRITES_HELD_RETRY_SECONDS, store)
+                if canonical_name in OFFER_MUTATION_METHODS:
+                    offer_id = kwargs.get("offer_id", args[0] if args else None)
+                    if offer_id is None:
+                        raise TypeError(f"{name} requires offer_id")
+                    lease = self.offer_mutation(offer_id)
+                else:
+                    lease = contextlib.nullcontext(True)
+                with lease as leased:
+                    if not leased:
+                        if governor.writes_held():
+                            return _refused("writes_held", WRITES_HELD_RETRY_SECONDS, store)
+                        return _refused("offer_mutation_busy", OFFER_LEASE_RETRY_SECONDS, store)
+                    admitted, reason, retry_after = governor.acquire_write(
+                        store, max_wait=self._max_write_wait,
+                    )
+                    if not admitted:
+                        return _refused(reason, retry_after, store)
+                    # The hold may have changed while waiting for the budget.
+                    if governor.writes_held():
+                        return _refused("writes_held", WRITES_HELD_RETRY_SECONDS, store)
+                    result = attr(*args, **kwargs)
+                    governor.record_write_result(store, result)
+                    return result
             return governed_write
 
         def governed_read(*args: Any, **kwargs: Any) -> Any:

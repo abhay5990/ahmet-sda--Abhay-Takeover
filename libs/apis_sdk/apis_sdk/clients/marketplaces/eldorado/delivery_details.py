@@ -23,6 +23,7 @@ creating an offer the buyer cannot use.
 
 from __future__ import annotations
 
+from copy import deepcopy
 import re
 from typing import Any
 
@@ -187,12 +188,42 @@ def to_wire_payload(payload: dict[str, Any]) -> dict[str, Any]:
     return wire
 
 
+def preserved_delivery_details(response: Any) -> list[dict[str, Any]]:
+    """Keep every existing provider entry intact before replacing inventory.
+
+    Text is for display/matching, NOT a lossless transport encoding. Preserve
+    the original structured object including MFA/unknown fields, preferring it
+    even when a legacy rendering is also supplied. Refuse any unreadable entry
+    rather than silently omit an account from a subsequent full PUT.
+    """
+    if response is None:
+        raise EldoradoDeliveryDetailsError("missing authoritative account-details response")
+    fields_set = getattr(response, 'model_fields_set', None)
+    if fields_set is not None and not {'accountsDetails', 'secretDetails'}.intersection(fields_set):
+        raise EldoradoDeliveryDetailsError("missing authoritative account-details list; inventory replacement refused")
+    entries = getattr(response, "accountsDetails", None) or getattr(response, "secretDetails", None) or []
+    preserved: list[dict[str, Any]] = []
+    for entry in entries:
+        structured = getattr(entry, "structuredDetails", None)
+        if structured is not None:
+            account = structured.get("accountDetails") if isinstance(structured, dict) else None
+            if not isinstance(account, dict) or not account.get("accountLogin") or not account.get("accountPassword"):
+                raise EldoradoDeliveryDetailsError("existing delivery entry is unreadable; inventory replacement refused")
+            preserved.append(deepcopy(structured))
+        else:
+            text = str(getattr(entry, "secretDetails", "") or "").strip()
+            if not text:
+                raise EldoradoDeliveryDetailsError("existing delivery entry is unreadable; inventory replacement refused")
+            preserved.append(secret_text_to_delivery_detail(text))
+    return preserved
+
+
 def delivery_detail_to_secret_text(detail: dict[str, Any]) -> str:
     """Render one structured Eldorado delivery detail back to SDA's text form.
 
-    Inverse of :func:`secret_text_to_delivery_detail` (round-trips through it),
-    used when Eldorado returns ``structuredDetails`` without
-    ``legacySecretDetails`` so existing credentials are never dropped.
+    This rendering is for display/identity matching only. Inventory writes must
+    use :func:`preserved_delivery_details`, not round-trip this text, because
+    structured MFA and unknown provider fields are not represented here.
     """
     if not isinstance(detail, dict):
         return ""

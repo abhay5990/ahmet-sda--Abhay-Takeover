@@ -89,6 +89,9 @@ class EldoradoOfferAccountDetail(BaseModel):
 
     id: str = ""
     secretDetails: str = ""
+    # Private in-memory transport data, never reconstructed from display text.
+    # In particular, retain MFA and unknown provider fields during an append.
+    structuredDetails: dict[str, Any] | None = Field(default=None, repr=False)
 
 
 def _normalize_account_delivery_details(data: Any, *, also_secret_details: bool = False) -> Any:
@@ -112,11 +115,18 @@ def _normalize_account_delivery_details(data: Any, *, also_secret_details: bool 
     mapped = []
     for entry in entries:
         if not isinstance(entry, dict):
+            # Keep an unreadable placeholder so a full PUT fails closed rather
+            # than silently losing an existing provider inventory unit.
+            mapped.append({"id": "", "secretDetails": ""})
             continue
         text = str(entry.get("legacySecretDetails") or "").strip()
         if not text and isinstance(entry.get("structuredDetails"), dict):
             text = delivery_detail_to_secret_text(entry["structuredDetails"])
-        mapped.append({"id": str(entry.get("id") or ""), "secretDetails": text})
+        mapped.append({
+            "id": str(entry.get("id") or ""),
+            "secretDetails": text,
+            "structuredDetails": entry.get("structuredDetails"),
+        })
     out = dict(data)
     out["accountsDetails"] = mapped
     if also_secret_details:

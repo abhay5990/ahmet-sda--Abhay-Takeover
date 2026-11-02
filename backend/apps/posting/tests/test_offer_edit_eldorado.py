@@ -1,9 +1,11 @@
+from contextlib import contextmanager
 from decimal import Decimal
 from types import SimpleNamespace
 from unittest.mock import patch
 
 from django.test import TestCase
 
+from apis_sdk.clients.marketplaces.eldorado.models import EldoradoOfferCredentialsResponse
 from apps.integrations.models import IntegrationAccount, IntegrationCredential
 from apps.inventory.models import Category, Game, OwnedProduct
 from apps.listings.models import Listing, ListingOwnedProduct
@@ -12,278 +14,129 @@ from apps.posting.services.pa_edit_queue import enqueue_pa_edit
 from apps.posting.services import offer_editor
 
 
+class FreshReadClient:
+    def __init__(self, readable=True):
+        self.readable = readable
+        self.leased = False
+
+    @contextmanager
+    def offer_mutation(self, offer_id):
+        self.leased = True
+        try:
+            yield True
+        finally:
+            self.leased = False
+
+    def get_offer_account_details(self, *args, **kwargs):
+        assert self.leased
+        return SimpleNamespace(ok=self.readable, data=EldoradoOfferCredentialsResponse.model_validate({
+            'accountsDetails': [{'id': 'credential-1', 'secretDetails': 'Login: fixture\nPassword: fixture-password'}]
+        }) if self.readable else None)
+
+
 class EldoradoEditPayloadTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.category = Category.objects.create(name="acc", title="Account")
-        cls.game = Game.objects.create(name="Fortnite", slug="fortnite", category=cls.category)
+        cls.category = Category.objects.create(name='acc', title='Account')
+        cls.game = Game.objects.create(name='Fortnite', slug='fortnite', category=cls.category)
 
     def _listing(self):
-        store = IntegrationAccount.objects.create(
-            name="Eldorado edit store",
-            slug="eldorado-edit-store",
-            provider="eldorado",
-            role="sell",
-        )
-        IntegrationCredential.objects.create(account=store, credentials={"test": "x"})
+        store = IntegrationAccount.objects.create(name='Eldorado edit store', slug='eldorado-edit-store', provider='eldorado', role='sell')
+        IntegrationCredential.objects.create(account=store, credentials={'test': 'x'})
         return Listing.objects.create(
-            is_instant=True,
-            integration_account=store,
-            game=self.game,
-            store_listing_id="eldorado-offer-1",
-            status="listed",
-            title="Old title",
-            price=Decimal("20.00"),
-            currency="USD",
-            raw_data={
-                "offerTitle": "Old title",
-                "description": "Old description",
-                "pricePerUnit": {"amount": 20.0, "currency": "USD"},
-                "quantity": 1,
-                "gameId": "70",
-                "tradeEnvironmentValues": [],
-                "attributes": [],
-                "_credential_entries": [
-                    {"id": "credential-1", "secretDetails": "login\npassword"},
-                ],
+            is_instant=True, integration_account=store, game=self.game,
+            store_listing_id='eldorado-offer-1', status='listed', title='Old title',
+            price=Decimal('20.00'), currency='USD', raw_data={
+                'offerTitle': 'Old title', 'description': 'Old description',
+                'pricePerUnit': {'amount': 20.0, 'currency': 'USD'}, 'quantity': 1,
+                'gameId': '70', 'tradeEnvironmentValues': [], 'attributes': [],
+                '_credential_entries': [{'id': 'credential-1', 'secretDetails': 'Login: stale-local\nPassword: stale-local-fixture'}],
             },
         )
 
-    def test_eldorado_edit_uses_canonical_update_payload(self):
+    def _edit(self, listing, changes, client, provider):
+        with patch.object(offer_editor, 'build_proxy_pool', return_value=None), \
+             patch.object(offer_editor, 'get_group_name', return_value=''), \
+             patch.object(offer_editor, 'get_or_build_client', return_value=client), \
+             patch.object(offer_editor, 'get_provider', return_value=provider):
+            return offer_editor.edit_offer(listing, changes)
+
+    def test_eldorado_edit_uses_fresh_canonical_update_payload(self):
         listing = self._listing()
         captured = {}
-
         class Provider:
             def update_listing(self, client, external_id, payload):
-                captured["external_id"] = external_id
-                captured["payload"] = payload
+                assert client.leased
+                captured.update(external_id=external_id, payload=payload)
                 return SimpleNamespace(ok=True, error=None)
-
-        client = SimpleNamespace(
-            get_offer_account_details=lambda offer_id, proxy_group=None: SimpleNamespace(
-                ok=False, data=None,
-            ),
-        )
-        with patch("apps.posting.services.offer_editor.build_proxy_pool", return_value=None), \
-                patch("apps.posting.services.offer_editor.get_group_name", return_value=""), \
-                patch("apps.posting.services.offer_editor.get_or_build_client", return_value=client), \
-                patch("apps.posting.services.offer_editor.get_provider", return_value=Provider()):
-            result = offer_editor.edit_offer(
-                listing,
-                {
-                    "title": "New title",
-                    "description": "New description",
-                    "price": Decimal("31.50"),
-                },
-            )
-
+        result = self._edit(listing, {'title': 'New title', 'description': 'New description', 'price': Decimal('31.50')}, FreshReadClient(), Provider())
         self.assertTrue(result.ok, result.error)
-        self.assertEqual(captured["external_id"], "eldorado-offer-1")
-        payload = captured["payload"]
-        self.assertIn("accountSecretDetails", payload)
-        self.assertNotIn("accountDetails", payload)
-        self.assertEqual(payload["accountSecretDetails"][0], "login\npassword")
-        self.assertEqual(payload["details"]["offerTitle"], "New title")
-        self.assertEqual(payload["details"]["description"], "New description")
-        self.assertEqual(payload["details"]["pricing"]["pricePerUnit"]["amount"], 31.5)
-        self.assertEqual(payload["details"]["pricing"]["minQuantity"], 1)
-        self.assertEqual(payload["details"]["pricing"]["volumeDiscounts"], [])
-        self.assertEqual(payload["augmentedGame"]["gameId"], "70")
-        self.assertIsNone(payload["augmentedGame"]["tradeEnvironmentId"])
+        self.assertEqual(captured['external_id'], 'eldorado-offer-1')
+        payload = captured['payload']
+        self.assertEqual(payload['accountSecretDetails'], ['Login: fixture\nPassword: fixture-password'])
+        self.assertEqual(payload['accountDeliveryDetails'][0]['accountDetails']['accountLogin'], 'fixture')
+        self.assertEqual(payload['details']['offerTitle'], 'New title')
+        self.assertEqual(payload['details']['description'], 'New description')
+        self.assertEqual(payload['details']['pricing']['pricePerUnit']['amount'], 31.5)
+        self.assertEqual(payload['details']['pricing']['minQuantity'], 1)
+        self.assertEqual(payload['augmentedGame']['gameId'], '70')
+        listing.refresh_from_db()
+        self.assertEqual(listing.title, 'New title')
 
-    def test_edit_prefers_managed_stock_and_includes_full_credentials(self):
+    def test_managed_stock_cannot_replace_an_unverified_remote_snapshot(self):
         listing = self._listing()
-        product = OwnedProduct.objects.create(
-            login="managed-login",
-            password="managed-pass",
-            password_hash="managed-hash",
-            email="managed@example.com",
-            email_password="managed-email-pass",
-            category=self.category,
-            game=self.game,
-        )
+        product = OwnedProduct.objects.create(login='managed-fixture', password='fixture-password', password_hash='fixture-hash', category=self.category, game=self.game)
         ListingOwnedProduct.objects.create(listing=listing, owned_product=product)
-        captured = {}
+        provider = SimpleNamespace(update_listing=lambda *args: self.fail('Unverified inventory must never be sent'))
+        result = self._edit(listing, {'title': 'Must not apply'}, FreshReadClient(readable=False), provider)
+        self.assertFalse(result.ok)
+        listing.refresh_from_db()
+        self.assertEqual(listing.title, 'Old title')
+        self.assertEqual(listing.store_listing_id, 'eldorado-offer-1')
 
-        class Provider:
-            def update_listing(self, client, external_id, payload):
-                captured["payload"] = payload
-                return SimpleNamespace(ok=True, error=None)
-
-        class Client:
-            def get_offer_account_details(self, *args, **kwargs):
-                raise AssertionError("managed credentials should avoid remote credential lookup")
-
-        with patch("apps.posting.services.offer_editor.build_proxy_pool", return_value=None), \
-                patch("apps.posting.services.offer_editor.get_group_name", return_value=""), \
-                patch("apps.posting.services.offer_editor.get_or_build_client", return_value=Client()), \
-                patch("apps.posting.services.offer_editor.get_provider", return_value=Provider()):
-            result = offer_editor.edit_offer(listing, {"title": "Managed credentials title"})
-
-        self.assertTrue(result.ok, result.error)
-        secret = captured["payload"]["accountSecretDetails"][0]
-        self.assertIn("Login: managed-login", secret)
-        self.assertIn("Password: managed-pass", secret)
-        self.assertIn("Login: managed@example.com", secret)
-        self.assertIn("Password: managed-email-pass", secret)
-
-    def test_pool_pushed_item_supplies_credentials_for_instant_delivery_edit(self):
+    def test_pool_pushed_item_cannot_bypass_fresh_read_requirement(self):
         listing = self._listing()
-        pool = OfferPool.objects.create(
-            game=self.game,
-            store=listing.integration_account,
-            strategy="append",
-        )
-        pool_offer = PoolOffer.objects.create(
-            pool=pool,
-            listing=listing,
-            strategy="append",
-            target_count=1,
-            threshold=1,
-        )
-        product = OwnedProduct.objects.create(
-            login="pool-login",
-            password="pool-pass",
-            password_hash="pool-hash",
-            email="pool@example.com",
-            email_password="pool-email-pass",
-            category=self.category,
-            game=self.game,
-        )
-        OfferPoolItem.objects.create(
-            pool=pool,
-            pool_offer=pool_offer,
-            owned_product=product,
-            status=OfferPoolItemStatus.PUSHED,
-        )
-        captured = {}
-
-        class Provider:
-            def update_listing(self, client, external_id, payload):
-                captured["payload"] = payload
-                return SimpleNamespace(ok=True, error=None)
-
-        client = SimpleNamespace(
-            get_offer_account_details=lambda *args, **kwargs: SimpleNamespace(ok=False, data=None),
-        )
-        with patch("apps.posting.services.offer_editor.build_proxy_pool", return_value=None), \
-                patch("apps.posting.services.offer_editor.get_group_name", return_value=""), \
-                patch("apps.posting.services.offer_editor.get_or_build_client", return_value=client), \
-                patch("apps.posting.services.offer_editor.get_provider", return_value=Provider()):
-            result = offer_editor.edit_offer(listing, {"price": Decimal("22.00")})
-
-        self.assertTrue(result.ok, result.error)
-        secret = captured["payload"]["accountSecretDetails"][0]
-        self.assertIn("Login: pool-login", secret)
-        self.assertIn("Password: pool-pass", secret)
-        self.assertIn("Login: pool@example.com", secret)
-        self.assertIn("Password: pool-email-pass", secret)
+        pool = OfferPool.objects.create(game=self.game, store=listing.integration_account, strategy='append')
+        pool_offer = PoolOffer.objects.create(pool=pool, listing=listing, strategy='append', target_count=1, threshold=1)
+        product = OwnedProduct.objects.create(login='pool-fixture', password='fixture-password', password_hash='fixture-hash', category=self.category, game=self.game)
+        OfferPoolItem.objects.create(pool=pool, pool_offer=pool_offer, owned_product=product, status=OfferPoolItemStatus.PUSHED)
+        provider = SimpleNamespace(update_listing=lambda *args: self.fail('Stale local pool inventory must never be sent'))
+        result = self._edit(listing, {'price': Decimal('22.00')}, FreshReadClient(readable=False), provider)
+        self.assertFalse(result.ok)
+        listing.refresh_from_db()
+        self.assertEqual(listing.price, Decimal('20.00'))
 
     def test_pa_queue_persists_decimal_price_as_json_safe_value(self):
         listing = self._listing()
+        request = enqueue_pa_edit(listing=listing, changes={'title': 'Queued title', 'description': 'Queued description', 'price': Decimal('34.90')})
+        self.assertEqual(request.changes['price'], '34.90')
+        self.assertEqual(request.changes['title'], 'Queued title')
+        self.assertEqual(request.changes['description'], 'Queued description')
 
-        request = enqueue_pa_edit(
-            listing=listing,
-            changes={
-                "title": "Queued title",
-                "description": "Queued description",
-                "price": Decimal("34.90"),
-            },
-        )
-
-        self.assertEqual(request.changes["price"], "34.90")
-        self.assertEqual(request.changes["title"], "Queued title")
-        self.assertEqual(request.changes["description"], "Queued description")
-
-    def test_legacy_edit_recreates_offer_and_hands_off_listing(self):
+    def _assert_failed_update_preserves_offer(self, message):
         listing = self._listing()
         calls = []
-
         class Provider:
             def update_listing(self, client, external_id, payload):
-                calls.append(("update", external_id))
-                return SimpleNamespace(
-                    ok=False,
-                    error=(
-                        "ErrorDetail(message='Cannot update structured details on "
-                        "a legacy account entry. Use the structured creation flow instead.')"
-                    ),
-                )
+                assert client.leased
+                calls.append('update')
+                return SimpleNamespace(ok=False, error=message)
+            def create_listing(self, *args, **kwargs):
+                raise AssertionError('A failed edit cannot create a replacement')
+            def delete_listing(self, *args, **kwargs):
+                raise AssertionError('A failed edit cannot delete the original')
+        result = self._edit(listing, {'title': 'Must not apply', 'price': Decimal('24.00')}, FreshReadClient(), Provider())
+        self.assertFalse(result.ok)
+        self.assertEqual(calls, ['update'])
+        listing.refresh_from_db()
+        self.assertEqual(listing.status, 'listed')
+        self.assertEqual(listing.store_listing_id, 'eldorado-offer-1')
+        self.assertEqual(listing.title, 'Old title')
+        self.assertEqual(listing.price, Decimal('20.00'))
+        self.assertEqual(Listing.objects.count(), 1)
 
-            def create_listing(self, client, product_data):
-                calls.append(("create", product_data["payload"]))
-                return SimpleNamespace(ok=True, data={"id": "eldorado-offer-2"})
+    def test_legacy_content_rejection_preserves_original_without_recreate(self):
+        self._assert_failed_update_preserves_offer('Cannot update structured details on a legacy account entry')
 
-            def delete_listing(self, client, external_id):
-                calls.append(("delete", external_id))
-                return SimpleNamespace(ok=True, error=None)
-
-        client = SimpleNamespace(
-            get_offer_account_details=lambda offer_id, proxy_group=None: SimpleNamespace(
-                ok=False, data=None,
-            ),
-        )
-        with patch("apps.posting.services.offer_editor.build_proxy_pool", return_value=None), \
-                patch("apps.posting.services.offer_editor.get_group_name", return_value=""), \
-                patch("apps.posting.services.offer_editor.get_or_build_client", return_value=client), \
-                patch("apps.posting.services.offer_editor.get_provider", return_value=Provider()):
-            result = offer_editor.edit_offer(
-                listing,
-                {"title": "Recreated title", "price": Decimal("22.25")},
-            )
-
-        self.assertTrue(result.ok, result.error)
-        self.assertEqual(result.new_offer_id, "eldorado-offer-2")
-        self.assertEqual([item[0] for item in calls], ["update", "create", "delete"])
-        self.assertEqual(calls[1][1]["details"]["offerTitle"], "Recreated title")
-        self.assertEqual(
-            calls[1][1]["details"]["pricing"]["pricePerUnit"]["amount"],
-            22.25,
-        )
-        self.assertFalse(Listing.objects.filter(pk=listing.pk, status="listed").exists())
-        replacement = Listing.objects.get(store_listing_id="eldorado-offer-2")
-        self.assertEqual(replacement.title, "Recreated title")
-        self.assertEqual(replacement.price, Decimal("22.25"))
-
-    def test_verified_account_entries_recreate_on_legacy_instant_delivery_error(self):
-        listing = self._listing()
-        product = OwnedProduct.objects.create(
-            login="legacy-login",
-            password="legacy-pass",
-            password_hash="legacy-hash",
-            email="legacy@example.com",
-            email_password="legacy-email-pass",
-            category=self.category,
-            game=self.game,
-        )
-        ListingOwnedProduct.objects.create(listing=listing, owned_product=product)
-        calls = []
-
-        class Provider:
-            def update_listing(self, client, external_id, payload):
-                calls.append(("update", len(payload["accountSecretDetails"])))
-                return SimpleNamespace(
-                    ok=False,
-                    error="HTTP 400: Instant delivery must contain account details.",
-                )
-
-            def create_listing(self, client, product_data):
-                calls.append(("create", len(product_data["payload"]["accountSecretDetails"])))
-                return SimpleNamespace(ok=True, data={"id": "eldorado-offer-legacy-recreated"})
-
-            def delete_listing(self, client, external_id):
-                calls.append(("delete", external_id))
-                return SimpleNamespace(ok=True, error=None)
-
-        client = SimpleNamespace(
-            get_offer_account_details=lambda offer_id, proxy_group=None: SimpleNamespace(ok=False, data=None),
-        )
-        with patch("apps.posting.services.offer_editor.build_proxy_pool", return_value=None), \
-                patch("apps.posting.services.offer_editor.get_group_name", return_value=""), \
-                patch("apps.posting.services.offer_editor.get_or_build_client", return_value=client), \
-                patch("apps.posting.services.offer_editor.get_provider", return_value=Provider()):
-            result = offer_editor.edit_offer(listing, {"price": Decimal("24.00")})
-
-        self.assertTrue(result.ok, result.error)
-        self.assertEqual(result.new_offer_id, "eldorado-offer-legacy-recreated")
-        self.assertEqual(calls, [("update", 1), ("create", 1), ("delete", "eldorado-offer-1")])
+    def test_instant_delivery_rejection_preserves_original_without_recreate(self):
+        self._assert_failed_update_preserves_offer('HTTP 400: Instant delivery must contain account details.')

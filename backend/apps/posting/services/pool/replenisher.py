@@ -427,10 +427,26 @@ def _push_eldorado(
     items: list[OfferPoolItem],
     proxy_group: str | None,
 ) -> int:
-    """Eldorado: fetch current creds, append new ones, update offer.
+    """Hold the same cross-process offer lease from fresh read through PUT."""
+    mutation = getattr(client, 'offer_mutation', None)
+    if not callable(mutation):
+        release_claims_as_pending(items, 'Eldorado offer serialization unavailable')
+        return 0
+    with mutation(offer_id) as admitted:
+        if not admitted:
+            release_claims_as_pending(items, 'Eldorado offer mutation busy or writes held')
+            return 0
+        return _push_eldorado_locked(pool, client, offer_id, items, proxy_group)
 
-    On rate limit (429): delete offer, recreate with all creds, update listing.
-    """
+
+def _push_eldorado_locked(
+    pool: OfferPool,
+    client: Any,
+    offer_id: str,
+    items: list[OfferPoolItem],
+    proxy_group: str | None,
+) -> int:
+    """Append only after preserving an authoritative, lease-protected snapshot."""
     # Fetch current credentials
     details_result = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
     if not details_result.ok:
@@ -441,6 +457,18 @@ def _push_eldorado(
             detail={'pool_id': pool.pk, 'offer_id': offer_id, 'error': str(details_result.error)},
         )
         release_claims_as_pending(items, 'Could not fetch Eldorado offer credentials')
+        return 0
+
+    from apis_sdk.clients.marketplaces.eldorado.delivery_details import (
+        EldoradoDeliveryDetailsError,
+        preserved_delivery_details,
+        secret_text_to_delivery_detail,
+    )
+    try:
+        existing_delivery = preserved_delivery_details(details_result.data)
+    except EldoradoDeliveryDetailsError:
+        release_claims_as_pending(items, 'Existing Eldorado delivery entry is unreadable')
+        _park_pool_offer_for_attention(pool, 'Existing delivery details cannot be preserved safely')
         return 0
 
     # Build existing + new credential list
@@ -477,6 +505,15 @@ def _push_eldorado(
     from apps.posting.services.offer_editor import build_eldorado_full_update_payload
 
     update_payload = build_eldorado_full_update_payload(pool.listing, all_creds)
+    try:
+        update_payload['accountDeliveryDetails'] = existing_delivery + [
+            secret_text_to_delivery_detail(credential) for credential in new_creds
+        ]
+    except EldoradoDeliveryDetailsError:
+        release_claims_as_pending(valid_items, 'New Eldorado delivery entry is invalid')
+        _park_pool_offer_for_attention(pool, 'New delivery details cannot be represented safely')
+        return 0
+    update_payload['details']['pricing']['quantity'] = len(update_payload['accountDeliveryDetails'])
     result = client.update_offer(offer_id, update_payload, proxy_group=proxy_group)
 
     if result.ok:
@@ -507,13 +544,13 @@ def _push_eldorado(
         )
         release_claims_as_pending(valid_items, 'Eldorado store paused (rate limit)')
         return 0
-    _log(
-        PostingLogLevel.WARNING,
-        f"Pool #{pool.pk}: Eldorado update failed (HTTP {status_code}), falling back to recreate",
-        account=pool.store,
-        detail={'pool_id': pool.pk, 'old_offer_id': offer_id, 'error': error_str[:500]},
-    )
-    return _recreate_eldorado_offer(pool, client, all_creds, valid_items, proxy_group)
+    # An unsuccessful PUT is not approval to create a duplicate or delete the
+    # original. Preserve it; content failures require staff attention, while
+    # other failures wait for authoritative reconciliation on a later sweep.
+    release_claims_as_pending(valid_items, 'Eldorado update failed; original offer preserved')
+    if _eldorado_failure_kind(result) == 'rejected':
+        _park_pool_offer_for_attention(pool, 'Eldorado rejected the update content')
+    return 0
 
 
 def _recreate_eldorado_offer(

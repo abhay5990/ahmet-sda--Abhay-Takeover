@@ -370,59 +370,51 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
     proxy_group = get_group_name(store)
     client = get_or_build_client('eldorado', store.credential, proxy_pool=proxy_pool, proxy_group=proxy_group)
 
-    offer_id = listing.store_listing_id
-    raw = listing.raw_data or {}
+    mutation = getattr(client, 'offer_mutation', None)
+    if not callable(mutation):
+        return EditResult(ok=False, error='Eldorado offer serialization unavailable')
+    with mutation(listing.store_listing_id) as admitted:
+        if not admitted:
+            return EditResult(ok=False, error='Eldorado offer mutation busy or writes held')
+        return _edit_eldorado_locked(listing, changes, store, client, proxy_group)
 
-    # Prefer authoritative managed pool credentials so every new/recreated
-    # Eldorado entry contains login, password, email, and email password.
-    account_secret_details = _managed_eldorado_secret_entries(listing)
-    if not account_secret_details:
-        # Legacy fallback: read the provider entry, then persisted canonical text.
-        creds_result = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
-        if creds_result.ok and creds_result.data:
-            resp = creds_result.data
-            src = resp.accountsDetails or resp.secretDetails or []
-            account_secret_details = [e.secretDetails for e in src if e.secretDetails]
-    if not account_secret_details:
-        account_secret_details = [
-            e['secretDetails']
-            for e in (raw.get('_credential_entries') or [])
-            if e.get('secretDetails')
-        ]
+
+def _edit_eldorado_locked(
+    listing: Listing,
+    changes: dict[str, Any],
+    store: IntegrationAccount,
+    client: Any,
+    proxy_group: str | None,
+) -> EditResult:
+    from apis_sdk.clients.marketplaces.eldorado.delivery_details import (
+        EldoradoDeliveryDetailsError,
+        preserved_delivery_details,
+    )
+
+    offer_id = listing.store_listing_id
+    # Editing title/price is not permission to replace credentials from a stale
+    # local snapshot. Read every current entry while holding the offer lease.
+    creds_result = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
+    if not creds_result.ok:
+        return EditResult(ok=False, error='Could not verify existing Eldorado delivery details; edit refused')
+    try:
+        delivery = preserved_delivery_details(creds_result.data)
+    except EldoradoDeliveryDetailsError:
+        return EditResult(ok=False, error='Existing Eldorado delivery entry is unreadable; edit refused')
+    src = creds_result.data.accountsDetails or creds_result.data.secretDetails or []
+    account_secret_details = [entry.secretDetails for entry in src]
 
     payload = build_eldorado_full_update_payload(listing, account_secret_details, changes)
+    payload['accountDeliveryDetails'] = delivery
+    payload['details']['pricing']['quantity'] = len(delivery)
 
     provider = get_provider('eldorado')
     result = provider.update_listing(client, offer_id, payload)
 
     if not (result and getattr(result, 'ok', True)):
         error_msg = str(getattr(result, 'error', 'Unknown error'))
-        if _is_eldorado_legacy_edit_error(
-            error_msg,
-            has_account_details=bool(account_secret_details),
-        ):
-            recreated = _recreate_eldorado_offer(
-                listing,
-                changes,
-                payload,
-                client=client,
-                provider=provider,
-                proxy_group=proxy_group,
-            )
-            if recreated.ok:
-                _log(
-                    PostingLogLevel.SUCCESS,
-                    f'Eldorado legacy listing #{listing.pk} recreated for edit',
-                    account=store,
-                    detail={
-                        'listing_id': listing.pk,
-                        'old_offer_id': offer_id,
-                        'new_offer_id': recreated.new_offer_id,
-                        'changes': list(changes.keys()),
-                    },
-                )
-                return recreated
-            error_msg = recreated.error or error_msg
+        # A failed content edit must not create a replacement or delete the
+        # original (which could duplicate or lose current delivery entries).
         _log(PostingLogLevel.ERROR,
              f'Eldorado edit failed for #{listing.pk}: {error_msg}',
              account=store,
