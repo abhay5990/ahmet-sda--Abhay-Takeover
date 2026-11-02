@@ -18,6 +18,7 @@ held instead of being silently changed.
 from __future__ import annotations
 
 import math
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from typing import Any
 
 # id -> (minimum, maximum, decimals)   decimals 0 = integer
@@ -85,14 +86,18 @@ def count(value: Any) -> int:
 
 
 def thousand(value: Any) -> float:
-    """Thousand-denominated field: 2650 → 2.7, 73825 → 73.8 (negatives → 0)."""
+    """Thousand-denominated field: 2650 → 2.7, 73825 → 73.8 (negatives → 0).
+
+    Rounds half-up exactly like MCT/Eldorado (``Math.round(v / 100) / 10``);
+    Python's ``round(2.65, 1)`` would give 2.6.
+    """
     try:
-        number = float(value)
-    except (TypeError, ValueError):
+        number = Decimal(str(value))
+    except (InvalidOperation, TypeError, ValueError):
         return 0.0
-    if not math.isfinite(number):
+    if not number.is_finite() or number <= 0:
         return 0.0
-    return round(max(0.0, number) / 1000.0, 1)
+    return float((number / 1000).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
 
 
 def is_numeric_attribute(attribute_id: str) -> bool:
