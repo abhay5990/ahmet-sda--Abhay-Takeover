@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from apis_sdk.clients.marketplaces.eldorado.governor import GovernedEldoradoFacade
 from apis_sdk.factories.eldorado_factory import EldoradoFactory
 from apis_sdk.infrastructure.logging.logger import StdlibLogger
 
@@ -41,12 +42,16 @@ class EldoradoProvider(AbstractProvider):
             marketplace='eldorado',
             store_slug=credential.account.slug,
         )
-        return EldoradoFactory.create(
+        facade = EldoradoFactory.create(
             auth=auth,
             transport=transport,
             proxy_pool=proxy_pool,
             logger=_sdk_logger,
         )
+        # Every SDA Eldorado call goes through the per-store governor: write
+        # spacing (max 30/hour/store by default), cowboy back-off ladder and
+        # hourly request counters shared across gunicorn/scheduler/dropship.
+        return GovernedEldoradoFacade(facade, credential.account.slug)
 
     def fetch_products(self, client: Any, **kwargs) -> Any:
         return client.search_my_offers(**kwargs)

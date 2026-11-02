@@ -185,3 +185,48 @@ def to_wire_payload(payload: dict[str, Any]) -> dict[str, Any]:
     if entries:
         wire["accountDeliveryDetails"] = [secret_text_to_delivery_detail(s) for s in entries]
     return wire
+
+
+def delivery_detail_to_secret_text(detail: dict[str, Any]) -> str:
+    """Render one structured Eldorado delivery detail back to SDA's text form.
+
+    Inverse of :func:`secret_text_to_delivery_detail` (round-trips through it),
+    used when Eldorado returns ``structuredDetails`` without
+    ``legacySecretDetails`` so existing credentials are never dropped.
+    """
+    if not isinstance(detail, dict):
+        return ""
+    lines: list[str] = []
+    account = detail.get("accountDetails") or {}
+    if isinstance(account, dict):
+        if account.get("accountLogin"):
+            lines.append(f"Login: {account['accountLogin']}")
+        if account.get("accountPassword"):
+            lines.append(f"Password: {account['accountPassword']}")
+    email = detail.get("emailDetails") or {}
+    if isinstance(email, dict):
+        if email.get("emailLogin"):
+            lines.append(f"Email: {email['emailLogin']}")
+        if email.get("emailPassword"):
+            lines.append(f"Email Password: {email['emailPassword']}")
+        if email.get("emailProviderUrl"):
+            lines.append(f"Email Login Link: {email['emailProviderUrl']}")
+    info = str(detail.get("additionalInfo") or "").strip()
+    if info:
+        lines.append(info)
+    return "\n".join(lines)
+
+
+def credential_fingerprint(text: str) -> str | None:
+    """Stable identity of one credential text: lower-cased login + password.
+
+    Lets SDA recognise its own credential after Eldorado re-renders it
+    (structured vs legacy text, re-ordered lines). ``None`` when the text
+    has no recognisable login and password.
+    """
+    try:
+        detail = secret_text_to_delivery_detail(text)
+    except EldoradoDeliveryDetailsError:
+        return None
+    account = detail["accountDetails"]
+    return f"{account['accountLogin'].strip().lower()}\x1f{account['accountPassword']}"

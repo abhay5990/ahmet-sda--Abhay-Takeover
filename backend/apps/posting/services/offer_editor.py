@@ -308,31 +308,19 @@ def edit_pool_offers(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResult
 
 # ── Eldorado ──────────────────────────────────────────────────────
 
-def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: IntegrationAccount) -> EditResult:
-    """Edit an Eldorado listing via PUT /api/flexibleOffers/account/{id}/details."""
-    proxy_pool = build_proxy_pool()
-    proxy_group = get_group_name(store)
-    client = get_or_build_client('eldorado', store.credential, proxy_pool=proxy_pool, proxy_group=proxy_group)
+def build_eldorado_full_update_payload(
+    listing: Listing,
+    account_secret_details: list[str],
+    changes: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Complete Eldorado PUT payload (details + augmentedGame + credentials).
 
-    offer_id = listing.store_listing_id
+    Eldorado rejects partial PUTs since late Oct 2026 ("The following
+    properties have invalid values: Details"), so every update — editor and
+    pool restock alike — must send the full offer rebuilt from raw_data.
+    """
+    changes = changes or {}
     raw = listing.raw_data or {}
-
-    # Prefer authoritative managed pool credentials so every new/recreated
-    # Eldorado entry contains login, password, email, and email password.
-    account_secret_details = _managed_eldorado_secret_entries(listing)
-    if not account_secret_details:
-        # Legacy fallback: read the provider entry, then persisted canonical text.
-        creds_result = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
-        if creds_result.ok and creds_result.data:
-            resp = creds_result.data
-            src = resp.accountsDetails or resp.secretDetails or []
-            account_secret_details = [e.secretDetails for e in src if e.secretDetails]
-    if not account_secret_details:
-        account_secret_details = [
-            e['secretDetails']
-            for e in (raw.get('_credential_entries') or [])
-            if e.get('secretDetails')
-        ]
 
     # Build details block — apply changes on top of raw_data values
     raw_price = raw.get('pricePerUnit') or {}
@@ -372,6 +360,37 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
         'augmentedGame': augmented_game,
         'accountSecretDetails': account_secret_details,
     }
+
+    return payload
+
+
+def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: IntegrationAccount) -> EditResult:
+    """Edit an Eldorado listing via PUT /api/flexibleOffers/account/{id}/details."""
+    proxy_pool = build_proxy_pool()
+    proxy_group = get_group_name(store)
+    client = get_or_build_client('eldorado', store.credential, proxy_pool=proxy_pool, proxy_group=proxy_group)
+
+    offer_id = listing.store_listing_id
+    raw = listing.raw_data or {}
+
+    # Prefer authoritative managed pool credentials so every new/recreated
+    # Eldorado entry contains login, password, email, and email password.
+    account_secret_details = _managed_eldorado_secret_entries(listing)
+    if not account_secret_details:
+        # Legacy fallback: read the provider entry, then persisted canonical text.
+        creds_result = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
+        if creds_result.ok and creds_result.data:
+            resp = creds_result.data
+            src = resp.accountsDetails or resp.secretDetails or []
+            account_secret_details = [e.secretDetails for e in src if e.secretDetails]
+    if not account_secret_details:
+        account_secret_details = [
+            e['secretDetails']
+            for e in (raw.get('_credential_entries') or [])
+            if e.get('secretDetails')
+        ]
+
+    payload = build_eldorado_full_update_payload(listing, account_secret_details, changes)
 
     provider = get_provider('eldorado')
     result = provider.update_listing(client, offer_id, payload)

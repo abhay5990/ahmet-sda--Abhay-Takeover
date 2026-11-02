@@ -7,7 +7,9 @@ They are mapped to SDK-canonical types via the mapper module.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from typing import Any
+
+from pydantic import BaseModel, Field, model_validator
 
 
 # ---------------------------------------------------------------------------
@@ -89,6 +91,39 @@ class EldoradoOfferAccountDetail(BaseModel):
     secretDetails: str = ""
 
 
+def _normalize_account_delivery_details(data: Any, *, also_secret_details: bool = False) -> Any:
+    """Map Eldorado's Oct-2026 ``accountDeliveryDetails`` onto the legacy lists.
+
+    Since the late-Oct 2026 contract change, ``GET /api/offers/accountDetails/
+    byOfferId/{id}`` answers ``{"accountDeliveryDetails": [{"id",
+    "legacySecretDetails", "structuredDetails"}]}`` instead of
+    ``accountsDetails``/``secretDetails``.  Without this mapping every pool
+    offer read as EMPTY (verified live 2 Nov 2026: Eldorado quantity 1, SDA
+    count 0), so the replenisher "refilled" full offers every sweep and would
+    have overwritten their existing credentials.
+    """
+    if not isinstance(data, dict):
+        return data
+    entries = data.get("accountDeliveryDetails")
+    if not isinstance(entries, list) or data.get("accountsDetails") or data.get("secretDetails"):
+        return data
+    from .delivery_details import delivery_detail_to_secret_text
+
+    mapped = []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        text = str(entry.get("legacySecretDetails") or "").strip()
+        if not text and isinstance(entry.get("structuredDetails"), dict):
+            text = delivery_detail_to_secret_text(entry["structuredDetails"])
+        mapped.append({"id": str(entry.get("id") or ""), "secretDetails": text})
+    out = dict(data)
+    out["accountsDetails"] = mapped
+    if also_secret_details:
+        out["secretDetails"] = list(mapped)
+    return out
+
+
 class EldoradoOfferSearchItem(BaseModel):
     """A single offer in flat format.
 
@@ -119,6 +154,11 @@ class EldoradoOfferSearchItem(BaseModel):
     expireDate: str | None = None
     offerVersion: int = 0
     accountsDetails: list[EldoradoOfferAccountDetail] = Field(default_factory=list)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _accept_delivery_details(cls, data: Any) -> Any:
+        return _normalize_account_delivery_details(data)
 
 
 class EldoradoOfferSearchPage(BaseModel):
@@ -265,6 +305,11 @@ class EldoradoOfferCredentialsResponse(BaseModel):
 
     accountsDetails: list[EldoradoOfferAccountDetail] = Field(default_factory=list)
     secretDetails: list[EldoradoOfferAccountDetail] = Field(default_factory=list)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _accept_delivery_details(cls, data: Any) -> Any:
+        return _normalize_account_delivery_details(data, also_secret_details=True)
 
 
 class EldoradoImageUploadResponse(BaseModel):
