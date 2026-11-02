@@ -5,6 +5,7 @@ from __future__ import annotations
 from ..models import CocResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....marketplaces.eldorado import BaseEldoradoBuilder
+from .....marketplaces.eldorado_numeric import count, thousand
 
 
 class CocEldoradoBuilder(BaseEldoradoBuilder):
@@ -27,6 +28,10 @@ class CocEldoradoBuilder(BaseEldoradoBuilder):
                 "clash-of-clans-maxed-account": account.maxed_account_attr or ("maxed-yes" if account.town_hall_level >= 18 else "maxed-no"),
                 "clash-of-clans-town-hall": self._resolve_town_hall(account.town_hall_level),
                 "coc-gems": self._resolve_gems(account.gems_count),
+            },
+            numeric_attributes={
+                "clash-of-clans-gems-numeric": thousand(account.gems_count),
+                "clash-of-clans-town-hall-numeric": count(account.town_hall_level),
             },
             ref_key=account.ref_key,
         )

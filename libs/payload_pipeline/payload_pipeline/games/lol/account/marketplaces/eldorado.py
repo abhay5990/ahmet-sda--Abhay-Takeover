@@ -6,6 +6,7 @@ from ..models import LolResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....core.variant_mapping import get_external_id
 from .....marketplaces.eldorado import BaseEldoradoBuilder
+from .....marketplaces.eldorado_numeric import count, thousand
 
 # Eldorado semantic attribute keys (from template)
 _ATTR_RANK = "lol-current-rank"
@@ -52,6 +53,12 @@ class LolEldoradoBuilder(BaseEldoradoBuilder):
                 "league-of-legends-previous-rank": account.previous_rank_attr or "previous-unranked",
                 "league-of-legends-ranked-ready": account.ranked_ready_attr or ("ready-yes" if account.level >= 30 else "ready-no"),
                 "league-of-legends-riot-points": self._resolve_riot_points(account.riot_points),
+            },
+            numeric_attributes={
+                "league-of-legends-blue-essence-numeric": thousand(account.blue_essence),
+                "league-of-legends-champion-count-numeric": count(account.champion_count),
+                "league-of-legends-riot-points-numeric": thousand(account.riot_points),
+                "league-of-legends-skins-numeric": count(account.skin_count),
             },
             ref_key=account.ref_key,
         )

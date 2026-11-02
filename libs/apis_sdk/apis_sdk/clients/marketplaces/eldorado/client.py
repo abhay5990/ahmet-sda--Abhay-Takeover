@@ -30,6 +30,7 @@ from apis_sdk.clients.marketplaces.eldorado.models import (
     EldoradoReviewsResponse,
     EldoradoSellerOrdersPage,
 )
+from apis_sdk.clients.marketplaces.eldorado.delivery_details import to_wire_payload
 
 
 class EldoradoClient:
@@ -83,7 +84,7 @@ class EldoradoClient:
         return self._request(
             HttpMethod.POST,
             EldoradoEndpoints.CREATE_OFFER,
-            json_body=payload,
+            json_body=to_wire_payload(payload),
             auth_headers=auth_headers,
             proxy_url=proxy_url,
             response_type=EldoradoOfferSearchItem,
@@ -101,7 +102,7 @@ class EldoradoClient:
         return self._request(
             HttpMethod.PUT,
             EldoradoEndpoints.offer(offer_id),
-            json_body=payload,
+            json_body=to_wire_payload(payload),
             auth_headers=auth_headers,
             proxy_url=proxy_url,
             response_type=EldoradoOffer,

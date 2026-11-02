@@ -5,6 +5,7 @@ from __future__ import annotations
 from ..models import CS2ResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....marketplaces.eldorado import BaseEldoradoBuilder
+from .....marketplaces.eldorado_numeric import count, thousand
 
 
 class CS2EldoradoBuilder(BaseEldoradoBuilder):
@@ -29,6 +30,11 @@ class CS2EldoradoBuilder(BaseEldoradoBuilder):
                 "counter-strike-2-coin": account.veteran_coin_attr or self._resolve_coin(account.medals),
                 "counter-strike-2-esea": account.esea_attr or "esea-other",
                 "counter-strike-2-faceit": account.faceit_attr or "faceit-other",
+            },
+            numeric_attributes={
+                "cs2-faceit-level-numeric": _faceit_level(account.faceit_attr),
+                "cs2-medals-numeric": count(account.medal_count),
+                "cs2-premier-rating-numeric": thousand(account.premier_elo),
             },
             ref_key=account.ref_key,
         )
@@ -72,3 +78,9 @@ class CS2EldoradoBuilder(BaseEldoradoBuilder):
         if premier_elo < 35000:
             return "7"
         return "8"
+
+
+def _faceit_level(faceit_attr: str) -> int:
+    """'faceit-7' -> 7 (same source as the FACEIT dropdown); unknown/other -> 0."""
+    tail = str(faceit_attr or "").rsplit("-", 1)[-1]
+    return int(tail) if tail.isdigit() and 0 <= int(tail) <= 10 else 0

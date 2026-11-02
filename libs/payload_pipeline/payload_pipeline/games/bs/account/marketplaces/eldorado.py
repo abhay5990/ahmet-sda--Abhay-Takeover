@@ -5,6 +5,7 @@ from __future__ import annotations
 from ..models import BSResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....marketplaces.eldorado import BaseEldoradoBuilder
+from .....marketplaces.eldorado_numeric import count, thousand
 
 
 class BSEldoradoBuilder(BaseEldoradoBuilder):
@@ -32,6 +33,16 @@ class BSEldoradoBuilder(BaseEldoradoBuilder):
                 "brawl-stars-hypercharge": self._resolve_hypercharge(account.hypercharge_count),
                 "brawl-stars-buffies": self._resolve_buffies(account.buffies_count),
                 "brawl-gemss": self._resolve_gems(account.gems_count),
+            },
+            numeric_attributes={
+                "brawl-stars-brawlers-count-numeric": count(account.brawler_count),
+                "brawl-stars-buffies-numeric": count(account.buffies_count),
+                "brawl-stars-gems-numeric": thousand(account.gems_count),
+                "brawl-stars-hypercharge-numeric": count(account.hypercharge_count),
+                "brawl-stars-maxed-brawlers-numeric": count(account.max_level_brawlers_count),
+                "brawl-stars-prestige-numeric": count(account.prestige_count),
+                "brawl-stars-skins-numeric": count(account.skin_count),
+                "brawl-stars-trophies-numeric": thousand(account.trophies),
             },
             ref_key=account.ref_key,
         )

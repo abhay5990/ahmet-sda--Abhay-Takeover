@@ -51,6 +51,7 @@ class EldoradoMapper:
         trade_environment_id: str | None = None,
         attribute_ids_csv: str = "",
         attributes: dict[str, str] | None = None,
+        numeric_attributes: dict[str, int | float] | None = None,
         account_secret_details: str | list[str] = "",
         tags: list[str] | None = None,
         volume_discounts: list[dict[str, object]] | None = None,
@@ -89,6 +90,10 @@ class EldoradoMapper:
                 "offerAttributes": [
                     {"id": attr_id, "type": "Select", "value": attr_value}
                     for attr_id, attr_value in (attributes or {}).items()
+                ] + [
+                    # Numeric attributes (required by Eldorado since late Oct 2026)
+                    {"id": attr_id, "type": "Numeric", "value": attr_value}
+                    for attr_id, attr_value in (numeric_attributes or {}).items()
                 ],
             },
             "accountSecretDetails": account_secret_details,
@@ -203,11 +208,14 @@ class EldoradoMapper:
         # Payload format: {"fortnite-account-type": "og-account"}
         raw_attrs = raw_data.get("attributes") or []
         attributes: dict[str, str] = {}
+        numeric_attributes: dict[str, int | float] = {}
         for attr in raw_attrs:
             attr_id = attr.get("id", "")
             value_obj = attr.get("value")
             if attr_id and isinstance(value_obj, dict):
                 attributes[attr_id] = value_obj.get("id", "")
+            elif attr_id and isinstance(value_obj, (int, float)) and not isinstance(value_obj, bool):
+                numeric_attributes[attr_id] = value_obj
 
         # --- price ------------------------------------------------------
         price_obj = raw_data.get("pricePerUnit") or {}
@@ -229,6 +237,7 @@ class EldoradoMapper:
             has_original_email=raw_data.get("hasOriginalEmail", False) or False,
             trade_environment_id=trade_env_id,
             attributes=attributes or None,
+            numeric_attributes=numeric_attributes or None,
             volume_discounts=raw_data.get("volumeDiscounts") or None,
             account_secret_details=secrets,
         )

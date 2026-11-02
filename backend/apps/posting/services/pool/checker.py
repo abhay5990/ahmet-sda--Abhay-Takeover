@@ -331,10 +331,35 @@ def sweep_all_pools() -> dict[str, int]:
         offer.pk,
     ))
 
-    stats = {'checked': 0, 'replenished': 0, 'errors': 0}
+    stats = {'checked': 0, 'replenished': 0, 'errors': 0, 'not_due': 0, 'unchanged': 0, 'store_paused': 0}
+
+    # Balanced Eldorado traffic (2 Nov 2026): each pool offer is checked at
+    # most once per POOL_CHECK_INTERVAL; sale events still replenish
+    # immediately through notify_sale(). Eldorado offers are first compared
+    # against ONE paged "my active offers" list per store+game — the
+    # per-offer credential read only happens when the count changed, the
+    # offer is missing from the list, or it is at/below its threshold.
+    now = timezone.now()
+    due_cutoff = now - pool_check_interval()
+    due_offers = [
+        offer for offer in pool_offers
+        if offer.marketplace != 'eldorado'
+        or offer.last_checked_at is None or offer.last_checked_at <= due_cutoff
+    ]
+    stats['not_due'] = len(pool_offers) - len(due_offers)
+    pool_offers = due_offers
+    eldorado_quantities = _eldorado_bulk_quantities(pool_offers)
 
     for pool_offer in pool_offers:
         try:
+            if pool_offer.marketplace == 'eldorado':
+                if _eldorado_store_writes_paused(pool_offer):
+                    stats['store_paused'] += 1
+                    continue
+                if _eldorado_offer_unchanged(pool_offer, eldorado_quantities):
+                    PoolOffer.objects.filter(pk=pool_offer.pk).update(last_checked_at=now)
+                    stats['unchanged'] += 1
+                    continue
             stats['checked'] += 1
             # The automatic sweep is allowed to recover append lanes that a
             # local listing-close event parked in ERROR — but only after the
@@ -360,6 +385,109 @@ def sweep_all_pools() -> dict[str, int]:
         )
 
     return stats
+
+
+# ── Balanced Eldorado checking ──────────────────────────────────
+
+_ELDORADO_SEARCH_PAGE_SIZE = 50
+_ELDORADO_SEARCH_MAX_PAGES = 20
+
+
+def pool_check_interval():
+    """How often one pool offer may be re-checked (default 30 minutes)."""
+    import datetime
+    import os
+
+    try:
+        minutes = float(os.environ.get('SDA_POOL_CHECK_INTERVAL_MINUTES', '30'))
+    except ValueError:
+        minutes = 30.0
+    return datetime.timedelta(minutes=max(1.0, minutes))
+
+
+def _eldorado_client_for(pool_offer: PoolOffer) -> Any:
+    store = pool_offer.store
+    return get_or_build_client('eldorado', store.credential)
+
+
+def _eldorado_store_writes_paused(pool_offer: PoolOffer) -> bool:
+    """True while Eldorado has this store in a cowboy pause (nothing to do)."""
+    try:
+        client = _eldorado_client_for(pool_offer)
+        remaining = getattr(client, 'write_cooldown_remaining', None)
+        return bool(remaining and remaining() > 0)
+    except Exception:
+        return False
+
+
+def _eldorado_game_id(pool_offer: PoolOffer) -> str:
+    raw = getattr(pool_offer.listing, 'raw_data', None) or {}
+    if not isinstance(raw, dict):
+        return ''
+    game = raw.get('gameId')
+    if not game and isinstance(raw.get('game'), dict):
+        game = raw['game'].get('id')
+    if not game and isinstance(raw.get('augmentedGame'), dict):
+        game = raw['augmentedGame'].get('gameId')
+    return str(game or '').strip()
+
+
+def _eldorado_bulk_quantities(pool_offers: list[PoolOffer]) -> dict[str, int]:
+    """offer_id → remaining quantity, from one paged Active list per store+game.
+
+    Any failure simply leaves offers out of the map, which makes them fall
+    back to the per-offer check — never to an assumed count.
+    """
+    groups: dict[tuple[int, str], PoolOffer] = {}
+    for offer in pool_offers:
+        if offer.marketplace != 'eldorado':
+            continue
+        game_id = _eldorado_game_id(offer)
+        if game_id and offer.store is not None:
+            groups.setdefault((offer.store.pk, game_id), offer)
+
+    quantities: dict[str, int] = {}
+    for (_, game_id), sample in groups.items():
+        if _eldorado_store_writes_paused(sample):
+            continue
+        try:
+            client = _eldorado_client_for(sample)
+        except Exception:
+            continue
+        page = 1
+        while page <= _ELDORADO_SEARCH_MAX_PAGES:
+            result = client.search_my_offers(params={
+                'offerState': 'Active',
+                'gameId': game_id,
+                'pageIndex': page,
+                'pageSize': _ELDORADO_SEARCH_PAGE_SIZE,
+            })
+            if not result.ok or result.data is None:
+                logger.warning(
+                    'pool_checker: bulk Eldorado list failed for store %s game %s: %s',
+                    sample.store, game_id, result.error,
+                )
+                break
+            for offer in result.data.results:
+                if offer.id:
+                    quantities[str(offer.id)] = int(offer.quantity or 0)
+            if result.data.pageIndex >= result.data.totalPages:
+                break
+            page += 1
+    return quantities
+
+
+def _eldorado_offer_unchanged(pool_offer: PoolOffer, quantities: dict[str, int]) -> bool:
+    """Skip the per-offer read when the bulk list proves nothing changed."""
+    offer_id = str(pool_offer.listing.store_listing_id or '')
+    if not offer_id or offer_id not in quantities:
+        return False
+    quantity = quantities[offer_id]
+    return (
+        pool_offer.current_remote_count is not None
+        and quantity == pool_offer.current_remote_count
+        and quantity > pool_offer.threshold
+    )
 
 
 # ── Internal ─────────────────────────────────────────────────────

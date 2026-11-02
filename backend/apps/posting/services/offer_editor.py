@@ -308,31 +308,19 @@ def edit_pool_offers(pool: OfferPool, changes: dict[str, Any]) -> BulkEditResult
 
 # ── Eldorado ──────────────────────────────────────────────────────
 
-def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: IntegrationAccount) -> EditResult:
-    """Edit an Eldorado listing via PUT /api/flexibleOffers/account/{id}/details."""
-    proxy_pool = build_proxy_pool()
-    proxy_group = get_group_name(store)
-    client = get_or_build_client('eldorado', store.credential, proxy_pool=proxy_pool, proxy_group=proxy_group)
+def build_eldorado_full_update_payload(
+    listing: Listing,
+    account_secret_details: list[str],
+    changes: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Complete Eldorado PUT payload (details + augmentedGame + credentials).
 
-    offer_id = listing.store_listing_id
+    Eldorado rejects partial PUTs since late Oct 2026 ("The following
+    properties have invalid values: Details"), so every update — editor and
+    pool restock alike — must send the full offer rebuilt from raw_data.
+    """
+    changes = changes or {}
     raw = listing.raw_data or {}
-
-    # Prefer authoritative managed pool credentials so every new/recreated
-    # Eldorado entry contains login, password, email, and email password.
-    account_secret_details = _managed_eldorado_secret_entries(listing)
-    if not account_secret_details:
-        # Legacy fallback: read the provider entry, then persisted canonical text.
-        creds_result = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
-        if creds_result.ok and creds_result.data:
-            resp = creds_result.data
-            src = resp.accountsDetails or resp.secretDetails or []
-            account_secret_details = [e.secretDetails for e in src if e.secretDetails]
-    if not account_secret_details:
-        account_secret_details = [
-            e['secretDetails']
-            for e in (raw.get('_credential_entries') or [])
-            if e.get('secretDetails')
-        ]
 
     # Build details block — apply changes on top of raw_data values
     raw_price = raw.get('pricePerUnit') or {}
@@ -358,10 +346,7 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
     trade_envs = raw.get('tradeEnvironmentValues') or []
     trade_env_id = str(trade_envs[0]['id']) if trade_envs and trade_envs[0].get('id') is not None else None
     raw_attrs = raw.get('attributes') or []
-    offer_attributes = [
-        {'id': a.get('id', ''), 'type': 'Select', 'value': (a.get('value') or {}).get('id', '')}
-        for a in raw_attrs
-    ]
+    offer_attributes = [_editor_attribute(a) for a in raw_attrs]
     augmented_game: dict[str, Any] = {
         'gameId': str(raw.get('gameId', '')),
         'category': raw.get('category', 'Account'),
@@ -376,37 +361,60 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
         'accountSecretDetails': account_secret_details,
     }
 
+    return payload
+
+
+def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: IntegrationAccount) -> EditResult:
+    """Edit an Eldorado listing via PUT /api/flexibleOffers/account/{id}/details."""
+    proxy_pool = build_proxy_pool()
+    proxy_group = get_group_name(store)
+    client = get_or_build_client('eldorado', store.credential, proxy_pool=proxy_pool, proxy_group=proxy_group)
+
+    mutation = getattr(client, 'offer_mutation', None)
+    if not callable(mutation):
+        return EditResult(ok=False, error='Eldorado offer serialization unavailable')
+    with mutation(listing.store_listing_id) as admitted:
+        if not admitted:
+            return EditResult(ok=False, error='Eldorado offer mutation busy or writes held')
+        return _edit_eldorado_locked(listing, changes, store, client, proxy_group)
+
+
+def _edit_eldorado_locked(
+    listing: Listing,
+    changes: dict[str, Any],
+    store: IntegrationAccount,
+    client: Any,
+    proxy_group: str | None,
+) -> EditResult:
+    from apis_sdk.clients.marketplaces.eldorado.delivery_details import (
+        EldoradoDeliveryDetailsError,
+        preserved_delivery_details,
+    )
+
+    offer_id = listing.store_listing_id
+    # Editing title/price is not permission to replace credentials from a stale
+    # local snapshot. Read every current entry while holding the offer lease.
+    creds_result = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
+    if not creds_result.ok:
+        return EditResult(ok=False, error='Could not verify existing Eldorado delivery details; edit refused')
+    try:
+        delivery = preserved_delivery_details(creds_result.data)
+    except EldoradoDeliveryDetailsError:
+        return EditResult(ok=False, error='Existing Eldorado delivery entry is unreadable; edit refused')
+    src = creds_result.data.accountsDetails or creds_result.data.secretDetails or []
+    account_secret_details = [entry.secretDetails for entry in src]
+
+    payload = build_eldorado_full_update_payload(listing, account_secret_details, changes)
+    payload['accountDeliveryDetails'] = delivery
+    payload['details']['pricing']['quantity'] = len(delivery)
+
     provider = get_provider('eldorado')
     result = provider.update_listing(client, offer_id, payload)
 
     if not (result and getattr(result, 'ok', True)):
         error_msg = str(getattr(result, 'error', 'Unknown error'))
-        if _is_eldorado_legacy_edit_error(
-            error_msg,
-            has_account_details=bool(account_secret_details),
-        ):
-            recreated = _recreate_eldorado_offer(
-                listing,
-                changes,
-                payload,
-                client=client,
-                provider=provider,
-                proxy_group=proxy_group,
-            )
-            if recreated.ok:
-                _log(
-                    PostingLogLevel.SUCCESS,
-                    f'Eldorado legacy listing #{listing.pk} recreated for edit',
-                    account=store,
-                    detail={
-                        'listing_id': listing.pk,
-                        'old_offer_id': offer_id,
-                        'new_offer_id': recreated.new_offer_id,
-                        'changes': list(changes.keys()),
-                    },
-                )
-                return recreated
-            error_msg = recreated.error or error_msg
+        # A failed content edit must not create a replacement or delete the
+        # original (which could duplicate or lose current delivery entries).
         _log(PostingLogLevel.ERROR,
              f'Eldorado edit failed for #{listing.pk}: {error_msg}',
              account=store,
@@ -1633,3 +1641,15 @@ def _json_safe_change_value(value: Any) -> Any:
     if isinstance(value, Decimal):
         return str(value)
     return value
+
+def _editor_attribute(attr: dict) -> dict:
+    """Re-send an existing offer attribute with its own type.
+
+    Eldorado returns Select values as ``{"id": ...}`` and Numeric values as
+    plain numbers (required since late Oct 2026). Forcing everything to
+    Select made edits crash or wipe the Numeric values.
+    """
+    value = attr.get('value')
+    if attr.get('type') == 'Numeric' or (isinstance(value, (int, float)) and not isinstance(value, bool)):
+        return {'id': attr.get('id', ''), 'type': 'Numeric', 'value': value}
+    return {'id': attr.get('id', ''), 'type': 'Select', 'value': (value or {}).get('id', '') if isinstance(value, dict) else (value or '')}

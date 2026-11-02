@@ -52,11 +52,14 @@ class EldoradoRetryStrategy(MarketplaceRetryStrategy):
                 error_category=ErrorCategory.NETWORK,
             )
 
-        # Eldorado-specific: 429 → rotate proxy + reset session
-        if isinstance(error, RateLimitError) and self._rotate_proxy_on_rate_limit:
-            return RetryDecision.new_proxy_and_session(
-                "Eldorado rate limited, rotate proxy and reset session",
-                delay_hint=error.retry_after,
+        # Eldorado 429 ("Calm down, cowboy! Quota exceeded") is a per-SELLER-
+        # ACCOUNT quota, not an IP limit: rotating proxies only sends more
+        # requests into the same quota (2 Nov 2026: SDA retried every 429 and
+        # kept both stores blocked). Never retry; the per-store governor
+        # (governor.py) opens the 3/6/12/30-minute pause instead.
+        if isinstance(error, RateLimitError):
+            return RetryDecision.no_retry(
+                "Eldorado per-account quota (429) — no retry; governor pauses this store",
                 error_category=ErrorCategory.RATE_LIMIT,
             )
 

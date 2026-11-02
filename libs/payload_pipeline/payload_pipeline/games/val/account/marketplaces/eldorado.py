@@ -6,6 +6,7 @@ from ..models import ValorantResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....core.variant_mapping import get_external_id
 from .....marketplaces.eldorado import BaseEldoradoBuilder
+from .....marketplaces.eldorado_numeric import count, thousand
 
 # Eldorado attribute keys & value IDs (from template)
 _ATTR_RANK = "valorant-rank"
@@ -64,6 +65,12 @@ class ValorantEldoradoBuilder(BaseEldoradoBuilder):
                 _ATTR_SKINS: self._resolve_skins(account.skin_count),
                 _ATTR_KNIVES: self._resolve_knives(account.knife_count),
                 _ATTR_SPENT: self._resolve_spent_points(account.inventory_value),
+            },
+            numeric_attributes={
+                "valorant-agents-numeric": count(account.agent_count),
+                "valorant-knives-numeric": count(account.knife_count),
+                "valorant-spent-points-numeric": thousand(account.inventory_value),
+                "valorant-weapon-skins-numeric": count(account.skin_count),
             },
             ref_key=account.ref_key,
         )

@@ -27,6 +27,7 @@ from apps.posting.models import (
     OfferPoolItemStatus,
     OfferPoolStatus,
     PoolOffer,
+    PoolOfferStatus,
     PostingLog,
     PostingLogLevel,
 )
@@ -257,6 +258,58 @@ def _log(
     )
 
 
+# ── Eldorado traffic discipline (2 Nov 2026) ─────────────────────
+
+def _eldorado_failure_kind(result: Any) -> str:
+    """Classify a failed Eldorado write.
+
+    * ``paused``   — Eldorado said "cowboy"/429, or SDA's own per-store
+                     governor refused to send (store paused / no write slot).
+                     Nothing is wrong with the pool: retry on a later sweep,
+                     and NEVER fall back to delete+recreate (that only sends
+                     more writes into the same quota).
+    * ``rejected`` — Eldorado refused the content (4xx validation, e.g.
+                     "Quantity of 0", "Required attribute 'Hours'"). Retrying
+                     the same payload every sweep can never succeed.
+    * ``other``    — network/5xx/unknown.
+    """
+    from apis_sdk.clients.marketplaces.eldorado.governor import is_governor_refusal, is_rate_limited
+    from apis_sdk.core.enums import ErrorCategory
+
+    if is_governor_refusal(result) or is_rate_limited(result):
+        return 'paused'
+    error = getattr(result, 'error', None)
+    if 'no recognisable account login and password' in str(getattr(error, 'message', '')):
+        return 'rejected'  # a pool credential cannot be sent in the new format
+    if getattr(error, 'category', None) == ErrorCategory.VALIDATION:
+        return 'rejected'
+    status = getattr(error, 'status_code', None) or getattr(result, 'status_code', None)
+    if isinstance(status, int) and 400 <= status < 500 and status not in (401, 403, 404, 408, 429):
+        return 'rejected'
+    return 'other'
+
+
+def _park_pool_offer_for_attention(pool: Any, reason: str) -> None:
+    """Stop automatic retries for a pool offer whose payload Eldorado rejects.
+
+    The pool shows "attention required" in the UI; an operator fixes the
+    template/data and presses Replenish (manual replenish resets ERROR).
+    """
+    pool_offer = pool.pool_offer
+    message = f"Eldorado rejected the pool offer (needs attention): {reason}"[:1000]
+    PoolOffer.objects.filter(pk=pool_offer.pk).update(
+        status=PoolOfferStatus.ERROR,
+        last_error=message,
+        updated_at=timezone.now(),
+    )
+    _log(
+        PostingLogLevel.ERROR,
+        f"Pool #{pool.pk}: automatic replenishment stopped — {message}",
+        account=pool.store,
+        detail={'pool_id': pool.pk, 'pool_offer_id': pool_offer.pk, 'reason': reason[:500]},
+    )
+
+
 def replenish_pool_offer(pool_offer: PoolOffer) -> int:
     """Push claimed credentials to one linked marketplace offer."""
     pool_offer = PoolOffer.objects.select_related(
@@ -317,6 +370,16 @@ def _replenish_append(pool: OfferPool, marketplace: str) -> int:
         proxy_group=proxy_group,
     )
 
+    if marketplace == 'eldorado':
+        seconds_until_write = getattr(client, 'seconds_until_write', None)
+        wait = seconds_until_write() if seconds_until_write else 0
+        if wait > 120:
+            logger.info(
+                'pool_replenish: Eldorado store %s paused for %.0fs — pool %d skipped this sweep',
+                store, wait, pool.pk,
+            )
+            return 0
+
     pending_items = claim_pending_items(pool.pool_offer, need)
     if not pending_items:
         _check_depleted(pool)
@@ -364,10 +427,26 @@ def _push_eldorado(
     items: list[OfferPoolItem],
     proxy_group: str | None,
 ) -> int:
-    """Eldorado: fetch current creds, append new ones, update offer.
+    """Hold the same cross-process offer lease from fresh read through PUT."""
+    mutation = getattr(client, 'offer_mutation', None)
+    if not callable(mutation):
+        release_claims_as_pending(items, 'Eldorado offer serialization unavailable')
+        return 0
+    with mutation(offer_id) as admitted:
+        if not admitted:
+            release_claims_as_pending(items, 'Eldorado offer mutation busy or writes held')
+            return 0
+        return _push_eldorado_locked(pool, client, offer_id, items, proxy_group)
 
-    On rate limit (429): delete offer, recreate with all creds, update listing.
-    """
+
+def _push_eldorado_locked(
+    pool: OfferPool,
+    client: Any,
+    offer_id: str,
+    items: list[OfferPoolItem],
+    proxy_group: str | None,
+) -> int:
+    """Append only after preserving an authoritative, lease-protected snapshot."""
     # Fetch current credentials
     details_result = client.get_offer_account_details(offer_id, proxy_group=proxy_group)
     if not details_result.ok:
@@ -378,6 +457,18 @@ def _push_eldorado(
             detail={'pool_id': pool.pk, 'offer_id': offer_id, 'error': str(details_result.error)},
         )
         release_claims_as_pending(items, 'Could not fetch Eldorado offer credentials')
+        return 0
+
+    from apis_sdk.clients.marketplaces.eldorado.delivery_details import (
+        EldoradoDeliveryDetailsError,
+        preserved_delivery_details,
+        secret_text_to_delivery_detail,
+    )
+    try:
+        existing_delivery = preserved_delivery_details(details_result.data)
+    except EldoradoDeliveryDetailsError:
+        release_claims_as_pending(items, 'Existing Eldorado delivery entry is unreadable')
+        _park_pool_offer_for_attention(pool, 'Existing delivery details cannot be preserved safely')
         return 0
 
     # Build existing + new credential list
@@ -408,8 +499,21 @@ def _push_eldorado(
 
     all_creds = existing_creds + new_creds
 
-    # Try update_offer with appended credentials
-    update_payload = {'accountSecretDetails': all_creds}
+    # Try update_offer with appended credentials. Eldorado rejects partial
+    # PUTs since late Oct 2026 ("invalid values: Details"), so send the full
+    # offer rebuilt from the listing's raw_data plus ALL credentials.
+    from apps.posting.services.offer_editor import build_eldorado_full_update_payload
+
+    update_payload = build_eldorado_full_update_payload(pool.listing, all_creds)
+    try:
+        update_payload['accountDeliveryDetails'] = existing_delivery + [
+            secret_text_to_delivery_detail(credential) for credential in new_creds
+        ]
+    except EldoradoDeliveryDetailsError:
+        release_claims_as_pending(valid_items, 'New Eldorado delivery entry is invalid')
+        _park_pool_offer_for_attention(pool, 'New delivery details cannot be represented safely')
+        return 0
+    update_payload['details']['pricing']['quantity'] = len(update_payload['accountDeliveryDetails'])
     result = client.update_offer(offer_id, update_payload, proxy_group=proxy_group)
 
     if result.ok:
@@ -427,16 +531,26 @@ def _push_eldorado(
             },
         )
 
-    # Update failed — fallback to delete + recreate strategy
+    # Update failed. A cowboy/429 or a local governor refusal means "wait",
+    # never "recreate" (recreate = two more writes into the same quota).
     error_str = str(result.error) if result.error else ''
     status_code = getattr(result.error, 'status_code', None)
-    _log(
-        PostingLogLevel.WARNING,
-        f"Pool #{pool.pk}: Eldorado update failed (HTTP {status_code}), falling back to recreate",
-        account=pool.store,
-        detail={'pool_id': pool.pk, 'old_offer_id': offer_id, 'error': error_str[:500]},
-    )
-    return _recreate_eldorado_offer(pool, client, all_creds, valid_items, proxy_group)
+    if _eldorado_failure_kind(result) == 'paused':
+        _log(
+            PostingLogLevel.WARNING,
+            f"Pool #{pool.pk}: Eldorado store paused (rate limit) — will retry on a later sweep",
+            account=pool.store,
+            detail={'pool_id': pool.pk, 'offer_id': offer_id, 'error': error_str[:500]},
+        )
+        release_claims_as_pending(valid_items, 'Eldorado store paused (rate limit)')
+        return 0
+    # An unsuccessful PUT is not approval to create a duplicate or delete the
+    # original. Preserve it; content failures require staff attention, while
+    # other failures wait for authoritative reconciliation on a later sweep.
+    release_claims_as_pending(valid_items, 'Eldorado update failed; original offer preserved')
+    if _eldorado_failure_kind(result) == 'rejected':
+        _park_pool_offer_for_attention(pool, 'Eldorado rejected the update content')
+    return 0
 
 
 def _recreate_eldorado_offer(
@@ -512,13 +626,18 @@ def _create_eldorado_offer(
 
     create_result = client.create_offer(create_payload, proxy_group=proxy_group)
     if not create_result.ok:
+        kind = _eldorado_failure_kind(create_result)
         _log(
-            PostingLogLevel.ERROR,
+            PostingLogLevel.WARNING if kind == 'paused' else PostingLogLevel.ERROR,
             f"Pool #{pool.pk}: failed to recreate offer: {create_result.error}",
             account=pool.store,
-            detail={'pool_id': pool.pk, 'old_offer_id': old_offer_id},
+            detail={'pool_id': pool.pk, 'old_offer_id': old_offer_id, 'failure_kind': kind},
         )
         release_claims_as_pending(new_items, 'Eldorado replacement create failed')
+        if kind == 'rejected':
+            _park_pool_offer_for_attention(
+                pool, str(getattr(create_result.error, 'details', '') or create_result.error),
+            )
         return 0
 
     # Update listing with new offer ID
@@ -605,13 +724,28 @@ def _eldorado_remote_ids_for_credentials(
     entries = getattr(response, 'secretDetails', None) or getattr(
         response, 'accountsDetails', None,
     ) or []
+    from apis_sdk.clients.marketplaces.eldorado.delivery_details import credential_fingerprint
+
     wanted = {credential.strip() for credential in credentials}
-    return {
+    by_text = {
         str(getattr(entry, 'secretDetails', '')).strip(): str(getattr(entry, 'id', '')).strip()
         for entry in entries
         if str(getattr(entry, 'secretDetails', '')).strip() in wanted
         and str(getattr(entry, 'id', '')).strip()
     }
+    # Eldorado may re-render a credential (structured details, other line
+    # order); match the rest by login+password identity.
+    by_fingerprint = {
+        credential_fingerprint(str(getattr(entry, 'secretDetails', ''))): str(getattr(entry, 'id', '')).strip()
+        for entry in entries
+        if str(getattr(entry, 'id', '')).strip()
+    }
+    by_fingerprint.pop(None, None)
+    for credential in wanted - set(by_text):
+        remote_id = by_fingerprint.get(credential_fingerprint(credential))
+        if remote_id:
+            by_text[credential] = remote_id
+    return by_text
 
 
 def _push_gameboost(
@@ -1512,6 +1646,15 @@ def _reconcile_pushed_items(
             found = any(rc.strip() == expected_norm for rc in remote_creds)
             if found:
                 matched_remote_id = remote_id_by_text.get(expected_norm, '')
+            elif marketplace == 'eldorado':
+                # Eldorado re-renders credentials since the Oct-2026 contract
+                # (structured details); fall back to login+password identity.
+                from apis_sdk.clients.marketplaces.eldorado.delivery_details import credential_fingerprint
+
+                expected_fp = credential_fingerprint(expected_norm)
+                found = bool(expected_fp) and any(
+                    credential_fingerprint(rc) == expected_fp for rc in remote_creds
+                )
 
         if found:
             if matched_remote_id and item.remote_credential_id != matched_remote_id:

@@ -5,6 +5,7 @@ from __future__ import annotations
 from ..models import RobloxResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....marketplaces.eldorado import BaseEldoradoBuilder
+from .....marketplaces.eldorado_numeric import count, thousand
 
 
 class RobloxEldoradoBuilder(BaseEldoradoBuilder):
@@ -24,11 +25,19 @@ class RobloxEldoradoBuilder(BaseEldoradoBuilder):
             credentials=account.credentials,
             attributes={
                 "roblox-account-type": account.account_type_attr or self._resolve_account_type(account),
-                "roblox-game": account.game_attr or "game-other",
+                # Optional on Eldorado; "game-other" is rejected live
+                # ("Select attribute 'Game' value 'Other' is not allowed", 2 Nov 2026),
+                # so the attribute is only sent when the account has a real game.
+                **({"roblox-game": account.game_attr} if account.game_attr and account.game_attr != "game-other" else {}),
                 "roblox-inventory-value": self._resolve_inventory_value(account.inventory_price),
                 "roblox-offsale-items": self._resolve_offsale(account.offsale_count),
                 "roblox-robux-value": self._resolve_robux(account.robux),
                 "roblox-verified": account.age_verified_attr or ("verified-yes" if account.age_verified else "verified-no"),
+            },
+            numeric_attributes={
+                "roblox-inventory-value-numeric": thousand(account.inventory_price),
+                "roblox-offsale-items-numeric": count(account.offsale_count),
+                "roblox-robux-balance-numeric": thousand(account.robux),
             },
             ref_key=account.ref_key,
         )

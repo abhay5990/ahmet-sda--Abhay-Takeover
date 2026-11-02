@@ -216,9 +216,17 @@ class TestRustEldoradoPayload:
         assert attrs["steam-account-level"] == "level-624"
 
     def test_attributes_type_is_select(self):
+        # Dropdowns stay Select; since late Oct 2026 Eldorado also requires
+        # typed Numeric values (hours / skins / Steam level).
         payload = self._build()
-        for attr in payload["augmentedGame"]["offerAttributes"]:
-            assert attr["type"] == "Select"
+        attrs = payload["augmentedGame"]["offerAttributes"]
+        for attr in attrs:
+            expected = "Numeric" if attr["id"].endswith("-numeric") else "Select"
+            assert attr["type"] == expected
+        numeric_ids = {a["id"] for a in attrs if a["type"] == "Numeric"}
+        assert numeric_ids == {
+            "rust-hours-played-numeric", "rust-skins-count-numeric", "rust-steam-account-level-numeric",
+        }
 
     def test_fallback_trade_env_when_no_variant_context(self):
         pipeline = PayloadPipeline(registry=build_default_registry())

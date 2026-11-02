@@ -6,6 +6,7 @@ from ..models import R6ResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....core.variant_mapping import get_external_id
 from .....marketplaces.eldorado import BaseEldoradoBuilder
+from .....marketplaces.eldorado_numeric import count, thousand
 
 # Eldorado attribute keys & value IDs (from template)
 _ATTR_RANK = "rainbow-six-siege-x-current-rank"
@@ -59,6 +60,11 @@ class R6EldoradoBuilder(BaseEldoradoBuilder):
                 "rainbow-six-previous-rank": account.previous_rank_attr or self._resolve_previous_rank(account),
                 "rainbow-six-ranked-unlocked": account.ranked_unlocked_attr or ("ranked-unlocked-yes" if account.ranked_ready else "ranked-unlocked-no"),
                 "rainbow-six-renown": self._resolve_renown(account.renown),
+            },
+            numeric_attributes={
+                "rainbow-six-siege-x-black-ice-skins-numeric": count(account.black_ice_count),
+                "rainbow-six-siege-x-operators-numeric": count(account.operator_count),
+                "rainbow-six-siege-x-renown-numeric": thousand(account.renown),
             },
             ref_key=account.ref_key,
         )
