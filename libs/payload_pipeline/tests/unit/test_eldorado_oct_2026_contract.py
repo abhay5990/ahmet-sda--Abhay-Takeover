@@ -81,3 +81,10 @@ def test_cs2_faceit_level_comes_from_the_faceit_dropdown():
     assert _faceit_level("faceit-10") == 10
     assert _faceit_level("faceit-other") == 0
     assert _faceit_level("") == 0
+
+
+def test_roblox_game_attribute_is_omitted_unless_known():
+    # Live Eldorado 2 Nov 2026: "Select attribute 'Game' value 'Other' is not allowed."
+    src = _builder_source("roblox")
+    assert '"roblox-game": account.game_attr or "game-other"' not in src
+    assert 'account.game_attr != "game-other"' in src
