@@ -16,6 +16,7 @@ from ..models import RustResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....core.variant_mapping import get_external_id
 from .....marketplaces.eldorado import BaseEldoradoBuilder
+from .....marketplaces.eldorado_numeric import count, thousand
 
 
 class RustEldoradoBuilder(BaseEldoradoBuilder):
@@ -63,6 +64,11 @@ class RustEldoradoBuilder(BaseEldoradoBuilder):
             credentials=account.credentials,
             trade_environment_id=trade_env,
             attributes=attributes,
+            numeric_attributes={
+                "rust-hours-played-numeric": thousand(account.real_hours),
+                "rust-skins-count-numeric": count(account.skins_count),
+                "rust-steam-account-level-numeric": count(account.steam_level),
+            },
             ref_key=account.ref_key,
         )
 

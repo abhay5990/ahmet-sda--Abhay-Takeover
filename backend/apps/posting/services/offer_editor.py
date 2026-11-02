@@ -358,10 +358,7 @@ def _edit_eldorado(listing: Listing, changes: dict[str, Any], store: Integration
     trade_envs = raw.get('tradeEnvironmentValues') or []
     trade_env_id = str(trade_envs[0]['id']) if trade_envs and trade_envs[0].get('id') is not None else None
     raw_attrs = raw.get('attributes') or []
-    offer_attributes = [
-        {'id': a.get('id', ''), 'type': 'Select', 'value': (a.get('value') or {}).get('id', '')}
-        for a in raw_attrs
-    ]
+    offer_attributes = [_editor_attribute(a) for a in raw_attrs]
     augmented_game: dict[str, Any] = {
         'gameId': str(raw.get('gameId', '')),
         'category': raw.get('category', 'Account'),
@@ -1633,3 +1630,15 @@ def _json_safe_change_value(value: Any) -> Any:
     if isinstance(value, Decimal):
         return str(value)
     return value
+
+def _editor_attribute(attr: dict) -> dict:
+    """Re-send an existing offer attribute with its own type.
+
+    Eldorado returns Select values as ``{"id": ...}`` and Numeric values as
+    plain numbers (required since late Oct 2026). Forcing everything to
+    Select made edits crash or wipe the Numeric values.
+    """
+    value = attr.get('value')
+    if attr.get('type') == 'Numeric' or (isinstance(value, (int, float)) and not isinstance(value, bool)):
+        return {'id': attr.get('id', ''), 'type': 'Numeric', 'value': value}
+    return {'id': attr.get('id', ''), 'type': 'Select', 'value': (value or {}).get('id', '') if isinstance(value, dict) else (value or '')}

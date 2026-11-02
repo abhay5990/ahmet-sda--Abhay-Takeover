@@ -8,6 +8,7 @@ from ..models import GenshinResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....core.variant_mapping import get_external_id
 from .....marketplaces.eldorado import BaseEldoradoBuilder
+from .....marketplaces.eldorado_numeric import count, thousand
 
 
 class GenshinImpactEldoradoBuilder(BaseEldoradoBuilder):
@@ -37,6 +38,13 @@ class GenshinImpactEldoradoBuilder(BaseEldoradoBuilder):
                 "genshin-events-count": self._resolve_events(account.events_count),
                 "genshin-legendary-weapons": self._resolve_legendary_weapons(account.genshin_legendary_weapons),
                 "genshin-primogems-count": self._resolve_primogems(account.genshin_currency),
+            },
+            numeric_attributes={
+                "genshin-impact-adventure-rank-numeric": count(account.genshin_level),
+                "genshin-impact-characters-numeric": count(account.genshin_character_count),
+                "genshin-impact-events-count-numeric": count(account.events_count),
+                "genshin-impact-legendary-weapons-numeric": count(account.genshin_legendary_weapons),
+                "genshin-impact-primogems-count-numeric": thousand(account.genshin_currency),
             },
             ref_key=account.ref_key,
         )

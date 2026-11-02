@@ -5,6 +5,7 @@ from __future__ import annotations
 from ..models import RobloxResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....marketplaces.eldorado import BaseEldoradoBuilder
+from .....marketplaces.eldorado_numeric import count, thousand
 
 
 class RobloxEldoradoBuilder(BaseEldoradoBuilder):
@@ -29,6 +30,11 @@ class RobloxEldoradoBuilder(BaseEldoradoBuilder):
                 "roblox-offsale-items": self._resolve_offsale(account.offsale_count),
                 "roblox-robux-value": self._resolve_robux(account.robux),
                 "roblox-verified": account.age_verified_attr or ("verified-yes" if account.age_verified else "verified-no"),
+            },
+            numeric_attributes={
+                "roblox-inventory-value-numeric": thousand(account.inventory_price),
+                "roblox-offsale-items-numeric": count(account.offsale_count),
+                "roblox-robux-balance-numeric": thousand(account.robux),
             },
             ref_key=account.ref_key,
         )

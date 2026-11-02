@@ -6,6 +6,7 @@ from ..models import FortniteResolvedAccount
 from .....core.contracts import BuildContext, ListingDraft
 from .....core.variant_mapping import get_external_id
 from .....marketplaces.eldorado import BaseEldoradoBuilder
+from .....marketplaces.eldorado_numeric import count, thousand
 
 
 class FortniteEldoradoBuilder(BaseEldoradoBuilder):
@@ -30,6 +31,12 @@ class FortniteEldoradoBuilder(BaseEldoradoBuilder):
                 "fortnite-outfits-skins": self._resolve_cosmetic_bucket(account.skin_count, "outfits"),
                 "fortnite-pickaxes": self._resolve_cosmetic_bucket(account.pickaxe_count, "pickaxes"),
                 "fortnite-vbucks": self._resolve_vbucks(account.v_bucks),
+            },
+            numeric_attributes={
+                "fortnite-emotes-numeric": count(account.dance_count),
+                "fortnite-outfits-skins-numeric": count(account.skin_count),
+                "fortnite-pickaxes-numeric": count(account.pickaxe_count),
+                "fortnite-v-bucks-numeric": thousand(account.v_bucks),
             },
             ref_key=account.ref_key,
         )

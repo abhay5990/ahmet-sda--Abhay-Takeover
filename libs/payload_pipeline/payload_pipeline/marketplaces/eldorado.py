@@ -99,6 +99,7 @@ class BaseEldoradoBuilder(BasePayloadBuilder[Any]):
         credentials: CredentialBundle,
         trade_environment_id: str | None = None,
         attributes: dict[str, Any] | None = None,
+        numeric_attributes: dict[str, int | float] | None = None,
         ref_key: str = "",
     ) -> dict[str, Any]:
         is_dropship = ctx.kind == ListingKind.DROPSHIPPING
@@ -152,12 +153,14 @@ class BaseEldoradoBuilder(BasePayloadBuilder[Any]):
                     credentials.to_eldorado_account_secret()
                 ]
 
-        # Attributes — Eldorado expects offerAttributes array format
-        if attributes:
-            payload["augmentedGame"]["offerAttributes"] = [
-                {"id": attr_id, "type": "Select", "value": attr_value}
-                for attr_id, attr_value in attributes.items()
-            ]
+        # Attributes — typed offerAttributes array. Since late Oct 2026
+        # Eldorado also requires exact Numeric values next to the dropdowns.
+        if attributes or numeric_attributes:
+            from .eldorado_numeric import serialize_attributes
+
+            payload["augmentedGame"]["offerAttributes"] = serialize_attributes(
+                attributes, numeric_attributes,
+            )
 
         self._attach_uploaded_images(payload, listing=listing, ctx=ctx)
         return payload
