@@ -851,9 +851,9 @@ def _get_pa_active_count(pool: OfferPool) -> int | None:
         }
         missing_ids = sorted(set(offer_ids) - confirmed_ids)
         if missing_ids:
-            # PA offers expire after 30 days. A missing clone whose own expiry
-            # passed (plus grace) and that has no local sale/order/reservation
-            # evidence is returned to the pool; anything else stays fail-closed.
+            # Expiry and active-snapshot absence cannot prove unsold inventory.
+            # Diagnose exact local holds without recycling stock or destroying
+            # the linkage needed by late signed order receipts.
             from .pa_mart_expiry import return_expired_mart_clones
 
             missing_set = set(missing_ids)
@@ -864,17 +864,15 @@ def _get_pa_active_count(pool: OfferPool) -> int | None:
                     if str(active_offer.store_listing_id) in missing_set
                 ],
                 snapshot_age_seconds=meta.get('snapshot_age_seconds') if isinstance(meta, dict) else None,
+                snapshot_meta=meta,
             )
-            if outcome.unresolved:
-                logger.warning(
-                    'pool_checker: Mart snapshot did not confirm %d active offer(s) '
-                    'for pool %s (%d expired returned to pool); preserving the rest '
-                    'and skipping replenishment: %s',
-                    len(outcome.unresolved), pool.pk, len(outcome.returned),
-                    sorted(set(outcome.unresolved.values())),
-                )
-                return None
-            return len(active_offers) - len(outcome.returned)
+            logger.warning(
+                'pool_checker: Mart snapshot did not confirm %d active offer(s) '
+                'for pool %s; recovery held, links preserved, replenishment '
+                'skipped: %s',
+                len(missing_ids), pool.pk, sorted(set(outcome.unresolved.values())),
+            )
+            return None
         return len(active_offers)
 
     for active_offer in active_offers:

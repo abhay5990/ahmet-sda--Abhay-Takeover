@@ -48,6 +48,7 @@ _encryptor = PAPasswordEncryptor()
 _MCT_MART_DELEGATION_PATH = '/api/sda/pa-mart/delegate'
 _MCT_MART_DELEGATION_TIMEOUT = 45
 _MCT_MART_OFFICIAL_OFFER_SNAPSHOT_PATH = '/api/sda/pa-mart/official-active-offers'
+_MCT_MART_LOCAL_NO_WRITE_PROOF = 'sda_local_pretransport'
 
 
 def _env_flag_enabled(value: str | None) -> bool:
@@ -169,23 +170,38 @@ class MctMartDelegationClient:
             return ApiResult.from_error(
                 ErrorCategory.SERVER_ERROR,
                 'MCT Mart delegation transport outcome is unknown; reconcile the request before retrying.',
-                provider='playerauctions', is_retryable=True,
+                provider='playerauctions', is_retryable=False,
                 details={'request_id': request_id, 'delegation_outcome': 'unknown'},
             )
-        if response.ok and data.get('ok'):
-            return ApiResult.success({'offer_id': str(data.get('offerId') or ''), 'request_id': request_id}, status_code=response.status_code)
-        unknown = response.status_code >= 500 or data.get('status') in {'pending', 'unknown'}
+        data = data if isinstance(data, dict) else {}
+        raw_offer_id = data.get('offerId')
+        offer_id = ''
+        if isinstance(raw_offer_id, int) and not isinstance(raw_offer_id, bool) and raw_offer_id > 0:
+            offer_id = str(raw_offer_id)
+        elif isinstance(raw_offer_id, str) and raw_offer_id.isascii() and raw_offer_id.isdigit():
+            offer_id = raw_offer_id.lstrip('0')
+        if (
+            200 <= response.status_code < 300
+            and data.get('ok') is True
+            and data.get('status') == 'succeeded'
+            and not data.get('errorCode')
+            and not data.get('error')
+            and (action == 'cancel' or (action in {'create', 'update'} and offer_id))
+        ):
+            return ApiResult.success({'offer_id': offer_id, 'request_id': request_id}, status_code=response.status_code)
+        # No external no-write attestation contract exists. HTTP/status/error
+        # labels cannot establish that MCT never wrote an offer, even when it
+        # says "rejected". Do not retry an ambiguous write automatically.
         return ApiResult.from_error(
-            ErrorCategory.SERVER_ERROR if unknown else ErrorCategory.VALIDATION,
-            'MCT Mart delegation outcome is unknown; reconcile the request before retrying.' if unknown else 'MCT Mart delegation rejected the request before a confirmed marketplace write.',
-            provider='playerauctions', is_retryable=unknown,
+            ErrorCategory.SERVER_ERROR,
+            'MCT Mart delegation outcome is unknown; reconcile the request before retrying.',
+            provider='playerauctions', status_code=response.status_code, is_retryable=False,
             details={
                 'request_id': request_id,
-                'delegation_outcome': 'unknown' if unknown else 'rejected',
-                'error_code': str(data.get('errorCode') or data.get('error') or 'mct_delegation_rejected')[:96],
-                # Sanitized provider reason from MCT (never credentials); kept
-                # so a refusal is diagnosable instead of a generic message.
-                'provider_message': str(data.get('message') or '')[:200],
+                'delegation_outcome': 'unknown',
+                # Static diagnostic only: provider messages and arbitrary
+                # error codes may echo delivery passwords or bridge secrets.
+                'error_code': 'mct_delegation_outcome_unknown',
             },
         )
 
@@ -314,13 +330,28 @@ class MctMartDelegationClient:
 
     def create_offer(self, product_type: str, payload: dict[str, Any], **_kwargs: Any) -> ApiResult[dict[str, Any]]:
         if product_type != 'account':
-            return ApiResult.from_error(ErrorCategory.VALIDATION, 'MCT Mart delegation only supports account offers.', provider='playerauctions')
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION,
+                'MCT Mart delegation only supports account offers.',
+                provider='playerauctions',
+                is_retryable=False,
+                details={
+                    'delegation_outcome': 'rejected',
+                    'no_write_proof': _MCT_MART_LOCAL_NO_WRITE_PROOF,
+                    'error_code': 'mct_invalid_product_type',
+                },
+            )
         if _mart_create_held():
             return ApiResult.from_error(
                 ErrorCategory.VALIDATION,
                 'Mart account-offer creation is held pending reconciliation.',
                 provider='playerauctions',
                 is_retryable=False,
+                details={
+                    'delegation_outcome': 'rejected',
+                    'no_write_proof': _MCT_MART_LOCAL_NO_WRITE_PROOF,
+                    'error_code': 'mart_create_held',
+                },
             )
         return self._delegate('create', payload)
 
