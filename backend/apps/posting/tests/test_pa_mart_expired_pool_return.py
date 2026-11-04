@@ -6,6 +6,7 @@ snapshot whose own expiry passed (+2h grace) and that has no sale/order/
 reservation evidence goes back to the pool; everything else stays fail-closed.
 """
 
+import uuid
 from datetime import timedelta
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
@@ -172,7 +173,7 @@ class PaPreWriteRefusalDefersRefillTests(_MartPoolBase):
         from apps.posting.services.pool import replenisher
         item = OfferPoolItem.objects.create(
             pool=self.pool, pool_offer=self.pool_offer, owned_product=self.make_owned(f'refusal-{len(error_details)}@example.test'),
-            status=OfferPoolItemStatus.QUEUED,
+            status=OfferPoolItemStatus.QUEUED, claim_token=uuid.uuid4(), claimed_at=timezone.now(),
         )
         client = Mock()
         client.uses_official_offer_api_only.return_value = True
