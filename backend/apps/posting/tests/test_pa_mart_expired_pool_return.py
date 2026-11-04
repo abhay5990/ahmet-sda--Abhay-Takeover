@@ -23,11 +23,34 @@ from apps.posting.models import (
 )
 from apps.posting.services.pool.checker import _get_pa_active_count
 from apps.posting.services.pool.replenisher import _PoolOfferContext
-from apps.posting.tests.test_unified_offer_pool import UnifiedPoolTestCase
+from decimal import Decimal
+
+from django.test import TestCase
+
+from apps.inventory.models import Category, Game, OwnedProduct
+from apps.listings.models import Listing
+from apps.posting.models import OfferPool, OfferPoolStatus, PoolOffer
 
 
-class ExpiredMartPoolReturnTests(UnifiedPoolTestCase):
+class ExpiredMartPoolReturnTests(TestCase):
+    def make_pool(self, name):
+        return OfferPool.objects.create(name=name, game=self.game, status=OfferPoolStatus.ACTIVE)
+
+    def make_listing(self, *, account, remote_id):
+        return Listing.objects.create(
+            is_instant=True, integration_account=account, game=self.game, store_listing_id=remote_id,
+            status='listed', title=remote_id, price=Decimal('10.00'), currency='USD',
+        )
+
+    def make_owned(self, login):
+        return OwnedProduct.objects.create(category=self.category, game=self.game, login=login, password='secret')
+
+    def make_pool_offer(self, pool, *, listing, **values):
+        return PoolOffer.objects.create(pool=pool, listing=listing, **values)
+
     def setUp(self):
+        self.category = Category.objects.create(name='test-accounts', title='Test Accounts')
+        self.game = Game.objects.create(name='Test Game', slug='test-game', category=self.category)
         self.mart = IntegrationAccount.objects.create(
             name='Mart', slug='playerauctions-csgosmurfkings', provider='playerauctions', role='sell',
         )
@@ -122,7 +145,7 @@ class ExpiredMartPoolReturnTests(UnifiedPoolTestCase):
         ao = self.clone(expired_hours_ago=48)
         Order.objects.create(
             integration_account=self.mart, store_listing_id=ao.store_listing_id,
-            owned_product=ao.pool_item.owned_product,
+            owned_product=ao.pool_item.owned_product, price=Decimal('10.00'),
         )
         self.assertIsNone(self.check())
         self.assert_untouched(ao)
