@@ -36,7 +36,7 @@ MART_ACCOUNT_SLUG = "playerauctions-csgosmurfkings"
 GTA_GAME_SLUG = "grand-theft-auto-5"
 DEFAULT_LIMIT = 50
 MAX_LIMIT = 100
-DEFAULT_SNAPSHOT_MAX_AGE_SECONDS = 600
+DEFAULT_SNAPSHOT_MAX_AGE_SECONDS = 1200  # MCT refreshes every 15 min and serves up to 30 min
 
 
 @dataclass(frozen=True)
