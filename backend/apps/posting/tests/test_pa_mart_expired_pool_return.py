@@ -32,7 +32,7 @@ from apps.listings.models import Listing
 from apps.posting.models import OfferPool, OfferPoolStatus, PoolOffer
 
 
-class ExpiredMartPoolReturnTests(TestCase):
+class _MartPoolBase(TestCase):
     def make_pool(self, name):
         return OfferPool.objects.create(name=name, game=self.game, status=OfferPoolStatus.ACTIVE)
 
@@ -107,6 +107,8 @@ class ExpiredMartPoolReturnTests(TestCase):
         self.assertEqual(ao.status, OfferPoolActiveOfferStatus.ACTIVE)
         self.assertEqual(ao.pool_item.status, OfferPoolItemStatus.PUSHED)
 
+
+class ExpiredMartPoolReturnTests(_MartPoolBase):
     def test_expired_unsold_clone_returns_to_pool_and_unfreezes_the_pool(self):
         ao = self.clone(expired_hours_ago=48)
         self.assertEqual(self.check(), 0)  # 0 live → normal threshold refill runs
@@ -161,3 +163,36 @@ class ExpiredMartPoolReturnTests(TestCase):
             orders.return_value.exists.return_value = True
             self.assertEqual(expired_clone_block_reason(ao), 'order_on_offer')
         self.assertIsNone(expired_clone_block_reason(ao))
+
+
+class PaPreWriteRefusalDefersRefillTests(_MartPoolBase):
+    """A PA refusal confirmed BEFORE any write returns the key to PENDING (4 Nov 2026: 70 keys stranded as FAILED)."""
+
+    def _post(self, error_details):
+        from apps.posting.services.pool import replenisher
+        item = OfferPoolItem.objects.create(
+            pool=self.pool, pool_offer=self.pool_offer, owned_product=self.make_owned(f'refusal-{len(error_details)}@example.test'),
+            status=OfferPoolItemStatus.QUEUED,
+        )
+        client = Mock()
+        client.uses_official_offer_api_only.return_value = True
+        provider = Mock()
+        provider.create_listing.return_value = SimpleNamespace(
+            ok=False, data=None, error=SimpleNamespace(details=error_details),
+        )
+        pool = SimpleNamespace(aggregate=self.pool, listing=self.template)
+        with patch.object(replenisher, 'pool_clone_tracking_code', return_value='#ABC123'), \
+             patch('apps.integrations.providers.registry.get_provider', return_value=provider):
+            pushed = replenisher._post_pa_excel_row(pool, client, item, {'Title': 'Pool offer'}, None)
+        self.assertEqual(pushed, 0)
+        item.refresh_from_db()
+        return item
+
+    def test_pre_write_refusal_returns_key_to_pending(self):
+        item = self._post({'delegation_outcome': 'rejected', 'error_code': 'create_failed_http_200'})
+        self.assertEqual(item.status, OfferPoolItemStatus.PENDING)
+        self.assertEqual(item.failure_stage, 'known_safe_failure')
+
+    def test_unknown_outcome_still_fails_closed(self):
+        item = self._post({'delegation_outcome': 'unknown'})
+        self.assertEqual(item.status, OfferPoolItemStatus.FAILED)
