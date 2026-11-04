@@ -5,12 +5,19 @@ documented signed Offer API. It never cancels/recreates an offer and never
 starts a relay/browser session. Other PA accounts retain the older relist path
 until separately migrated.
 
+Mart (4 Nov 2026): the renewal is delegated to MCT's exact-ID ``renew``
+action, which runs MCT's proven official renewal (query → 30-day edit →
+re-query, verified by the extended expiry). The old in-SDA Mart path could
+never succeed: PA strips the HTML-comment marker it verified against, and a PA
+edit may return a *replacement* offer ID that it ignored. Only the Mart account
+is renewed by default; other PA accounts need ``--include-legacy-accounts``.
+
 This recurring lane intentionally excludes expired records. Expiry recovery
 needs separate exact remote-state and sale-safety evidence; it must not be
 silently mixed into pre-expiry renewal work.
 """
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -20,12 +27,13 @@ from apps.integrations.providers import registry
 from apps.listings.enums import ListingStatus
 from apps.listings.models import Listing
 from apps.orders.models import Order
-from apps.posting.models import OfferPoolActiveOffer, OfferPoolActiveOfferStatus, PoolSaleEvent
+from apps.posting.models import OfferPoolActiveOffer, OfferPoolActiveOfferStatus, OfferPoolItem, PoolSaleEvent
 from apps.posting.services.relist import relist_listing
 
 
 DEFAULT_RENEWAL_LEAD_HOURS = 96
-DEFAULT_RENEWAL_BATCH_SIZE = 75
+DEFAULT_RENEWAL_BATCH_SIZE = 25
+MART_ACCOUNT_SLUG = 'playerauctions-csgosmurfkings'
 MAX_RENEWAL_BATCH_SIZE = 100
 _PA_ACTIVE_STATE = 1
 
@@ -92,7 +100,87 @@ def _is_unexpired_renewal_candidate(expires_at, now, cutoff) -> bool:
     return bool(expires_at and now < expires_at <= cutoff)
 
 
+def mart_renewal_request_id(offer_id: str, expires_at, today) -> str:
+    """Deterministic per offer, per recorded expiry, per UTC day.
+
+    Repeating the same ID within a day returns MCT's stored outcome (never a
+    second edit); a new day allows one fresh attempt (a renewal never creates
+    a duplicate offer, so a repeat is at worst a second extension).
+    """
+    return f"sda-renew-{offer_id}-{expires_at:%Y%m%d}-{today:%Y%m%d}"
+
+
+def _parse_iso(value):
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace('Z', '+00:00'))
+    except ValueError:
+        return None
+    return parsed if parsed.tzinfo else None
+
+
+def _renew_mart_offer_via_mct(listing: Listing, client) -> tuple[str, str]:
+    """Returns (outcome, message); outcome is renewed | rejected | unknown."""
+    offer_id = str(listing.store_listing_id or '').strip()
+    if not offer_id.isdigit():
+        return 'rejected', 'listing has no numeric PlayerAuctions offer ID'
+    now = timezone.now()
+    request_id = mart_renewal_request_id(offer_id, listing.marketplace_expires_at, now)
+    try:
+        result = client.renew_offer(offer_id, request_id=request_id)
+    except Exception as exc:
+        return 'unknown', f'renewal transport failed ({type(exc).__name__}); request {request_id}'
+    if not result or not getattr(result, 'ok', False):
+        details = getattr(getattr(result, 'error', None), 'details', None) or {}
+        if isinstance(details, dict) and details.get('delegation_outcome') == 'rejected':
+            return 'rejected', f"refused before any write ({details.get('error_code', 'rejected')})"
+        return 'unknown', f'renewal outcome not verified; request {request_id} (repeat the same ID to resolve)'
+    data = getattr(result, 'data', None) or {}
+    new_offer_id = str(data.get('offer_id') or '')
+    if not (new_offer_id.isdigit() and not new_offer_id.startswith('0')):
+        return 'unknown', f'renewal returned no valid offer ID; request {request_id}'
+    expires_at = _parse_iso(data.get('expires_at')) or (now + timedelta(days=29))
+
+    with transaction.atomic():
+        locked = Listing.objects.select_for_update().get(pk=listing.pk)
+        if str(locked.store_listing_id) != offer_id:
+            return 'unknown', f'local offer ID changed during renewal; request {request_id}'
+        if new_offer_id != offer_id and Listing.objects.filter(
+            integration_account=locked.integration_account, store_listing_id=new_offer_id,
+        ).exclude(pk=locked.pk).exists():
+            return 'unknown', f'renewed offer {new_offer_id} already mapped to another listing; request {request_id}'
+        locked.store_listing_id = new_offer_id
+        locked.listed_at = now
+        locked.marketplace_expires_at = expires_at
+        locked.raw_data = {
+            **(locked.raw_data or {}),
+            'official_renewal': {
+                'request_id': request_id,
+                'previous_offer_id': offer_id,
+                'renewed_at': now.isoformat(),
+            },
+        }
+        locked.save(update_fields=['store_listing_id', 'listed_at', 'marketplace_expires_at', 'raw_data', 'updated_at'])
+        if new_offer_id != offer_id:
+            # Pool clones and their keys follow the replacement ID so the pool
+            # checker keeps confirming them in the Official snapshot.
+            OfferPoolActiveOffer.objects.filter(listing=locked, store_listing_id=offer_id).update(
+                store_listing_id=new_offer_id, updated_at=now,
+            )
+            OfferPoolItem.objects.filter(
+                active_offers__listing=locked, target_offer_id=offer_id,
+            ).update(target_offer_id=new_offer_id, updated_at=now)
+    suffix = f' (new offer ID {new_offer_id})' if new_offer_id != offer_id else ''
+    return 'renewed', f'renewed through MCT official renewal until {expires_at:%Y-%m-%d}{suffix}'
+
+
 def _renew_official_mart_account_offer(listing: Listing, client) -> tuple[bool, str]:
+    """Legacy in-SDA Mart renewal — superseded by _renew_mart_offer_via_mct.
+
+    Kept only for clients without ``renew_offer``; see the module docstring
+    for why its marker verification cannot succeed against live PA.
+    """
     """Renew one Mart account offer in place after query/edit/re-query proof.
 
     Account-offer edits are replace-style requests. The source is always the
@@ -180,6 +268,11 @@ class Command(BaseCommand):
                 f'(default: {DEFAULT_RENEWAL_BATCH_SIZE}; maximum: {MAX_RENEWAL_BATCH_SIZE}).'
             ),
         )
+        parser.add_argument(
+            '--include-legacy-accounts',
+            action='store_true',
+            help='Also renew non-Mart PA accounts through the legacy relist path (off by default).',
+        )
 
     def handle(self, *args, **options):
         execute = options['execute']
@@ -197,6 +290,7 @@ class Command(BaseCommand):
                 marketplace_expires_at__isnull=False,
                 marketplace_expires_at__gt=now,
                 marketplace_expires_at__lte=cutoff,
+                **({} if options.get('include_legacy_accounts') else {'integration_account__slug': MART_ACCOUNT_SLUG}),
             )
             .select_related('integration_account__credential')
             .order_by('marketplace_expires_at', 'pk')[:limit]
@@ -207,6 +301,7 @@ class Command(BaseCommand):
             'skipped': 0,
             'stale': 0,
             'failed': 0,
+            'unknown': 0,
         }
 
         for candidate in candidates:
@@ -260,6 +355,19 @@ class Command(BaseCommand):
                     ))
                     continue
 
+                if _uses_official_offer_api_only(client) and callable(getattr(client, 'renew_offer', None)):
+                    outcome, message = _renew_mart_offer_via_mct(listing, client)
+                    if outcome == 'renewed':
+                        stats['renewed'] += 1
+                        self.stdout.write(self.style.SUCCESS(f'RENEWED {listing.store_listing_id}: {message}'))
+                    elif outcome == 'rejected':
+                        stats['skipped'] += 1
+                        self.stdout.write(f'SKIP {listing.store_listing_id}: {message}')
+                    else:
+                        stats['unknown'] += 1
+                        self.stdout.write(self.style.ERROR(f'UNKNOWN {listing.store_listing_id}: {message}'))
+                    continue
+
                 if _uses_official_offer_api_only(client):
                     renewed, message = _renew_official_mart_account_offer(listing, client)
                     if renewed:
@@ -294,5 +402,6 @@ class Command(BaseCommand):
             f"{'EXECUTED' if execute else 'DRY RUN'}: "
             f"candidates={stats['candidates']} renewed={stats['renewed']} "
             f"skipped={stats['skipped']} stale={stats['stale']} failed={stats['failed']} "
+            f"unknown={stats['unknown']} "
             f"limit={limit}; expired listings are intentionally excluded"
         )
