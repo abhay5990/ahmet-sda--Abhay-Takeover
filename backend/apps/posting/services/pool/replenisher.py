@@ -1087,7 +1087,7 @@ def _replenish_pa(pool: OfferPool) -> int:
         return 0
 
     pushed = 0
-    for item in pending_items:
+    for index, item in enumerate(pending_items):
         try:
             if original_payload:
                 pushed += _clone_pa_offer(
@@ -1097,6 +1097,14 @@ def _replenish_pa(pool: OfferPool) -> int:
                 pushed += _rebuild_pa_offer_from_stock(
                     pool, client, item, proxy_group,
                 )
+            if getattr(item, '_pa_refill_deferred', False):
+                # Provider refused before writing: keep the remaining claimed
+                # keys PENDING and let the next sweep (minutes later) retry.
+                release_claims_as_pending(
+                    pending_items[index + 1:],
+                    'PA refill deferred to next sweep after a pre-write refusal',
+                )
+                break
         except Exception as exc:
             logger.exception('pool_replenish: PA replacement failed for item %d', item.pk)
             mark_item_failed(
@@ -1290,10 +1298,28 @@ def _post_pa_excel_row(
             {'payload': excel_row, 'proxy_group': proxy_group},
         )
         if not official_result or not getattr(official_result, 'ok', False):
-            error_str = str(getattr(official_result, 'error', 'Official PA account-offer create failed'))
+            error = getattr(official_result, 'error', None)
+            error_str = str(error or 'Official PA account-offer create failed')
+            details = getattr(error, 'details', None) or {}
+            if isinstance(details, dict) and details.get('delegation_outcome') == 'rejected':
+                # MCT confirmed PA refused the create BEFORE any marketplace
+                # write (e.g. a second same-template offer posted seconds after
+                # the first — live 4 Nov 2026: 75 such refusals, all later
+                # accepted a few minutes apart). The key is provably unlisted:
+                # return it to PENDING and defer the rest of this pool to the
+                # next sweep instead of stranding it as FAILED forever.
+                mark_item_failed(
+                    item,
+                    error_message=f"PA official create refused before write (will retry next sweep): {error_str[:500]}",
+                    failure_stage='known_safe_failure',
+                    remote_state='absent',
+                    retryable=True,
+                )
+                item._pa_refill_deferred = True
+                return 0
             mark_item_failed(
                 item,
-                error_message=f"PA official replacement failed: {error_str[:200]}",
+                error_message=f"PA official replacement failed: {error_str[:500]}",
                 failure_stage='remote_push',
                 remote_state='absent',
                 retryable=False,

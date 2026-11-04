@@ -141,11 +141,23 @@ class ExpiredMartPoolReturnTests(TestCase):
         self.assertIsNone(self.check(age=5_000))
         self.assert_untouched(ao)
 
-    def test_order_on_the_account_blocks_return(self):
+    def test_order_on_the_account_never_returns_it_to_the_pool(self):
         ao = self.clone(expired_hours_ago=48)
         Order.objects.create(
             integration_account=self.mart, store_listing_id=ao.store_listing_id,
             owned_product=ao.pool_item.owned_product, price=Decimal('10.00'),
         )
-        self.assertIsNone(self.check())
-        self.assert_untouched(ao)
+        self.check()
+        ao.refresh_from_db()
+        ao.pool_item.refresh_from_db()
+        # The sale (via SDA's own order handling or the guard) wins: never back on sale.
+        self.assertNotEqual(ao.status, OfferPoolActiveOfferStatus.FAILED)
+        self.assertNotEqual(ao.pool_item.status, OfferPoolItemStatus.PENDING)
+
+    def test_guard_names_the_order_when_the_clone_is_still_active(self):
+        from apps.posting.services.pool.pa_mart_expiry import expired_clone_block_reason
+        ao = self.clone(expired_hours_ago=48)
+        with patch('apps.posting.services.pool.pa_mart_expiry.Order.objects.filter') as orders:
+            orders.return_value.exists.return_value = True
+            self.assertEqual(expired_clone_block_reason(ao), 'order_on_offer')
+        self.assertIsNone(expired_clone_block_reason(ao))

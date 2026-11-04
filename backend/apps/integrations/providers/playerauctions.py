@@ -183,6 +183,9 @@ class MctMartDelegationClient:
                 'request_id': request_id,
                 'delegation_outcome': 'unknown' if unknown else 'rejected',
                 'error_code': str(data.get('errorCode') or data.get('error') or 'mct_delegation_rejected')[:96],
+                # Sanitized provider reason from MCT (never credentials); kept
+                # so a refusal is diagnosable instead of a generic message.
+                'provider_message': str(data.get('message') or '')[:200],
             },
         )
 
