@@ -851,10 +851,26 @@ def _get_pa_active_count(pool: OfferPool) -> int | None:
         }
         missing_ids = sorted(set(offer_ids) - confirmed_ids)
         if missing_ids:
+            # Expiry and active-snapshot absence cannot prove unsold inventory.
+            # Diagnose exact local holds without recycling stock or destroying
+            # the linkage needed by late signed order receipts.
+            from .pa_mart_expiry import return_expired_mart_clones
+
+            missing_set = set(missing_ids)
+            meta = getattr(result, 'meta', None) or {}
+            outcome = return_expired_mart_clones(
+                [
+                    active_offer for active_offer in active_offers
+                    if str(active_offer.store_listing_id) in missing_set
+                ],
+                snapshot_age_seconds=meta.get('snapshot_age_seconds') if isinstance(meta, dict) else None,
+                snapshot_meta=meta,
+            )
             logger.warning(
                 'pool_checker: Mart snapshot did not confirm %d active offer(s) '
-                'for pool %s; preserving local state and skipping replenishment',
-                len(missing_ids), pool.pk,
+                'for pool %s; recovery held, links preserved, replenishment '
+                'skipped: %s',
+                len(missing_ids), pool.pk, sorted(set(outcome.unresolved.values())),
             )
             return None
         return len(active_offers)

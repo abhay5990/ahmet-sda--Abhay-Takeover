@@ -1087,7 +1087,7 @@ def _replenish_pa(pool: OfferPool) -> int:
         return 0
 
     pushed = 0
-    for item in pending_items:
+    for index, item in enumerate(pending_items):
         try:
             if original_payload:
                 pushed += _clone_pa_offer(
@@ -1097,14 +1097,41 @@ def _replenish_pa(pool: OfferPool) -> int:
                 pushed += _rebuild_pa_offer_from_stock(
                     pool, client, item, proxy_group,
                 )
+            if getattr(item, '_pa_refill_deferred', False):
+                # Provider refused before writing: keep the remaining claimed
+                # keys PENDING and let the next sweep (minutes later) retry.
+                from .pa_mart_claims import finalize_mart_claim_failure
+
+                # These later claims have not been submitted. Fence each release
+                # against its original token; never alter a newer worker claim.
+                for remaining in pending_items[index + 1:]:
+                    finalize_mart_claim_failure(
+                        remaining, expected_token=remaining.claim_token,
+                        local_pretransport=True,
+                    )
+                break
         except Exception as exc:
-            logger.exception('pool_replenish: PA replacement failed for item %d', item.pk)
-            mark_item_failed(
-                item,
-                error_message=str(exc),
-                failure_stage='remote_push',
-                remote_state='unknown',
-            )
+            from apps.integrations.providers.playerauctions import is_mart_account_store
+
+            if is_mart_account_store(pool.listing.integration_account):
+                from .pa_mart_claims import finalize_mart_claim_failure
+
+                logger.warning('pool_replenish: Mart create outcome unverified for item %d; round deferred', item.pk)
+                finalize_mart_claim_failure(item, expected_token=item.claim_token)
+                for remaining in pending_items[index + 1:]:
+                    finalize_mart_claim_failure(
+                        remaining, expected_token=remaining.claim_token,
+                        local_pretransport=True,
+                    )
+                break
+            else:
+                logger.exception('pool_replenish: PA replacement failed for item %d', item.pk)
+                mark_item_failed(
+                    item,
+                    error_message=str(exc),
+                    failure_stage='remote_push',
+                    remote_state='unknown',
+                )
 
     pool.last_replenished_at = timezone.now()
     pool.current_remote_count = active_count + pushed
@@ -1266,6 +1293,7 @@ def _post_pa_excel_row(
     raw_payload: dict[str, Any] | None = None,
 ) -> int:
     """Post one prepared PA bulk row and atomically persist its pool clone."""
+    expected_claim_token = item.claim_token
     tracking_code = pool_clone_tracking_code(pool.aggregate, item, item.claim_token)
     title_key = 'Title' if 'Title' in excel_row or 'title' not in excel_row else 'title'
     excel_row = dict(excel_row)
@@ -1290,10 +1318,36 @@ def _post_pa_excel_row(
             {'payload': excel_row, 'proxy_group': proxy_group},
         )
         if not official_result or not getattr(official_result, 'ok', False):
-            error_str = str(getattr(official_result, 'error', 'Official PA account-offer create failed'))
+            error = getattr(official_result, 'error', None)
+            error_str = str(error or 'Official PA account-offer create failed')
+            details = getattr(error, 'details', None) or {}
+            from apps.integrations.providers.playerauctions import is_mart_account_store
+
+            if is_mart_account_store(pool.listing.integration_account):
+                from .pa_mart_claims import finalize_mart_claim_failure
+
+                # Generic HTTP rejection is not a no-write receipt. The provider
+                # emits this proof ONLY for its own local pretransport checks.
+                local_refusal = (
+                    isinstance(details, dict)
+                    and details.get('delegation_outcome') == 'rejected'
+                    and details.get('no_write_proof') == 'sda_local_pretransport'
+                    and details.get('error_code') in {'mart_create_held', 'mct_invalid_product_type'}
+                    and not any(details.get(key) for key in ('offerId', 'offer_id', 'remote_offer_id'))
+                    and getattr(official_result, 'data', None) is None
+                )
+                finalize_mart_claim_failure(
+                    item, expected_token=expected_claim_token,
+                    local_pretransport=local_refusal,
+                    request_id=details.get('request_id', '') if isinstance(details, dict) else '',
+                )
+                # Stop this round even for an ambiguous/stale response; do not
+                # submit additional claims from the same pool after uncertainty.
+                item._pa_refill_deferred = True
+                return 0
             mark_item_failed(
                 item,
-                error_message=f"PA official replacement failed: {error_str[:200]}",
+                error_message=f"PA official replacement failed: {error_str[:500]}",
                 failure_stage='remote_push',
                 remote_state='absent',
                 retryable=False,
