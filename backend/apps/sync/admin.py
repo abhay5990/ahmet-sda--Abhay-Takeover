@@ -3,6 +3,7 @@ from django.utils.html import format_html
 
 from .models import (
     EldoradoReview,
+    PaMartRenewalAttempt,
     RawPayload,
     SyncCheckpoint,
     SyncFeatureFlag,
@@ -238,3 +239,34 @@ class EldoradoReviewAdmin(admin.ModelAdmin):
         if len(obj.review_message) > 80:
             return obj.review_message[:80] + '...'
         return obj.review_message
+
+
+@admin.register(PaMartRenewalAttempt)
+class PaMartRenewalAttemptAdmin(admin.ModelAdmin):
+    """Read-only incident state; pending/unknown cannot be edited into retry."""
+
+    list_display = ('request_id', 'listing_reference', 'old_offer_id', 'new_offer_id', 'status', 'reason_code', 'updated_at')
+    list_filter = ('status', 'integration_account')
+    search_fields = ('request_id', 'old_offer_id', 'new_offer_id')
+    list_per_page = 50
+    show_full_result_count = False
+    actions = None
+    readonly_fields = (
+        'request_id', 'listing_reference', 'old_offer_id', 'new_offer_id',
+        'status', 'reason_code', 'previous_expires_at', 'verified_expires_at',
+        'created_at', 'updated_at',
+    )
+    fields = readonly_fields
+
+    @admin.display(description='SDA Listing ID')
+    def listing_reference(self, obj):
+        return obj.listing_id
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False

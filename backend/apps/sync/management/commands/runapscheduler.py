@@ -136,7 +136,7 @@ def run_pause_expiring_listings_job():
 def run_renew_expiring_playerauctions_job():
     """Renew only verified-active PA offers before their recorded expiry."""
     from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled
-    if not is_sync_feature_enabled(SyncFlag.RENEW_EXPIRING_PA):
+    if not is_sync_feature_enabled(SyncFlag.RENEW_EXPIRING_PA, default=False):
         return
     from django.core.management import call_command
     call_command('renew_expiring_playerauctions', '--execute')

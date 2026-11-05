@@ -765,15 +765,28 @@ class BaseSyncService:
 
         from apps.listings.models import Listing
 
-        listing = (
-            Listing.objects
-            .filter(
-                integration_account=raw_payload.integration_account,
-                store_listing_id=store_listing_id,
-            )
-            .select_related('dropship_product')
-            .first()
+        from apps.sync.services.pa_mart_offer_identity import (
+            is_pa_mart_identity_account, resolve_pa_mart_listing,
         )
+
+        if is_pa_mart_identity_account(raw_payload.integration_account):
+            # Linking a pending Mart order would also trigger the existing
+            # Order signal's sold/closed lifecycle before payment is final.
+            if not BaseSyncService._is_pool_sale_confirmed(defaults.get('status')):
+                return
+            listing = resolve_pa_mart_listing(
+                raw_payload.integration_account, store_listing_id,
+            )
+        else:
+            listing = (
+                Listing.objects
+                .filter(
+                    integration_account=raw_payload.integration_account,
+                    store_listing_id=store_listing_id,
+                )
+                .select_related('dropship_product')
+                .first()
+            )
         if not listing:
             return
 
@@ -815,10 +828,23 @@ class BaseSyncService:
         """If this order's listing has an offer pool, trigger replenish check."""
         try:
             from apps.listings.models import Listing
-            listing = Listing.objects.filter(
-                store_listing_id=order.store_listing_id,
-                integration_account=order.integration_account,
-            ).only('id').first()
+            from apps.sync.services.pa_mart_offer_identity import (
+                is_pa_mart_identity_account, resolve_pa_mart_listing,
+            )
+
+            if is_pa_mart_identity_account(order.integration_account):
+                if not BaseSyncService._is_pool_sale_confirmed(order.status):
+                    return
+                # Re-resolve the original order offer ID, rather than trusting
+                # a pre-existing FK or silently preferring a current-ID match.
+                listing = resolve_pa_mart_listing(
+                    order.integration_account, order.store_listing_id,
+                )
+            else:
+                listing = Listing.objects.filter(
+                    store_listing_id=order.store_listing_id,
+                    integration_account=order.integration_account,
+                ).only('id').first()
             if listing:
                 from apps.posting.services.pool.checker import notify_sale
                 provider = getattr(order.integration_account, 'provider', '')

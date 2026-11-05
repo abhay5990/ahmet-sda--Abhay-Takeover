@@ -10,6 +10,9 @@ from apps.sync.enums import ResourceType, SyncMode, SyncPhase, SyncRunStatus
 from apps.sync.exceptions import SkipItem
 from apps.sync.models import RawPayload, SyncCheckpoint, SyncRun
 from apps.sync.services.base import BaseSyncService
+from apps.sync.services.pa_mart_offer_identity import (
+    is_pa_mart_identity_account, resolve_pa_mart_listing,
+)
 from apps.posting.services.stock.pa_tracking import extract_tracking_code
 from . import mapper
 
@@ -363,9 +366,20 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
         # Native offer IDs are authoritative.  A per-listing PA title code is
         # a deliberately narrow fallback for API payloads that omit offerId.
         # It maps the order to the exact locally persisted Listing, which in
-        # turn restores the canonical offer ID before pool-sale handling runs.
+        # turn supplies an offer ID before pool-sale handling runs. Historical
+        # native IDs stay on the Order; only the Listing FK resolves to today.
+        is_mart = is_pa_mart_identity_account(raw_payload.integration_account)
+        status = mapper.map_status(status_str)
+        can_link_stock = not is_mart or self._is_pool_sale_confirmed(status)
         linked_listing = None
-        if not listing_id and raw_payload.integration_account_id:
+        if listing_id and is_mart and can_link_stock:
+            linked_listing = resolve_pa_mart_listing(
+                raw_payload.integration_account, listing_id,
+            )
+            # A native identity collision/unmatched ID must not fall through
+            # to credentials and consume some other stock item instead.
+            can_link_stock = linked_listing is not None
+        if not listing_id and raw_payload.integration_account_id and can_link_stock:
             tracking_code = extract_tracking_code(*_payload_text_values(payload))
             if tracking_code:
                 from apps.listings.models import Listing
@@ -392,7 +406,7 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
         defaults = {
             'is_instant': mapper.extract_is_instant(payload),
             'product_category': product_category,
-            'status': mapper.map_status(status_str),
+            'status': status,
             'price': Decimal(str(price_value)),
             'currency': currency,
             'our_fee': None,
@@ -400,10 +414,17 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
             'store_listing_id': listing_id,
             'raw_data': payload,
         }
+        if is_mart and listing_id:
+            # A replay must not keep an earlier FK if identity now collides.
+            defaults.update(listing=None, dropship_product=None)
+        if is_mart and not can_link_stock:
+            # update_or_create otherwise retains old FKs on pending/ambiguous
+            # replays, allowing stock consumption even without a pool notify.
+            defaults.update(listing=None, dropship_product=None, owned_product=None)
 
         if linked_listing:
-            # Prevent BaseSyncService from discarding the verified title-code
-            # link when it applies its normal store_listing_id lookup.
+            # Preserve the exact native-history or existing title-code link
+            # when BaseSyncService applies its normal store_listing_id lookup.
             defaults['listing'] = linked_listing
             if linked_listing.dropship_product_id:
                 defaults['dropship_product'] = linked_listing.dropship_product
@@ -419,7 +440,7 @@ class PlayerAuctionsOrderSyncService(BaseSyncService):
         # OwnedProduct get-or-create
         owned = self._match_or_create_owned_product(
             payload, raw_payload, Decimal(str(price_value)), currency,
-        )
+        ) if can_link_stock else None
         if owned:
             defaults['owned_product'] = owned
 
