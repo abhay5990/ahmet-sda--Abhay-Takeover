@@ -5,6 +5,13 @@ documented signed Offer API. It never cancels/recreates an offer and never
 starts a relay/browser session. Other PA accounts retain the older relist path
 until separately migrated.
 
+Mart (4 Nov 2026): the renewal is delegated to MCT's exact-ID ``renew``
+action, which runs MCT's proven official renewal (query → 30-day edit →
+re-query, verified by the extended expiry). The old in-SDA Mart path could
+never succeed: PA strips the HTML-comment marker it verified against, and a PA
+edit may return a *replacement* offer ID that it ignored. Only the Mart account
+is renewed by default; other PA accounts need ``--include-legacy-accounts``.
+
 This recurring lane intentionally excludes expired records. Expiry recovery
 needs separate exact remote-state and sale-safety evidence; it must not be
 silently mixed into pre-expiry renewal work.
@@ -20,12 +27,13 @@ from apps.integrations.providers import registry
 from apps.listings.enums import ListingStatus
 from apps.listings.models import Listing
 from apps.orders.models import Order
-from apps.posting.models import OfferPoolActiveOffer, OfferPoolActiveOfferStatus, PoolSaleEvent
+from apps.posting.models import OfferPoolActiveOffer, OfferPoolActiveOfferStatus, OfferPoolItem, PoolSaleEvent
 from apps.posting.services.relist import relist_listing
 
 
 DEFAULT_RENEWAL_LEAD_HOURS = 96
-DEFAULT_RENEWAL_BATCH_SIZE = 75
+DEFAULT_RENEWAL_BATCH_SIZE = 25
+MART_ACCOUNT_SLUG = 'playerauctions-csgosmurfkings'
 MAX_RENEWAL_BATCH_SIZE = 100
 _PA_ACTIVE_STATE = 1
 
@@ -92,7 +100,24 @@ def _is_unexpired_renewal_candidate(expires_at, now, cutoff) -> bool:
     return bool(expires_at and now < expires_at <= cutoff)
 
 
+def mart_renewal_request_id(offer_id: str, expires_at, today=None) -> str:
+    """Stable for the full recorded UTC expiry, never changed at midnight."""
+    from apps.sync.services.pa_mart_renewal import mart_renewal_request_id as durable_request_id
+    return durable_request_id(offer_id, expires_at, today)
+
+
+def _renew_mart_offer_via_mct(listing: Listing, client, *, lead_hours=96) -> tuple[str, str]:
+    """Delegate only through the durable, independently gated ownership service."""
+    from apps.sync.services.pa_mart_renewal import renew_mart_listing
+    return renew_mart_listing(listing.pk, client, lead_hours=lead_hours)
+
+
 def _renew_official_mart_account_offer(listing: Listing, client) -> tuple[bool, str]:
+    """Legacy in-SDA Mart renewal — superseded by _renew_mart_offer_via_mct.
+
+    Kept only for clients without ``renew_offer``; see the module docstring
+    for why its marker verification cannot succeed against live PA.
+    """
     """Renew one Mart account offer in place after query/edit/re-query proof.
 
     Account-offer edits are replace-style requests. The source is always the
@@ -180,6 +205,11 @@ class Command(BaseCommand):
                 f'(default: {DEFAULT_RENEWAL_BATCH_SIZE}; maximum: {MAX_RENEWAL_BATCH_SIZE}).'
             ),
         )
+        parser.add_argument(
+            '--include-legacy-accounts',
+            action='store_true',
+            help='Also renew non-Mart PA accounts through the legacy relist path (off by default).',
+        )
 
     def handle(self, *args, **options):
         execute = options['execute']
@@ -187,6 +217,11 @@ class Command(BaseCommand):
         limit = int(options['limit'])
         if not 1 <= limit <= MAX_RENEWAL_BATCH_SIZE:
             raise CommandError(f'--limit must be between 1 and {MAX_RENEWAL_BATCH_SIZE}')
+
+        if execute:
+            from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled
+            if not is_sync_feature_enabled(SyncFlag.RENEW_EXPIRING_PA, default=False):
+                raise CommandError('PlayerAuctions renewal is held; explicit enabled flag required.')
 
         now = timezone.now()
         cutoff = now + timedelta(hours=lead_hours)
@@ -197,6 +232,7 @@ class Command(BaseCommand):
                 marketplace_expires_at__isnull=False,
                 marketplace_expires_at__gt=now,
                 marketplace_expires_at__lte=cutoff,
+                **({} if options.get('include_legacy_accounts') else {'integration_account__slug': MART_ACCOUNT_SLUG}),
             )
             .select_related('integration_account__credential')
             .order_by('marketplace_expires_at', 'pk')[:limit]
@@ -207,6 +243,7 @@ class Command(BaseCommand):
             'skipped': 0,
             'stale': 0,
             'failed': 0,
+            'unknown': 0,
         }
 
         for candidate in candidates:
@@ -220,6 +257,33 @@ class Command(BaseCommand):
                     f'READY {candidate.store_listing_id}: expires '
                     f'{candidate.marketplace_expires_at.isoformat()}'
                 )
+                continue
+
+            if candidate.integration_account.slug == MART_ACCOUNT_SLUG:
+                # A committed pending attempt must precede transport; do not
+                # wrap the Mart helper in the legacy long-running transaction.
+                try:
+                    client = registry.get_or_build_client('playerauctions', candidate.integration_account.credential)
+                    if not _uses_official_offer_api_only(client) or not callable(getattr(client, 'renew_offer', None)):
+                        stats['skipped'] += 1
+                        self.stdout.write(f'SKIP {candidate.store_listing_id}: exact-ID official renewal unavailable')
+                        continue
+                except Exception as exc:
+                    stats['failed'] += 1
+                    self.stdout.write(self.style.ERROR(
+                        f'FAILED {candidate.store_listing_id}: client unavailable ({type(exc).__name__})'
+                    ))
+                    continue
+                outcome, message = _renew_mart_offer_via_mct(candidate, client, lead_hours=lead_hours)
+                if outcome == 'renewed':
+                    stats['renewed'] += 1
+                    self.stdout.write(self.style.SUCCESS(f'RENEWED {candidate.store_listing_id}: {message}'))
+                elif outcome == 'rejected':
+                    stats['skipped'] += 1
+                    self.stdout.write(f'SKIP {candidate.store_listing_id}: {message}')
+                else:
+                    stats['unknown'] += 1
+                    self.stdout.write(self.style.ERROR(f'UNKNOWN {candidate.store_listing_id}: {message}'))
                 continue
 
             # A scheduled and a manual run can overlap. Re-lock and re-check
@@ -294,5 +358,6 @@ class Command(BaseCommand):
             f"{'EXECUTED' if execute else 'DRY RUN'}: "
             f"candidates={stats['candidates']} renewed={stats['renewed']} "
             f"skipped={stats['skipped']} stale={stats['stale']} failed={stats['failed']} "
+            f"unknown={stats['unknown']} "
             f"limit={limit}; expired listings are intentionally excluded"
         )

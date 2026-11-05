@@ -6,6 +6,7 @@ import json
 import logging
 import os
 import uuid
+from datetime import datetime, timezone as dt_timezone
 from typing import TYPE_CHECKING, Any
 
 import requests
@@ -156,8 +157,10 @@ class MctMartDelegationClient:
             'tag': base64.b64encode(ciphertext[-16:]).decode('ascii'),
         }
 
-    def _delegate(self, action: str, payload: dict[str, Any]) -> ApiResult[dict[str, Any]]:
-        request_id = uuid.uuid4().hex + uuid.uuid4().hex[:8]
+    def _delegate(self, action: str, payload: dict[str, Any], *, request_id: str | None = None) -> ApiResult[dict[str, Any]]:
+        # Renewals pass a deterministic request ID: MCT stores one outcome per
+        # ID, so a repeat returns that stored outcome instead of a second write.
+        request_id = request_id or (uuid.uuid4().hex + uuid.uuid4().hex[:8])
         try:
             response = requests.post(
                 self._url,
@@ -180,15 +183,27 @@ class MctMartDelegationClient:
             offer_id = str(raw_offer_id)
         elif isinstance(raw_offer_id, str) and raw_offer_id.isascii() and raw_offer_id.isdigit():
             offer_id = raw_offer_id.lstrip('0')
+        expires_at = data.get('expiresAt')
+        renewal_proof_valid = action != 'renew'
+        if action == 'renew' and isinstance(expires_at, str) and len(expires_at) <= 40 and 0 < len(offer_id) <= 16:
+            try:
+                parsed_expiry = datetime.fromisoformat(expires_at.replace('Z', '+00:00'))
+                renewal_proof_valid = bool(parsed_expiry.tzinfo and parsed_expiry > datetime.now(dt_timezone.utc))
+            except (ValueError, OverflowError):
+                renewal_proof_valid = False
         if (
             200 <= response.status_code < 300
             and data.get('ok') is True
             and data.get('status') == 'succeeded'
             and not data.get('errorCode')
             and not data.get('error')
-            and (action == 'cancel' or (action in {'create', 'update'} and offer_id))
+            and renewal_proof_valid
+            and (action == 'cancel' or (action in {'create', 'update', 'renew'} and offer_id))
         ):
-            return ApiResult.success({'offer_id': offer_id, 'request_id': request_id}, status_code=response.status_code)
+            success = {'offer_id': offer_id, 'request_id': request_id}
+            if action == 'renew' and isinstance(expires_at, str) and len(expires_at) <= 40:
+                success['expires_at'] = expires_at
+            return ApiResult.success(success, status_code=response.status_code)
         # No external no-write attestation contract exists. HTTP/status/error
         # labels cannot establish that MCT never wrote an offer, even when it
         # says "rejected". Do not retry an ambiguous write automatically.
@@ -328,6 +343,35 @@ class MctMartDelegationClient:
             status_code=404,
         )
 
+    def renew_offer(self, offer_id: str, *, request_id: str) -> ApiResult[dict[str, Any]]:
+        """Exact-ID Mart pre-expiry renewal through MCT's verified official renewal.
+
+        MCT queries the offer, extends it to 30 days and re-queries it. The
+        returned offer ID may differ from the requested one (PA edits can
+        issue a replacement ID). Anything but verified success is unknown and
+        must be resolved by repeating the SAME request ID, never a new one.
+        """
+        text = str(offer_id or '')
+        if not (text.isascii() and text.isdigit() and not text.startswith('0') and len(text) <= 16):
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION, 'Renewal requires an exact numeric offer ID.',
+                provider='playerauctions', is_retryable=False,
+                details={'delegation_outcome': 'rejected', 'no_write_proof': _MCT_MART_LOCAL_NO_WRITE_PROOF,
+                         'error_code': 'renew_invalid_offer_id'},
+            )
+        if not (
+            isinstance(request_id, str) and 12 <= len(request_id) <= 128
+            and request_id.isascii()
+            and all(ch.isalnum() or ch in '._:-' for ch in request_id)
+        ):
+            return ApiResult.from_error(
+                ErrorCategory.VALIDATION, 'Renewal requires a safe durable request ID.',
+                provider='playerauctions', is_retryable=False,
+                details={'delegation_outcome': 'rejected', 'no_write_proof': _MCT_MART_LOCAL_NO_WRITE_PROOF,
+                         'error_code': 'renew_invalid_request_id'},
+            )
+        return self._delegate('renew', {'offerId': text}, request_id=request_id)
+
     def create_offer(self, product_type: str, payload: dict[str, Any], **_kwargs: Any) -> ApiResult[dict[str, Any]]:
         if product_type != 'account':
             return ApiResult.from_error(
@@ -438,6 +482,13 @@ class PACompositeClient:
         if request is not None:
             offer_ids = request.offer_ids
         return self._official.cancel_offers(offer_ids=offer_ids, proxy_group=proxy_group)
+
+    def renew_offer(self, offer_id: str, *, request_id: str) -> Any:
+        """Mart official lane only; other facades have no exact-ID renewal."""
+        renew = getattr(self._official, 'renew_offer', None)
+        if not callable(renew):
+            raise RuntimeError('Exact-ID renewal is only available on the Mart official lane')
+        return renew(offer_id, request_id=request_id)
 
     def edit_offer_in_browser(self, **kwargs: Any) -> Any:
         """Use the legacy browser session only where that lane is explicitly retained."""

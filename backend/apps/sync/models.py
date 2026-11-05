@@ -529,3 +529,49 @@ class EldoradoReview(models.Model):
 
     def __str__(self):
         return f"{self.feedback_rating}:{self.remote_id} ({self.buyer_masked_username})"
+
+
+class PaMartRenewalAttempt(models.Model):
+    """Durable renewal cycle and account-scoped historical offer identities.
+
+    Pending/unknown rows are reconciliation holds, never automatic retry tickets.
+    No raw response, credential or provider error text belongs in this ledger.
+    """
+
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'Pending'
+        SUCCEEDED = 'succeeded', 'Succeeded'
+        REJECTED = 'rejected', 'Rejected before write'
+        UNKNOWN = 'unknown', 'Unknown remote outcome'
+
+    listing = models.ForeignKey(
+        'listings.Listing', on_delete=models.PROTECT,
+        related_name='pa_mart_renewal_attempts',
+    )
+    integration_account = models.ForeignKey(
+        'integrations.IntegrationAccount', on_delete=models.PROTECT,
+        related_name='pa_mart_renewal_attempts',
+    )
+    request_id = models.CharField(max_length=128, unique=True)
+    old_offer_id = models.CharField(max_length=16)
+    new_offer_id = models.CharField(max_length=16, blank=True)
+    previous_expires_at = models.DateTimeField()
+    verified_expires_at = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
+    reason_code = models.CharField(max_length=80, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'pa_mart_renewal_attempts'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['listing', 'old_offer_id', 'previous_expires_at'],
+                name='unique_pa_mart_renewal_cycle',
+            ),
+        ]
+        indexes = [
+            models.Index(fields=['integration_account', 'old_offer_id'], name='pa_renew_account_old_idx'),
+            models.Index(fields=['integration_account', 'new_offer_id'], name='pa_renew_account_new_idx'),
+            models.Index(fields=['listing', 'status'], name='pa_renew_listing_status_idx'),
+        ]
