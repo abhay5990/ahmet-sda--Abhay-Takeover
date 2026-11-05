@@ -26,6 +26,7 @@ from apis_sdk.clients.marketplaces.eldorado.models import (
     EldoradoOfferSearchPage,
     EldoradoOfferStateCount,
     EldoradoOrder,
+    EldoradoPrivateOffer,
     EldoradoOrderAccountDetails,
     EldoradoReviewsResponse,
     EldoradoSellerOrdersPage,
@@ -226,6 +227,22 @@ class EldoradoClient:
             auth_headers=auth_headers,
             proxy_url=proxy_url,
             response_type=EldoradoOrderAccountDetails,
+        )
+
+    def get_private_offer(
+        self,
+        offer_id: str,
+        *,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[EldoradoPrivateOffer]:
+        """Read one of our offers, including its state and expiry date."""
+        return self._request(
+            HttpMethod.GET,
+            EldoradoEndpoints.private_offer(offer_id),
+            auth_headers=auth_headers,
+            proxy_url=proxy_url,
+            response_type=EldoradoPrivateOffer,
         )
 
     def get_offer_account_details(

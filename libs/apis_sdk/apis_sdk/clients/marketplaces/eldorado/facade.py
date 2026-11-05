@@ -46,6 +46,7 @@ from apis_sdk.clients.marketplaces.eldorado.models import (
     EldoradoOfferSearchItem,
     EldoradoOfferSearchPage,
     EldoradoOfferStateCount,
+    EldoradoPrivateOffer,
     EldoradoOrder,
     EldoradoOrderAccountDetails,
     EldoradoReviewsResponse,
@@ -154,6 +155,15 @@ class EldoradoApiClient(Protocol):
         auth_headers: dict[str, str],
         proxy_url: str | None = None,
     ) -> ApiResult[EldoradoOfferCredentialsResponse]:
+        ...
+
+    def get_private_offer(
+        self,
+        offer_id: str,
+        *,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[EldoradoPrivateOffer]:
         ...
 
     def get_seller_reviews(
@@ -406,6 +416,22 @@ class EldoradoFacade:
         return self._exec.execute_with_retry(
             lambda proxy_url: self._client.get_order_account_details(
                 order_id,
+                auth_headers=self._exec.get_auth_headers(),
+                proxy_url=proxy_url,
+            ),
+            proxy_group=proxy_group,
+        )
+
+    def get_private_offer(
+        self,
+        offer_id: str,
+        *,
+        proxy_group: str | None = None,
+    ) -> ApiResult[EldoradoPrivateOffer]:
+        """Read one of our offers, including its state and expiry date."""
+        return self._exec.execute_with_retry(
+            lambda proxy_url: self._client.get_private_offer(
+                offer_id,
                 auth_headers=self._exec.get_auth_headers(),
                 proxy_url=proxy_url,
             ),

@@ -55,6 +55,7 @@ READ_METHODS = frozenset({
     "search_my_offers", "get_seller_orders", "get_order_by_id",
     "get_offer_state_counts", "get_order_account_details",
     "get_offer_account_details", "get_seller_reviews", "get_notifications",
+    "get_private_offer",
 })
 WRITES_HELD_RETRY_SECONDS = 31_536_000.0
 OFFER_LEASE_RETRY_SECONDS = 1.0

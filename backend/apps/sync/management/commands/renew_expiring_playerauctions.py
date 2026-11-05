@@ -220,7 +220,9 @@ class Command(BaseCommand):
 
         if execute:
             from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled
-            if not is_sync_feature_enabled(SyncFlag.RENEW_EXPIRING_PA, default=False):
+            from apps.sync.services.shared.feature_flags import unified_renewal_providers
+            if not (is_sync_feature_enabled(SyncFlag.RENEW_EXPIRING_PA, default=False)
+                    or 'playerauctions' in unified_renewal_providers()):
                 raise CommandError('PlayerAuctions renewal is held; explicit enabled flag required.')
 
         now = timezone.now()

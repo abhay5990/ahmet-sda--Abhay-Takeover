@@ -31,6 +31,9 @@ class SyncFlag:
     POOL_SWEEP = 'sync.pool_sweep'
     PAUSE_EXPIRING = 'sync.pause_expiring'
     RENEW_EXPIRING_PA = 'sync.renew_expiring_playerauctions'
+    # One switch for auto-renewal on every marketplace that expires offers.
+    # value: {"providers": ["playerauctions", "eldorado"]} (default both).
+    RENEW_EXPIRING_LISTINGS = 'sync.renew_expiring_listings'
 
 
 def is_sync_feature_enabled(key: str, *, default: bool = True) -> bool:
@@ -70,3 +73,16 @@ def get_sync_setting(key: str, setting: str, *, default: Any = None) -> Any:
     except Exception:
         logger.debug('get_sync_setting failed for %s.%s, using default=%s', key, setting, default)
         return default
+
+
+RENEWABLE_PROVIDERS = ('playerauctions', 'eldorado')
+
+
+def unified_renewal_providers() -> tuple[str, ...]:
+    """Providers the unified auto-renewal covers right now ('' when it is off)."""
+    if not is_sync_feature_enabled(SyncFlag.RENEW_EXPIRING_LISTINGS, default=False):
+        return ()
+    configured = get_sync_setting(SyncFlag.RENEW_EXPIRING_LISTINGS, 'providers', default=list(RENEWABLE_PROVIDERS))
+    if not isinstance(configured, (list, tuple)):
+        return ()
+    return tuple(p for p in RENEWABLE_PROVIDERS if p in configured)

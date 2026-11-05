@@ -171,6 +171,18 @@ class EldoradoOfferSearchItem(BaseModel):
         return _normalize_account_delivery_details(data)
 
 
+class EldoradoPrivateOffer(BaseModel):
+    """Seller-only view of one offer (GET /api/flexibleOffers/{id}/private).
+
+    ``offer`` carries the flat offer, including ``offerState`` and
+    ``expireDate`` (Eldorado offers expire ~21 days after their last save).
+    """
+
+    model_config = {"extra": "allow"}
+
+    offer: EldoradoOfferSearchItem = Field(default_factory=EldoradoOfferSearchItem)
+
+
 class EldoradoOfferSearchPage(BaseModel):
     """Paginated response from the offer search endpoint."""
 

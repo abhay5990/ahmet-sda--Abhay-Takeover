@@ -575,3 +575,40 @@ class PaMartRenewalAttempt(models.Model):
             models.Index(fields=['integration_account', 'new_offer_id'], name='pa_renew_account_new_idx'),
             models.Index(fields=['listing', 'status'], name='pa_renew_listing_status_idx'),
         ]
+
+
+class MarketplaceRenewalCheck(models.Model):
+    """One auto-renewal look at one listing (all marketplaces except PA Mart,
+    which keeps its own PaMartRenewalAttempt ledger).
+
+    Holds only ids, outcome and dates — never a payload, credential or
+    provider error text.
+    """
+
+    class Outcome(models.TextChoices):
+        RENEWED = 'renewed', 'Renewed (new expiry verified)'
+        NOT_DUE = 'not_due', 'Not due yet (expiry read)'
+        GONE = 'gone', 'Offer no longer exists on the marketplace'
+        NOT_ACTIVE = 'not_active', 'Offer is not active on the marketplace'
+        HELD_SALE = 'held_sale', 'Held: local sale or order evidence'
+        UNPROVEN = 'unproven', 'Saved, but the expiry did not move'
+        FAILED = 'failed', 'Read or save failed'
+
+    listing = models.ForeignKey(
+        'listings.Listing', on_delete=models.CASCADE,
+        related_name='marketplace_renewal_checks',
+    )
+    provider = models.CharField(max_length=32)
+    offer_id = models.CharField(max_length=64)
+    outcome = models.CharField(max_length=16, choices=Outcome.choices)
+    previous_expires_at = models.DateTimeField(null=True, blank=True)
+    verified_expires_at = models.DateTimeField(null=True, blank=True)
+    reason_code = models.CharField(max_length=80, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'marketplace_renewal_checks'
+        indexes = [
+            models.Index(fields=['listing', 'created_at'], name='mrc_listing_created_idx'),
+            models.Index(fields=['provider', 'outcome', 'created_at'], name='mrc_provider_outcome_idx'),
+        ]
