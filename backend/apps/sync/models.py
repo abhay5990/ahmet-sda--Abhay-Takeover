@@ -578,14 +578,16 @@ class PaMartRenewalAttempt(models.Model):
 
 
 class MarketplaceRenewalCheck(models.Model):
-    """One auto-renewal look at one listing (all marketplaces except PA Mart,
-    which keeps its own PaMartRenewalAttempt ledger).
+    """Sanitized observations and durable renewal claims (excluding PA Mart).
 
-    Holds only ids, outcome and dates — never a payload, credential or
-    provider error text.
+    Pending/unknown/unproven claims never age out. Account + offer identity
+    survives local aliases, while the unique cycle key prevents exact replay.
+    No payload, credential or provider error text belongs here.
     """
 
     class Outcome(models.TextChoices):
+        PENDING = 'pending', 'Pending (committed before potential write)'
+        UNKNOWN = 'unknown', 'Unknown remote outcome (reconciliation hold)'
         RENEWED = 'renewed', 'Renewed (new expiry verified)'
         NOT_DUE = 'not_due', 'Not due yet (expiry read)'
         GONE = 'gone', 'Offer no longer exists on the marketplace'
@@ -594,21 +596,46 @@ class MarketplaceRenewalCheck(models.Model):
         UNPROVEN = 'unproven', 'Saved, but the expiry did not move'
         FAILED = 'failed', 'Read or save failed'
 
+    REASON_CODES = frozenset({
+        'attempt_pending', 'attempt_exception', 'send_failed_unknown',
+        'verify_read_failed', 'verify_identity_mismatch', 'verify_state_changed',
+        'verified_expiry_extended', 'saved_but_expiry_unproven',
+        'offer_not_found', 'read_failed', 'identity_mismatch', 'remote_not_active',
+        'expiry_unreadable', 'not_expiring_soon', 'local_sale_or_order',
+        'dry_run_would_renew', 'transaction_active', 'listing_changed',
+        'unresolved_attempt', 'cycle_already_checked', 'renewal_disabled',
+        'serialization_unavailable', 'one_shot_update_unavailable',
+        'mutation_not_admitted', 'ledger_unavailable', 'local_check_failed',
+        'local_state_changed_after_send', 'save_configuration_missing',
+        'credential_read_failed', 'payload_invalid', 'local_safety_refusal',
+        'read_budget_exhausted',
+    })
+
     listing = models.ForeignKey(
-        'listings.Listing', on_delete=models.CASCADE,
+        'listings.Listing', on_delete=models.PROTECT,
+        related_name='marketplace_renewal_checks',
+    )
+    integration_account = models.ForeignKey(
+        'integrations.IntegrationAccount', on_delete=models.PROTECT,
         related_name='marketplace_renewal_checks',
     )
     provider = models.CharField(max_length=32)
     offer_id = models.CharField(max_length=64)
+    cycle_key = models.CharField(max_length=64, unique=True, null=True, blank=True)
+    # MySQL does not enforce partial unique constraints. Allocate this key
+    # before sending and clear it only for a proven terminal/local outcome.
+    unresolved_key = models.CharField(max_length=64, unique=True, null=True, blank=True)
     outcome = models.CharField(max_length=16, choices=Outcome.choices)
     previous_expires_at = models.DateTimeField(null=True, blank=True)
     verified_expires_at = models.DateTimeField(null=True, blank=True)
     reason_code = models.CharField(max_length=80, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'marketplace_renewal_checks'
         indexes = [
             models.Index(fields=['listing', 'created_at'], name='mrc_listing_created_idx'),
             models.Index(fields=['provider', 'outcome', 'created_at'], name='mrc_provider_outcome_idx'),
+            models.Index(fields=['integration_account', 'offer_id', 'outcome'], name='mrc_account_offer_outcome_idx'),
         ]

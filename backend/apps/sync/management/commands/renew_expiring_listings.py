@@ -54,7 +54,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         execute = options['execute']
-        lead_hours = max(1, int(options['lead_hours']))
+        lead_hours = int(options['lead_hours'])
+        if not 1 <= lead_hours <= 96:
+            raise CommandError('--lead-hours must be between 1 and 96')
         reads = int(options['eldorado_reads'])
         renewals = int(options['eldorado_renewals'])
         if not 1 <= reads <= MAX_ELDORADO_READS:
@@ -97,26 +99,35 @@ class Command(BaseCommand):
         candidates = eldorado_candidates(now=now, cutoff=cutoff, limit=reads)
         stats: dict[str, int] = {}
         saves = 0
+        remaining_reads = reads
         stopped = ''
         for listing in candidates:
+            if remaining_reads <= 0:
+                stats['read_budget_exhausted'] = stats.get('read_budget_exhausted', 0) + 1
+                break
             if saves >= renewals:
                 stats['left_for_next_run'] = stats.get('left_for_next_run', 0) + 1
                 continue
             try:
-                decision = renew_eldorado_listing(listing, now=now, cutoff=cutoff, execute=execute)
-            except Exception as exc:  # one bad row must not stop the others
+                decision = renew_eldorado_listing(
+                    listing, now=now, cutoff=cutoff, execute=execute, read_budget=remaining_reads,
+                )
+            except Exception:
+                # The send may have happened. Never continue or infer safety
+                # from an exception class/message; pending ledger stays held.
                 stats['failed'] = stats.get('failed', 0) + 1
-                self.stdout.write(self.style.ERROR(f'FAILED {listing.store_listing_id}: {type(exc).__name__}'))
-                continue
+                stopped = 'failed:unclassified_renewal_exception'
+                self.stdout.write(self.style.ERROR(f'FAILED {listing.store_listing_id}: renewal_exception'))
+                break
             stats[decision.outcome] = stats.get(decision.outcome, 0) + 1
-            if decision.outcome in ('renewed', 'unproven', 'failed') and decision.reason.startswith(('verified', 'saved', 'verify', 'save')):
-                saves += 1
+            saves += decision.writes_attempted
+            remaining_reads -= decision.reads_used
             if decision.outcome == 'renewed':
                 self.stdout.write(self.style.SUCCESS(
                     f'RENEWED {listing.store_listing_id}: {decision.previous:%Y-%m-%d} → {decision.verified:%Y-%m-%d}'))
             elif decision.reason == 'dry_run_would_renew':
                 self.stdout.write(f'READY {listing.store_listing_id}: expires {decision.previous}')
-            elif decision.outcome in ('unproven', 'failed', 'held_sale'):
+            elif decision.outcome in ('pending', 'unknown', 'unproven', 'failed', 'held_sale'):
                 self.stdout.write(self.style.WARNING(f'{decision.outcome.upper()} {listing.store_listing_id}: {decision.reason}'))
             if decision.stop_run:
                 stopped = f'{decision.outcome}:{decision.reason}'

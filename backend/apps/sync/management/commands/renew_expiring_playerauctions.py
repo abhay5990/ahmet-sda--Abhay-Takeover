@@ -213,7 +213,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         execute = options['execute']
-        lead_hours = max(1, options['lead_hours'])
+        lead_hours = int(options['lead_hours'])
+        if not 1 <= lead_hours <= 96:
+            raise CommandError('--lead-hours must be between 1 and 96')
         limit = int(options['limit'])
         if not 1 <= limit <= MAX_RENEWAL_BATCH_SIZE:
             raise CommandError(f'--limit must be between 1 and {MAX_RENEWAL_BATCH_SIZE}')

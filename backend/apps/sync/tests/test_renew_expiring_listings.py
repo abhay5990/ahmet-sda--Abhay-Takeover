@@ -49,27 +49,59 @@ class DecisionTests(SimpleTestCase):
 
     def test_renewed_only_when_a_fresh_read_shows_a_later_expiry(self):
         prev = R.parse_expire_date('2026-11-08T18:00:00')
-        ok = R.decide_after_save(previous=prev, after_ok=True, after=live(expire='2026-11-26T18:00:00'), offer_id=OID)
+        ok = R.decide_after_save(previous=prev, after_ok=True, after=live(expire='2026-11-26T18:00:00'), offer_id=OID, now=NOW)
         self.assertEqual((ok.outcome, ok.stop_run), ('renewed', False))
-        same = R.decide_after_save(previous=prev, after_ok=True, after=live(expire='2026-11-08T18:00:00'), offer_id=OID)
+        same = R.decide_after_save(previous=prev, after_ok=True, after=live(expire='2026-11-08T18:00:00'), offer_id=OID, now=NOW)
         self.assertEqual((same.outcome, same.stop_run), ('unproven', True))
-        self.assertTrue(R.decide_after_save(previous=prev, after_ok=False, after=None, offer_id=OID).stop_run)
-        self.assertEqual(R.decide_after_save(previous=prev, after_ok=True, after=live(state='Paused', expire='2026-11-26T18:00:00'), offer_id=OID).reason, 'verify_state_changed')
+        self.assertTrue(R.decide_after_save(previous=prev, after_ok=False, after=None, offer_id=OID, now=NOW).stop_run)
+        self.assertEqual(R.decide_after_save(previous=prev, after_ok=True, after=live(state='Paused', expire='2026-11-26T18:00:00'), offer_id=OID, now=NOW).reason, 'verify_state_changed')
 
 
-class RenewListingTests(SimpleTestCase):
+# Real committed claims require TransactionTestCase, not TestCase savepoints.
+from contextlib import contextmanager
+from django.test import TransactionTestCase
+
+
+class RenewListingTests(TransactionTestCase):
     def setUp(self):
-        self.listing = SimpleNamespace(store_listing_id=OID, status='listed', raw_data={}, pk=1)
-        self.records = []
-        patcher = patch.object(R, '_record', side_effect=lambda l, d: self.records.append(d.outcome))
-        patcher.start(); self.addCleanup(patcher.stop)
+        from apps.integrations.models import IntegrationAccount, IntegrationCredential
+        from apps.listings.models import Listing
+        from apps.sync.models import SyncFeatureFlag
+        from apps.sync.services.shared.feature_flags import SyncFlag
+        account = IntegrationAccount.objects.create(name='Synthetic Eldorado', slug='synthetic-eldorado', provider='eldorado')
+        IntegrationCredential.objects.create(account=account, credentials={'synthetic': True})
+        self.listing = Listing.objects.create(integration_account=account, store_listing_id=OID, status='listed', price='10.00')
+        SyncFeatureFlag.objects.update_or_create(key=SyncFlag.RENEW_EXPIRING_LISTINGS,
+            defaults={'is_enabled': True, 'value': {'providers': ['eldorado']}})
         store = patch.object(R, '_store_expiry'); self.store = store.start(); self.addCleanup(store.stop)
         guard = patch.object(R, '_has_sale_or_open_order', return_value=False); self.guard = guard.start(); self.addCleanup(guard.stop)
 
     def run_once(self, reads, save_ok=True, execute=True):
-        client = Mock(); client.get_private_offer.side_effect = reads
+        # The original response factory predates exclude_unset=True. Preserve
+        # explicit fixture fields as dicts rather than synthesizing defaults.
+        for read in reads:
+            if read.ok:
+                read.data.offer = read.data.offer.model_dump()
+        leased = []
+        @contextmanager
+        def mutation(offer_id):
+            self.assertEqual(offer_id, OID)
+            leased.append(True)
+            try:
+                yield True
+            finally:
+                leased.pop()
+        client = Mock()
+        client.offer_mutation = mutation
+        def read_offer(offer_id, **kwargs):
+            self.assertTrue(leased)
+            self.assertTrue(kwargs.get('renewal_safe'))
+            return reads.pop(0)
+        client.get_private_offer.side_effect = read_offer
         save = Mock(return_value=SimpleNamespace(ok=save_ok, error=None if save_ok else 'Eldorado offer mutation busy or writes held'))
         d = R.renew_eldorado_listing(self.listing, now=NOW, cutoff=CUTOFF, execute=execute, client_for=lambda l: client, save=save, sleep=lambda s: None)
+        if save.called:
+            self.assertIs(save.call_args.args[2], client)
         return d, client, save
 
     def test_due_offer_is_saved_unchanged_and_verified(self):
@@ -79,7 +111,9 @@ class RenewListingTests(SimpleTestCase):
 
     def test_dry_run_never_saves(self):
         d, _, save = self.run_once([result(offer=live())], execute=False)
-        self.assertEqual(d.reason, 'dry_run_would_renew'); save.assert_not_called(); self.assertEqual(self.records, [])
+        from apps.sync.models import MarketplaceRenewalCheck
+        self.assertEqual(d.reason, 'dry_run_would_renew'); save.assert_not_called()
+        self.assertFalse(MarketplaceRenewalCheck.objects.exists())
 
     def test_sale_evidence_holds_before_any_save(self):
         self.guard.return_value = True
@@ -94,7 +128,7 @@ class RenewListingTests(SimpleTestCase):
 
     def test_busy_or_held_save_stops_the_run(self):
         d, _, _ = self.run_once([result(offer=live())], save_ok=False)
-        self.assertEqual((d.outcome, d.stop_run), ('failed', True))
+        self.assertEqual((d.outcome, d.stop_run, d.writes_attempted), ('unknown', True, 1))
 
     def test_unproven_save_stops_the_run(self):
         d, _, _ = self.run_once([result(offer=live()), result(offer=live())])

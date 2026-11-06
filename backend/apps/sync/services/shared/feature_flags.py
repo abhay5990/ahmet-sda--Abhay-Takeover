@@ -32,7 +32,7 @@ class SyncFlag:
     PAUSE_EXPIRING = 'sync.pause_expiring'
     RENEW_EXPIRING_PA = 'sync.renew_expiring_playerauctions'
     # One switch for auto-renewal on every marketplace that expires offers.
-    # value: {"providers": ["playerauctions", "eldorado"]} (default both).
+    # value requires an explicit providers list; missing/invalid scope is held.
     RENEW_EXPIRING_LISTINGS = 'sync.renew_expiring_listings'
 
 
@@ -79,10 +79,21 @@ RENEWABLE_PROVIDERS = ('playerauctions', 'eldorado')
 
 
 def unified_renewal_providers() -> tuple[str, ...]:
-    """Providers the unified auto-renewal covers right now ('' when it is off)."""
-    if not is_sync_feature_enabled(SyncFlag.RENEW_EXPIRING_LISTINGS, default=False):
+    """Read enablement and exact provider scope together; any failure holds it."""
+    from apps.sync.models import SyncFeatureFlag
+
+    try:
+        flag = SyncFeatureFlag.objects.filter(
+            key=SyncFlag.RENEW_EXPIRING_LISTINGS,
+        ).only('is_enabled', 'value').first()
+        if flag is None or flag.is_enabled is not True or not isinstance(flag.value, dict):
+            return ()
+        configured = flag.value.get('providers')
+        if not isinstance(configured, list) or not configured:
+            return ()
+        if any(not isinstance(p, str) or p not in RENEWABLE_PROVIDERS for p in configured):
+            return ()
+        return tuple(p for p in RENEWABLE_PROVIDERS if p in configured)
+    except Exception:
+        logger.debug('Unified renewal configuration unavailable; execution held')
         return ()
-    configured = get_sync_setting(SyncFlag.RENEW_EXPIRING_LISTINGS, 'providers', default=list(RENEWABLE_PROVIDERS))
-    if not isinstance(configured, (list, tuple)):
-        return ()
-    return tuple(p for p in RENEWABLE_PROVIDERS if p in configured)

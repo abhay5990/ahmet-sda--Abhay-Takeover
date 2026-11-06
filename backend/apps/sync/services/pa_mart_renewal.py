@@ -32,7 +32,7 @@ from apps.posting.models import (
 )
 from apps.posting.services.stock.pa_tracking import extract_tracking_code
 from apps.sync.models import PaMartRenewalAttempt
-from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled
+from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled, unified_renewal_providers
 
 MART_ACCOUNT_SLUG = 'playerauctions-csgosmurfkings'
 _LOCAL_NO_WRITE_PROOF = 'sda_local_pretransport'
@@ -66,7 +66,10 @@ def mart_renewal_request_id(offer_id: str, expires_at, today=None) -> str:
 def _enabled():
     # Explicit False also makes the shared helper's DB-exception path fail closed.
     try:
-        return is_sync_feature_enabled(SyncFlag.RENEW_EXPIRING_PA, default=False) is True
+        return (
+            is_sync_feature_enabled(SyncFlag.RENEW_EXPIRING_PA, default=False) is True
+            or 'playerauctions' in unified_renewal_providers()
+        )
     except Exception:
         return False
 
