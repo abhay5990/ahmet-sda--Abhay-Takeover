@@ -7,9 +7,10 @@ They are mapped to SDK-canonical types via the mapper module.
 
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, PrivateAttr, model_validator
 
 
 # ---------------------------------------------------------------------------
@@ -169,6 +170,34 @@ class EldoradoOfferSearchItem(BaseModel):
     @classmethod
     def _accept_delivery_details(cls, data: Any) -> Any:
         return _normalize_account_delivery_details(data)
+
+
+class EldoradoPrivateOffer(BaseModel):
+    """Seller-only view of one offer (GET /api/flexibleOffers/{id}/private).
+
+    ``offer`` carries the flat offer, including ``offerState`` and
+    ``expireDate`` (Eldorado offers expire ~21 days after their last save).
+    """
+
+    model_config = {"extra": "allow"}
+
+    offer: EldoradoOfferSearchItem = Field(default_factory=EldoradoOfferSearchItem)
+    # Transient private transport evidence only: never serialized or repr'd.
+    # Renewal must validate raw types/nested keys before model coercion can
+    # round prices, turn bools into integers or discard unknown image fields.
+    _raw_offer_snapshot: dict[str, Any] | None = PrivateAttr(default=None)
+
+    @model_validator(mode="wrap")
+    @classmethod
+    def _retain_raw_offer(cls, data: Any, handler: Any) -> Any:
+        raw = deepcopy(data.get('offer')) if isinstance(data, dict) and isinstance(data.get('offer'), dict) else None
+        model = handler(data)
+        if raw is not None:
+            model._raw_offer_snapshot = raw
+        return model
+
+    def raw_offer_snapshot(self) -> dict[str, Any] | None:
+        return deepcopy(self._raw_offer_snapshot)
 
 
 class EldoradoOfferSearchPage(BaseModel):

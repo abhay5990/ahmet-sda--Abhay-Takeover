@@ -3,6 +3,7 @@ from django.utils.html import format_html
 
 from .models import (
     EldoradoReview,
+    MarketplaceRenewalCheck,
     PaMartRenewalAttempt,
     RawPayload,
     SyncCheckpoint,
@@ -255,6 +256,36 @@ class PaMartRenewalAttemptAdmin(admin.ModelAdmin):
         'request_id', 'listing_reference', 'old_offer_id', 'new_offer_id',
         'status', 'reason_code', 'previous_expires_at', 'verified_expires_at',
         'created_at', 'updated_at',
+    )
+    fields = readonly_fields
+
+    @admin.display(description='SDA Listing ID')
+    def listing_reference(self, obj):
+        return obj.listing_id
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(MarketplaceRenewalCheck)
+class MarketplaceRenewalCheckAdmin(admin.ModelAdmin):
+    """Sanitized observation only: unresolved sends cannot be edited into retry."""
+
+    list_display = ('provider', 'offer_id', 'listing_reference', 'outcome', 'reason_code', 'created_at')
+    list_filter = ('provider', 'outcome')
+    search_fields = ('offer_id', 'cycle_key')
+    list_per_page = 50
+    show_full_result_count = False
+    actions = None
+    readonly_fields = (
+        'provider', 'offer_id', 'listing_reference', 'cycle_key', 'outcome', 'reason_code',
+        'previous_expires_at', 'verified_expires_at', 'created_at',
     )
     fields = readonly_fields
 

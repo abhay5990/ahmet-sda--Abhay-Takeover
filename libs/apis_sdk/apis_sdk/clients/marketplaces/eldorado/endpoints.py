@@ -14,6 +14,7 @@ class EldoradoEndpoints:
     DELETE_OFFER = "/api/flexibleOffersUser/me/{offer_id}"
     SEARCH_MY_OFFERS = "/api/flexibleOffers/me/search"
     GET_OFFER = "/api/flexibleOffers/{offer_id}"
+    GET_PRIVATE_OFFER = "/api/flexibleOffers/{offer_id}/private"
 
     # Offer Details (credentials)
     GET_OFFER_DETAILS = "/api/offers/accountDetails/byOfferId/{offer_id}"
@@ -40,6 +41,10 @@ class EldoradoEndpoints:
     @classmethod
     def offer(cls, offer_id: str) -> str:
         return cls.UPDATE_OFFER.format(offer_id=offer_id)
+
+    @classmethod
+    def private_offer(cls, offer_id: str) -> str:
+        return cls.GET_PRIVATE_OFFER.format(offer_id=offer_id)
 
     @classmethod
     def delete_offer(cls, offer_id: str) -> str:

@@ -30,7 +30,9 @@ class RenewalHoldTests(SimpleTestCase):
         dispatch.assert_not_called()
 
     def test_scheduler_explicit_true_flag_admits_command(self):
-        with patch('apps.sync.models.SyncFeatureFlag.objects') as flags, patch('django.core.management.call_command') as dispatch:
+        # Only the PA-only switch is on (the unified switch is a separate row).
+        with patch('apps.sync.models.SyncFeatureFlag.objects') as flags, patch('django.core.management.call_command') as dispatch, \
+             patch('apps.sync.services.shared.feature_flags.unified_renewal_providers', return_value=()):
             flags.filter.return_value.only.return_value.first.return_value = SimpleNamespace(is_enabled=True)
             run_renew_expiring_playerauctions_job()
         dispatch.assert_called_once_with('renew_expiring_playerauctions', '--execute')

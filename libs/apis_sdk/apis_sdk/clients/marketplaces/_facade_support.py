@@ -452,13 +452,15 @@ class FacadeExecutor:
         operation: Callable[[str | None], ApiResult[T]],
         *,
         proxy_group: str | None = None,
+        retry_auth: bool = True,
     ) -> ApiResult[T]:
         """Execute a client call once, with a single auth-retry on 401.
 
         Used for non-idempotent operations (e.g. POST create_offer).
         No general retry to prevent duplicates, but a 401 means the
         request was rejected (not processed), so refreshing auth and
-        retrying once is safe.
+        retrying once is safe. Callers requiring strictly one wire attempt
+        can disable even this established authentication-rejection replay.
         """
         if self._pre_execute is not None:
             self._pre_execute()
@@ -470,7 +472,7 @@ class FacadeExecutor:
             return self._exception_to_result(exc)
 
         # If auth error (401/403), try refresh + one retry
-        if not result.ok and result.error and result.error.category == ErrorCategory.AUTHENTICATION:
+        if retry_auth and not result.ok and result.error and result.error.category == ErrorCategory.AUTHENTICATION:
             self._logger.info("Auth failed on write operation, attempting token refresh")
             try:
                 self._auth.refresh()

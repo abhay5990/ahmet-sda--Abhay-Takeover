@@ -134,11 +134,19 @@ def run_pause_expiring_listings_job():
 
 @apscheduler_util.close_old_connections
 def run_renew_expiring_playerauctions_job():
-    """Renew only verified-active PA offers before their recorded expiry."""
-    from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled
+    """Auto-renew offers before they expire.
+
+    The unified switch (``sync.renew_expiring_listings``) renews every covered
+    marketplace (PlayerAuctions + Eldorado). Without it, the older PA-only
+    switch keeps its exact previous behaviour.
+    """
+    from apps.sync.services.shared.feature_flags import SyncFlag, is_sync_feature_enabled, unified_renewal_providers
+    from django.core.management import call_command
+    if unified_renewal_providers():
+        call_command('renew_expiring_listings', '--execute')
+        return
     if not is_sync_feature_enabled(SyncFlag.RENEW_EXPIRING_PA, default=False):
         return
-    from django.core.management import call_command
     call_command('renew_expiring_playerauctions', '--execute')
 
 
@@ -345,7 +353,7 @@ class Command(BaseCommand):
             run_renew_expiring_playerauctions_job,
             trigger=IntervalTrigger(minutes=30),
             id='renew_expiring_playerauctions',
-            name='Renew Expiring PlayerAuctions Offers',
+            name='Renew Expiring Offers (PlayerAuctions + Eldorado)',
             max_instances=1,
             replace_existing=True,
             next_run_time=datetime.now(),

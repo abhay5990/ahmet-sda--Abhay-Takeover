@@ -46,15 +46,17 @@ from apis_sdk.core.enums import ErrorCategory
 from apis_sdk.core.result import ApiResult
 
 WRITE_METHODS = frozenset({
-    "create_offer", "update_offer", "delete_offer", "upload_image", "deliver_order",
+    "create_offer", "update_offer", "update_offer_once", "delete_offer",
+    "upload_image", "deliver_order",
 })
-OFFER_MUTATION_METHODS = frozenset({"update_offer", "delete_offer"})
+OFFER_MUTATION_METHODS = frozenset({"update_offer", "update_offer_once", "delete_offer"})
 # Only confirmed GET operations bypass the write hold. Unknown public methods
 # (including future order status/feedback mutations) fail closed as writes.
 READ_METHODS = frozenset({
     "search_my_offers", "get_seller_orders", "get_order_by_id",
     "get_offer_state_counts", "get_order_account_details",
     "get_offer_account_details", "get_seller_reviews", "get_notifications",
+    "get_private_offer",
 })
 WRITES_HELD_RETRY_SECONDS = 31_536_000.0
 OFFER_LEASE_RETRY_SECONDS = 1.0
@@ -198,7 +200,9 @@ class EldoradoGovernor:
         if self.writes_held():
             yield False
             return
-        identifiers = json.dumps([store_key(store), str(offer_id)], ensure_ascii=True)
+        # Eldorado UUID identity is case-insensitive. Every caller (including
+        # the unchanged editor) must share the renewal's normalized lease.
+        identifiers = json.dumps([store_key(store), str(offer_id).strip().lower()], ensure_ascii=True)
         digest = hashlib.sha256(identifiers.encode("utf-8")).hexdigest()
         path = self._dir / "offer-leases" / f"{digest}.lock"
         key = (os.getpid(), str(path.resolve()))

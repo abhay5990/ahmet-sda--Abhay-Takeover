@@ -41,7 +41,15 @@ class Command(BaseCommand):
         now = timezone.now()
         total_paused = 0
 
+        from apps.sync.services.shared.feature_flags import unified_renewal_providers
+        renewed_by_autorenew = set(unified_renewal_providers())
+
         for provider, days in EXPIRY_THRESHOLDS.items():
+            if provider in renewed_by_autorenew:
+                # Auto-renewal keeps these offers alive; a DB-only pause would
+                # hide live offers from sync while they are still on sale.
+                self.stdout.write(f'  {provider}: skipped — auto-renewal is on for this marketplace')
+                continue
             cutoff = now - timedelta(days=days)
 
             qs = Listing.objects.filter(

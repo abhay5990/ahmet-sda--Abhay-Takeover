@@ -46,6 +46,7 @@ from apis_sdk.clients.marketplaces.eldorado.models import (
     EldoradoOfferSearchItem,
     EldoradoOfferSearchPage,
     EldoradoOfferStateCount,
+    EldoradoPrivateOffer,
     EldoradoOrder,
     EldoradoOrderAccountDetails,
     EldoradoReviewsResponse,
@@ -156,6 +157,15 @@ class EldoradoApiClient(Protocol):
     ) -> ApiResult[EldoradoOfferCredentialsResponse]:
         ...
 
+    def get_private_offer(
+        self,
+        offer_id: str,
+        *,
+        auth_headers: dict[str, str],
+        proxy_url: str | None = None,
+    ) -> ApiResult[EldoradoPrivateOffer]:
+        ...
+
     def get_seller_reviews(
         self,
         *,
@@ -262,6 +272,30 @@ class EldoradoFacade:
                 proxy_url=proxy_url,
             ),
             proxy_group=proxy_group,
+        )
+
+    def update_offer_once(
+        self,
+        offer_id: str,
+        payload: dict[str, Any],
+        *,
+        proxy_group: str | None = None,
+    ) -> ApiResult[EldoradoOffer]:
+        """Update without replaying an uncertain transport/server outcome.
+
+        Renewal callers must hold the governed offer lease across their fresh
+        reads, this PUT, and verification. Even explicit authentication rejection
+        is returned to the durable caller without refreshing and replaying PUT.
+        """
+        return self._exec.execute_once(
+            lambda proxy_url: self._client.update_offer(
+                offer_id,
+                payload,
+                auth_headers=self._exec.get_auth_headers(),
+                proxy_url=proxy_url,
+            ),
+            proxy_group=proxy_group,
+            retry_auth=False,
         )
 
     def delete_offer(
@@ -412,20 +446,42 @@ class EldoradoFacade:
             proxy_group=proxy_group,
         )
 
+    def get_private_offer(
+        self,
+        offer_id: str,
+        *,
+        proxy_group: str | None = None,
+        renewal_safe: bool = False,
+    ) -> ApiResult[EldoradoPrivateOffer]:
+        """Read one of our offers, including its state and expiry date."""
+        executor = self._exec.execute_once if renewal_safe else self._exec.execute_with_retry
+        return executor(
+            lambda proxy_url: self._client.get_private_offer(
+                offer_id,
+                auth_headers=self._exec.get_auth_headers(),
+                proxy_url=proxy_url,
+            ),
+            proxy_group=proxy_group,
+            **({'retry_auth': False} if renewal_safe else {}),
+        )
+
     def get_offer_account_details(
         self,
         offer_id: str,
         *,
         proxy_group: str | None = None,
+        renewal_safe: bool = False,
     ) -> ApiResult[EldoradoOfferCredentialsResponse]:
         """Fetch credential details for an offer (by offer ID)."""
-        return self._exec.execute_with_retry(
+        executor = self._exec.execute_once if renewal_safe else self._exec.execute_with_retry
+        return executor(
             lambda proxy_url: self._client.get_offer_account_details(
                 offer_id,
                 auth_headers=self._exec.get_auth_headers(),
                 proxy_url=proxy_url,
             ),
             proxy_group=proxy_group,
+            **({'retry_auth': False} if renewal_safe else {}),
         )
 
     # ---------------------------------------------------------------------------
